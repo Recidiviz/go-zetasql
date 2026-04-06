@@ -13,15 +13,30 @@
 #include "zetasql/parser/unparser.h"
 #include "zetasql/parser/visit_result.h"
 // include sources
-// flex_tokenizer.cc / flex_tokenizer.flex.cc are amalgamated in parser/bind.cc (parser prelude).
 #include "zetasql/parser/ast_node_internal.h"
 #include "zetasql/parser/bison_parser.bison.cc"
 // bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
 #undef yylex
 #include "zetasql/parser/join_processor.cc"
+// TextMapper (Bazel :tm_parser). tm_lexer.cc is compiled via flex_tokenizer/export.inc → tm_lexer/export.inc.
+#include "zetasql/parser/textmapper_lexer_adapter.cc"
+#include "zetasql/parser/tm_parser.cc"
 // utf8_validity.cc: single copy via blank-import utf8_range_link (see go-protobuf/protobuf/export.inc).
+// Flex-generated yyalloc helpers use global Legacyalloc names; root analyzer and parser/ CGO packages
+// both amalgamate flex_tokenizer.flex.cc — prefix so the final link does not duplicate symbols.
+#ifdef ZETASQL_GO_FLEX_LEGACY_IN_PARSER_PKG
+#define Legacyalloc zetasql_go_parser_pkg_Legacyalloc
+#define Legacyrealloc zetasql_go_parser_pkg_Legacyrealloc
+#define Legacyfree zetasql_go_parser_pkg_Legacyfree
+#else
+#define Legacyalloc zetasql_go_root_Legacyalloc
+#define Legacyrealloc zetasql_go_root_Legacyrealloc
+#define Legacyfree zetasql_go_root_Legacyfree
+#endif
 #include "zetasql/parser/flex_tokenizer.h"
+#include "zetasql/parser/flex_tokenizer.flex.cc"
 #include "zetasql/parser/bison_parser.cc"
+#include "zetasql/parser/flex_tokenizer.cc"
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/parser.cc"
 #include "zetasql/parser/unparser.cc"
@@ -33,6 +48,8 @@
 #include "go-zetasql/parser/keywords/export.inc"
 #include "go-zetasql/parser/lookahead_transformer/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
+#include "go-zetasql/parser/token/export.inc"
+#include "go-zetasql/parser/token_codes/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"

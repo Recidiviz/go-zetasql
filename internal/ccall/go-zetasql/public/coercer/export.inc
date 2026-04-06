@@ -22,6 +22,7 @@
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/check/export.inc"
+#include "go-zetasql/base/endian/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

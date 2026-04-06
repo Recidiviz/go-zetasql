@@ -1,7 +1,6 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_BISON_PARSER_GENERATED_LIB_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_BISON_PARSER_GENERATED_LIB_EXPORT_H
 
-#include "zetasql/parser/bison_parser.bison.h"
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/join_processor.h"
 #include "zetasql/parser/parser_internal.h"
@@ -10,9 +9,10 @@
 // include sources
 // include dependencies
 #include "go-zetasql/parser/bison_parser_mode/export.inc"
-#include "go-zetasql/parser/bison_token_codes/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
+#include "go-zetasql/parser/token_codes/export.inc"
+#include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
@@ -23,7 +23,6 @@
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/timer_util/export.inc"
 #include "go-zetasql/parser/macros/macro_catalog/export.inc"
-#include "go-zetasql/parser/macros/token_with_location/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"

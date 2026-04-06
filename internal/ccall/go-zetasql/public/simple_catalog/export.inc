@@ -2,9 +2,11 @@
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SIMPLE_CATALOG_EXPORT_H
 
 #include "zetasql/public/simple_catalog.h"
+#include "zetasql/public/simple_property_graph.h"
 #include "zetasql/public/table_from_proto.h"
 // include sources
 #include "zetasql/public/simple_catalog.cc"
+#include "zetasql/public/simple_property_graph.cc"
 #include "zetasql/public/table_from_proto.cc"
 // include dependencies
 #include "go-zetasql/public/builtin_function/export.inc"
@@ -32,9 +34,11 @@
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/simple_evaluator_table_iterator/export.inc"
 #include "go-zetasql/proto/simple_catalog_cc_proto/export.inc"
+#include "go-zetasql/proto/simple_property_graph_cc_proto/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-zetasql/resolved_ast/resolved_ast_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

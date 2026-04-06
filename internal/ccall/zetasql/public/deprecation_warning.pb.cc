@@ -109,21 +109,22 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n(zetasql/public/deprecation_warning.pro"
     "to\022\007zetasql\032#zetasql/public/error_locati"
-    "on.proto\"\312\002\n\022DeprecationWarning\022.\n\004kind\030"
+    "on.proto\"\366\002\n\022DeprecationWarning\022.\n\004kind\030"
     "\001 \001(\0162 .zetasql.DeprecationWarning.Kind\""
-    "\203\002\n\004Kind\0221\n$__Kind__switch_must_have_a_d"
+    "\257\002\n\004Kind\0221\n$__Kind__switch_must_have_a_d"
     "efault__\020\377\377\377\377\377\377\377\377\377\001\022\013\n\007UNKNOWN\020\000\022\027\n\023DEPR"
     "ECATED_FUNCTION\020\001\022!\n\035DEPRECATED_FUNCTION"
     "_SIGNATURE\020\002\022\031\n\025PROTO3_FIELD_PRESENCE\020\003\022"
     "\025\n\021QUERY_TOO_COMPLEX\020\004\022)\n%DEPRECATED_ANO"
     "NYMIZATION_OPTION_KAPPA\020\005\022\"\n\036PIVOT_OR_UN"
-    "PIVOT_ON_ARRAY_SCAN\020\006\"\261\001\n\036FreestandingDe"
-    "precationWarning\022\017\n\007message\030\001 \001(\t\022\024\n\014car"
-    "et_string\030\002 \001(\t\022.\n\016error_location\030\003 \001(\0132"
-    "\026.zetasql.ErrorLocation\0228\n\023deprecation_w"
-    "arning\030\004 \001(\0132\033.zetasql.DeprecationWarnin"
-    "gB.\n\022com.google.zetasqlB\030DeprecationWarn"
-    "ingProtos"
+    "PIVOT_ON_ARRAY_SCAN\020\006\022*\n&TABLE_SYNTAX_AR"
+    "GUMENT_RESOLUTION_ORDER\020\007\"\261\001\n\036Freestandi"
+    "ngDeprecationWarning\022\017\n\007message\030\001 \001(\t\022\024\n"
+    "\014caret_string\030\002 \001(\t\022.\n\016error_location\030\003 "
+    "\001(\0132\026.zetasql.ErrorLocation\0228\n\023deprecati"
+    "on_warning\030\004 \001(\0132\033.zetasql.DeprecationWa"
+    "rningB.\n\022com.google.zetasqlB\030Deprecation"
+    "WarningProtos"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_deps[1] =
     {
@@ -133,7 +134,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarni
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto = {
     false,
     false,
-    649,
+    693,
     descriptor_table_protodef_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto,
     "zetasql/public/deprecation_warning.proto",
     &descriptor_table_zetasql_2fpublic_2fdeprecation_5fwarning_2eproto_once,
@@ -180,6 +181,7 @@ bool DeprecationWarning_Kind_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
       return true;
     default:
       return false;
@@ -196,6 +198,7 @@ constexpr DeprecationWarning_Kind DeprecationWarning::PROTO3_FIELD_PRESENCE;
 constexpr DeprecationWarning_Kind DeprecationWarning::QUERY_TOO_COMPLEX;
 constexpr DeprecationWarning_Kind DeprecationWarning::DEPRECATED_ANONYMIZATION_OPTION_KAPPA;
 constexpr DeprecationWarning_Kind DeprecationWarning::PIVOT_OR_UNPIVOT_ON_ARRAY_SCAN;
+constexpr DeprecationWarning_Kind DeprecationWarning::TABLE_SYNTAX_ARGUMENT_RESOLUTION_ORDER;
 constexpr DeprecationWarning_Kind DeprecationWarning::Kind_MIN;
 constexpr DeprecationWarning_Kind DeprecationWarning::Kind_MAX;
 constexpr int DeprecationWarning::Kind_ARRAYSIZE;

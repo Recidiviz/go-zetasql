@@ -51,6 +51,7 @@ PROTOBUF_CONSTEXPR SimpleCatalogProto::SimpleCatalogProto(
   , /*decltype(_impl_.procedure_)*/{}
   , /*decltype(_impl_.custom_tvf_)*/{}
   , /*decltype(_impl_.constant_)*/{}
+  , /*decltype(_impl_.property_graph_)*/{}
   , /*decltype(_impl_.connection_)*/{}
   , /*decltype(_impl_.model_)*/{}
   , /*decltype(_impl_.name_)*/ {
@@ -108,6 +109,7 @@ const ::uint32_t TableStruct_zetasql_2fproto_2fsimple_5fcatalog_2eproto::offsets
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.file_descriptor_set_index_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.procedure_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.constant_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.property_graph_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.connection_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleCatalogProto, _impl_.model_),
     0,
@@ -122,12 +124,13 @@ const ::uint32_t TableStruct_zetasql_2fproto_2fsimple_5fcatalog_2eproto::offsets
     ~0u,
     ~0u,
     ~0u,
+    ~0u,
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         { 0, 10, -1, sizeof(::zetasql::SimpleCatalogProto_NamedTypeProto)},
-        { 12, 32, -1, sizeof(::zetasql::SimpleCatalogProto)},
+        { 12, 33, -1, sizeof(::zetasql::SimpleCatalogProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -137,34 +140,38 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_zetasql_2fproto_2fsimple_5fcatalog_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\"zetasql/proto/simple_catalog.proto\022\007ze"
     "tasql\032\034zetasql/proto/function.proto\032\033zet"
-    "asql/proto/options.proto\032&zetasql/public"
-    "/simple_connection.proto\032$zetasql/public"
-    "/simple_constant.proto\032!zetasql/public/s"
-    "imple_model.proto\032!zetasql/public/simple"
-    "_table.proto\032\031zetasql/public/type.proto\""
-    "\224\005\n\022SimpleCatalogProto\022\014\n\004name\030\001 \001(\t\022(\n\005"
-    "table\030\002 \003(\0132\031.zetasql.SimpleTableProto\022>"
-    "\n\nnamed_type\030\003 \003(\0132*.zetasql.SimpleCatal"
-    "ogProto.NamedTypeProto\022,\n\007catalog\030\004 \003(\0132"
-    "\033.zetasql.SimpleCatalogProto\022M\n\030builtin_"
-    "function_options\030\005 \001(\0132+.zetasql.ZetaSQL"
-    "BuiltinFunctionOptionsProto\022/\n\017custom_fu"
-    "nction\030\006 \003(\0132\026.zetasql.FunctionProto\0225\n\n"
-    "custom_tvf\030\t \003(\0132!.zetasql.TableValuedFu"
-    "nctionProto\022%\n\031file_descriptor_set_index"
-    "\030\007 \001(\005:\002-1\022*\n\tprocedure\030\010 \003(\0132\027.zetasql."
-    "ProcedureProto\022.\n\010constant\030\n \003(\0132\034.zetas"
-    "ql.SimpleConstantProto\0222\n\nconnection\030\014 \003"
-    "(\0132\036.zetasql.SimpleConnectionProto\022(\n\005mo"
-    "del\030\r \003(\0132\031.zetasql.SimpleModelProto\032@\n\016"
-    "NamedTypeProto\022\014\n\004name\030\001 \001(\t\022 \n\004type\030\002 \001"
-    "(\0132\022.zetasql.TypeProtoB)\n\022com.google.zet"
-    "asqlB\023SimpleCatalogProtos"
+    "asql/proto/options.proto\032)zetasql/proto/"
+    "simple_property_graph.proto\032&zetasql/pub"
+    "lic/simple_connection.proto\032$zetasql/pub"
+    "lic/simple_constant.proto\032!zetasql/publi"
+    "c/simple_model.proto\032!zetasql/public/sim"
+    "ple_table.proto\032\031zetasql/public/type.pro"
+    "to\"\317\005\n\022SimpleCatalogProto\022\014\n\004name\030\001 \001(\t\022"
+    "(\n\005table\030\002 \003(\0132\031.zetasql.SimpleTableProt"
+    "o\022>\n\nnamed_type\030\003 \003(\0132*.zetasql.SimpleCa"
+    "talogProto.NamedTypeProto\022,\n\007catalog\030\004 \003"
+    "(\0132\033.zetasql.SimpleCatalogProto\022M\n\030built"
+    "in_function_options\030\005 \001(\0132+.zetasql.Zeta"
+    "SQLBuiltinFunctionOptionsProto\022/\n\017custom"
+    "_function\030\006 \003(\0132\026.zetasql.FunctionProto\022"
+    "5\n\ncustom_tvf\030\t \003(\0132!.zetasql.TableValue"
+    "dFunctionProto\022%\n\031file_descriptor_set_in"
+    "dex\030\007 \001(\005:\002-1\022*\n\tprocedure\030\010 \003(\0132\027.zetas"
+    "ql.ProcedureProto\022.\n\010constant\030\n \003(\0132\034.ze"
+    "tasql.SimpleConstantProto\0229\n\016property_gr"
+    "aph\030\013 \003(\0132!.zetasql.SimplePropertyGraphP"
+    "roto\0222\n\nconnection\030\014 \003(\0132\036.zetasql.Simpl"
+    "eConnectionProto\022(\n\005model\030\r \003(\0132\031.zetasq"
+    "l.SimpleModelProto\032@\n\016NamedTypeProto\022\014\n\004"
+    "name\030\001 \001(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeP"
+    "rotoB)\n\022com.google.zetasqlB\023SimpleCatalo"
+    "gProtos"
 };
-static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_deps[7] =
+static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_deps[8] =
     {
         &::descriptor_table_zetasql_2fproto_2ffunction_2eproto,
         &::descriptor_table_zetasql_2fproto_2foptions_2eproto,
+        &::descriptor_table_zetasql_2fproto_2fsimple_5fproperty_5fgraph_2eproto,
         &::descriptor_table_zetasql_2fpublic_2fsimple_5fconnection_2eproto,
         &::descriptor_table_zetasql_2fpublic_2fsimple_5fconstant_2eproto,
         &::descriptor_table_zetasql_2fpublic_2fsimple_5fmodel_2eproto,
@@ -175,12 +182,12 @@ static ::absl::once_flag descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2ep
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto = {
     false,
     false,
-    985,
+    1087,
     descriptor_table_protodef_zetasql_2fproto_2fsimple_5fcatalog_2eproto,
     "zetasql/proto/simple_catalog.proto",
     &descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_once,
     descriptor_table_zetasql_2fproto_2fsimple_5fcatalog_2eproto_deps,
-    7,
+    8,
     2,
     schemas,
     file_default_instances,
@@ -525,6 +532,9 @@ void SimpleCatalogProto::clear_procedure() {
 void SimpleCatalogProto::clear_constant() {
   _internal_mutable_constant()->Clear();
 }
+void SimpleCatalogProto::clear_property_graph() {
+  _internal_mutable_property_graph()->Clear();
+}
 void SimpleCatalogProto::clear_connection() {
   _internal_mutable_connection()->Clear();
 }
@@ -549,6 +559,7 @@ SimpleCatalogProto::SimpleCatalogProto(const SimpleCatalogProto& from)
     , decltype(_impl_.procedure_){from._impl_.procedure_}
     , decltype(_impl_.custom_tvf_){from._impl_.custom_tvf_}
     , decltype(_impl_.constant_){from._impl_.constant_}
+    , decltype(_impl_.property_graph_){from._impl_.property_graph_}
     , decltype(_impl_.connection_){from._impl_.connection_}
     , decltype(_impl_.model_){from._impl_.model_}
     , decltype(_impl_.name_) {}
@@ -584,6 +595,7 @@ inline void SimpleCatalogProto::SharedCtor(::_pb::Arena* arena) {
     , decltype(_impl_.procedure_){arena}
     , decltype(_impl_.custom_tvf_){arena}
     , decltype(_impl_.constant_){arena}
+    , decltype(_impl_.property_graph_){arena}
     , decltype(_impl_.connection_){arena}
     , decltype(_impl_.model_){arena}
     , decltype(_impl_.name_) {}
@@ -616,6 +628,7 @@ inline void SimpleCatalogProto::SharedDtor() {
   _internal_mutable_procedure()->~RepeatedPtrField();
   _internal_mutable_custom_tvf()->~RepeatedPtrField();
   _internal_mutable_constant()->~RepeatedPtrField();
+  _internal_mutable_property_graph()->~RepeatedPtrField();
   _internal_mutable_connection()->~RepeatedPtrField();
   _internal_mutable_model()->~RepeatedPtrField();
   _impl_.name_.Destroy();
@@ -639,6 +652,7 @@ void SimpleCatalogProto::Clear() {
   _internal_mutable_procedure()->Clear();
   _internal_mutable_custom_tvf()->Clear();
   _internal_mutable_constant()->Clear();
+  _internal_mutable_property_graph()->Clear();
   _internal_mutable_connection()->Clear();
   _internal_mutable_model()->Clear();
   cached_has_bits = _impl_._has_bits_[0];
@@ -793,6 +807,20 @@ const char* SimpleCatalogProto::_InternalParse(const char* ptr, ::_pbi::ParseCon
           goto handle_unusual;
         }
         continue;
+      // repeated .zetasql.SimplePropertyGraphProto property_graph = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 90)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_property_graph(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<90>(ptr));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       // repeated .zetasql.SimpleConnectionProto connection = 12;
       case 12:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 98)) {
@@ -930,6 +958,14 @@ failure:
         InternalWriteMessage(10, repfield, repfield.GetCachedSize(), target, stream);
   }
 
+  // repeated .zetasql.SimplePropertyGraphProto property_graph = 11;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_property_graph_size()); i < n; i++) {
+    const auto& repfield = this->_internal_property_graph(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(11, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
   // repeated .zetasql.SimpleConnectionProto connection = 12;
   for (unsigned i = 0,
       n = static_cast<unsigned>(this->_internal_connection_size()); i < n; i++) {
@@ -1011,6 +1047,13 @@ failure:
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
+  // repeated .zetasql.SimplePropertyGraphProto property_graph = 11;
+  total_size += 1UL * this->_internal_property_graph_size();
+  for (const auto& msg : this->_internal_property_graph()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
   // repeated .zetasql.SimpleConnectionProto connection = 12;
   total_size += 1UL * this->_internal_connection_size();
   for (const auto& msg : this->_internal_connection()) {
@@ -1072,6 +1115,7 @@ void SimpleCatalogProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   _this->_internal_mutable_procedure()->MergeFrom(from._internal_procedure());
   _this->_internal_mutable_custom_tvf()->MergeFrom(from._internal_custom_tvf());
   _this->_internal_mutable_constant()->MergeFrom(from._internal_constant());
+  _this->_internal_mutable_property_graph()->MergeFrom(from._internal_property_graph());
   _this->_internal_mutable_connection()->MergeFrom(from._internal_connection());
   _this->_internal_mutable_model()->MergeFrom(from._internal_model());
   cached_has_bits = from._impl_._has_bits_[0];
@@ -1113,6 +1157,8 @@ bool SimpleCatalogProto::IsInitialized() const {
     return false;
   if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_constant()))
     return false;
+  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_property_graph()))
+    return false;
   if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(_internal_model()))
     return false;
   return true;
@@ -1131,6 +1177,7 @@ void SimpleCatalogProto::InternalSwap(SimpleCatalogProto* other) {
   _internal_mutable_procedure()->InternalSwap(other->_internal_mutable_procedure());
   _internal_mutable_custom_tvf()->InternalSwap(other->_internal_mutable_custom_tvf());
   _internal_mutable_constant()->InternalSwap(other->_internal_mutable_constant());
+  _internal_mutable_property_graph()->InternalSwap(other->_internal_mutable_property_graph());
   _internal_mutable_connection()->InternalSwap(other->_internal_mutable_connection());
   _internal_mutable_model()->InternalSwap(other->_internal_mutable_model());
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, lhs_arena,

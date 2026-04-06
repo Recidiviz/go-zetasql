@@ -18,6 +18,7 @@
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
+#include "go-zetasql/public/uuid_value/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-absl/status/status/export.inc"

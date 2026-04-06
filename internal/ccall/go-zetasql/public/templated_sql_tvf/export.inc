@@ -32,6 +32,7 @@
 #include "go-zetasql/parser/parser/export.inc"
 #include "go-zetasql/proto/function_cc_proto/export.inc"
 #include "go-zetasql/proto/internal_error_location_cc_proto/export.inc"
+#include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"

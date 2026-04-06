@@ -194,6 +194,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_REPLACE_FIELD:
       return CompareResolvedReplaceField(node1->GetAs<ResolvedReplaceField>(),
                                    node2->GetAs<ResolvedReplaceField>());
+    case RESOLVED_GET_PROTO_ONEOF:
+      return CompareResolvedGetProtoOneof(node1->GetAs<ResolvedGetProtoOneof>(),
+                                   node2->GetAs<ResolvedGetProtoOneof>());
     case RESOLVED_SUBQUERY_EXPR:
       return CompareResolvedSubqueryExpr(node1->GetAs<ResolvedSubqueryExpr>(),
                                    node2->GetAs<ResolvedSubqueryExpr>());
@@ -278,6 +281,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_COMPUTED_COLUMN:
       return CompareResolvedComputedColumn(node1->GetAs<ResolvedComputedColumn>(),
                                    node2->GetAs<ResolvedComputedColumn>());
+    case RESOLVED_DEFERRED_COMPUTED_COLUMN:
+      return CompareResolvedDeferredComputedColumn(node1->GetAs<ResolvedDeferredComputedColumn>(),
+                                   node2->GetAs<ResolvedDeferredComputedColumn>());
     case RESOLVED_ORDER_BY_ITEM:
       return CompareResolvedOrderByItem(node1->GetAs<ResolvedOrderByItem>(),
                                    node2->GetAs<ResolvedOrderByItem>());
@@ -305,6 +311,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_OUTPUT_COLUMN:
       return CompareResolvedOutputColumn(node1->GetAs<ResolvedOutputColumn>(),
                                    node2->GetAs<ResolvedOutputColumn>());
+    case RESOLVED_OUTPUT_SCHEMA:
+      return CompareResolvedOutputSchema(node1->GetAs<ResolvedOutputSchema>(),
+                                   node2->GetAs<ResolvedOutputSchema>());
     case RESOLVED_PROJECT_SCAN:
       return CompareResolvedProjectScan(node1->GetAs<ResolvedProjectScan>(),
                                    node2->GetAs<ResolvedProjectScan>());
@@ -323,6 +332,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_QUERY_STMT:
       return CompareResolvedQueryStmt(node1->GetAs<ResolvedQueryStmt>(),
                                    node2->GetAs<ResolvedQueryStmt>());
+    case RESOLVED_GENERALIZED_QUERY_STMT:
+      return CompareResolvedGeneralizedQueryStmt(node1->GetAs<ResolvedGeneralizedQueryStmt>(),
+                                   node2->GetAs<ResolvedGeneralizedQueryStmt>());
     case RESOLVED_CREATE_DATABASE_STMT:
       return CompareResolvedCreateDatabaseStmt(node1->GetAs<ResolvedCreateDatabaseStmt>(),
                                    node2->GetAs<ResolvedCreateDatabaseStmt>());
@@ -338,6 +350,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_CREATE_SCHEMA_STMT:
       return CompareResolvedCreateSchemaStmt(node1->GetAs<ResolvedCreateSchemaStmt>(),
                                    node2->GetAs<ResolvedCreateSchemaStmt>());
+    case RESOLVED_CREATE_EXTERNAL_SCHEMA_STMT:
+      return CompareResolvedCreateExternalSchemaStmt(node1->GetAs<ResolvedCreateExternalSchemaStmt>(),
+                                   node2->GetAs<ResolvedCreateExternalSchemaStmt>());
     case RESOLVED_CREATE_TABLE_STMT:
       return CompareResolvedCreateTableStmt(node1->GetAs<ResolvedCreateTableStmt>(),
                                    node2->GetAs<ResolvedCreateTableStmt>());
@@ -413,6 +428,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_RECURSIVE_REF_SCAN:
       return CompareResolvedRecursiveRefScan(node1->GetAs<ResolvedRecursiveRefScan>(),
                                    node2->GetAs<ResolvedRecursiveRefScan>());
+    case RESOLVED_RECURSION_DEPTH_MODIFIER:
+      return CompareResolvedRecursionDepthModifier(node1->GetAs<ResolvedRecursionDepthModifier>(),
+                                   node2->GetAs<ResolvedRecursionDepthModifier>());
     case RESOLVED_RECURSIVE_SCAN:
       return CompareResolvedRecursiveScan(node1->GetAs<ResolvedRecursiveScan>(),
                                    node2->GetAs<ResolvedRecursiveScan>());
@@ -452,6 +470,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ASSERT_ROWS_MODIFIED:
       return CompareResolvedAssertRowsModified(node1->GetAs<ResolvedAssertRowsModified>(),
                                    node2->GetAs<ResolvedAssertRowsModified>());
+    case RESOLVED_ON_CONFLICT_CLAUSE:
+      return CompareResolvedOnConflictClause(node1->GetAs<ResolvedOnConflictClause>(),
+                                   node2->GetAs<ResolvedOnConflictClause>());
     case RESOLVED_INSERT_ROW:
       return CompareResolvedInsertRow(node1->GetAs<ResolvedInsertRow>(),
                                    node2->GetAs<ResolvedInsertRow>());
@@ -503,6 +524,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ALTER_SCHEMA_STMT:
       return CompareResolvedAlterSchemaStmt(node1->GetAs<ResolvedAlterSchemaStmt>(),
                                    node2->GetAs<ResolvedAlterSchemaStmt>());
+    case RESOLVED_ALTER_EXTERNAL_SCHEMA_STMT:
+      return CompareResolvedAlterExternalSchemaStmt(node1->GetAs<ResolvedAlterExternalSchemaStmt>(),
+                                   node2->GetAs<ResolvedAlterExternalSchemaStmt>());
     case RESOLVED_ALTER_MODEL_STMT:
       return CompareResolvedAlterModelStmt(node1->GetAs<ResolvedAlterModelStmt>(),
                                    node2->GetAs<ResolvedAlterModelStmt>());
@@ -542,6 +566,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ALTER_COLUMN_DROP_NOT_NULL_ACTION:
       return CompareResolvedAlterColumnDropNotNullAction(node1->GetAs<ResolvedAlterColumnDropNotNullAction>(),
                                    node2->GetAs<ResolvedAlterColumnDropNotNullAction>());
+    case RESOLVED_ALTER_COLUMN_DROP_GENERATED_ACTION:
+      return CompareResolvedAlterColumnDropGeneratedAction(node1->GetAs<ResolvedAlterColumnDropGeneratedAction>(),
+                                   node2->GetAs<ResolvedAlterColumnDropGeneratedAction>());
     case RESOLVED_ALTER_COLUMN_SET_DATA_TYPE_ACTION:
       return CompareResolvedAlterColumnSetDataTypeAction(node1->GetAs<ResolvedAlterColumnSetDataTypeAction>(),
                                    node2->GetAs<ResolvedAlterColumnSetDataTypeAction>());
@@ -695,6 +722,30 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_UNPIVOT_SCAN:
       return CompareResolvedUnpivotScan(node1->GetAs<ResolvedUnpivotScan>(),
                                    node2->GetAs<ResolvedUnpivotScan>());
+    case RESOLVED_MATCH_RECOGNIZE_SCAN:
+      return CompareResolvedMatchRecognizeScan(node1->GetAs<ResolvedMatchRecognizeScan>(),
+                                   node2->GetAs<ResolvedMatchRecognizeScan>());
+    case RESOLVED_MEASURE_GROUP:
+      return CompareResolvedMeasureGroup(node1->GetAs<ResolvedMeasureGroup>(),
+                                   node2->GetAs<ResolvedMeasureGroup>());
+    case RESOLVED_MATCH_RECOGNIZE_VARIABLE_DEFINITION:
+      return CompareResolvedMatchRecognizeVariableDefinition(node1->GetAs<ResolvedMatchRecognizeVariableDefinition>(),
+                                   node2->GetAs<ResolvedMatchRecognizeVariableDefinition>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_EMPTY:
+      return CompareResolvedMatchRecognizePatternEmpty(node1->GetAs<ResolvedMatchRecognizePatternEmpty>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternEmpty>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_ANCHOR:
+      return CompareResolvedMatchRecognizePatternAnchor(node1->GetAs<ResolvedMatchRecognizePatternAnchor>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternAnchor>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_VARIABLE_REF:
+      return CompareResolvedMatchRecognizePatternVariableRef(node1->GetAs<ResolvedMatchRecognizePatternVariableRef>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternVariableRef>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_OPERATION:
+      return CompareResolvedMatchRecognizePatternOperation(node1->GetAs<ResolvedMatchRecognizePatternOperation>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternOperation>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_QUANTIFICATION:
+      return CompareResolvedMatchRecognizePatternQuantification(node1->GetAs<ResolvedMatchRecognizePatternQuantification>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternQuantification>());
     case RESOLVED_CLONE_DATA_STMT:
       return CompareResolvedCloneDataStmt(node1->GetAs<ResolvedCloneDataStmt>(),
                                    node2->GetAs<ResolvedCloneDataStmt>());
@@ -710,9 +761,132 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_AUX_LOAD_DATA_STMT:
       return CompareResolvedAuxLoadDataStmt(node1->GetAs<ResolvedAuxLoadDataStmt>(),
                                    node2->GetAs<ResolvedAuxLoadDataStmt>());
+    case RESOLVED_CREATE_PROPERTY_GRAPH_STMT:
+      return CompareResolvedCreatePropertyGraphStmt(node1->GetAs<ResolvedCreatePropertyGraphStmt>(),
+                                   node2->GetAs<ResolvedCreatePropertyGraphStmt>());
+    case RESOLVED_GRAPH_ELEMENT_TABLE:
+      return CompareResolvedGraphElementTable(node1->GetAs<ResolvedGraphElementTable>(),
+                                   node2->GetAs<ResolvedGraphElementTable>());
+    case RESOLVED_GRAPH_NODE_TABLE_REFERENCE:
+      return CompareResolvedGraphNodeTableReference(node1->GetAs<ResolvedGraphNodeTableReference>(),
+                                   node2->GetAs<ResolvedGraphNodeTableReference>());
+    case RESOLVED_GRAPH_ELEMENT_LABEL:
+      return CompareResolvedGraphElementLabel(node1->GetAs<ResolvedGraphElementLabel>(),
+                                   node2->GetAs<ResolvedGraphElementLabel>());
+    case RESOLVED_GRAPH_PROPERTY_DECLARATION:
+      return CompareResolvedGraphPropertyDeclaration(node1->GetAs<ResolvedGraphPropertyDeclaration>(),
+                                   node2->GetAs<ResolvedGraphPropertyDeclaration>());
+    case RESOLVED_GRAPH_PROPERTY_DEFINITION:
+      return CompareResolvedGraphPropertyDefinition(node1->GetAs<ResolvedGraphPropertyDefinition>(),
+                                   node2->GetAs<ResolvedGraphPropertyDefinition>());
+    case RESOLVED_GRAPH_REF_SCAN:
+      return CompareResolvedGraphRefScan(node1->GetAs<ResolvedGraphRefScan>(),
+                                   node2->GetAs<ResolvedGraphRefScan>());
+    case RESOLVED_GRAPH_LINEAR_SCAN:
+      return CompareResolvedGraphLinearScan(node1->GetAs<ResolvedGraphLinearScan>(),
+                                   node2->GetAs<ResolvedGraphLinearScan>());
+    case RESOLVED_GRAPH_TABLE_SCAN:
+      return CompareResolvedGraphTableScan(node1->GetAs<ResolvedGraphTableScan>(),
+                                   node2->GetAs<ResolvedGraphTableScan>());
+    case RESOLVED_GRAPH_SCAN:
+      return CompareResolvedGraphScan(node1->GetAs<ResolvedGraphScan>(),
+                                   node2->GetAs<ResolvedGraphScan>());
+    case RESOLVED_GRAPH_PATH_PATTERN_QUANTIFIER:
+      return CompareResolvedGraphPathPatternQuantifier(node1->GetAs<ResolvedGraphPathPatternQuantifier>(),
+                                   node2->GetAs<ResolvedGraphPathPatternQuantifier>());
+    case RESOLVED_GRAPH_PATH_SEARCH_PREFIX:
+      return CompareResolvedGraphPathSearchPrefix(node1->GetAs<ResolvedGraphPathSearchPrefix>(),
+                                   node2->GetAs<ResolvedGraphPathSearchPrefix>());
+    case RESOLVED_GRAPH_NODE_SCAN:
+      return CompareResolvedGraphNodeScan(node1->GetAs<ResolvedGraphNodeScan>(),
+                                   node2->GetAs<ResolvedGraphNodeScan>());
+    case RESOLVED_GRAPH_EDGE_SCAN:
+      return CompareResolvedGraphEdgeScan(node1->GetAs<ResolvedGraphEdgeScan>(),
+                                   node2->GetAs<ResolvedGraphEdgeScan>());
+    case RESOLVED_GRAPH_GET_ELEMENT_PROPERTY:
+      return CompareResolvedGraphGetElementProperty(node1->GetAs<ResolvedGraphGetElementProperty>(),
+                                   node2->GetAs<ResolvedGraphGetElementProperty>());
+    case RESOLVED_GRAPH_LABEL_NARY_EXPR:
+      return CompareResolvedGraphLabelNaryExpr(node1->GetAs<ResolvedGraphLabelNaryExpr>(),
+                                   node2->GetAs<ResolvedGraphLabelNaryExpr>());
+    case RESOLVED_GRAPH_LABEL:
+      return CompareResolvedGraphLabel(node1->GetAs<ResolvedGraphLabel>(),
+                                   node2->GetAs<ResolvedGraphLabel>());
+    case RESOLVED_GRAPH_WILD_CARD_LABEL:
+      return CompareResolvedGraphWildCardLabel(node1->GetAs<ResolvedGraphWildCardLabel>(),
+                                   node2->GetAs<ResolvedGraphWildCardLabel>());
+    case RESOLVED_GRAPH_ELEMENT_IDENTIFIER:
+      return CompareResolvedGraphElementIdentifier(node1->GetAs<ResolvedGraphElementIdentifier>(),
+                                   node2->GetAs<ResolvedGraphElementIdentifier>());
+    case RESOLVED_GRAPH_ELEMENT_PROPERTY:
+      return CompareResolvedGraphElementProperty(node1->GetAs<ResolvedGraphElementProperty>(),
+                                   node2->GetAs<ResolvedGraphElementProperty>());
+    case RESOLVED_GRAPH_MAKE_ELEMENT:
+      return CompareResolvedGraphMakeElement(node1->GetAs<ResolvedGraphMakeElement>(),
+                                   node2->GetAs<ResolvedGraphMakeElement>());
+    case RESOLVED_ARRAY_AGGREGATE:
+      return CompareResolvedArrayAggregate(node1->GetAs<ResolvedArrayAggregate>(),
+                                   node2->GetAs<ResolvedArrayAggregate>());
+    case RESOLVED_GRAPH_MAKE_ARRAY_VARIABLE:
+      return CompareResolvedGraphMakeArrayVariable(node1->GetAs<ResolvedGraphMakeArrayVariable>(),
+                                   node2->GetAs<ResolvedGraphMakeArrayVariable>());
+    case RESOLVED_GRAPH_PATH_MODE:
+      return CompareResolvedGraphPathMode(node1->GetAs<ResolvedGraphPathMode>(),
+                                   node2->GetAs<ResolvedGraphPathMode>());
+    case RESOLVED_GRAPH_PATH_SCAN:
+      return CompareResolvedGraphPathScan(node1->GetAs<ResolvedGraphPathScan>(),
+                                   node2->GetAs<ResolvedGraphPathScan>());
+    case RESOLVED_GRAPH_IS_LABELED_PREDICATE:
+      return CompareResolvedGraphIsLabeledPredicate(node1->GetAs<ResolvedGraphIsLabeledPredicate>(),
+                                   node2->GetAs<ResolvedGraphIsLabeledPredicate>());
     case RESOLVED_UNDROP_STMT:
       return CompareResolvedUndropStmt(node1->GetAs<ResolvedUndropStmt>(),
                                    node2->GetAs<ResolvedUndropStmt>());
+    case RESOLVED_IDENTITY_COLUMN_INFO:
+      return CompareResolvedIdentityColumnInfo(node1->GetAs<ResolvedIdentityColumnInfo>(),
+                                   node2->GetAs<ResolvedIdentityColumnInfo>());
+    case RESOLVED_STATIC_DESCRIBE_SCAN:
+      return CompareResolvedStaticDescribeScan(node1->GetAs<ResolvedStaticDescribeScan>(),
+                                   node2->GetAs<ResolvedStaticDescribeScan>());
+    case RESOLVED_ASSERT_SCAN:
+      return CompareResolvedAssertScan(node1->GetAs<ResolvedAssertScan>(),
+                                   node2->GetAs<ResolvedAssertScan>());
+    case RESOLVED_LOG_SCAN:
+      return CompareResolvedLogScan(node1->GetAs<ResolvedLogScan>(),
+                                   node2->GetAs<ResolvedLogScan>());
+    case RESOLVED_PIPE_IF_SCAN:
+      return CompareResolvedPipeIfScan(node1->GetAs<ResolvedPipeIfScan>(),
+                                   node2->GetAs<ResolvedPipeIfScan>());
+    case RESOLVED_PIPE_IF_CASE:
+      return CompareResolvedPipeIfCase(node1->GetAs<ResolvedPipeIfCase>(),
+                                   node2->GetAs<ResolvedPipeIfCase>());
+    case RESOLVED_PIPE_FORK_SCAN:
+      return CompareResolvedPipeForkScan(node1->GetAs<ResolvedPipeForkScan>(),
+                                   node2->GetAs<ResolvedPipeForkScan>());
+    case RESOLVED_PIPE_EXPORT_DATA_SCAN:
+      return CompareResolvedPipeExportDataScan(node1->GetAs<ResolvedPipeExportDataScan>(),
+                                   node2->GetAs<ResolvedPipeExportDataScan>());
+    case RESOLVED_SUBPIPELINE:
+      return CompareResolvedSubpipeline(node1->GetAs<ResolvedSubpipeline>(),
+                                   node2->GetAs<ResolvedSubpipeline>());
+    case RESOLVED_SUBPIPELINE_INPUT_SCAN:
+      return CompareResolvedSubpipelineInputScan(node1->GetAs<ResolvedSubpipelineInputScan>(),
+                                   node2->GetAs<ResolvedSubpipelineInputScan>());
+    case RESOLVED_GENERALIZED_QUERY_SUBPIPELINE:
+      return CompareResolvedGeneralizedQuerySubpipeline(node1->GetAs<ResolvedGeneralizedQuerySubpipeline>(),
+                                   node2->GetAs<ResolvedGeneralizedQuerySubpipeline>());
+    case RESOLVED_BARRIER_SCAN:
+      return CompareResolvedBarrierScan(node1->GetAs<ResolvedBarrierScan>(),
+                                   node2->GetAs<ResolvedBarrierScan>());
+    case RESOLVED_CREATE_CONNECTION_STMT:
+      return CompareResolvedCreateConnectionStmt(node1->GetAs<ResolvedCreateConnectionStmt>(),
+                                   node2->GetAs<ResolvedCreateConnectionStmt>());
+    case RESOLVED_ALTER_CONNECTION_STMT:
+      return CompareResolvedAlterConnectionStmt(node1->GetAs<ResolvedAlterConnectionStmt>(),
+                                   node2->GetAs<ResolvedAlterConnectionStmt>());
+    case RESOLVED_LOCK_MODE:
+      return CompareResolvedLockMode(node1->GetAs<ResolvedLockMode>(),
+                                   node2->GetAs<ResolvedLockMode>());
     default: return false;
   }
 }
@@ -1093,6 +1267,24 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateFunctionCall
   if (!Equals(node1->function_call_info(), node2->function_call_info())) {
     return false;
   }
+  if (node1->group_by_list().size() != node2->group_by_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->group_by_list().size(); ++i) {
+    result = CompareResolvedAST(node1->group_by_list(i),
+                                  node2->group_by_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->group_by_aggregate_list().size() != node2->group_by_aggregate_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->group_by_aggregate_list().size(); ++i) {
+    result = CompareResolvedAST(node1->group_by_aggregate_list(i),
+                                  node2->group_by_aggregate_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticFunctionCall(
@@ -1456,6 +1648,25 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedReplaceField(
   }
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGetProtoOneof(
+    const ResolvedGetProtoOneof* node1, const ResolvedGetProtoOneof* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->oneof_descriptor(), node2->oneof_descriptor())) {
+    return false;
+  }
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSubqueryExpr(
     const ResolvedSubqueryExpr* node1, const ResolvedSubqueryExpr* node2) {
 
@@ -1678,6 +1889,10 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTableScan(
   if (!Equals(node1->alias(), node2->alias())) {
     return false;
   }
+  result = CompareResolvedAST(node1->lock_mode(),
+                                node2->lock_mode());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedJoinScan(
@@ -1722,6 +1937,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedJoinScan(
                                 node2->join_expr());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (!Equals(node1->has_using(), node2->has_using())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayScan(
@@ -1755,12 +1973,22 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayScan(
                                 node2->input_scan());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
-  result = CompareResolvedAST(node1->array_expr(),
-                                node2->array_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
-  if (!*result) return false;
-  if (!Equals(node1->element_column(), node2->element_column())) {
+  if (node1->array_expr_list().size() != node2->array_expr_list().size()) {
     return false;
+  }
+  for (int i = 0; i < node1->array_expr_list().size(); ++i) {
+    result = CompareResolvedAST(node1->array_expr_list(i),
+                                  node2->array_expr_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->element_column_list().size() != node2->element_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->element_column_list().size(); ++i) {
+    if (!Equals(node1->element_column_list(i), node2->element_column_list(i))) {
+      return false;
+    }
   }
   result = CompareResolvedAST(node1->array_offset_column(),
                                 node2->array_offset_column());
@@ -1773,6 +2001,10 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayScan(
   if (!Equals(node1->is_outer(), node2->is_outer())) {
     return false;
   }
+  result = CompareResolvedAST(node1->array_zip_mode(),
+                                node2->array_zip_mode());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnHolder(
@@ -2553,6 +2785,22 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedComputedColumn(
   if (!*result) return false;
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDeferredComputedColumn(
+    const ResolvedDeferredComputedColumn* node1, const ResolvedDeferredComputedColumn* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->column(), node2->column())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->side_effect_column(), node2->side_effect_column())) {
+    return false;
+  }
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOrderByItem(
     const ResolvedOrderByItem* node1, const ResolvedOrderByItem* node2) {
 
@@ -2621,6 +2869,13 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGeneratedColumnInfo(
   if (!Equals(node1->stored_mode(), node2->stored_mode())) {
     return false;
   }
+  if (!Equals(node1->generated_mode(), node2->generated_mode())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->identity_column_info(),
+                                node2->identity_column_info());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnDefaultValue(
@@ -2793,6 +3048,24 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOutputColumn(
     return false;
   }
   if (!Equals(node1->column(), node2->column())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOutputSchema(
+    const ResolvedOutputSchema* node1, const ResolvedOutputSchema* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->output_column_list().size() != node2->output_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->output_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->output_column_list(i),
+                                  node2->output_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_value_table(), node2->is_value_table())) {
     return false;
   }
   return true;
@@ -2978,6 +3251,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFunctionArgument(
                                 node2->sequence());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (!Equals(node1->argument_alias(), node2->argument_alias())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExplainStmt(
@@ -3030,6 +3306,29 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedQueryStmt(
   if (!*result) return false;
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGeneralizedQueryStmt(
+    const ResolvedGeneralizedQueryStmt* node1, const ResolvedGeneralizedQueryStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->output_schema(),
+                                node2->output_schema());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->query(),
+                                node2->query());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateDatabaseStmt(
     const ResolvedCreateDatabaseStmt* node1, const ResolvedCreateDatabaseStmt* node2) {
 
@@ -3072,6 +3371,15 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedIndexItem(
   if (!*result) return false;
   if (!Equals(node1->descending(), node2->descending())) {
     return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
   }
   return true;
 }
@@ -3161,6 +3469,15 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
+  if (node1->partition_by_list().size() != node2->partition_by_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->partition_by_list().size(); ++i) {
+    result = CompareResolvedAST(node1->partition_by_list(i),
+                                  node2->partition_by_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
   }
@@ -3217,10 +3534,6 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateSchemaStmt(
   if (!Equals(node1->create_mode(), node2->create_mode())) {
     return false;
   }
-  result = CompareResolvedAST(node1->collation_name(),
-                                node2->collation_name());
-  ZETASQL_RETURN_IF_ERROR(result.status());
-  if (!*result) return false;
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
   }
@@ -3230,6 +3543,52 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateSchemaStmt(
     ZETASQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
+  result = CompareResolvedAST(node1->collation_name(),
+                                node2->collation_name());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalSchemaStmt(
+    const ResolvedCreateExternalSchemaStmt* node1, const ResolvedCreateExternalSchemaStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->create_scope(), node2->create_scope())) {
+    return false;
+  }
+  if (!Equals(node1->create_mode(), node2->create_mode())) {
+    return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->connection(),
+                                node2->connection());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
@@ -4299,6 +4658,24 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveRefScan(
   }
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursionDepthModifier(
+    const ResolvedRecursionDepthModifier* node1, const ResolvedRecursionDepthModifier* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->lower_bound(),
+                                node2->lower_bound());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->upper_bound(),
+                                node2->upper_bound());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->recursion_depth_column(),
+                                node2->recursion_depth_column());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveScan(
     const ResolvedRecursiveScan* node1, const ResolvedRecursiveScan* node2) {
 
@@ -4335,6 +4712,10 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveScan(
   if (!*result) return false;
   result = CompareResolvedAST(node1->recursive_term(),
                                 node2->recursive_term());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->recursion_depth_modifier(),
+                                node2->recursion_depth_modifier());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
@@ -4411,6 +4792,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOption(
                                 node2->value());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (!Equals(node1->assignment_op(), node2->assignment_op())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowPartitioning(
@@ -4576,6 +4960,43 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAssertRowsModified(
   if (!*result) return false;
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOnConflictClause(
+    const ResolvedOnConflictClause* node1, const ResolvedOnConflictClause* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->conflict_action(), node2->conflict_action())) {
+    return false;
+  }
+  if (node1->conflict_target_column_list().size() != node2->conflict_target_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->conflict_target_column_list().size(); ++i) {
+    if (!Equals(node1->conflict_target_column_list(i), node2->conflict_target_column_list(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->unique_constraint_name(), node2->unique_constraint_name())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->insert_row_scan(),
+                                node2->insert_row_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->update_item_list().size() != node2->update_item_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->update_item_list().size(); ++i) {
+    result = CompareResolvedAST(node1->update_item_list(i),
+                                  node2->update_item_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->update_where_expression(),
+                                node2->update_where_expression());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInsertRow(
     const ResolvedInsertRow* node1, const ResolvedInsertRow* node2) {
 
@@ -4664,6 +5085,27 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInsertStmt(
     if (!Equals(node1->column_access_list(i), node2->column_access_list(i))) {
       return false;
     }
+  }
+  result = CompareResolvedAST(node1->on_conflict_clause(),
+                                node2->on_conflict_clause());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->topologically_sorted_generated_column_id_list().size() != node2->topologically_sorted_generated_column_id_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->topologically_sorted_generated_column_id_list().size(); ++i) {
+    if (!Equals(node1->topologically_sorted_generated_column_id_list(i), node2->topologically_sorted_generated_column_id_list(i))) {
+      return false;
+    }
+  }
+  if (node1->generated_column_expr_list().size() != node2->generated_column_expr_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->generated_column_expr_list().size(); ++i) {
+    result = CompareResolvedAST(node1->generated_column_expr_list(i),
+                                  node2->generated_column_expr_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
   }
   return true;
 }
@@ -4832,6 +5274,23 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateStmt(
                                 node2->from_scan());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (node1->topologically_sorted_generated_column_id_list().size() != node2->topologically_sorted_generated_column_id_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->topologically_sorted_generated_column_id_list().size(); ++i) {
+    if (!Equals(node1->topologically_sorted_generated_column_id_list(i), node2->topologically_sorted_generated_column_id_list(i))) {
+      return false;
+    }
+  }
+  if (node1->generated_column_expr_list().size() != node2->generated_column_expr_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->generated_column_expr_list().size(); ++i) {
+    result = CompareResolvedAST(node1->generated_column_expr_list(i),
+                                  node2->generated_column_expr_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMergeWhen(
@@ -5224,6 +5683,41 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterSchemaStmt(
   }
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterExternalSchemaStmt(
+    const ResolvedAlterExternalSchemaStmt* node1, const ResolvedAlterExternalSchemaStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (node1->alter_action_list().size() != node2->alter_action_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->alter_action_list().size(); ++i) {
+    result = CompareResolvedAST(node1->alter_action_list(i),
+                                  node2->alter_action_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterModelStmt(
     const ResolvedAlterModelStmt* node1, const ResolvedAlterModelStmt* node2) {
 
@@ -5475,6 +5969,18 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnOptionsAct
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnDropNotNullAction(
     const ResolvedAlterColumnDropNotNullAction* node1, const ResolvedAlterColumnDropNotNullAction* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  if (!Equals(node1->column(), node2->column())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnDropGeneratedAction(
+    const ResolvedAlterColumnDropGeneratedAction* node1, const ResolvedAlterColumnDropGeneratedAction* node2) {
 
   absl::StatusOr<bool> result;
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -7181,6 +7687,176 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnpivotScan(
   }
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizeScan(
+    const ResolvedMatchRecognizeScan* node1, const ResolvedMatchRecognizeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->partition_by(),
+                                node2->partition_by());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->order_by(),
+                                node2->order_by());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->pattern_variable_definition_list().size() != node2->pattern_variable_definition_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->pattern_variable_definition_list().size(); ++i) {
+    result = CompareResolvedAST(node1->pattern_variable_definition_list(i),
+                                  node2->pattern_variable_definition_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->pattern(),
+                                node2->pattern());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->after_match_skip_mode(), node2->after_match_skip_mode())) {
+    return false;
+  }
+  if (node1->measure_group_list().size() != node2->measure_group_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->measure_group_list().size(); ++i) {
+    result = CompareResolvedAST(node1->measure_group_list(i),
+                                  node2->measure_group_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMeasureGroup(
+    const ResolvedMeasureGroup* node1, const ResolvedMeasureGroup* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->pattern_variable_ref(),
+                                node2->pattern_variable_ref());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->aggregate_list().size() != node2->aggregate_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->aggregate_list().size(); ++i) {
+    result = CompareResolvedAST(node1->aggregate_list(i),
+                                  node2->aggregate_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizeVariableDefinition(
+    const ResolvedMatchRecognizeVariableDefinition* node1, const ResolvedMatchRecognizeVariableDefinition* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->predicate(),
+                                node2->predicate());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternEmpty(
+    const ResolvedMatchRecognizePatternEmpty* node1, const ResolvedMatchRecognizePatternEmpty* node2) {
+
+  absl::StatusOr<bool> result;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternAnchor(
+    const ResolvedMatchRecognizePatternAnchor* node1, const ResolvedMatchRecognizePatternAnchor* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->mode(), node2->mode())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternVariableRef(
+    const ResolvedMatchRecognizePatternVariableRef* node1, const ResolvedMatchRecognizePatternVariableRef* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternOperation(
+    const ResolvedMatchRecognizePatternOperation* node1, const ResolvedMatchRecognizePatternOperation* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->op_type(), node2->op_type())) {
+    return false;
+  }
+  if (node1->operand_list().size() != node2->operand_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->operand_list().size(); ++i) {
+    result = CompareResolvedAST(node1->operand_list(i),
+                                  node2->operand_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternQuantification(
+    const ResolvedMatchRecognizePatternQuantification* node1, const ResolvedMatchRecognizePatternQuantification* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->operand(),
+                                node2->operand());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->lower_bound(),
+                                node2->lower_bound());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->upper_bound(),
+                                node2->upper_bound());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->is_reluctant(), node2->is_reluctant())) {
+    return false;
+  }
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCloneDataStmt(
     const ResolvedCloneDataStmt* node1, const ResolvedCloneDataStmt* node2) {
 
@@ -7392,6 +8068,776 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   }
   return true;
 }
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreatePropertyGraphStmt(
+    const ResolvedCreatePropertyGraphStmt* node1, const ResolvedCreatePropertyGraphStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->create_scope(), node2->create_scope())) {
+    return false;
+  }
+  if (!Equals(node1->create_mode(), node2->create_mode())) {
+    return false;
+  }
+  if (node1->node_table_list().size() != node2->node_table_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->node_table_list().size(); ++i) {
+    result = CompareResolvedAST(node1->node_table_list(i),
+                                  node2->node_table_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->edge_table_list().size() != node2->edge_table_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->edge_table_list().size(); ++i) {
+    result = CompareResolvedAST(node1->edge_table_list(i),
+                                  node2->edge_table_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->label_list().size() != node2->label_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->label_list().size(); ++i) {
+    result = CompareResolvedAST(node1->label_list(i),
+                                  node2->label_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->property_declaration_list().size() != node2->property_declaration_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->property_declaration_list().size(); ++i) {
+    result = CompareResolvedAST(node1->property_declaration_list(i),
+                                  node2->property_declaration_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphElementTable(
+    const ResolvedGraphElementTable* node1, const ResolvedGraphElementTable* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->alias(), node2->alias())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->key_list().size() != node2->key_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->key_list().size(); ++i) {
+    result = CompareResolvedAST(node1->key_list(i),
+                                  node2->key_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->source_node_reference(),
+                                node2->source_node_reference());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->dest_node_reference(),
+                                node2->dest_node_reference());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->label_name_list().size() != node2->label_name_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->label_name_list().size(); ++i) {
+    if (!Equals(node1->label_name_list(i), node2->label_name_list(i))) {
+      return false;
+    }
+  }
+  if (node1->property_definition_list().size() != node2->property_definition_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->property_definition_list().size(); ++i) {
+    result = CompareResolvedAST(node1->property_definition_list(i),
+                                  node2->property_definition_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphNodeTableReference(
+    const ResolvedGraphNodeTableReference* node1, const ResolvedGraphNodeTableReference* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->node_table_identifier(), node2->node_table_identifier())) {
+    return false;
+  }
+  if (node1->edge_table_column_list().size() != node2->edge_table_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->edge_table_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->edge_table_column_list(i),
+                                  node2->edge_table_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->node_table_column_list().size() != node2->node_table_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->node_table_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->node_table_column_list(i),
+                                  node2->node_table_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphElementLabel(
+    const ResolvedGraphElementLabel* node1, const ResolvedGraphElementLabel* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  if (node1->property_declaration_name_list().size() != node2->property_declaration_name_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->property_declaration_name_list().size(); ++i) {
+    if (!Equals(node1->property_declaration_name_list(i), node2->property_declaration_name_list(i))) {
+      return false;
+    }
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPropertyDeclaration(
+    const ResolvedGraphPropertyDeclaration* node1, const ResolvedGraphPropertyDeclaration* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPropertyDefinition(
+    const ResolvedGraphPropertyDefinition* node1, const ResolvedGraphPropertyDefinition* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->sql(), node2->sql())) {
+    return false;
+  }
+  if (!Equals(node1->property_declaration_name(), node2->property_declaration_name())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphRefScan(
+    const ResolvedGraphRefScan* node1, const ResolvedGraphRefScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphLinearScan(
+    const ResolvedGraphLinearScan* node1, const ResolvedGraphLinearScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (node1->scan_list().size() != node2->scan_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->scan_list().size(); ++i) {
+    result = CompareResolvedAST(node1->scan_list(i),
+                                  node2->scan_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphTableScan(
+    const ResolvedGraphTableScan* node1, const ResolvedGraphTableScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (!Equals(node1->property_graph(), node2->property_graph())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->shape_expr_list().size() != node2->shape_expr_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->shape_expr_list().size(); ++i) {
+    result = CompareResolvedAST(node1->shape_expr_list(i),
+                                  node2->shape_expr_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphScan(
+    const ResolvedGraphScan* node1, const ResolvedGraphScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (node1->input_scan_list().size() != node2->input_scan_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->input_scan_list().size(); ++i) {
+    result = CompareResolvedAST(node1->input_scan_list(i),
+                                  node2->input_scan_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->filter_expr(),
+                                node2->filter_expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->optional(), node2->optional())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathPatternQuantifier(
+    const ResolvedGraphPathPatternQuantifier* node1, const ResolvedGraphPathPatternQuantifier* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->lower_bound(),
+                                node2->lower_bound());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->upper_bound(),
+                                node2->upper_bound());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathSearchPrefix(
+    const ResolvedGraphPathSearchPrefix* node1, const ResolvedGraphPathSearchPrefix* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphNodeScan(
+    const ResolvedGraphNodeScan* node1, const ResolvedGraphNodeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->filter_expr(),
+                                node2->filter_expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->label_expr(),
+                                node2->label_expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->target_element_table_list().size() != node2->target_element_table_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->target_element_table_list().size(); ++i) {
+    if (!Equals(node1->target_element_table_list(i), node2->target_element_table_list(i))) {
+      return false;
+    }
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphEdgeScan(
+    const ResolvedGraphEdgeScan* node1, const ResolvedGraphEdgeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->filter_expr(),
+                                node2->filter_expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->label_expr(),
+                                node2->label_expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->target_element_table_list().size() != node2->target_element_table_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->target_element_table_list().size(); ++i) {
+    if (!Equals(node1->target_element_table_list(i), node2->target_element_table_list(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->orientation(), node2->orientation())) {
+    return false;
+  }
+  if (node1->lhs_hint_list().size() != node2->lhs_hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->lhs_hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->lhs_hint_list(i),
+                                  node2->lhs_hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->rhs_hint_list().size() != node2->rhs_hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->rhs_hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->rhs_hint_list(i),
+                                  node2->rhs_hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphGetElementProperty(
+    const ResolvedGraphGetElementProperty* node1, const ResolvedGraphGetElementProperty* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->property(), node2->property())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphLabelNaryExpr(
+    const ResolvedGraphLabelNaryExpr* node1, const ResolvedGraphLabelNaryExpr* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->op(), node2->op())) {
+    return false;
+  }
+  if (node1->operand_list().size() != node2->operand_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->operand_list().size(); ++i) {
+    result = CompareResolvedAST(node1->operand_list(i),
+                                  node2->operand_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphLabel(
+    const ResolvedGraphLabel* node1, const ResolvedGraphLabel* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->label(), node2->label())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphWildCardLabel(
+    const ResolvedGraphWildCardLabel* node1, const ResolvedGraphWildCardLabel* node2) {
+
+  absl::StatusOr<bool> result;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphElementIdentifier(
+    const ResolvedGraphElementIdentifier* node1, const ResolvedGraphElementIdentifier* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->element_table(), node2->element_table())) {
+    return false;
+  }
+  if (node1->key_list().size() != node2->key_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->key_list().size(); ++i) {
+    result = CompareResolvedAST(node1->key_list(i),
+                                  node2->key_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->source_node_identifier(),
+                                node2->source_node_identifier());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->dest_node_identifier(),
+                                node2->dest_node_identifier());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphElementProperty(
+    const ResolvedGraphElementProperty* node1, const ResolvedGraphElementProperty* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->declaration(), node2->declaration())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphMakeElement(
+    const ResolvedGraphMakeElement* node1, const ResolvedGraphMakeElement* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->identifier(),
+                                node2->identifier());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->property_list().size() != node2->property_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->property_list().size(); ++i) {
+    result = CompareResolvedAST(node1->property_list(i),
+                                  node2->property_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->label_list().size() != node2->label_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->label_list().size(); ++i) {
+    if (!Equals(node1->label_list(i), node2->label_list(i))) {
+      return false;
+    }
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayAggregate(
+    const ResolvedArrayAggregate* node1, const ResolvedArrayAggregate* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->array(),
+                                node2->array());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->element_column(), node2->element_column())) {
+    return false;
+  }
+  if (node1->pre_aggregate_computed_column_list().size() != node2->pre_aggregate_computed_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->pre_aggregate_computed_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->pre_aggregate_computed_column_list(i),
+                                  node2->pre_aggregate_computed_column_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->aggregate(),
+                                node2->aggregate());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphMakeArrayVariable(
+    const ResolvedGraphMakeArrayVariable* node1, const ResolvedGraphMakeArrayVariable* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->element(), node2->element())) {
+    return false;
+  }
+  if (!Equals(node1->array(), node2->array())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathMode(
+    const ResolvedGraphPathMode* node1, const ResolvedGraphPathMode* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->path_mode(), node2->path_mode())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathScan(
+    const ResolvedGraphPathScan* node1, const ResolvedGraphPathScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (node1->input_scan_list().size() != node2->input_scan_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->input_scan_list().size(); ++i) {
+    result = CompareResolvedAST(node1->input_scan_list(i),
+                                  node2->input_scan_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->filter_expr(),
+                                node2->filter_expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->path(),
+                                node2->path());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->head(), node2->head())) {
+    return false;
+  }
+  if (!Equals(node1->tail(), node2->tail())) {
+    return false;
+  }
+  if (node1->path_hint_list().size() != node2->path_hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->path_hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->path_hint_list(i),
+                                  node2->path_hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->quantifier(),
+                                node2->quantifier());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->group_variable_list().size() != node2->group_variable_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->group_variable_list().size(); ++i) {
+    result = CompareResolvedAST(node1->group_variable_list(i),
+                                  node2->group_variable_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->path_mode(),
+                                node2->path_mode());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->search_prefix(),
+                                node2->search_prefix());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphIsLabeledPredicate(
+    const ResolvedGraphIsLabeledPredicate* node1, const ResolvedGraphIsLabeledPredicate* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  if (!Equals(node1->is_not(), node2->is_not())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->label_expr(),
+                                node2->label_expr());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUndropStmt(
     const ResolvedUndropStmt* node1, const ResolvedUndropStmt* node2) {
 
@@ -7423,6 +8869,463 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUndropStmt(
                                 node2->for_system_time_expr());
   ZETASQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedIdentityColumnInfo(
+    const ResolvedIdentityColumnInfo* node1, const ResolvedIdentityColumnInfo* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->start_with_value(), node2->start_with_value())) {
+    return false;
+  }
+  if (!Equals(node1->increment_by_value(), node2->increment_by_value())) {
+    return false;
+  }
+  if (!Equals(node1->max_value(), node2->max_value())) {
+    return false;
+  }
+  if (!Equals(node1->min_value(), node2->min_value())) {
+    return false;
+  }
+  if (!Equals(node1->cycling_enabled(), node2->cycling_enabled())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedStaticDescribeScan(
+    const ResolvedStaticDescribeScan* node1, const ResolvedStaticDescribeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->describe_text(), node2->describe_text())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAssertScan(
+    const ResolvedAssertScan* node1, const ResolvedAssertScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->condition(),
+                                node2->condition());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->message(),
+                                node2->message());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedLogScan(
+    const ResolvedLogScan* node1, const ResolvedLogScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->subpipeline(),
+                                node2->subpipeline());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->output_schema(),
+                                node2->output_schema());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeIfScan(
+    const ResolvedPipeIfScan* node1, const ResolvedPipeIfScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->selected_case(), node2->selected_case())) {
+    return false;
+  }
+  if (node1->if_case_list().size() != node2->if_case_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->if_case_list().size(); ++i) {
+    result = CompareResolvedAST(node1->if_case_list(i),
+                                  node2->if_case_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeIfCase(
+    const ResolvedPipeIfCase* node1, const ResolvedPipeIfCase* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->condition(),
+                                node2->condition());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->subpipeline_sql(), node2->subpipeline_sql())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->subpipeline(),
+                                node2->subpipeline());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeForkScan(
+    const ResolvedPipeForkScan* node1, const ResolvedPipeForkScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->subpipeline_list().size() != node2->subpipeline_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->subpipeline_list().size(); ++i) {
+    result = CompareResolvedAST(node1->subpipeline_list(i),
+                                  node2->subpipeline_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeExportDataScan(
+    const ResolvedPipeExportDataScan* node1, const ResolvedPipeExportDataScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->export_data_stmt(),
+                                node2->export_data_stmt());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSubpipeline(
+    const ResolvedSubpipeline* node1, const ResolvedSubpipeline* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->scan(),
+                                node2->scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSubpipelineInputScan(
+    const ResolvedSubpipelineInputScan* node1, const ResolvedSubpipelineInputScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGeneralizedQuerySubpipeline(
+    const ResolvedGeneralizedQuerySubpipeline* node1, const ResolvedGeneralizedQuerySubpipeline* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->subpipeline(),
+                                node2->subpipeline());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->output_schema(),
+                                node2->output_schema());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedBarrierScan(
+    const ResolvedBarrierScan* node1, const ResolvedBarrierScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  ZETASQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateConnectionStmt(
+    const ResolvedCreateConnectionStmt* node1, const ResolvedCreateConnectionStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->create_scope(), node2->create_scope())) {
+    return false;
+  }
+  if (!Equals(node1->create_mode(), node2->create_mode())) {
+    return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterConnectionStmt(
+    const ResolvedAlterConnectionStmt* node1, const ResolvedAlterConnectionStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (node1->alter_action_list().size() != node2->alter_action_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->alter_action_list().size(); ++i) {
+    result = CompareResolvedAST(node1->alter_action_list(i),
+                                  node2->alter_action_list(i));
+    ZETASQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedLockMode(
+    const ResolvedLockMode* node1, const ResolvedLockMode* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->strength(), node2->strength())) {
+    return false;
+  }
   return true;
 }
 }  // namespace zetasql

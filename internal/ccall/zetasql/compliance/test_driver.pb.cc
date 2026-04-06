@@ -28,6 +28,7 @@ PROTOBUF_CONSTEXPR TestDatabaseProto::TestDatabaseProto(
   , /*decltype(_impl_.proto_names_)*/{}
   , /*decltype(_impl_.enum_names_)*/{}
   , /*decltype(_impl_.test_tables_)*/{}
+  , /*decltype(_impl_.property_graphs_)*/{}
   , /*decltype(_impl_.runs_as_test_)*/ false
 } {}
 struct TestDatabaseProtoDefaultTypeInternal {
@@ -108,8 +109,31 @@ struct TypeAndValueDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TypeAndValueDefaultTypeInternal _TypeAndValue_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR TestPropertyGraphProto::TestPropertyGraphProto(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.name_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.create_stmt_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+} {}
+struct TestPropertyGraphProtoDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR TestPropertyGraphProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~TestPropertyGraphProtoDefaultTypeInternal() {}
+  union {
+    TestPropertyGraphProto _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TestPropertyGraphProtoDefaultTypeInternal _TestPropertyGraphProto_default_instance_;
 }  // namespace zetasql
-static ::_pb::Metadata file_level_metadata_zetasql_2fcompliance_2ftest_5fdriver_2eproto[4];
+static ::_pb::Metadata file_level_metadata_zetasql_2fcompliance_2ftest_5fdriver_2eproto[5];
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_zetasql_2fcompliance_2ftest_5fdriver_2eproto = nullptr;
 static constexpr const ::_pb::ServiceDescriptor**
@@ -129,8 +153,10 @@ const ::uint32_t TableStruct_zetasql_2fcompliance_2ftest_5fdriver_2eproto::offse
     PROTOBUF_FIELD_OFFSET(::zetasql::TestDatabaseProto, _impl_.proto_names_),
     PROTOBUF_FIELD_OFFSET(::zetasql::TestDatabaseProto, _impl_.enum_names_),
     PROTOBUF_FIELD_OFFSET(::zetasql::TestDatabaseProto, _impl_.test_tables_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::TestDatabaseProto, _impl_.property_graphs_),
     ~0u,
     0,
+    ~0u,
     ~0u,
     ~0u,
     ~0u,
@@ -182,14 +208,27 @@ const ::uint32_t TableStruct_zetasql_2fcompliance_2ftest_5fdriver_2eproto::offse
     PROTOBUF_FIELD_OFFSET(::zetasql::TypeAndValue, _impl_.type_),
     0,
     1,
+    PROTOBUF_FIELD_OFFSET(::zetasql::TestPropertyGraphProto, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::TestPropertyGraphProto, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::zetasql::TestPropertyGraphProto, _impl_.name_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::TestPropertyGraphProto, _impl_.create_stmt_),
+    0,
+    1,
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        { 0, 13, -1, sizeof(::zetasql::TestDatabaseProto)},
-        { 18, 33, -1, sizeof(::zetasql::TestTableOptionsProto)},
-        { 40, 51, -1, sizeof(::zetasql::TestTableProto)},
-        { 54, 64, -1, sizeof(::zetasql::TypeAndValue)},
+        { 0, 14, -1, sizeof(::zetasql::TestDatabaseProto)},
+        { 20, 35, -1, sizeof(::zetasql::TestTableOptionsProto)},
+        { 42, 53, -1, sizeof(::zetasql::TestTableProto)},
+        { 56, 66, -1, sizeof(::zetasql::TypeAndValue)},
+        { 68, 78, -1, sizeof(::zetasql::TestPropertyGraphProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -197,29 +236,33 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::zetasql::_TestTableOptionsProto_default_instance_._instance,
     &::zetasql::_TestTableProto_default_instance_._instance,
     &::zetasql::_TypeAndValue_default_instance_._instance,
+    &::zetasql::_TestPropertyGraphProto_default_instance_._instance,
 };
 const char descriptor_table_protodef_zetasql_2fcompliance_2ftest_5fdriver_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n$zetasql/compliance/test_driver.proto\022\007"
     "zetasql\032\037zetasql/public/annotation.proto"
     "\032\034zetasql/public/options.proto\032\031zetasql/"
     "public/type.proto\032\032zetasql/public/value."
-    "proto\"\225\001\n\021TestDatabaseProto\022\023\n\013proto_fil"
+    "proto\"\325\001\n\021TestDatabaseProto\022\023\n\013proto_fil"
     "es\030\001 \003(\t\022\024\n\014runs_as_test\030\002 \001(\010\022\023\n\013proto_"
     "names\030\003 \003(\t\022\022\n\nenum_names\030\004 \003(\t\022,\n\013test_"
-    "tables\030\005 \003(\0132\027.zetasql.TestTableProto\"\224\002"
-    "\n\025TestTableOptionsProto\022\037\n\027expected_tabl"
-    "e_size_min\030\001 \001(\003\022\037\n\027expected_table_size_"
-    "max\030\002 \001(\003\022\026\n\016is_value_table\030\003 \001(\010\022\034\n\024nul"
-    "lable_probability\030\004 \001(\001\0223\n\021required_feat"
-    "ures\030\005 \003(\0162\030.zetasql.LanguageFeature\022\025\n\r"
-    "userid_column\030\006 \001(\t\0227\n\022column_annotation"
-    "s\030\007 \003(\0132\033.zetasql.AnnotationMapProto\"x\n\016"
-    "TestTableProto\022\014\n\004name\030\001 \001(\t\022\'\n\010contents"
-    "\030\002 \001(\0132\025.zetasql.TypeAndValue\022/\n\007options"
-    "\030\003 \001(\0132\036.zetasql.TestTableOptionsProto\"T"
-    "\n\014TypeAndValue\022\"\n\005value\030\001 \001(\0132\023.zetasql."
-    "ValueProto\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeP"
-    "rotoB\026\n\022com.google.zetasqlP\001"
+    "tables\030\005 \003(\0132\027.zetasql.TestTableProto\0228\n"
+    "\017property_graphs\030\007 \003(\0132\037.zetasql.TestPro"
+    "pertyGraphProtoJ\004\010\006\020\007\"\224\002\n\025TestTableOptio"
+    "nsProto\022\037\n\027expected_table_size_min\030\001 \001(\003"
+    "\022\037\n\027expected_table_size_max\030\002 \001(\003\022\026\n\016is_"
+    "value_table\030\003 \001(\010\022\034\n\024nullable_probabilit"
+    "y\030\004 \001(\001\0223\n\021required_features\030\005 \003(\0162\030.zet"
+    "asql.LanguageFeature\022\025\n\ruserid_column\030\006 "
+    "\001(\t\0227\n\022column_annotations\030\007 \003(\0132\033.zetasq"
+    "l.AnnotationMapProto\"x\n\016TestTableProto\022\014"
+    "\n\004name\030\001 \001(\t\022\'\n\010contents\030\002 \001(\0132\025.zetasql"
+    ".TypeAndValue\022/\n\007options\030\003 \001(\0132\036.zetasql"
+    ".TestTableOptionsProto\"T\n\014TypeAndValue\022\""
+    "\n\005value\030\001 \001(\0132\023.zetasql.ValueProto\022 \n\004ty"
+    "pe\030\002 \001(\0132\022.zetasql.TypeProto\";\n\026TestProp"
+    "ertyGraphProto\022\014\n\004name\030\001 \001(\t\022\023\n\013create_s"
+    "tmt\030\002 \001(\tB\026\n\022com.google.zetasqlP\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2eproto_deps[4] =
     {
@@ -232,13 +275,13 @@ static ::absl::once_flag descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2eproto = {
     false,
     false,
-    828,
+    953,
     descriptor_table_protodef_zetasql_2fcompliance_2ftest_5fdriver_2eproto,
     "zetasql/compliance/test_driver.proto",
     &descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2eproto_once,
     descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2eproto_deps,
     4,
-    4,
+    5,
     schemas,
     file_default_instances,
     TableStruct_zetasql_2fcompliance_2ftest_5fdriver_2eproto::offsets,
@@ -292,6 +335,7 @@ TestDatabaseProto::TestDatabaseProto(const TestDatabaseProto& from)
     , decltype(_impl_.proto_names_){from._impl_.proto_names_}
     , decltype(_impl_.enum_names_){from._impl_.enum_names_}
     , decltype(_impl_.test_tables_){from._impl_.test_tables_}
+    , decltype(_impl_.property_graphs_){from._impl_.property_graphs_}
     , decltype(_impl_.runs_as_test_) {}
   };
 
@@ -309,6 +353,7 @@ inline void TestDatabaseProto::SharedCtor(::_pb::Arena* arena) {
     , decltype(_impl_.proto_names_){arena}
     , decltype(_impl_.enum_names_){arena}
     , decltype(_impl_.test_tables_){arena}
+    , decltype(_impl_.property_graphs_){arena}
     , decltype(_impl_.runs_as_test_) { false }
 
   };
@@ -329,6 +374,7 @@ inline void TestDatabaseProto::SharedDtor() {
   _internal_mutable_proto_names()->~RepeatedPtrField();
   _internal_mutable_enum_names()->~RepeatedPtrField();
   _internal_mutable_test_tables()->~RepeatedPtrField();
+  _internal_mutable_property_graphs()->~RepeatedPtrField();
 }
 
 void TestDatabaseProto::SetCachedSize(int size) const {
@@ -345,6 +391,7 @@ void TestDatabaseProto::Clear() {
   _internal_mutable_proto_names()->Clear();
   _internal_mutable_enum_names()->Clear();
   _internal_mutable_test_tables()->Clear();
+  _internal_mutable_property_graphs()->Clear();
   _impl_.runs_as_test_ = false;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -435,6 +482,20 @@ const char* TestDatabaseProto::_InternalParse(const char* ptr, ::_pbi::ParseCont
           goto handle_unusual;
         }
         continue;
+      // repeated .zetasql.TestPropertyGraphProto property_graphs = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 58)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_property_graphs(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<58>(ptr));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -505,6 +566,14 @@ failure:
         InternalWriteMessage(5, repfield, repfield.GetCachedSize(), target, stream);
   }
 
+  // repeated .zetasql.TestPropertyGraphProto property_graphs = 7;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_property_graphs_size()); i < n; i++) {
+    const auto& repfield = this->_internal_property_graphs(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(7, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -549,6 +618,13 @@ failure:
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
+  // repeated .zetasql.TestPropertyGraphProto property_graphs = 7;
+  total_size += 1UL * this->_internal_property_graphs_size();
+  for (const auto& msg : this->_internal_property_graphs()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
   // optional bool runs_as_test = 2;
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
@@ -577,6 +653,7 @@ void TestDatabaseProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   _this->_internal_mutable_proto_names()->MergeFrom(from._internal_proto_names());
   _this->_internal_mutable_enum_names()->MergeFrom(from._internal_enum_names());
   _this->_internal_mutable_test_tables()->MergeFrom(from._internal_test_tables());
+  _this->_internal_mutable_property_graphs()->MergeFrom(from._internal_property_graphs());
   if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
     _this->_internal_set_runs_as_test(from._internal_runs_as_test());
   }
@@ -607,6 +684,7 @@ void TestDatabaseProto::InternalSwap(TestDatabaseProto* other) {
   _internal_mutable_enum_names()->InternalSwap(
       other->_internal_mutable_enum_names());
   _internal_mutable_test_tables()->InternalSwap(other->_internal_mutable_test_tables());
+  _internal_mutable_property_graphs()->InternalSwap(other->_internal_mutable_property_graphs());
 
   swap(_impl_.runs_as_test_, other->_impl_.runs_as_test_);
 }
@@ -1664,6 +1742,282 @@ void TypeAndValue::InternalSwap(TypeAndValue* other) {
       &descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2eproto_getter, &descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2eproto_once,
       file_level_metadata_zetasql_2fcompliance_2ftest_5fdriver_2eproto[3]);
 }
+// ===================================================================
+
+class TestPropertyGraphProto::_Internal {
+ public:
+  using HasBits = decltype(std::declval<TestPropertyGraphProto>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(TestPropertyGraphProto, _impl_._has_bits_);
+  static void set_has_name(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_create_stmt(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
+
+TestPropertyGraphProto::TestPropertyGraphProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:zetasql.TestPropertyGraphProto)
+}
+TestPropertyGraphProto::TestPropertyGraphProto(const TestPropertyGraphProto& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  TestPropertyGraphProto* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.name_) {}
+
+    , decltype(_impl_.create_stmt_) {}
+  };
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.name_.Set(from._internal_name(), _this->GetArenaForAllocation());
+  }
+  _impl_.create_stmt_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.create_stmt_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.create_stmt_.Set(from._internal_create_stmt(), _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:zetasql.TestPropertyGraphProto)
+}
+
+inline void TestPropertyGraphProto::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.name_) {}
+
+    , decltype(_impl_.create_stmt_) {}
+
+  };
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.create_stmt_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.create_stmt_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+TestPropertyGraphProto::~TestPropertyGraphProto() {
+  // @@protoc_insertion_point(destructor:zetasql.TestPropertyGraphProto)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void TestPropertyGraphProto::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.name_.Destroy();
+  _impl_.create_stmt_.Destroy();
+}
+
+void TestPropertyGraphProto::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void TestPropertyGraphProto::Clear() {
+// @@protoc_insertion_point(message_clear_start:zetasql.TestPropertyGraphProto)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _impl_.name_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _impl_.create_stmt_.ClearNonDefaultToEmpty();
+    }
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* TestPropertyGraphProto::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional string name = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.TestPropertyGraphProto.name");
+          #endif  // !NDEBUG
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // optional string create_stmt = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_create_stmt();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          #ifndef NDEBUG
+          ::_pbi::VerifyUTF8(str, "zetasql.TestPropertyGraphProto.create_stmt");
+          #endif  // !NDEBUG
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* TestPropertyGraphProto::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:zetasql.TestPropertyGraphProto)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // optional string name = 1;
+  if (cached_has_bits & 0x00000001u) {
+    const std::string& _s = this->_internal_name();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.TestPropertyGraphProto.name");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // optional string create_stmt = 2;
+  if (cached_has_bits & 0x00000002u) {
+    const std::string& _s = this->_internal_create_stmt();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(_s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+                                "zetasql.TestPropertyGraphProto.create_stmt");
+    target = stream->WriteStringMaybeAliased(2, _s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:zetasql.TestPropertyGraphProto)
+  return target;
+}
+
+::size_t TestPropertyGraphProto::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:zetasql.TestPropertyGraphProto)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    // optional string name = 1;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_name());
+    }
+
+    // optional string create_stmt = 2;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_create_stmt());
+    }
+
+  }
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData TestPropertyGraphProto::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    TestPropertyGraphProto::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*TestPropertyGraphProto::GetClassData() const { return &_class_data_; }
+
+
+void TestPropertyGraphProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<TestPropertyGraphProto*>(&to_msg);
+  auto& from = static_cast<const TestPropertyGraphProto&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:zetasql.TestPropertyGraphProto)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_set_name(from._internal_name());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_internal_set_create_stmt(from._internal_create_stmt());
+    }
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void TestPropertyGraphProto::CopyFrom(const TestPropertyGraphProto& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:zetasql.TestPropertyGraphProto)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TestPropertyGraphProto::IsInitialized() const {
+  return true;
+}
+
+void TestPropertyGraphProto::InternalSwap(TestPropertyGraphProto* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, lhs_arena,
+                                       &other->_impl_.name_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.create_stmt_, lhs_arena,
+                                       &other->_impl_.create_stmt_, rhs_arena);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TestPropertyGraphProto::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2eproto_getter, &descriptor_table_zetasql_2fcompliance_2ftest_5fdriver_2eproto_once,
+      file_level_metadata_zetasql_2fcompliance_2ftest_5fdriver_2eproto[4]);
+}
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
@@ -1682,6 +2036,10 @@ Arena::CreateMaybeMessage< ::zetasql::TestTableProto >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::zetasql::TypeAndValue*
 Arena::CreateMaybeMessage< ::zetasql::TypeAndValue >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::TypeAndValue >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::TestPropertyGraphProto*
+Arena::CreateMaybeMessage< ::zetasql::TestPropertyGraphProto >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::TestPropertyGraphProto >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 // @@protoc_insertion_point(global_scope)

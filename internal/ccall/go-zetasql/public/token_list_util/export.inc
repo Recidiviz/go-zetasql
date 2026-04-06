@@ -6,6 +6,8 @@
 #include "zetasql/public/token_list_util.cc"
 // include dependencies
 #include "go-zetasql/public/value/export.inc"
+#include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/simple_token_list/export.inc"
+#include "go-absl/status/statusor/export.inc"
 
 #endif

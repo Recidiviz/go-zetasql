@@ -16,6 +16,8 @@ class ParseTreeVisitor {
 
   virtual void visitASTFromQuery(const ASTFromQuery* node, void* data) = 0;
 
+  virtual void visitASTSubpipeline(const ASTSubpipeline* node, void* data) = 0;
+
   virtual void visitASTPipeExtend(const ASTPipeExtend* node, void* data) = 0;
 
   virtual void visitASTPipeRenameItem(const ASTPipeRenameItem* node, void* data) = 0;
@@ -50,6 +52,8 @@ class ParseTreeVisitor {
 
   virtual void visitASTPipeAssert(const ASTPipeAssert* node, void* data) = 0;
 
+  virtual void visitASTPipeLog(const ASTPipeLog* node, void* data) = 0;
+
   virtual void visitASTPipeDrop(const ASTPipeDrop* node, void* data) = 0;
 
   virtual void visitASTPipeSetItem(const ASTPipeSetItem* node, void* data) = 0;
@@ -59,6 +63,14 @@ class ParseTreeVisitor {
   virtual void visitASTPipePivot(const ASTPipePivot* node, void* data) = 0;
 
   virtual void visitASTPipeUnpivot(const ASTPipeUnpivot* node, void* data) = 0;
+
+  virtual void visitASTPipeIf(const ASTPipeIf* node, void* data) = 0;
+
+  virtual void visitASTPipeIfCase(const ASTPipeIfCase* node, void* data) = 0;
+
+  virtual void visitASTPipeFork(const ASTPipeFork* node, void* data) = 0;
+
+  virtual void visitASTPipeExportData(const ASTPipeExportData* node, void* data) = 0;
 
   virtual void visitASTSelect(const ASTSelect* node, void* data) = 0;
 
@@ -344,9 +356,25 @@ class ParseTreeVisitor {
 
   virtual void visitASTMatchRecognizeClause(const ASTMatchRecognizeClause* node, void* data) = 0;
 
+  virtual void visitASTAfterMatchSkipClause(const ASTAfterMatchSkipClause* node, void* data) = 0;
+
   virtual void visitASTRowPatternVariable(const ASTRowPatternVariable* node, void* data) = 0;
 
   virtual void visitASTRowPatternOperation(const ASTRowPatternOperation* node, void* data) = 0;
+
+  virtual void visitASTEmptyRowPattern(const ASTEmptyRowPattern* node, void* data) = 0;
+
+  virtual void visitASTRowPatternAnchor(const ASTRowPatternAnchor* node, void* data) = 0;
+
+  virtual void visitASTBoundedQuantifier(const ASTBoundedQuantifier* node, void* data) = 0;
+
+  virtual void visitASTQuantifierBound(const ASTQuantifierBound* node, void* data) = 0;
+
+  virtual void visitASTFixedQuantifier(const ASTFixedQuantifier* node, void* data) = 0;
+
+  virtual void visitASTSymbolQuantifier(const ASTSymbolQuantifier* node, void* data) = 0;
+
+  virtual void visitASTRowPatternQuantification(const ASTRowPatternQuantification* node, void* data) = 0;
 
   virtual void visitASTQualify(const ASTQualify* node, void* data) = 0;
 
@@ -483,6 +511,8 @@ class ParseTreeVisitor {
   virtual void visitASTAssertRowsModified(const ASTAssertRowsModified* node, void* data) = 0;
 
   virtual void visitASTReturningClause(const ASTReturningClause* node, void* data) = 0;
+
+  virtual void visitASTOnConflictClause(const ASTOnConflictClause* node, void* data) = 0;
 
   virtual void visitASTDeleteStatement(const ASTDeleteStatement* node, void* data) = 0;
 
@@ -792,6 +822,90 @@ class ParseTreeVisitor {
 
   virtual void visitASTRangeType(const ASTRangeType* node, void* data) = 0;
 
+  virtual void visitASTCreatePropertyGraphStatement(const ASTCreatePropertyGraphStatement* node, void* data) = 0;
+
+  virtual void visitASTGraphElementTableList(const ASTGraphElementTableList* node, void* data) = 0;
+
+  virtual void visitASTGraphElementTable(const ASTGraphElementTable* node, void* data) = 0;
+
+  virtual void visitASTGraphNodeTableReference(const ASTGraphNodeTableReference* node, void* data) = 0;
+
+  virtual void visitASTGraphElementLabelAndPropertiesList(const ASTGraphElementLabelAndPropertiesList* node, void* data) = 0;
+
+  virtual void visitASTGraphElementLabelAndProperties(const ASTGraphElementLabelAndProperties* node, void* data) = 0;
+
+  virtual void visitASTGraphProperties(const ASTGraphProperties* node, void* data) = 0;
+
+  virtual void visitASTGraphPattern(const ASTGraphPattern* node, void* data) = 0;
+
+  virtual void visitASTGqlQuery(const ASTGqlQuery* node, void* data) = 0;
+
+  virtual void visitASTGqlGraphPatternQuery(const ASTGqlGraphPatternQuery* node, void* data) = 0;
+
+  virtual void visitASTGqlLinearOpsQuery(const ASTGqlLinearOpsQuery* node, void* data) = 0;
+
+  virtual void visitASTGraphTableQuery(const ASTGraphTableQuery* node, void* data) = 0;
+
+  virtual void visitASTGraphElementLabel(const ASTGraphElementLabel* node, void* data) = 0;
+
+  virtual void visitASTGraphWildcardLabel(const ASTGraphWildcardLabel* node, void* data) = 0;
+
+  virtual void visitASTGraphLabelOperation(const ASTGraphLabelOperation* node, void* data) = 0;
+
+  virtual void visitASTGraphLabelFilter(const ASTGraphLabelFilter* node, void* data) = 0;
+
+  virtual void visitASTGraphIsLabeledPredicate(const ASTGraphIsLabeledPredicate* node, void* data) = 0;
+
+  virtual void visitASTGraphElementPatternFiller(const ASTGraphElementPatternFiller* node, void* data) = 0;
+
+  virtual void visitASTGraphPropertySpecification(const ASTGraphPropertySpecification* node, void* data) = 0;
+
+  virtual void visitASTGraphPropertyNameAndValue(const ASTGraphPropertyNameAndValue* node, void* data) = 0;
+
+  virtual void visitASTGraphNodePattern(const ASTGraphNodePattern* node, void* data) = 0;
+
+  virtual void visitASTGraphLhsHint(const ASTGraphLhsHint* node, void* data) = 0;
+
+  virtual void visitASTGraphRhsHint(const ASTGraphRhsHint* node, void* data) = 0;
+
+  virtual void visitASTGraphPathSearchPrefix(const ASTGraphPathSearchPrefix* node, void* data) = 0;
+
+  virtual void visitASTGraphEdgePattern(const ASTGraphEdgePattern* node, void* data) = 0;
+
+  virtual void visitASTGraphPathMode(const ASTGraphPathMode* node, void* data) = 0;
+
+  virtual void visitASTGraphPathPattern(const ASTGraphPathPattern* node, void* data) = 0;
+
+  virtual void visitASTGqlMatch(const ASTGqlMatch* node, void* data) = 0;
+
+  virtual void visitASTGqlReturn(const ASTGqlReturn* node, void* data) = 0;
+
+  virtual void visitASTGqlWith(const ASTGqlWith* node, void* data) = 0;
+
+  virtual void visitASTGqlFor(const ASTGqlFor* node, void* data) = 0;
+
+  virtual void visitASTGqlLet(const ASTGqlLet* node, void* data) = 0;
+
+  virtual void visitASTGqlLetVariableDefinitionList(const ASTGqlLetVariableDefinitionList* node, void* data) = 0;
+
+  virtual void visitASTGqlLetVariableDefinition(const ASTGqlLetVariableDefinition* node, void* data) = 0;
+
+  virtual void visitASTGqlFilter(const ASTGqlFilter* node, void* data) = 0;
+
+  virtual void visitASTGqlOperatorList(const ASTGqlOperatorList* node, void* data) = 0;
+
+  virtual void visitASTGqlSetOperation(const ASTGqlSetOperation* node, void* data) = 0;
+
+  virtual void visitASTGqlPageLimit(const ASTGqlPageLimit* node, void* data) = 0;
+
+  virtual void visitASTGqlPageOffset(const ASTGqlPageOffset* node, void* data) = 0;
+
+  virtual void visitASTGqlPage(const ASTGqlPage* node, void* data) = 0;
+
+  virtual void visitASTGqlOrderByAndPage(const ASTGqlOrderByAndPage* node, void* data) = 0;
+
+  virtual void visitASTGqlSample(const ASTGqlSample* node, void* data) = 0;
+
   virtual void visitASTSelectWith(const ASTSelectWith* node, void* data) = 0;
 
   virtual void visitASTColumnWithOptions(const ASTColumnWithOptions* node, void* data) = 0;
@@ -822,6 +936,10 @@ class ParseTreeVisitor {
 
   virtual void visitASTMapType(const ASTMapType* node, void* data) = 0;
 
+  virtual void visitASTLockMode(const ASTLockMode* node, void* data) = 0;
+
+  virtual void visitASTPipeRecursiveUnion(const ASTPipeRecursiveUnion* node, void* data) = 0;
+
 };
 
 class DefaultParseTreeVisitor : public ParseTreeVisitor {
@@ -843,6 +961,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTFromQuery(const ASTFromQuery* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTSubpipeline(const ASTSubpipeline* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -914,6 +1036,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTPipeLog(const ASTPipeLog* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTPipeDrop(const ASTPipeDrop* node, void* data) override {
     defaultVisit(node, data);
   }
@@ -931,6 +1057,22 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTPipeUnpivot(const ASTPipeUnpivot* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTPipeIf(const ASTPipeIf* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTPipeIfCase(const ASTPipeIfCase* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTPipeFork(const ASTPipeFork* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTPipeExportData(const ASTPipeExportData* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -1502,11 +1644,43 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTAfterMatchSkipClause(const ASTAfterMatchSkipClause* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTRowPatternVariable(const ASTRowPatternVariable* node, void* data) override {
     defaultVisit(node, data);
   }
 
   void visitASTRowPatternOperation(const ASTRowPatternOperation* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTEmptyRowPattern(const ASTEmptyRowPattern* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTRowPatternAnchor(const ASTRowPatternAnchor* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTBoundedQuantifier(const ASTBoundedQuantifier* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTQuantifierBound(const ASTQuantifierBound* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTFixedQuantifier(const ASTFixedQuantifier* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTSymbolQuantifier(const ASTSymbolQuantifier* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTRowPatternQuantification(const ASTRowPatternQuantification* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -1779,6 +1953,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTReturningClause(const ASTReturningClause* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTOnConflictClause(const ASTOnConflictClause* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -2398,6 +2576,174 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTCreatePropertyGraphStatement(const ASTCreatePropertyGraphStatement* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphElementTableList(const ASTGraphElementTableList* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphElementTable(const ASTGraphElementTable* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphNodeTableReference(const ASTGraphNodeTableReference* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphElementLabelAndPropertiesList(const ASTGraphElementLabelAndPropertiesList* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphElementLabelAndProperties(const ASTGraphElementLabelAndProperties* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphProperties(const ASTGraphProperties* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphPattern(const ASTGraphPattern* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlQuery(const ASTGqlQuery* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlGraphPatternQuery(const ASTGqlGraphPatternQuery* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlLinearOpsQuery(const ASTGqlLinearOpsQuery* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphTableQuery(const ASTGraphTableQuery* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphElementLabel(const ASTGraphElementLabel* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphWildcardLabel(const ASTGraphWildcardLabel* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphLabelOperation(const ASTGraphLabelOperation* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphLabelFilter(const ASTGraphLabelFilter* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphIsLabeledPredicate(const ASTGraphIsLabeledPredicate* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphElementPatternFiller(const ASTGraphElementPatternFiller* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphPropertySpecification(const ASTGraphPropertySpecification* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphPropertyNameAndValue(const ASTGraphPropertyNameAndValue* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphNodePattern(const ASTGraphNodePattern* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphLhsHint(const ASTGraphLhsHint* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphRhsHint(const ASTGraphRhsHint* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphPathSearchPrefix(const ASTGraphPathSearchPrefix* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphEdgePattern(const ASTGraphEdgePattern* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphPathMode(const ASTGraphPathMode* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphPathPattern(const ASTGraphPathPattern* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlMatch(const ASTGqlMatch* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlReturn(const ASTGqlReturn* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlWith(const ASTGqlWith* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlFor(const ASTGqlFor* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlLet(const ASTGqlLet* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlLetVariableDefinitionList(const ASTGqlLetVariableDefinitionList* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlLetVariableDefinition(const ASTGqlLetVariableDefinition* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlFilter(const ASTGqlFilter* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlOperatorList(const ASTGqlOperatorList* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlSetOperation(const ASTGqlSetOperation* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlPageLimit(const ASTGqlPageLimit* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlPageOffset(const ASTGqlPageOffset* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlPage(const ASTGqlPage* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlOrderByAndPage(const ASTGqlOrderByAndPage* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGqlSample(const ASTGqlSample* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTSelectWith(const ASTSelectWith* node, void* data) override {
     defaultVisit(node, data);
   }
@@ -2458,6 +2804,14 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTLockMode(const ASTLockMode* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTPipeRecursiveUnion(const ASTPipeRecursiveUnion* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
 };
 
 class NonRecursiveParseTreeVisitor {
@@ -2474,6 +2828,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTQuery(const ASTQuery* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTFromQuery(const ASTFromQuery* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTSubpipeline(const ASTSubpipeline* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTPipeExtend(const ASTPipeExtend* node) {return defaultVisit(node);};
 
@@ -2509,6 +2865,8 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTPipeAssert(const ASTPipeAssert* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTPipeLog(const ASTPipeLog* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTPipeDrop(const ASTPipeDrop* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTPipeSetItem(const ASTPipeSetItem* node) {return defaultVisit(node);};
@@ -2518,6 +2876,14 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTPipePivot(const ASTPipePivot* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTPipeUnpivot(const ASTPipeUnpivot* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTPipeIf(const ASTPipeIf* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTPipeIfCase(const ASTPipeIfCase* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTPipeFork(const ASTPipeFork* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTPipeExportData(const ASTPipeExportData* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTSelect(const ASTSelect* node) {return defaultVisit(node);};
 
@@ -2803,9 +3169,25 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTMatchRecognizeClause(const ASTMatchRecognizeClause* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTAfterMatchSkipClause(const ASTAfterMatchSkipClause* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTRowPatternVariable(const ASTRowPatternVariable* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTRowPatternOperation(const ASTRowPatternOperation* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTEmptyRowPattern(const ASTEmptyRowPattern* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTRowPatternAnchor(const ASTRowPatternAnchor* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTBoundedQuantifier(const ASTBoundedQuantifier* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTQuantifierBound(const ASTQuantifierBound* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTFixedQuantifier(const ASTFixedQuantifier* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTSymbolQuantifier(const ASTSymbolQuantifier* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTRowPatternQuantification(const ASTRowPatternQuantification* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTQualify(const ASTQualify* node) {return defaultVisit(node);};
 
@@ -2942,6 +3324,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTAssertRowsModified(const ASTAssertRowsModified* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTReturningClause(const ASTReturningClause* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTOnConflictClause(const ASTOnConflictClause* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTDeleteStatement(const ASTDeleteStatement* node) {return defaultVisit(node);};
 
@@ -3251,6 +3635,90 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTRangeType(const ASTRangeType* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTCreatePropertyGraphStatement(const ASTCreatePropertyGraphStatement* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphElementTableList(const ASTGraphElementTableList* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphElementTable(const ASTGraphElementTable* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphNodeTableReference(const ASTGraphNodeTableReference* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphElementLabelAndPropertiesList(const ASTGraphElementLabelAndPropertiesList* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphElementLabelAndProperties(const ASTGraphElementLabelAndProperties* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphProperties(const ASTGraphProperties* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphPattern(const ASTGraphPattern* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlQuery(const ASTGqlQuery* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlGraphPatternQuery(const ASTGqlGraphPatternQuery* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlLinearOpsQuery(const ASTGqlLinearOpsQuery* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphTableQuery(const ASTGraphTableQuery* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphElementLabel(const ASTGraphElementLabel* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphWildcardLabel(const ASTGraphWildcardLabel* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphLabelOperation(const ASTGraphLabelOperation* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphLabelFilter(const ASTGraphLabelFilter* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphIsLabeledPredicate(const ASTGraphIsLabeledPredicate* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphElementPatternFiller(const ASTGraphElementPatternFiller* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphPropertySpecification(const ASTGraphPropertySpecification* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphPropertyNameAndValue(const ASTGraphPropertyNameAndValue* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphNodePattern(const ASTGraphNodePattern* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphLhsHint(const ASTGraphLhsHint* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphRhsHint(const ASTGraphRhsHint* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphPathSearchPrefix(const ASTGraphPathSearchPrefix* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphEdgePattern(const ASTGraphEdgePattern* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphPathMode(const ASTGraphPathMode* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphPathPattern(const ASTGraphPathPattern* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlMatch(const ASTGqlMatch* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlReturn(const ASTGqlReturn* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlWith(const ASTGqlWith* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlFor(const ASTGqlFor* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlLet(const ASTGqlLet* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlLetVariableDefinitionList(const ASTGqlLetVariableDefinitionList* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlLetVariableDefinition(const ASTGqlLetVariableDefinition* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlFilter(const ASTGqlFilter* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlOperatorList(const ASTGqlOperatorList* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlSetOperation(const ASTGqlSetOperation* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlPageLimit(const ASTGqlPageLimit* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlPageOffset(const ASTGqlPageOffset* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlPage(const ASTGqlPage* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlOrderByAndPage(const ASTGqlOrderByAndPage* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGqlSample(const ASTGqlSample* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTSelectWith(const ASTSelectWith* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTColumnWithOptions(const ASTColumnWithOptions* node) {return defaultVisit(node);};
@@ -3280,6 +3748,10 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTRecursionDepthModifier(const ASTRecursionDepthModifier* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTMapType(const ASTMapType* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTLockMode(const ASTLockMode* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTPipeRecursiveUnion(const ASTPipeRecursiveUnion* node) {return defaultVisit(node);};
 
 };
 }  // namespace zetasql

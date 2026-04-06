@@ -54,10 +54,20 @@ namespace zetasql {
 class SimpleTokenListProto;
 struct SimpleTokenListProtoDefaultTypeInternal;
 extern SimpleTokenListProtoDefaultTypeInternal _SimpleTokenListProto_default_instance_;
+class TextTokenProto;
+struct TextTokenProtoDefaultTypeInternal;
+extern TextTokenProtoDefaultTypeInternal _TextTokenProto_default_instance_;
+class TokenProto;
+struct TokenProtoDefaultTypeInternal;
+extern TokenProtoDefaultTypeInternal _TokenProto_default_instance_;
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
 template <>
 ::zetasql::SimpleTokenListProto* Arena::CreateMaybeMessage<::zetasql::SimpleTokenListProto>(Arena*);
+template <>
+::zetasql::TextTokenProto* Arena::CreateMaybeMessage<::zetasql::TextTokenProto>(Arena*);
+template <>
+::zetasql::TokenProto* Arena::CreateMaybeMessage<::zetasql::TokenProto>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace zetasql {
@@ -195,38 +205,28 @@ class SimpleTokenListProto final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTokenFieldNumber = 1,
+    kTextTokenFieldNumber = 2,
   };
-  // repeated string token = 1;
-  int token_size() const;
+  // repeated .zetasql.TextTokenProto text_token = 2;
+  int text_token_size() const;
   private:
-  int _internal_token_size() const;
+  int _internal_text_token_size() const;
 
   public:
-  void clear_token() ;
-  const std::string& token(int index) const;
-  std::string* mutable_token(int index);
-  void set_token(int index, const std::string& value);
-  void set_token(int index, std::string&& value);
-  void set_token(int index, const char* value);
-  void set_token(int index, const char* value, std::size_t size);
-  void set_token(int index, absl::string_view value);
-  std::string* add_token();
-  void add_token(const std::string& value);
-  void add_token(std::string&& value);
-  void add_token(const char* value);
-  void add_token(const char* value, std::size_t size);
-  void add_token(absl::string_view value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& token() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_token();
-
+  void clear_text_token() ;
+  ::zetasql::TextTokenProto* mutable_text_token(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TextTokenProto >*
+      mutable_text_token();
   private:
-  const std::string& _internal_token(int index) const;
-  std::string* _internal_add_token();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& _internal_token() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* _internal_mutable_token();
-
+  const ::zetasql::TextTokenProto& _internal_text_token(int index) const;
+  ::zetasql::TextTokenProto* _internal_add_text_token();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::TextTokenProto>& _internal_text_token() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::TextTokenProto>* _internal_mutable_text_token();
   public:
+  const ::zetasql::TextTokenProto& text_token(int index) const;
+  ::zetasql::TextTokenProto* add_text_token();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TextTokenProto >&
+      text_token() const;
   // @@protoc_insertion_point(class_scope:zetasql.SimpleTokenListProto)
  private:
   class _Internal;
@@ -235,8 +235,390 @@ class SimpleTokenListProto final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> token_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TextTokenProto > text_token_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto;
+};// -------------------------------------------------------------------
+
+class TextTokenProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.TextTokenProto) */ {
+ public:
+  inline TextTokenProto() : TextTokenProto(nullptr) {}
+  ~TextTokenProto() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR TextTokenProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TextTokenProto(const TextTokenProto& from);
+  TextTokenProto(TextTokenProto&& from) noexcept
+    : TextTokenProto() {
+    *this = ::std::move(from);
+  }
+
+  inline TextTokenProto& operator=(const TextTokenProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TextTokenProto& operator=(TextTokenProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const TextTokenProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TextTokenProto* internal_default_instance() {
+    return reinterpret_cast<const TextTokenProto*>(
+               &_TextTokenProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(TextTokenProto& a, TextTokenProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TextTokenProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TextTokenProto* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  TextTokenProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<TextTokenProto>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const TextTokenProto& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const TextTokenProto& from) {
+    TextTokenProto::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TextTokenProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.TextTokenProto";
+  }
+  protected:
+  explicit TextTokenProto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIndexTokenFieldNumber = 3,
+    kTextFieldNumber = 1,
+    kAttributeFieldNumber = 2,
+  };
+  // repeated .zetasql.TokenProto index_token = 3;
+  int index_token_size() const;
+  private:
+  int _internal_index_token_size() const;
+
+  public:
+  void clear_index_token() ;
+  ::zetasql::TokenProto* mutable_index_token(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TokenProto >*
+      mutable_index_token();
+  private:
+  const ::zetasql::TokenProto& _internal_index_token(int index) const;
+  ::zetasql::TokenProto* _internal_add_index_token();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::TokenProto>& _internal_index_token() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::TokenProto>* _internal_mutable_index_token();
+  public:
+  const ::zetasql::TokenProto& index_token(int index) const;
+  ::zetasql::TokenProto* add_index_token();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TokenProto >&
+      index_token() const;
+  // optional string text = 1;
+  bool has_text() const;
+  void clear_text() ;
+  const std::string& text() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_text(Arg_&& arg, Args_... args);
+  std::string* mutable_text();
+  PROTOBUF_NODISCARD std::string* release_text();
+  void set_allocated_text(std::string* ptr);
+
+  private:
+  const std::string& _internal_text() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_text(
+      const std::string& value);
+  std::string* _internal_mutable_text();
+
+  public:
+  // optional uint64 attribute = 2;
+  bool has_attribute() const;
+  void clear_attribute() ;
+  ::uint64_t attribute() const;
+  void set_attribute(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_attribute() const;
+  void _internal_set_attribute(::uint64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:zetasql.TextTokenProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TokenProto > index_token_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr text_;
+    ::uint64_t attribute_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto;
+};// -------------------------------------------------------------------
+
+class TokenProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.TokenProto) */ {
+ public:
+  inline TokenProto() : TokenProto(nullptr) {}
+  ~TokenProto() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR TokenProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TokenProto(const TokenProto& from);
+  TokenProto(TokenProto&& from) noexcept
+    : TokenProto() {
+    *this = ::std::move(from);
+  }
+
+  inline TokenProto& operator=(const TokenProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TokenProto& operator=(TokenProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const TokenProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TokenProto* internal_default_instance() {
+    return reinterpret_cast<const TokenProto*>(
+               &_TokenProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(TokenProto& a, TokenProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TokenProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TokenProto* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  TokenProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<TokenProto>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const TokenProto& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const TokenProto& from) {
+    TokenProto::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TokenProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.TokenProto";
+  }
+  protected:
+  explicit TokenProto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTextFieldNumber = 1,
+    kAttributeFieldNumber = 2,
+  };
+  // optional string text = 1;
+  bool has_text() const;
+  void clear_text() ;
+  const std::string& text() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_text(Arg_&& arg, Args_... args);
+  std::string* mutable_text();
+  PROTOBUF_NODISCARD std::string* release_text();
+  void set_allocated_text(std::string* ptr);
+
+  private:
+  const std::string& _internal_text() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_text(
+      const std::string& value);
+  std::string* _internal_mutable_text();
+
+  public:
+  // optional uint64 attribute = 2;
+  bool has_attribute() const;
+  void clear_attribute() ;
+  ::uint64_t attribute() const;
+  void set_attribute(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_attribute() const;
+  void _internal_set_attribute(::uint64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:zetasql.TokenProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr text_;
+    ::uint64_t attribute_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto;
@@ -258,97 +640,288 @@ class SimpleTokenListProto final :
 
 // SimpleTokenListProto
 
-// repeated string token = 1;
-inline int SimpleTokenListProto::_internal_token_size() const {
-  return _impl_.token_.size();
+// repeated .zetasql.TextTokenProto text_token = 2;
+inline int SimpleTokenListProto::_internal_text_token_size() const {
+  return _impl_.text_token_.size();
 }
-inline int SimpleTokenListProto::token_size() const {
-  return _internal_token_size();
+inline int SimpleTokenListProto::text_token_size() const {
+  return _internal_text_token_size();
 }
-inline void SimpleTokenListProto::clear_token() {
-  _internal_mutable_token()->Clear();
+inline void SimpleTokenListProto::clear_text_token() {
+  _internal_mutable_text_token()->Clear();
 }
-inline std::string* SimpleTokenListProto::add_token() {
-  std::string* _s = _internal_add_token();
-  // @@protoc_insertion_point(field_add_mutable:zetasql.SimpleTokenListProto.token)
+inline ::zetasql::TextTokenProto* SimpleTokenListProto::mutable_text_token(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.SimpleTokenListProto.text_token)
+  return _internal_mutable_text_token()->Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TextTokenProto >*
+SimpleTokenListProto::mutable_text_token() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.SimpleTokenListProto.text_token)
+  return _internal_mutable_text_token();
+}
+inline const ::zetasql::TextTokenProto& SimpleTokenListProto::_internal_text_token(int index) const {
+  return _internal_text_token().Get(index);
+}
+inline const ::zetasql::TextTokenProto& SimpleTokenListProto::text_token(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.SimpleTokenListProto.text_token)
+  return _internal_text_token(index);
+}
+inline ::zetasql::TextTokenProto* SimpleTokenListProto::_internal_add_text_token() {
+  return _internal_mutable_text_token()->Add();
+}
+inline ::zetasql::TextTokenProto* SimpleTokenListProto::add_text_token() {
+  ::zetasql::TextTokenProto* _add = _internal_add_text_token();
+  // @@protoc_insertion_point(field_add:zetasql.SimpleTokenListProto.text_token)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TextTokenProto >&
+SimpleTokenListProto::text_token() const {
+  // @@protoc_insertion_point(field_list:zetasql.SimpleTokenListProto.text_token)
+  return _internal_text_token();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::TextTokenProto>&
+SimpleTokenListProto::_internal_text_token() const {
+  return _impl_.text_token_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::TextTokenProto>*
+SimpleTokenListProto::_internal_mutable_text_token() {
+  return &_impl_.text_token_;
+}
+
+// -------------------------------------------------------------------
+
+// TextTokenProto
+
+// optional string text = 1;
+inline bool TextTokenProto::has_text() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void TextTokenProto::clear_text() {
+  _impl_.text_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& TextTokenProto::text() const {
+  // @@protoc_insertion_point(field_get:zetasql.TextTokenProto.text)
+  return _internal_text();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void TextTokenProto::set_text(Arg_&& arg,
+                                                     Args_... args) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.text_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:zetasql.TextTokenProto.text)
+}
+inline std::string* TextTokenProto::mutable_text() {
+  std::string* _s = _internal_mutable_text();
+  // @@protoc_insertion_point(field_mutable:zetasql.TextTokenProto.text)
   return _s;
 }
-inline const std::string& SimpleTokenListProto::token(int index) const {
-  // @@protoc_insertion_point(field_get:zetasql.SimpleTokenListProto.token)
-  return _internal_token(index);
+inline const std::string& TextTokenProto::_internal_text() const {
+  return _impl_.text_.Get();
 }
-inline std::string* SimpleTokenListProto::mutable_token(int index) {
-  // @@protoc_insertion_point(field_mutable:zetasql.SimpleTokenListProto.token)
-  return _internal_mutable_token()->Mutable(index);
+inline void TextTokenProto::_internal_set_text(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+
+
+  _impl_.text_.Set(value, GetArenaForAllocation());
 }
-inline void SimpleTokenListProto::set_token(int index, const std::string& value) {
-  _internal_mutable_token()->Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set:zetasql.SimpleTokenListProto.token)
+inline std::string* TextTokenProto::_internal_mutable_text() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.text_.Mutable( GetArenaForAllocation());
 }
-inline void SimpleTokenListProto::set_token(int index, std::string&& value) {
-  _internal_mutable_token()->Mutable(index)->assign(std::move(value));
-  // @@protoc_insertion_point(field_set:zetasql.SimpleTokenListProto.token)
+inline std::string* TextTokenProto::release_text() {
+  // @@protoc_insertion_point(field_release:zetasql.TextTokenProto.text)
+  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* released = _impl_.text_.Release();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.text_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return released;
 }
-inline void SimpleTokenListProto::set_token(int index, const char* value) {
-  ABSL_DCHECK(value != nullptr);
-  _internal_mutable_token()->Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:zetasql.SimpleTokenListProto.token)
+inline void TextTokenProto::set_allocated_text(std::string* value) {
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.text_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.text_.IsDefault()) {
+          _impl_.text_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:zetasql.TextTokenProto.text)
 }
-inline void SimpleTokenListProto::set_token(int index, const char* value,
-                              std::size_t size) {
-  _internal_mutable_token()->Mutable(index)->assign(
-      reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:zetasql.SimpleTokenListProto.token)
+
+// optional uint64 attribute = 2;
+inline bool TextTokenProto::has_attribute() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
 }
-inline void SimpleTokenListProto::set_token(int index, absl::string_view value) {
-  _internal_mutable_token()->Mutable(index)->assign(value.data(),
-                                                     value.size());
-  // @@protoc_insertion_point(field_set_string_piece:zetasql.SimpleTokenListProto.token)
+inline void TextTokenProto::clear_attribute() {
+  _impl_.attribute_ = ::uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
-inline void SimpleTokenListProto::add_token(const std::string& value) {
-  _internal_mutable_token()->Add()->assign(value);
-  // @@protoc_insertion_point(field_add:zetasql.SimpleTokenListProto.token)
+inline ::uint64_t TextTokenProto::attribute() const {
+  // @@protoc_insertion_point(field_get:zetasql.TextTokenProto.attribute)
+  return _internal_attribute();
 }
-inline void SimpleTokenListProto::add_token(std::string&& value) {
-  _internal_mutable_token()->Add(std::move(value));
-  // @@protoc_insertion_point(field_add:zetasql.SimpleTokenListProto.token)
+inline void TextTokenProto::set_attribute(::uint64_t value) {
+  _internal_set_attribute(value);
+  // @@protoc_insertion_point(field_set:zetasql.TextTokenProto.attribute)
 }
-inline void SimpleTokenListProto::add_token(const char* value) {
-  ABSL_DCHECK(value != nullptr);
-  _internal_mutable_token()->Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:zetasql.SimpleTokenListProto.token)
+inline ::uint64_t TextTokenProto::_internal_attribute() const {
+  return _impl_.attribute_;
 }
-inline void SimpleTokenListProto::add_token(const char* value, std::size_t size) {
-  _internal_mutable_token()->Add()->assign(
-      reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:zetasql.SimpleTokenListProto.token)
+inline void TextTokenProto::_internal_set_attribute(::uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.attribute_ = value;
 }
-inline void SimpleTokenListProto::add_token(absl::string_view value) {
-  _internal_mutable_token()->Add()->assign(value.data(), value.size());
-  // @@protoc_insertion_point(field_add_string_piece:zetasql.SimpleTokenListProto.token)
+
+// repeated .zetasql.TokenProto index_token = 3;
+inline int TextTokenProto::_internal_index_token_size() const {
+  return _impl_.index_token_.size();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
-SimpleTokenListProto::token() const {
-  // @@protoc_insertion_point(field_list:zetasql.SimpleTokenListProto.token)
-  return _internal_token();
+inline int TextTokenProto::index_token_size() const {
+  return _internal_index_token_size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* SimpleTokenListProto::mutable_token() {
-  // @@protoc_insertion_point(field_mutable_list:zetasql.SimpleTokenListProto.token)
-  return _internal_mutable_token();
+inline void TextTokenProto::clear_index_token() {
+  _internal_mutable_index_token()->Clear();
 }
-inline const std::string& SimpleTokenListProto::_internal_token(int index) const {
-  return _internal_token().Get(index);
+inline ::zetasql::TokenProto* TextTokenProto::mutable_index_token(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.TextTokenProto.index_token)
+  return _internal_mutable_index_token()->Mutable(index);
 }
-inline std::string* SimpleTokenListProto::_internal_add_token() {
-  return _internal_mutable_token()->Add();
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TokenProto >*
+TextTokenProto::mutable_index_token() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.TextTokenProto.index_token)
+  return _internal_mutable_index_token();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
-SimpleTokenListProto::_internal_token() const {
-  return _impl_.token_;
+inline const ::zetasql::TokenProto& TextTokenProto::_internal_index_token(int index) const {
+  return _internal_index_token().Get(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
-SimpleTokenListProto::_internal_mutable_token() {
-  return &_impl_.token_;
+inline const ::zetasql::TokenProto& TextTokenProto::index_token(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.TextTokenProto.index_token)
+  return _internal_index_token(index);
+}
+inline ::zetasql::TokenProto* TextTokenProto::_internal_add_index_token() {
+  return _internal_mutable_index_token()->Add();
+}
+inline ::zetasql::TokenProto* TextTokenProto::add_index_token() {
+  ::zetasql::TokenProto* _add = _internal_add_index_token();
+  // @@protoc_insertion_point(field_add:zetasql.TextTokenProto.index_token)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TokenProto >&
+TextTokenProto::index_token() const {
+  // @@protoc_insertion_point(field_list:zetasql.TextTokenProto.index_token)
+  return _internal_index_token();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::TokenProto>&
+TextTokenProto::_internal_index_token() const {
+  return _impl_.index_token_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::TokenProto>*
+TextTokenProto::_internal_mutable_index_token() {
+  return &_impl_.index_token_;
+}
+
+// -------------------------------------------------------------------
+
+// TokenProto
+
+// optional string text = 1;
+inline bool TokenProto::has_text() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void TokenProto::clear_text() {
+  _impl_.text_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& TokenProto::text() const {
+  // @@protoc_insertion_point(field_get:zetasql.TokenProto.text)
+  return _internal_text();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void TokenProto::set_text(Arg_&& arg,
+                                                     Args_... args) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.text_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:zetasql.TokenProto.text)
+}
+inline std::string* TokenProto::mutable_text() {
+  std::string* _s = _internal_mutable_text();
+  // @@protoc_insertion_point(field_mutable:zetasql.TokenProto.text)
+  return _s;
+}
+inline const std::string& TokenProto::_internal_text() const {
+  return _impl_.text_.Get();
+}
+inline void TokenProto::_internal_set_text(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+
+
+  _impl_.text_.Set(value, GetArenaForAllocation());
+}
+inline std::string* TokenProto::_internal_mutable_text() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.text_.Mutable( GetArenaForAllocation());
+}
+inline std::string* TokenProto::release_text() {
+  // @@protoc_insertion_point(field_release:zetasql.TokenProto.text)
+  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* released = _impl_.text_.Release();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.text_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return released;
+}
+inline void TokenProto::set_allocated_text(std::string* value) {
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.text_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.text_.IsDefault()) {
+          _impl_.text_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:zetasql.TokenProto.text)
+}
+
+// optional uint64 attribute = 2;
+inline bool TokenProto::has_attribute() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline void TokenProto::clear_attribute() {
+  _impl_.attribute_ = ::uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline ::uint64_t TokenProto::attribute() const {
+  // @@protoc_insertion_point(field_get:zetasql.TokenProto.attribute)
+  return _internal_attribute();
+}
+inline void TokenProto::set_attribute(::uint64_t value) {
+  _internal_set_attribute(value);
+  // @@protoc_insertion_point(field_set:zetasql.TokenProto.attribute)
+}
+inline ::uint64_t TokenProto::_internal_attribute() const {
+  return _impl_.attribute_;
+}
+inline void TokenProto::_internal_set_attribute(::uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.attribute_ = value;
 }
 
 #ifdef __GNUC__

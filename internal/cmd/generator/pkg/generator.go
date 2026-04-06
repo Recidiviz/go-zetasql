@@ -734,6 +734,25 @@ func filterStrings(paths []string, exclude map[string]struct{}) []string {
 	return out
 }
 
+// dropCCHeadersDuplicatedInSources removes *.cc paths from the header list when the same
+// path is also a Bazel src (tm_parser lists tm_parser.cc under both hdrs and srcs).
+func dropCCHeadersDuplicatedInSources(headers []string, lib *Lib) []string {
+	src := make(map[string]struct{}, len(lib.Sources))
+	for _, s := range lib.Sources {
+		src[fmt.Sprintf("%s/%s", lib.BasePkg, s)] = struct{}{}
+	}
+	out := make([]string, 0, len(headers))
+	for _, h := range headers {
+		if strings.HasSuffix(h, ".cc") {
+			if _, ok := src[h]; ok {
+				continue
+			}
+		}
+		out = append(out, h)
+	}
+	return out
+}
+
 func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	param := &BindCCParam{}
 
@@ -745,7 +764,7 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	param.PreludeBeforeHeaders = bindCCPreludeBeforeHeaders(g.cfg, lib)
 	excludeAmalg := g.amalgamationExcludePaths(lib)
 	excludeSrc := g.amalgamationExcludeSourcePaths(lib)
-	param.Headers = filterStrings(lib.HeaderPaths(), excludeAmalg)
+	param.Headers = dropCCHeadersDuplicatedInSources(filterStrings(lib.HeaderPaths(), excludeAmalg), lib)
 	sources := make([]SourceParam, 0, len(lib.Sources))
 	for _, src := range filterStrings(filterStrings(lib.SourcePaths(), excludeAmalg), excludeSrc) {
 		sourceParam := SourceParam{Value: src}
@@ -787,6 +806,12 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 		// flex_tokenizer/export.inc again duplicates the TU (ABSL_FLAG + methods).
 		if lib.BasePkg == "zetasql/parser" && lib.Name == "parser" &&
 			dep.BasePkg == "zetasql/parser" && dep.Pkg == "flex_tokenizer" {
+			continue
+		}
+		// Parser bind.cc flex_prelude amalgamates tm_lexer.cc, textmapper_lexer_adapter.cc,
+		// tm_parser.cc; including tm_parser/export.inc again duplicates those TUs.
+		if lib.BasePkg == "zetasql/parser" && lib.Name == "parser" &&
+			dep.BasePkg == "zetasql/parser" && dep.Pkg == "tm_parser" {
 			continue
 		}
 		deps = append(deps, goPkgPath(dep.BasePkg, dep.Pkg))

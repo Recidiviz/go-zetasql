@@ -71,6 +71,9 @@ extern DifferentialPrivacyOutputValuesDefaultTypeInternal _DifferentialPrivacyOu
 class DifferentialPrivacyOutputWithReport;
 struct DifferentialPrivacyOutputWithReportDefaultTypeInternal;
 extern DifferentialPrivacyOutputWithReportDefaultTypeInternal _DifferentialPrivacyOutputWithReport_default_instance_;
+class DifferentiallyPrivateCountDistinctBoundingReport;
+struct DifferentiallyPrivateCountDistinctBoundingReportDefaultTypeInternal;
+extern DifferentiallyPrivateCountDistinctBoundingReportDefaultTypeInternal _DifferentiallyPrivateCountDistinctBoundingReport_default_instance_;
 }  // namespace functions
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
@@ -84,6 +87,8 @@ template <>
 ::zetasql::functions::DifferentialPrivacyOutputValues* Arena::CreateMaybeMessage<::zetasql::functions::DifferentialPrivacyOutputValues>(Arena*);
 template <>
 ::zetasql::functions::DifferentialPrivacyOutputWithReport* Arena::CreateMaybeMessage<::zetasql::functions::DifferentialPrivacyOutputWithReport>(Arena*);
+template <>
+::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* Arena::CreateMaybeMessage<::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace zetasql {
@@ -145,6 +150,37 @@ inline const std::string& DifferentialPrivacyEnums_GroupSelectionStrategy_Name(D
 inline bool DifferentialPrivacyEnums_GroupSelectionStrategy_Parse(absl::string_view name, DifferentialPrivacyEnums_GroupSelectionStrategy* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<DifferentialPrivacyEnums_GroupSelectionStrategy>(
       DifferentialPrivacyEnums_GroupSelectionStrategy_descriptor(), name, value);
+}
+enum DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy : int {
+  DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_DIFFERENTIAL_PRIVACY_COUNT_DISTINCT_CONTRIBUTION_BOUNDING_STRATEGY_INVALID = 0,
+  DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_AUTO = 1,
+  DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_SAMPLING = 2,
+  DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_GREEDY = 3,
+  DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_MATCHING = 4,
+};
+
+bool DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_IsValid(int value);
+constexpr DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_CountDistinctContributionBoundingStrategy_MIN = static_cast<DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy>(0);
+constexpr DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_CountDistinctContributionBoundingStrategy_MAX = static_cast<DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy>(4);
+constexpr int DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_CountDistinctContributionBoundingStrategy_ARRAYSIZE = 4 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_descriptor();
+template <typename T>
+const std::string& DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_Name(T value) {
+  static_assert(std::is_same<T, DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to CountDistinctContributionBoundingStrategy_Name().");
+  return DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_Name(static_cast<DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy>(value));
+}
+template <>
+inline const std::string& DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_Name(DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_descriptor,
+                                                 0, 4>(
+      static_cast<int>(value));
+}
+inline bool DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_Parse(absl::string_view name, DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy>(
+      DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_descriptor(), name, value);
 }
 
 // ===================================================================
@@ -304,6 +340,29 @@ class DifferentialPrivacyEnums final :
     return DifferentialPrivacyEnums_GroupSelectionStrategy_Parse(name, value);
   }
 
+  using CountDistinctContributionBoundingStrategy = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy;
+  static constexpr CountDistinctContributionBoundingStrategy DIFFERENTIAL_PRIVACY_COUNT_DISTINCT_CONTRIBUTION_BOUNDING_STRATEGY_INVALID = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_DIFFERENTIAL_PRIVACY_COUNT_DISTINCT_CONTRIBUTION_BOUNDING_STRATEGY_INVALID;
+  static constexpr CountDistinctContributionBoundingStrategy AUTO = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_AUTO;
+  static constexpr CountDistinctContributionBoundingStrategy SAMPLING = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_SAMPLING;
+  static constexpr CountDistinctContributionBoundingStrategy GREEDY = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_GREEDY;
+  static constexpr CountDistinctContributionBoundingStrategy MATCHING = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_MATCHING;
+  static inline bool CountDistinctContributionBoundingStrategy_IsValid(int value) {
+    return DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_IsValid(value);
+  }
+  static constexpr CountDistinctContributionBoundingStrategy CountDistinctContributionBoundingStrategy_MIN = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_CountDistinctContributionBoundingStrategy_MIN;
+  static constexpr CountDistinctContributionBoundingStrategy CountDistinctContributionBoundingStrategy_MAX = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_CountDistinctContributionBoundingStrategy_MAX;
+  static constexpr int CountDistinctContributionBoundingStrategy_ARRAYSIZE = DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_CountDistinctContributionBoundingStrategy_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CountDistinctContributionBoundingStrategy_descriptor() {
+    return DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& CountDistinctContributionBoundingStrategy_Name(T value) {
+    return DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_Name(value);
+  }
+  static inline bool CountDistinctContributionBoundingStrategy_Parse(absl::string_view name, CountDistinctContributionBoundingStrategy* value) {
+    return DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   // @@protoc_insertion_point(class_scope:zetasql.functions.DifferentialPrivacyEnums)
@@ -373,6 +432,12 @@ class DifferentialPrivacyOutputWithReport final :
     kValue = 1,
     kValues = 2,
     RESULT_NOT_SET = 0,
+  };
+
+  enum ReportCase {
+    kBoundingReport = 3,
+    kCountDistinctBoundingReport = 4,
+    REPORT_NOT_SET = 0,
   };
 
   static inline const DifferentialPrivacyOutputWithReport* internal_default_instance() {
@@ -452,24 +517,11 @@ class DifferentialPrivacyOutputWithReport final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kBoundingReportFieldNumber = 3,
     kValueFieldNumber = 1,
     kValuesFieldNumber = 2,
+    kBoundingReportFieldNumber = 3,
+    kCountDistinctBoundingReportFieldNumber = 4,
   };
-  // optional .zetasql.functions.DifferentialPrivacyBoundingReport bounding_report = 3;
-  bool has_bounding_report() const;
-  void clear_bounding_report() ;
-  const ::zetasql::functions::DifferentialPrivacyBoundingReport& bounding_report() const;
-  PROTOBUF_NODISCARD ::zetasql::functions::DifferentialPrivacyBoundingReport* release_bounding_report();
-  ::zetasql::functions::DifferentialPrivacyBoundingReport* mutable_bounding_report();
-  void set_allocated_bounding_report(::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report);
-  private:
-  const ::zetasql::functions::DifferentialPrivacyBoundingReport& _internal_bounding_report() const;
-  ::zetasql::functions::DifferentialPrivacyBoundingReport* _internal_mutable_bounding_report();
-  public:
-  void unsafe_arena_set_allocated_bounding_report(
-      ::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report);
-  ::zetasql::functions::DifferentialPrivacyBoundingReport* unsafe_arena_release_bounding_report();
   // .zetasql.functions.DifferentialPrivacyOutputValue value = 1;
   bool has_value() const;
   private:
@@ -506,31 +558,78 @@ class DifferentialPrivacyOutputWithReport final :
   void unsafe_arena_set_allocated_values(
       ::zetasql::functions::DifferentialPrivacyOutputValues* values);
   ::zetasql::functions::DifferentialPrivacyOutputValues* unsafe_arena_release_values();
+  // .zetasql.functions.DifferentialPrivacyBoundingReport bounding_report = 3;
+  bool has_bounding_report() const;
+  private:
+  bool _internal_has_bounding_report() const;
+
+  public:
+  void clear_bounding_report() ;
+  const ::zetasql::functions::DifferentialPrivacyBoundingReport& bounding_report() const;
+  PROTOBUF_NODISCARD ::zetasql::functions::DifferentialPrivacyBoundingReport* release_bounding_report();
+  ::zetasql::functions::DifferentialPrivacyBoundingReport* mutable_bounding_report();
+  void set_allocated_bounding_report(::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report);
+  private:
+  const ::zetasql::functions::DifferentialPrivacyBoundingReport& _internal_bounding_report() const;
+  ::zetasql::functions::DifferentialPrivacyBoundingReport* _internal_mutable_bounding_report();
+  public:
+  void unsafe_arena_set_allocated_bounding_report(
+      ::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report);
+  ::zetasql::functions::DifferentialPrivacyBoundingReport* unsafe_arena_release_bounding_report();
+  // .zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport count_distinct_bounding_report = 4;
+  bool has_count_distinct_bounding_report() const;
+  private:
+  bool _internal_has_count_distinct_bounding_report() const;
+
+  public:
+  void clear_count_distinct_bounding_report() ;
+  const ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport& count_distinct_bounding_report() const;
+  PROTOBUF_NODISCARD ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* release_count_distinct_bounding_report();
+  ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* mutable_count_distinct_bounding_report();
+  void set_allocated_count_distinct_bounding_report(::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* count_distinct_bounding_report);
+  private:
+  const ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport& _internal_count_distinct_bounding_report() const;
+  ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* _internal_mutable_count_distinct_bounding_report();
+  public:
+  void unsafe_arena_set_allocated_count_distinct_bounding_report(
+      ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* count_distinct_bounding_report);
+  ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* unsafe_arena_release_count_distinct_bounding_report();
   void clear_result();
   ResultCase result_case() const;
+  void clear_report();
+  ReportCase report_case() const;
   // @@protoc_insertion_point(class_scope:zetasql.functions.DifferentialPrivacyOutputWithReport)
  private:
   class _Internal;
   void set_has_value();
   void set_has_values();
+  void set_has_bounding_report();
+  void set_has_count_distinct_bounding_report();
 
   inline bool has_result() const;
   inline void clear_has_result();
+
+  inline bool has_report() const;
+  inline void clear_has_report();
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report_;
     union ResultUnion {
       constexpr ResultUnion() : _constinit_{} {}
         ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
       ::zetasql::functions::DifferentialPrivacyOutputValue* value_;
       ::zetasql::functions::DifferentialPrivacyOutputValues* values_;
     } result_;
-    ::uint32_t _oneof_case_[1];
+    union ReportUnion {
+      constexpr ReportUnion() : _constinit_{} {}
+        ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+      ::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report_;
+      ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* count_distinct_bounding_report_;
+    } report_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::uint32_t _oneof_case_[2];
 
   };
   union { Impl_ _impl_; };
@@ -739,6 +838,189 @@ class DifferentialPrivacyBoundingReport final :
   friend struct ::TableStruct_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto;
 };// -------------------------------------------------------------------
 
+class DifferentiallyPrivateCountDistinctBoundingReport final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport) */ {
+ public:
+  inline DifferentiallyPrivateCountDistinctBoundingReport() : DifferentiallyPrivateCountDistinctBoundingReport(nullptr) {}
+  ~DifferentiallyPrivateCountDistinctBoundingReport() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR DifferentiallyPrivateCountDistinctBoundingReport(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  DifferentiallyPrivateCountDistinctBoundingReport(const DifferentiallyPrivateCountDistinctBoundingReport& from);
+  DifferentiallyPrivateCountDistinctBoundingReport(DifferentiallyPrivateCountDistinctBoundingReport&& from) noexcept
+    : DifferentiallyPrivateCountDistinctBoundingReport() {
+    *this = ::std::move(from);
+  }
+
+  inline DifferentiallyPrivateCountDistinctBoundingReport& operator=(const DifferentiallyPrivateCountDistinctBoundingReport& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline DifferentiallyPrivateCountDistinctBoundingReport& operator=(DifferentiallyPrivateCountDistinctBoundingReport&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const DifferentiallyPrivateCountDistinctBoundingReport& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const DifferentiallyPrivateCountDistinctBoundingReport* internal_default_instance() {
+    return reinterpret_cast<const DifferentiallyPrivateCountDistinctBoundingReport*>(
+               &_DifferentiallyPrivateCountDistinctBoundingReport_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(DifferentiallyPrivateCountDistinctBoundingReport& a, DifferentiallyPrivateCountDistinctBoundingReport& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(DifferentiallyPrivateCountDistinctBoundingReport* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(DifferentiallyPrivateCountDistinctBoundingReport* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  DifferentiallyPrivateCountDistinctBoundingReport* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<DifferentiallyPrivateCountDistinctBoundingReport>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const DifferentiallyPrivateCountDistinctBoundingReport& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const DifferentiallyPrivateCountDistinctBoundingReport& from) {
+    DifferentiallyPrivateCountDistinctBoundingReport::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(DifferentiallyPrivateCountDistinctBoundingReport* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport";
+  }
+  protected:
+  explicit DifferentiallyPrivateCountDistinctBoundingReport(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUpperBoundFieldNumber = 2,
+    kNumInputsFieldNumber = 3,
+    kContributionBoundingStrategyFieldNumber = 1,
+  };
+  // optional int64 upper_bound = 2;
+  bool has_upper_bound() const;
+  void clear_upper_bound() ;
+  ::int64_t upper_bound() const;
+  void set_upper_bound(::int64_t value);
+
+  private:
+  ::int64_t _internal_upper_bound() const;
+  void _internal_set_upper_bound(::int64_t value);
+
+  public:
+  // optional double num_inputs = 3;
+  bool has_num_inputs() const;
+  void clear_num_inputs() ;
+  double num_inputs() const;
+  void set_num_inputs(double value);
+
+  private:
+  double _internal_num_inputs() const;
+  void _internal_set_num_inputs(double value);
+
+  public:
+  // optional .zetasql.functions.DifferentialPrivacyEnums.CountDistinctContributionBoundingStrategy contribution_bounding_strategy = 1;
+  bool has_contribution_bounding_strategy() const;
+  void clear_contribution_bounding_strategy() ;
+  ::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy contribution_bounding_strategy() const;
+  void set_contribution_bounding_strategy(::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy value);
+
+  private:
+  ::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy _internal_contribution_bounding_strategy() const;
+  void _internal_set_contribution_bounding_strategy(::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::int64_t upper_bound_;
+    double num_inputs_;
+    int contribution_bounding_strategy_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_zetasql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto;
+};// -------------------------------------------------------------------
+
 class DifferentialPrivacyOutputValues final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.functions.DifferentialPrivacyOutputValues) */ {
  public:
@@ -795,7 +1077,7 @@ class DifferentialPrivacyOutputValues final :
                &_DifferentialPrivacyOutputValues_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(DifferentialPrivacyOutputValues& a, DifferentialPrivacyOutputValues& b) {
     a.Swap(&b);
@@ -967,7 +1249,7 @@ class DifferentialPrivacyOutputValue final :
                &_DifferentialPrivacyOutputValue_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(DifferentialPrivacyOutputValue& a, DifferentialPrivacyOutputValue& b) {
     a.Swap(&b);
@@ -1302,91 +1584,152 @@ inline ::zetasql::functions::DifferentialPrivacyOutputValues* DifferentialPrivac
   return _msg;
 }
 
-// optional .zetasql.functions.DifferentialPrivacyBoundingReport bounding_report = 3;
+// .zetasql.functions.DifferentialPrivacyBoundingReport bounding_report = 3;
 inline bool DifferentialPrivacyOutputWithReport::has_bounding_report() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.bounding_report_ != nullptr);
-  return value;
+  return report_case() == kBoundingReport;
+}
+inline bool DifferentialPrivacyOutputWithReport::_internal_has_bounding_report() const {
+  return report_case() == kBoundingReport;
+}
+inline void DifferentialPrivacyOutputWithReport::set_has_bounding_report() {
+  _impl_._oneof_case_[1] = kBoundingReport;
 }
 inline void DifferentialPrivacyOutputWithReport::clear_bounding_report() {
-  if (_impl_.bounding_report_ != nullptr) _impl_.bounding_report_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000001u;
+  if (report_case() == kBoundingReport) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.report_.bounding_report_;
+    }
+    clear_has_report();
+  }
+}
+inline ::zetasql::functions::DifferentialPrivacyBoundingReport* DifferentialPrivacyOutputWithReport::release_bounding_report() {
+  // @@protoc_insertion_point(field_release:zetasql.functions.DifferentialPrivacyOutputWithReport.bounding_report)
+  if (report_case() == kBoundingReport) {
+    clear_has_report();
+    ::zetasql::functions::DifferentialPrivacyBoundingReport* temp = _impl_.report_.bounding_report_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.report_.bounding_report_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
 }
 inline const ::zetasql::functions::DifferentialPrivacyBoundingReport& DifferentialPrivacyOutputWithReport::_internal_bounding_report() const {
-  const ::zetasql::functions::DifferentialPrivacyBoundingReport* p = _impl_.bounding_report_;
-  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::functions::DifferentialPrivacyBoundingReport&>(
-      ::zetasql::functions::_DifferentialPrivacyBoundingReport_default_instance_);
+  return report_case() == kBoundingReport
+      ? *_impl_.report_.bounding_report_
+      : reinterpret_cast<::zetasql::functions::DifferentialPrivacyBoundingReport&>(::zetasql::functions::_DifferentialPrivacyBoundingReport_default_instance_);
 }
 inline const ::zetasql::functions::DifferentialPrivacyBoundingReport& DifferentialPrivacyOutputWithReport::bounding_report() const {
   // @@protoc_insertion_point(field_get:zetasql.functions.DifferentialPrivacyOutputWithReport.bounding_report)
   return _internal_bounding_report();
 }
-inline void DifferentialPrivacyOutputWithReport::unsafe_arena_set_allocated_bounding_report(
-    ::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.bounding_report_);
-  }
-  _impl_.bounding_report_ = bounding_report;
-  if (bounding_report) {
-    _impl_._has_bits_[0] |= 0x00000001u;
+inline ::zetasql::functions::DifferentialPrivacyBoundingReport* DifferentialPrivacyOutputWithReport::unsafe_arena_release_bounding_report() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.functions.DifferentialPrivacyOutputWithReport.bounding_report)
+  if (report_case() == kBoundingReport) {
+    clear_has_report();
+    ::zetasql::functions::DifferentialPrivacyBoundingReport* temp = _impl_.report_.bounding_report_;
+    _impl_.report_.bounding_report_ = nullptr;
+    return temp;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
+    return nullptr;
+  }
+}
+inline void DifferentialPrivacyOutputWithReport::unsafe_arena_set_allocated_bounding_report(::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report) {
+  clear_report();
+  if (bounding_report) {
+    set_has_bounding_report();
+    _impl_.report_.bounding_report_ = bounding_report;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.functions.DifferentialPrivacyOutputWithReport.bounding_report)
 }
-inline ::zetasql::functions::DifferentialPrivacyBoundingReport* DifferentialPrivacyOutputWithReport::release_bounding_report() {
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::zetasql::functions::DifferentialPrivacyBoundingReport* temp = _impl_.bounding_report_;
-  _impl_.bounding_report_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::zetasql::functions::DifferentialPrivacyBoundingReport* DifferentialPrivacyOutputWithReport::unsafe_arena_release_bounding_report() {
-  // @@protoc_insertion_point(field_release:zetasql.functions.DifferentialPrivacyOutputWithReport.bounding_report)
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::zetasql::functions::DifferentialPrivacyBoundingReport* temp = _impl_.bounding_report_;
-  _impl_.bounding_report_ = nullptr;
-  return temp;
-}
 inline ::zetasql::functions::DifferentialPrivacyBoundingReport* DifferentialPrivacyOutputWithReport::_internal_mutable_bounding_report() {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  if (_impl_.bounding_report_ == nullptr) {
-    auto* p = CreateMaybeMessage<::zetasql::functions::DifferentialPrivacyBoundingReport>(GetArenaForAllocation());
-    _impl_.bounding_report_ = p;
+  if (report_case() != kBoundingReport) {
+    clear_report();
+    set_has_bounding_report();
+    _impl_.report_.bounding_report_ = CreateMaybeMessage< ::zetasql::functions::DifferentialPrivacyBoundingReport >(GetArenaForAllocation());
   }
-  return _impl_.bounding_report_;
+  return _impl_.report_.bounding_report_;
 }
 inline ::zetasql::functions::DifferentialPrivacyBoundingReport* DifferentialPrivacyOutputWithReport::mutable_bounding_report() {
   ::zetasql::functions::DifferentialPrivacyBoundingReport* _msg = _internal_mutable_bounding_report();
   // @@protoc_insertion_point(field_mutable:zetasql.functions.DifferentialPrivacyOutputWithReport.bounding_report)
   return _msg;
 }
-inline void DifferentialPrivacyOutputWithReport::set_allocated_bounding_report(::zetasql::functions::DifferentialPrivacyBoundingReport* bounding_report) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete _impl_.bounding_report_;
-  }
-  if (bounding_report) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(bounding_report);
-    if (message_arena != submessage_arena) {
-      bounding_report = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, bounding_report, submessage_arena);
+
+// .zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport count_distinct_bounding_report = 4;
+inline bool DifferentialPrivacyOutputWithReport::has_count_distinct_bounding_report() const {
+  return report_case() == kCountDistinctBoundingReport;
+}
+inline bool DifferentialPrivacyOutputWithReport::_internal_has_count_distinct_bounding_report() const {
+  return report_case() == kCountDistinctBoundingReport;
+}
+inline void DifferentialPrivacyOutputWithReport::set_has_count_distinct_bounding_report() {
+  _impl_._oneof_case_[1] = kCountDistinctBoundingReport;
+}
+inline void DifferentialPrivacyOutputWithReport::clear_count_distinct_bounding_report() {
+  if (report_case() == kCountDistinctBoundingReport) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.report_.count_distinct_bounding_report_;
     }
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
+    clear_has_report();
   }
-  _impl_.bounding_report_ = bounding_report;
-  // @@protoc_insertion_point(field_set_allocated:zetasql.functions.DifferentialPrivacyOutputWithReport.bounding_report)
+}
+inline ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* DifferentialPrivacyOutputWithReport::release_count_distinct_bounding_report() {
+  // @@protoc_insertion_point(field_release:zetasql.functions.DifferentialPrivacyOutputWithReport.count_distinct_bounding_report)
+  if (report_case() == kCountDistinctBoundingReport) {
+    clear_has_report();
+    ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* temp = _impl_.report_.count_distinct_bounding_report_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.report_.count_distinct_bounding_report_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport& DifferentialPrivacyOutputWithReport::_internal_count_distinct_bounding_report() const {
+  return report_case() == kCountDistinctBoundingReport
+      ? *_impl_.report_.count_distinct_bounding_report_
+      : reinterpret_cast<::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport&>(::zetasql::functions::_DifferentiallyPrivateCountDistinctBoundingReport_default_instance_);
+}
+inline const ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport& DifferentialPrivacyOutputWithReport::count_distinct_bounding_report() const {
+  // @@protoc_insertion_point(field_get:zetasql.functions.DifferentialPrivacyOutputWithReport.count_distinct_bounding_report)
+  return _internal_count_distinct_bounding_report();
+}
+inline ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* DifferentialPrivacyOutputWithReport::unsafe_arena_release_count_distinct_bounding_report() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:zetasql.functions.DifferentialPrivacyOutputWithReport.count_distinct_bounding_report)
+  if (report_case() == kCountDistinctBoundingReport) {
+    clear_has_report();
+    ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* temp = _impl_.report_.count_distinct_bounding_report_;
+    _impl_.report_.count_distinct_bounding_report_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void DifferentialPrivacyOutputWithReport::unsafe_arena_set_allocated_count_distinct_bounding_report(::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* count_distinct_bounding_report) {
+  clear_report();
+  if (count_distinct_bounding_report) {
+    set_has_count_distinct_bounding_report();
+    _impl_.report_.count_distinct_bounding_report_ = count_distinct_bounding_report;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.functions.DifferentialPrivacyOutputWithReport.count_distinct_bounding_report)
+}
+inline ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* DifferentialPrivacyOutputWithReport::_internal_mutable_count_distinct_bounding_report() {
+  if (report_case() != kCountDistinctBoundingReport) {
+    clear_report();
+    set_has_count_distinct_bounding_report();
+    _impl_.report_.count_distinct_bounding_report_ = CreateMaybeMessage< ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport >(GetArenaForAllocation());
+  }
+  return _impl_.report_.count_distinct_bounding_report_;
+}
+inline ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* DifferentialPrivacyOutputWithReport::mutable_count_distinct_bounding_report() {
+  ::zetasql::functions::DifferentiallyPrivateCountDistinctBoundingReport* _msg = _internal_mutable_count_distinct_bounding_report();
+  // @@protoc_insertion_point(field_mutable:zetasql.functions.DifferentialPrivacyOutputWithReport.count_distinct_bounding_report)
+  return _msg;
 }
 
 inline bool DifferentialPrivacyOutputWithReport::has_result() const {
@@ -1395,8 +1738,17 @@ inline bool DifferentialPrivacyOutputWithReport::has_result() const {
 inline void DifferentialPrivacyOutputWithReport::clear_has_result() {
   _impl_._oneof_case_[0] = RESULT_NOT_SET;
 }
+inline bool DifferentialPrivacyOutputWithReport::has_report() const {
+  return report_case() != REPORT_NOT_SET;
+}
+inline void DifferentialPrivacyOutputWithReport::clear_has_report() {
+  _impl_._oneof_case_[1] = REPORT_NOT_SET;
+}
 inline DifferentialPrivacyOutputWithReport::ResultCase DifferentialPrivacyOutputWithReport::result_case() const {
   return DifferentialPrivacyOutputWithReport::ResultCase(_impl_._oneof_case_[0]);
+}
+inline DifferentialPrivacyOutputWithReport::ReportCase DifferentialPrivacyOutputWithReport::report_case() const {
+  return DifferentialPrivacyOutputWithReport::ReportCase(_impl_._oneof_case_[1]);
 }
 // -------------------------------------------------------------------
 
@@ -1624,6 +1976,86 @@ inline double DifferentialPrivacyBoundingReport::_internal_num_outside() const {
 inline void DifferentialPrivacyBoundingReport::_internal_set_num_outside(double value) {
   _impl_._has_bits_[0] |= 0x00000008u;
   _impl_.num_outside_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// DifferentiallyPrivateCountDistinctBoundingReport
+
+// optional .zetasql.functions.DifferentialPrivacyEnums.CountDistinctContributionBoundingStrategy contribution_bounding_strategy = 1;
+inline bool DifferentiallyPrivateCountDistinctBoundingReport::has_contribution_bounding_strategy() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::clear_contribution_bounding_strategy() {
+  _impl_.contribution_bounding_strategy_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline ::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy DifferentiallyPrivateCountDistinctBoundingReport::contribution_bounding_strategy() const {
+  // @@protoc_insertion_point(field_get:zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport.contribution_bounding_strategy)
+  return _internal_contribution_bounding_strategy();
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::set_contribution_bounding_strategy(::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy value) {
+   _internal_set_contribution_bounding_strategy(value);
+  // @@protoc_insertion_point(field_set:zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport.contribution_bounding_strategy)
+}
+inline ::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy DifferentiallyPrivateCountDistinctBoundingReport::_internal_contribution_bounding_strategy() const {
+  return static_cast<::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy>(_impl_.contribution_bounding_strategy_);
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::_internal_set_contribution_bounding_strategy(::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy value) {
+  assert(::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_IsValid(value));
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.contribution_bounding_strategy_ = value;
+}
+
+// optional int64 upper_bound = 2;
+inline bool DifferentiallyPrivateCountDistinctBoundingReport::has_upper_bound() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::clear_upper_bound() {
+  _impl_.upper_bound_ = ::int64_t{0};
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline ::int64_t DifferentiallyPrivateCountDistinctBoundingReport::upper_bound() const {
+  // @@protoc_insertion_point(field_get:zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport.upper_bound)
+  return _internal_upper_bound();
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::set_upper_bound(::int64_t value) {
+  _internal_set_upper_bound(value);
+  // @@protoc_insertion_point(field_set:zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport.upper_bound)
+}
+inline ::int64_t DifferentiallyPrivateCountDistinctBoundingReport::_internal_upper_bound() const {
+  return _impl_.upper_bound_;
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::_internal_set_upper_bound(::int64_t value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.upper_bound_ = value;
+}
+
+// optional double num_inputs = 3;
+inline bool DifferentiallyPrivateCountDistinctBoundingReport::has_num_inputs() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::clear_num_inputs() {
+  _impl_.num_inputs_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline double DifferentiallyPrivateCountDistinctBoundingReport::num_inputs() const {
+  // @@protoc_insertion_point(field_get:zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport.num_inputs)
+  return _internal_num_inputs();
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::set_num_inputs(double value) {
+  _internal_set_num_inputs(value);
+  // @@protoc_insertion_point(field_set:zetasql.functions.DifferentiallyPrivateCountDistinctBoundingReport.num_inputs)
+}
+inline double DifferentiallyPrivateCountDistinctBoundingReport::_internal_num_inputs() const {
+  return _impl_.num_inputs_;
+}
+inline void DifferentiallyPrivateCountDistinctBoundingReport::_internal_set_num_inputs(double value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.num_inputs_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1946,6 +2378,12 @@ struct is_proto_enum<::zetasql::functions::DifferentialPrivacyEnums_GroupSelecti
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::functions::DifferentialPrivacyEnums_GroupSelectionStrategy>() {
   return ::zetasql::functions::DifferentialPrivacyEnums_GroupSelectionStrategy_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy>() {
+  return ::zetasql::functions::DifferentialPrivacyEnums_CountDistinctContributionBoundingStrategy_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

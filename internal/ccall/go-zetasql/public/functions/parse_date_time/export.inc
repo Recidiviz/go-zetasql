@@ -10,7 +10,6 @@
 #include "go-zetasql/public/functions/datetime_cc_proto/export.inc"
 #include "go-zetasql/public/functions/parse_date_time_utils/export.inc"
 #include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/mathutil/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"

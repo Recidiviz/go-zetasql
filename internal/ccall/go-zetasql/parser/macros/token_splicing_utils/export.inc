@@ -5,9 +5,10 @@
 // include sources
 #include "zetasql/parser/macros/token_splicing_utils.cc"
 // include dependencies
-#include "go-zetasql/parser/macros/token_with_location/export.inc"
-#include "go-zetasql/parser/bison_token_codes/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
+#include "go-zetasql/parser/token/export.inc"
+#include "go-zetasql/parser/token_codes/export.inc"
+#include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #endif

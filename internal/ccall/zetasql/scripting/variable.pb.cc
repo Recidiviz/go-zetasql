@@ -83,8 +83,8 @@ const char descriptor_table_protodef_zetasql_2fscripting_2fvariable_2eproto[] PR
     "\001(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeProto\022\"\n"
     "\005value\030\003 \001(\0132\023.zetasql.ValueProto\0221\n\013typ"
     "e_params\030\004 \001(\0132\034.zetasql.TypeParametersP"
-    "rotoB(\n\022com.google.zetasqlB\017ZetaSQLVaria"
-    "ble\370\001\001"
+    "rotoB%\n\022com.google.zetasqlB\017ZetaSQLVaria"
+    "ble"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fscripting_2fvariable_2eproto_deps[3] =
     {
@@ -96,7 +96,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fscripting_2fvariable_2eproto = {
     false,
     false,
-    326,
+    323,
     descriptor_table_protodef_zetasql_2fscripting_2fvariable_2eproto,
     "zetasql/scripting/variable.proto",
     &descriptor_table_zetasql_2fscripting_2fvariable_2eproto_once,

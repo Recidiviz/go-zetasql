@@ -22,6 +22,7 @@
 #include "go-zetasql/public/simple_catalog/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-zetasql/resolved_ast/column_factory/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/cleanup/cleanup/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

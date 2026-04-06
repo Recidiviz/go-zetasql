@@ -3,6 +3,7 @@
 
 #include "zetasql/public/catalog.h"
 #include "zetasql/public/catalog_helper.h"
+#include "zetasql/public/property_graph.h"
 // include sources
 #include "zetasql/public/catalog.cc"
 #include "zetasql/public/catalog_helper.cc"

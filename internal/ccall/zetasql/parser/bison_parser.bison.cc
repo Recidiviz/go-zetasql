@@ -43,7 +43,7 @@
 
 
 // Unqualified %code blocks.
-#line 339 "zetasql/parser/bison_parser.y" // lalr1.cc:435
+#line 339 "bison_parser.y" // lalr1.cc:435
 
 // NOYACC-START
 #if YYDEBUG
@@ -53,7 +53,7 @@ ABSL_FLAG(bool, zetasql_bison_parserdebug, true, "Print traces for the ZetaSQL p
 
 using namespace zetasql::parser_internal;
 
-#line 57 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:435
+#line 57 "bison_parser.bison.cc" // lalr1.cc:435
 
 
 #ifndef YY_
@@ -148,7 +148,7 @@ using namespace zetasql::parser_internal;
 
 
 namespace zetasql_bison_parser {
-#line 152 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:510
+#line 152 "bison_parser.bison.cc" // lalr1.cc:510
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -518,14 +518,14 @@ namespace zetasql_bison_parser {
 
 
     // User initialization code.
-#line 56 "zetasql/parser/bison_parser.y" // lalr1.cc:788
+#line 56 "bison_parser.y" // lalr1.cc:788
 {
 #if YYDEBUG
    set_debug_level(absl::GetFlag(FLAGS_zetasql_bison_parserdebug));
 #endif
 }
 
-#line 529 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:788
+#line 529 "bison_parser.bison.cc" // lalr1.cc:788
 
     /* Initialize the stack.  The initial state will be set in
        yynewstate, since the latter expects the semantical and the
@@ -647,144 +647,144 @@ namespace zetasql_bison_parser {
           switch (yyn)
             {
   case 2:
-#line 1650 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1650 "bison_parser.y" // lalr1.cc:919
     { *ast_node_result = (yystack_[0].value.node); }
-#line 653 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 653 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 3:
-#line 1651 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1651 "bison_parser.y" // lalr1.cc:919
     { *ast_node_result = (yystack_[0].value.node); }
-#line 659 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 659 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 4:
-#line 1652 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1652 "bison_parser.y" // lalr1.cc:919
     { *ast_node_result = (yystack_[0].value.node); }
-#line 665 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 665 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 5:
-#line 1653 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1653 "bison_parser.y" // lalr1.cc:919
     { *ast_node_result = (yystack_[0].value.node); }
-#line 671 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 671 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 6:
-#line 1655 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1655 "bison_parser.y" // lalr1.cc:919
     { ast_statement_properties->node_kind = (yystack_[0].value.ast_node_kind); }
-#line 677 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 677 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 7:
-#line 1656 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1656 "bison_parser.y" // lalr1.cc:919
     { *ast_node_result = (yystack_[0].value.expression); }
-#line 683 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 683 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 8:
-#line 1657 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1657 "bison_parser.y" // lalr1.cc:919
     { *ast_node_result = (yystack_[0].value.node); }
-#line 689 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 689 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 11:
-#line 1665 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1665 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[1].value.node);
       }
-#line 697 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 697 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 12:
-#line 1672 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1672 "bison_parser.y" // lalr1.cc:919
     {
         // The semicolon marks the end of the statement.
         SetForceTerminate(tokenizer, statement_end_byte_offset);
         (yylhs.value.node) = (yystack_[1].value.node);
       }
-#line 707 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 707 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 13:
-#line 1678 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1678 "bison_parser.y" // lalr1.cc:919
     {
         // There's no semicolon. That means we have to be at EOF.
         *statement_end_byte_offset = -1;
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 717 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 717 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 14:
-#line 1687 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1687 "bison_parser.y" // lalr1.cc:919
     {
         // The semicolon marks the end of the statement.
         SetForceTerminate(tokenizer, statement_end_byte_offset);
         (yylhs.value.node) = (yystack_[1].value.node);
       }
-#line 727 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 727 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 15:
-#line 1693 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1693 "bison_parser.y" // lalr1.cc:919
     {
         // There's no semicolon. That means we have to be at EOF.
         *statement_end_byte_offset = -1;
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 737 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 737 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 16:
-#line 1712 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1712 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_LOOKBACK(KW_BEGIN, LB_BEGIN_AT_STATEMENT_START); }
-#line 743 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 743 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 17:
-#line 1716 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1716 "bison_parser.y" // lalr1.cc:919
     {
       yylhs.location = yystack_[0].location;
       (yylhs.value.node) = (yystack_[0].value.node);
     }
-#line 752 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 752 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 18:
-#line 1721 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1721 "bison_parser.y" // lalr1.cc:919
     {
       yylhs.location = yystack_[0].location;
       (yylhs.value.node) = (yystack_[0].value.node);
     }
-#line 761 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 761 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 19:
-#line 1729 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1729 "bison_parser.y" // lalr1.cc:919
     {
       OVERRIDE_CURRENT_TOKEN_LOOKBACK(yystack_[0].location, LB_END_OF_STATEMENT_LEVEL_HINT);
       (yylhs.value.node) = (yystack_[0].value.node);
     }
-#line 770 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 770 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 20:
-#line 1736 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1736 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 776 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 776 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 21:
-#line 1738 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1738 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTHintedStatement, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 784 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 784 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 22:
-#line 1742 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1742 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_4_SQL_MACROS)) {
@@ -797,20 +797,20 @@ namespace zetasql_bison_parser {
           "Syntax error: DEFINE MACRO statements cannot be composed from other "
           "expansions");
       }
-#line 801 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 801 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 23:
-#line 1755 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1755 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
           yystack_[2].location, "Hints are not allowed on DEFINE MACRO statements.");
       }
-#line 810 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 810 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 24:
-#line 1760 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1760 "bison_parser.y" // lalr1.cc:919
     {
         // This is here for extra future-proofing. We should never hit this
         // codepath, because the expander should only generate
@@ -821,95 +821,95 @@ namespace zetasql_bison_parser {
         YYERROR_AND_ABORT_AT(
           yystack_[2].location, "Hints are not allowed on DEFINE MACRO statements");
       }
-#line 825 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 825 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 25:
-#line 1773 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1773 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 831 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 831 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 26:
-#line 1774 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1774 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 837 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 837 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 27:
-#line 1775 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1775 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 843 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 843 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 28:
-#line 1776 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1776 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 849 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 849 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 29:
-#line 1777 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1777 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 855 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 855 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 30:
-#line 1781 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1781 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 861 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 861 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 31:
-#line 1782 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1782 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 867 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 867 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 32:
-#line 1783 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1783 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 873 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 873 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 33:
-#line 1784 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1784 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 879 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 879 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 34:
-#line 1785 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1785 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 885 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 885 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 35:
-#line 1786 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1786 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 891 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 891 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 36:
-#line 1787 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1787 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 897 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 897 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 37:
-#line 1788 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1788 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 903 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 903 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 38:
-#line 1797 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1797 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_LOOKBACK(KW_BEGIN, LB_OPEN_STATEMENT_BLOCK); }
-#line 909 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 909 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 39:
-#line 1799 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1799 "bison_parser.y" // lalr1.cc:919
     {
         CHECK_LABEL_SUPPORT((yystack_[4].value.identifier), yystack_[4].location);
         if ((yystack_[0].value.identifier) != nullptr &&
@@ -924,323 +924,323 @@ namespace zetasql_bison_parser {
         (yystack_[1].value.node)->AddChildFront(label);
         (yylhs.value.node) = parser->WithLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 928 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 928 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 40:
-#line 1816 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1816 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 934 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 934 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 41:
-#line 1817 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1817 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 940 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 940 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 42:
-#line 1818 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1818 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 946 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 946 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 43:
-#line 1819 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1819 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 952 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 952 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 44:
-#line 1820 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1820 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 958 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 958 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 45:
-#line 1821 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1821 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 964 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 964 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 46:
-#line 1822 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1822 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 970 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 970 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 47:
-#line 1823 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1823 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 976 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 976 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 48:
-#line 1824 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1824 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 982 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 982 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 49:
-#line 1825 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1825 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 988 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 988 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 50:
-#line 1826 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1826 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 994 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 994 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 51:
-#line 1827 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1827 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1000 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1000 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 52:
-#line 1828 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1828 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1006 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1006 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 53:
-#line 1829 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1829 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1012 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1012 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 54:
-#line 1830 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1830 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1018 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1018 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 55:
-#line 1831 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1831 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1024 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1024 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 56:
-#line 1832 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1832 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1030 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1030 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 57:
-#line 1833 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1833 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1036 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1036 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 58:
-#line 1834 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1834 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1042 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1042 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 59:
-#line 1835 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1835 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1048 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1048 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 60:
-#line 1836 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1836 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1054 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1054 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 61:
-#line 1837 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1837 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1060 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1060 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 62:
-#line 1838 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1838 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1066 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1066 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 63:
-#line 1839 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1839 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1072 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1072 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 64:
-#line 1840 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1840 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1078 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1078 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 65:
-#line 1841 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1841 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1084 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1084 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 66:
-#line 1842 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1842 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1090 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1090 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 67:
-#line 1843 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1843 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1096 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1096 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 68:
-#line 1844 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1844 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1102 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1102 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 69:
-#line 1845 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1845 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1108 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1108 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 70:
-#line 1846 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1846 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1114 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1114 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 71:
-#line 1847 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1847 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1120 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1120 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 72:
-#line 1848 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1848 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1126 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1126 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 73:
-#line 1849 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1849 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1132 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1132 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 74:
-#line 1850 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1850 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1138 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1138 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 75:
-#line 1851 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1851 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1144 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1144 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 76:
-#line 1852 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1852 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1150 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1150 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 77:
-#line 1853 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1853 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1156 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1156 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 78:
-#line 1854 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1854 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1162 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1162 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 79:
-#line 1855 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1855 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1168 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1168 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 80:
-#line 1856 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1856 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1174 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1174 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 81:
-#line 1857 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1857 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1180 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1180 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 82:
-#line 1858 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1858 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1186 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1186 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 83:
-#line 1859 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1859 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1192 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1192 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 84:
-#line 1860 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1860 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1198 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1198 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 85:
-#line 1861 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1861 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1204 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1204 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 86:
-#line 1862 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1862 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1210 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1210 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 87:
-#line 1863 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1863 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1216 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1216 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 88:
-#line 1864 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1864 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1222 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1222 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 89:
-#line 1865 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1865 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1228 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1228 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 90:
-#line 1866 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1866 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1234 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1234 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 91:
-#line 1867 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1867 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1240 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1240 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 92:
-#line 1875 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1875 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_4_SQL_MACROS)) {
@@ -1249,11 +1249,11 @@ namespace zetasql_bison_parser {
         PushBisonParserMode(tokenizer,
             zetasql::parser::BisonParserMode::kMacroBody);
       }
-#line 1253 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1253 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 93:
-#line 1884 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1884 "bison_parser.y" // lalr1.cc:919
     {
         absl::string_view name = parser->GetInputText(yystack_[1].location);
         absl::Status is_identifier_or_keyword =
@@ -1272,71 +1272,71 @@ namespace zetasql_bison_parser {
                        yylhs.location,
                        {parser->MakeIdentifier(yystack_[1].location, name), (yystack_[0].value.node)});
       }
-#line 1276 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1276 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 94:
-#line 1917 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1917 "bison_parser.y" // lalr1.cc:919
     {
         auto* macro_body = MAKE_NODE(ASTMacroBody, yylhs.location);
         macro_body->set_image("");
         (yylhs.value.node) = macro_body;
       }
-#line 1286 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1286 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 95:
-#line 1923 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1923 "bison_parser.y" // lalr1.cc:919
     {
         auto* macro_body = MAKE_NODE(ASTMacroBody, yylhs.location);
         macro_body->set_image(std::string(parser->GetInputText(yystack_[0].location)));
         (yylhs.value.node) = macro_body;
       }
-#line 1296 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1296 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 98:
-#line 1937 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1937 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTQueryStatement, yylhs.location, {(yystack_[0].value.query)});
       }
-#line 1304 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1304 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 99:
-#line 1944 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1944 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSetOptionsAction, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1312 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1312 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 100:
-#line 1949 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1949 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSetAsAction, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1320 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1320 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 101:
-#line 1953 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1953 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAddConstraintAction, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1328 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1328 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 102:
-#line 1957 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1957 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAddConstraintAction, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1336 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1336 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 103:
-#line 1962 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1962 "bison_parser.y" // lalr1.cc:919
     {
         auto* constraint = (yystack_[0].value.node);
         constraint->AddChild((yystack_[1].value.identifier));
@@ -1345,32 +1345,32 @@ namespace zetasql_bison_parser {
         node->set_is_if_not_exists((yystack_[2].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1349 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1349 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 104:
-#line 1971 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1971 "bison_parser.y" // lalr1.cc:919
     {
         auto* node =
           MAKE_NODE(ASTDropConstraintAction, yylhs.location, {(yystack_[0].value.identifier)});
         node->set_is_if_exists((yystack_[1].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1360 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1360 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 105:
-#line 1978 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1978 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTDropPrimaryKeyAction, yylhs.location, {});
         node->set_is_if_exists((yystack_[0].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1370 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1370 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 106:
-#line 1984 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1984 "bison_parser.y" // lalr1.cc:919
     {
         auto* node =
           MAKE_NODE(ASTAlterConstraintEnforcementAction, yylhs.location, {(yystack_[1].value.identifier)});
@@ -1378,129 +1378,129 @@ namespace zetasql_bison_parser {
         node->set_is_enforced((yystack_[0].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1382 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1382 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 107:
-#line 1992 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 1992 "bison_parser.y" // lalr1.cc:919
     {
         auto* node =
           MAKE_NODE(ASTAlterConstraintSetOptionsAction, yylhs.location, {(yystack_[3].value.identifier), (yystack_[0].value.node)});
         node->set_is_if_exists((yystack_[4].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1393 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1393 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 108:
-#line 2000 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2000 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAddColumnAction, yylhs.location, {(yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.expression)});
         node->set_is_if_not_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1403 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1403 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 109:
-#line 2006 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2006 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTDropColumnAction, yylhs.location, {(yystack_[0].value.identifier)});
         node->set_is_if_exists((yystack_[1].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1413 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1413 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 110:
-#line 2012 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2012 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTRenameColumnAction, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.identifier)});
         node->set_is_if_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1423 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1423 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 111:
-#line 2019 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2019 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAlterColumnTypeAction, yylhs.location, {(yystack_[4].value.identifier), (yystack_[0].value.node)});
         node->set_is_if_exists((yystack_[5].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1433 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1433 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 112:
-#line 2025 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2025 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAlterColumnOptionsAction, yylhs.location, {(yystack_[3].value.identifier), (yystack_[0].value.node)});
         node->set_is_if_exists((yystack_[4].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1443 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1443 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 113:
-#line 2031 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2031 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAlterColumnSetDefaultAction, yylhs.location,{(yystack_[3].value.identifier), (yystack_[0].value.expression)});
         node->set_is_if_exists((yystack_[4].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1453 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1453 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 114:
-#line 2037 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2037 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAlterColumnDropDefaultAction, yylhs.location, {(yystack_[2].value.identifier)});
         node->set_is_if_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1463 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1463 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 115:
-#line 2043 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2043 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAlterColumnDropNotNullAction, yylhs.location, {(yystack_[3].value.identifier)});
         node->set_is_if_exists((yystack_[4].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1473 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1473 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 116:
-#line 2049 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2049 "bison_parser.y" // lalr1.cc:919
     {
         auto* node =
             MAKE_NODE(ASTAlterColumnDropGeneratedAction, yylhs.location, {(yystack_[2].value.identifier)});
         node->set_is_if_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1484 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1484 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 117:
-#line 2056 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2056 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRenameToClause, yylhs.location, {(yystack_[0].value.path_expression)});
       }
-#line 1492 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1492 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 118:
-#line 2060 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2060 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSetCollateClause, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1500 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1500 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 119:
-#line 2064 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2064 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_4_TTL)) {
@@ -1511,11 +1511,11 @@ namespace zetasql_bison_parser {
         node->set_is_if_not_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1515 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1515 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 120:
-#line 2075 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2075 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_4_TTL)) {
@@ -1526,11 +1526,11 @@ namespace zetasql_bison_parser {
         node->set_is_if_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1530 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1530 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 121:
-#line 2086 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2086 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_4_TTL)) {
@@ -1541,85 +1541,85 @@ namespace zetasql_bison_parser {
         node->set_is_if_exists((yystack_[0].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1545 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1545 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 122:
-#line 2097 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2097 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAlterSubEntityAction, yylhs.location, {(yystack_[3].value.node), (yystack_[1].value.identifier), (yystack_[0].value.node)});
         node->set_is_if_exists((yystack_[2].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1555 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1555 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 123:
-#line 2104 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2104 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAddSubEntityAction, yylhs.location, {(yystack_[3].value.node), (yystack_[1].value.identifier), (yystack_[0].value.node)});
         node->set_is_if_not_exists((yystack_[2].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1565 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1565 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 124:
-#line 2110 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2110 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTDropSubEntityAction, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.identifier)});
         node->set_is_if_exists((yystack_[1].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1575 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1575 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 125:
-#line 2115 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2115 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1581 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1581 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 126:
-#line 2116 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2116 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1587 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1587 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 127:
-#line 2121 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2121 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAlterActionList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1595 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1595 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 128:
-#line 2125 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2125 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 1603 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1603 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 129:
-#line 2133 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2133 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1609 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1609 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 130:
-#line 2135 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2135 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAddToRestricteeListClause, yylhs.location, {(yystack_[0].value.node)});
         node->set_is_if_not_exists((yystack_[1].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1619 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1619 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 131:
-#line 2141 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2141 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(
             ASTRemoveFromRestricteeListClause, yylhs.location, {(yystack_[0].value.node)}
@@ -1627,119 +1627,119 @@ namespace zetasql_bison_parser {
         node->set_is_if_exists((yystack_[1].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1631 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1631 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 132:
-#line 2154 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2154 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAlterActionList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1639 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1639 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 133:
-#line 2159 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2159 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 1647 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1647 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 134:
-#line 2167 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2167 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1653 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1653 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 135:
-#line 2169 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2169 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTFilterUsingClause* node = MAKE_NODE(
             ASTFilterUsingClause, yylhs.location, {(yystack_[1].value.expression)});
         node->set_has_filter_keyword(true);
         (yylhs.value.node) = node;
       }
-#line 1664 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1664 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 136:
-#line 2176 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2176 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRevokeFromClause, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 1672 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1672 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 137:
-#line 2180 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2180 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTRevokeFromClause* node = MAKE_NODE(
             ASTRevokeFromClause, yylhs.location);
         node->set_is_revoke_from_all(true);
         (yylhs.value.node) = node;
       }
-#line 1683 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1683 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 138:
-#line 2187 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2187 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTPathExpression* id =
             MAKE_NODE(ASTPathExpression, yystack_[0].location, {(yystack_[0].value.identifier)});
         (yylhs.value.node) = MAKE_NODE(ASTRenameToClause, yylhs.location, {id});
       }
-#line 1693 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1693 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 139:
-#line 2198 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2198 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAlterActionList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1701 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1701 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 140:
-#line 2202 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2202 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 1709 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1709 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 141:
-#line 2218 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2218 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kAggregateFunction; }
-#line 1715 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1715 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 142:
-#line 2220 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2220 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kApproxView; }
-#line 1721 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1721 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 143:
-#line 2222 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2222 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kConnection; }
-#line 1727 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1727 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 144:
-#line 2224 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2224 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kConstant; }
-#line 1733 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1733 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 145:
-#line 2226 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2226 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kDatabase; }
-#line 1739 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1739 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 146:
-#line 2227 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2227 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.table_or_table_function_keywords) == TableOrTableFunctionKeywords::kTableAndFunctionKeywords) {
             YYERROR_AND_ABORT_AT(yystack_[1].location,
@@ -1748,59 +1748,59 @@ namespace zetasql_bison_parser {
            (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kExternalTable;
         }
       }
-#line 1752 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1752 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 147:
-#line 2236 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2236 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kExternalSchema; }
-#line 1758 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1758 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 148:
-#line 2238 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2238 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kFunction; }
-#line 1764 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1764 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 149:
-#line 2240 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2240 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kIndex; }
-#line 1770 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1770 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 150:
-#line 2242 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2242 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kMaterializedView; }
-#line 1776 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1776 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 151:
-#line 2244 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2244 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kModel; }
-#line 1782 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1782 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 152:
-#line 2246 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2246 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kProcedure; }
-#line 1788 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1788 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 153:
-#line 2248 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2248 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kSchema; }
-#line 1794 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1794 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 154:
-#line 2250 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2250 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.schema_object_kind_keyword) = zetasql::SchemaObjectKind::kView; }
-#line 1800 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1800 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 155:
-#line 2256 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2256 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[3].value.table_or_table_function_keywords) == TableOrTableFunctionKeywords::kTableAndFunctionKeywords) {
           YYERROR_AND_ABORT_AT(yystack_[3].location, "ALTER TABLE FUNCTION is not supported");
@@ -1811,11 +1811,11 @@ namespace zetasql_bison_parser {
         node->set_is_if_exists((yystack_[2].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1815 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1815 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 156:
-#line 2268 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2268 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTAlterStatementBase* node = nullptr;
         // Only ALTER DATABASE, SCHEMA, TABLE, VIEW, MATERIALIZED VIEW,
@@ -1844,21 +1844,21 @@ namespace zetasql_bison_parser {
         node->AddChildren({(yystack_[1].value.path_expression), (yystack_[0].value.node)});
         (yylhs.value.node) = parser->WithLocation(node, yylhs.location);
       }
-#line 1848 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1848 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 157:
-#line 2298 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2298 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTAlterEntityStatement, yylhs.location, {(yystack_[3].value.node), (yystack_[1].value.path_expression), (yystack_[0].value.node)});
         node->set_is_if_exists((yystack_[2].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1858 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1858 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 158:
-#line 2304 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2304 "bison_parser.y" // lalr1.cc:919
     {
         if (parser->language_options().LanguageFeatureEnabled(
                zetasql::FEATURE_ALLOW_MISSING_PATH_EXPRESSION_IN_ALTER_DDL)) {
@@ -1872,41 +1872,41 @@ namespace zetasql_bison_parser {
                                parser->GetFirstTokenOfNode(yystack_[0].location)));
         }
       }
-#line 1876 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1876 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 159:
-#line 2320 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2320 "bison_parser.y" // lalr1.cc:919
     {
         auto* alter_privilege_restriction = MAKE_NODE(
             ASTAlterPrivilegeRestrictionStatement, yylhs.location, {(yystack_[4].value.node), (yystack_[2].value.identifier), (yystack_[1].value.path_expression), (yystack_[0].value.node)});
         alter_privilege_restriction->set_is_if_exists((yystack_[6].value.boolean));
         (yylhs.value.node) = alter_privilege_restriction;
       }
-#line 1887 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1887 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 160:
-#line 2328 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2328 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTAlterRowAccessPolicyStatement* node = MAKE_NODE(
             ASTAlterRowAccessPolicyStatement, yylhs.location, {(yystack_[3].value.identifier), (yystack_[1].value.path_expression), (yystack_[0].value.node)});
         node->set_is_if_exists((yystack_[4].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 1898 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1898 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 161:
-#line 2336 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2336 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAlterAllRowAccessPoliciesStatement, yylhs.location, {(yystack_[1].value.path_expression), (yystack_[0].value.node)});
       }
-#line 1906 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1906 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 162:
-#line 2345 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2345 "bison_parser.y" // lalr1.cc:919
     {
         auto* input = (yystack_[2].value.node)->GetAsOrDie<zetasql::ASTTableElementList>();
         if (input->HasConstraints()) {
@@ -1920,223 +1920,223 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = MAKE_NODE(ASTInputOutputClause, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.node)});
       }
-#line 1924 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1924 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 163:
-#line 2358 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2358 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 1930 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1930 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 164:
-#line 2363 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2363 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTransformClause, yylhs.location, {(yystack_[1].value.node)})
       }
-#line 1938 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1938 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 165:
-#line 2366 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2366 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 1944 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1944 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 166:
-#line 2371 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2371 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAssertStatement, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.node)});
       }
-#line 1952 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1952 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 167:
-#line 2378 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2378 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.string_literal);
       }
-#line 1960 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1960 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 168:
-#line 2382 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2382 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 1968 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1968 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 169:
-#line 2389 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2389 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAnalyzeStatement, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 1976 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1976 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 170:
-#line 2395 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2395 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 1982 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1982 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 171:
-#line 2396 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2396 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 1988 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1988 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 172:
-#line 2401 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2401 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTableAndColumnInfoList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 1996 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 1996 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 173:
-#line 2405 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2405 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 2004 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2004 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 174:
-#line 2412 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2412 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTableAndColumnInfo, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.node)});
       }
-#line 2012 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2012 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 175:
-#line 2419 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2419 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTTransactionReadWriteMode, yylhs.location, {});
         node->set_mode(zetasql::ASTTransactionReadWriteMode::READ_ONLY);
         (yylhs.value.node) = node;
       }
-#line 2022 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2022 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 176:
-#line 2425 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2425 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTTransactionReadWriteMode, yylhs.location, {});
         node->set_mode(zetasql::ASTTransactionReadWriteMode::READ_WRITE);
         (yylhs.value.node) = node;
       }
-#line 2032 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2032 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 177:
-#line 2431 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2431 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTransactionIsolationLevel, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 2040 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2040 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 178:
-#line 2435 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2435 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTransactionIsolationLevel, yylhs.location, {(yystack_[1].value.identifier), (yystack_[0].value.identifier)});
       }
-#line 2048 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2048 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 179:
-#line 2442 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2442 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTransactionModeList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 2056 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2056 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 180:
-#line 2446 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2446 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 2064 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2064 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 181:
-#line 2452 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2452 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 2070 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2070 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 182:
-#line 2454 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2454 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 2078 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2078 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 183:
-#line 2461 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2461 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTBeginStatement, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 2086 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2086 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 189:
-#line 2482 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2482 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSetTransactionStatement, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 2094 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2094 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 190:
-#line 2486 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2486 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTSingleAssignment, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.expression)});
     }
-#line 2102 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2102 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 191:
-#line 2490 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2490 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTParameterAssignment, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
     }
-#line 2110 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2110 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 192:
-#line 2494 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2494 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTSystemVariableAssignment, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
     }
-#line 2118 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2118 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 193:
-#line 2498 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2498 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTAssignmentFromStruct, yylhs.location, {(yystack_[3].value.node), (yystack_[0].value.expression)});
     }
-#line 2126 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2126 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 194:
-#line 2502 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2502 "bison_parser.y" // lalr1.cc:919
     {
       // Provide improved error message for an empty variable list.
       YYERROR_AND_ABORT_AT(yystack_[0].location,
         "Parenthesized SET statement requires a variable list");
     }
-#line 2136 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2136 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 195:
-#line 2508 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2508 "bison_parser.y" // lalr1.cc:919
     {
       // Provide improved error message for missing parentheses around a
       // list of multiple variables.
@@ -2144,51 +2144,51 @@ namespace zetasql_bison_parser {
         "Using SET with multiple variables requires parentheses around the "
         "variable list");
     }
-#line 2148 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2148 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 196:
-#line 2519 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2519 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCommitStatement, yylhs.location, {});
       }
-#line 2156 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2156 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 197:
-#line 2526 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2526 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRollbackStatement, yylhs.location, {});
       }
-#line 2164 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2164 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 198:
-#line 2533 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2533 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStartBatchStatement, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 2172 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2172 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 199:
-#line 2540 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2540 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRunBatchStatement, yylhs.location, {});
       }
-#line 2180 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2180 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 200:
-#line 2547 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2547 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAbortBatchStatement, yylhs.location, {});
       }
-#line 2188 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2188 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 201:
-#line 2555 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2555 "bison_parser.y" // lalr1.cc:919
     {
         auto* create = MAKE_NODE(ASTCreateConstantStatement, yylhs.location, {(yystack_[2].value.path_expression), (yystack_[0].value.expression)});
         create->set_is_or_replace((yystack_[6].value.boolean));
@@ -2196,28 +2196,28 @@ namespace zetasql_bison_parser {
         create->set_is_if_not_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 2200 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2200 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 202:
-#line 2566 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2566 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCreateDatabaseStatement, yylhs.location, {(yystack_[1].value.path_expression), (yystack_[0].value.node)});
       }
-#line 2208 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2208 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 203:
-#line 2573 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2573 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.options_body_set).options = (yystack_[1].value.node);
         (yylhs.value.options_body_set).body = (yystack_[0].value.node);
       }
-#line 2217 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2217 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 204:
-#line 2578 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2578 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.node) != nullptr) {
           parser->AddWarning(parser->GenerateWarning(
@@ -2228,20 +2228,20 @@ namespace zetasql_bison_parser {
         (yylhs.value.options_body_set).options = (yystack_[0].value.node);
         (yylhs.value.options_body_set).body = (yystack_[1].value.node);
       }
-#line 2232 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2232 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 205:
-#line 2589 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2589 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.options_body_set).options = nullptr;
         (yylhs.value.options_body_set).body = nullptr;
       }
-#line 2241 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2241 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 206:
-#line 2603 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2603 "bison_parser.y" // lalr1.cc:919
     {
         auto* create = MAKE_NODE(
             ASTCreateFunctionStatement, yylhs.location,
@@ -2256,95 +2256,95 @@ namespace zetasql_bison_parser {
         create->set_is_remote((yystack_[1].value.language_or_remote_with_connection).is_remote);
         (yylhs.value.node) = create;
       }
-#line 2260 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2260 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 207:
-#line 2621 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2621 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 2266 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2266 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 208:
-#line 2622 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2622 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 2272 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2272 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 209:
-#line 2627 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2627 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 2278 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2278 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 210:
-#line 2628 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2628 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 2284 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2284 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 211:
-#line 2633 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2633 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTFunctionDeclaration, yylhs.location, {(yystack_[1].value.path_expression), (yystack_[0].value.node)});
       }
-#line 2292 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2292 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 212:
-#line 2641 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2641 "bison_parser.y" // lalr1.cc:919
     {
         auto* parameter = MAKE_NODE(ASTFunctionParameter, yylhs.location, {(yystack_[4].value.identifier), (yystack_[3].value.node), (yystack_[2].value.alias), (yystack_[1].value.node)});
         parameter->set_is_not_aggregate((yystack_[0].value.boolean));
         (yylhs.value.node) = parameter;
       }
-#line 2302 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2302 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 213:
-#line 2647 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2647 "bison_parser.y" // lalr1.cc:919
     {
         auto* parameter = MAKE_NODE(ASTFunctionParameter, yylhs.location, {(yystack_[2].value.node), (yystack_[1].value.alias)});
         parameter->set_is_not_aggregate((yystack_[0].value.boolean));
         (yylhs.value.node) = parameter;
       }
-#line 2312 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2312 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 214:
-#line 2656 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2656 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTFunctionParameters, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 2320 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2320 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 215:
-#line 2660 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2660 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 2328 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2328 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 216:
-#line 2667 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2667 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 2336 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2336 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 217:
-#line 2671 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2671 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTFunctionParameters, yylhs.location);
       }
-#line 2344 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2344 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 218:
-#line 2678 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2678 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTStatementList* stmt_list = MAKE_NODE(
             ASTStatementList, yystack_[0].location, {(yystack_[0].value.node)});
@@ -2353,11 +2353,11 @@ namespace zetasql_bison_parser {
         (yylhs.value.begin_end_block_or_language_as_code).language = nullptr;
         (yylhs.value.begin_end_block_or_language_as_code).code = nullptr;
       }
-#line 2357 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2357 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 219:
-#line 2687 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2687 "bison_parser.y" // lalr1.cc:919
     {
         if (parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_NON_SQL_PROCEDURE)) {
@@ -2368,37 +2368,37 @@ namespace zetasql_bison_parser {
           YYERROR_AND_ABORT_AT(yystack_[2].location, "LANGUAGE is not supported");
         }
       }
-#line 2372 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2372 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 220:
-#line 2700 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2700 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.external_security) = (yystack_[0].value.external_security); }
-#line 2378 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2378 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 221:
-#line 2702 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2702 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.external_security) = zetasql::ASTCreateStatement::SQL_SECURITY_UNSPECIFIED;
       }
-#line 2386 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2386 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 222:
-#line 2708 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2708 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.external_security) = zetasql::ASTCreateStatement::SQL_SECURITY_INVOKER; }
-#line 2392 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2392 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 223:
-#line 2709 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2709 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.external_security) = zetasql::ASTCreateStatement::SQL_SECURITY_DEFINER; }
-#line 2398 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2398 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 224:
-#line 2716 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2716 "bison_parser.y" // lalr1.cc:919
     {
       auto* create =
           MAKE_NODE(ASTCreateProcedureStatement, yylhs.location,
@@ -2409,53 +2409,53 @@ namespace zetasql_bison_parser {
       create->set_external_security((yystack_[3].value.external_security));
       (yylhs.value.node) = create;
     }
-#line 2413 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2413 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 225:
-#line 2729 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2729 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTFunctionParameters, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 2421 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2421 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 226:
-#line 2733 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2733 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 2429 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2429 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 227:
-#line 2740 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2740 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 2437 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2437 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 228:
-#line 2744 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2744 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTFunctionParameters, yylhs.location);
       }
-#line 2445 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2445 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 231:
-#line 2756 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2756 "bison_parser.y" // lalr1.cc:919
     {
         auto* parameter = MAKE_NODE(ASTFunctionParameter, yylhs.location, {(yystack_[1].value.identifier), (yystack_[0].value.node)});
         parameter->set_procedure_parameter_mode((yystack_[2].value.parameter_mode));
         (yylhs.value.node) = parameter;
       }
-#line 2455 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2455 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 232:
-#line 2762 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2762 "bison_parser.y" // lalr1.cc:919
     {
         // There may be 3 cases causing this error:
         // 1. OUT int32_t where mode is empty and intended identifier name is
@@ -2470,35 +2470,35 @@ namespace zetasql_bison_parser {
                              "parameter, it must be escaped with backticks"
                              );
       }
-#line 2474 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2474 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 233:
-#line 2779 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2779 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.parameter_mode) = ::zetasql::ASTFunctionParameter::ProcedureParameterMode::IN;}
-#line 2480 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2480 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 234:
-#line 2781 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2781 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.parameter_mode) = ::zetasql::ASTFunctionParameter::ProcedureParameterMode::OUT;}
-#line 2486 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2486 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 235:
-#line 2783 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2783 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.parameter_mode) = ::zetasql::ASTFunctionParameter::ProcedureParameterMode::INOUT;}
-#line 2492 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2492 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 236:
-#line 2785 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2785 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.parameter_mode) = ::zetasql::ASTFunctionParameter::ProcedureParameterMode::NOT_SET;}
-#line 2498 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2498 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 237:
-#line 2790 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2790 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.node)->node_kind() == zetasql::AST_TEMPLATED_PARAMETER_TYPE) {
           // TODO: Note that the official design supports this
@@ -2511,19 +2511,19 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 2515 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2515 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 238:
-#line 2803 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2803 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 2523 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2523 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 239:
-#line 2810 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2810 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.node) != nullptr &&
             (yystack_[0].value.node)->node_kind() == zetasql::AST_TVF_SCHEMA) {
@@ -2531,71 +2531,71 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 2535 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2535 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 240:
-#line 2820 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2820 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.determinism_level) = zetasql::ASTCreateFunctionStmtBase::DETERMINISTIC;}
-#line 2541 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2541 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 241:
-#line 2822 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2822 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.determinism_level) = zetasql::ASTCreateFunctionStmtBase::NOT_DETERMINISTIC;}
-#line 2547 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2547 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 242:
-#line 2824 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2824 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.determinism_level) = zetasql::ASTCreateFunctionStmtBase::IMMUTABLE;}
-#line 2553 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2553 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 243:
-#line 2826 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2826 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.determinism_level) = zetasql::ASTCreateFunctionStmtBase::STABLE;}
-#line 2559 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2559 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 244:
-#line 2828 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2828 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.determinism_level) = zetasql::ASTCreateFunctionStmtBase::VOLATILE;}
-#line 2565 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2565 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 245:
-#line 2830 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2830 "bison_parser.y" // lalr1.cc:919
     {(yylhs.value.determinism_level) = zetasql::ASTCreateFunctionStmtBase::DETERMINISM_UNSPECIFIED;}
-#line 2571 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2571 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 246:
-#line 2835 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2835 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.identifier) = (yystack_[0].value.identifier);
       }
-#line 2579 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2579 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 247:
-#line 2842 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2842 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.identifier) = (yystack_[0].value.identifier);
       }
-#line 2587 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2587 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 248:
-#line 2846 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2846 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.identifier) = nullptr;
       }
-#line 2595 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2595 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 249:
-#line 2853 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2853 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_V_1_3_REMOTE_FUNCTION)) {
@@ -2611,11 +2611,11 @@ namespace zetasql_bison_parser {
               (yystack_[0].value.node)->GetAsOrDie<zetasql::ASTWithConnectionClause>();
         }
       }
-#line 2615 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2615 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 250:
-#line 2869 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2869 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.language_or_remote_with_connection).language = nullptr;
         (yylhs.value.language_or_remote_with_connection).is_remote = false;
@@ -2632,169 +2632,169 @@ namespace zetasql_bison_parser {
               (yystack_[0].value.node)->GetAsOrDie<zetasql::ASTWithConnectionClause>();
         }
       }
-#line 2636 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2636 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 251:
-#line 2889 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2889 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.language_or_remote_with_connection) = (yystack_[0].value.language_or_remote_with_connection);
       }
-#line 2644 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2644 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 252:
-#line 2893 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2893 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.language_or_remote_with_connection).language = nullptr;
         (yylhs.value.language_or_remote_with_connection).is_remote = false;
         (yylhs.value.language_or_remote_with_connection).with_connection_clause = nullptr;
       }
-#line 2654 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2654 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 253:
-#line 2903 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2903 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.language_or_remote_with_connection) = (yystack_[0].value.language_or_remote_with_connection);
         (yylhs.value.language_or_remote_with_connection).language = (yystack_[1].value.identifier);
       }
-#line 2663 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2663 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 254:
-#line 2908 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2908 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.language_or_remote_with_connection) = (yystack_[1].value.language_or_remote_with_connection);
         (yylhs.value.language_or_remote_with_connection).language = (yystack_[0].value.identifier);
       }
-#line 2672 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2672 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 255:
-#line 2913 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2913 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.language_or_remote_with_connection).language = nullptr;
         (yylhs.value.language_or_remote_with_connection).is_remote = false;
         (yylhs.value.language_or_remote_with_connection).with_connection_clause = nullptr;
       }
-#line 2682 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2682 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 256:
-#line 2922 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2922 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.sql_security) = (yystack_[0].value.sql_security); }
-#line 2688 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2688 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 257:
-#line 2924 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2924 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.sql_security) = zetasql::ASTCreateStatement::SQL_SECURITY_UNSPECIFIED;
       }
-#line 2696 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2696 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 258:
-#line 2930 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2930 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.sql_security) = zetasql::ASTCreateStatement::SQL_SECURITY_INVOKER; }
-#line 2702 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2702 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 259:
-#line 2931 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2931 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.sql_security) = zetasql::ASTCreateStatement::SQL_SECURITY_DEFINER; }
-#line 2708 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2708 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 260:
-#line 2935 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2935 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 2716 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2716 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 261:
-#line 2939 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2939 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.string_literal);
       }
-#line 2724 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2724 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 262:
-#line 2945 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2945 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 2730 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2730 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 263:
-#line 2947 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2947 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 2738 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2738 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 264:
-#line 2954 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2954 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.string_literal);
       }
-#line 2746 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2746 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 265:
-#line 2958 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2958 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 2754 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2754 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 266:
-#line 2965 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2965 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.path_expression);
       }
-#line 2762 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2762 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 267:
-#line 2969 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2969 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.string_literal);
       }
-#line 2770 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2770 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 268:
-#line 2976 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2976 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = (yystack_[0].value.path_expression);
       }
-#line 2778 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2778 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 269:
-#line 2980 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2980 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTDefaultLiteral, yylhs.location, {});
       }
-#line 2786 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2786 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 270:
-#line 2987 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2987 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSqlFunctionBody, yylhs.location, {(yystack_[1].value.expression)});
       }
-#line 2794 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2794 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 271:
-#line 2991 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 2991 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
         yystack_[0].location,
@@ -2802,108 +2802,108 @@ namespace zetasql_bison_parser {
         "query; to use a query as an expression, the query must be wrapped "
         "with additional parentheses to make it a scalar subquery expression");
       }
-#line 2806 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2806 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 272:
-#line 3005 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3005 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTRestrictToClause* node =
             MAKE_NODE(ASTRestrictToClause, yylhs.location, {(yystack_[0].value.node)});
         (yylhs.value.node) = node;
       }
-#line 2816 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2816 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 273:
-#line 3014 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3014 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 2824 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2824 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 274:
-#line 3018 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3018 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 2832 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2832 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 275:
-#line 3025 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3025 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTGrantToClause* grant_to =
             MAKE_NODE(ASTGrantToClause, yylhs.location, {(yystack_[1].value.node)});
         grant_to->set_has_grant_keyword_and_parens(true);
         (yylhs.value.node) = grant_to;
       }
-#line 2843 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2843 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 276:
-#line 3033 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3033 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 2849 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2849 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 277:
-#line 3035 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3035 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTGrantToClause* grant_to =
             MAKE_NODE(ASTGrantToClause, yylhs.location, {(yystack_[0].value.node)});
         grant_to->set_has_grant_keyword_and_parens(false);
         (yylhs.value.node) = grant_to;
       }
-#line 2860 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2860 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 278:
-#line 3044 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3044 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 2868 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2868 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 279:
-#line 3048 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3048 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 2876 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2876 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 280:
-#line 3056 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3056 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.boolean) = true;
       }
-#line 2884 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2884 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 281:
-#line 3060 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3060 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.boolean) = false;
       }
-#line 2892 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2892 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 282:
-#line 3067 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3067 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTFilterUsingClause* filter_using =
             MAKE_NODE(ASTFilterUsingClause, yylhs.location, {(yystack_[1].value.expression)});
         filter_using->set_has_filter_keyword((yystack_[4].value.boolean));
         (yylhs.value.node) = filter_using;
       }
-#line 2903 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2903 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 283:
-#line 3078 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3078 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTCreatePrivilegeRestrictionStatement* node =
             MAKE_NODE(ASTCreatePrivilegeRestrictionStatement, yylhs.location,
@@ -2912,11 +2912,11 @@ namespace zetasql_bison_parser {
         node->set_is_if_not_exists((yystack_[6].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 2916 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2916 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 284:
-#line 3092 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3092 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTPathExpression* opt_path_expression =
             (yystack_[4].value.identifier) == nullptr ? nullptr : MAKE_NODE(ASTPathExpression, yystack_[4].location, {(yystack_[4].value.identifier)});
@@ -2928,69 +2928,69 @@ namespace zetasql_bison_parser {
         create->set_has_access_keyword((yystack_[7].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 2932 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2932 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 285:
-#line 3107 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3107 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTWithPartitionColumnsClause* with_partition_columns =
             MAKE_NODE(ASTWithPartitionColumnsClause, yylhs.location, {(yystack_[0].value.node)});
         (yylhs.value.node) = with_partition_columns;
       }
-#line 2942 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2942 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 286:
-#line 3116 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3116 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTWithConnectionClause, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 2950 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2950 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 287:
-#line 3131 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3131 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.external_table_with_clauses).with_partition_columns_clause =
           (yystack_[1].value.node)->GetAsOrDie<zetasql::ASTWithPartitionColumnsClause>();
       (yylhs.value.external_table_with_clauses).with_connection_clause =
           (yystack_[0].value.node)->GetAsOrDie<zetasql::ASTWithConnectionClause>();
     }
-#line 2961 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2961 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 288:
-#line 3137 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3137 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.external_table_with_clauses).with_partition_columns_clause =
           (yystack_[0].value.node)->GetAsOrDie<zetasql::ASTWithPartitionColumnsClause>();
       (yylhs.value.external_table_with_clauses).with_connection_clause = nullptr;
     }
-#line 2971 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2971 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 289:
-#line 3142 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3142 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.external_table_with_clauses).with_partition_columns_clause = nullptr;
       (yylhs.value.external_table_with_clauses).with_connection_clause =
           (yystack_[0].value.node)->GetAsOrDie<zetasql::ASTWithConnectionClause>();
     }
-#line 2981 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2981 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 290:
-#line 3147 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3147 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.external_table_with_clauses).with_partition_columns_clause = nullptr;
       (yylhs.value.external_table_with_clauses).with_connection_clause = nullptr;
     }
-#line 2990 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 2990 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 291:
-#line 3158 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3158 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.node) == nullptr) {
           YYERROR_AND_ABORT_AT(
@@ -3006,57 +3006,57 @@ namespace zetasql_bison_parser {
         create->set_is_if_not_exists((yystack_[6].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 3010 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3010 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 292:
-#line 3183 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3183 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
         yystack_[2].location,
         "Syntax error: CREATE EXTERNAL TABLE FUNCTION is not supported");
       }
-#line 3020 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3020 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 293:
-#line 3198 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3198 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.create_index_statement_suffix) = {(yystack_[1].value.node), (yystack_[0].value.node),
               /*spanner_index_innerleaving_clause=*/nullptr};
       }
-#line 3029 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3029 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 294:
-#line 3203 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3203 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.create_index_statement_suffix) = {/*partition_by=*/nullptr, (yystack_[1].value.node),
               (yystack_[0].value.node)};
       }
-#line 3038 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3038 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 295:
-#line 3208 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3208 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.create_index_statement_suffix) = {/*partition_by=*/nullptr, (yystack_[0].value.node),
               /*spanner_index_innerleaving_clause=*/nullptr};
       }
-#line 3047 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3047 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 296:
-#line 3213 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3213 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.create_index_statement_suffix) = {/*partition_by=*/nullptr, /*opt_options_list=*/nullptr,
               /*spanner_index_innerleaving_clause=*/nullptr};
       }
-#line 3056 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3056 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 297:
-#line 3224 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3224 "bison_parser.y" // lalr1.cc:919
     {
         auto* create =
           MAKE_NODE(ASTCreateIndexStatement, yylhs.location,
@@ -3077,22 +3077,22 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = create;
       }
-#line 3081 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3081 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 298:
-#line 3249 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3249 "bison_parser.y" // lalr1.cc:919
     {
         auto* create = MAKE_NODE(ASTCreateSchemaStatement, yylhs.location, {(yystack_[2].value.path_expression), (yystack_[1].value.node), (yystack_[0].value.node)});
         create->set_is_or_replace((yystack_[5].value.boolean));
         create->set_is_if_not_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 3092 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3092 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 299:
-#line 3260 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3260 "bison_parser.y" // lalr1.cc:919
     {
         auto* create = MAKE_NODE(ASTCreateExternalSchemaStatement, yylhs.location, {(yystack_[2].value.path_expression), (yystack_[1].value.node), (yystack_[0].value.node)});
         create->set_is_or_replace((yystack_[7].value.boolean));
@@ -3100,22 +3100,22 @@ namespace zetasql_bison_parser {
         create->set_is_if_not_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 3104 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3104 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 300:
-#line 3272 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3272 "bison_parser.y" // lalr1.cc:919
     {
         auto* create = MAKE_NODE(ASTCreateConnectionStatement, yylhs.location, {(yystack_[1].value.path_expression), (yystack_[0].value.node)});
         create->set_is_or_replace((yystack_[4].value.boolean));
         create->set_is_if_not_exists((yystack_[2].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 3115 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3115 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 301:
-#line 3283 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3283 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[4].value.schema_object_kind_keyword) != zetasql::SchemaObjectKind::kSchema) {
           YYERROR_AND_ABORT_AT(yystack_[4].location, absl::StrCat("UNDROP ", absl::AsciiStrToUpper(
@@ -3126,11 +3126,11 @@ namespace zetasql_bison_parser {
         undrop->set_is_if_not_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = undrop;
       }
-#line 3130 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3130 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 302:
-#line 3298 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3298 "bison_parser.y" // lalr1.cc:919
     {
         auto* create =
             MAKE_NODE(ASTCreateSnapshotTableStatement, yylhs.location, {(yystack_[3].value.expression), (yystack_[1].value.node), (yystack_[0].value.node)});
@@ -3138,11 +3138,11 @@ namespace zetasql_bison_parser {
         create->set_is_or_replace((yystack_[7].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 3142 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3142 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 303:
-#line 3307 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3307 "bison_parser.y" // lalr1.cc:919
     {
         if (!zetasql::SchemaObjectAllowedForSnapshot((yystack_[5].value.schema_object_kind_keyword))) {
           YYERROR_AND_ABORT_AT(yystack_[5].location, absl::StrCat("CREATE SNAPSHOT ", absl::AsciiStrToUpper(
@@ -3155,39 +3155,39 @@ namespace zetasql_bison_parser {
         create->set_is_or_replace((yystack_[7].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 3159 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3159 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 304:
-#line 3323 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3323 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.language_options_set).language = (yystack_[1].value.identifier);
         (yylhs.value.language_options_set).options = (yystack_[0].value.node);
       }
-#line 3168 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3168 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 305:
-#line 3328 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3328 "bison_parser.y" // lalr1.cc:919
     {
         // This production is deprecated (with no warning YET).
         (yylhs.value.language_options_set).language = (yystack_[0].value.identifier);
         (yylhs.value.language_options_set).options = (yystack_[1].value.node);
       }
-#line 3178 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3178 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 306:
-#line 3334 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3334 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.language_options_set).language = nullptr;
         (yylhs.value.language_options_set).options = nullptr;
       }
-#line 3187 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3187 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 307:
-#line 3353 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3353 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[4].value.node) == nullptr) {
             // Missing function argument list.
@@ -3212,11 +3212,11 @@ namespace zetasql_bison_parser {
         create->set_sql_security((yystack_[2].value.sql_security));
         (yylhs.value.node) = create;
       }
-#line 3216 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3216 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 308:
-#line 3392 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3392 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTCreateStatement* create =
             MAKE_NODE(ASTCreateTableStatement, yylhs.location, {
@@ -3239,47 +3239,47 @@ namespace zetasql_bison_parser {
         create->set_is_if_not_exists((yystack_[13].value.boolean));
         (yylhs.value.node) = create;
       }
-#line 3243 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3243 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 309:
-#line 3417 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3417 "bison_parser.y" // lalr1.cc:919
     {  // INTO to mean append, which is consistent with INSERT INTO
       (yylhs.value.insertion_mode) = zetasql::ASTAuxLoadDataStatement::InsertionMode::APPEND;
     }
-#line 3251 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3251 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 310:
-#line 3420 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3420 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.insertion_mode) = zetasql::ASTAuxLoadDataStatement::InsertionMode::OVERWRITE;
     }
-#line 3259 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3259 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 311:
-#line 3427 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3427 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAuxLoadDataFromFilesOptionsList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 3267 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3267 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 312:
-#line 3433 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3433 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 3273 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3273 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 313:
-#line 3434 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3434 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 3279 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3279 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 314:
-#line 3439 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3439 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_V_1_4_LOAD_DATA_PARTITIONS)) {
@@ -3292,53 +3292,53 @@ namespace zetasql_bison_parser {
         partitions_clause->set_is_overwrite((yystack_[4].value.boolean));
         (yylhs.value.node) = partitions_clause;
       }
-#line 3296 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3296 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 315:
-#line 3454 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3454 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 3302 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3302 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 316:
-#line 3455 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3455 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 3308 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3308 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 317:
-#line 3460 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3460 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.path_expression_with_scope).maybe_dashed_path_expression =
             (yystack_[0].value.expression)->GetAsOrDie<zetasql::ASTExpression>();
         (yylhs.value.path_expression_with_scope).is_temp_table = true;
       }
-#line 3318 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3318 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 318:
-#line 3466 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3466 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.path_expression_with_scope).maybe_dashed_path_expression =
             (yystack_[0].value.expression)->GetAsOrDie<zetasql::ASTExpression>();
         (yylhs.value.path_expression_with_scope).is_temp_table = true;
       }
-#line 3328 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3328 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 319:
-#line 3472 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3472 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.path_expression_with_scope).maybe_dashed_path_expression =
             (yystack_[0].value.expression)->GetAsOrDie<zetasql::ASTExpression>();
         (yylhs.value.path_expression_with_scope).is_temp_table = false;
       }
-#line 3338 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3338 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 320:
-#line 3489 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3489 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTAuxLoadDataStatement* statement =
             MAKE_NODE(
@@ -3358,30 +3358,30 @@ namespace zetasql_bison_parser {
         statement->set_is_temp_table((yystack_[8].value.path_expression_with_scope).is_temp_table);
         (yylhs.value.node) = statement;
       }
-#line 3362 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3362 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 321:
-#line 3512 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3512 "bison_parser.y" // lalr1.cc:919
     {
         // It is by design that we don't want to support backtick quoted
         // entity type. Backtick is kept as part of entity type name, and will
         // be rejected by engine later.
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 3373 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3373 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 322:
-#line 3519 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3519 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));;
       }
-#line 3381 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3381 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 323:
-#line 3526 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3526 "bison_parser.y" // lalr1.cc:919
     {
         std::string entity_type(parser->GetInputText(yystack_[0].location));
         if (!parser->language_options().
@@ -3391,27 +3391,27 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 3395 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3395 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 324:
-#line 3546 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3546 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.identifier) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));;
       }
-#line 3403 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3403 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 325:
-#line 3550 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3550 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.identifier) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));;
       }
-#line 3411 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3411 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 326:
-#line 3557 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3557 "bison_parser.y" // lalr1.cc:919
     {
       if (!parser->language_options().
                 GenericSubEntityTypeSupported((yystack_[0].value.identifier)->GetAsString())) {
@@ -3421,41 +3421,41 @@ namespace zetasql_bison_parser {
       }
       (yylhs.value.node) = (yystack_[0].value.identifier);
     }
-#line 3425 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3425 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 327:
-#line 3569 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3569 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.expression);
       }
-#line 3433 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3433 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 328:
-#line 3573 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3573 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.string_literal);
       }
-#line 3441 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3441 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 329:
-#line 3580 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3580 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 3449 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3449 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 330:
-#line 3583 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3583 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 3455 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3455 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 331:
-#line 3589 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3589 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(
             ASTCreateEntityStatement,
@@ -3470,11 +3470,11 @@ namespace zetasql_bison_parser {
         node->set_is_if_not_exists((yystack_[3].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 3474 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3474 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 332:
-#line 3610 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3610 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(
             ASTCreateModelStatement,
@@ -3493,31 +3493,31 @@ namespace zetasql_bison_parser {
         node->set_is_remote((yystack_[2].value.language_or_remote_with_connection).is_remote);
         (yylhs.value.node) = node;
       }
-#line 3497 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3497 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 333:
-#line 3631 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3631 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 3503 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3503 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 334:
-#line 3632 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3632 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 3509 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3509 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 335:
-#line 3637 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3637 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 3517 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3517 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 336:
-#line 3641 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3641 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_SPANNER_LEGACY_DDL)) {
@@ -3526,57 +3526,57 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = MAKE_NODE(ASTTableElementList, yylhs.location, {});
       }
-#line 3530 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3530 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 337:
-#line 3653 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3653 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTableElementList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 3538 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3538 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 338:
-#line 3657 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3657 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 3546 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3546 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 339:
-#line 3661 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3661 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 3554 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3554 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 340:
-#line 3699 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3699 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 3560 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3560 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 341:
-#line 3700 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3700 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 3566 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3566 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 342:
-#line 3705 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3705 "bison_parser.y" // lalr1.cc:919
     {
         auto* schema = parser->WithEndLocation(
             WithExtraChildren((yystack_[2].value.node), {(yystack_[1].value.node), (yystack_[0].value.node)}), yylhs.location);
         (yylhs.value.node) = MAKE_NODE(ASTColumnDefinition, yylhs.location, {(yystack_[3].value.identifier), schema});
       }
-#line 3576 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3576 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 343:
-#line 3714 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3714 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.generated_or_default_column_info).generated_column_info != nullptr) {
           (yylhs.value.node) = parser->WithEndLocation(
@@ -3592,371 +3592,371 @@ namespace zetasql_bison_parser {
                                      /*default_expression=*/nullptr}), yylhs.location);
         }
       }
-#line 3596 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3596 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 344:
-#line 3730 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3730 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTInferredTypeColumnSchema, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 3604 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3604 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 345:
-#line 3737 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3737 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSimpleColumnSchema, yylhs.location, {(yystack_[0].value.path_expression)});
       }
-#line 3612 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3612 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 346:
-#line 3742 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3742 "bison_parser.y" // lalr1.cc:919
     {
         auto* id = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
         auto* path_expression = MAKE_NODE(ASTPathExpression, yylhs.location, {id});
         (yylhs.value.node) = MAKE_NODE(ASTSimpleColumnSchema, yylhs.location, {path_expression});
       }
-#line 3622 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3622 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 347:
-#line 3751 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3751 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTArrayColumnSchema, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 3630 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3630 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 348:
-#line 3758 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3758 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRangeColumnSchema, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 3638 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3638 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 349:
-#line 3782 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3782 "bison_parser.y" // lalr1.cc:919
     {
         auto* schema = parser->WithEndLocation(
             WithExtraChildren((yystack_[2].value.node), {(yystack_[1].value.node), (yystack_[0].value.node)}), yylhs.location);
         (yylhs.value.node) = MAKE_NODE(ASTStructColumnField, yylhs.location, {schema});
       }
-#line 3648 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3648 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 350:
-#line 3788 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3788 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStructColumnField, yylhs.location, {(yystack_[1].value.identifier), (yystack_[0].value.node)});
       }
-#line 3656 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3656 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 351:
-#line 3795 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3795 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStructColumnSchema, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 3664 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3664 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 352:
-#line 3799 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3799 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 3672 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3672 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 353:
-#line 3808 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3808 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStructColumnSchema, yylhs.location);
       }
-#line 3680 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3680 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 354:
-#line 3811 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3811 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[1].value.node); }
-#line 3686 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3686 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 355:
-#line 3815 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3815 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 3692 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3692 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 356:
-#line 3816 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3816 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 3698 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3698 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 357:
-#line 3817 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3817 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 3704 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3704 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 358:
-#line 3818 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3818 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 3710 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3710 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 359:
-#line 3823 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3823 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = WithExtraChildren(parser->WithEndLocation((yystack_[1].value.node), yystack_[0].location), {(yystack_[0].value.node)});
     }
-#line 3718 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3718 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 360:
-#line 3829 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3829 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.generated_mode) = zetasql::ASTGeneratedColumnInfo::GeneratedMode::ALWAYS;
     }
-#line 3726 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3726 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 361:
-#line 3833 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3833 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.generated_mode) = zetasql::ASTGeneratedColumnInfo::GeneratedMode::ALWAYS;
     }
-#line 3734 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3734 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 362:
-#line 3837 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3837 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.generated_mode) = zetasql::ASTGeneratedColumnInfo::GeneratedMode::BY_DEFAULT;
     }
-#line 3742 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3742 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 363:
-#line 3841 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3841 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.generated_mode) = zetasql::ASTGeneratedColumnInfo::GeneratedMode::ALWAYS;
     }
-#line 3750 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3750 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 364:
-#line 3848 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3848 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.stored_mode) = zetasql::ASTGeneratedColumnInfo::StoredMode::STORED_VOLATILE;
     }
-#line 3758 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3758 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 365:
-#line 3852 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3852 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.stored_mode) = zetasql::ASTGeneratedColumnInfo::StoredMode::STORED;
     }
-#line 3766 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3766 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 366:
-#line 3856 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3856 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.stored_mode) = zetasql::ASTGeneratedColumnInfo::StoredMode::NON_STORED;
     }
-#line 3774 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3774 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 367:
-#line 3862 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3862 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 3780 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3780 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 368:
-#line 3863 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3863 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 3786 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3786 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 369:
-#line 3864 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3864 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 3792 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3792 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 370:
-#line 3866 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3866 "bison_parser.y" // lalr1.cc:919
     {
   (yylhs.value.expression) = (yystack_[0].value.expression);
  }
-#line 3800 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3800 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 371:
-#line 3870 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3870 "bison_parser.y" // lalr1.cc:919
     {
   auto* expression = MAKE_NODE(ASTUnaryExpression, yylhs.location, {(yystack_[0].value.expression)});
   expression->set_op(zetasql::ASTUnaryExpression::MINUS);
   (yylhs.value.expression) = expression;
  }
-#line 3810 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3810 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 372:
-#line 3876 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3876 "bison_parser.y" // lalr1.cc:919
     {
   auto* expression = MAKE_NODE(ASTUnaryExpression, yylhs.location, {(yystack_[0].value.expression)});
   expression->set_op(zetasql::ASTUnaryExpression::MINUS);
   (yylhs.value.expression) = expression;
  }
-#line 3820 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3820 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 373:
-#line 3885 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3885 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTIdentityColumnStartWith, yylhs.location, {(yystack_[0].value.expression)});
   }
-#line 3828 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3828 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 374:
-#line 3889 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3889 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = nullptr;
   }
-#line 3836 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3836 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 375:
-#line 3896 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3896 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTIdentityColumnIncrementBy, yylhs.location, {(yystack_[0].value.expression)});
   }
-#line 3844 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3844 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 376:
-#line 3900 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3900 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = nullptr;
   }
-#line 3852 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3852 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 377:
-#line 3907 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3907 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTIdentityColumnMaxValue, yylhs.location, {(yystack_[0].value.expression)});
   }
-#line 3860 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3860 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 378:
-#line 3911 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3911 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = nullptr;
   }
-#line 3868 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3868 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 379:
-#line 3918 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3918 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTIdentityColumnMinValue, yylhs.location, {(yystack_[0].value.expression)});
   }
-#line 3876 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3876 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 380:
-#line 3922 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3922 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = nullptr;
   }
-#line 3884 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3884 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 381:
-#line 3929 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3929 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.boolean) = true;
   }
-#line 3892 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3892 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 382:
-#line 3933 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3933 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.boolean) = false;
   }
-#line 3900 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3900 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 383:
-#line 3937 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3937 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.boolean) = false;
   }
-#line 3908 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3908 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 384:
-#line 3945 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3945 "bison_parser.y" // lalr1.cc:919
     {
       auto* identity_column =
         MAKE_NODE(ASTIdentityColumnInfo, yylhs.location, {(yystack_[5].value.node), (yystack_[4].value.node), (yystack_[3].value.node), (yystack_[2].value.node)});
       identity_column->set_cycling_enabled((yystack_[1].value.boolean));
       (yylhs.value.node) = identity_column;
     }
-#line 3919 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3919 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 385:
-#line 3955 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3955 "bison_parser.y" // lalr1.cc:919
     {
       auto* column = MAKE_NODE(ASTGeneratedColumnInfo, yylhs.location, {(yystack_[2].value.expression)});
       column->set_stored_mode((yystack_[0].value.stored_mode));
       column->set_generated_mode((yystack_[4].value.generated_mode));
       (yylhs.value.node) = column;
     }
-#line 3930 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3930 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 386:
-#line 3962 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3962 "bison_parser.y" // lalr1.cc:919
     {
       auto* column = MAKE_NODE(ASTGeneratedColumnInfo, yylhs.location, {(yystack_[0].value.node)});
       column->set_generated_mode((yystack_[1].value.generated_mode));
       (yylhs.value.node) = column;
     }
-#line 3940 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3940 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 387:
-#line 3971 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3971 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.boolean) = true;
     }
-#line 3948 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3948 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 388:
-#line 3975 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3975 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.boolean) = false;
     }
-#line 3956 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3956 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 389:
-#line 3982 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3982 "bison_parser.y" // lalr1.cc:919
     {
       if (parser->language_options().LanguageFeatureEnabled(
              zetasql::FEATURE_V_1_3_COLUMN_DEFAULT_VALUE)) {
@@ -3965,27 +3965,27 @@ namespace zetasql_bison_parser {
         YYERROR_AND_ABORT_AT(yystack_[0].location, "Column DEFAULT value is not supported.");
       }
     }
-#line 3969 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3969 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 390:
-#line 3994 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3994 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.boolean) = true;
     }
-#line 3977 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3977 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 391:
-#line 3998 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 3998 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.boolean) = false;
     }
-#line 3985 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3985 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 392:
-#line 4005 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4005 "bison_parser.y" // lalr1.cc:919
     {
       if ((yystack_[0].value.boolean)) {
         YYERROR_AND_ABORT_AT(yystack_[0].location, "Syntax error: \"DEFAULT\" and \"GENERATED "
@@ -3995,11 +3995,11 @@ namespace zetasql_bison_parser {
           static_cast<zetasql::ASTGeneratedColumnInfo*>((yystack_[1].value.node));
       (yylhs.value.generated_or_default_column_info).default_expression = nullptr;
     }
-#line 3999 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 3999 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 393:
-#line 4015 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4015 "bison_parser.y" // lalr1.cc:919
     {
       if ((yystack_[0].value.boolean)) {
         YYERROR_AND_ABORT_AT(yystack_[0].location, "Syntax error: \"DEFAULT\" and \"GENERATED "
@@ -4008,101 +4008,101 @@ namespace zetasql_bison_parser {
       (yylhs.value.generated_or_default_column_info).generated_column_info = nullptr;
       (yylhs.value.generated_or_default_column_info).default_expression = static_cast<zetasql::ASTExpression*>((yystack_[1].value.node));
     }
-#line 4012 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4012 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 394:
-#line 4024 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4024 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.generated_or_default_column_info).generated_column_info = nullptr;
       (yylhs.value.generated_or_default_column_info).default_expression = nullptr;
     }
-#line 4021 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4021 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 395:
-#line 4032 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4032 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[3].value.node), {(yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)}), yylhs.location);
     }
-#line 4029 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4029 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 396:
-#line 4039 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4039 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTPrimaryKeyColumnAttribute, yylhs.location, {});
     }
-#line 4037 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4037 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 397:
-#line 4046 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4046 "bison_parser.y" // lalr1.cc:919
     {
       auto* node = MAKE_NODE(ASTForeignKeyColumnAttribute, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.foreign_key_reference)});
       (yylhs.value.node) = parser->WithStartLocation(node, FirstNonEmptyLocation(yystack_[1].location, yystack_[0].location));
     }
-#line 4046 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4046 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 398:
-#line 4054 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4054 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTHiddenColumnAttribute, yylhs.location, {});
     }
-#line 4054 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4054 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 399:
-#line 4061 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4061 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTNotNullColumnAttribute, yylhs.location, {});
     }
-#line 4062 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4062 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 400:
-#line 4067 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4067 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4068 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4068 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 401:
-#line 4068 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4068 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4074 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4074 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 402:
-#line 4069 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4069 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4080 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4080 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 403:
-#line 4070 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4070 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4086 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4086 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 404:
-#line 4091 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4091 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTColumnAttributeList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 4094 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4094 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 405:
-#line 4095 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4095 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[1].value.node), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 4102 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4102 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 406:
-#line 4099 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4099 "bison_parser.y" // lalr1.cc:919
     {
         auto* last = (yystack_[1].value.node)->mutable_child((yystack_[1].value.node)->num_children() - 1);
         if (last->node_kind() != zetasql::AST_FOREIGN_KEY_COLUMN_ATTRIBUTE
@@ -4130,109 +4130,109 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 4134 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4134 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 407:
-#line 4129 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4129 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4140 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4140 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 408:
-#line 4130 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4130 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4146 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4146 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 409:
-#line 4135 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4135 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTColumnAttributeList, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 4154 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4154 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 410:
-#line 4138 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4138 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4160 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4160 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 411:
-#line 4143 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4143 "bison_parser.y" // lalr1.cc:919
     {
         auto* pos = MAKE_NODE(ASTColumnPosition, yylhs.location, {(yystack_[0].value.identifier)});
         pos->set_type(zetasql::ASTColumnPosition::PRECEDING);
         (yylhs.value.node) = pos;
       }
-#line 4170 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4170 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 412:
-#line 4149 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4149 "bison_parser.y" // lalr1.cc:919
     {
         auto* pos = MAKE_NODE(ASTColumnPosition, yylhs.location, {(yystack_[0].value.identifier)});
         pos->set_type(zetasql::ASTColumnPosition::FOLLOWING);
         (yylhs.value.node) = pos;
       }
-#line 4180 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4180 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 413:
-#line 4157 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4157 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4186 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4186 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 414:
-#line 4158 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4158 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4192 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4192 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 415:
-#line 4163 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4163 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = (yystack_[0].value.expression);
       }
-#line 4200 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4200 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 416:
-#line 4169 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4169 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 4206 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4206 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 417:
-#line 4170 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4170 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = nullptr; }
-#line 4212 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4212 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 418:
-#line 4175 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4175 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTCheckConstraint, yylhs.location, {(yystack_[3].value.expression), (yystack_[0].value.node)});
         node->set_is_enforced((yystack_[1].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 4222 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4222 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 419:
-#line 4182 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4182 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTForeignKeyReference* foreign_key_ref = (yystack_[2].value.foreign_key_reference);
         foreign_key_ref->set_enforced((yystack_[1].value.boolean));
         (yylhs.value.node) = MAKE_NODE(ASTForeignKey, yylhs.location, {(yystack_[3].value.node), (yystack_[2].value.foreign_key_reference), (yystack_[0].value.node)});
       }
-#line 4232 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4232 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 420:
-#line 4191 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4191 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_4_ORDERED_PRIMARY_KEYS)) {
@@ -4249,75 +4249,75 @@ namespace zetasql_bison_parser {
         node->set_ordering_spec((yystack_[1].value.ordering_spec));
         (yylhs.value.node) = node;
       }
-#line 4253 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4253 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 421:
-#line 4211 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4211 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTPrimaryKeyElementList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 4261 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4261 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 422:
-#line 4215 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4215 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 4269 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4269 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 423:
-#line 4222 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4222 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 4277 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4277 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 424:
-#line 4225 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4225 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4283 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4283 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 425:
-#line 4231 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4231 "bison_parser.y" // lalr1.cc:919
     {
       zetasql::ASTPrimaryKey* node = MAKE_NODE(ASTPrimaryKey, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.node)});
       node->set_enforced((yystack_[1].value.boolean));
       (yylhs.value.node) = node;
     }
-#line 4293 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4293 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 426:
-#line 4239 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4239 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4299 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4299 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 427:
-#line 4240 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4240 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4305 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4305 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 428:
-#line 4246 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4246 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4311 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4311 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 429:
-#line 4247 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4247 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4317 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4317 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 430:
-#line 4249 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4249 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = (yystack_[0].value.node);
         absl::string_view constraint = parser->GetInputText(yystack_[2].location);
@@ -4339,248 +4339,248 @@ namespace zetasql_bison_parser {
         node->AddChild((yystack_[1].value.identifier));
         (yylhs.value.node) = parser->WithLocation(node, yylhs.location);
       }
-#line 4343 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4343 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 431:
-#line 4277 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4277 "bison_parser.y" // lalr1.cc:919
     {
         auto* reference = MAKE_NODE(ASTForeignKeyReference, yylhs.location, {(yystack_[3].value.path_expression), (yystack_[2].value.node), (yystack_[0].value.node)});
         reference->set_match((yystack_[1].value.foreign_key_match));
         (yylhs.value.foreign_key_reference) = reference;
       }
-#line 4353 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4353 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 432:
-#line 4285 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4285 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_match) = (yystack_[0].value.foreign_key_match); }
-#line 4359 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4359 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 433:
-#line 4286 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4286 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_match) = zetasql::ASTForeignKeyReference::SIMPLE; }
-#line 4365 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4365 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 434:
-#line 4290 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4290 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_match) = zetasql::ASTForeignKeyReference::SIMPLE; }
-#line 4371 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4371 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 435:
-#line 4291 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4291 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_match) = zetasql::ASTForeignKeyReference::FULL; }
-#line 4377 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4377 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 436:
-#line 4292 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4292 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.foreign_key_match) = zetasql::ASTForeignKeyReference::NOT_DISTINCT;
     }
-#line 4385 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4385 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 437:
-#line 4299 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4299 "bison_parser.y" // lalr1.cc:919
     {
         auto* actions = MAKE_NODE(ASTForeignKeyActions, yylhs.location, {});
         actions->set_update_action((yystack_[1].value.foreign_key_action));
         actions->set_delete_action((yystack_[0].value.foreign_key_action));
         (yylhs.value.node) = actions;
       }
-#line 4396 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4396 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 438:
-#line 4306 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4306 "bison_parser.y" // lalr1.cc:919
     {
         auto* actions = MAKE_NODE(ASTForeignKeyActions, yylhs.location, {});
         actions->set_delete_action((yystack_[1].value.foreign_key_action));
         actions->set_update_action((yystack_[0].value.foreign_key_action));
         (yylhs.value.node) = actions;
       }
-#line 4407 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4407 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 439:
-#line 4313 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4313 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTForeignKeyActions, yylhs.location, {});
       }
-#line 4415 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4415 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 440:
-#line 4319 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4319 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = (yystack_[0].value.foreign_key_action); }
-#line 4421 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4421 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 441:
-#line 4320 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4320 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = zetasql::ASTForeignKeyActions::NO_ACTION; }
-#line 4427 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4427 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 442:
-#line 4324 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4324 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = (yystack_[0].value.foreign_key_action); }
-#line 4433 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4433 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 443:
-#line 4325 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4325 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = zetasql::ASTForeignKeyActions::NO_ACTION; }
-#line 4439 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4439 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 444:
-#line 4329 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4329 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = (yystack_[0].value.foreign_key_action); }
-#line 4445 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4445 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 445:
-#line 4333 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4333 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = (yystack_[0].value.foreign_key_action); }
-#line 4451 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4451 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 446:
-#line 4337 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4337 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = zetasql::ASTForeignKeyActions::NO_ACTION; }
-#line 4457 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4457 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 447:
-#line 4338 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4338 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = zetasql::ASTForeignKeyActions::RESTRICT; }
-#line 4463 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4463 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 448:
-#line 4339 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4339 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = zetasql::ASTForeignKeyActions::CASCADE; }
-#line 4469 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4469 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 449:
-#line 4340 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4340 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.foreign_key_action) = zetasql::ASTForeignKeyActions::SET_NULL; }
-#line 4475 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4475 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 450:
-#line 4344 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4344 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.identifier); }
-#line 4481 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4481 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 451:
-#line 4345 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4345 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4487 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4487 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 452:
-#line 4349 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4349 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = (yystack_[0].value.boolean); }
-#line 4493 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4493 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 453:
-#line 4350 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4350 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 4499 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4499 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 454:
-#line 4354 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4354 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 4505 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4505 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 455:
-#line 4355 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4355 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 4511 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4511 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 456:
-#line 4362 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4362 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_or_table_function_keywords) = TableOrTableFunctionKeywords::kTableAndFunctionKeywords;
       }
-#line 4519 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4519 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 457:
-#line 4366 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4366 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_or_table_function_keywords) = TableOrTableFunctionKeywords::kTableKeyword;
       }
-#line 4527 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4527 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 458:
-#line 4373 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4373 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTVFSchemaColumn, yylhs.location, {(yystack_[1].value.identifier), (yystack_[0].value.node)});
       }
-#line 4535 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4535 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 459:
-#line 4377 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4377 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTVFSchemaColumn, yylhs.location, {nullptr, (yystack_[0].value.node)});
       }
-#line 4543 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4543 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 460:
-#line 4384 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4384 "bison_parser.y" // lalr1.cc:919
     {
         auto* create = MAKE_NODE(ASTTVFSchema, yylhs.location, {(yystack_[0].value.node)});
         (yylhs.value.node) = create;
       }
-#line 4552 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4552 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 461:
-#line 4389 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4389 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 4560 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4560 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 462:
-#line 4396 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4396 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 4568 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4568 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 463:
-#line 4401 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4401 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 4574 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4574 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 464:
-#line 4402 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4402 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 4580 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4580 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 465:
-#line 4410 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4410 "bison_parser.y" // lalr1.cc:919
     {
         auto* create =
             MAKE_NODE(ASTCreateViewStatement, yylhs.location, {(yystack_[4].value.expression), (yystack_[3].value.node), (yystack_[1].value.node), (yystack_[0].value.node)});
@@ -4591,11 +4591,11 @@ namespace zetasql_bison_parser {
         create->set_sql_security((yystack_[2].value.sql_security));
         (yylhs.value.node) = create;
       }
-#line 4595 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4595 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 466:
-#line 4425 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4425 "bison_parser.y" // lalr1.cc:919
     {
         auto* create = MAKE_NODE(ASTCreateMaterializedViewStatement, yylhs.location,
           {(yystack_[7].value.expression), (yystack_[6].value.node), (yystack_[4].value.node), (yystack_[3].value.node), (yystack_[2].value.node), (yystack_[0].value.query_or_replica_source_info).query, (yystack_[0].value.query_or_replica_source_info).replica_source});
@@ -4606,11 +4606,11 @@ namespace zetasql_bison_parser {
         create->set_sql_security((yystack_[5].value.sql_security));
         (yylhs.value.node) = create;
       }
-#line 4610 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4610 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 467:
-#line 4440 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4440 "bison_parser.y" // lalr1.cc:919
     {
         auto* create = MAKE_NODE(
           ASTCreateApproxViewStatement, yylhs.location, {(yystack_[4].value.expression), (yystack_[3].value.node), (yystack_[1].value.node), (yystack_[0].value.node)});
@@ -4621,158 +4621,158 @@ namespace zetasql_bison_parser {
         create->set_sql_security((yystack_[2].value.sql_security));
         (yylhs.value.node) = create;
       }
-#line 4625 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4625 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 468:
-#line 4453 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4453 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.query_or_replica_source_info) = {.query = (yystack_[0].value.query), .replica_source = nullptr };
     }
-#line 4633 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4633 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 469:
-#line 4458 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4458 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.query_or_replica_source_info) = {.query = nullptr,
             .replica_source = static_cast<zetasql::ASTPathExpression*>((yystack_[0].value.expression))};
     }
-#line 4642 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4642 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 470:
-#line 4466 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4466 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = (yystack_[0].value.query);
     }
-#line 4650 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4650 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 471:
-#line 4472 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4472 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4656 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4656 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 472:
-#line 4473 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4473 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4662 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4662 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 473:
-#line 4477 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4477 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4668 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4668 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 474:
-#line 4478 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4478 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.string_literal); }
-#line 4674 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4674 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 475:
-#line 4479 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4479 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4680 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4680 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 476:
-#line 4483 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4483 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 4686 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4686 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 477:
-#line 4484 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4484 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[1].value.node); }
-#line 4692 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4692 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 478:
-#line 4485 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4485 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4698 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4698 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 479:
-#line 4489 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4489 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 4704 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4704 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 480:
-#line 4490 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4490 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 4710 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4710 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 481:
-#line 4495 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4495 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithStartLocation((yystack_[0].value.node), yylhs.location);
       }
-#line 4718 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4718 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 482:
-#line 4502 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4502 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTDescribeStatement, yylhs.location, {(yystack_[2].value.identifier), (yystack_[1].value.expression), (yystack_[0].value.expression)});
       }
-#line 4726 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4726 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 483:
-#line 4506 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4506 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTDescribeStatement, yylhs.location, {nullptr, (yystack_[1].value.expression), (yystack_[0].value.expression)});
       }
-#line 4734 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4734 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 484:
-#line 4513 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4513 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = (yystack_[0].value.expression);
       }
-#line 4742 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4742 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 485:
-#line 4516 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4516 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = nullptr; }
-#line 4748 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4748 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 486:
-#line 4521 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4521 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTExplainStatement, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 4756 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4756 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 487:
-#line 4528 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4528 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTExportDataStatement, yylhs.location, {(yystack_[3].value.node), (yystack_[2].value.node), (yystack_[0].value.query)});
       }
-#line 4764 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4764 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 488:
-#line 4535 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4535 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTExportModelStatement, yylhs.location, {(yystack_[2].value.path_expression), (yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 4772 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4772 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 489:
-#line 4543 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4543 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[5].value.table_or_table_function_keywords) == TableOrTableFunctionKeywords::kTableAndFunctionKeywords) {
           YYERROR_AND_ABORT_AT(yystack_[5].location,
@@ -4784,124 +4784,124 @@ namespace zetasql_bison_parser {
           zetasql::SchemaObjectKind::kTable);
         (yylhs.value.node) = export_metadata;
       }
-#line 4788 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4788 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 490:
-#line 4558 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4558 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGrantStatement, yylhs.location, {(yystack_[5].value.node), (yystack_[3].value.identifier), (yystack_[2].value.path_expression), (yystack_[0].value.node)});
       }
-#line 4796 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4796 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 491:
-#line 4563 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4563 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGrantStatement, yylhs.location, {(yystack_[6].value.node), (yystack_[4].value.identifier), (yystack_[3].value.identifier), (yystack_[2].value.path_expression), (yystack_[0].value.node)});
       }
-#line 4804 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4804 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 492:
-#line 4567 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4567 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGrantStatement, yylhs.location, {(yystack_[4].value.node), (yystack_[2].value.path_expression), (yystack_[0].value.node)});
       }
-#line 4812 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4812 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 493:
-#line 4574 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4574 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRevokeStatement, yylhs.location, {(yystack_[5].value.node), (yystack_[3].value.identifier), (yystack_[2].value.path_expression), (yystack_[0].value.node)});
       }
-#line 4820 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4820 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 494:
-#line 4579 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4579 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRevokeStatement, yylhs.location, {(yystack_[6].value.node), (yystack_[4].value.identifier), (yystack_[3].value.identifier), (yystack_[2].value.path_expression), (yystack_[0].value.node)});
       }
-#line 4828 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4828 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 495:
-#line 4583 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4583 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRevokeStatement, yylhs.location, {(yystack_[4].value.node), (yystack_[2].value.path_expression), (yystack_[0].value.node)});
       }
-#line 4836 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4836 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 496:
-#line 4590 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4590 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTPrivileges, yylhs.location, {});
       }
-#line 4844 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4844 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 497:
-#line 4594 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4594 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 4852 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4852 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 500:
-#line 4606 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4606 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTPrivileges, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 4860 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4860 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 501:
-#line 4610 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4610 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 4868 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4868 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 502:
-#line 4617 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4617 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTPrivilege, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 4876 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4876 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 503:
-#line 4624 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4624 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.identifier);
       }
-#line 4884 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4884 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 504:
-#line 4628 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4628 "bison_parser.y" // lalr1.cc:919
     {
         // The SELECT keyword is allowed to be a privilege name.
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 4893 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4893 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 505:
-#line 4636 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4636 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRenameStatement, yylhs.location, {(yystack_[3].value.identifier), (yystack_[2].value.path_expression), (yystack_[0].value.path_expression)});
       }
-#line 4901 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4901 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 506:
-#line 4644 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4644 "bison_parser.y" // lalr1.cc:919
     {
         auto* import = MAKE_NODE(ASTImportStatement, yylhs.location, {(yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)});
         switch ((yystack_[3].value.import_type)) {
@@ -4914,19 +4914,19 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = import;
       }
-#line 4918 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4918 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 507:
-#line 4660 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4660 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTModuleStatement, yylhs.location, {(yystack_[1].value.path_expression), (yystack_[0].value.node)});
       }
-#line 4926 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4926 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 508:
-#line 4668 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4668 "bison_parser.y" // lalr1.cc:919
     {
         auto* ordering_expr =
             MAKE_NODE(ASTOrderingExpression, yylhs.location, {
@@ -4938,47 +4938,47 @@ namespace zetasql_bison_parser {
         ordering_expr->set_ordering_spec((yystack_[2].value.ordering_spec));
         (yylhs.value.node) = ordering_expr;
       }
-#line 4942 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4942 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 509:
-#line 4683 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4683 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTIndexItemList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 4950 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4950 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 510:
-#line 4687 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4687 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 4958 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4958 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 511:
-#line 4693 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4693 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[1].value.node); }
-#line 4964 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4964 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 512:
-#line 4697 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4697 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 4972 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4972 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 513:
-#line 4700 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4700 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 4978 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4978 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 514:
-#line 4705 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4705 "bison_parser.y" // lalr1.cc:919
     {
         auto* all_columns = MAKE_NODE(ASTIndexAllColumns, yylhs.location, {(yystack_[1].value.node)});
         all_columns->set_image("ALL COLUMNS");
@@ -4989,433 +4989,433 @@ namespace zetasql_bison_parser {
                                 zetasql::ASTOrderingExpression::UNSPECIFIED);
         (yylhs.value.node) = MAKE_NODE(ASTIndexItemList, yylhs.location, {ordering_expr});
       }
-#line 4993 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 4993 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 515:
-#line 4718 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4718 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
     }
-#line 5001 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5001 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 516:
-#line 4722 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4722 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation((yystack_[0].value.node), yylhs.location);
     }
-#line 5009 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5009 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 517:
-#line 4729 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4729 "bison_parser.y" // lalr1.cc:919
     {
        (yylhs.value.node) = MAKE_NODE(ASTIndexUnnestExpressionList, yylhs.location, {(yystack_[0].value.node)});
      }
-#line 5017 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5017 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 518:
-#line 4734 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4734 "bison_parser.y" // lalr1.cc:919
     {
        (yylhs.value.node) = WithExtraChildren((yystack_[1].value.node), {(yystack_[0].value.node)});
      }
-#line 5025 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5025 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 519:
-#line 4740 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4740 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5031 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5031 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 520:
-#line 4741 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4741 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 5037 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5037 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 521:
-#line 4746 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4746 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTIndexStoringExpressionList, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 5045 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5045 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 522:
-#line 4750 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4750 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 5053 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5053 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 523:
-#line 4757 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4757 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 5061 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5061 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 524:
-#line 4763 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4763 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = (yystack_[0].value.node);
   }
-#line 5069 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5069 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 525:
-#line 4769 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4769 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5075 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5075 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 526:
-#line 4770 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4770 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 5081 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5081 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 527:
-#line 4775 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4775 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTColumnList, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 5089 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5089 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 528:
-#line 4779 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4779 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.identifier)});
       }
-#line 5097 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5097 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 529:
-#line 4786 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4786 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 5105 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5105 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 530:
-#line 4792 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4792 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5111 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5111 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 531:
-#line 4793 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4793 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 5117 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5117 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 532:
-#line 4798 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4798 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTColumnWithOptions, yylhs.location, {(yystack_[1].value.identifier), (yystack_[0].value.node)});
       }
-#line 5125 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5125 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 533:
-#line 4805 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4805 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTColumnWithOptionsList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 5133 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5133 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 534:
-#line 4809 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4809 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 5141 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5141 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 535:
-#line 4816 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4816 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 5149 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5149 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 536:
-#line 4822 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4822 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5155 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5155 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 537:
-#line 4823 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4823 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 5161 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5161 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 538:
-#line 4828 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4828 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGranteeList, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 5169 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5169 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 539:
-#line 4832 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4832 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)}), yylhs.location);
       }
-#line 5177 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5177 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 540:
-#line 4839 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4839 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGranteeList, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 5185 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5185 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 541:
-#line 4843 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4843 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 5193 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5193 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 542:
-#line 4850 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4850 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 5201 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5201 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 543:
-#line 4854 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4854 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGranteeList, yylhs.location, {});
       }
-#line 5209 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5209 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 544:
-#line 4861 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4861 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTShowStatement, yylhs.location, {(yystack_[2].value.identifier), (yystack_[1].value.expression), (yystack_[0].value.node)});
       }
-#line 5217 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5217 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 545:
-#line 4868 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4868 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.identifier) = parser->MakeIdentifier(yylhs.location, "MATERIALIZED VIEWS");
     }
-#line 5225 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5225 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 546:
-#line 4872 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4872 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.identifier) = (yystack_[0].value.identifier);
     }
-#line 5233 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5233 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 547:
-#line 4879 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4879 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.string_literal);
       }
-#line 5241 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5241 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 548:
-#line 4882 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4882 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 5247 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5247 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 549:
-#line 4887 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4887 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.expression);
       }
-#line 5255 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5255 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 550:
-#line 4890 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4890 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 5261 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5261 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 551:
-#line 4895 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4895 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 5269 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5269 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 552:
-#line 4898 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4898 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 5275 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5275 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 553:
-#line 4903 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4903 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 5283 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5283 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 554:
-#line 4906 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4906 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 5289 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5289 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 555:
-#line 4910 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4910 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.set_operation_all_or_distinct) = MAKE_NODE(ASTSetOperationAllOrDistinct, yylhs.location, {});
       (yylhs.value.set_operation_all_or_distinct)->set_value(zetasql::ASTSetOperation::ALL);
     }
-#line 5298 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5298 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 556:
-#line 4914 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4914 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.set_operation_all_or_distinct) = MAKE_NODE(ASTSetOperationAllOrDistinct, yylhs.location, {});
       (yylhs.value.set_operation_all_or_distinct)->set_value(zetasql::ASTSetOperation::DISTINCT);
     }
-#line 5307 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5307 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 557:
-#line 4924 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4924 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.set_operation_type) = MAKE_NODE(ASTSetOperationType, yylhs.location, {});
         (yylhs.value.set_operation_type)->set_value(zetasql::ASTSetOperation::UNION);
       }
-#line 5316 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5316 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 558:
-#line 4929 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4929 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.set_operation_type) = MAKE_NODE(ASTSetOperationType, yylhs.location, {});
         (yylhs.value.set_operation_type)->set_value(zetasql::ASTSetOperation::EXCEPT);
       }
-#line 5325 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5325 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 559:
-#line 4934 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4934 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.set_operation_type) = MAKE_NODE(ASTSetOperationType, yylhs.location, {});
         (yylhs.value.set_operation_type)->set_value(zetasql::ASTSetOperation::INTERSECT);
       }
-#line 5334 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5334 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 560:
-#line 4941 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4941 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5340 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5340 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 561:
-#line 4942 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4942 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5346 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5346 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 562:
-#line 4947 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4947 "bison_parser.y" // lalr1.cc:919
     {
         // We do not call $query->set_parenthesized(true) because typically the
         // calling rule expects parentheses and will already insert one pair
         // when unparsing.
         (yylhs.value.query) = (yystack_[1].value.query);
       }
-#line 5357 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5357 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 565:
-#line 4962 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4962 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.string_constant) = "WHERE"; }
-#line 5363 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5363 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 566:
-#line 4963 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4963 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.string_constant) = "SELECT"; }
-#line 5369 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5369 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 567:
-#line 4964 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4964 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.string_constant) = "GROUP BY"; }
-#line 5375 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5375 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 568:
-#line 4969 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4969 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.string_constant) = "ORDER BY"; }
-#line 5381 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5381 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 569:
-#line 4970 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4970 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.string_constant) = "UNION"; }
-#line 5387 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5387 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 570:
-#line 4971 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4971 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.string_constant) = "INTERSECT"; }
-#line 5393 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5393 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 571:
-#line 4972 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4972 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.string_constant) = "EXCEPT"; }
-#line 5399 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5399 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 572:
-#line 4973 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4973 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.string_constant) = "LIMIT"; }
-#line 5405 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5405 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 573:
-#line 4982 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4982 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTQuery, yylhs.location,
            {(yystack_[3].value.node), (yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)});
         (yylhs.value.query) = node;
       }
-#line 5415 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5415 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 574:
-#line 4988 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4988 "bison_parser.y" // lalr1.cc:919
     {
         // TODO: Consider pointing the error location at the comma
         // instead of at the SELECT.
@@ -5423,11 +5423,11 @@ namespace zetasql_bison_parser {
                              "Syntax error: Trailing comma after the WITH "
                              "clause before the main query is not allowed");
       }
-#line 5427 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5427 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 575:
-#line 4996 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 4996 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_PIPES)) {
@@ -5440,11 +5440,11 @@ namespace zetasql_bison_parser {
                                "FROM here");
         }
       }
-#line 5444 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5444 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 576:
-#line 5011 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5011 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTQuery* query = (yystack_[2].value.node)->GetAsOrNull<
           zetasql::ASTQuery>();
@@ -5463,11 +5463,11 @@ namespace zetasql_bison_parser {
           (yylhs.value.query) = node;
         }
       }
-#line 5467 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5467 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 577:
-#line 5035 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5035 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_PIPES)) {
@@ -5476,11 +5476,11 @@ namespace zetasql_bison_parser {
         zetasql::ASTFromQuery* from_query = MAKE_NODE(ASTFromQuery, yystack_[0].location, {(yystack_[0].value.node)});
         (yylhs.value.query) = MAKE_NODE(ASTQuery, yylhs.location, {(yystack_[1].value.node), from_query});
      }
-#line 5480 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5480 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 578:
-#line 5044 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5044 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_PIPES)) {
@@ -5492,11 +5492,11 @@ namespace zetasql_bison_parser {
             "Consider using pipe operator `|> ",
             keyword == "GROUP BY" ? "AGGREGATE" : keyword, "`"));
      }
-#line 5496 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5496 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 579:
-#line 5056 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5056 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_PIPES)) {
@@ -5508,17 +5508,17 @@ namespace zetasql_bison_parser {
             "Consider using pipe operator `|> ", keyword,
             "` or parentheses around the FROM query"));
      }
-#line 5512 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5512 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 580:
-#line 5070 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5070 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.query) = (yystack_[0].value.query); }
-#line 5518 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5518 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 581:
-#line 5072 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5072 "bison_parser.y" // lalr1.cc:919
     {
       // Adjust the location on the operator node to include the pipe symbol.
       zetasql::ASTNode* pipe_op =
@@ -5538,169 +5538,169 @@ namespace zetasql_bison_parser {
         (yylhs.value.query) = WithExtraChildren(query, {pipe_op});
       }
     }
-#line 5542 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5542 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 582:
-#line 5094 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5094 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5548 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5548 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 583:
-#line 5095 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5095 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5554 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5554 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 584:
-#line 5096 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5096 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5560 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5560 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 585:
-#line 5097 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5097 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5566 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5566 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 586:
-#line 5098 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5098 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5572 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5572 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 587:
-#line 5099 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5099 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5578 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5578 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 588:
-#line 5100 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5100 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5584 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5584 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 589:
-#line 5101 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5101 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5590 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5590 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 590:
-#line 5102 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5102 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5596 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5596 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 591:
-#line 5103 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5103 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5602 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5602 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 592:
-#line 5104 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5104 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5608 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5608 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 593:
-#line 5105 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5105 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5614 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5614 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 594:
-#line 5106 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5106 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5620 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5620 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 595:
-#line 5107 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5107 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5626 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5626 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 596:
-#line 5108 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5108 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5632 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5632 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 597:
-#line 5109 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5109 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5638 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5638 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 598:
-#line 5110 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5110 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5644 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5644 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 599:
-#line 5111 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5111 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5650 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5650 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 600:
-#line 5112 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5112 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5656 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5656 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 601:
-#line 5113 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5113 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5662 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5662 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 602:
-#line 5114 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5114 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.pipe_operator) = (yystack_[0].value.pipe_operator); }
-#line 5668 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5668 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 603:
-#line 5119 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5119 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeWhere, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 5676 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5676 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 604:
-#line 5126 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5126 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeSelect, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 5684 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5684 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 605:
-#line 5133 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5133 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeLimitOffset, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 5692 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5692 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 606:
-#line 5140 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5140 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeOrderBy, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 5700 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5700 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 607:
-#line 5147 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5147 "bison_parser.y" // lalr1.cc:919
     {
         // Pipe EXTEND is represented as an ASTSelect inside an
         // ASTPipeExtend.  This allows more resolver code sharing.
@@ -5708,109 +5708,109 @@ namespace zetasql_bison_parser {
             MAKE_NODE(ASTSelect, yylhs.location, {(yystack_[0].value.node)});
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeExtend, yylhs.location, {select});
       }
-#line 5712 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5712 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 608:
-#line 5157 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5157 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5718 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5718 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 609:
-#line 5158 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5158 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5724 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5724 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 610:
-#line 5165 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5165 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[1].value.node), {(yystack_[0].value.node)});
       }
-#line 5732 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5732 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 611:
-#line 5168 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5168 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 5738 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5738 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 612:
-#line 5175 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5175 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSelectList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 5746 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5746 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 613:
-#line 5179 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5179 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 5754 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5754 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 614:
-#line 5186 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5186 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSelectList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 5762 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5762 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 615:
-#line 5191 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5191 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 5770 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5770 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 616:
-#line 5200 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5200 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 5778 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5778 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 617:
-#line 5209 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5209 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 5786 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5786 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 618:
-#line 5216 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5216 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 5794 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5794 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 619:
-#line 5220 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5220 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSelectList, yylhs.location, {});
       }
-#line 5802 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5802 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 620:
-#line 5227 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5227 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeRenameItem, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.identifier)});
       }
-#line 5810 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5810 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 621:
-#line 5231 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5231 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[1].location,
@@ -5818,75 +5818,75 @@ namespace zetasql_bison_parser {
             "Renaming columns under table aliases or fields under paths is not "
             "supported");
       }
-#line 5822 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5822 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 622:
-#line 5242 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5242 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeRename, yylhs.location, {(yystack_[0].value.pipe_operator)});
       }
-#line 5830 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5830 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 623:
-#line 5246 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5246 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.pipe_operator) = WithExtraChildren((yystack_[2].value.pipe_operator), {(yystack_[0].value.pipe_operator)});
       }
-#line 5838 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5838 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 624:
-#line 5253 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5253 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.pipe_operator) = (yystack_[1].value.pipe_operator);
       }
-#line 5846 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5846 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 627:
-#line 5272 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5272 "bison_parser.y" // lalr1.cc:919
     {
         // Pipe AGGREGATE is represented as an ASTSelect inside an
         // ASTPipeAggregate.  This allows more resolver code sharing.
         zetasql::ASTSelect* select = MAKE_NODE(ASTSelect, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.node)});
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeAggregate, yylhs.location, {select});
       }
-#line 5857 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5857 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 628:
-#line 5283 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5283 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location,
             "Syntax error: GROUP BY should be part of a pipe AGGREGATE "
             "operator, without a leading pipe character");
       }
-#line 5868 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5868 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 629:
-#line 5293 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5293 "bison_parser.y" // lalr1.cc:919
     {
         (yystack_[0].value.query)->set_parenthesized(true);
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeSetOperation, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.query)});
       }
-#line 5877 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5877 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 630:
-#line 5298 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5298 "bison_parser.y" // lalr1.cc:919
     {
         (yystack_[0].value.query)->set_parenthesized(true);
         (yylhs.value.pipe_operator) = WithExtraChildren((yystack_[2].value.pipe_operator), {(yystack_[0].value.query)});
       }
-#line 5886 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5886 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 631:
-#line 5307 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5307 "bison_parser.y" // lalr1.cc:919
     {
         // Pipe JOIN has no LHS, so we use this placeholder in the ASTJoin.
         zetasql::ASTPipeJoinLhsPlaceholder* join_lhs =
@@ -5916,95 +5916,95 @@ namespace zetasql_bison_parser {
 
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeJoin, yylhs.location, {join});
       }
-#line 5920 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5920 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 632:
-#line 5340 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5340 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeCall, yylhs.location, {WithExtraChildren((yystack_[1].value.table_expression), {(yystack_[0].value.alias)})});
       }
-#line 5928 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5928 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 633:
-#line 5347 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5347 "bison_parser.y" // lalr1.cc:919
     {
         // Pipe WINDOW is represented as an ASTSelect inside an
         // ASTPipeWindow.  This allows more resolver code sharing.
         zetasql::ASTSelect* select = MAKE_NODE(ASTSelect, yylhs.location, {(yystack_[0].value.node)});
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeWindow, yylhs.location, {select});
       }
-#line 5939 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5939 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 634:
-#line 5357 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5357 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeDistinct, yylhs.location);
     }
-#line 5947 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5947 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 635:
-#line 5364 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5364 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeTablesample, yylhs.location, {(yystack_[0].value.sample_clause)});
     }
-#line 5955 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5955 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 636:
-#line 5371 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5371 "bison_parser.y" // lalr1.cc:919
     {
       auto* alias = MAKE_NODE(ASTAlias, yystack_[0].location, {(yystack_[0].value.identifier)});
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeAs, yylhs.location, {alias});
     }
-#line 5964 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5964 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 637:
-#line 5379 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5379 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeStaticDescribe, yylhs.location);
     }
-#line 5972 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5972 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 638:
-#line 5386 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5386 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeAssert, yylhs.location, {(yystack_[0].value.expression)});
     }
-#line 5980 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5980 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 639:
-#line 5390 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5390 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = WithExtraChildren((yystack_[2].value.pipe_operator), {(yystack_[0].value.expression)});
     }
-#line 5988 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5988 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 640:
-#line 5397 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5397 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = parser->WithEndLocation((yystack_[1].value.pipe_operator), yylhs.location);
     }
-#line 5996 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 5996 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 641:
-#line 5404 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5404 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = (yystack_[0].value.identifier);
     }
-#line 6004 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6004 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 642:
-#line 5408 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5408 "bison_parser.y" // lalr1.cc:919
     {
       {
         YYERROR_AND_ABORT_AT(
@@ -6014,43 +6014,43 @@ namespace zetasql_bison_parser {
             "supported");
       }
     }
-#line 6018 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6018 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 643:
-#line 5423 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5423 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTIdentifierList, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 6026 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6026 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 644:
-#line 5427 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5427 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
     }
-#line 6034 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6034 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 645:
-#line 5434 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5434 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeDrop, yylhs.location, {(yystack_[1].value.node)});
     }
-#line 6042 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6042 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 646:
-#line 5441 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5441 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTPipeSetItem, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.expression)});
       }
-#line 6050 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6050 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 647:
-#line 5445 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5445 "bison_parser.y" // lalr1.cc:919
     {
       {
         YYERROR_AND_ABORT_AT(
@@ -6060,158 +6060,158 @@ namespace zetasql_bison_parser {
             "paths is not supported");
       }
     }
-#line 6064 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6064 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 648:
-#line 5458 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5458 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeSet, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 6072 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6072 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 649:
-#line 5462 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5462 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.pipe_operator) = WithExtraChildren((yystack_[2].value.pipe_operator), {(yystack_[0].value.node)});
       }
-#line 6080 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6080 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 650:
-#line 5469 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5469 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.pipe_operator) = parser->WithLocation((yystack_[1].value.pipe_operator), yylhs.location);
     }
-#line 6088 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6088 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 651:
-#line 5476 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5476 "bison_parser.y" // lalr1.cc:919
     {
       // The alias is parsed separately from pivot_clause but needs to be
       // added into that AST node.
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipePivot, yylhs.location, { WithExtraChildren((yystack_[1].value.pivot_clause), {(yystack_[0].value.alias)}) });
     }
-#line 6098 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6098 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 652:
-#line 5485 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5485 "bison_parser.y" // lalr1.cc:919
     {
       // The alias is parsed separately from unpivot_clause but needs to be
       // added into that AST node.
       (yylhs.value.pipe_operator) = MAKE_NODE(ASTPipeUnpivot, yylhs.location, { WithExtraChildren((yystack_[1].value.unpivot_clause), {(yystack_[0].value.alias)}) });
     }
-#line 6108 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6108 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 653:
-#line 5494 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5494 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.column_propagation_mode) = MAKE_NODE(ASTSetOperationColumnPropagationMode, yylhs.location, {});
         (yylhs.value.column_propagation_mode)->set_value(zetasql::ASTSetOperation::FULL);
       }
-#line 6117 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6117 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 654:
-#line 5499 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5499 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.column_propagation_mode) = MAKE_NODE(ASTSetOperationColumnPropagationMode, yylhs.location, {});
         (yylhs.value.column_propagation_mode)->set_value(zetasql::ASTSetOperation::FULL);
       }
-#line 6126 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6126 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 655:
-#line 5504 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5504 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.column_propagation_mode) = MAKE_NODE(ASTSetOperationColumnPropagationMode, yylhs.location, {});
         (yylhs.value.column_propagation_mode)->set_value(zetasql::ASTSetOperation::LEFT);
       }
-#line 6135 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6135 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 656:
-#line 5509 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5509 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.column_propagation_mode) = nullptr;
       }
-#line 6143 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6143 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 657:
-#line 5516 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5516 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.column_propagation_mode) = MAKE_NODE(ASTSetOperationColumnPropagationMode, yylhs.location, {});
         (yylhs.value.column_propagation_mode)->set_value(zetasql::ASTSetOperation::STRICT);
       }
-#line 6152 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6152 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 658:
-#line 5521 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5521 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.column_propagation_mode) = nullptr;
       }
-#line 6160 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6160 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 659:
-#line 5528 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5528 "bison_parser.y" // lalr1.cc:919
     {
         auto* mode = MAKE_NODE(ASTSetOperationColumnMatchMode, yylhs.location, {});
         mode->set_value(zetasql::ASTSetOperation::CORRESPONDING);
         (yylhs.value.column_match_suffix).column_match_mode = mode;
         (yylhs.value.column_match_suffix).column_list = nullptr;
       }
-#line 6171 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6171 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 660:
-#line 5535 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5535 "bison_parser.y" // lalr1.cc:919
     {
         auto* mode = MAKE_NODE(ASTSetOperationColumnMatchMode, yystack_[2].location, yystack_[1].location, {});
         mode->set_value(zetasql::ASTSetOperation::CORRESPONDING_BY);
         (yylhs.value.column_match_suffix).column_match_mode = mode;
         (yylhs.value.column_match_suffix).column_list = (yystack_[0].value.node)->GetAsOrDie<zetasql::ASTColumnList>();
       }
-#line 6182 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6182 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 661:
-#line 5542 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5542 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.column_match_suffix).column_match_mode = nullptr;
         (yylhs.value.column_match_suffix).column_list = nullptr;
       }
-#line 6191 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6191 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 662:
-#line 5556 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5556 "bison_parser.y" // lalr1.cc:919
     {
         auto* metadata_list =
             MAKE_NODE(ASTSetOperationMetadataList, yystack_[1].location, {(yystack_[1].value.node)});
         (yylhs.value.query_set_operation) = MAKE_NODE(ASTSetOperation, yylhs.location,
                       {metadata_list, (yystack_[2].value.node), (yystack_[0].value.node)});
       }
-#line 6202 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6202 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 663:
-#line 5563 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5563 "bison_parser.y" // lalr1.cc:919
     {
         (yystack_[2].value.query_set_operation)->mutable_child(0)->AddChild((yystack_[1].value.node));
         (yylhs.value.query_set_operation) = WithExtraChildren((yystack_[2].value.query_set_operation), {(yystack_[0].value.node)});
       }
-#line 6211 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6211 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 664:
-#line 5568 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5568 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_PIPES)) {
@@ -6221,11 +6221,11 @@ namespace zetasql_bison_parser {
             "Syntax error: Unexpected FROM; "
             "FROM queries following a set operation must be parenthesized"));
       }
-#line 6225 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6225 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 665:
-#line 5578 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5578 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_PIPES)) {
@@ -6235,11 +6235,11 @@ namespace zetasql_bison_parser {
             "Syntax error: Unexpected FROM; "
             "FROM queries following a set operation must be parenthesized"));
       }
-#line 6239 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6239 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 666:
-#line 5592 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5592 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[5].value.column_propagation_mode) != nullptr && (yystack_[1].value.column_propagation_mode) != nullptr) {
           YYERROR_AND_ABORT_AT(yystack_[1].location,
@@ -6253,25 +6253,25 @@ namespace zetasql_bison_parser {
                   (yystack_[0].value.column_match_suffix).column_match_mode,
                   column_propagation_mode, (yystack_[0].value.column_match_suffix).column_list});
       }
-#line 6257 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6257 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 667:
-#line 5609 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5609 "bison_parser.y" // lalr1.cc:919
     {
        (yylhs.value.node) = parser->WithEndLocation((yystack_[0].value.query_set_operation), yylhs.location);
      }
-#line 6265 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6265 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 668:
-#line 5615 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5615 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 6271 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6271 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 669:
-#line 5617 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5617 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.alias) != nullptr) {
           if (!parser->language_options().LanguageFeatureEnabled(
@@ -6286,80 +6286,80 @@ namespace zetasql_bison_parser {
          (yylhs.value.node) = (yystack_[1].value.query);
        }
      }
-#line 6290 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6290 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 670:
-#line 5639 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5639 "bison_parser.y" // lalr1.cc:919
     {
         auto* select =
             MAKE_NODE(ASTSelect, yylhs.location, {(yystack_[4].value.node), (yystack_[3].value.select_with), (yystack_[1].value.node), (yystack_[0].value.node)});
         select->set_distinct((yystack_[2].value.all_or_distinct_keyword) == AllOrDistinctKeyword::kDistinct);
         (yylhs.value.node) = select;
       }
-#line 6301 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6301 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 671:
-#line 5649 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5649 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location,
             "Syntax error: SELECT list must not be empty");
       }
-#line 6311 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6311 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 672:
-#line 5658 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5658 "bison_parser.y" // lalr1.cc:919
     {
       zetasql::ASTSelect* select = static_cast<zetasql::ASTSelect*>((yystack_[2].value.node));
       (yylhs.value.node) = WithExtraChildren(select, {(yystack_[1].value.node), (yystack_[0].value.clauses_following_from).where, (yystack_[0].value.clauses_following_from).group_by,
                                       (yystack_[0].value.clauses_following_from).having, (yystack_[0].value.clauses_following_from).qualify, (yystack_[0].value.clauses_following_from).window});
     }
-#line 6321 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6321 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 673:
-#line 5666 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5666 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_LOOKBACK(KW_WITH, LB_WITH_IN_SELECT_WITH_OPTIONS); }
-#line 6327 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6327 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 674:
-#line 5670 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5670 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.select_with) = MAKE_NODE(ASTSelectWith, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 6335 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6335 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 675:
-#line 5674 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5674 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.select_with) = MAKE_NODE(ASTSelectWith, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.node)});
       }
-#line 6343 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6343 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 676:
-#line 5677 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5677 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.select_with) = nullptr; }
-#line 6349 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6349 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 677:
-#line 5684 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5684 "bison_parser.y" // lalr1.cc:919
     {
          auto* select_as = MAKE_NODE(ASTSelectAs, yylhs.location);
          select_as->set_as_mode(zetasql::ASTSelectAs::STRUCT);
          (yylhs.value.node) = select_as;
       }
-#line 6359 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6359 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 678:
-#line 5690 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5690 "bison_parser.y" // lalr1.cc:919
     {
         // "VALUE" is a valid identifier, so it can be a valid path expression.
         // But AS VALUE has a special meaning as a SELECT statement mode. We
@@ -6380,578 +6380,578 @@ namespace zetasql_bison_parser {
           (yylhs.value.node) = select_as;
         }
       }
-#line 6384 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6384 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 679:
-#line 5710 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5710 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 6390 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6390 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 683:
-#line 5720 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5720 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.identifier) = (yystack_[0].value.identifier); }
-#line 6396 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6396 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 684:
-#line 5722 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5722 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.identifier) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 6404 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6404 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 685:
-#line 5729 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5729 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTHintEntry, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.expression)});
       }
-#line 6412 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6412 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 686:
-#line 5733 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5733 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTHintEntry, yylhs.location, {(yystack_[4].value.identifier), (yystack_[2].value.identifier), (yystack_[0].value.expression)});
       }
-#line 6420 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6420 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 687:
-#line 5740 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5740 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTHint, yylhs.location, {(yystack_[3].value.expression), (yystack_[0].value.node)});
       }
-#line 6428 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6428 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 688:
-#line 5744 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5744 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTHint, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 6436 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6436 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 689:
-#line 5748 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5748 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 6444 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6444 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 690:
-#line 5755 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5755 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 6452 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6452 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 691:
-#line 5765 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5765 "bison_parser.y" // lalr1.cc:919
     {
         ABORT_CHECK(yylhs.location, PARSER_LA_IS_EMPTY(),
                     "Expected parser lookahead to be empty following hint.");
         (yylhs.value.node) = MAKE_NODE(ASTHint, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 6462 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6462 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 692:
-#line 5771 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5771 "bison_parser.y" // lalr1.cc:919
     {
         ABORT_CHECK(yylhs.location,PARSER_LA_IS_EMPTY(),
                     "Expected parser lookahead to be empty following hint.");
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 6472 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6472 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 693:
-#line 5780 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5780 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.all_or_distinct_keyword) = AllOrDistinctKeyword::kAll; }
-#line 6478 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6478 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 694:
-#line 5781 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5781 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.all_or_distinct_keyword) = AllOrDistinctKeyword::kDistinct; }
-#line 6484 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6484 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 695:
-#line 5782 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5782 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.all_or_distinct_keyword) = AllOrDistinctKeyword::kNone; }
-#line 6490 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6490 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 696:
-#line 5787 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5787 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSelectList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 6498 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6498 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 697:
-#line 5791 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5791 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 6506 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6506 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 698:
-#line 5798 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5798 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[0].value.node), yylhs.location);
       }
-#line 6514 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6514 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 699:
-#line 5803 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5803 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 6522 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6522 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 700:
-#line 5810 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5810 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStarExceptList, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 6530 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6530 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 701:
-#line 5814 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5814 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.identifier)});
       }
-#line 6538 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6538 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 702:
-#line 5821 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5821 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 6546 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6546 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 703:
-#line 5828 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5828 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStarReplaceItem, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.identifier)});
       }
-#line 6554 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6554 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 704:
-#line 5835 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5835 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStarModifiers, yylhs.location, {(yystack_[3].value.node), (yystack_[0].value.node)});
       }
-#line 6562 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6562 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 705:
-#line 5839 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5839 "bison_parser.y" // lalr1.cc:919
     {
        (yylhs.value.node) = MAKE_NODE(ASTStarModifiers, yylhs.location, {(yystack_[0].value.node)});
      }
-#line 6570 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6570 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 706:
-#line 5843 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5843 "bison_parser.y" // lalr1.cc:919
     {
        (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
      }
-#line 6578 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6578 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 707:
-#line 5850 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5850 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStarModifiers, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 6586 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6586 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 708:
-#line 5854 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5854 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 6594 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6594 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 709:
-#line 5860 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5860 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 6600 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6600 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 710:
-#line 5861 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5861 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 6606 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6606 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 711:
-#line 5862 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5862 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 6612 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6612 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 712:
-#line 5868 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5868 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSelectColumn, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 6620 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6620 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 713:
-#line 5871 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5871 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 6626 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6626 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 714:
-#line 5873 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5873 "bison_parser.y" // lalr1.cc:919
     {
         auto* alias = MAKE_NODE(ASTAlias, yystack_[0].location, {(yystack_[0].value.identifier)});
         (yylhs.value.node) = MAKE_NODE(ASTSelectColumn, yylhs.location, {(yystack_[1].value.expression), alias});
       }
-#line 6635 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6635 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 715:
-#line 5881 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5881 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSelectList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 6643 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6643 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 716:
-#line 5885 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5885 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 6651 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6651 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 717:
-#line 5892 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5892 "bison_parser.y" // lalr1.cc:919
     {
         auto* alias = MAKE_NODE(ASTAlias, yystack_[1].location, yystack_[0].location, {(yystack_[0].value.identifier)});
         (yylhs.value.node) = MAKE_NODE(ASTSelectColumn, yylhs.location, {(yystack_[2].value.expression), alias});
       }
-#line 6660 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6660 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 718:
-#line 5905 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5905 "bison_parser.y" // lalr1.cc:919
     {
         auto* dot_star = MAKE_NODE(ASTDotStar, yylhs.location, {(yystack_[2].value.expression)});
         (yylhs.value.node) = MAKE_NODE(ASTSelectColumn, yylhs.location, {dot_star});
       }
-#line 6669 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6669 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 719:
-#line 5913 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5913 "bison_parser.y" // lalr1.cc:919
     {
         auto* dot_star_with_modifiers =
             MAKE_NODE(ASTDotStarWithModifiers, yylhs.location, {(yystack_[3].value.expression), (yystack_[0].value.node)});
         (yylhs.value.node) = MAKE_NODE(ASTSelectColumn, yylhs.location, {dot_star_with_modifiers});
       }
-#line 6679 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6679 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 720:
-#line 5924 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5924 "bison_parser.y" // lalr1.cc:919
     {
         auto* star = MAKE_NODE(ASTStar, yylhs.location);
         star->set_image("*");
         (yylhs.value.node) = MAKE_NODE(ASTSelectColumn, yylhs.location, {star});
       }
-#line 6689 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6689 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 721:
-#line 5930 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5930 "bison_parser.y" // lalr1.cc:919
     {
         auto* star_with_modifiers = MAKE_NODE(ASTStarWithModifiers, yylhs.location, {(yystack_[0].value.node)});
         (yylhs.value.node) = MAKE_NODE(ASTSelectColumn, yylhs.location, {star_with_modifiers});
       }
-#line 6698 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6698 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 722:
-#line 5938 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5938 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.alias) = MAKE_NODE(ASTAlias, FirstNonEmptyLocation(yystack_[1].location, yystack_[0].location), yystack_[0].location, {(yystack_[0].value.identifier)});
       }
-#line 6706 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6706 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 723:
-#line 5941 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5941 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.alias) = nullptr; }
-#line 6712 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6712 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 724:
-#line 5946 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5946 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.alias) = MAKE_NODE(ASTAlias, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 6720 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6720 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 725:
-#line 5949 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5949 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.alias) = nullptr; }
-#line 6726 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6726 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 726:
-#line 5954 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5954 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAlias, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 6734 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6734 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 727:
-#line 5958 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5958 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTIntoAlias, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 6742 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6742 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 728:
-#line 5961 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5961 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 6748 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6748 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 731:
-#line 5971 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5971 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 6754 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6754 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 732:
-#line 5972 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5972 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 6760 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6760 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 735:
-#line 5982 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5982 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 6766 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6766 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 736:
-#line 5983 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5983 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 6772 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6772 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 737:
-#line 5984 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5984 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 6778 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6778 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 738:
-#line 5988 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5988 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTCastExpression, yylhs.location, {(yystack_[4].value.expression), (yystack_[2].value.node), (yystack_[1].value.node)});
       }
-#line 6786 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6786 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 739:
-#line 5996 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5996 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 6792 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6792 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 740:
-#line 5997 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 5997 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 6798 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6798 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 741:
-#line 6002 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6002 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRepeatableClause, yylhs.location, {(yystack_[1].value.expression)});
       }
-#line 6806 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6806 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 742:
-#line 6008 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6008 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 6812 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6812 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 743:
-#line 6009 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6009 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 6818 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6818 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 744:
-#line 6014 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6014 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.sample_size_unit) = zetasql::ASTSampleSize::ROWS; }
-#line 6824 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6824 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 745:
-#line 6015 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6015 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.sample_size_unit) = zetasql::ASTSampleSize::PERCENT; }
-#line 6830 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6830 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 746:
-#line 6020 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6020 "bison_parser.y" // lalr1.cc:919
     {
         auto* sample_size = MAKE_NODE(ASTSampleSize, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.node)});
         sample_size->set_unit((yystack_[1].value.sample_size_unit));
         (yylhs.value.node) = sample_size;
       }
-#line 6840 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6840 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 747:
-#line 6028 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6028 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 6846 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6846 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 748:
-#line 6029 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6029 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 6852 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6852 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 749:
-#line 6036 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6036 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSampleSuffix, yylhs.location, {nullptr, (yystack_[0].value.node)});
       }
-#line 6860 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6860 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 750:
-#line 6040 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6040 "bison_parser.y" // lalr1.cc:919
     {
         auto* with_weight = MAKE_NODE(ASTWithWeight, yylhs.location, {});
         (yylhs.value.node) = MAKE_NODE(ASTSampleSuffix, yylhs.location, {with_weight, (yystack_[0].value.node)});
       }
-#line 6869 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6869 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 751:
-#line 6045 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6045 "bison_parser.y" // lalr1.cc:919
     {
         auto* alias = MAKE_NODE(ASTAlias, yystack_[1].location, {(yystack_[1].value.identifier)});
         auto* with_weight = MAKE_NODE(ASTWithWeight, yylhs.location, {alias});
         (yylhs.value.node) = MAKE_NODE(ASTSampleSuffix, yylhs.location, {with_weight, (yystack_[0].value.node)});
       }
-#line 6879 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6879 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 752:
-#line 6051 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6051 "bison_parser.y" // lalr1.cc:919
     {
         auto* alias = MAKE_NODE(ASTAlias, yystack_[2].location, yystack_[1].location, {(yystack_[1].value.identifier)});
         auto* with_weight = MAKE_NODE(ASTWithWeight, yylhs.location, {alias});
         (yylhs.value.node) = MAKE_NODE(ASTSampleSuffix, yylhs.location, {with_weight, (yystack_[0].value.node)});
       }
-#line 6889 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6889 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 753:
-#line 6056 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6056 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 6895 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6895 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 754:
-#line 6061 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6061 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.sample_clause) = MAKE_NODE(ASTSampleClause, yylhs.location, {(yystack_[4].value.identifier), (yystack_[2].value.node), (yystack_[0].value.node)});
       }
-#line 6903 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6903 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 755:
-#line 6067 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6067 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTPivotExpression, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.alias)});
   }
-#line 6911 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6911 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 756:
-#line 6073 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6073 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTPivotExpressionList, yylhs.location, {(yystack_[0].value.node)});
   }
-#line 6919 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6919 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 757:
-#line 6076 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6076 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
   }
-#line 6927 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6927 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 758:
-#line 6082 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6082 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTPivotValue, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.alias)});
   }
-#line 6935 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6935 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 759:
-#line 6087 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6087 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTPivotValueList, yylhs.location, {(yystack_[0].value.node)});
   }
-#line 6943 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6943 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 760:
-#line 6090 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6090 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
   }
-#line 6951 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6951 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 761:
-#line 6097 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6097 "bison_parser.y" // lalr1.cc:919
     {
       if ((yystack_[7].value.node) == nullptr) {
         YYERROR_AND_ABORT_AT(yystack_[7].location,
@@ -6959,334 +6959,334 @@ namespace zetasql_bison_parser {
       }
       (yylhs.value.pivot_clause) = MAKE_NODE(ASTPivotClause, yylhs.location, {(yystack_[7].value.node), (yystack_[5].value.expression), (yystack_[2].value.node)});
   }
-#line 6963 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6963 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 762:
-#line 6106 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6106 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTUnpivotInItemLabel, yylhs.location, {(yystack_[0].value.string_literal)});
   }
-#line 6971 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6971 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 763:
-#line 6109 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6109 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTUnpivotInItemLabel, yylhs.location, {(yystack_[0].value.expression)})
   }
-#line 6979 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6979 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 764:
-#line 6112 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6112 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 6985 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6985 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 765:
-#line 6116 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6116 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTPathExpressionList, yylhs.location, {(yystack_[0].value.path_expression)});
     }
-#line 6993 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 6993 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 766:
-#line 6120 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6120 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.path_expression)}), yylhs.location);
     }
-#line 7001 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7001 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 767:
-#line 6125 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6125 "bison_parser.y" // lalr1.cc:919
     {
    (yylhs.value.node) = (yystack_[1].value.node);
  }
-#line 7009 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7009 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 768:
-#line 6129 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6129 "bison_parser.y" // lalr1.cc:919
     {
    (yylhs.value.node) = MAKE_NODE(ASTPathExpressionList, yylhs.location, {(yystack_[0].value.path_expression)});
  }
-#line 7017 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7017 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 769:
-#line 6135 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6135 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTPathExpressionList, yylhs.location, {(yystack_[0].value.path_expression)});
       }
-#line 7025 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7025 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 770:
-#line 6139 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6139 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.path_expression)});
       }
-#line 7033 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7033 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 771:
-#line 6146 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6146 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 7041 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7041 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 772:
-#line 6152 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6152 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 7047 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7047 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 773:
-#line 6153 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6153 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 7053 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7053 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 774:
-#line 6157 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6157 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTUnpivotInItem, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.node)});
   }
-#line 7061 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7061 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 775:
-#line 6162 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6162 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = MAKE_NODE(ASTUnpivotInItemList, yylhs.location, {(yystack_[0].value.node)});
   }
-#line 7069 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7069 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 776:
-#line 6165 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6165 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
   }
-#line 7077 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7077 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 777:
-#line 6170 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6170 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
   }
-#line 7085 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7085 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 778:
-#line 6175 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6175 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.opt_unpivot_nulls_filter) = zetasql::ASTUnpivotClause::kExclude; }
-#line 7091 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7091 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 779:
-#line 6176 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6176 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.opt_unpivot_nulls_filter) = zetasql::ASTUnpivotClause::kInclude; }
-#line 7097 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7097 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 780:
-#line 6177 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6177 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.opt_unpivot_nulls_filter) = zetasql::ASTUnpivotClause::kUnspecified; }
-#line 7103 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7103 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 781:
-#line 6183 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6183 "bison_parser.y" // lalr1.cc:919
     {
     auto* unpivot_clause = MAKE_NODE(ASTUnpivotClause, yylhs.location, {(yystack_[5].value.node), (yystack_[3].value.path_expression), (yystack_[1].value.node)});
     unpivot_clause->set_null_filter((yystack_[7].value.opt_unpivot_nulls_filter));
     (yylhs.value.unpivot_clause) = unpivot_clause;
    }
-#line 7113 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7113 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 782:
-#line 6202 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6202 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = MAKE_NODE(ASTAlias, yylhs.location, {(yystack_[0].value.identifier)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = nullptr;
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = nullptr;
   }
-#line 7123 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7123 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 783:
-#line 6207 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6207 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = MAKE_NODE(ASTAlias, yylhs.location, {(yystack_[0].value.identifier)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = nullptr;
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = nullptr;
   }
-#line 7133 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7133 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 784:
-#line 6212 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6212 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = MAKE_NODE(ASTAlias, yystack_[3].location, {(yystack_[2].value.identifier)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = parser->WithEndLocation((yylhs.value.pivot_or_unpivot_clause_and_alias).alias, yystack_[2].location);
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = WithExtraChildren((yystack_[1].value.pivot_clause), {(yystack_[0].value.alias)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = nullptr;
   }
-#line 7144 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7144 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 785:
-#line 6218 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6218 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = MAKE_NODE(ASTAlias, yystack_[3].location, {(yystack_[2].value.identifier)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = parser->WithEndLocation((yylhs.value.pivot_or_unpivot_clause_and_alias).alias, yystack_[2].location);
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = WithExtraChildren((yystack_[1].value.unpivot_clause), {(yystack_[0].value.alias)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = nullptr;
   }
-#line 7155 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7155 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 786:
-#line 6224 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6224 "bison_parser.y" // lalr1.cc:919
     {
     YYERROR_AND_ABORT_AT(
         yystack_[0].location,
         "QUALIFY clause must be used in conjunction with WHERE or GROUP BY "
         "or HAVING clause");
   }
-#line 7166 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7166 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 787:
-#line 6230 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6230 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = MAKE_NODE(ASTAlias, yystack_[2].location, {(yystack_[2].value.identifier)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = WithExtraChildren((yystack_[1].value.pivot_clause), {(yystack_[0].value.alias)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = nullptr;
   }
-#line 7176 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7176 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 788:
-#line 6235 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6235 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = MAKE_NODE(ASTAlias, yystack_[2].location, {(yystack_[2].value.identifier)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = WithExtraChildren((yystack_[1].value.unpivot_clause), {(yystack_[0].value.alias)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = nullptr;
   }
-#line 7186 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7186 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 789:
-#line 6240 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6240 "bison_parser.y" // lalr1.cc:919
     {
     YYERROR_AND_ABORT_AT(
         yystack_[0].location,
         "QUALIFY clause must be used in conjunction with WHERE or GROUP BY "
         "or HAVING clause");
   }
-#line 7197 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7197 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 790:
-#line 6246 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6246 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = nullptr;
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = WithExtraChildren((yystack_[1].value.pivot_clause), {(yystack_[0].value.alias)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = nullptr;
   }
-#line 7207 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7207 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 791:
-#line 6251 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6251 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = nullptr;
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = WithExtraChildren((yystack_[1].value.unpivot_clause), {(yystack_[0].value.alias)});
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = nullptr;
   }
-#line 7217 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7217 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 792:
-#line 6256 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6256 "bison_parser.y" // lalr1.cc:919
     {
     YYERROR_AND_ABORT_AT(
         yystack_[0].location,
         "QUALIFY clause must be used in conjunction with WHERE or GROUP BY "
         "or HAVING clause");
   }
-#line 7228 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7228 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 793:
-#line 6262 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6262 "bison_parser.y" // lalr1.cc:919
     {
     (yylhs.value.pivot_or_unpivot_clause_and_alias).alias = nullptr;
     (yylhs.value.pivot_or_unpivot_clause_and_alias).pivot_clause = nullptr;
     (yylhs.value.pivot_or_unpivot_clause_and_alias).unpivot_clause = nullptr;
   }
-#line 7238 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7238 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 794:
-#line 6277 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6277 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.postfix_table_operator) = MAKE_NODE(ASTMatchRecognizeClause, yylhs.location,
                        {(yystack_[11].value.node), (yystack_[10].value.node), (yystack_[8].value.node), (yystack_[5].value.row_pattern_expression),
                         (yystack_[2].value.node), (yystack_[0].value.alias)});
       }
-#line 7248 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7248 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 795:
-#line 6285 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6285 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.row_pattern_expression) = (yystack_[0].value.row_pattern_expression); }
-#line 7254 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7254 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 796:
-#line 6287 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6287 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.row_pattern_expression) = MakeOrCombineRowPatternOperation(
           zetasql::ASTRowPatternOperation::ALTERNATE, parser, yylhs.location, (yystack_[2].value.row_pattern_expression), (yystack_[0].value.row_pattern_expression));
     }
-#line 7263 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7263 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 797:
-#line 6294 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6294 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.row_pattern_expression) = (yystack_[0].value.row_pattern_expression); }
-#line 7269 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7269 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 798:
-#line 6296 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6296 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.row_pattern_expression) = MakeOrCombineRowPatternOperation(
           zetasql::ASTRowPatternOperation::CONCAT, parser, yylhs.location, (yystack_[1].value.row_pattern_expression), (yystack_[0].value.row_pattern_expression));
     }
-#line 7278 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7278 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 799:
-#line 6304 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6304 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.row_pattern_expression) = MAKE_NODE(ASTRowPatternVariable, yylhs.location, {(yystack_[0].value.identifier)});
     }
-#line 7286 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7286 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 800:
-#line 6308 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6308 "bison_parser.y" // lalr1.cc:919
     {
       (yystack_[1].value.row_pattern_expression)->set_parenthesized(true);
       // Don't include the location in the parentheses. Semantic error
@@ -7294,11 +7294,11 @@ namespace zetasql_bison_parser {
       // expression, not at the opening parentheses.
       (yylhs.value.row_pattern_expression) = (yystack_[1].value.row_pattern_expression);
     }
-#line 7298 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7298 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 801:
-#line 6320 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6320 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTQuery* query = (yystack_[1].value.query);
         if ((yystack_[0].value.pivot_or_unpivot_clause_and_alias).pivot_clause != nullptr) {
@@ -7315,123 +7315,123 @@ namespace zetasql_bison_parser {
                                       (yystack_[0].value.pivot_or_unpivot_clause_and_alias).pivot_clause,
                                       (yystack_[0].value.pivot_or_unpivot_clause_and_alias).unpivot_clause);
       }
-#line 7319 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7319 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 802:
-#line 6340 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6340 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTableClause, yylhs.location, {(yystack_[0].value.table_expression)});
       }
-#line 7327 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7327 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 803:
-#line 6344 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6344 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTableClause, yylhs.location, {(yystack_[0].value.path_expression)});
       }
-#line 7335 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7335 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 804:
-#line 6351 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6351 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTModelClause, yylhs.location, {(yystack_[0].value.path_expression)});
       }
-#line 7343 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7343 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 805:
-#line 6358 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6358 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTConnectionClause, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 7351 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7351 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 806:
-#line 6365 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6365 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTDescriptorColumn, yylhs.location, {(yystack_[0].value.identifier), nullptr});
       }
-#line 7359 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7359 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 807:
-#line 6372 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6372 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTDescriptorColumnList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 7367 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7367 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 808:
-#line 6376 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6376 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 7375 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7375 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 809:
-#line 6383 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6383 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTDescriptor, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 7383 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7383 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 810:
-#line 6390 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6390 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTVFArgument, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 7391 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7391 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 811:
-#line 6394 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6394 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTVFArgument, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 7399 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7399 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 812:
-#line 6398 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6398 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTVFArgument, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 7407 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7407 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 813:
-#line 6402 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6402 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTVFArgument, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 7415 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7415 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 814:
-#line 6406 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6406 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTVFArgument, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 7423 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7423 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 815:
-#line 6410 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6410 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTVFArgument, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 7431 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7431 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 816:
-#line 6414 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6414 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[2].location,
@@ -7439,11 +7439,11 @@ namespace zetasql_bison_parser {
             "calls written as \"TABLE path\" must not be enclosed in "
             "parentheses. To fix this, replace (TABLE path) with TABLE path");
       }
-#line 7443 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7443 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 817:
-#line 6422 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6422 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[2].location,
@@ -7451,11 +7451,11 @@ namespace zetasql_bison_parser {
             "calls written as \"MODEL path\" must not be enclosed in "
             "parentheses. To fix this, replace (MODEL path) with MODEL path");
       }
-#line 7455 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7455 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 818:
-#line 6430 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6430 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[2].location,
@@ -7464,11 +7464,11 @@ namespace zetasql_bison_parser {
             "parentheses. To fix this, replace (CONNECTION path) with "
             "CONNECTION path");
       }
-#line 7468 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7468 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 819:
-#line 6439 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6439 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[2].location,
@@ -7477,11 +7477,11 @@ namespace zetasql_bison_parser {
             "parentheses. To fix this, replace (name => value) with "
             "name => value");
       }
-#line 7481 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7481 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 820:
-#line 6448 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6448 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location,
@@ -7489,11 +7489,11 @@ namespace zetasql_bison_parser {
             "calls must be enclosed in parentheses. To fix this, replace "
             "SELECT... with (SELECT...)");
       }
-#line 7493 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7493 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 821:
-#line 6456 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6456 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location,
@@ -7501,61 +7501,61 @@ namespace zetasql_bison_parser {
             "calls must be enclosed in parentheses. To fix this, replace "
             "WITH... with (WITH...)");
       }
-#line 7505 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7505 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 822:
-#line 6467 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6467 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_expression) = MAKE_NODE(ASTTVF, yylhs.location, {(yystack_[1].value.path_expression)});
       }
-#line 7513 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7513 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 823:
-#line 6471 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6471 "bison_parser.y" // lalr1.cc:919
     {
         auto* identifier = parser->MakeIdentifier(yystack_[1].location, parser->GetInputText(yystack_[1].location));
         auto* path_expression = MAKE_NODE(ASTPathExpression, yystack_[1].location, {identifier});
         (yylhs.value.table_expression) = MAKE_NODE(ASTTVF, yylhs.location, {path_expression});
       }
-#line 7523 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7523 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 824:
-#line 6480 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6480 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_expression) = WithExtraChildren((yystack_[1].value.table_expression), {(yystack_[0].value.node)});
       }
-#line 7531 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7531 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 825:
-#line 6484 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6484 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_expression) = WithExtraChildren((yystack_[2].value.table_expression), {(yystack_[0].value.node)});
       }
-#line 7539 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7539 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 826:
-#line 6491 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6491 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_expression) = WithExtraChildren(parser->WithEndLocation((yystack_[2].value.table_expression), yylhs.location), {(yystack_[0].value.node)});
       }
-#line 7547 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7547 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 827:
-#line 6495 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6495 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_expression) = WithExtraChildren(parser->WithEndLocation((yystack_[2].value.table_expression), yylhs.location), {(yystack_[0].value.node)});
       }
-#line 7555 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7555 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 828:
-#line 6505 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6505 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = WithExtraChildren(
                         parser->WithEndLocation((yystack_[3].value.table_expression), yylhs.location),
@@ -7564,11 +7564,11 @@ namespace zetasql_bison_parser {
                                       (yystack_[0].value.pivot_or_unpivot_clause_and_alias).pivot_clause,
                                       (yystack_[0].value.pivot_or_unpivot_clause_and_alias).unpivot_clause);
       }
-#line 7568 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7568 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 829:
-#line 6516 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6516 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = WithExtraChildren(
                         parser->WithEndLocation((yystack_[3].value.table_expression), yylhs.location),
@@ -7577,67 +7577,67 @@ namespace zetasql_bison_parser {
                                       (yystack_[0].value.pivot_or_unpivot_clause_and_alias).pivot_clause,
                                       (yystack_[0].value.pivot_or_unpivot_clause_and_alias).unpivot_clause);
       }
-#line 7581 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7581 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 830:
-#line 6527 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6527 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 7587 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7587 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 831:
-#line 6528 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6528 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.expression); }
-#line 7593 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7593 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 832:
-#line 6530 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6530 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location,
             "Syntax error: Array element access is not allowed in the FROM "
             "clause without UNNEST; Use UNNEST(<expression>)");
       }
-#line 7604 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7604 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 833:
-#line 6537 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6537 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location,
             "Syntax error: Generalized field access is not allowed in the FROM "
             "clause without UNNEST; Use UNNEST(<expression>)");
       }
-#line 7615 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7615 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 834:
-#line 6544 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6544 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location,
             "Syntax error: Array element access is not allowed in the FROM "
             "clause without UNNEST; Use UNNEST(<expression>)");
       }
-#line 7626 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7626 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 835:
-#line 6551 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6551 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location,
             "Syntax error: Generalized field access is not allowed in the FROM "
             "clause without UNNEST; Use UNNEST(<expression>)");
       }
-#line 7637 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7637 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 836:
-#line 6565 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6565 "bison_parser.y" // lalr1.cc:919
     {
         if ( (yystack_[1].value.node) != nullptr) {
           // We do not support combining PIVOT or UNPIVOT with WITH OFFSET.
@@ -7684,23 +7684,23 @@ namespace zetasql_bison_parser {
                                       (yystack_[2].value.pivot_or_unpivot_clause_and_alias).pivot_clause,
                                       (yystack_[2].value.pivot_or_unpivot_clause_and_alias).unpivot_clause);
       }
-#line 7688 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7688 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 837:
-#line 6613 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6613 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.table_expression) = (yystack_[0].value.table_expression); }
-#line 7694 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7694 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 838:
-#line 6614 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6614 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.table_expression) = (yystack_[0].value.table_expression); }
-#line 7700 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7700 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 839:
-#line 6616 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6616 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::parser::ErrorInfo error_info;
         auto node = zetasql::parser::TransformJoinExpression(
@@ -7711,109 +7711,109 @@ namespace zetasql_bison_parser {
 
         (yylhs.value.table_expression) = MAKE_NODE(ASTParenthesizedJoin, yylhs.location,{node});
       }
-#line 7715 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7715 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 840:
-#line 6626 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6626 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.table_expression) = (yystack_[0].value.table_expression); }
-#line 7721 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7721 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 841:
-#line 6632 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6632 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_expression) = WithExtraChildren((yystack_[1].value.table_expression), {(yystack_[0].value.postfix_table_operator)});
       }
-#line 7729 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7729 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 842:
-#line 6636 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6636 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.table_expression) = WithExtraChildren((yystack_[1].value.table_expression), {(yystack_[0].value.sample_clause)});
       }
-#line 7737 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7737 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 843:
-#line 6643 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6643 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTForSystemTime, yylhs.location, {(yystack_[0].value.expression)})
       }
-#line 7745 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7745 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 844:
-#line 6647 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6647 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTForSystemTime, yylhs.location, {(yystack_[0].value.expression)})
       }
-#line 7753 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7753 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 845:
-#line 6651 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6651 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 7759 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7759 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 846:
-#line 6656 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6656 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTOnClause, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 7767 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7767 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 847:
-#line 6663 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6663 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTUsingClause, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 7775 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7775 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 848:
-#line 6667 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6667 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.identifier)});
       }
-#line 7783 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7783 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 849:
-#line 6674 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6674 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 7791 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7791 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 850:
-#line 6680 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6680 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 7797 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7797 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 851:
-#line 6682 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6682 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 7805 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7805 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 852:
-#line 6689 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6689 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTOnOrUsingClauseList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 7813 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7813 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 853:
-#line 6693 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6693 "bison_parser.y" // lalr1.cc:919
     {
         if (parser->language_options().LanguageFeatureEnabled(
                zetasql::FEATURE_V_1_3_ALLOW_CONSECUTIVE_ON)) {
@@ -7827,101 +7827,101 @@ namespace zetasql_bison_parser {
                        ? "ON" : "USING")));
         }
       }
-#line 7831 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7831 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 854:
-#line 6709 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6709 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 7837 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7837 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 855:
-#line 6710 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6710 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 7843 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7843 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 856:
-#line 6714 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6714 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 7849 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7849 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 857:
-#line 6715 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6715 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 7855 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7855 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 858:
-#line 6720 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6720 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_type) = zetasql::ASTJoin::CROSS; }
-#line 7861 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7861 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 859:
-#line 6721 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6721 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_type) = zetasql::ASTJoin::FULL; }
-#line 7867 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7867 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 860:
-#line 6722 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6722 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_type) = zetasql::ASTJoin::INNER; }
-#line 7873 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7873 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 861:
-#line 6723 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6723 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_type) = zetasql::ASTJoin::LEFT; }
-#line 7879 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7879 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 862:
-#line 6724 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6724 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_type) = zetasql::ASTJoin::RIGHT; }
-#line 7885 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7885 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 863:
-#line 6725 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6725 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_type) = zetasql::ASTJoin::DEFAULT_JOIN_TYPE; }
-#line 7891 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7891 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 864:
-#line 6730 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6730 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_hint) = zetasql::ASTJoin::HASH; }
-#line 7897 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7897 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 865:
-#line 6731 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6731 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_hint) = zetasql::ASTJoin::LOOKUP; }
-#line 7903 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7903 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 866:
-#line 6732 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6732 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.join_hint) = zetasql::ASTJoin::NO_JOIN_HINT; }
-#line 7909 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7909 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 867:
-#line 6735 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6735 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.table_expression) = (yystack_[0].value.table_expression); }
-#line 7915 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7915 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 868:
-#line 6735 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6735 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.table_expression) = (yystack_[0].value.table_expression); }
-#line 7921 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7921 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 869:
-#line 6747 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6747 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::parser::ErrorInfo error_info;
         auto *join_location =
@@ -7935,17 +7935,17 @@ namespace zetasql_bison_parser {
 
         (yylhs.value.table_expression) = node->GetAsOrDie<zetasql::ASTJoin>();
       }
-#line 7939 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7939 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 870:
-#line 6763 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6763 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.table_expression); }
-#line 7945 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7945 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 871:
-#line 6765 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6765 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::parser::ErrorInfo error_info;
         auto* comma_location = parser->MakeLocation(yystack_[1].location);
@@ -7957,11 +7957,11 @@ namespace zetasql_bison_parser {
 
         (yylhs.value.node) = node;
       }
-#line 7961 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 7961 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 872:
-#line 6778 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6778 "bison_parser.y" // lalr1.cc:919
     {
         // Give an error if we have a RIGHT or FULL JOIN following a comma
         // join since our left-to-right binding would violate the standard.
@@ -8007,50 +8007,50 @@ namespace zetasql_bison_parser {
 
         (yylhs.value.node) = node;
       }
-#line 8011 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8011 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 873:
-#line 6824 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6824 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location, "Query parameters cannot be used in place of table names");
       }
-#line 8020 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8020 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 874:
-#line 6829 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6829 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location, "Query parameters cannot be used in place of table names");
       }
-#line 8029 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8029 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 875:
-#line 6834 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6834 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
             yystack_[0].location, "System variables cannot be used in place of table names");
       }
-#line 8038 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8038 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 876:
-#line 6841 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6841 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8044 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8044 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 877:
-#line 6842 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6842 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8050 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8050 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 878:
-#line 6847 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6847 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::parser::ErrorInfo error_info;
         auto node = zetasql::parser::TransformJoinExpression(
@@ -8061,202 +8061,202 @@ namespace zetasql_bison_parser {
 
         (yylhs.value.node) = MAKE_NODE(ASTFromClause, yylhs.location, {node});
       }
-#line 8065 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8065 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 879:
-#line 6872 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6872 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.clauses_following_from) = {(yystack_[4].value.node), (yystack_[3].value.node), (yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)};
       }
-#line 8073 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8073 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 880:
-#line 6876 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6876 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.clauses_following_from) = {/*where=*/nullptr, (yystack_[0].value.clauses_following_from).group_by, (yystack_[0].value.clauses_following_from).having, (yystack_[0].value.clauses_following_from).qualify, (yystack_[0].value.clauses_following_from).window};
       }
-#line 8081 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8081 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 881:
-#line 6882 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6882 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.clauses_following_from) = {/*where=*/nullptr, (yystack_[3].value.node), (yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)};
       }
-#line 8089 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8089 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 882:
-#line 6886 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6886 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.clauses_following_from) = {/*where=*/nullptr, /*group_by=*/nullptr, (yystack_[0].value.clauses_following_from).having, (yystack_[0].value.clauses_following_from).qualify,
               (yystack_[0].value.clauses_following_from).window};
       }
-#line 8098 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8098 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 883:
-#line 6893 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6893 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.clauses_following_from) = {/*where=*/nullptr, /*group_by=*/nullptr, (yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)};
       }
-#line 8106 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8106 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 884:
-#line 6897 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6897 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.clauses_following_from) = {/*where=*/nullptr, /*group_by=*/nullptr, /*having=*/nullptr,
               (yystack_[1].value.node), (yystack_[0].value.node)};
       }
-#line 8115 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8115 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 885:
-#line 6903 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6903 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = MAKE_NODE(ASTWhereClause, yylhs.location, {(yystack_[0].value.expression)}); }
-#line 8121 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8121 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 886:
-#line 6906 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6906 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8127 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8127 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 887:
-#line 6907 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6907 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8133 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8133 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 888:
-#line 6912 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6912 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRollup, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 8141 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8141 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 889:
-#line 6916 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6916 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 8149 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8149 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 890:
-#line 6923 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6923 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCube, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 8157 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8157 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 891:
-#line 6927 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6927 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 8165 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8165 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 892:
-#line 6934 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6934 "bison_parser.y" // lalr1.cc:919
     {
         auto* grouping_set = MAKE_NODE(ASTGroupingSet, yylhs.location, {});
         (yylhs.value.node) = parser->WithEndLocation(grouping_set, yylhs.location);
       }
-#line 8174 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8174 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 893:
-#line 6939 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6939 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGroupingSet, yylhs.location, {parser->WithEndLocation((yystack_[0].value.expression), yylhs.location)});
       }
-#line 8182 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8182 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 894:
-#line 6943 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6943 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGroupingSet, yylhs.location, {parser->WithEndLocation((yystack_[1].value.node), yylhs.location)});
       }
-#line 8190 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8190 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 895:
-#line 6947 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6947 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGroupingSet, yylhs.location, {parser->WithEndLocation((yystack_[1].value.node), yylhs.location)});
       }
-#line 8198 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8198 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 896:
-#line 6954 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6954 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGroupingSetList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 8206 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8206 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 897:
-#line 6958 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6958 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 8214 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8214 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 898:
-#line 6966 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6966 "bison_parser.y" // lalr1.cc:919
     {
         auto* node =
             MAKE_NODE(ASTGroupingItemOrder, yylhs.location, {(yystack_[0].value.node)});
         node->set_ordering_spec((yystack_[1].value.ordering_spec));
         (yylhs.value.node) = node;
       }
-#line 8225 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8225 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 899:
-#line 6972 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6972 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8231 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8231 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 900:
-#line 6977 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6977 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8237 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8237 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 901:
-#line 6979 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6979 "bison_parser.y" // lalr1.cc:919
     {
         auto* node =
             MAKE_NODE(ASTGroupingItemOrder, yylhs.location, {(yystack_[0].value.node)});
         (yylhs.value.node) = node;
       }
-#line 8247 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8247 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 902:
-#line 6988 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6988 "bison_parser.y" // lalr1.cc:919
     {
         auto* grouping_item = MAKE_NODE(ASTGroupingItem, yylhs.location, {});
         (yylhs.value.node) = parser->WithEndLocation(grouping_item, yylhs.location);
       }
-#line 8256 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8256 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 903:
-#line 6996 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 6996 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[1].value.alias) != nullptr
             && !parser->language_options().LanguageFeatureEnabled(
@@ -8275,35 +8275,35 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = MAKE_NODE(ASTGroupingItem, yylhs.location, {(yystack_[2].value.expression), (yystack_[1].value.alias), (yystack_[0].value.node)});
       }
-#line 8279 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8279 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 904:
-#line 7015 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7015 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGroupingItem, yylhs.location, {parser->WithEndLocation((yystack_[1].value.node), yylhs.location)});
       }
-#line 8287 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8287 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 905:
-#line 7019 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7019 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGroupingItem, yylhs.location, {parser->WithEndLocation((yystack_[1].value.node), yylhs.location)});
       }
-#line 8295 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8295 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 906:
-#line 7023 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7023 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTGroupingItem, yylhs.location, {parser->WithEndLocation((yystack_[1].value.node), yylhs.location)});
       }
-#line 8303 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8303 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 907:
-#line 7029 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7029 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                   zetasql::FEATURE_PIPES)) {
@@ -8312,169 +8312,169 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.boolean) = true;
       }
-#line 8316 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8316 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 908:
-#line 7038 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7038 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 8322 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8322 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 909:
-#line 7045 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7045 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.group_by_preamble).hint = (yystack_[2].value.node);
         (yylhs.value.group_by_preamble).and_order_by = (yystack_[1].value.boolean);
       }
-#line 8331 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8331 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 910:
-#line 7053 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7053 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTGroupBy, yylhs.location, {(yystack_[1].value.group_by_preamble).hint, (yystack_[0].value.node)});
         node->set_and_order_by((yystack_[1].value.group_by_preamble).and_order_by);
         (yylhs.value.node) = node;
       }
-#line 8341 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8341 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 911:
-#line 7059 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7059 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 8349 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8349 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 912:
-#line 7066 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7066 "bison_parser.y" // lalr1.cc:919
     {
         auto* group_by_all = MAKE_NODE(ASTGroupByAll, yystack_[0].location, {});
         auto* node = MAKE_NODE(ASTGroupBy, yylhs.location, {(yystack_[1].value.group_by_preamble).hint, group_by_all});
         node->set_and_order_by((yystack_[1].value.group_by_preamble).and_order_by);
         (yylhs.value.node) = node;
       }
-#line 8360 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8360 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 913:
-#line 7075 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7075 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8366 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8366 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 914:
-#line 7076 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7076 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8372 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8372 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 915:
-#line 7080 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7080 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8378 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8378 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 916:
-#line 7081 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7081 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8384 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8384 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 917:
-#line 7089 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7089 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 8392 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8392 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 918:
-#line 7092 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7092 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8398 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8398 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 919:
-#line 7097 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7097 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTHaving, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 8406 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8406 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 920:
-#line 7102 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7102 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8412 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8412 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 921:
-#line 7103 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7103 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8418 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8418 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 922:
-#line 7108 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7108 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTWindowDefinition, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.node)});
       }
-#line 8426 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8426 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 923:
-#line 7115 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7115 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTWindowClause, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 8434 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8434 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 924:
-#line 7119 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7119 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 8442 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8442 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 925:
-#line 7126 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7126 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[0].value.node), yylhs.location);
       }
-#line 8450 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8450 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 926:
-#line 7129 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7129 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8456 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8456 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 927:
-#line 7133 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7133 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8462 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8462 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 928:
-#line 7134 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7134 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8468 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8468 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 929:
-#line 7135 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7135 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8474 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8474 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 930:
-#line 7140 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7140 "bison_parser.y" // lalr1.cc:919
     {
        if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_V_1_3_QUALIFY)) {
@@ -8482,23 +8482,23 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = MAKE_NODE(ASTQualify, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 8486 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8486 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 931:
-#line 7150 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7150 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8492 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8492 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 932:
-#line 7151 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7151 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8498 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8498 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 933:
-#line 7155 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7155 "bison_parser.y" // lalr1.cc:919
     {
        if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_V_1_3_QUALIFY)) {
@@ -8506,151 +8506,151 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = MAKE_NODE(ASTQualify, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 8510 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8510 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 934:
-#line 7167 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7167 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTLimitOffset, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 8518 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8518 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 935:
-#line 7171 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7171 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTLimitOffset, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 8526 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8526 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 936:
-#line 7177 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7177 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8532 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8532 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 937:
-#line 7178 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7178 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8538 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8538 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 938:
-#line 7184 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7184 "bison_parser.y" // lalr1.cc:919
     {
         auto* modifier = MAKE_NODE(ASTHavingModifier, yylhs.location, {(yystack_[0].value.expression)});
         modifier->set_modifier_kind(
             zetasql::ASTHavingModifier::ModifierKind::MAX);
         (yylhs.value.node) = modifier;
       }
-#line 8549 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8549 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 939:
-#line 7191 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7191 "bison_parser.y" // lalr1.cc:919
     {
         auto* modifier = MAKE_NODE(ASTHavingModifier, yylhs.location, {(yystack_[0].value.expression)});
         modifier->set_modifier_kind(
             zetasql::ASTHavingModifier::ModifierKind::MIN);
         (yylhs.value.node) = modifier;
       }
-#line 8560 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8560 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 940:
-#line 7198 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7198 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 8568 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8568 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 941:
-#line 7201 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7201 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8574 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8574 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 942:
-#line 7206 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7206 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTClampedBetweenModifier, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)})
       }
-#line 8582 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8582 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 943:
-#line 7209 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7209 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8588 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8588 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 944:
-#line 7214 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7214 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTWithReportModifier, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 8596 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8596 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 945:
-#line 7217 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7217 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8602 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8602 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 946:
-#line 7221 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7221 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8608 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8608 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 947:
-#line 7222 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7222 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8614 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8614 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 948:
-#line 7227 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7227 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.null_handling_modifier) = zetasql::ASTFunctionCall::IGNORE_NULLS;
       }
-#line 8622 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8622 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 949:
-#line 7231 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7231 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.null_handling_modifier) = zetasql::ASTFunctionCall::RESPECT_NULLS;
       }
-#line 8630 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8630 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 950:
-#line 7235 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7235 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.null_handling_modifier) = zetasql::ASTFunctionCall::DEFAULT_NULL_HANDLING;
       }
-#line 8638 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8638 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 951:
-#line 7241 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7241 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = MAKE_NODE(ASTIntOrUnbounded, yylhs.location, {(yystack_[0].value.expression)}); }
-#line 8644 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8644 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 952:
-#line 7242 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7242 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = MAKE_NODE(ASTIntOrUnbounded, yylhs.location, {}); }
-#line 8650 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8650 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 953:
-#line 7247 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7247 "bison_parser.y" // lalr1.cc:919
     {
         auto empty_location = LocationFromOffset(yystack_[0].location.end());
 
@@ -8660,20 +8660,20 @@ namespace zetasql_bison_parser {
         (yylhs.value.node) = MAKE_NODE(ASTRecursionDepthModifier, yylhs.location,
                        {(yystack_[0].value.alias), lower_bound, upper_bound});
       }
-#line 8664 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8664 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 954:
-#line 7264 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7264 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRecursionDepthModifier, yylhs.location,
                        {(yystack_[4].value.alias), (yystack_[2].value.node), (yystack_[0].value.node)});
       }
-#line 8673 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8673 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 955:
-#line 7270 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7270 "bison_parser.y" // lalr1.cc:919
     {
         auto empty_location = LocationFromOffset(yystack_[2].location.end());
 
@@ -8682,57 +8682,57 @@ namespace zetasql_bison_parser {
         (yylhs.value.node) = MAKE_NODE(ASTRecursionDepthModifier, yylhs.location,
                        {(yystack_[2].value.alias), lower_bound, (yystack_[0].value.node)});
       }
-#line 8686 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8686 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 956:
-#line 7282 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7282 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAliasedQueryModifiers, yylhs.location,
                        {(yystack_[0].value.node)});
       }
-#line 8695 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8695 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 957:
-#line 7286 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7286 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8701 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8701 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 958:
-#line 7292 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7292 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAliasedQuery, yylhs.location, {(yystack_[3].value.identifier), (yystack_[1].value.query), (yystack_[0].value.node)});
       }
-#line 8709 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8709 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 959:
-#line 7298 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7298 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = MAKE_NODE(ASTAliasedQueryList, yylhs.location, {(yystack_[0].value.node)}); }
-#line 8715 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8715 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 960:
-#line 7300 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7300 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 8723 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8723 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 961:
-#line 7307 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7307 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTWithClause, yylhs.location, {(yystack_[0].value.node)});
         (yylhs.value.node) = parser->WithEndLocation((yylhs.value.node), yylhs.location);
       }
-#line 8732 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8732 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 962:
-#line 7312 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7312 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTWithClause* with_clause =
             MAKE_NODE(ASTWithClause, yylhs.location, {(yystack_[0].value.node)})
@@ -8740,241 +8740,241 @@ namespace zetasql_bison_parser {
         with_clause->set_recursive(true);
         (yylhs.value.node) = with_clause;
       }
-#line 8744 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8744 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 963:
-#line 7320 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7320 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 8752 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8752 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 964:
-#line 7326 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7326 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8758 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8758 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 965:
-#line 7327 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7327 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8764 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8764 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 966:
-#line 7331 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7331 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8770 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8770 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 967:
-#line 7332 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7332 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8776 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8776 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 968:
-#line 7337 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7337 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 8784 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8784 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 969:
-#line 7343 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7343 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ordering_spec) = zetasql::ASTOrderingExpression::ASC; }
-#line 8790 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8790 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 970:
-#line 7344 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7344 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ordering_spec) = zetasql::ASTOrderingExpression::DESC; }
-#line 8796 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8796 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 971:
-#line 7348 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7348 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ordering_spec) = (yystack_[0].value.ordering_spec); }
-#line 8802 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8802 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 972:
-#line 7349 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7349 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ordering_spec) = zetasql::ASTOrderingExpression::UNSPECIFIED; }
-#line 8808 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8808 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 973:
-#line 7354 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7354 "bison_parser.y" // lalr1.cc:919
     {
         auto* null_order = MAKE_NODE(ASTNullOrder, yylhs.location, {});
         null_order->set_nulls_first(true);
         (yylhs.value.node) = null_order;
       }
-#line 8818 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8818 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 974:
-#line 7360 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7360 "bison_parser.y" // lalr1.cc:919
     {
         auto* null_order = MAKE_NODE(ASTNullOrder, yylhs.location, {});
         null_order->set_nulls_first(false);
         (yylhs.value.node) = null_order;
       }
-#line 8828 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8828 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 975:
-#line 7368 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7368 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8834 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8834 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 976:
-#line 7369 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7369 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8840 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8840 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 977:
-#line 7373 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7373 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.string_literal); }
-#line 8846 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8846 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 978:
-#line 7374 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7374 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 8852 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8852 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 979:
-#line 7375 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7375 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 8858 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8858 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 980:
-#line 7379 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7379 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCollate, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 8866 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8866 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 981:
-#line 7384 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7384 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8872 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8872 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 982:
-#line 7385 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7385 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8878 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8878 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 983:
-#line 7390 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7390 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 8886 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8886 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 984:
-#line 7393 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7393 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8892 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8892 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 985:
-#line 7398 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7398 "bison_parser.y" // lalr1.cc:919
     {
         auto* ordering_expr =
             MAKE_NODE(ASTOrderingExpression, yylhs.location, {(yystack_[3].value.expression), (yystack_[2].value.node), (yystack_[0].value.node), nullptr});
         ordering_expr->set_ordering_spec((yystack_[1].value.ordering_spec));
         (yylhs.value.node) = ordering_expr;
       }
-#line 8903 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8903 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 986:
-#line 7408 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7408 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTOrderBy, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.node)});
       }
-#line 8911 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8911 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 987:
-#line 7412 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7412 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 8919 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8919 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 988:
-#line 7419 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7419 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[0].value.node), yylhs.location);
       }
-#line 8927 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8927 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 989:
-#line 7426 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7426 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 8935 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8935 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 990:
-#line 7432 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7432 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 8941 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8941 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 991:
-#line 7433 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7433 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 8947 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8947 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 992:
-#line 7438 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7438 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.query);
       }
-#line 8955 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8955 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 993:
-#line 7442 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7442 "bison_parser.y" // lalr1.cc:919
     {
         // `expression_maybe_parenthesized_not_a_query` is NOT a query.
         (yylhs.value.node) = MAKE_NODE(ASTInList, yystack_[1].location, {(yystack_[1].value.expression)});
       }
-#line 8964 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8964 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 994:
-#line 7447 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7447 "bison_parser.y" // lalr1.cc:919
     {
         // Don't include the ")" in the location, to match the JavaCC parser.
         // TODO: Fix that.
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yystack_[1].location);
       }
-#line 8974 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8974 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 995:
-#line 7462 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7462 "bison_parser.y" // lalr1.cc:919
     {
         if (!(yystack_[0].value.query)->parenthesized() &&
           !parser->language_options().LanguageFeatureEnabled(
@@ -8988,93 +8988,93 @@ namespace zetasql_bison_parser {
         auto* sub_query = MAKE_NODE(ASTExpressionSubquery, yystack_[0].location, {(yystack_[0].value.query)});
         (yylhs.value.node) = MAKE_NODE(ASTInList, yylhs.location, {sub_query});
       }
-#line 8992 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 8992 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 996:
-#line 7476 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7476 "bison_parser.y" // lalr1.cc:919
     {
         // `expression_maybe_parenthesized_not_a_query` is NOT a query.
         (yylhs.value.node) = MAKE_NODE(ASTInList, yystack_[1].location, {(yystack_[1].value.expression)});
       }
-#line 9001 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9001 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 997:
-#line 7481 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7481 "bison_parser.y" // lalr1.cc:919
     {
         // Don't include the ")" in the location, to match the JavaCC parser.
         // TODO: Fix that.
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yystack_[1].location);
       }
-#line 9011 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9011 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 998:
-#line 7490 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7490 "bison_parser.y" // lalr1.cc:919
     {
         // The JavaCC parser doesn't include the opening "(" in the location
         // for some reason. TODO: Correct this after JavaCC is gone.
         (yylhs.value.node) = MAKE_NODE(ASTInList, yystack_[2].location, yystack_[0].location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 9021 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9021 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 999:
-#line 7496 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7496 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 9029 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9029 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1000:
-#line 7503 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7503 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTExpressionWithOptAlias, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.alias)});
       }
-#line 9037 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9037 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1001:
-#line 7509 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7509 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTUnnestExpression, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 9045 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9045 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1002:
-#line 7513 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7513 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 9053 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9053 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1003:
-#line 7518 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7518 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9059 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9059 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1004:
-#line 7519 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7519 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = nullptr; }
-#line 9065 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9065 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1005:
-#line 7523 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7523 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(
           WithExtraChildren((yystack_[2].value.node), {(yystack_[1].value.expression)}), yylhs.location);
       }
-#line 9074 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9074 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1006:
-#line 7528 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7528 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
         yystack_[0].location,
@@ -9082,110 +9082,110 @@ namespace zetasql_bison_parser {
         "as an expression, the query must be wrapped with additional "
         "parentheses to make it a scalar subquery expression");
       }
-#line 9086 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9086 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1007:
-#line 7539 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7539 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTUnnestExpressionWithOptAliasAndOffset, yylhs.location,
                        {(yystack_[2].value.node), (yystack_[1].value.alias), (yystack_[0].value.node)});
       }
-#line 9095 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9095 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1008:
-#line 7547 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7547 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::EQ; }
-#line 9101 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9101 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1009:
-#line 7548 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7548 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::NE; }
-#line 9107 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9107 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1010:
-#line 7549 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7549 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::NE2; }
-#line 9113 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9113 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1011:
-#line 7550 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7550 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::LT; }
-#line 9119 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9119 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1012:
-#line 7551 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7551 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::LE; }
-#line 9125 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9125 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1013:
-#line 7552 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7552 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::GT; }
-#line 9131 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9131 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1014:
-#line 7553 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7553 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::GE; }
-#line 9137 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9137 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1015:
-#line 7556 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7556 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::PLUS; }
-#line 9143 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9143 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1016:
-#line 7557 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7557 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::MINUS; }
-#line 9149 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9149 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1017:
-#line 7561 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7561 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::MULTIPLY; }
-#line 9155 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9155 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1018:
-#line 7562 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7562 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.binary_op) = zetasql::ASTBinaryExpression::DIVIDE; }
-#line 9161 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9161 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1019:
-#line 7567 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7567 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.shift_operator) = ShiftOperator::kLeft; }
-#line 9167 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9167 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1020:
-#line 7568 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7568 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.shift_operator) = ShiftOperator::kRight; }
-#line 9173 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9173 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1021:
-#line 7573 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7573 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.import_type) = ImportType::kModule; }
-#line 9179 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9179 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1022:
-#line 7574 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7574 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.import_type) = ImportType::kProto; }
-#line 9185 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9185 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1023:
-#line 7580 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7580 "bison_parser.y" // lalr1.cc:919
     {
        if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_V_1_3_LIKE_ANY_SOME_ALL)) {
@@ -9196,11 +9196,11 @@ namespace zetasql_bison_parser {
         op->set_op(zetasql::ASTAnySomeAllOp::kAny);
         (yylhs.value.node) = op;
       }
-#line 9200 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9200 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1024:
-#line 7591 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7591 "bison_parser.y" // lalr1.cc:919
     {
        if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_V_1_3_LIKE_ANY_SOME_ALL)) {
@@ -9211,11 +9211,11 @@ namespace zetasql_bison_parser {
         op->set_op(zetasql::ASTAnySomeAllOp::kSome);
         (yylhs.value.node) = op;
       }
-#line 9215 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9215 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1025:
-#line 7602 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7602 "bison_parser.y" // lalr1.cc:919
     {
        if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_V_1_3_LIKE_ANY_SOME_ALL)) {
@@ -9226,162 +9226,162 @@ namespace zetasql_bison_parser {
         op->set_op(zetasql::ASTAnySomeAllOp::kAll);
         (yylhs.value.node) = op;
       }
-#line 9230 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9230 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1026:
-#line 7616 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7616 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.not_keyword_presence) = NotKeywordPresence::kAbsent; }
-#line 9236 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9236 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1027:
-#line 7618 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7618 "bison_parser.y" // lalr1.cc:919
     {
         yylhs.location = yystack_[0].location;  // Error messages should point at the "LIKE".
         (yylhs.value.not_keyword_presence) = NotKeywordPresence::kPresent;
       }
-#line 9245 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9245 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1028:
-#line 7627 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7627 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.not_keyword_presence) = NotKeywordPresence::kAbsent;
       }
-#line 9253 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9253 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1029:
-#line 7631 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7631 "bison_parser.y" // lalr1.cc:919
     {
         yylhs.location = yystack_[0].location;  // Error messages should point at the "BETWEEN".
         (yylhs.value.not_keyword_presence) = NotKeywordPresence::kPresent;
       }
-#line 9262 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9262 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1030:
-#line 7639 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7639 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.not_keyword_presence) = NotKeywordPresence::kAbsent;
       }
-#line 9270 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9270 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1031:
-#line 7643 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7643 "bison_parser.y" // lalr1.cc:919
     {
         yylhs.location = yystack_[1].location;  // Error messages should point at the "DISTINCT".
         (yylhs.value.not_keyword_presence) = NotKeywordPresence::kPresent;
       }
-#line 9279 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9279 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1032:
-#line 7651 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7651 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.not_keyword_presence) = NotKeywordPresence::kAbsent; }
-#line 9285 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9285 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1033:
-#line 7653 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7653 "bison_parser.y" // lalr1.cc:919
     {
         yylhs.location = yystack_[0].location;  // Error messages should point at the "IN".
         (yylhs.value.not_keyword_presence) = NotKeywordPresence::kPresent;
       }
-#line 9294 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9294 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1034:
-#line 7661 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7661 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.not_keyword_presence) = NotKeywordPresence::kAbsent; }
-#line 9300 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9300 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1035:
-#line 7662 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7662 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.not_keyword_presence) = NotKeywordPresence::kPresent; }
-#line 9306 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9306 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1036:
-#line 7667 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7667 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.unary_op) = zetasql::ASTUnaryExpression::PLUS;
       }
-#line 9314 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9314 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1037:
-#line 7671 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7671 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.unary_op) = zetasql::ASTUnaryExpression::MINUS;
       }
-#line 9322 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9322 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1038:
-#line 7675 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7675 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.unary_op) = zetasql::ASTUnaryExpression::BITWISE_NOT;
       }
-#line 9330 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9330 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1039:
-#line 7682 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7682 "bison_parser.y" // lalr1.cc:919
     {
         auto* alias = MAKE_NODE(ASTAlias, yystack_[2].location, yystack_[1].location, {(yystack_[2].value.identifier)});
         (yylhs.value.node) = MAKE_NODE(ASTSelectColumn, yylhs.location, {(yystack_[0].value.expression), alias});
       }
-#line 9339 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9339 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1040:
-#line 7689 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7689 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSelectList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 9347 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9347 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1041:
-#line 7694 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7694 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 9355 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9355 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1042:
-#line 7701 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7701 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.expression) = MAKE_NODE(ASTWithExpression, yylhs.location, {(yystack_[3].value.node), (yystack_[1].value.expression)});
     }
-#line 9363 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9363 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1043:
-#line 7713 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7713 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9369 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9369 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1044:
-#line 7714 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7714 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9375 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9375 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1045:
-#line 7715 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7715 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9381 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9381 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1046:
-#line 7720 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7720 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[2].value.expression)->node_kind() == zetasql::AST_OR_EXPR &&
             !(yystack_[2].value.expression)->parenthesized()) {
@@ -9391,234 +9391,234 @@ namespace zetasql_bison_parser {
           (yylhs.value.expression) = MAKE_NODE(ASTOrExpr, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
         }
       }
-#line 9395 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9395 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1047:
-#line 7733 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7733 "bison_parser.y" // lalr1.cc:919
     {
         // Embrace and extend $lhs's ASTNode to flatten a series of ANDs.
         (yylhs.value.expression) = WithExtraChildren(parser->WithEndLocation((yystack_[2].value.expression), yystack_[0].location), {(yystack_[0].value.expression)});
       }
-#line 9404 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9404 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1048:
-#line 7738 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7738 "bison_parser.y" // lalr1.cc:919
     {
           (yylhs.value.expression) = MAKE_NODE(ASTAndExpr, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
        }
-#line 9412 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9412 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1049:
-#line 7748 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7748 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9418 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9418 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1050:
-#line 7749 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7749 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9424 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9424 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1051:
-#line 7751 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7751 "bison_parser.y" // lalr1.cc:919
     {
       // As the query ASTExpressionSubquery already has parentheses, set this
       // flag to false to avoid a double nesting like SELECT ((SELECT 1)).
       (yystack_[0].value.query)->set_parenthesized(false);
       (yylhs.value.expression) = MAKE_NODE(ASTExpressionSubquery, yystack_[0].location, {(yystack_[0].value.query)});
     }
-#line 9435 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9435 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1052:
-#line 7760 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7760 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9441 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9441 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1053:
-#line 7761 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7761 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9447 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9447 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1054:
-#line 7762 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7762 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9453 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9453 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1055:
-#line 7763 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7763 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9459 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9459 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1056:
-#line 7771 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7771 "bison_parser.y" // lalr1.cc:919
     {
         (yystack_[1].value.expression)->set_parenthesized(true);
         (yylhs.value.expression) = (yystack_[1].value.expression);
       }
-#line 9468 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9468 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1057:
-#line 7782 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7782 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9474 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9474 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1058:
-#line 7783 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7783 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9480 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9480 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1059:
-#line 7784 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7784 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.string_literal); }
-#line 9486 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9486 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1060:
-#line 7785 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7785 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.bytes_literal); }
-#line 9492 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9492 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1061:
-#line 7786 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7786 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9498 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9498 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1062:
-#line 7787 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7787 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9504 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9504 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1063:
-#line 7788 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7788 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9510 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9510 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1064:
-#line 7789 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7789 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9516 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9516 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1065:
-#line 7790 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7790 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9522 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9522 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1066:
-#line 7791 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7791 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9528 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9528 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1067:
-#line 7792 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7792 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9534 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9534 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1068:
-#line 7793 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7793 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9540 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9540 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1069:
-#line 7794 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7794 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9546 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9546 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1070:
-#line 7795 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7795 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9552 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9552 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1071:
-#line 7796 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7796 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9558 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9558 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1072:
-#line 7797 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7797 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.braced_constructor); }
-#line 9564 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9564 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1073:
-#line 7798 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7798 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9570 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9570 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1074:
-#line 7799 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7799 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9576 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9576 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1075:
-#line 7800 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7800 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9582 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9582 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1076:
-#line 7801 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7801 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9588 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9588 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1077:
-#line 7802 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7802 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9594 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9594 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1078:
-#line 7803 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7803 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9600 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9600 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1079:
-#line 7804 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7804 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9606 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9606 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1080:
-#line 7805 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7805 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9612 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9612 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1081:
-#line 7806 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7806 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9618 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9618 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1082:
-#line 7808 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7808 "bison_parser.y" // lalr1.cc:919
     {
         // The path expression is extended by the "." identifier rule below.
         (yylhs.value.expression) = MAKE_NODE(ASTPathExpression, yylhs.location, {(yystack_[0].value.identifier)});
@@ -9644,42 +9644,42 @@ namespace zetasql_bison_parser {
           }
         }
       }
-#line 9648 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9648 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1083:
-#line 7833 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7833 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 9654 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9654 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1084:
-#line 7835 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7835 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = (yystack_[0].value.expression_subquery);
       }
-#line 9662 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9662 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1085:
-#line 7839 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7839 "bison_parser.y" // lalr1.cc:919
     {
         auto* bracket_loc = parser->MakeLocation(yystack_[2].location);
         (yylhs.value.expression) = MAKE_NODE(ASTArrayElement, yystack_[3].location, yystack_[0].location, {(yystack_[3].value.expression), bracket_loc, (yystack_[1].value.expression)});
       }
-#line 9671 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9671 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1086:
-#line 7844 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7844 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTDotGeneralizedField, yystack_[4].location, yystack_[0].location, {(yystack_[4].value.expression), (yystack_[1].value.path_expression)});
       }
-#line 9679 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9679 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1087:
-#line 7848 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7848 "bison_parser.y" // lalr1.cc:919
     {
         // Note that if "expression" ends with an identifier, then the tokenizer
         // switches to IDENTIFIER_DOT mode before tokenizing $3. That means that
@@ -9696,21 +9696,21 @@ namespace zetasql_bison_parser {
           (yylhs.value.expression) = MAKE_NODE(ASTDotIdentifier, yystack_[2].location, yystack_[0].location, {(yystack_[2].value.expression), (yystack_[0].value.identifier)});
         }
       }
-#line 9700 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9700 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1088:
-#line 7865 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7865 "bison_parser.y" // lalr1.cc:919
     {
         auto* not_expr = MAKE_NODE(ASTUnaryExpression, yylhs.location, {(yystack_[0].value.expression)});
         not_expr->set_op(zetasql::ASTUnaryExpression::NOT);
         (yylhs.value.expression) = not_expr;
       }
-#line 9710 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9710 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1089:
-#line 7871 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7871 "bison_parser.y" // lalr1.cc:919
     {
           if ((yystack_[1].value.node)) {
             YYERROR_AND_ABORT_AT(yystack_[1].location,
@@ -9730,11 +9730,11 @@ namespace zetasql_bison_parser {
           like_expression->set_is_not((yystack_[3].value.not_keyword_presence) == NotKeywordPresence::kPresent);
           (yylhs.value.expression) = like_expression;
         }
-#line 9734 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9734 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1090:
-#line 7891 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7891 "bison_parser.y" // lalr1.cc:919
     {
           // Bison allows some cases like IN on the left hand side because it's
           // not ambiguous. The language doesn't allow this.
@@ -9760,11 +9760,11 @@ namespace zetasql_bison_parser {
           like_expression->set_is_not((yystack_[3].value.not_keyword_presence) == NotKeywordPresence::kPresent);
           (yylhs.value.expression) = like_expression;
         }
-#line 9764 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9764 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1091:
-#line 7917 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7917 "bison_parser.y" // lalr1.cc:919
     {
           // NOT has lower precedence but can be parsed unparenthesized in the
           // rhs because it is not ambiguous. This is not allowed.
@@ -9785,11 +9785,11 @@ namespace zetasql_bison_parser {
           binary_expression->set_op(zetasql::ASTBinaryExpression::LIKE);
           (yylhs.value.expression) = binary_expression;
         }
-#line 9789 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9789 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1092:
-#line 7938 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7938 "bison_parser.y" // lalr1.cc:919
     {
           if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_3_IS_DISTINCT)) {
@@ -9804,11 +9804,11 @@ namespace zetasql_bison_parser {
                   zetasql::ASTBinaryExpression::DISTINCT);
           (yylhs.value.expression) = binary_expression;
         }
-#line 9808 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9808 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1093:
-#line 7953 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7953 "bison_parser.y" // lalr1.cc:919
     {
           if ((yystack_[1].value.node)) {
             YYERROR_AND_ABORT_AT(yystack_[1].location,
@@ -9828,11 +9828,11 @@ namespace zetasql_bison_parser {
           in_expression->set_is_not((yystack_[2].value.not_keyword_presence) == NotKeywordPresence::kPresent);
           (yylhs.value.expression) = in_expression;
         }
-#line 9832 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9832 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1094:
-#line 7973 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 7973 "bison_parser.y" // lalr1.cc:919
     {
           // Bison allows some cases like IN on the left hand side because it's
           // not ambiguous. The language doesn't allow this.
@@ -9858,11 +9858,11 @@ namespace zetasql_bison_parser {
           in_expression->set_is_not((yystack_[2].value.not_keyword_presence) == NotKeywordPresence::kPresent);
           (yylhs.value.expression) = in_expression;
         }
-#line 9862 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9862 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1095:
-#line 8003 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8003 "bison_parser.y" // lalr1.cc:919
     {
           // Bison allows some cases like IN on the left hand side because it's
           // not ambiguous. The language doesn't allow this.
@@ -9893,11 +9893,11 @@ namespace zetasql_bison_parser {
           between_expression->set_is_not((yystack_[3].value.not_keyword_presence) == NotKeywordPresence::kPresent);
           (yylhs.value.expression) = between_expression;
         }
-#line 9897 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9897 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1096:
-#line 8035 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8035 "bison_parser.y" // lalr1.cc:919
     {
           // The "OR" operator has lower precedence than "AND". The rule
           // immediately above tries to catch all expressions with lower or
@@ -9911,11 +9911,11 @@ namespace zetasql_bison_parser {
                                "Syntax error: Expression in BETWEEN must be "
                                "parenthesized");
         }
-#line 9915 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9915 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1097:
-#line 8049 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8049 "bison_parser.y" // lalr1.cc:919
     {
           // The Bison parser allows comparison expressions in the LHS, even
           // though these operators are at the same precedence level and are not
@@ -9936,11 +9936,11 @@ namespace zetasql_bison_parser {
           }
           (yylhs.value.expression) = unary_expression;
         }
-#line 9940 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9940 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1098:
-#line 8070 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8070 "bison_parser.y" // lalr1.cc:919
     {
           // The Bison parser allows comparison expressions in the LHS, even
           // though these operators are at the same precedence level and are not
@@ -9956,11 +9956,11 @@ namespace zetasql_bison_parser {
           binary_expression->set_op(zetasql::ASTBinaryExpression::IS);
           (yylhs.value.expression) = binary_expression;
         }
-#line 9960 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9960 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1099:
-#line 8086 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8086 "bison_parser.y" // lalr1.cc:919
     {
           // The Bison parser allows comparison expressions in the LHS, even
           // though these operators are at the same precedence level and are not
@@ -9976,11 +9976,11 @@ namespace zetasql_bison_parser {
           binary_expression->set_op(zetasql::ASTBinaryExpression::IS);
           (yylhs.value.expression) = binary_expression;
         }
-#line 9980 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 9980 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1100:
-#line 8102 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8102 "bison_parser.y" // lalr1.cc:919
     {
           // NOT has lower precedence but can be parsed unparenthesized in the
           // rhs because it is not ambiguous. This is not allowed. We don't have
@@ -10003,11 +10003,11 @@ namespace zetasql_bison_parser {
           binary_expression->set_op((yystack_[1].value.binary_op));
           (yylhs.value.expression) = binary_expression;
         }
-#line 10007 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10007 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1101:
-#line 8125 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8125 "bison_parser.y" // lalr1.cc:919
     {
         // NOT has lower precedence but can be parsed unparenthesized in the
         // rhs because it is not ambiguous. This is not allowed. Other
@@ -10022,11 +10022,11 @@ namespace zetasql_bison_parser {
             zetasql::ASTBinaryExpression::BITWISE_OR);
         (yylhs.value.expression) = binary_expression;
       }
-#line 10026 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10026 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1102:
-#line 8140 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8140 "bison_parser.y" // lalr1.cc:919
     {
         // NOT has lower precedence but can be parsed unparenthesized in the
         // rhs because it is not ambiguous. This is not allowed. Other
@@ -10041,11 +10041,11 @@ namespace zetasql_bison_parser {
             zetasql::ASTBinaryExpression::BITWISE_XOR);
         (yylhs.value.expression) = binary_expression;
       }
-#line 10045 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10045 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1103:
-#line 8155 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8155 "bison_parser.y" // lalr1.cc:919
     {
         // NOT has lower precedence but can be parsed unparenthesized in the
         // rhs because it is not ambiguous. This is not allowed. Other
@@ -10060,11 +10060,11 @@ namespace zetasql_bison_parser {
             zetasql::ASTBinaryExpression::BITWISE_AND);
         (yylhs.value.expression) = binary_expression;
       }
-#line 10064 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10064 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1104:
-#line 8170 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8170 "bison_parser.y" // lalr1.cc:919
     {
         // NOT has lower precedence but can be parsed unparenthesized in the
         // rhs because it is not ambiguous. However, this is not allowed. Other
@@ -10079,11 +10079,11 @@ namespace zetasql_bison_parser {
             zetasql::ASTBinaryExpression::CONCAT_OP);
         (yylhs.value.expression) = binary_expression;
       }
-#line 10083 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10083 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1105:
-#line 8185 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8185 "bison_parser.y" // lalr1.cc:919
     {
         // NOT has lower precedence but can be parsed unparenthesized in the
         // rhs because it is not ambiguous. This is not allowed. Other
@@ -10098,11 +10098,11 @@ namespace zetasql_bison_parser {
         binary_expression->set_is_left_shift((yystack_[1].value.shift_operator) == ShiftOperator::kLeft);
         (yylhs.value.expression) = binary_expression;
       }
-#line 10102 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10102 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1106:
-#line 8200 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8200 "bison_parser.y" // lalr1.cc:919
     {
         // NOT has lower precedence but can be parsed unparenthesized in the
         // rhs because it is not ambiguous. This is not allowed. Other
@@ -10116,11 +10116,11 @@ namespace zetasql_bison_parser {
         binary_expression->set_op((yystack_[1].value.binary_op));
         (yylhs.value.expression) = binary_expression;
       }
-#line 10120 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10120 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1107:
-#line 8214 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8214 "bison_parser.y" // lalr1.cc:919
     {
         // NOT has lower precedence but can be parsed unparenthesized in the
         // rhs because it is not ambiguous. This is not allowed. Other
@@ -10134,11 +10134,11 @@ namespace zetasql_bison_parser {
         binary_expression->set_op((yystack_[1].value.binary_op));
         (yylhs.value.expression) = binary_expression;
       }
-#line 10138 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10138 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1108:
-#line 8228 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8228 "bison_parser.y" // lalr1.cc:919
     {
         // NOT has lower precedence but can be parsed unparenthesized in the
         // rhs because it is not ambiguous. This is not allowed. Other
@@ -10152,27 +10152,27 @@ namespace zetasql_bison_parser {
         expression->set_op((yystack_[1].value.unary_op));
         (yylhs.value.expression) = expression;
       }
-#line 10156 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10156 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1109:
-#line 8249 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8249 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.path_expression) = MAKE_NODE(ASTPathExpression, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 10164 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10164 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1110:
-#line 8253 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8253 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.path_expression) = WithExtraChildren(parser->WithEndLocation((yystack_[2].value.path_expression), yystack_[0].location), {(yystack_[0].value.identifier)});
       }
-#line 10172 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10172 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1111:
-#line 8260 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8260 "bison_parser.y" // lalr1.cc:919
     {
         // a - b
         if (parser->HasWhitespace(yystack_[2].location, yystack_[1].location) || parser->HasWhitespace(yystack_[1].location, yystack_[0].location)) {
@@ -10187,11 +10187,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts({{id1, "-", id2}});
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10191 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10191 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1112:
-#line 8275 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8275 "bison_parser.y" // lalr1.cc:919
     {
         // a-b - c
         if (parser->HasWhitespace(yystack_[2].location, yystack_[1].location) || parser->HasWhitespace(yystack_[1].location, yystack_[0].location)) {
@@ -10209,11 +10209,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts(std::move(prev));
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10213 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10213 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1113:
-#line 8293 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8293 "bison_parser.y" // lalr1.cc:919
     {
         // a - 5
         if (parser->HasWhitespace(yystack_[2].location, yystack_[1].location) || parser->HasWhitespace(yystack_[1].location, yystack_[0].location)) {
@@ -10228,11 +10228,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts({{id1, "-", id2}});
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10232 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10232 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1114:
-#line 8308 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8308 "bison_parser.y" // lalr1.cc:919
     {
         // a-b - 5
         if (parser->HasWhitespace(yystack_[2].location, yystack_[1].location) || parser->HasWhitespace(yystack_[1].location, yystack_[0].location)) {
@@ -10246,11 +10246,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts(std::move(prev));
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10250 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10250 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1115:
-#line 8322 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8322 "bison_parser.y" // lalr1.cc:919
     {
         // a - 1. b
         if (parser->HasWhitespace(yystack_[3].location, yystack_[2].location) || parser->HasWhitespace(yystack_[2].location, yystack_[1].location)) {
@@ -10270,11 +10270,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts({{id1, "-", id2}, {id3}});
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10274 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10274 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1116:
-#line 8342 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8342 "bison_parser.y" // lalr1.cc:919
     {
         // a-b - 1. c
         if (parser->HasWhitespace(yystack_[3].location, yystack_[2].location) || parser->HasWhitespace(yystack_[2].location, yystack_[1].location)) {
@@ -10296,11 +10296,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts(std::move(prev));
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10300 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10300 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1117:
-#line 8366 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8366 "bison_parser.y" // lalr1.cc:919
     {
         absl::StatusOr<std::vector<zetasql::ASTNode*>> path_parts =
           SeparatedIdentifierTmpNode::BuildPathParts(yystack_[0].location,
@@ -10310,25 +10310,25 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.expression) = MAKE_NODE(ASTPathExpression, yylhs.location, std::move(path_parts).value());
       }
-#line 10314 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10314 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1118:
-#line 8376 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8376 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren(parser->WithEndLocation((yystack_[2].value.expression), yystack_[0].location), {(yystack_[0].value.identifier)});
       }
-#line 10322 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10322 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1119:
-#line 8382 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8382 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.path_expression); }
-#line 10328 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10328 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1120:
-#line 8384 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8384 "bison_parser.y" // lalr1.cc:919
     {
         if (parser->language_options().LanguageFeatureEnabled(
                zetasql::FEATURE_V_1_3_ALLOW_DASHES_IN_TABLE_NAME)) {
@@ -10343,17 +10343,17 @@ namespace zetasql_bison_parser {
                   parser->GetInputText(yystack_[0].location), false)));
         }
       }
-#line 10347 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10347 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1121:
-#line 8400 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8400 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 10353 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10353 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1122:
-#line 8402 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8402 "bison_parser.y" // lalr1.cc:919
     {
         if (parser->language_options().LanguageFeatureEnabled(
                zetasql::FEATURE_V_1_3_ALLOW_SLASH_PATHS)) {
@@ -10368,11 +10368,11 @@ namespace zetasql_bison_parser {
                   parser->GetInputText(yystack_[0].location), false)));
         }
       }
-#line 10372 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10372 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1129:
-#line 8429 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8429 "bison_parser.y" // lalr1.cc:919
     {
         // Return an error if there is embedded whitespace.
         if (parser->HasWhitespace(yystack_[1].location, yystack_[0].location)) {
@@ -10387,11 +10387,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts({{"/", id}});
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10391 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10391 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1130:
-#line 8445 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8445 "bison_parser.y" // lalr1.cc:919
     {
         absl::string_view separator = parser->GetInputText(yystack_[1].location);
         absl::string_view id = parser->GetInputText(yystack_[0].location);
@@ -10414,11 +10414,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts(std::move(prev));
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10418 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10418 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1131:
-#line 8469 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8469 "bison_parser.y" // lalr1.cc:919
     {
         // This rule handles floating point literals between separator
         // characters (/:-) before the first dot.  The floating point literal
@@ -10463,11 +10463,11 @@ namespace zetasql_bison_parser {
         out->set_path_parts(std::move(prev));
         (yylhs.value.slashed_identifier) = out;
       }
-#line 10467 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10467 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1132:
-#line 8521 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8521 "bison_parser.y" // lalr1.cc:919
     {
        // Build the path.
        absl::StatusOr<std::vector<zetasql::ASTNode*>> path_parts =
@@ -10478,11 +10478,11 @@ namespace zetasql_bison_parser {
        }
        (yylhs.value.expression) = MAKE_NODE(ASTPathExpression, yylhs.location, std::move(path_parts).value());
      }
-#line 10482 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10482 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1133:
-#line 8533 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8533 "bison_parser.y" // lalr1.cc:919
     {
       // This rule handles floating point literals that are preceded by a
       // separator character (/:-). The floating point literal can be
@@ -10534,11 +10534,11 @@ namespace zetasql_bison_parser {
       }
       (yylhs.value.expression) = MAKE_NODE(ASTPathExpression, yylhs.location, std::move(path_parts).value());
     }
-#line 10538 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10538 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1134:
-#line 8586 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8586 "bison_parser.y" // lalr1.cc:919
     {
       // This rule matches a slashed_identifier that terminates in a floating
       // point literal and is followed by the next path component, which must be
@@ -10583,135 +10583,135 @@ namespace zetasql_bison_parser {
       path_parts.value().push_back((yystack_[0].value.identifier));
       (yylhs.value.expression) = MAKE_NODE(ASTPathExpression, yylhs.location, std::move(path_parts).value());
     }
-#line 10587 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10587 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1135:
-#line 8631 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8631 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.expression) = WithExtraChildren(parser->WithEndLocation((yystack_[2].value.expression), yystack_[0].location), {(yystack_[0].value.identifier)});
     }
-#line 10595 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10595 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1136:
-#line 8637 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8637 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = MAKE_NODE(ASTArrayConstructor, yylhs.location); }
-#line 10601 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10601 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1137:
-#line 8638 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8638 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = MAKE_NODE(ASTArrayConstructor, yylhs.location); }
-#line 10607 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10607 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1138:
-#line 8640 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8640 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTArrayConstructor, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 10615 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10615 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1139:
-#line 8647 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8647 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[1].value.expression), {(yystack_[0].value.expression)});
       }
-#line 10623 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10623 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1140:
-#line 8651 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8651 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[2].value.expression), {(yystack_[0].value.expression)});
       }
-#line 10631 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10631 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1141:
-#line 8658 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8658 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yylhs.location);
       }
-#line 10639 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10639 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1142:
-#line 8662 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8662 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yylhs.location);
       }
-#line 10647 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10647 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1143:
-#line 8669 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8669 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTRangeLiteral, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.string_literal)});
       }
-#line 10655 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10655 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1144:
-#line 8675 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8675 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.type_kind) = zetasql::TYPE_DATE; }
-#line 10661 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10661 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1145:
-#line 8676 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8676 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.type_kind) = zetasql::TYPE_DATETIME; }
-#line 10667 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10667 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1146:
-#line 8677 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8677 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.type_kind) = zetasql::TYPE_TIME; }
-#line 10673 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10673 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1147:
-#line 8678 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8678 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.type_kind) = zetasql::TYPE_TIMESTAMP; }
-#line 10679 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10679 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1148:
-#line 8683 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8683 "bison_parser.y" // lalr1.cc:919
     {
         auto* literal = MAKE_NODE(ASTDateOrTimeLiteral, yylhs.location, {(yystack_[0].value.string_literal)});
         literal->set_type_kind((yystack_[1].value.type_kind));
         (yylhs.value.expression) = literal;
       }
-#line 10689 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10689 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1149:
-#line 8692 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8692 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTIntervalExpr, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.identifier)});
       }
-#line 10697 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10697 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1150:
-#line 8696 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8696 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTIntervalExpr, yylhs.location, {(yystack_[3].value.expression), (yystack_[2].value.identifier), (yystack_[0].value.identifier)});
       }
-#line 10705 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10705 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1151:
-#line 8702 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8702 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 10711 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10711 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1152:
-#line 8704 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8704 "bison_parser.y" // lalr1.cc:919
     {
         auto* parameter_expr = MAKE_NODE(ASTParameterExpr, yylhs.location, {});
         // Bison's algorithm guarantees that the "?" productions are reduced in
@@ -10720,332 +10720,332 @@ namespace zetasql_bison_parser {
           parser->GetNextPositionalParameterPosition());
         (yylhs.value.expression) = parameter_expr;
       }
-#line 10724 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10724 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1153:
-#line 8716 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8716 "bison_parser.y" // lalr1.cc:919
     {
         if (parser->HasWhitespace(yystack_[1].location, yystack_[0].location)) {
           // TODO: Add a deprecation warning in this case.
         }
         (yylhs.value.expression) = MAKE_NODE(ASTParameterExpr, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 10735 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10735 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1154:
-#line 8726 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8726 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTSimpleType, yylhs.location, {(yystack_[0].value.path_expression)});
       }
-#line 10743 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10743 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1155:
-#line 8731 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8731 "bison_parser.y" // lalr1.cc:919
     {
         auto* id = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
         auto* path_expression = MAKE_NODE(ASTPathExpression, yylhs.location, {id});
         (yylhs.value.node) = MAKE_NODE(ASTSimpleType, yylhs.location, {path_expression});
       }
-#line 10753 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10753 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1156:
-#line 8739 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8739 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_CHAR_LOOKBACK('<', LB_OPEN_TYPE_TEMPLATE); }
-#line 10759 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10759 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1157:
-#line 8741 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8741 "bison_parser.y" // lalr1.cc:919
     { yylhs.location = yystack_[0].location; }
-#line 10765 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10765 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1158:
-#line 8745 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8745 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_CHAR_LOOKBACK('>', LB_CLOSE_TYPE_TEMPLATE); }
-#line 10771 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10771 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1159:
-#line 8747 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8747 "bison_parser.y" // lalr1.cc:919
     { yylhs.location = yystack_[0].location; }
-#line 10777 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10777 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1160:
-#line 8752 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8752 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTArrayType, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 10785 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10785 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1161:
-#line 8759 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8759 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStructField, yylhs.location, {(yystack_[1].value.identifier), (yystack_[0].value.node)});
       }
-#line 10793 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10793 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1162:
-#line 8763 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8763 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStructField, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 10801 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10801 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1163:
-#line 8770 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8770 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStructType, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 10809 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10809 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1164:
-#line 8774 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8774 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 10817 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10817 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1165:
-#line 8781 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8781 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStructType, yylhs.location);
       }
-#line 10825 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10825 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1166:
-#line 8785 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8785 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 10833 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10833 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1167:
-#line 8792 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8792 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTRangeType, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 10841 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10841 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1168:
-#line 8799 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8799 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTFunctionTypeArgList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 10849 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10849 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1169:
-#line 8803 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8803 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 10857 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10857 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1170:
-#line 8810 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8810 "bison_parser.y" // lalr1.cc:919
     {
         auto empty_arg_list =
             MAKE_NODE(ASTFunctionTypeArgList, yystack_[4].location, yystack_[3].location, {});
         (yylhs.value.node) = MAKE_NODE(ASTFunctionType, yylhs.location, {empty_arg_list, (yystack_[1].value.node)});
       }
-#line 10867 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10867 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1171:
-#line 8816 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8816 "bison_parser.y" // lalr1.cc:919
     {
         auto arg_list =
             MAKE_NODE(ASTFunctionTypeArgList, yystack_[3].location, {(yystack_[3].value.node)});
         (yylhs.value.node) = MAKE_NODE(ASTFunctionType, yylhs.location, {arg_list, (yystack_[1].value.node)});
       }
-#line 10877 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10877 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1172:
-#line 8822 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8822 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTFunctionType, yylhs.location, {(yystack_[4].value.node), (yystack_[1].value.node)});
       }
-#line 10885 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10885 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1173:
-#line 8829 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8829 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTMapType, yylhs.location, {(yystack_[3].value.node), (yystack_[1].value.node)});
       }
-#line 10893 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10893 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1174:
-#line 8836 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8836 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 10899 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10899 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1175:
-#line 8836 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8836 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 10905 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10905 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1176:
-#line 8836 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8836 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 10911 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10911 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1177:
-#line 8836 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8836 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 10917 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10917 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1178:
-#line 8836 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8836 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 10923 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10923 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1179:
-#line 8836 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8836 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 10929 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10929 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1180:
-#line 8839 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8839 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 10935 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10935 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1181:
-#line 8840 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8840 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 10941 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10941 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1182:
-#line 8841 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8841 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.string_literal); }
-#line 10947 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10947 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1183:
-#line 8842 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8842 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.bytes_literal); }
-#line 10953 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10953 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1184:
-#line 8843 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8843 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 10959 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10959 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1185:
-#line 8845 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8845 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTMaxLiteral, yystack_[0].location, {});
       }
-#line 10967 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10967 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1186:
-#line 8852 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8852 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTypeParameterList, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 10975 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10975 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1187:
-#line 8856 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8856 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)}), yylhs.location);
       }
-#line 10983 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10983 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1188:
-#line 8862 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8862 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[1].value.node); }
-#line 10989 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10989 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1189:
-#line 8864 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8864 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(yystack_[1].location,
                              "Syntax error: Trailing comma in type parameter "
                              "list is not allowed.");
       }
-#line 10999 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 10999 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1190:
-#line 8869 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8869 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 11005 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11005 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1191:
-#line 8873 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8873 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[1].value.node), (yystack_[0].value.node)}), yylhs.location);
     }
-#line 11013 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11013 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1192:
-#line 8879 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8879 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.templated_parameter_kind) = zetasql::ASTTemplatedParameterType::ANY_PROTO;
       }
-#line 11021 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11021 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1193:
-#line 8883 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8883 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.templated_parameter_kind) = zetasql::ASTTemplatedParameterType::ANY_ENUM;
       }
-#line 11029 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11029 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1194:
-#line 8887 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8887 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.templated_parameter_kind) = zetasql::ASTTemplatedParameterType::ANY_STRUCT;
       }
-#line 11037 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11037 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1195:
-#line 8891 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8891 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.templated_parameter_kind) = zetasql::ASTTemplatedParameterType::ANY_ARRAY;
       }
-#line 11045 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11045 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1196:
-#line 8895 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8895 "bison_parser.y" // lalr1.cc:919
     {
         const absl::string_view templated_type_string = (yystack_[0].value.identifier)->GetAsStringView();
         if (zetasql_base::CaseEqual(templated_type_string, "TABLE")) {
@@ -11057,170 +11057,170 @@ namespace zetasql_bison_parser {
                                "Syntax error: unexpected ANY template type");
         }
       }
-#line 11061 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11061 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1197:
-#line 8910 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8910 "bison_parser.y" // lalr1.cc:919
     {
         auto* templated_parameter =
             MAKE_NODE(ASTTemplatedParameterType, yylhs.location, {});
         templated_parameter->set_kind((yystack_[0].value.templated_parameter_kind));
         (yylhs.value.node) = templated_parameter;
       }
-#line 11072 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11072 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1198:
-#line 8918 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8918 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 11078 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11078 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1199:
-#line 8918 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8918 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 11084 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11084 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1200:
-#line 8918 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8918 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 11090 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11090 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1201:
-#line 8922 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8922 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTNewConstructor, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 11098 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11098 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1202:
-#line 8929 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8929 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTNewConstructorArg, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 11106 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11106 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1203:
-#line 8933 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8933 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTNewConstructorArg, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.identifier)});
       }
-#line 11114 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11114 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1204:
-#line 8937 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8937 "bison_parser.y" // lalr1.cc:919
     {
         // Do not parenthesize $4 because it is not really a parenthesized
         // path expression. The parentheses are just part of the syntax here.
         (yylhs.value.node) = MAKE_NODE(ASTNewConstructorArg, yylhs.location, {(yystack_[4].value.expression), (yystack_[1].value.path_expression)});
       }
-#line 11124 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11124 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1205:
-#line 8946 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8946 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[1].value.expression), {(yystack_[0].value.node)});
       }
-#line 11132 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11132 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1206:
-#line 8950 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8950 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[2].value.expression), {(yystack_[0].value.node)});
       }
-#line 11140 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11140 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1207:
-#line 8957 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8957 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yystack_[0].location);
       }
-#line 11148 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11148 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1208:
-#line 8961 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8961 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yystack_[0].location);
       }
-#line 11156 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11156 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1209:
-#line 8968 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8968 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor_field_value) = MAKE_NODE(ASTBracedConstructorFieldValue, yylhs.location, {(yystack_[0].value.expression)});
         (yylhs.value.braced_constructor_field_value)->set_colon_prefixed(true);
       }
-#line 11165 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11165 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1210:
-#line 8973 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8973 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor_field_value) = MAKE_NODE(ASTBracedConstructorFieldValue, yylhs.location, {(yystack_[0].value.braced_constructor)});
       }
-#line 11173 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11173 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1211:
-#line 8980 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8980 "bison_parser.y" // lalr1.cc:919
     {
         (yystack_[1].value.path_expression)->set_parenthesized(true);
         (yylhs.value.expression) = (yystack_[1].value.path_expression);
       }
-#line 11182 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11182 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1212:
-#line 8989 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8989 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 11188 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11188 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1213:
-#line 8994 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 8994 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTBracedConstructorLhs, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 11196 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11196 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1214:
-#line 9001 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9001 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor_field) = MAKE_NODE(ASTBracedConstructorField, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.braced_constructor_field_value)});
       }
-#line 11204 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11204 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1215:
-#line 9008 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9008 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTBracedConstructorLhs, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 11212 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11212 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1216:
-#line 9015 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9015 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor_field) = MAKE_NODE(ASTBracedConstructorField, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.braced_constructor_field_value)});
       }
-#line 11220 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11220 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1217:
-#line 9022 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9022 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_V_1_3_BRACED_PROTO_CONSTRUCTORS)) {
@@ -11228,199 +11228,199 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.braced_constructor) = MAKE_NODE(ASTBracedConstructor, yylhs.location);
     }
-#line 11232 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11232 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1218:
-#line 9033 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9033 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor) = WithExtraChildren((yystack_[1].value.braced_constructor), {(yystack_[0].value.braced_constructor_field)});
       }
-#line 11240 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11240 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1219:
-#line 9037 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9037 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor) = WithExtraChildren((yystack_[1].value.braced_constructor), {(yystack_[0].value.braced_constructor_field)});
       }
-#line 11248 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11248 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1220:
-#line 9041 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9041 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor) = WithExtraChildren((yystack_[2].value.braced_constructor), {(yystack_[0].value.braced_constructor_field)});
         (yystack_[0].value.braced_constructor_field)->set_comma_separated(true);
       }
-#line 11257 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11257 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1221:
-#line 9046 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9046 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor) = WithExtraChildren((yystack_[1].value.braced_constructor), {(yystack_[0].value.braced_constructor_field)});
       }
-#line 11265 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11265 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1222:
-#line 9060 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9060 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor) = WithExtraChildren((yystack_[2].value.braced_constructor), {(yystack_[0].value.braced_constructor_field)});
         (yystack_[0].value.braced_constructor_field)->set_comma_separated(true);
       }
-#line 11274 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11274 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1223:
-#line 9068 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9068 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor) = parser->WithEndLocation((yystack_[1].value.braced_constructor), yystack_[0].location);
       }
-#line 11282 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11282 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1224:
-#line 9072 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9072 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor) = parser->WithEndLocation((yystack_[1].value.braced_constructor), yystack_[0].location);
       }
-#line 11290 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11290 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1225:
-#line 9077 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9077 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.braced_constructor) = parser->WithEndLocation((yystack_[2].value.braced_constructor), yystack_[0].location);
       }
-#line 11298 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11298 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1226:
-#line 9084 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9084 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTBracedNewConstructor, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.braced_constructor)});
       }
-#line 11306 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11306 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1227:
-#line 9091 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9091 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTStructBracedConstructor, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.braced_constructor)});
       }
-#line 11314 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11314 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1228:
-#line 9095 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9095 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTStructBracedConstructor, yylhs.location, {(yystack_[0].value.braced_constructor)});
       }
-#line 11322 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11322 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1229:
-#line 9102 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9102 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTCaseNoValueExpression, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 11330 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11330 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1230:
-#line 9106 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9106 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[4].value.expression), {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 11338 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11338 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1231:
-#line 9113 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9113 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTCaseValueExpression, yylhs.location, {(yystack_[4].value.expression), (yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 11346 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11346 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1232:
-#line 9117 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9117 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[4].value.expression), {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 11354 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11354 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1233:
-#line 9123 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9123 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 11360 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11360 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1234:
-#line 9124 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9124 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 11366 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11366 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1235:
-#line 9129 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9129 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yylhs.location);
       }
-#line 11374 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11374 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1236:
-#line 9133 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9133 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren(parser->WithEndLocation((yystack_[3].value.expression), yylhs.location), {(yystack_[1].value.expression)});
       }
-#line 11382 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11382 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1237:
-#line 9140 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9140 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = (yystack_[0].value.expression);
       }
-#line 11390 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11390 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1238:
-#line 9143 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9143 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = nullptr; }
-#line 11396 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11396 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1239:
-#line 9149 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9149 "bison_parser.y" // lalr1.cc:919
     {
          (yylhs.value.node) = MAKE_NODE(ASTFormatClause, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.expression)});
        }
-#line 11404 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11404 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1240:
-#line 9152 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9152 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 11410 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11410 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1241:
-#line 9157 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9157 "bison_parser.y" // lalr1.cc:919
     {
         auto* cast = MAKE_NODE(ASTCastExpression, yylhs.location, {(yystack_[4].value.expression), (yystack_[2].value.node), (yystack_[1].value.node)});
         cast->set_is_safe_cast(false);
         (yylhs.value.expression) = cast;
       }
-#line 11420 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11420 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1242:
-#line 9163 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9163 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
         yystack_[0].location,
@@ -11428,21 +11428,21 @@ namespace zetasql_bison_parser {
         "as an expression, the query must be wrapped with additional "
         "parentheses to make it a scalar subquery expression");
       }
-#line 11432 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11432 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1243:
-#line 9173 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9173 "bison_parser.y" // lalr1.cc:919
     {
         auto* cast = MAKE_NODE(ASTCastExpression, yylhs.location, {(yystack_[4].value.expression), (yystack_[2].value.node), (yystack_[1].value.node)});
         cast->set_is_safe_cast(true);
         (yylhs.value.expression) = cast;
       }
-#line 11442 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11442 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1244:
-#line 9179 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9179 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
         yystack_[0].location,
@@ -11450,123 +11450,123 @@ namespace zetasql_bison_parser {
         "query as an expression, the query must be wrapped with additional "
         "parentheses to make it a scalar subquery expression");
       }
-#line 11454 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11454 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1245:
-#line 9190 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9190 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTExtractExpression, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 11462 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11462 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1246:
-#line 9197 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9197 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yylhs.location);
       }
-#line 11470 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11470 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1247:
-#line 9201 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9201 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren(parser->WithEndLocation((yystack_[5].value.expression), yylhs.location), {(yystack_[1].value.expression)});
       }
-#line 11478 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11478 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1248:
-#line 9208 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9208 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTReplaceFieldsArg, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 11486 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11486 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1249:
-#line 9212 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9212 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTReplaceFieldsArg, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 11494 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11494 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1250:
-#line 9219 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9219 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTReplaceFieldsExpression, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.node)});
       }
-#line 11502 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11502 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1251:
-#line 9223 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9223 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[2].value.expression), {(yystack_[0].value.node)});
       }
-#line 11510 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11510 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1252:
-#line 9230 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9230 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yylhs.location);
       }
-#line 11518 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11518 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1253:
-#line 9237 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9237 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 11526 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11526 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1254:
-#line 9241 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9241 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 11534 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11534 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1255:
-#line 9245 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9245 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 11542 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11542 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1256:
-#line 9249 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9249 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 11550 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11550 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1257:
-#line 9253 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9253 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 11558 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11558 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1258:
-#line 9257 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9257 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 11566 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11566 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1259:
-#line 9278 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9278 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[2].value.expression)->node_kind() == zetasql::AST_FUNCTION_CALL) {
           auto* function_call = (yystack_[2].value.expression)->GetAsOrDie<zetasql::ASTFunctionCall>();
@@ -11604,11 +11604,11 @@ namespace zetasql_bison_parser {
           (yylhs.value.function_call) = function_call;
         }
       }
-#line 11608 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11608 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1260:
-#line 9316 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9316 "bison_parser.y" // lalr1.cc:919
     {
         // TODO: Merge this with the other code path. We have to have
         // two separate productions to avoid an empty opt_distinct rule that
@@ -11645,11 +11645,11 @@ namespace zetasql_bison_parser {
           (yylhs.value.function_call) = function_call;
         }
       }
-#line 11649 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11649 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1261:
-#line 9353 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9353 "bison_parser.y" // lalr1.cc:919
     {
         // IF and GROUPING can be function calls, but they are also keywords.
         // Treat them specially, and don't allow DISTINCT etc. since that only
@@ -11659,11 +11659,11 @@ namespace zetasql_bison_parser {
         function_call->set_distinct(false);
         (yylhs.value.function_call) = function_call;
       }
-#line 11663 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11663 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1262:
-#line 9366 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9366 "bison_parser.y" // lalr1.cc:919
     {
         // When "AS alias" shows up in a function call argument, we wrap a new
         // node ASTExpressionWithAlias with required alias field to indicate
@@ -11676,29 +11676,29 @@ namespace zetasql_bison_parser {
           (yylhs.value.expression) = (yystack_[1].value.expression);
         }
       }
-#line 11680 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11680 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1263:
-#line 9378 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9378 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 11686 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11686 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1264:
-#line 9379 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9379 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 11692 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11692 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1265:
-#line 9380 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9380 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 11698 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11698 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1266:
-#line 9382 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9382 "bison_parser.y" // lalr1.cc:919
     {
         YYERROR_AND_ABORT_AT(
         yystack_[0].location,
@@ -11706,43 +11706,43 @@ namespace zetasql_bison_parser {
         "query as an expression, the query must be wrapped with additional "
         "parentheses to make it a scalar subquery expression");
       }
-#line 11710 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11710 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1267:
-#line 9393 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9393 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTSequenceArg, yylhs.location, {(yystack_[0].value.path_expression)});
       }
-#line 11718 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11718 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1268:
-#line 9400 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9400 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTNamedArgument, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.expression)});
       }
-#line 11726 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11726 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1269:
-#line 9404 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9404 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTNamedArgument, yylhs.location, {(yystack_[2].value.identifier), (yystack_[0].value.expression)});
       }
-#line 11734 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11734 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1270:
-#line 9411 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9411 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTLambda, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.expression)});
       }
-#line 11742 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11742 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1271:
-#line 9430 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9430 "bison_parser.y" // lalr1.cc:919
     {
         auto expr_kind = (yystack_[0].value.expression)->node_kind();
         if (expr_kind != zetasql::AST_STRUCT_CONSTRUCTOR_WITH_PARENS &&
@@ -11753,53 +11753,53 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = (yystack_[0].value.expression);
       }
-#line 11757 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11757 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1272:
-#line 9441 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9441 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTStructConstructorWithParens, yylhs.location);
     }
-#line 11765 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11765 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1273:
-#line 9448 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9448 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.function_call) = WithExtraChildren((yystack_[1].value.function_call), {(yystack_[0].value.expression)});
       }
-#line 11773 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11773 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1274:
-#line 9456 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9456 "bison_parser.y" // lalr1.cc:919
     {
         auto* star = MAKE_NODE(ASTStar, yystack_[0].location);
         star->set_image("*");
         (yylhs.value.function_call) = WithExtraChildren((yystack_[1].value.function_call), {star});
       }
-#line 11783 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11783 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1275:
-#line 9462 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9462 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.function_call) = WithExtraChildren((yystack_[2].value.function_call), {(yystack_[0].value.expression)});
       }
-#line 11791 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11791 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1276:
-#line 9471 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9471 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.function_call) = WithExtraChildren(parser->WithEndLocation((yystack_[4].value.function_call), yylhs.location), {(yystack_[3].value.node), (yystack_[2].value.node), (yystack_[1].value.node)});
       }
-#line 11799 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11799 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1277:
-#line 9484 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9484 "bison_parser.y" // lalr1.cc:919
     {
         (yystack_[7].value.function_call)->set_null_handling_modifier((yystack_[6].value.null_handling_modifier));
         (yylhs.value.function_call) = WithExtraChildren(parser->WithEndLocation((yystack_[7].value.function_call), yylhs.location), {
@@ -11809,107 +11809,107 @@ namespace zetasql_bison_parser {
             (yystack_[2].value.node),
             (yystack_[1].value.node)});
       }
-#line 11813 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11813 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1278:
-#line 9496 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9496 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.identifier) = (yystack_[0].value.identifier); }
-#line 11819 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11819 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1279:
-#line 9497 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9497 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.identifier) = nullptr; }
-#line 11825 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11825 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1280:
-#line 9502 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9502 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTPartitionBy, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.expression)});
       }
-#line 11833 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11833 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1281:
-#line 9506 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9506 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 11841 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11841 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1282:
-#line 9512 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9512 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = parser->WithEndLocation((yystack_[0].value.node), yylhs.location); }
-#line 11847 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11847 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1283:
-#line 9513 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9513 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 11853 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11853 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1284:
-#line 9518 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9518 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTPartitionBy, yylhs.location, {nullptr, (yystack_[0].value.expression)});
       }
-#line 11861 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11861 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1285:
-#line 9522 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9522 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 11869 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11869 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1286:
-#line 9528 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9528 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = parser->WithEndLocation((yystack_[0].value.node), yylhs.location); }
-#line 11875 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11875 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1287:
-#line 9529 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9529 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 11881 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11881 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1288:
-#line 9534 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9534 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTClusterBy, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 11889 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11889 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1289:
-#line 9538 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9538 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 11897 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11897 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1290:
-#line 9544 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9544 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = parser->WithEndLocation((yystack_[0].value.node), yylhs.location); }
-#line 11903 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11903 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1291:
-#line 9545 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9545 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 11909 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11909 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1292:
-#line 9550 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9550 "bison_parser.y" // lalr1.cc:919
     {
     if (!parser->language_options().LanguageFeatureEnabled(
         zetasql::FEATURE_V_1_4_TTL)) {
@@ -11917,29 +11917,29 @@ namespace zetasql_bison_parser {
     }
     (yylhs.value.node) = MAKE_NODE(ASTTtlClause, yylhs.location, {(yystack_[1].value.expression)});
   }
-#line 11921 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11921 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1293:
-#line 9557 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9557 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 11927 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11927 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1294:
-#line 9562 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9562 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.preceding_or_following_keyword) = PrecedingOrFollowingKeyword::kPreceding; }
-#line 11933 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11933 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1295:
-#line 9563 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9563 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.preceding_or_following_keyword) = PrecedingOrFollowingKeyword::kFollowing; }
-#line 11939 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11939 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1296:
-#line 9568 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9568 "bison_parser.y" // lalr1.cc:919
     {
         auto* frame = MAKE_NODE(ASTWindowFrameExpr, yylhs.location);
         frame->set_boundary_type(
@@ -11948,22 +11948,22 @@ namespace zetasql_bison_parser {
                 : zetasql::ASTWindowFrameExpr::UNBOUNDED_FOLLOWING);
         (yylhs.value.node) = frame;
       }
-#line 11952 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11952 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1297:
-#line 9577 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9577 "bison_parser.y" // lalr1.cc:919
     {
         auto* frame = MAKE_NODE(ASTWindowFrameExpr, yylhs.location);
         frame->set_boundary_type(
             zetasql::ASTWindowFrameExpr::CURRENT_ROW);
         (yylhs.value.node) = frame;
       }
-#line 11963 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11963 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1298:
-#line 9584 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9584 "bison_parser.y" // lalr1.cc:919
     {
         auto* frame = MAKE_NODE(ASTWindowFrameExpr, yylhs.location, {(yystack_[1].value.expression)});
         frame->set_boundary_type(
@@ -11972,65 +11972,65 @@ namespace zetasql_bison_parser {
                 : zetasql::ASTWindowFrameExpr::OFFSET_FOLLOWING);
         (yylhs.value.node) = frame;
       }
-#line 11976 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11976 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1299:
-#line 9595 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9595 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.frame_unit) = zetasql::ASTWindowFrame::ROWS; }
-#line 11982 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11982 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1300:
-#line 9596 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9596 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.frame_unit) = zetasql::ASTWindowFrame::RANGE; }
-#line 11988 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11988 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1301:
-#line 9601 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9601 "bison_parser.y" // lalr1.cc:919
     {
         auto* frame = MAKE_NODE(ASTWindowFrame, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.node)});
         frame->set_unit((yystack_[4].value.frame_unit));
         (yylhs.value.node) = frame;
       }
-#line 11998 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 11998 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1302:
-#line 9607 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9607 "bison_parser.y" // lalr1.cc:919
     {
         auto* frame = MAKE_NODE(ASTWindowFrame, yylhs.location, {(yystack_[0].value.node)});
         frame->set_unit((yystack_[1].value.frame_unit));
         (yylhs.value.node) = frame;
       }
-#line 12008 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12008 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1303:
-#line 9612 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9612 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 12014 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12014 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1304:
-#line 9616 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9616 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTWindowSpecification, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 12022 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12022 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1305:
-#line 9621 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9621 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTWindowSpecification, yylhs.location, {(yystack_[4].value.identifier), (yystack_[3].value.node), (yystack_[2].value.node), (yystack_[1].value.node)});
       }
-#line 12030 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12030 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1306:
-#line 9628 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9628 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTExpression* current_expression = (yystack_[3].value.function_call);
         if ((yystack_[2].value.node) != nullptr) {
@@ -12050,139 +12050,139 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.expression) = current_expression;
       }
-#line 12054 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12054 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1307:
-#line 9650 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9650 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.query);
       }
-#line 12062 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12062 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1308:
-#line 9653 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9653 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 12068 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12068 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1309:
-#line 9658 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9658 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 12076 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12076 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1310:
-#line 9661 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9661 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 12082 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12082 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1311:
-#line 9666 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9666 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTStructConstructorWithKeyword, yylhs.location, {(yystack_[1].value.node)});
       }
-#line 12090 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12090 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1312:
-#line 9670 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9670 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTStructConstructorWithKeyword, yylhs.location);
       }
-#line 12098 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12098 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1313:
-#line 9677 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9677 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[1].value.expression), {(yystack_[0].value.node)});
       }
-#line 12106 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12106 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1314:
-#line 9681 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9681 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[2].value.expression), {(yystack_[0].value.node)});
       }
-#line 12114 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12114 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1315:
-#line 9688 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9688 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTStructConstructorArg, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.alias)});
       }
-#line 12122 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12122 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1316:
-#line 9697 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9697 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTStructConstructorWithParens, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 12130 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12130 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1317:
-#line 9701 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9701 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = WithExtraChildren((yystack_[2].value.expression), {(yystack_[0].value.expression)});
       }
-#line 12138 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12138 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1318:
-#line 9708 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9708 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yylhs.location);
       }
-#line 12146 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12146 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1319:
-#line 9712 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9712 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yylhs.location);
       }
-#line 12154 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12154 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1320:
-#line 9716 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9716 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = parser->WithEndLocation((yystack_[1].value.expression), yylhs.location);
       }
-#line 12162 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12162 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1321:
-#line 9723 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9723 "bison_parser.y" // lalr1.cc:919
     {
         auto* subquery = MAKE_NODE(ASTExpressionSubquery, yylhs.location, {(yystack_[0].value.query)});
         subquery->set_modifier(zetasql::ASTExpressionSubquery::ARRAY);
         (yylhs.value.expression_subquery) = subquery;
       }
-#line 12172 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12172 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1322:
-#line 9729 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9729 "bison_parser.y" // lalr1.cc:919
     {
         auto* subquery = MAKE_NODE(ASTExpressionSubquery, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.query)});
         subquery->set_modifier(zetasql::ASTExpressionSubquery::EXISTS);
         (yylhs.value.expression_subquery) = subquery;
       }
-#line 12182 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12182 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1323:
-#line 9738 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9738 "bison_parser.y" // lalr1.cc:919
     {
         auto* literal = MAKE_NODE(ASTNullLiteral, yystack_[0].location);
         // TODO: Migrate to absl::string_view or avoid having to
@@ -12190,11 +12190,11 @@ namespace zetasql_bison_parser {
         literal->set_image(std::string(parser->GetInputText(yystack_[0].location)));
         (yylhs.value.expression) = literal;
       }
-#line 12194 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12194 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1324:
-#line 9749 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9749 "bison_parser.y" // lalr1.cc:919
     {
         auto* literal = MAKE_NODE(ASTBooleanLiteral, yystack_[0].location);
         literal->set_value(true);
@@ -12203,11 +12203,11 @@ namespace zetasql_bison_parser {
         literal->set_image(std::string(parser->GetInputText(yystack_[0].location)));
         (yylhs.value.expression) = literal;
       }
-#line 12207 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12207 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1325:
-#line 9758 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9758 "bison_parser.y" // lalr1.cc:919
     {
         auto* literal = MAKE_NODE(ASTBooleanLiteral, yystack_[0].location);
         literal->set_value(false);
@@ -12216,11 +12216,11 @@ namespace zetasql_bison_parser {
         literal->set_image(std::string(parser->GetInputText(yystack_[0].location)));
         (yylhs.value.expression) = literal;
       }
-#line 12220 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12220 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1326:
-#line 9770 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9770 "bison_parser.y" // lalr1.cc:919
     {
         const absl::string_view input_text = parser->GetInputText(yystack_[0].location);
         std::string str;
@@ -12248,20 +12248,20 @@ namespace zetasql_bison_parser {
         literal->set_image(std::string(input_text));
         (yylhs.value.string_literal_component) = literal;
       }
-#line 12252 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12252 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1327:
-#line 9802 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9802 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.string_literal) = MAKE_NODE(ASTStringLiteral, yylhs.location, {(yystack_[0].value.string_literal_component)});
         (yylhs.value.string_literal)->set_string_value((yystack_[0].value.string_literal_component)->string_value());
       }
-#line 12261 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12261 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1328:
-#line 9807 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9807 "bison_parser.y" // lalr1.cc:919
     {
         if (yystack_[0].location.start().GetByteOffset() == yystack_[1].location.end().GetByteOffset()) {
           YYERROR_AND_ABORT_AT(yystack_[0].location, "Syntax error: concatenated string literals must be separated by whitespace or comments");
@@ -12273,22 +12273,22 @@ namespace zetasql_bison_parser {
         (yylhs.value.string_literal)->set_string_value(
               absl::StrCat((yylhs.value.string_literal)->string_value(), (yystack_[0].value.string_literal_component)->string_value()));
       }
-#line 12277 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12277 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1329:
-#line 9819 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9819 "bison_parser.y" // lalr1.cc:919
     {
         // Capture this case to provide a better error message
         YYERROR_AND_ABORT_AT(
           yystack_[0].location,
           "Syntax error: string and bytes literals cannot be concatenated.");
       }
-#line 12288 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12288 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1330:
-#line 9829 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9829 "bison_parser.y" // lalr1.cc:919
     {
         const absl::string_view input_text = parser->GetInputText(yystack_[0].location);
         std::string bytes;
@@ -12319,20 +12319,20 @@ namespace zetasql_bison_parser {
         literal->set_image(std::string(input_text));
         (yylhs.value.bytes_literal_component) = literal;
       }
-#line 12323 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12323 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1331:
-#line 9865 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9865 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.bytes_literal) = MAKE_NODE(ASTBytesLiteral, yylhs.location, {(yystack_[0].value.bytes_literal_component)});
         (yylhs.value.bytes_literal)->set_bytes_value((yystack_[0].value.bytes_literal_component)->bytes_value());
       }
-#line 12332 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12332 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1332:
-#line 9870 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9870 "bison_parser.y" // lalr1.cc:919
     {
         if (yystack_[0].location.start().GetByteOffset() == yystack_[1].location.end().GetByteOffset()) {
           YYERROR_AND_ABORT_AT(
@@ -12346,64 +12346,64 @@ namespace zetasql_bison_parser {
         (yylhs.value.bytes_literal)->set_bytes_value(
               absl::StrCat((yylhs.value.bytes_literal)->bytes_value(), (yystack_[0].value.bytes_literal_component)->bytes_value()));
       }
-#line 12350 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12350 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1333:
-#line 9884 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9884 "bison_parser.y" // lalr1.cc:919
     {
         // Capture this case to provide a better error message
         YYERROR_AND_ABORT_AT(yystack_[0].location, "Syntax error: string and bytes literals cannot be concatenated.");
       }
-#line 12359 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12359 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1334:
-#line 9892 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9892 "bison_parser.y" // lalr1.cc:919
     {
         auto* literal = MAKE_NODE(ASTIntLiteral, yystack_[0].location);
         literal->set_image(std::string(parser->GetInputText(yystack_[0].location)));
         (yylhs.value.expression) = literal;
       }
-#line 12369 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12369 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1337:
-#line 9906 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9906 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTNumericLiteral, yylhs.location, {(yystack_[0].value.string_literal)});
       }
-#line 12377 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12377 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1340:
-#line 9918 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9918 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTBigNumericLiteral, yylhs.location, {(yystack_[0].value.string_literal)});
       }
-#line 12385 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12385 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1341:
-#line 9925 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9925 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTJSONLiteral, yylhs.location, {(yystack_[0].value.string_literal)});
       }
-#line 12393 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12393 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1342:
-#line 9932 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9932 "bison_parser.y" // lalr1.cc:919
     {
         auto* literal = MAKE_NODE(ASTFloatLiteral, yystack_[0].location);
         literal->set_image(std::string(parser->GetInputText(yystack_[0].location)));
         (yylhs.value.expression) = literal;
       }
-#line 12403 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12403 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1343:
-#line 9941 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9941 "bison_parser.y" // lalr1.cc:919
     {
         const absl::string_view identifier_text((yystack_[0].value.string_view).str, (yystack_[0].value.string_view).len);
         // The tokenizer rule already validates that the identifier is valid,
@@ -12433,25 +12433,25 @@ namespace zetasql_bison_parser {
           (yylhs.value.identifier) = parser->MakeIdentifier(yystack_[0].location, identifier_text);
         }
       }
-#line 12437 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12437 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1344:
-#line 9972 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9972 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.identifier) = (yystack_[0].value.identifier); }
-#line 12443 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12443 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1345:
-#line 9974 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9974 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.identifier) = parser->MakeIdentifier(yystack_[0].location, parser->GetInputText(yystack_[0].location));
       }
-#line 12451 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12451 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1346:
-#line 9981 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 9981 "bison_parser.y" // lalr1.cc:919
     {
       const absl::string_view label_text = parser->GetInputText(yystack_[0].location);
       // The tokenizer rule already validates that the identifier is valid and
@@ -12481,22 +12481,22 @@ namespace zetasql_bison_parser {
         (yylhs.value.identifier) = parser->MakeIdentifier(yystack_[0].location, label_text);
       }
     }
-#line 12485 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12485 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1347:
-#line 10014 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10014 "bison_parser.y" // lalr1.cc:919
     {
       if (parser->HasWhitespace(yystack_[1].location, yystack_[0].location)) {
         // TODO: Add a deprecation warning in this case.
       }
       (yylhs.value.expression) = MAKE_NODE(ASTSystemVariableExpr, yylhs.location, {(yystack_[0].value.path_expression)});
     }
-#line 12496 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12496 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1470:
-#line 10152 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10152 "bison_parser.y" // lalr1.cc:919
     {
           // TODO: this warning should point to documentation once
           // we have the engine-specific root URI to use.
@@ -12504,497 +12504,497 @@ namespace zetasql_bison_parser {
                                         zetasql::parser::kQualify,
                                         (yystack_[0].location).start().GetByteOffset()));
       }
-#line 12508 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12508 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1542:
-#line 10238 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10238 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 12514 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12514 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1543:
-#line 10238 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10238 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 12520 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12520 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1544:
-#line 10241 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10241 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.create_scope) = zetasql::ASTCreateStatement::TEMPORARY; }
-#line 12526 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12526 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1545:
-#line 10242 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10242 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.create_scope) = zetasql::ASTCreateStatement::TEMPORARY; }
-#line 12532 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12532 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1546:
-#line 10243 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10243 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.create_scope) = zetasql::ASTCreateStatement::PUBLIC; }
-#line 12538 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12538 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1547:
-#line 10244 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10244 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.create_scope) = zetasql::ASTCreateStatement::PRIVATE; }
-#line 12544 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12544 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1548:
-#line 10245 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10245 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.create_scope) = zetasql::ASTCreateStatement::DEFAULT_SCOPE; }
-#line 12550 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12550 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1549:
-#line 10248 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10248 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = true; }
-#line 12556 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12556 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1550:
-#line 10248 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10248 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 12562 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12562 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1553:
-#line 10253 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10253 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 12568 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12568 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1554:
-#line 10254 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10254 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 12574 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12574 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1555:
-#line 10259 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10259 "bison_parser.y" // lalr1.cc:919
     {
         auto* options_entry =
             MAKE_NODE(ASTOptionsEntry, yystack_[2].location, yystack_[0].location, {(yystack_[2].value.identifier), (yystack_[0].value.expression)});
         options_entry->set_assignment_op((yystack_[1].value.options_assignment_op));
         (yylhs.value.node) = options_entry;
       }
-#line 12585 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12585 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1556:
-#line 10268 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10268 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.options_assignment_op) = zetasql::ASTOptionsEntry::ASSIGN; }
-#line 12591 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12591 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1557:
-#line 10269 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10269 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.options_assignment_op) = zetasql::ASTOptionsEntry::ADD_ASSIGN; }
-#line 12597 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12597 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1558:
-#line 10270 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10270 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.options_assignment_op) = zetasql::ASTOptionsEntry::SUB_ASSIGN; }
-#line 12603 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12603 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1559:
-#line 10275 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10275 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTIdentifier* proto_identifier =
             parser->MakeIdentifier(yystack_[0].location, "PROTO");
         (yylhs.value.expression) = MAKE_NODE(ASTPathExpression, yylhs.location, {proto_identifier});
       }
-#line 12613 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12613 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1560:
-#line 10280 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10280 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 12619 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12619 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1561:
-#line 10285 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10285 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTOptionsList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 12627 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12627 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1562:
-#line 10289 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10289 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 12635 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12635 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1563:
-#line 10296 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10296 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 12643 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12643 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1564:
-#line 10300 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10300 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTOptionsList, yylhs.location);
       }
-#line 12651 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12651 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1565:
-#line 10306 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10306 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 12657 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12657 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1566:
-#line 10310 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10310 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 12663 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12663 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1567:
-#line 10311 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10311 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 12669 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12669 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1568:
-#line 10316 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10316 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTDefineTableStatement, yylhs.location, {(yystack_[1].value.path_expression), (yystack_[0].value.node)});
       }
-#line 12677 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12677 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1569:
-#line 10322 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10322 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.insert_statement); }
-#line 12683 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12683 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1570:
-#line 10323 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10323 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 12689 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12689 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1571:
-#line 10324 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10324 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 12695 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12695 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1574:
-#line 10331 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10331 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.expression);
       }
-#line 12703 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12703 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1575:
-#line 10335 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10335 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 12711 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12711 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1576:
-#line 10342 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10342 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTAssertRowsModified, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 12719 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12719 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1577:
-#line 10346 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10346 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 12727 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12727 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1578:
-#line 10353 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10353 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTReturningClause, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 12735 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12735 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1579:
-#line 10357 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10357 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTIdentifier* default_identifier =
           parser->MakeIdentifier(yystack_[1].location, "ACTION");
         auto* action_alias = MAKE_NODE(ASTAlias, yylhs.location, {default_identifier});
         (yylhs.value.node) = MAKE_NODE(ASTReturningClause, yylhs.location, {(yystack_[0].value.node), action_alias});
       }
-#line 12746 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12746 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1580:
-#line 10364 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10364 "bison_parser.y" // lalr1.cc:919
     {
         auto* action_alias = MAKE_NODE(ASTAlias, yylhs.location, {(yystack_[1].value.identifier)});
         (yylhs.value.node) = MAKE_NODE(ASTReturningClause, yylhs.location, {(yystack_[0].value.node), action_alias});
       }
-#line 12755 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12755 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1581:
-#line 10368 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10368 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 12761 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12761 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1582:
-#line 10372 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10372 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.insert_mode) = zetasql::ASTInsertStatement::IGNORE; }
-#line 12767 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12767 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1583:
-#line 10373 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10373 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.insert_mode) = zetasql::ASTInsertStatement::IGNORE; }
-#line 12773 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12773 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1584:
-#line 10374 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10374 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.insert_mode) = zetasql::ASTInsertStatement::REPLACE; }
-#line 12779 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12779 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1585:
-#line 10375 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10375 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.insert_mode) = zetasql::ASTInsertStatement::REPLACE; }
-#line 12785 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12785 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1586:
-#line 10376 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10376 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.insert_mode) = zetasql::ASTInsertStatement::UPDATE; }
-#line 12791 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12791 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1587:
-#line 10377 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10377 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.insert_mode) = zetasql::ASTInsertStatement::UPDATE; }
-#line 12797 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12797 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1588:
-#line 10378 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10378 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.insert_mode) = zetasql::ASTInsertStatement::DEFAULT_MODE; }
-#line 12803 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12803 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1589:
-#line 10383 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10383 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.insert_statement) = MAKE_NODE(ASTInsertStatement, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.node)});
         (yylhs.value.insert_statement)->set_insert_mode((yystack_[3].value.insert_mode));
       }
-#line 12812 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12812 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1590:
-#line 10391 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10391 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.insert_statement) = parser->WithEndLocation(WithExtraChildren((yystack_[4].value.insert_statement), {(yystack_[3].value.node), (yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)}), yylhs.location);
       }
-#line 12820 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12820 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1591:
-#line 10395 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10395 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.insert_statement) = parser->WithEndLocation(WithExtraChildren((yystack_[3].value.insert_statement), {(yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)}), yylhs.location);
       }
-#line 12828 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12828 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1592:
-#line 10402 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10402 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCopyDataSource, yylhs.location, {(yystack_[2].value.expression), (yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 12836 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12836 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1593:
-#line 10409 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10409 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCloneDataSource, yylhs.location, {(yystack_[2].value.expression), (yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 12844 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12844 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1594:
-#line 10416 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10416 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCloneDataSourceList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 12852 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12852 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1595:
-#line 10420 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10420 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[3].value.node), {(yystack_[0].value.node)});
       }
-#line 12860 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12860 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1596:
-#line 10428 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10428 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCloneDataStatement, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.node)});
       }
-#line 12868 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12868 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1597:
-#line 10434 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10434 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 12874 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12874 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1598:
-#line 10436 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10436 "bison_parser.y" // lalr1.cc:919
     {
        (yylhs.value.expression) = MAKE_NODE(ASTDefaultLiteral, yylhs.location, {});
      }
-#line 12882 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12882 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1599:
-#line 10443 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10443 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTInsertValuesRow, yylhs.location, {(yystack_[0].value.expression)});
       }
-#line 12890 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12890 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1600:
-#line 10447 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10447 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.expression)});
       }
-#line 12898 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12898 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1601:
-#line 10454 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10454 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 12906 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12906 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1602:
-#line 10460 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10460 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.insert_values_row_list); }
-#line 12912 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12912 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1603:
-#line 10461 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10461 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.query); }
-#line 12918 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12918 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1604:
-#line 10466 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10466 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.insert_values_row_list) = MAKE_NODE(ASTInsertValuesRowList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 12926 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12926 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1605:
-#line 10470 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10470 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.insert_values_row_list) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.insert_values_row_list), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 12934 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12934 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1606:
-#line 10479 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10479 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTDeleteStatement, yylhs.location, {(yystack_[6].value.expression), (yystack_[5].value.node), (yystack_[4].value.alias), (yystack_[3].value.node), (yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 12942 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12942 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1607:
-#line 10486 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10486 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTWithOffset, yylhs.location, {(yystack_[0].value.alias)});
       }
-#line 12950 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12950 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1608:
-#line 10489 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10489 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 12956 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12956 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1609:
-#line 10496 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10496 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTUpdateStatement, yylhs.location, {(yystack_[9].value.expression), (yystack_[8].value.node), (yystack_[7].value.alias), (yystack_[6].value.node), (yystack_[4].value.node), (yystack_[3].value.node), (yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 12964 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12964 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1610:
-#line 10503 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10503 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTTruncateStatement, yylhs.location, {(yystack_[1].value.expression), (yystack_[0].value.node)});
       }
-#line 12972 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12972 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1611:
-#line 10509 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10509 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_CHAR_LOOKBACK('(', LB_OPEN_NESTED_DML); }
-#line 12978 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12978 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1612:
-#line 10511 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10511 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[1].value.node);
       }
-#line 12986 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12986 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1613:
-#line 10523 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10523 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTPathExpression, yylhs.location, {(yystack_[0].value.identifier)});
       }
-#line 12994 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 12994 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1614:
-#line 10527 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10527 "bison_parser.y" // lalr1.cc:919
     {
         // Remove the parentheses from generalized_extension_path as they were
         // added to indicate the path corresponds to an extension field in the
@@ -13004,11 +13004,11 @@ namespace zetasql_bison_parser {
         (yystack_[0].value.expression)->set_parenthesized(false);
         (yylhs.value.expression) = MAKE_NODE(ASTDotGeneralizedField, yystack_[2].location, yystack_[0].location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 13008 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13008 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1615:
-#line 10537 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10537 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[2].value.expression)->node_kind() == zetasql::AST_PATH_EXPRESSION) {
           (yylhs.value.expression) = WithExtraChildren(parser->WithEndLocation((yystack_[2].value.expression), yystack_[0].location), {(yystack_[0].value.identifier)});
@@ -13016,26 +13016,26 @@ namespace zetasql_bison_parser {
           (yylhs.value.expression) = MAKE_NODE(ASTDotIdentifier, yystack_[2].location, yystack_[0].location, {(yystack_[2].value.expression), (yystack_[0].value.identifier)});
         }
       }
-#line 13020 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13020 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1616:
-#line 10545 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10545 "bison_parser.y" // lalr1.cc:919
     {
         auto* bracket_loc = parser->MakeLocation(yystack_[2].location);
         (yylhs.value.expression) = MAKE_NODE(ASTArrayElement, yystack_[3].location, yystack_[0].location, {(yystack_[3].value.expression), bracket_loc, (yystack_[1].value.expression)});
       }
-#line 13029 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13029 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1617:
-#line 10552 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10552 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.expression) = (yystack_[0].value.expression); }
-#line 13035 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13035 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1618:
-#line 10558 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10558 "bison_parser.y" // lalr1.cc:919
     {
       if (parser->language_options().LanguageFeatureEnabled(
              zetasql::FEATURE_V_1_3_ALLOW_DASHES_IN_TABLE_NAME)) {
@@ -13050,356 +13050,356 @@ namespace zetasql_bison_parser {
                 parser->GetInputText(yystack_[0].location), false)));
       }
     }
-#line 13054 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13054 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1619:
-#line 10582 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10582 "bison_parser.y" // lalr1.cc:919
     {
        (yystack_[1].value.path_expression)->set_parenthesized(true);
        (yylhs.value.expression) = (yystack_[1].value.path_expression);
       }
-#line 13063 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13063 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1620:
-#line 10587 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10587 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTDotGeneralizedField, yystack_[4].location, yystack_[0].location, {(yystack_[4].value.expression), (yystack_[1].value.path_expression)});
       }
-#line 13071 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13071 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1621:
-#line 10591 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10591 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = MAKE_NODE(ASTDotIdentifier, yystack_[2].location, yystack_[0].location, {(yystack_[2].value.expression), (yystack_[0].value.identifier)});
       }
-#line 13079 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13079 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1622:
-#line 10598 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10598 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTUpdateSetValue, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.expression)});
       }
-#line 13087 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13087 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1623:
-#line 10605 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10605 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTUpdateItem, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 13095 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13095 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1624:
-#line 10609 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10609 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTUpdateItem, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 13103 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13103 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1625:
-#line 10616 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10616 "bison_parser.y" // lalr1.cc:919
     {
        (yylhs.value.node) = MAKE_NODE(ASTUpdateItemList, yylhs.location, {(yystack_[0].value.node)});
      }
-#line 13111 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13111 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1626:
-#line 10620 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10620 "bison_parser.y" // lalr1.cc:919
     {
        (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
      }
-#line 13119 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13119 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1631:
-#line 10637 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10637 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.expression);
       }
-#line 13127 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13127 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1632:
-#line 10641 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10641 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 13135 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13135 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1633:
-#line 10648 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10648 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.node);
       }
-#line 13143 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13143 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1634:
-#line 10652 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10652 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTInsertValuesRow, yylhs.location, {});
       }
-#line 13151 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13151 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1635:
-#line 10659 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10659 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTMergeAction, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.node)});
         node->set_action_type(zetasql::ASTMergeAction::INSERT);
         (yylhs.value.node) = node;
       }
-#line 13161 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13161 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1636:
-#line 10665 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10665 "bison_parser.y" // lalr1.cc:919
     {
           auto* node = MAKE_NODE(ASTMergeAction, yylhs.location, {(yystack_[0].value.node)});
           node->set_action_type(zetasql::ASTMergeAction::UPDATE);
           (yylhs.value.node) = node;
         }
-#line 13171 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13171 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1637:
-#line 10671 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10671 "bison_parser.y" // lalr1.cc:919
     {
           auto* node = MAKE_NODE(ASTMergeAction, yylhs.location, {});
           node->set_action_type(zetasql::ASTMergeAction::DELETE);
           (yylhs.value.node) = node;
         }
-#line 13181 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13181 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1638:
-#line 10680 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10680 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTMergeWhenClause, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.node)});
         node->set_match_type(zetasql::ASTMergeWhenClause::MATCHED);
         (yylhs.value.node) = node;
       }
-#line 13191 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13191 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1639:
-#line 10687 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10687 "bison_parser.y" // lalr1.cc:919
     {
           auto* node = MAKE_NODE(ASTMergeWhenClause, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.node)});
           node->set_match_type(
               zetasql::ASTMergeWhenClause::NOT_MATCHED_BY_TARGET);
           (yylhs.value.node) = node;
         }
-#line 13202 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13202 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1640:
-#line 10695 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10695 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTMergeWhenClause, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.node)});
         node->set_match_type(
             zetasql::ASTMergeWhenClause::NOT_MATCHED_BY_SOURCE);
         (yylhs.value.node) = node;
       }
-#line 13213 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13213 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1641:
-#line 10705 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10705 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTMergeWhenClauseList, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 13221 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13221 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1642:
-#line 10709 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10709 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[1].value.node), {(yystack_[0].value.node)}), yylhs.location);
     }
-#line 13229 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13229 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1643:
-#line 10717 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10717 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.table_expression) = (yystack_[0].value.table_expression); }
-#line 13235 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13235 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1644:
-#line 10718 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10718 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.table_expression) = (yystack_[0].value.table_expression); }
-#line 13241 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13241 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1645:
-#line 10724 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10724 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTMergeStatement, yylhs.location, {(yystack_[5].value.expression), (yystack_[4].value.alias), (yystack_[2].value.table_expression), (yystack_[0].value.expression)});
     }
-#line 13249 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13249 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1646:
-#line 10731 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10731 "bison_parser.y" // lalr1.cc:919
     {
-      parser->WithEndLocation(WithExtraChildren((yystack_[1].value.node), {(yystack_[0].value.node)}), yylhs.location);
+      (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[1].value.node), {(yystack_[0].value.node)}), yylhs.location);
     }
-#line 13257 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13257 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1647:
-#line 10738 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10738 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCallStatement, yylhs.location, {(yystack_[2].value.path_expression), (yystack_[0].value.node)});
       }
-#line 13265 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13265 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1648:
-#line 10742 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10742 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)});
       }
-#line 13273 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13273 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1649:
-#line 10749 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10749 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[1].value.node), yylhs.location);
       }
-#line 13281 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13281 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1650:
-#line 10753 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10753 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTCallStatement, yylhs.location, {(yystack_[2].value.path_expression)});
       }
-#line 13289 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13289 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1651:
-#line 10759 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10759 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 13295 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13295 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1652:
-#line 10761 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10761 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 13303 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13303 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1653:
-#line 10769 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10769 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.boolean) = true;
       }
-#line 13311 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13311 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1654:
-#line 10773 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10773 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.boolean) = false;
       }
-#line 13319 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13319 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1655:
-#line 10781 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10781 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.boolean) = true;
       }
-#line 13327 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13327 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1656:
-#line 10785 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10785 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.boolean) = false;
       }
-#line 13335 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13335 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1657:
-#line 10793 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10793 "bison_parser.y" // lalr1.cc:919
     {
         auto* drop_all = MAKE_NODE(ASTDropAllRowAccessPoliciesStatement, yylhs.location,
             {(yystack_[0].value.path_expression)});
         drop_all->set_has_access_keyword((yystack_[3].value.boolean));
         (yylhs.value.node) = drop_all;
       }
-#line 13346 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13346 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1658:
-#line 10803 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10803 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.expression) = (yystack_[0].value.path_expression);
       }
-#line 13354 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13354 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1659:
-#line 10810 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10810 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.path_expression);
       }
-#line 13362 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13362 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1660:
-#line 10814 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10814 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 13370 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13370 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1661:
-#line 10820 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10820 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.drop_mode) = zetasql::ASTDropStatement::DropMode::RESTRICT; }
-#line 13376 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13376 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1662:
-#line 10821 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10821 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.drop_mode) = zetasql::ASTDropStatement::DropMode::CASCADE; }
-#line 13382 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13382 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1663:
-#line 10823 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10823 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.drop_mode) = zetasql::ASTDropStatement::DropMode::DROP_MODE_UNSPECIFIED; }
-#line 13388 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13388 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1664:
-#line 10829 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10829 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTDropPrivilegeRestrictionStatement, yylhs.location,
                                {(yystack_[3].value.node), (yystack_[1].value.identifier), (yystack_[0].value.path_expression)});
         node->set_is_if_exists((yystack_[5].value.boolean));
         (yylhs.value.node) = node;
       }
-#line 13399 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13399 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1665:
-#line 10837 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10837 "bison_parser.y" // lalr1.cc:919
     {
         zetasql::ASTPathExpression* path_expression =
             (yystack_[0].value.expression) == nullptr ? nullptr : MAKE_NODE(ASTPathExpression, yystack_[1].location, {(yystack_[1].value.identifier)});
@@ -13409,11 +13409,11 @@ namespace zetasql_bison_parser {
         drop_row_access_policy->set_is_if_exists((yystack_[2].value.boolean));
         (yylhs.value.node) = drop_row_access_policy;
       }
-#line 13413 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13413 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1666:
-#line 10848 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10848 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[4].value.index_type_keywords) == IndexTypeKeywords::kSearch) {
           auto* drop_search_index = MAKE_NODE(
@@ -13428,11 +13428,11 @@ namespace zetasql_bison_parser {
           (yylhs.value.node) = drop_vector_index;
         }
       }
-#line 13432 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13432 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1667:
-#line 10864 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10864 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[3].value.table_or_table_function_keywords) == TableOrTableFunctionKeywords::kTableAndFunctionKeywords) {
           // Table functions don't support overloading so this statement doesn't
@@ -13461,31 +13461,31 @@ namespace zetasql_bison_parser {
           (yylhs.value.node) = drop;
         }
       }
-#line 13465 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13465 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1668:
-#line 10893 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10893 "bison_parser.y" // lalr1.cc:919
     {
         auto* drop = MAKE_NODE(ASTDropSnapshotTableStatement, yylhs.location, {(yystack_[0].value.expression)});
         drop->set_is_if_exists((yystack_[1].value.boolean));
         (yylhs.value.node) = drop;
       }
-#line 13475 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13475 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1669:
-#line 10899 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10899 "bison_parser.y" // lalr1.cc:919
     {
         auto* drop = MAKE_NODE(ASTDropEntityStatement, yylhs.location, {(yystack_[2].value.node), (yystack_[0].value.path_expression)});
         drop->set_is_if_exists((yystack_[1].value.boolean));
         (yylhs.value.node) = drop;
       }
-#line 13485 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13485 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1670:
-#line 10906 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10906 "bison_parser.y" // lalr1.cc:919
     {
         // This is a DROP <object_type> <object_name> statement.
         if ((yystack_[4].value.schema_object_kind_keyword) == zetasql::SchemaObjectKind::kAggregateFunction) {
@@ -13535,35 +13535,35 @@ namespace zetasql_bison_parser {
           }
         }
       }
-#line 13539 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13539 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1671:
-#line 10959 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10959 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.index_type_keywords) = IndexTypeKeywords::kSearch; }
-#line 13545 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13545 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1672:
-#line 10961 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10961 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.index_type_keywords) = IndexTypeKeywords::kVector; }
-#line 13551 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13551 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1673:
-#line 10964 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10964 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.index_type_keywords) = (yystack_[0].value.index_type_keywords); }
-#line 13557 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13557 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1674:
-#line 10965 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10965 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.index_type_keywords) = IndexTypeKeywords::kNone; }
-#line 13563 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13563 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1675:
-#line 10969 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10969 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.node)->Is<zetasql::ASTDefineMacroStatement>()) {
           YYERROR_AND_ABORT_AT(
@@ -13573,11 +13573,11 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.statement_list) = MAKE_NODE(ASTStatementList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 13577 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13577 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1676:
-#line 10980 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10980 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.node)->Is<zetasql::ASTDefineMacroStatement>()) {
           YYERROR_AND_ABORT_AT(
@@ -13587,252 +13587,252 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.statement_list) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.statement_list), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 13591 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13591 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1677:
-#line 10993 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10993 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.statement_list) = MAKE_NODE(ASTStatementList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 13599 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13599 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1678:
-#line 10998 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 10998 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.statement_list) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.statement_list), {(yystack_[0].value.node)}), yylhs.location);
       }
-#line 13607 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13607 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1679:
-#line 11005 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11005 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTExecuteIntoClause, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 13615 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13615 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1680:
-#line 11009 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11009 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = nullptr;
     }
-#line 13623 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13623 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1681:
-#line 11016 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11016 "bison_parser.y" // lalr1.cc:919
     {
       auto* alias = MAKE_NODE(ASTAlias, yystack_[0].location, yystack_[0].location, {(yystack_[0].value.identifier)});
       (yylhs.value.node) = MAKE_NODE(ASTExecuteUsingArgument, yylhs.location, {(yystack_[2].value.expression), alias});
     }
-#line 13632 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13632 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1682:
-#line 11021 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11021 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTExecuteUsingArgument, yylhs.location, {(yystack_[0].value.expression), nullptr});
     }
-#line 13640 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13640 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1683:
-#line 11030 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11030 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTExecuteUsingClause, yylhs.location, {(yystack_[0].value.node)});
     }
-#line 13648 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13648 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1684:
-#line 11034 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11034 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.node)}), yylhs.location);
     }
-#line 13656 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13656 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1685:
-#line 11041 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11041 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = (yystack_[0].value.node);
     }
-#line 13664 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13664 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1686:
-#line 11045 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11045 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = nullptr;
     }
-#line 13672 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13672 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1687:
-#line 11053 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11053 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTExecuteImmediateStatement, yylhs.location, {(yystack_[2].value.expression), (yystack_[1].value.node), (yystack_[0].value.node)});
     }
-#line 13680 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13680 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1688:
-#line 11060 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11060 "bison_parser.y" // lalr1.cc:919
     {
     (yystack_[0].value.statement_list)->set_variable_declarations_allowed(true);
     (yylhs.value.node) = MAKE_NODE(ASTScript, yylhs.location, {(yystack_[0].value.statement_list)});
   }
-#line 13689 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13689 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1689:
-#line 11065 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11065 "bison_parser.y" // lalr1.cc:919
     {
     (yystack_[1].value.statement_list)->set_variable_declarations_allowed(true);
     (yylhs.value.node) = MAKE_NODE(ASTScript, yylhs.location, {parser->WithEndLocation((yystack_[1].value.statement_list), yylhs.location)});
   }
-#line 13698 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13698 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1690:
-#line 11070 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11070 "bison_parser.y" // lalr1.cc:919
     {
       // Resolve to an empty script.
       zetasql::ASTStatementList* empty_stmt_list = MAKE_NODE(
           ASTStatementList, yylhs.location, {});
       (yylhs.value.node) = MAKE_NODE(ASTScript, yylhs.location, {empty_stmt_list});
     }
-#line 13709 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13709 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1691:
-#line 11080 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11080 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.statement_list) = parser->WithEndLocation((yystack_[1].value.statement_list), yylhs.location);
     }
-#line 13717 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13717 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1692:
-#line 11084 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11084 "bison_parser.y" // lalr1.cc:919
     {
       // Resolve to an empty statement list.
       (yylhs.value.statement_list) = MAKE_NODE(ASTStatementList, yylhs.location, {});
     }
-#line 13726 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13726 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1693:
-#line 11092 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11092 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = (yystack_[0].value.statement_list);
       }
-#line 13734 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13734 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1694:
-#line 11096 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11096 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = nullptr;
       }
-#line 13742 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13742 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1695:
-#line 11103 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11103 "bison_parser.y" // lalr1.cc:919
     {
     zetasql::ASTElseifClause* elseif_clause = MAKE_NODE(
         ASTElseifClause, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.statement_list)});
     (yylhs.value.node) = MAKE_NODE(ASTElseifClauseList, yylhs.location, {elseif_clause});
   }
-#line 13752 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13752 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1696:
-#line 11109 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11109 "bison_parser.y" // lalr1.cc:919
     {
     zetasql::ASTElseifClause* elseif_clause = MAKE_NODE(
         ASTElseifClause, yystack_[3].location, {(yystack_[2].value.expression), (yystack_[0].value.statement_list)});
     (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren(
         (yystack_[4].value.node), {parser->WithEndLocation(elseif_clause, yylhs.location)}), yylhs.location);
   }
-#line 13763 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13763 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1697:
-#line 11118 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11118 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = (yystack_[0].value.node);
     }
-#line 13771 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13771 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1698:
-#line 11122 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11122 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = nullptr;
     }
-#line 13779 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13779 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1699:
-#line 11129 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11129 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = MAKE_NODE(ASTIfStatement, yylhs.location, {(yystack_[4].value.expression), (yystack_[2].value.statement_list), (yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 13787 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13787 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1700:
-#line 11137 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11137 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.node) = parser->WithEndLocation((yystack_[2].value.node), yylhs.location);
       }
-#line 13795 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13795 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1701:
-#line 11144 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11144 "bison_parser.y" // lalr1.cc:919
     {
       zetasql::ASTWhenThenClause* when_then_clause = MAKE_NODE(
           ASTWhenThenClause, yylhs.location, {(yystack_[2].value.expression), (yystack_[0].value.statement_list)});
       (yylhs.value.node) = MAKE_NODE(ASTWhenThenClauseList, yylhs.location, {when_then_clause});
     }
-#line 13805 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13805 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1702:
-#line 11150 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11150 "bison_parser.y" // lalr1.cc:919
     {
       zetasql::ASTWhenThenClause* when_then_clause = MAKE_NODE(
           ASTWhenThenClause, yystack_[3].location, {(yystack_[2].value.expression), (yystack_[0].value.statement_list)});
       (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren(
           (yystack_[4].value.node), {parser->WithEndLocation(when_then_clause, yylhs.location)}), yylhs.location);
     }
-#line 13816 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13816 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1703:
-#line 11159 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11159 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = (yystack_[0].value.expression);
     }
-#line 13824 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13824 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1704:
-#line 11163 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11163 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = nullptr;
     }
-#line 13832 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13832 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1705:
-#line 11170 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11170 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
                 zetasql::FEATURE_V_1_3_CASE_STMT)) {
@@ -13840,128 +13840,128 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = MAKE_NODE(ASTCaseStatement, yylhs.location, {(yystack_[4].value.node), (yystack_[3].value.node), (yystack_[2].value.node)});
       }
-#line 13844 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13844 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1706:
-#line 11181 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11181 "bison_parser.y" // lalr1.cc:919
     {
       (yystack_[2].value.statement_list)->set_variable_declarations_allowed(true);
       (yylhs.value.node) = MAKE_NODE(ASTBeginEndBlock, yylhs.location, {(yystack_[2].value.statement_list), (yystack_[1].value.node)});
     }
-#line 13853 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13853 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1707:
-#line 11188 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11188 "bison_parser.y" // lalr1.cc:919
     {
       zetasql::ASTExceptionHandler* handler = MAKE_NODE(
           ASTExceptionHandler, yystack_[3].location, {(yystack_[0].value.statement_list)});
       (yylhs.value.node) = MAKE_NODE(ASTExceptionHandlerList, yystack_[4].location, {handler});
     }
-#line 13863 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13863 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1708:
-#line 11194 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11194 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = nullptr;
     }
-#line 13871 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13871 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1709:
-#line 11201 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11201 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = (yystack_[0].value.expression);
     }
-#line 13879 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13879 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1710:
-#line 11205 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11205 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = nullptr;
     }
-#line 13887 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13887 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1711:
-#line 11212 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11212 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTIdentifierList, yylhs.location, {(yystack_[0].value.identifier)});
     }
-#line 13895 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13895 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1712:
-#line 11216 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11216 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = parser->WithEndLocation(WithExtraChildren((yystack_[2].value.node), {(yystack_[0].value.identifier)}), yylhs.location);
     }
-#line 13903 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13903 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1713:
-#line 11223 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11223 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTVariableDeclaration, yylhs.location, {(yystack_[2].value.node), (yystack_[1].value.node), (yystack_[0].value.node)});
     }
-#line 13911 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13911 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1714:
-#line 11228 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11228 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTVariableDeclaration, yylhs.location, {(yystack_[2].value.node), nullptr, (yystack_[0].value.expression)});
     }
-#line 13919 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13919 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1715:
-#line 11234 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11234 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_LOOKBACK(KW_LOOP, LB_OPEN_STATEMENT_BLOCK); }
-#line 13925 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13925 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1716:
-#line 11236 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11236 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTWhileStatement, yylhs.location, {(yystack_[2].value.statement_list)});
     }
-#line 13933 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13933 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1717:
-#line 11242 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11242 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_LOOKBACK(KW_DO, LB_OPEN_STATEMENT_BLOCK); }
-#line 13939 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13939 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1718:
-#line 11243 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11243 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTWhileStatement, yylhs.location, {(yystack_[5].value.expression), (yystack_[2].value.statement_list)});
     }
-#line 13947 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13947 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1719:
-#line 11250 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11250 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTUntilClause, yylhs.location, {(yystack_[0].value.expression)});
     }
-#line 13955 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13955 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1720:
-#line 11256 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11256 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_LOOKBACK(KW_REPEAT, LB_OPEN_STATEMENT_BLOCK); }
-#line 13961 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13961 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1721:
-#line 11258 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11258 "bison_parser.y" // lalr1.cc:919
     {
      if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_3_REPEAT)) {
@@ -13969,17 +13969,17 @@ namespace zetasql_bison_parser {
       }
       (yylhs.value.node) = MAKE_NODE(ASTRepeatStatement, yylhs.location, {(yystack_[3].value.statement_list), (yystack_[2].value.node)});
     }
-#line 13973 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13973 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1722:
-#line 11269 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11269 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_NEXT_TOKEN_LOOKBACK(KW_DO, LB_OPEN_STATEMENT_BLOCK); }
-#line 13979 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13979 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1723:
-#line 11270 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11270 "bison_parser.y" // lalr1.cc:919
     {
      if (!parser->language_options().LanguageFeatureEnabled(
               zetasql::FEATURE_V_1_3_FOR_IN)) {
@@ -13988,11 +13988,11 @@ namespace zetasql_bison_parser {
       (yylhs.value.node) = MAKE_NODE(ASTForInStatement, yylhs.location,
         {(yystack_[7].value.identifier), (yystack_[5].value.query), (yystack_[2].value.statement_list)});
     }
-#line 13992 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 13992 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1724:
-#line 11282 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11282 "bison_parser.y" // lalr1.cc:919
     {
       CHECK_LABEL_SUPPORT((yystack_[0].value.identifier), yystack_[0].location);
       zetasql::ASTBreakStatement* stmt;
@@ -14005,11 +14005,11 @@ namespace zetasql_bison_parser {
       stmt->set_keyword(zetasql::ASTBreakContinueStatement::BREAK);
       (yylhs.value.node) = stmt;
     }
-#line 14009 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14009 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1725:
-#line 11295 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11295 "bison_parser.y" // lalr1.cc:919
     {
       CHECK_LABEL_SUPPORT((yystack_[0].value.identifier), yystack_[0].location);
       zetasql::ASTBreakStatement* stmt;
@@ -14022,11 +14022,11 @@ namespace zetasql_bison_parser {
       stmt->set_keyword(zetasql::ASTBreakContinueStatement::LEAVE);
       (yylhs.value.node) = stmt;
     }
-#line 14026 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14026 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1726:
-#line 11311 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11311 "bison_parser.y" // lalr1.cc:919
     {
       CHECK_LABEL_SUPPORT((yystack_[0].value.identifier), yystack_[0].location);
       zetasql::ASTContinueStatement* stmt;
@@ -14039,11 +14039,11 @@ namespace zetasql_bison_parser {
       stmt->set_keyword(zetasql::ASTBreakContinueStatement::CONTINUE);
       (yylhs.value.node) = stmt;
     }
-#line 14043 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14043 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1727:
-#line 11324 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11324 "bison_parser.y" // lalr1.cc:919
     {
       CHECK_LABEL_SUPPORT((yystack_[0].value.identifier), yystack_[0].location);
       zetasql::ASTContinueStatement* stmt;
@@ -14056,35 +14056,35 @@ namespace zetasql_bison_parser {
       stmt->set_keyword(zetasql::ASTBreakContinueStatement::ITERATE);
       (yylhs.value.node) = stmt;
     }
-#line 14060 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14060 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1728:
-#line 11342 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11342 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTReturnStatement, yylhs.location, {});
     }
-#line 14068 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14068 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1729:
-#line 11349 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11349 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTRaiseStatement, yylhs.location);
     }
-#line 14076 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14076 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1730:
-#line 11353 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11353 "bison_parser.y" // lalr1.cc:919
     {
       (yylhs.value.node) = MAKE_NODE(ASTRaiseStatement, yylhs.location, {(yystack_[0].value.expression)});
     }
-#line 14084 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14084 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1731:
-#line 11359 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11359 "bison_parser.y" // lalr1.cc:919
     {
         *ast_node_result = nullptr;
         // The parser will complain about the remainder of the input if we let
@@ -14093,17 +14093,17 @@ namespace zetasql_bison_parser {
         SetForceTerminate(tokenizer, /*end_byte_offset=*/nullptr);
         (yylhs.value.ast_node_kind) = (yystack_[0].value.ast_node_kind);
       }
-#line 14097 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14097 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1732:
-#line 11367 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11367 "bison_parser.y" // lalr1.cc:919
     { OVERRIDE_CURRENT_TOKEN_LOOKBACK(yystack_[0].location, LB_END_OF_STATEMENT_LEVEL_HINT); }
-#line 14103 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14103 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1733:
-#line 11369 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11369 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.ast_node_kind) == zetasql::ASTDefineMacroStatement::kConcreteNodeKind) {
           YYERROR_AND_ABORT_AT(
@@ -14116,35 +14116,35 @@ namespace zetasql_bison_parser {
         SetForceTerminate(tokenizer, /*end_byte_offset=*/nullptr);
         (yylhs.value.ast_node_kind) = (yystack_[0].value.ast_node_kind);
       }
-#line 14120 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14120 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1734:
-#line 11384 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11384 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = (yystack_[0].value.ast_node_kind); }
-#line 14126 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14126 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1735:
-#line 11385 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11385 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTQueryStatement::kConcreteNodeKind; }
-#line 14132 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14132 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1736:
-#line 11386 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11386 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTQueryStatement::kConcreteNodeKind; }
-#line 14138 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14138 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1737:
-#line 11391 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11391 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTQueryStatement::kConcreteNodeKind; }
-#line 14144 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14144 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1738:
-#line 11396 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11396 "bison_parser.y" // lalr1.cc:919
     {
         // Set statement properties node_kind before finishing parsing, so that
         // in the case of a syntax error after "TABLE", ParseNextStatementKind()
@@ -14152,155 +14152,155 @@ namespace zetasql_bison_parser {
         ast_statement_properties->node_kind =
             zetasql::ASTCreateTableStatement::kConcreteNodeKind;
       }
-#line 14156 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14156 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1739:
-#line 11406 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11406 "bison_parser.y" // lalr1.cc:919
     { ast_statement_properties->is_create_table_as_select = true; }
-#line 14162 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14162 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1742:
-#line 11413 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11413 "bison_parser.y" // lalr1.cc:919
     {
         ast_statement_properties->create_scope = (yystack_[0].value.create_scope);
       }
-#line 14170 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14170 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1743:
-#line 11418 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11418 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTExplainStatement::kConcreteNodeKind; }
-#line 14176 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14176 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1744:
-#line 11419 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11419 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = (yystack_[0].value.ast_node_kind); }
-#line 14182 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14182 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1745:
-#line 11421 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11421 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDefineTableStatement::kConcreteNodeKind; }
-#line 14188 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14188 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1746:
-#line 11423 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11423 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDefineMacroStatement::kConcreteNodeKind; }
-#line 14194 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14194 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1747:
-#line 11425 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11425 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTExecuteImmediateStatement::kConcreteNodeKind; }
-#line 14200 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14200 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1748:
-#line 11427 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11427 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTExportDataStatement::kConcreteNodeKind; }
-#line 14206 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14206 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1749:
-#line 11429 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11429 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTExportModelStatement::kConcreteNodeKind; }
-#line 14212 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14212 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1750:
-#line 11431 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11431 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTExportMetadataStatement::kConcreteNodeKind; }
-#line 14218 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14218 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1751:
-#line 11432 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11432 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTInsertStatement::kConcreteNodeKind; }
-#line 14224 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14224 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1752:
-#line 11433 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11433 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTUpdateStatement::kConcreteNodeKind; }
-#line 14230 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14230 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1753:
-#line 11434 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11434 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDeleteStatement::kConcreteNodeKind; }
-#line 14236 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14236 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1754:
-#line 11435 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11435 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTMergeStatement::kConcreteNodeKind; }
-#line 14242 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14242 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1755:
-#line 11437 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11437 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCloneDataStatement::kConcreteNodeKind; }
-#line 14248 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14248 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1756:
-#line 11439 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11439 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAuxLoadDataStatement::kConcreteNodeKind; }
-#line 14254 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14254 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1757:
-#line 11441 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11441 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDescribeStatement::kConcreteNodeKind; }
-#line 14260 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14260 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1758:
-#line 11442 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11442 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTShowStatement::kConcreteNodeKind; }
-#line 14266 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14266 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1759:
-#line 11444 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11444 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTDropPrivilegeRestrictionStatement::kConcreteNodeKind;
       }
-#line 14274 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14274 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1760:
-#line 11448 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11448 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTDropAllRowAccessPoliciesStatement::kConcreteNodeKind;
       }
-#line 14282 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14282 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1761:
-#line 11452 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11452 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDropRowAccessPolicyStatement::kConcreteNodeKind; }
-#line 14288 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14288 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1762:
-#line 11454 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11454 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDropSearchIndexStatement::kConcreteNodeKind; }
-#line 14294 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14294 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1763:
-#line 11456 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11456 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDropVectorIndexStatement::kConcreteNodeKind; }
-#line 14300 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14300 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1764:
-#line 11458 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11458 "bison_parser.y" // lalr1.cc:919
     {
         if ((yystack_[0].value.table_or_table_function_keywords) == TableOrTableFunctionKeywords::kTableAndFunctionKeywords) {
           (yylhs.value.ast_node_kind) = zetasql::ASTDropTableFunctionStatement::kConcreteNodeKind;
@@ -14308,23 +14308,23 @@ namespace zetasql_bison_parser {
           (yylhs.value.ast_node_kind) = zetasql::ASTDropStatement::kConcreteNodeKind;
         }
       }
-#line 14312 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14312 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1765:
-#line 11466 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11466 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDropSnapshotTableStatement::kConcreteNodeKind; }
-#line 14318 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14318 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1766:
-#line 11468 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11468 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTDropEntityStatement::kConcreteNodeKind; }
-#line 14324 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14324 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1767:
-#line 11470 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11470 "bison_parser.y" // lalr1.cc:919
     {
         switch ((yystack_[0].value.schema_object_kind_keyword)) {
           case zetasql::SchemaObjectKind::kFunction:
@@ -14338,472 +14338,472 @@ namespace zetasql_bison_parser {
             break;
         }
       }
-#line 14342 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14342 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1768:
-#line 11483 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11483 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTGrantStatement::kConcreteNodeKind; }
-#line 14348 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14348 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1769:
-#line 11484 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11484 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTQueryStatement::kConcreteNodeKind; }
-#line 14354 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14354 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1770:
-#line 11485 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11485 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTRevokeStatement::kConcreteNodeKind; }
-#line 14360 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14360 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1771:
-#line 11486 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11486 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTRenameStatement::kConcreteNodeKind; }
-#line 14366 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14366 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1772:
-#line 11487 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11487 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTBeginStatement::kConcreteNodeKind; }
-#line 14372 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14372 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1773:
-#line 11488 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11488 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTBeginStatement::kConcreteNodeKind; }
-#line 14378 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14378 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1774:
-#line 11490 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11490 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTSetTransactionStatement::kConcreteNodeKind; }
-#line 14384 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14384 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1775:
-#line 11492 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11492 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTSingleAssignment::kConcreteNodeKind; }
-#line 14390 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14390 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1776:
-#line 11494 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11494 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTParameterAssignment::kConcreteNodeKind; }
-#line 14396 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14396 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1777:
-#line 11496 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11496 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTSystemVariableAssignment::kConcreteNodeKind; }
-#line 14402 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14402 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1778:
-#line 11498 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11498 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAssignmentFromStruct::kConcreteNodeKind; }
-#line 14408 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14408 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1779:
-#line 11499 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11499 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCommitStatement::kConcreteNodeKind; }
-#line 14414 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14414 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1780:
-#line 11500 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11500 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTRollbackStatement::kConcreteNodeKind; }
-#line 14420 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14420 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1781:
-#line 11502 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11502 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTStartBatchStatement::kConcreteNodeKind; }
-#line 14426 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14426 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1782:
-#line 11503 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11503 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTRunBatchStatement::kConcreteNodeKind; }
-#line 14432 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14432 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1783:
-#line 11505 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11505 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAbortBatchStatement::kConcreteNodeKind; }
-#line 14438 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14438 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1784:
-#line 11507 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11507 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterApproxViewStatement::kConcreteNodeKind; }
-#line 14444 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14444 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1785:
-#line 11509 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11509 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterConnectionStatement::kConcreteNodeKind; }
-#line 14450 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14450 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1786:
-#line 11511 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11511 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterDatabaseStatement::kConcreteNodeKind; }
-#line 14456 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14456 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1787:
-#line 11513 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11513 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterSchemaStatement::kConcreteNodeKind; }
-#line 14462 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14462 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1788:
-#line 11515 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11515 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterExternalSchemaStatement::kConcreteNodeKind; }
-#line 14468 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14468 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1789:
-#line 11517 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11517 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterTableStatement::kConcreteNodeKind; }
-#line 14474 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14474 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1790:
-#line 11519 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11519 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTAlterPrivilegeRestrictionStatement::kConcreteNodeKind;
       }
-#line 14482 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14482 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1791:
-#line 11523 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11523 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterRowAccessPolicyStatement::kConcreteNodeKind; }
-#line 14488 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14488 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1792:
-#line 11525 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11525 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) =
           zetasql::ASTAlterAllRowAccessPoliciesStatement::kConcreteNodeKind; }
-#line 14495 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14495 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1793:
-#line 11528 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11528 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterViewStatement::kConcreteNodeKind; }
-#line 14501 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14501 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1794:
-#line 11530 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11530 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterMaterializedViewStatement::kConcreteNodeKind; }
-#line 14507 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14507 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1795:
-#line 11532 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11532 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterEntityStatement::kConcreteNodeKind; }
-#line 14513 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14513 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1796:
-#line 11534 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11534 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAlterModelStatement::kConcreteNodeKind; }
-#line 14519 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14519 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1797:
-#line 11536 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11536 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateDatabaseStatement::kConcreteNodeKind; }
-#line 14525 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14525 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1798:
-#line 11538 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11538 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateConnectionStatement::kConcreteNodeKind; }
-#line 14531 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14531 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1799:
-#line 11541 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11541 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateConstantStatement::kConcreteNodeKind;
       }
-#line 14539 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14539 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1800:
-#line 11546 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11546 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateFunctionStatement::kConcreteNodeKind;
       }
-#line 14547 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14547 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1801:
-#line 11550 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11550 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateProcedureStatement::kConcreteNodeKind;
       }
-#line 14555 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14555 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1802:
-#line 11555 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11555 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateIndexStatement::kConcreteNodeKind; }
-#line 14561 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14561 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1803:
-#line 11557 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11557 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateSchemaStatement::kConcreteNodeKind; }
-#line 14567 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14567 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1804:
-#line 11559 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11559 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateEntityStatement::kConcreteNodeKind; }
-#line 14573 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14573 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1805:
-#line 11568 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11568 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateTableStatement::kConcreteNodeKind;
       }
-#line 14581 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14581 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1806:
-#line 11572 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11572 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateModelStatement::kConcreteNodeKind;
       }
-#line 14589 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14589 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1807:
-#line 11577 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11577 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateTableFunctionStatement::kConcreteNodeKind;
       }
-#line 14597 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14597 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1808:
-#line 11581 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11581 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateExternalTableStatement::kConcreteNodeKind;
       }
-#line 14605 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14605 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1809:
-#line 11585 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11585 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateExternalSchemaStatement::kConcreteNodeKind;
       }
-#line 14613 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14613 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1810:
-#line 11589 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11589 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreatePrivilegeRestrictionStatement::kConcreteNodeKind;
       }
-#line 14621 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14621 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1811:
-#line 11593 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11593 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateRowAccessPolicyStatement::kConcreteNodeKind; }
-#line 14627 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14627 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1812:
-#line 11595 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11595 "bison_parser.y" // lalr1.cc:919
     {
         (yylhs.value.ast_node_kind) = zetasql::ASTCreateViewStatement::kConcreteNodeKind;
       }
-#line 14635 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14635 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1813:
-#line 11599 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11599 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateApproxViewStatement::kConcreteNodeKind; }
-#line 14641 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14641 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1814:
-#line 11601 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11601 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateMaterializedViewStatement::kConcreteNodeKind; }
-#line 14647 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14647 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1815:
-#line 11603 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11603 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateSnapshotStatement::kConcreteNodeKind; }
-#line 14653 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14653 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1816:
-#line 11605 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11605 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCreateSnapshotTableStatement::kConcreteNodeKind; }
-#line 14659 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14659 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1817:
-#line 11607 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11607 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTCallStatement::kConcreteNodeKind; }
-#line 14665 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14665 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1818:
-#line 11609 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11609 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTReturnStatement::kConcreteNodeKind; }
-#line 14671 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14671 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1819:
-#line 11611 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11611 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTImportStatement::kConcreteNodeKind; }
-#line 14677 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14677 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1820:
-#line 11613 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11613 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTModuleStatement::kConcreteNodeKind; }
-#line 14683 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14683 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1821:
-#line 11615 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11615 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAnalyzeStatement::kConcreteNodeKind; }
-#line 14689 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14689 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1822:
-#line 11617 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11617 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTAssertStatement::kConcreteNodeKind; }
-#line 14695 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14695 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1823:
-#line 11619 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11619 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTTruncateStatement::kConcreteNodeKind; }
-#line 14701 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14701 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1824:
-#line 11621 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11621 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTIfStatement::kConcreteNodeKind; }
-#line 14707 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14707 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1825:
-#line 11623 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11623 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTWhileStatement::kConcreteNodeKind; }
-#line 14713 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14713 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1826:
-#line 11625 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11625 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTWhileStatement::kConcreteNodeKind; }
-#line 14719 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14719 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1827:
-#line 11627 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11627 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTVariableDeclaration::kConcreteNodeKind; }
-#line 14725 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14725 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1828:
-#line 11629 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11629 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTBreakStatement::kConcreteNodeKind; }
-#line 14731 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14731 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1829:
-#line 11631 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11631 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTBreakStatement::kConcreteNodeKind; }
-#line 14737 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14737 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1830:
-#line 11633 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11633 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTContinueStatement::kConcreteNodeKind; }
-#line 14743 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14743 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1831:
-#line 11635 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11635 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTContinueStatement::kConcreteNodeKind; }
-#line 14749 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14749 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1832:
-#line 11637 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11637 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTRaiseStatement::kConcreteNodeKind; }
-#line 14755 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14755 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1833:
-#line 11639 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11639 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTForInStatement::kConcreteNodeKind; }
-#line 14761 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14761 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1834:
-#line 11641 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11641 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTRepeatStatement::kConcreteNodeKind; }
-#line 14767 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14767 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1835:
-#line 11643 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11643 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTBeginStatement::kConcreteNodeKind; }
-#line 14773 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14773 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1836:
-#line 11645 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11645 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTWhileStatement::kConcreteNodeKind; }
-#line 14779 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14779 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1837:
-#line 11647 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11647 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTWhileStatement::kConcreteNodeKind; }
-#line 14785 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14785 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1838:
-#line 11649 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11649 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTForInStatement::kConcreteNodeKind; }
-#line 14791 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14791 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1839:
-#line 11651 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11651 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTRepeatStatement::kConcreteNodeKind; }
-#line 14797 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14797 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1840:
-#line 11653 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11653 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.ast_node_kind) = zetasql::ASTUndropStatement::kConcreteNodeKind; }
-#line 14803 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14803 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1841:
-#line 11659 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11659 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_SPANNER_LEGACY_DDL)) {
@@ -14812,11 +14812,11 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.node) = MAKE_NODE(ASTPrimaryKey, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 14816 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14816 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1842:
-#line 11671 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11671 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_SPANNER_LEGACY_DDL)) {
@@ -14827,11 +14827,11 @@ namespace zetasql_bison_parser {
         clause->set_type(zetasql::ASTSpannerInterleaveClause::IN);
         (yylhs.value.node) = clause;
       }
-#line 14831 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14831 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1843:
-#line 11685 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11685 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_SPANNER_LEGACY_DDL)) {
@@ -14844,17 +14844,17 @@ namespace zetasql_bison_parser {
         clause->set_type(zetasql::ASTSpannerInterleaveClause::IN_PARENT);
         (yylhs.value.node) = clause;
       }
-#line 14848 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14848 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1844:
-#line 11697 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11697 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 14854 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14854 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1845:
-#line 11702 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11702 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_SPANNER_LEGACY_DDL)) {
@@ -14864,17 +14864,17 @@ namespace zetasql_bison_parser {
 
         (yylhs.value.node) = MAKE_NODE(ASTSpannerTableOptions, yylhs.location, {(yystack_[1].value.node), (yystack_[0].value.node)});
       }
-#line 14868 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14868 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1846:
-#line 11711 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11711 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 14874 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14874 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1847:
-#line 11716 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11716 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_SPANNER_LEGACY_DDL)) {
@@ -14883,61 +14883,61 @@ namespace zetasql_bison_parser {
         }
         (yylhs.value.boolean) = true;
       }
-#line 14887 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14887 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1848:
-#line 11724 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11724 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.boolean) = false; }
-#line 14893 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14893 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1849:
-#line 11731 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11731 "bison_parser.y" // lalr1.cc:919
     {
         auto* node = MAKE_NODE(ASTGeneratedColumnInfo, yylhs.location, {(yystack_[2].value.expression)});
         node->set_stored_mode(zetasql::ASTGeneratedColumnInfo::STORED);
         (yylhs.value.node) = node;
       }
-#line 14903 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14903 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1850:
-#line 11736 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11736 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 14909 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14909 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1851:
-#line 11740 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11740 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = (yystack_[0].value.node); }
-#line 14915 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14915 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1852:
-#line 11741 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11741 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 14921 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14921 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1853:
-#line 11746 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11746 "bison_parser.y" // lalr1.cc:919
     {
         // Feature-checking here would make parser reduce and error out
         // too early, so we rely on the check in spanner_alter_column_action.
         (yylhs.value.node) = MAKE_NODE(ASTColumnAttributeList, yylhs.location, {(yystack_[0].value.node)});
       }
-#line 14931 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14931 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1854:
-#line 11751 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11751 "bison_parser.y" // lalr1.cc:919
     { (yylhs.value.node) = nullptr; }
-#line 14937 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14937 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1855:
-#line 11758 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11758 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_SPANNER_LEGACY_DDL)) {
@@ -14959,11 +14959,11 @@ namespace zetasql_bison_parser {
         (yylhs.value.node) = MAKE_NODE(ASTSpannerAlterColumnAction, yylhs.location,
           {parser->WithStartLocation(column, yystack_[4].location)});
       }
-#line 14963 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14963 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
   case 1856:
-#line 11783 "zetasql/parser/bison_parser.y" // lalr1.cc:919
+#line 11783 "bison_parser.y" // lalr1.cc:919
     {
         if (!parser->language_options().LanguageFeatureEnabled(
           zetasql::FEATURE_SPANNER_LEGACY_DDL)) {
@@ -14973,11 +14973,11 @@ namespace zetasql_bison_parser {
         node->set_action((yystack_[0].value.foreign_key_action));
         (yylhs.value.node) = node;
       }
-#line 14977 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14977 "bison_parser.bison.cc" // lalr1.cc:919
     break;
 
 
-#line 14981 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:919
+#line 14981 "bison_parser.bison.cc" // lalr1.cc:919
             default:
               break;
             }
@@ -25682,8 +25682,8 @@ namespace zetasql_bison_parser {
 
 
 } // zetasql_bison_parser
-#line 25686 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.cc" // lalr1.cc:1242
-#line 11793 "zetasql/parser/bison_parser.y" // lalr1.cc:1243
+#line 25686 "bison_parser.bison.cc" // lalr1.cc:1242
+#line 11793 "bison_parser.y" // lalr1.cc:1243
 
 
 void zetasql_bison_parser::BisonParserImpl::error(

@@ -4,8 +4,8 @@
 #include "zetasql/parser/macros/token_provider_base.h"
 // include sources
 // include dependencies
-#include "go-zetasql/parser/macros/token_with_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
+#include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

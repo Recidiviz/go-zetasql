@@ -83,33 +83,33 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n*zetasql/public/proto/type_annotation.p"
     "roto\022\007zetasql\032 google/protobuf/descripto"
-    "r.proto\"\301\003\n\013FieldFormat\"\261\003\n\006Format\022\022\n\016DE"
+    "r.proto\"\326\003\n\013FieldFormat\"\306\003\n\006Format\022\022\n\016DE"
     "FAULT_FORMAT\020\000\022\010\n\004DATE\020\001\022\025\n\021TIMESTAMP_SE"
     "CONDS\020\002\022\024\n\020TIMESTAMP_MILLIS\020\003\022\024\n\020TIMESTA"
-    "MP_MICROS\020\004\022\023\n\017TIMESTAMP_NANOS\020\005\022\020\n\014DATE"
-    "_DECIMAL\020\006\022\017\n\013TIME_MICROS\020\007\022\023\n\017DATETIME_"
-    "MICROS\020\010\022\030\n\024ST_GEOGRAPHY_ENCODED\020\t\022\013\n\007NU"
-    "MERIC\020\n\022\016\n\nBIGNUMERIC\020\013\022\010\n\004JSON\020\014\022\014\n\010INT"
-    "ERVAL\020\016\022\r\n\tTOKENLIST\020\017\022\027\n\023RANGE_DATES_EN"
-    "CODED\020\020\022\033\n\027RANGE_DATETIMES_ENCODED\020\021\022\034\n\030"
-    "RANGE_TIMESTAMPS_ENCODED\020\022\022\010\n\004UUID\020\023\022=\n0"
-    "__FieldFormat_Type__switch_must_have_a_d"
-    "efault__\020\377\377\377\377\377\377\377\377\377\001\"\247\001\n\022DeprecatedEncodi"
-    "ng\"\220\001\n\010Encoding\022\024\n\020DEFAULT_ENCODING\020\000\022\020\n"
-    "\014DATE_DECIMAL\020\001\022\025\n\rDATE_PACKED32\020\001\032\002\010\001\022A"
-    "\n4__FieldFormat_Encoding__switch_must_ha"
-    "ve_a_default__\020\377\377\377\377\377\377\377\377\377\001\032\002\020\001:M\n\006format\022"
-    "\035.google.protobuf.FieldOptions\030\313\353\341  \001(\0162"
-    "\033.zetasql.FieldFormat.Format:K\n\004type\022\035.g"
-    "oogle.protobuf.FieldOptions\030\345\252\337\027 \001(\0162\033.z"
-    "etasql.FieldFormat.Format:X\n\010encoding\022\035."
-    "google.protobuf.FieldOptions\030\247\371\376\035 \001(\0162$."
-    "zetasql.DeprecatedEncoding.Encoding:<\n\014u"
-    "se_defaults\022\035.google.protobuf.FieldOptio"
-    "ns\030\277\246\336\027 \001(\010:\004true:D\n\022use_field_defaults\022"
-    "\037.google.protobuf.MessageOptions\030\202\371\326\027 \001("
-    "\010:\004trueB,\n\022com.google.zetasqlB\023TypeAnnot"
-    "ationProto\370\001\001"
+    "MP_MICROS\020\004\022\023\n\017TIMESTAMP_NANOS\020\005\022\023\n\017TIME"
+    "STAMP_PICOS\020\024\022\020\n\014DATE_DECIMAL\020\006\022\017\n\013TIME_"
+    "MICROS\020\007\022\023\n\017DATETIME_MICROS\020\010\022\030\n\024ST_GEOG"
+    "RAPHY_ENCODED\020\t\022\013\n\007NUMERIC\020\n\022\016\n\nBIGNUMER"
+    "IC\020\013\022\010\n\004JSON\020\014\022\014\n\010INTERVAL\020\016\022\r\n\tTOKENLIS"
+    "T\020\017\022\027\n\023RANGE_DATES_ENCODED\020\020\022\033\n\027RANGE_DA"
+    "TETIMES_ENCODED\020\021\022\034\n\030RANGE_TIMESTAMPS_EN"
+    "CODED\020\022\022\010\n\004UUID\020\023\022=\n0__FieldFormat_Type_"
+    "_switch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001"
+    "\"\247\001\n\022DeprecatedEncoding\"\220\001\n\010Encoding\022\024\n\020"
+    "DEFAULT_ENCODING\020\000\022\020\n\014DATE_DECIMAL\020\001\022\025\n\r"
+    "DATE_PACKED32\020\001\032\002\010\001\022A\n4__FieldFormat_Enc"
+    "oding__switch_must_have_a_default__\020\377\377\377\377"
+    "\377\377\377\377\377\001\032\002\020\001:M\n\006format\022\035.google.protobuf.F"
+    "ieldOptions\030\313\353\341  \001(\0162\033.zetasql.FieldForm"
+    "at.Format:K\n\004type\022\035.google.protobuf.Fiel"
+    "dOptions\030\345\252\337\027 \001(\0162\033.zetasql.FieldFormat."
+    "Format:X\n\010encoding\022\035.google.protobuf.Fie"
+    "ldOptions\030\247\371\376\035 \001(\0162$.zetasql.DeprecatedE"
+    "ncoding.Encoding:<\n\014use_defaults\022\035.googl"
+    "e.protobuf.FieldOptions\030\277\246\336\027 \001(\010:\004true:D"
+    "\n\022use_field_defaults\022\037.google.protobuf.M"
+    "essageOptions\030\202\371\326\027 \001(\010:\004trueB,\n\022com.goog"
+    "le.zetasqlB\023TypeAnnotationProto\370\001\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_deps[1] =
     {
@@ -119,7 +119,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fanno
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto = {
     false,
     false,
-    1133,
+    1154,
     descriptor_table_protodef_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto,
     "zetasql/public/proto/type_annotation.proto",
     &descriptor_table_zetasql_2fpublic_2fproto_2ftype_5fannotation_2eproto_once,
@@ -178,6 +178,7 @@ bool FieldFormat_Format_IsValid(int value) {
     case 17:
     case 18:
     case 19:
+    case 20:
       return true;
     default:
       return false;
@@ -192,6 +193,7 @@ constexpr FieldFormat_Format FieldFormat::TIMESTAMP_SECONDS;
 constexpr FieldFormat_Format FieldFormat::TIMESTAMP_MILLIS;
 constexpr FieldFormat_Format FieldFormat::TIMESTAMP_MICROS;
 constexpr FieldFormat_Format FieldFormat::TIMESTAMP_NANOS;
+constexpr FieldFormat_Format FieldFormat::TIMESTAMP_PICOS;
 constexpr FieldFormat_Format FieldFormat::DATE_DECIMAL;
 constexpr FieldFormat_Format FieldFormat::TIME_MICROS;
 constexpr FieldFormat_Format FieldFormat::DATETIME_MICROS;

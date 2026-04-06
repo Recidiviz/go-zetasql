@@ -387,7 +387,21 @@ add_sources:
       // bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
       #undef yylex
       #include "zetasql/parser/join_processor.cc"
+      // TextMapper (Bazel :tm_parser). tm_lexer.cc is compiled via flex_tokenizer/export.inc → tm_lexer/export.inc.
+      #include "zetasql/parser/textmapper_lexer_adapter.cc"
+      #include "zetasql/parser/tm_parser.cc"
       // utf8_validity.cc: single copy via blank-import utf8_range_link (see go-protobuf/protobuf/export.inc).
+      // Flex-generated yyalloc helpers use global Legacyalloc names; root analyzer and parser/ CGO packages
+      // both amalgamate flex_tokenizer.flex.cc — prefix so the final link does not duplicate symbols.
+      #ifdef ZETASQL_GO_FLEX_LEGACY_IN_PARSER_PKG
+      #define Legacyalloc zetasql_go_parser_pkg_Legacyalloc
+      #define Legacyrealloc zetasql_go_parser_pkg_Legacyrealloc
+      #define Legacyfree zetasql_go_parser_pkg_Legacyfree
+      #else
+      #define Legacyalloc zetasql_go_root_Legacyalloc
+      #define Legacyrealloc zetasql_go_root_Legacyrealloc
+      #define Legacyfree zetasql_go_root_Legacyfree
+      #endif
       #include "zetasql/parser/flex_tokenizer.h"
       #include "zetasql/parser/flex_tokenizer.flex.cc"
 
@@ -441,6 +455,12 @@ cclib:
         - zetasql/parser/flex_tokenizer.h
         - zetasql/parser/flex_tokenizer.cc
   bind_cc_prelude_before_headers:
+    - pkg: zetasql/parser/parser
+      lines: |
+        // flex_tokenizer.flex.cc defines yyFlexLexer::{yylex,yywrap}; suppress flex_tokenizer.h inline stubs.
+        #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+        // flex_prelude uses distinct Legacyalloc symbols from root analyzer (see flex_prelude in add_sources).
+        #define ZETASQL_GO_FLEX_LEGACY_IN_PARSER_PKG 1
     - pkg: zetasql/public/parse_helpers
       lines: |
         // parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.

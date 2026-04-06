@@ -418,6 +418,7 @@ class SimpleTableProto final :
   enum : int {
     kColumnFieldNumber = 4,
     kPrimaryKeyColumnIndexFieldNumber = 9,
+    kRowIdentityColumnIndexFieldNumber = 11,
     kNameFieldNumber = 1,
     kNameInCatalogFieldNumber = 5,
     kFullNameFieldNumber = 10,
@@ -465,6 +466,26 @@ class SimpleTableProto final :
   void _internal_add_primary_key_column_index(::int32_t value);
   const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>& _internal_primary_key_column_index() const;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>* _internal_mutable_primary_key_column_index();
+
+  public:
+  // repeated int32 row_identity_column_index = 11;
+  int row_identity_column_index_size() const;
+  private:
+  int _internal_row_identity_column_index_size() const;
+
+  public:
+  void clear_row_identity_column_index() ;
+  ::int32_t row_identity_column_index(int index) const;
+  void set_row_identity_column_index(int index, ::int32_t value);
+  void add_row_identity_column_index(::int32_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>& row_identity_column_index() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>* mutable_row_identity_column_index();
+
+  private:
+  ::int32_t _internal_row_identity_column_index(int index) const;
+  void _internal_add_row_identity_column_index(::int32_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>& _internal_row_identity_column_index() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>* _internal_mutable_row_identity_column_index();
 
   public:
   // optional string name = 1;
@@ -600,6 +621,7 @@ class SimpleTableProto final :
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimpleColumnProto > column_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t> primary_key_column_index_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t> row_identity_column_index_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_in_catalog_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr full_name_;
@@ -1398,6 +1420,50 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>& SimpleTableProto
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>* SimpleTableProto::_internal_mutable_primary_key_column_index() {
   return &_impl_.primary_key_column_index_;
+}
+
+// repeated int32 row_identity_column_index = 11;
+inline int SimpleTableProto::_internal_row_identity_column_index_size() const {
+  return _impl_.row_identity_column_index_.size();
+}
+inline int SimpleTableProto::row_identity_column_index_size() const {
+  return _internal_row_identity_column_index_size();
+}
+inline void SimpleTableProto::clear_row_identity_column_index() {
+  _internal_mutable_row_identity_column_index()->Clear();
+}
+inline ::int32_t SimpleTableProto::row_identity_column_index(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.SimpleTableProto.row_identity_column_index)
+  return _internal_row_identity_column_index(index);
+}
+inline void SimpleTableProto::set_row_identity_column_index(int index, ::int32_t value) {
+  _internal_mutable_row_identity_column_index()->Set(index, value);
+  // @@protoc_insertion_point(field_set:zetasql.SimpleTableProto.row_identity_column_index)
+}
+inline void SimpleTableProto::add_row_identity_column_index(::int32_t value) {
+  _internal_add_row_identity_column_index(value);
+  // @@protoc_insertion_point(field_add:zetasql.SimpleTableProto.row_identity_column_index)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>& SimpleTableProto::row_identity_column_index() const {
+  // @@protoc_insertion_point(field_list:zetasql.SimpleTableProto.row_identity_column_index)
+  return _internal_row_identity_column_index();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>* SimpleTableProto::mutable_row_identity_column_index() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.SimpleTableProto.row_identity_column_index)
+  return _internal_mutable_row_identity_column_index();
+}
+
+inline ::int32_t SimpleTableProto::_internal_row_identity_column_index(int index) const {
+  return _internal_row_identity_column_index().Get(index);
+}
+inline void SimpleTableProto::_internal_add_row_identity_column_index(::int32_t value) {
+  _internal_mutable_row_identity_column_index()->Add(value);
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>& SimpleTableProto::_internal_row_identity_column_index() const {
+  return _impl_.row_identity_column_index_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<::int32_t>* SimpleTableProto::_internal_mutable_row_identity_column_index() {
+  return &_impl_.row_identity_column_index_;
 }
 
 // optional string name_in_catalog = 5;

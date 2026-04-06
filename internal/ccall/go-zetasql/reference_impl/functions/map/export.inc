@@ -6,6 +6,7 @@
 #include "zetasql/reference_impl/functions/map.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
+#include "go-zetasql/base/optional_ref/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"

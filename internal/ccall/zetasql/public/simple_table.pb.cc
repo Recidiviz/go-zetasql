@@ -42,6 +42,8 @@ PROTOBUF_CONSTEXPR SimpleTableProto::SimpleTableProto(
   , /*decltype(_impl_.column_)*/{}
   , /*decltype(_impl_.primary_key_column_index_)*/ {}
 
+  , /*decltype(_impl_.row_identity_column_index_)*/ {}
+
   , /*decltype(_impl_.name_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
@@ -153,6 +155,7 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets[
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleTableProto, _impl_.is_value_table_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleTableProto, _impl_.column_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleTableProto, _impl_.primary_key_column_index_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::SimpleTableProto, _impl_.row_identity_column_index_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleTableProto, _impl_.name_in_catalog_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleTableProto, _impl_.allow_anonymous_column_name_),
     PROTOBUF_FIELD_OFFSET(::zetasql::SimpleTableProto, _impl_.allow_duplicate_column_names_),
@@ -161,6 +164,7 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets[
     0,
     4,
     5,
+    ~0u,
     ~0u,
     ~0u,
     1,
@@ -209,9 +213,9 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2fsimple_5ftable_2eproto::offsets[
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         { 0, -1, -1, sizeof(::zetasql::SimpleAnonymizationInfoProto)},
-        { 9, 27, -1, sizeof(::zetasql::SimpleTableProto)},
-        { 37, 47, -1, sizeof(::zetasql::ExpressionAttributeProto)},
-        { 49, 65, -1, sizeof(::zetasql::SimpleColumnProto)},
+        { 9, 28, -1, sizeof(::zetasql::SimpleTableProto)},
+        { 39, 49, -1, sizeof(::zetasql::ExpressionAttributeProto)},
+        { 51, 67, -1, sizeof(::zetasql::SimpleColumnProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -225,29 +229,30 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fsimple_5ftable_2eproto[]
     "asql\032\037zetasql/public/annotation.proto\032\031z"
     "etasql/public/type.proto\":\n\034SimpleAnonym"
     "izationInfoProto\022\032\n\022userid_column_name\030\001"
-    " \003(\t\"\332\002\n\020SimpleTableProto\022\014\n\004name\030\001 \001(\t\022"
+    " \003(\t\"\375\002\n\020SimpleTableProto\022\014\n\004name\030\001 \001(\t\022"
     "\030\n\020serialization_id\030\002 \001(\003\022\026\n\016is_value_ta"
     "ble\030\003 \001(\010\022*\n\006column\030\004 \003(\0132\032.zetasql.Simp"
     "leColumnProto\022 \n\030primary_key_column_inde"
-    "x\030\t \003(\005\022\027\n\017name_in_catalog\030\005 \001(\t\022#\n\033allo"
-    "w_anonymous_column_name\030\006 \001(\010\022$\n\034allow_d"
-    "uplicate_column_names\030\007 \001(\010\022A\n\022anonymiza"
-    "tion_info\030\010 \001(\0132%.zetasql.SimpleAnonymiz"
-    "ationInfoProto\022\021\n\tfull_name\030\n \001(\t\"\256\001\n\030Ex"
-    "pressionAttributeProto\022\031\n\021expression_str"
-    "ing\030\010 \001(\t\022I\n\017expression_kind\030\t \001(\01620.zet"
-    "asql.ExpressionAttributeProto.Expression"
-    "Kind\",\n\016ExpressionKind\022\013\n\007DEFAULT\020\000\022\r\n\tG"
-    "ENERATED\020\001\"\276\002\n\021SimpleColumnProto\022\014\n\004name"
-    "\030\001 \001(\t\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeProto"
-    "\022\030\n\020is_pseudo_column\030\003 \001(\010\022 \n\022is_writabl"
-    "e_column\030\004 \001(\010:\004true\022(\n can_update_unwri"
-    "table_to_default\030\006 \001(\010\0223\n\016annotation_map"
-    "\030\005 \001(\0132\033.zetasql.AnnotationMapProto\022 \n\021h"
-    "as_default_value\030\007 \001(\010:\005false\022<\n\021column_"
-    "expression\030\010 \001(\0132!.zetasql.ExpressionAtt"
-    "ributeProtoB\'\n\022com.google.zetasqlB\021Simpl"
-    "eTableProtos"
+    "x\030\t \003(\005\022!\n\031row_identity_column_index\030\013 \003"
+    "(\005\022\027\n\017name_in_catalog\030\005 \001(\t\022#\n\033allow_ano"
+    "nymous_column_name\030\006 \001(\010\022$\n\034allow_duplic"
+    "ate_column_names\030\007 \001(\010\022A\n\022anonymization_"
+    "info\030\010 \001(\0132%.zetasql.SimpleAnonymization"
+    "InfoProto\022\021\n\tfull_name\030\n \001(\t\"\256\001\n\030Express"
+    "ionAttributeProto\022\031\n\021expression_string\030\010"
+    " \001(\t\022I\n\017expression_kind\030\t \001(\01620.zetasql."
+    "ExpressionAttributeProto.ExpressionKind\""
+    ",\n\016ExpressionKind\022\013\n\007DEFAULT\020\000\022\r\n\tGENERA"
+    "TED\020\001\"\276\002\n\021SimpleColumnProto\022\014\n\004name\030\001 \001("
+    "\t\022 \n\004type\030\002 \001(\0132\022.zetasql.TypeProto\022\030\n\020i"
+    "s_pseudo_column\030\003 \001(\010\022 \n\022is_writable_col"
+    "umn\030\004 \001(\010:\004true\022(\n can_update_unwritable"
+    "_to_default\030\006 \001(\010\0223\n\016annotation_map\030\005 \001("
+    "\0132\033.zetasql.AnnotationMapProto\022 \n\021has_de"
+    "fault_value\030\007 \001(\010:\005false\022<\n\021column_expre"
+    "ssion\030\010 \001(\0132!.zetasql.ExpressionAttribut"
+    "eProtoB\'\n\022com.google.zetasqlB\021SimpleTabl"
+    "eProtos"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_deps[2] =
     {
@@ -258,7 +263,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2epr
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto = {
     false,
     false,
-    1052,
+    1087,
     descriptor_table_protodef_zetasql_2fpublic_2fsimple_5ftable_2eproto,
     "zetasql/public/simple_table.proto",
     &descriptor_table_zetasql_2fpublic_2fsimple_5ftable_2eproto_once,
@@ -554,6 +559,8 @@ SimpleTableProto::SimpleTableProto(const SimpleTableProto& from)
     , decltype(_impl_.column_){from._impl_.column_}
     , decltype(_impl_.primary_key_column_index_) { from._impl_.primary_key_column_index_ }
 
+    , decltype(_impl_.row_identity_column_index_) { from._impl_.row_identity_column_index_ }
+
     , decltype(_impl_.name_) {}
 
     , decltype(_impl_.name_in_catalog_) {}
@@ -609,6 +616,8 @@ inline void SimpleTableProto::SharedCtor(::_pb::Arena* arena) {
     , decltype(_impl_.column_){arena}
     , decltype(_impl_.primary_key_column_index_) { arena }
 
+    , decltype(_impl_.row_identity_column_index_) { arena }
+
     , decltype(_impl_.name_) {}
 
     , decltype(_impl_.name_in_catalog_) {}
@@ -652,6 +661,7 @@ inline void SimpleTableProto::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
   _internal_mutable_column()->~RepeatedPtrField();
   _impl_.primary_key_column_index_.~RepeatedField();
+  _impl_.row_identity_column_index_.~RepeatedField();
   _impl_.name_.Destroy();
   _impl_.name_in_catalog_.Destroy();
   _impl_.full_name_.Destroy();
@@ -670,6 +680,7 @@ void SimpleTableProto::Clear() {
 
   _internal_mutable_column()->Clear();
   _internal_mutable_primary_key_column_index()->Clear();
+  _internal_mutable_row_identity_column_index()->Clear();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x0000000fu) {
     if (cached_has_bits & 0x00000001u) {
@@ -821,6 +832,23 @@ const char* SimpleTableProto::_InternalParse(const char* ptr, ::_pbi::ParseConte
           goto handle_unusual;
         }
         continue;
+      // repeated int32 row_identity_column_index = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 88)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            _internal_add_row_identity_column_index(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<88>(ptr));
+        } else if (static_cast<::uint8_t>(tag) == 90) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt32Parser(_internal_mutable_row_identity_column_index(), ptr, ctx);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -926,6 +954,13 @@ failure:
     target = stream->WriteStringMaybeAliased(10, _s, target);
   }
 
+  // repeated int32 row_identity_column_index = 11;
+  for (int i = 0, n = this->_internal_row_identity_column_index_size(); i < n; ++i) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        11, this->_internal_row_identity_column_index(i), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -956,6 +991,17 @@ failure:
     ;
     std::size_t tag_size = std::size_t{1} *
         ::_pbi::FromIntSize(this->_internal_primary_key_column_index_size());
+    ;
+    total_size += tag_size + data_size;
+  }
+
+  // repeated int32 row_identity_column_index = 11;
+  {
+    std::size_t data_size = ::_pbi::WireFormatLite::Int32Size(
+        this->_internal_row_identity_column_index())
+    ;
+    std::size_t tag_size = std::size_t{1} *
+        ::_pbi::FromIntSize(this->_internal_row_identity_column_index_size());
     ;
     total_size += tag_size + data_size;
   }
@@ -1029,6 +1075,7 @@ void SimpleTableProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const
 
   _this->_internal_mutable_column()->MergeFrom(from._internal_column());
   _this->_impl_.primary_key_column_index_.MergeFrom(from._impl_.primary_key_column_index_);
+  _this->_impl_.row_identity_column_index_.MergeFrom(from._impl_.row_identity_column_index_);
   cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
@@ -1082,6 +1129,7 @@ void SimpleTableProto::InternalSwap(SimpleTableProto* other) {
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   _internal_mutable_column()->InternalSwap(other->_internal_mutable_column());
   _impl_.primary_key_column_index_.InternalSwap(&other->_impl_.primary_key_column_index_);
+  _impl_.row_identity_column_index_.InternalSwap(&other->_impl_.row_identity_column_index_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, lhs_arena,
                                        &other->_impl_.name_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_in_catalog_, lhs_arena,

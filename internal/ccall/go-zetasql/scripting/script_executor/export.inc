@@ -41,7 +41,9 @@
 #include "go-zetasql/public/signature_match_result/export.inc"
 #include "go-zetasql/public/time_zone_util/export.inc"
 #include "go-zetasql/public/type/export.inc"
+#include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
@@ -49,5 +51,6 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"
+#include "go-protobuf/protobuf/export.inc"
 
 #endif

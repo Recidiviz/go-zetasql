@@ -75,14 +75,14 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fsimple_5fvalue_2eproto[]
     "_value\030\003 \001(\010H\000\022\026\n\014double_value\030\004 \001(\001H\000\022\025"
     "\n\013bytes_value\030\005 \001(\014H\000\0229\n.__SimpleValuePr"
     "oto__switch_must_have_a_default\030\377\001 \001(\010H\000"
-    "B\007\n\005valueB+\n\022com.google.zetasqlB\022ZetaSQL"
-    "SimpleValue\370\001\001"
+    "B\007\n\005valueB(\n\022com.google.zetasqlB\022ZetaSQL"
+    "SimpleValue"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto = {
     false,
     false,
-    294,
+    291,
     descriptor_table_protodef_zetasql_2fpublic_2fsimple_5fvalue_2eproto,
     "zetasql/public/simple_value.proto",
     &descriptor_table_zetasql_2fpublic_2fsimple_5fvalue_2eproto_once,

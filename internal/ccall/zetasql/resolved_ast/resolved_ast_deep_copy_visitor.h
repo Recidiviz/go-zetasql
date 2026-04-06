@@ -538,6 +538,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedOutputColumn(
       const ResolvedOutputColumn* node);
 
+  absl::Status CopyVisitResolvedOutputSchema(
+      const ResolvedOutputSchema* node);
+
   absl::Status CopyVisitResolvedProjectScan(
       const ResolvedProjectScan* node);
 
@@ -555,6 +558,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedQueryStmt(
       const ResolvedQueryStmt* node);
+
+  absl::Status CopyVisitResolvedGeneralizedQueryStmt(
+      const ResolvedGeneralizedQueryStmt* node);
 
   absl::Status CopyVisitResolvedCreateDatabaseStmt(
       const ResolvedCreateDatabaseStmt* node);
@@ -690,6 +696,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedAssertRowsModified(
       const ResolvedAssertRowsModified* node);
+
+  absl::Status CopyVisitResolvedOnConflictClause(
+      const ResolvedOnConflictClause* node);
 
   absl::Status CopyVisitResolvedInsertRow(
       const ResolvedInsertRow* node);
@@ -940,6 +949,30 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedUnpivotScan(
       const ResolvedUnpivotScan* node);
 
+  absl::Status CopyVisitResolvedMatchRecognizeScan(
+      const ResolvedMatchRecognizeScan* node);
+
+  absl::Status CopyVisitResolvedMeasureGroup(
+      const ResolvedMeasureGroup* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizeVariableDefinition(
+      const ResolvedMatchRecognizeVariableDefinition* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternEmpty(
+      const ResolvedMatchRecognizePatternEmpty* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternAnchor(
+      const ResolvedMatchRecognizePatternAnchor* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternVariableRef(
+      const ResolvedMatchRecognizePatternVariableRef* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternOperation(
+      const ResolvedMatchRecognizePatternOperation* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternQuantification(
+      const ResolvedMatchRecognizePatternQuantification* node);
+
   absl::Status CopyVisitResolvedCloneDataStmt(
       const ResolvedCloneDataStmt* node);
 
@@ -955,6 +988,84 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* node);
 
+  absl::Status CopyVisitResolvedCreatePropertyGraphStmt(
+      const ResolvedCreatePropertyGraphStmt* node);
+
+  absl::Status CopyVisitResolvedGraphElementTable(
+      const ResolvedGraphElementTable* node);
+
+  absl::Status CopyVisitResolvedGraphNodeTableReference(
+      const ResolvedGraphNodeTableReference* node);
+
+  absl::Status CopyVisitResolvedGraphElementLabel(
+      const ResolvedGraphElementLabel* node);
+
+  absl::Status CopyVisitResolvedGraphPropertyDeclaration(
+      const ResolvedGraphPropertyDeclaration* node);
+
+  absl::Status CopyVisitResolvedGraphPropertyDefinition(
+      const ResolvedGraphPropertyDefinition* node);
+
+  absl::Status CopyVisitResolvedGraphRefScan(
+      const ResolvedGraphRefScan* node);
+
+  absl::Status CopyVisitResolvedGraphLinearScan(
+      const ResolvedGraphLinearScan* node);
+
+  absl::Status CopyVisitResolvedGraphTableScan(
+      const ResolvedGraphTableScan* node);
+
+  absl::Status CopyVisitResolvedGraphScan(
+      const ResolvedGraphScan* node);
+
+  absl::Status CopyVisitResolvedGraphPathPatternQuantifier(
+      const ResolvedGraphPathPatternQuantifier* node);
+
+  absl::Status CopyVisitResolvedGraphPathSearchPrefix(
+      const ResolvedGraphPathSearchPrefix* node);
+
+  absl::Status CopyVisitResolvedGraphNodeScan(
+      const ResolvedGraphNodeScan* node);
+
+  absl::Status CopyVisitResolvedGraphEdgeScan(
+      const ResolvedGraphEdgeScan* node);
+
+  absl::Status CopyVisitResolvedGraphGetElementProperty(
+      const ResolvedGraphGetElementProperty* node);
+
+  absl::Status CopyVisitResolvedGraphLabelNaryExpr(
+      const ResolvedGraphLabelNaryExpr* node);
+
+  absl::Status CopyVisitResolvedGraphLabel(
+      const ResolvedGraphLabel* node);
+
+  absl::Status CopyVisitResolvedGraphWildCardLabel(
+      const ResolvedGraphWildCardLabel* node);
+
+  absl::Status CopyVisitResolvedGraphElementIdentifier(
+      const ResolvedGraphElementIdentifier* node);
+
+  absl::Status CopyVisitResolvedGraphElementProperty(
+      const ResolvedGraphElementProperty* node);
+
+  absl::Status CopyVisitResolvedGraphMakeElement(
+      const ResolvedGraphMakeElement* node);
+
+  absl::Status CopyVisitResolvedArrayAggregate(
+      const ResolvedArrayAggregate* node);
+
+  absl::Status CopyVisitResolvedGraphMakeArrayVariable(
+      const ResolvedGraphMakeArrayVariable* node);
+
+  absl::Status CopyVisitResolvedGraphPathMode(
+      const ResolvedGraphPathMode* node);
+
+  absl::Status CopyVisitResolvedGraphPathScan(
+      const ResolvedGraphPathScan* node);
+
+  absl::Status CopyVisitResolvedGraphIsLabeledPredicate(
+      const ResolvedGraphIsLabeledPredicate* node);
+
   absl::Status CopyVisitResolvedUndropStmt(
       const ResolvedUndropStmt* node);
 
@@ -967,6 +1078,30 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAssertScan(
       const ResolvedAssertScan* node);
 
+  absl::Status CopyVisitResolvedLogScan(
+      const ResolvedLogScan* node);
+
+  absl::Status CopyVisitResolvedPipeIfScan(
+      const ResolvedPipeIfScan* node);
+
+  absl::Status CopyVisitResolvedPipeIfCase(
+      const ResolvedPipeIfCase* node);
+
+  absl::Status CopyVisitResolvedPipeForkScan(
+      const ResolvedPipeForkScan* node);
+
+  absl::Status CopyVisitResolvedPipeExportDataScan(
+      const ResolvedPipeExportDataScan* node);
+
+  absl::Status CopyVisitResolvedSubpipeline(
+      const ResolvedSubpipeline* node);
+
+  absl::Status CopyVisitResolvedSubpipelineInputScan(
+      const ResolvedSubpipelineInputScan* node);
+
+  absl::Status CopyVisitResolvedGeneralizedQuerySubpipeline(
+      const ResolvedGeneralizedQuerySubpipeline* node);
+
   absl::Status CopyVisitResolvedBarrierScan(
       const ResolvedBarrierScan* node);
 
@@ -975,6 +1110,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedAlterConnectionStmt(
       const ResolvedAlterConnectionStmt* node);
+
+  absl::Status CopyVisitResolvedLockMode(
+      const ResolvedLockMode* node);
 
   absl::Status DefaultVisit(const ResolvedNode* node) override;
 
@@ -1181,6 +1319,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedOutputColumn(
       const ResolvedOutputColumn* node) override;
 
+  absl::Status VisitResolvedOutputSchema(
+      const ResolvedOutputSchema* node) override;
+
   absl::Status VisitResolvedProjectScan(
       const ResolvedProjectScan* node) override;
 
@@ -1198,6 +1339,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedQueryStmt(
       const ResolvedQueryStmt* node) override;
+
+  absl::Status VisitResolvedGeneralizedQueryStmt(
+      const ResolvedGeneralizedQueryStmt* node) override;
 
   absl::Status VisitResolvedCreateDatabaseStmt(
       const ResolvedCreateDatabaseStmt* node) override;
@@ -1333,6 +1477,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedAssertRowsModified(
       const ResolvedAssertRowsModified* node) override;
+
+  absl::Status VisitResolvedOnConflictClause(
+      const ResolvedOnConflictClause* node) override;
 
   absl::Status VisitResolvedInsertRow(
       const ResolvedInsertRow* node) override;
@@ -1583,6 +1730,30 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedUnpivotScan(
       const ResolvedUnpivotScan* node) override;
 
+  absl::Status VisitResolvedMatchRecognizeScan(
+      const ResolvedMatchRecognizeScan* node) override;
+
+  absl::Status VisitResolvedMeasureGroup(
+      const ResolvedMeasureGroup* node) override;
+
+  absl::Status VisitResolvedMatchRecognizeVariableDefinition(
+      const ResolvedMatchRecognizeVariableDefinition* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternEmpty(
+      const ResolvedMatchRecognizePatternEmpty* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternAnchor(
+      const ResolvedMatchRecognizePatternAnchor* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternVariableRef(
+      const ResolvedMatchRecognizePatternVariableRef* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternOperation(
+      const ResolvedMatchRecognizePatternOperation* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternQuantification(
+      const ResolvedMatchRecognizePatternQuantification* node) override;
+
   absl::Status VisitResolvedCloneDataStmt(
       const ResolvedCloneDataStmt* node) override;
 
@@ -1598,6 +1769,84 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* node) override;
 
+  absl::Status VisitResolvedCreatePropertyGraphStmt(
+      const ResolvedCreatePropertyGraphStmt* node) override;
+
+  absl::Status VisitResolvedGraphElementTable(
+      const ResolvedGraphElementTable* node) override;
+
+  absl::Status VisitResolvedGraphNodeTableReference(
+      const ResolvedGraphNodeTableReference* node) override;
+
+  absl::Status VisitResolvedGraphElementLabel(
+      const ResolvedGraphElementLabel* node) override;
+
+  absl::Status VisitResolvedGraphPropertyDeclaration(
+      const ResolvedGraphPropertyDeclaration* node) override;
+
+  absl::Status VisitResolvedGraphPropertyDefinition(
+      const ResolvedGraphPropertyDefinition* node) override;
+
+  absl::Status VisitResolvedGraphRefScan(
+      const ResolvedGraphRefScan* node) override;
+
+  absl::Status VisitResolvedGraphLinearScan(
+      const ResolvedGraphLinearScan* node) override;
+
+  absl::Status VisitResolvedGraphTableScan(
+      const ResolvedGraphTableScan* node) override;
+
+  absl::Status VisitResolvedGraphScan(
+      const ResolvedGraphScan* node) override;
+
+  absl::Status VisitResolvedGraphPathPatternQuantifier(
+      const ResolvedGraphPathPatternQuantifier* node) override;
+
+  absl::Status VisitResolvedGraphPathSearchPrefix(
+      const ResolvedGraphPathSearchPrefix* node) override;
+
+  absl::Status VisitResolvedGraphNodeScan(
+      const ResolvedGraphNodeScan* node) override;
+
+  absl::Status VisitResolvedGraphEdgeScan(
+      const ResolvedGraphEdgeScan* node) override;
+
+  absl::Status VisitResolvedGraphGetElementProperty(
+      const ResolvedGraphGetElementProperty* node) override;
+
+  absl::Status VisitResolvedGraphLabelNaryExpr(
+      const ResolvedGraphLabelNaryExpr* node) override;
+
+  absl::Status VisitResolvedGraphLabel(
+      const ResolvedGraphLabel* node) override;
+
+  absl::Status VisitResolvedGraphWildCardLabel(
+      const ResolvedGraphWildCardLabel* node) override;
+
+  absl::Status VisitResolvedGraphElementIdentifier(
+      const ResolvedGraphElementIdentifier* node) override;
+
+  absl::Status VisitResolvedGraphElementProperty(
+      const ResolvedGraphElementProperty* node) override;
+
+  absl::Status VisitResolvedGraphMakeElement(
+      const ResolvedGraphMakeElement* node) override;
+
+  absl::Status VisitResolvedArrayAggregate(
+      const ResolvedArrayAggregate* node) override;
+
+  absl::Status VisitResolvedGraphMakeArrayVariable(
+      const ResolvedGraphMakeArrayVariable* node) override;
+
+  absl::Status VisitResolvedGraphPathMode(
+      const ResolvedGraphPathMode* node) override;
+
+  absl::Status VisitResolvedGraphPathScan(
+      const ResolvedGraphPathScan* node) override;
+
+  absl::Status VisitResolvedGraphIsLabeledPredicate(
+      const ResolvedGraphIsLabeledPredicate* node) override;
+
   absl::Status VisitResolvedUndropStmt(
       const ResolvedUndropStmt* node) override;
 
@@ -1610,6 +1859,30 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAssertScan(
       const ResolvedAssertScan* node) override;
 
+  absl::Status VisitResolvedLogScan(
+      const ResolvedLogScan* node) override;
+
+  absl::Status VisitResolvedPipeIfScan(
+      const ResolvedPipeIfScan* node) override;
+
+  absl::Status VisitResolvedPipeIfCase(
+      const ResolvedPipeIfCase* node) override;
+
+  absl::Status VisitResolvedPipeForkScan(
+      const ResolvedPipeForkScan* node) override;
+
+  absl::Status VisitResolvedPipeExportDataScan(
+      const ResolvedPipeExportDataScan* node) override;
+
+  absl::Status VisitResolvedSubpipeline(
+      const ResolvedSubpipeline* node) override;
+
+  absl::Status VisitResolvedSubpipelineInputScan(
+      const ResolvedSubpipelineInputScan* node) override;
+
+  absl::Status VisitResolvedGeneralizedQuerySubpipeline(
+      const ResolvedGeneralizedQuerySubpipeline* node) override;
+
   absl::Status VisitResolvedBarrierScan(
       const ResolvedBarrierScan* node) override;
 
@@ -1618,6 +1891,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedAlterConnectionStmt(
       const ResolvedAlterConnectionStmt* node) override;
+
+  absl::Status VisitResolvedLockMode(
+      const ResolvedLockMode* node) override;
 
   // Assumes that 'ResolvedNodeType' contains 'hint_list' and copies it
   // 'from' -> 'to'.

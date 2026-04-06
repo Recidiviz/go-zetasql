@@ -102,3 +102,36 @@ func TestWalk(t *testing.T) {
 		})
 	}
 }
+
+func TestParseNextScriptStatementBegin(t *testing.T) {
+	opt := zetasql.NewParserOptions()
+	loc := zetasql.NewParseResumeLocation("BEGIN TRANSACTION;")
+	_, _, err := zetasql.ParseNextScriptStatement(loc, opt)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestParseNextScriptStatementMerge(t *testing.T) {
+	opt := zetasql.NewParserOptions()
+	loc := zetasql.NewParseResumeLocation(
+		"MERGE Inventory AS I USING tmp AS T ON I.product = T.product WHEN NOT MATCHED THEN INSERT ROW;",
+	)
+	_, _, err := zetasql.ParseNextScriptStatement(loc, opt)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestParseStatementMerge(t *testing.T) {
+	// From internal/ccall/zetasql/parser/testdata/dml_merge.test (known-good tree shape).
+	q := `MERGE INTO T
+USING S
+ON t1 = s1
+WHEN MATCHED AND T.T1 = 5 THEN
+UPDATE SET T1 = T1 + 10, T2 = T.T1 + S.C1`
+	_, err := zetasql.ParseStatement(q, zetasql.NewParserOptions())
+	if err != nil {
+		t.Fatal(err)
+	}
+}

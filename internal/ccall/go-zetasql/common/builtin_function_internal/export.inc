@@ -9,6 +9,7 @@
 #undef SetDefinitionForInlining
 #include "zetasql/common/builtin_function_differential_privacy.cc"
 #include "zetasql/common/builtin_function_distance.cc"
+#include "zetasql/common/builtin_function_graph.cc"
 #include "zetasql/common/builtin_function_internal_1.cc"
 #include "zetasql/common/builtin_function_internal_2.cc"
 #define SetDefinitionForInlining zetasql_common_builtin_function_internal_internal3_SetDefinitionForInlining

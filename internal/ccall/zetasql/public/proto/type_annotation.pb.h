@@ -76,6 +76,7 @@ enum FieldFormat_Format : int {
   FieldFormat_Format_TIMESTAMP_MILLIS = 3,
   FieldFormat_Format_TIMESTAMP_MICROS = 4,
   FieldFormat_Format_TIMESTAMP_NANOS = 5,
+  FieldFormat_Format_TIMESTAMP_PICOS = 20,
   FieldFormat_Format_DATE_DECIMAL = 6,
   FieldFormat_Format_TIME_MICROS = 7,
   FieldFormat_Format_DATETIME_MICROS = 8,
@@ -94,8 +95,8 @@ enum FieldFormat_Format : int {
 
 bool FieldFormat_Format_IsValid(int value);
 constexpr FieldFormat_Format FieldFormat_Format_Format_MIN = static_cast<FieldFormat_Format>(-1);
-constexpr FieldFormat_Format FieldFormat_Format_Format_MAX = static_cast<FieldFormat_Format>(19);
-constexpr int FieldFormat_Format_Format_ARRAYSIZE = 19 + 1;
+constexpr FieldFormat_Format FieldFormat_Format_Format_MAX = static_cast<FieldFormat_Format>(20);
+constexpr int FieldFormat_Format_Format_ARRAYSIZE = 20 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 FieldFormat_Format_descriptor();
 template <typename T>
@@ -108,7 +109,7 @@ const std::string& FieldFormat_Format_Name(T value) {
 template <>
 inline const std::string& FieldFormat_Format_Name(FieldFormat_Format value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<FieldFormat_Format_descriptor,
-                                                 -1, 19>(
+                                                 -1, 20>(
       static_cast<int>(value));
 }
 inline bool FieldFormat_Format_Parse(absl::string_view name, FieldFormat_Format* value) {
@@ -268,6 +269,7 @@ class FieldFormat final :
   static constexpr Format TIMESTAMP_MILLIS = FieldFormat_Format_TIMESTAMP_MILLIS;
   static constexpr Format TIMESTAMP_MICROS = FieldFormat_Format_TIMESTAMP_MICROS;
   static constexpr Format TIMESTAMP_NANOS = FieldFormat_Format_TIMESTAMP_NANOS;
+  static constexpr Format TIMESTAMP_PICOS = FieldFormat_Format_TIMESTAMP_PICOS;
   static constexpr Format DATE_DECIMAL = FieldFormat_Format_DATE_DECIMAL;
   static constexpr Format TIME_MICROS = FieldFormat_Format_TIME_MICROS;
   static constexpr Format DATETIME_MICROS = FieldFormat_Format_DATETIME_MICROS;

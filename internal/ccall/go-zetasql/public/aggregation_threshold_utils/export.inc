@@ -8,6 +8,8 @@
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/no_destructor/export.inc"
+#include "go-zetasql/proto/options_cc_proto/export.inc"
+#include "go-zetasql/public/types/types/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 
 #endif

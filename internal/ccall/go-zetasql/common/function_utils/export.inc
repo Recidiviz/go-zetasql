@@ -5,6 +5,7 @@
 // include sources
 #include "zetasql/common/function_utils.cc"
 // include dependencies
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/public/function_headers/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

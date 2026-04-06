@@ -7,6 +7,7 @@
 #include "zetasql/reference_impl/tuple.h"
 // include sources
 #include "zetasql/reference_impl/algebrizer.cc"
+#include "zetasql/reference_impl/algebrizer_graph.cc"
 // include dependencies
 #include "go-zetasql/reference_impl/common/export.inc"
 #include "go-zetasql/reference_impl/evaluation/export.inc"
@@ -23,6 +24,7 @@
 #include "go-zetasql/base/no_destructor/export.inc"
 #include "go-zetasql/base/optional_ref/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
+#include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/stl_util/export.inc"
 #include "go-zetasql/common/aggregate_null_handling/export.inc"
@@ -36,6 +38,7 @@
 #include "go-zetasql/public/evaluator_table_iterator/export.inc"
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
+#include "go-zetasql/public/interval_value/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/simple_catalog/export.inc"
@@ -47,6 +50,7 @@
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/functions/differential_privacy_cc_proto/export.inc"
 #include "go-zetasql/public/functions/json/export.inc"
+#include "go-zetasql/public/functions/match_recognize/compiled_pattern/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"

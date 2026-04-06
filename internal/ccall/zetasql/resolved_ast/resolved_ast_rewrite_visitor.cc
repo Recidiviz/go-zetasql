@@ -271,11 +271,11 @@ ResolvedASTRewriteVisitor::DefaultVisit(
     builder.set_limit(*std::move(result));
   }
   if (!builder.group_by_list().empty()) {
-    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> tmp =
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> tmp =
         builder.release_group_by_list();
     ZETASQL_ASSIGN_OR_RETURN(
         tmp, DispatchNodeList<
-                 std::unique_ptr<const ResolvedComputedColumnBase>::element_type>(
+                 std::unique_ptr<const ResolvedComputedColumn>::element_type>(
                  std::move(tmp)));
     builder.set_group_by_list(std::move(tmp));
   }
@@ -889,6 +889,17 @@ ResolvedASTRewriteVisitor::DefaultVisit(
       return std::move(result).status();
     }
     builder.set_for_system_time_expr(*std::move(result));
+  }
+  if (builder.lock_mode() != nullptr) {
+    std::unique_ptr<const ResolvedLockMode> tmp =
+        builder.release_lock_mode();
+    absl::StatusOr<std::unique_ptr<const ResolvedLockMode>> result =
+        Dispatch<std::unique_ptr<const ResolvedLockMode>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_lock_mode(*std::move(result));
   }
   if (!builder.column_list().empty()) {
     std::vector<ResolvedColumn> tmp = builder.release_column_list();
@@ -2153,6 +2164,24 @@ ResolvedASTRewriteVisitor::DefaultVisit(
 
 absl::StatusOr<std::unique_ptr<const ResolvedNode>>
 ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedOutputSchema> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedOutputSchema(*node));
+  ResolvedOutputSchemaBuilder builder = ToBuilder(std::move(node));
+  if (!builder.output_column_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOutputColumn>> tmp =
+        builder.release_output_column_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOutputColumn>::element_type>(
+                 std::move(tmp)));
+    builder.set_output_column_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedOutputSchema(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
     std::unique_ptr<const ResolvedProjectScan> node) {
   ZETASQL_RETURN_IF_ERROR(PreVisitResolvedProjectScan(*node));
   ResolvedProjectScanBuilder builder = ToBuilder(std::move(node));
@@ -2426,6 +2455,46 @@ ResolvedASTRewriteVisitor::DefaultVisit(
 
 absl::StatusOr<std::unique_ptr<const ResolvedNode>>
 ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGeneralizedQueryStmt> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGeneralizedQueryStmt(*node));
+  ResolvedGeneralizedQueryStmtBuilder builder = ToBuilder(std::move(node));
+  if (builder.output_schema() != nullptr) {
+    std::unique_ptr<const ResolvedOutputSchema> tmp =
+        builder.release_output_schema();
+    absl::StatusOr<std::unique_ptr<const ResolvedOutputSchema>> result =
+        Dispatch<std::unique_ptr<const ResolvedOutputSchema>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_output_schema(*std::move(result));
+  }
+  if (builder.query() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_query();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_query(*std::move(result));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGeneralizedQueryStmt(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
     std::unique_ptr<const ResolvedCreateDatabaseStmt> node) {
   ZETASQL_RETURN_IF_ERROR(PreVisitResolvedCreateDatabaseStmt(*node));
   ResolvedCreateDatabaseStmtBuilder builder = ToBuilder(std::move(node));
@@ -2466,6 +2535,15 @@ ResolvedASTRewriteVisitor::DefaultVisit(
       return std::move(result).status();
     }
     builder.set_column_ref(*std::move(result));
+  }
+  if (!builder.option_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_option_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_option_list(std::move(tmp));
   }
   ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
   return PostVisitResolvedIndexItem(std::move(built));
@@ -4116,6 +4194,53 @@ ResolvedASTRewriteVisitor::DefaultVisit(
 
 absl::StatusOr<std::unique_ptr<const ResolvedNode>>
 ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedOnConflictClause> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedOnConflictClause(*node));
+  ResolvedOnConflictClauseBuilder builder = ToBuilder(std::move(node));
+  if (!builder.conflict_target_column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_conflict_target_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_conflict_target_column_list(std::move(tmp));
+  }
+  if (builder.insert_row_scan() != nullptr) {
+    std::unique_ptr<const ResolvedTableScan> tmp =
+        builder.release_insert_row_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedTableScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedTableScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_insert_row_scan(*std::move(result));
+  }
+  if (!builder.update_item_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedUpdateItem>> tmp =
+        builder.release_update_item_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedUpdateItem>::element_type>(
+                 std::move(tmp)));
+    builder.set_update_item_list(std::move(tmp));
+  }
+  if (builder.update_where_expression() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_update_where_expression();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_update_where_expression(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedOnConflictClause(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
     std::unique_ptr<const ResolvedInsertRow> node) {
   ZETASQL_RETURN_IF_ERROR(PreVisitResolvedInsertRow(*node));
   ResolvedInsertRowBuilder builder = ToBuilder(std::move(node));
@@ -4212,6 +4337,17 @@ ResolvedASTRewriteVisitor::DefaultVisit(
                  std::unique_ptr<const ResolvedInsertRow>::element_type>(
                  std::move(tmp)));
     builder.set_row_list(std::move(tmp));
+  }
+  if (builder.on_conflict_clause() != nullptr) {
+    std::unique_ptr<const ResolvedOnConflictClause> tmp =
+        builder.release_on_conflict_clause();
+    absl::StatusOr<std::unique_ptr<const ResolvedOnConflictClause>> result =
+        Dispatch<std::unique_ptr<const ResolvedOnConflictClause>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_on_conflict_clause(*std::move(result));
   }
   if (!builder.generated_column_expr_list().empty()) {
     std::vector<std::unique_ptr<const ResolvedExpr>> tmp =
@@ -6548,6 +6684,232 @@ ResolvedASTRewriteVisitor::DefaultVisit(
 
 absl::StatusOr<std::unique_ptr<const ResolvedNode>>
 ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedMatchRecognizeScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedMatchRecognizeScan(*node));
+  ResolvedMatchRecognizeScanBuilder builder = ToBuilder(std::move(node));
+  if (builder.input_scan() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_input_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_input_scan(*std::move(result));
+  }
+  if (!builder.option_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_option_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_option_list(std::move(tmp));
+  }
+  if (builder.partition_by() != nullptr) {
+    std::unique_ptr<const ResolvedWindowPartitioning> tmp =
+        builder.release_partition_by();
+    absl::StatusOr<std::unique_ptr<const ResolvedWindowPartitioning>> result =
+        Dispatch<std::unique_ptr<const ResolvedWindowPartitioning>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_partition_by(*std::move(result));
+  }
+  if (builder.order_by() != nullptr) {
+    std::unique_ptr<const ResolvedWindowOrdering> tmp =
+        builder.release_order_by();
+    absl::StatusOr<std::unique_ptr<const ResolvedWindowOrdering>> result =
+        Dispatch<std::unique_ptr<const ResolvedWindowOrdering>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_order_by(*std::move(result));
+  }
+  if (!builder.pattern_variable_definition_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>> tmp =
+        builder.release_pattern_variable_definition_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>::element_type>(
+                 std::move(tmp)));
+    builder.set_pattern_variable_definition_list(std::move(tmp));
+  }
+  if (builder.pattern() != nullptr) {
+    std::unique_ptr<const ResolvedMatchRecognizePatternExpr> tmp =
+        builder.release_pattern();
+    absl::StatusOr<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_pattern(*std::move(result));
+  }
+  if (!builder.measure_group_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedMeasureGroup>> tmp =
+        builder.release_measure_group_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedMeasureGroup>::element_type>(
+                 std::move(tmp)));
+    builder.set_measure_group_list(std::move(tmp));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedMatchRecognizeScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedMeasureGroup> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedMeasureGroup(*node));
+  ResolvedMeasureGroupBuilder builder = ToBuilder(std::move(node));
+  if (builder.pattern_variable_ref() != nullptr) {
+    std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> tmp =
+        builder.release_pattern_variable_ref();
+    absl::StatusOr<std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef>> result =
+        Dispatch<std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_pattern_variable_ref(*std::move(result));
+  }
+  if (!builder.aggregate_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> tmp =
+        builder.release_aggregate_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedComputedColumnBase>::element_type>(
+                 std::move(tmp)));
+    builder.set_aggregate_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedMeasureGroup(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedMatchRecognizeVariableDefinition(*node));
+  ResolvedMatchRecognizeVariableDefinitionBuilder builder = ToBuilder(std::move(node));
+  if (builder.predicate() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_predicate();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_predicate(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedMatchRecognizeVariableDefinition(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedMatchRecognizePatternEmpty> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedMatchRecognizePatternEmpty(*node));
+  return PostVisitResolvedMatchRecognizePatternEmpty(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedMatchRecognizePatternAnchor> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedMatchRecognizePatternAnchor(*node));
+  return PostVisitResolvedMatchRecognizePatternAnchor(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedMatchRecognizePatternVariableRef(*node));
+  return PostVisitResolvedMatchRecognizePatternVariableRef(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedMatchRecognizePatternOperation> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedMatchRecognizePatternOperation(*node));
+  ResolvedMatchRecognizePatternOperationBuilder builder = ToBuilder(std::move(node));
+  if (!builder.operand_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> tmp =
+        builder.release_operand_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedMatchRecognizePatternExpr>::element_type>(
+                 std::move(tmp)));
+    builder.set_operand_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedMatchRecognizePatternOperation(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedMatchRecognizePatternQuantification> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedMatchRecognizePatternQuantification(*node));
+  ResolvedMatchRecognizePatternQuantificationBuilder builder = ToBuilder(std::move(node));
+  if (builder.operand() != nullptr) {
+    std::unique_ptr<const ResolvedMatchRecognizePatternExpr> tmp =
+        builder.release_operand();
+    absl::StatusOr<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_operand(*std::move(result));
+  }
+  if (builder.lower_bound() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_lower_bound();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_lower_bound(*std::move(result));
+  }
+  if (builder.upper_bound() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_upper_bound();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_upper_bound(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedMatchRecognizePatternQuantification(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
     std::unique_ptr<const ResolvedCloneDataStmt> node) {
   ZETASQL_RETURN_IF_ERROR(PreVisitResolvedCloneDataStmt(*node));
   ResolvedCloneDataStmtBuilder builder = ToBuilder(std::move(node));
@@ -6792,6 +7154,840 @@ ResolvedASTRewriteVisitor::DefaultVisit(
 
 absl::StatusOr<std::unique_ptr<const ResolvedNode>>
 ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedCreatePropertyGraphStmt> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedCreatePropertyGraphStmt(*node));
+  ResolvedCreatePropertyGraphStmtBuilder builder = ToBuilder(std::move(node));
+  if (!builder.node_table_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphElementTable>> tmp =
+        builder.release_node_table_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphElementTable>::element_type>(
+                 std::move(tmp)));
+    builder.set_node_table_list(std::move(tmp));
+  }
+  if (!builder.edge_table_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphElementTable>> tmp =
+        builder.release_edge_table_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphElementTable>::element_type>(
+                 std::move(tmp)));
+    builder.set_edge_table_list(std::move(tmp));
+  }
+  if (!builder.label_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> tmp =
+        builder.release_label_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphElementLabel>::element_type>(
+                 std::move(tmp)));
+    builder.set_label_list(std::move(tmp));
+  }
+  if (!builder.property_declaration_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> tmp =
+        builder.release_property_declaration_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphPropertyDeclaration>::element_type>(
+                 std::move(tmp)));
+    builder.set_property_declaration_list(std::move(tmp));
+  }
+  if (!builder.option_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_option_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_option_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedCreatePropertyGraphStmt(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphElementTable> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphElementTable(*node));
+  ResolvedGraphElementTableBuilder builder = ToBuilder(std::move(node));
+  if (builder.input_scan() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_input_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_input_scan(*std::move(result));
+  }
+  if (!builder.key_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp =
+        builder.release_key_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedExpr>::element_type>(
+                 std::move(tmp)));
+    builder.set_key_list(std::move(tmp));
+  }
+  if (builder.source_node_reference() != nullptr) {
+    std::unique_ptr<const ResolvedGraphNodeTableReference> tmp =
+        builder.release_source_node_reference();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphNodeTableReference>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphNodeTableReference>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_source_node_reference(*std::move(result));
+  }
+  if (builder.dest_node_reference() != nullptr) {
+    std::unique_ptr<const ResolvedGraphNodeTableReference> tmp =
+        builder.release_dest_node_reference();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphNodeTableReference>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphNodeTableReference>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_dest_node_reference(*std::move(result));
+  }
+  if (!builder.property_definition_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>> tmp =
+        builder.release_property_definition_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphPropertyDefinition>::element_type>(
+                 std::move(tmp)));
+    builder.set_property_definition_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphElementTable(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphNodeTableReference> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphNodeTableReference(*node));
+  ResolvedGraphNodeTableReferenceBuilder builder = ToBuilder(std::move(node));
+  if (!builder.edge_table_column_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp =
+        builder.release_edge_table_column_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedExpr>::element_type>(
+                 std::move(tmp)));
+    builder.set_edge_table_column_list(std::move(tmp));
+  }
+  if (!builder.node_table_column_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp =
+        builder.release_node_table_column_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedExpr>::element_type>(
+                 std::move(tmp)));
+    builder.set_node_table_column_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphNodeTableReference(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphElementLabel> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphElementLabel(*node));
+  return PostVisitResolvedGraphElementLabel(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphPropertyDeclaration> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphPropertyDeclaration(*node));
+  return PostVisitResolvedGraphPropertyDeclaration(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphPropertyDefinition> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphPropertyDefinition(*node));
+  ResolvedGraphPropertyDefinitionBuilder builder = ToBuilder(std::move(node));
+  if (builder.expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_expr(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphPropertyDefinition(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphRefScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphRefScan(*node));
+  ResolvedGraphRefScanBuilder builder = ToBuilder(std::move(node));
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphRefScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphLinearScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphLinearScan(*node));
+  ResolvedGraphLinearScanBuilder builder = ToBuilder(std::move(node));
+  if (!builder.scan_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedScan>> tmp =
+        builder.release_scan_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedScan>::element_type>(
+                 std::move(tmp)));
+    builder.set_scan_list(std::move(tmp));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphLinearScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphTableScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphTableScan(*node));
+  ResolvedGraphTableScanBuilder builder = ToBuilder(std::move(node));
+  if (builder.input_scan() != nullptr) {
+    std::unique_ptr<const ResolvedGraphScanBase> tmp =
+        builder.release_input_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphScanBase>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphScanBase>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_input_scan(*std::move(result));
+  }
+  if (!builder.shape_expr_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> tmp =
+        builder.release_shape_expr_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedComputedColumn>::element_type>(
+                 std::move(tmp)));
+    builder.set_shape_expr_list(std::move(tmp));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphTableScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphScan(*node));
+  ResolvedGraphScanBuilder builder = ToBuilder(std::move(node));
+  if (!builder.input_scan_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphPathScan>> tmp =
+        builder.release_input_scan_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphPathScan>::element_type>(
+                 std::move(tmp)));
+    builder.set_input_scan_list(std::move(tmp));
+  }
+  if (builder.filter_expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_filter_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_filter_expr(*std::move(result));
+  }
+  if (builder.input_scan() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_input_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_input_scan(*std::move(result));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphPathPatternQuantifier> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphPathPatternQuantifier(*node));
+  ResolvedGraphPathPatternQuantifierBuilder builder = ToBuilder(std::move(node));
+  if (builder.lower_bound() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_lower_bound();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_lower_bound(*std::move(result));
+  }
+  if (builder.upper_bound() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_upper_bound();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_upper_bound(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphPathPatternQuantifier(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphPathSearchPrefix> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphPathSearchPrefix(*node));
+  return PostVisitResolvedGraphPathSearchPrefix(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphNodeScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphNodeScan(*node));
+  ResolvedGraphNodeScanBuilder builder = ToBuilder(std::move(node));
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  if (builder.filter_expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_filter_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_filter_expr(*std::move(result));
+  }
+  if (builder.label_expr() != nullptr) {
+    std::unique_ptr<const ResolvedGraphLabelExpr> tmp =
+        builder.release_label_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphLabelExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphLabelExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_label_expr(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphNodeScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphEdgeScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphEdgeScan(*node));
+  ResolvedGraphEdgeScanBuilder builder = ToBuilder(std::move(node));
+  if (!builder.lhs_hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_lhs_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_lhs_hint_list(std::move(tmp));
+  }
+  if (!builder.rhs_hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_rhs_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_rhs_hint_list(std::move(tmp));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  if (builder.filter_expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_filter_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_filter_expr(*std::move(result));
+  }
+  if (builder.label_expr() != nullptr) {
+    std::unique_ptr<const ResolvedGraphLabelExpr> tmp =
+        builder.release_label_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphLabelExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphLabelExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_label_expr(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphEdgeScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphGetElementProperty> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphGetElementProperty(*node));
+  ResolvedGraphGetElementPropertyBuilder builder = ToBuilder(std::move(node));
+  if (builder.expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_expr(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphGetElementProperty(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphLabelNaryExpr> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphLabelNaryExpr(*node));
+  ResolvedGraphLabelNaryExprBuilder builder = ToBuilder(std::move(node));
+  if (!builder.operand_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>> tmp =
+        builder.release_operand_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphLabelExpr>::element_type>(
+                 std::move(tmp)));
+    builder.set_operand_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphLabelNaryExpr(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphLabel> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphLabel(*node));
+  return PostVisitResolvedGraphLabel(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphWildCardLabel> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphWildCardLabel(*node));
+  return PostVisitResolvedGraphWildCardLabel(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphElementIdentifier> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphElementIdentifier(*node));
+  ResolvedGraphElementIdentifierBuilder builder = ToBuilder(std::move(node));
+  if (!builder.key_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp =
+        builder.release_key_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedExpr>::element_type>(
+                 std::move(tmp)));
+    builder.set_key_list(std::move(tmp));
+  }
+  if (builder.source_node_identifier() != nullptr) {
+    std::unique_ptr<const ResolvedGraphElementIdentifier> tmp =
+        builder.release_source_node_identifier();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphElementIdentifier>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphElementIdentifier>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_source_node_identifier(*std::move(result));
+  }
+  if (builder.dest_node_identifier() != nullptr) {
+    std::unique_ptr<const ResolvedGraphElementIdentifier> tmp =
+        builder.release_dest_node_identifier();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphElementIdentifier>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphElementIdentifier>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_dest_node_identifier(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphElementIdentifier(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphElementProperty> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphElementProperty(*node));
+  ResolvedGraphElementPropertyBuilder builder = ToBuilder(std::move(node));
+  if (builder.expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_expr(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphElementProperty(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphMakeElement> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphMakeElement(*node));
+  ResolvedGraphMakeElementBuilder builder = ToBuilder(std::move(node));
+  if (builder.identifier() != nullptr) {
+    std::unique_ptr<const ResolvedGraphElementIdentifier> tmp =
+        builder.release_identifier();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphElementIdentifier>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphElementIdentifier>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_identifier(*std::move(result));
+  }
+  if (!builder.property_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphElementProperty>> tmp =
+        builder.release_property_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphElementProperty>::element_type>(
+                 std::move(tmp)));
+    builder.set_property_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphMakeElement(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedArrayAggregate> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedArrayAggregate(*node));
+  ResolvedArrayAggregateBuilder builder = ToBuilder(std::move(node));
+  if (builder.array() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_array();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_array(*std::move(result));
+  }
+  builder.set_element_column(DefaultVisit(builder.element_column()));
+  if (!builder.pre_aggregate_computed_column_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> tmp =
+        builder.release_pre_aggregate_computed_column_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedComputedColumn>::element_type>(
+                 std::move(tmp)));
+    builder.set_pre_aggregate_computed_column_list(std::move(tmp));
+  }
+  if (builder.aggregate() != nullptr) {
+    std::unique_ptr<const ResolvedAggregateFunctionCall> tmp =
+        builder.release_aggregate();
+    absl::StatusOr<std::unique_ptr<const ResolvedAggregateFunctionCall>> result =
+        Dispatch<std::unique_ptr<const ResolvedAggregateFunctionCall>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_aggregate(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedArrayAggregate(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphMakeArrayVariable> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphMakeArrayVariable(*node));
+  ResolvedGraphMakeArrayVariableBuilder builder = ToBuilder(std::move(node));
+  builder.set_element(DefaultVisit(builder.element()));
+  builder.set_array(DefaultVisit(builder.array()));
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphMakeArrayVariable(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphPathMode> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphPathMode(*node));
+  return PostVisitResolvedGraphPathMode(std::move(node));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphPathScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphPathScan(*node));
+  ResolvedGraphPathScanBuilder builder = ToBuilder(std::move(node));
+  if (!builder.input_scan_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> tmp =
+        builder.release_input_scan_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphPathScanBase>::element_type>(
+                 std::move(tmp)));
+    builder.set_input_scan_list(std::move(tmp));
+  }
+  if (builder.filter_expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_filter_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_filter_expr(*std::move(result));
+  }
+  if (builder.path() != nullptr) {
+    std::unique_ptr<const ResolvedColumnHolder> tmp =
+        builder.release_path();
+    absl::StatusOr<std::unique_ptr<const ResolvedColumnHolder>> result =
+        Dispatch<std::unique_ptr<const ResolvedColumnHolder>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_path(*std::move(result));
+  }
+  builder.set_head(DefaultVisit(builder.head()));
+  builder.set_tail(DefaultVisit(builder.tail()));
+  if (!builder.path_hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_path_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_path_hint_list(std::move(tmp));
+  }
+  if (builder.quantifier() != nullptr) {
+    std::unique_ptr<const ResolvedGraphPathPatternQuantifier> tmp =
+        builder.release_quantifier();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphPathPatternQuantifier>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphPathPatternQuantifier>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_quantifier(*std::move(result));
+  }
+  if (!builder.group_variable_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> tmp =
+        builder.release_group_variable_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGraphMakeArrayVariable>::element_type>(
+                 std::move(tmp)));
+    builder.set_group_variable_list(std::move(tmp));
+  }
+  if (builder.path_mode() != nullptr) {
+    std::unique_ptr<const ResolvedGraphPathMode> tmp =
+        builder.release_path_mode();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphPathMode>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphPathMode>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_path_mode(*std::move(result));
+  }
+  if (builder.search_prefix() != nullptr) {
+    std::unique_ptr<const ResolvedGraphPathSearchPrefix> tmp =
+        builder.release_search_prefix();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphPathSearchPrefix>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphPathSearchPrefix>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_search_prefix(*std::move(result));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphPathScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGraphIsLabeledPredicate> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGraphIsLabeledPredicate(*node));
+  ResolvedGraphIsLabeledPredicateBuilder builder = ToBuilder(std::move(node));
+  if (builder.expr() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_expr(*std::move(result));
+  }
+  if (builder.label_expr() != nullptr) {
+    std::unique_ptr<const ResolvedGraphLabelExpr> tmp =
+        builder.release_label_expr();
+    absl::StatusOr<std::unique_ptr<const ResolvedGraphLabelExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedGraphLabelExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_label_expr(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGraphIsLabeledPredicate(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
     std::unique_ptr<const ResolvedUndropStmt> node) {
   ZETASQL_RETURN_IF_ERROR(PreVisitResolvedUndropStmt(*node));
   ResolvedUndropStmtBuilder builder = ToBuilder(std::move(node));
@@ -6931,6 +8127,308 @@ ResolvedASTRewriteVisitor::DefaultVisit(
 
 absl::StatusOr<std::unique_ptr<const ResolvedNode>>
 ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedLogScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedLogScan(*node));
+  ResolvedLogScanBuilder builder = ToBuilder(std::move(node));
+  if (builder.input_scan() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_input_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_input_scan(*std::move(result), /*propagate_order=*/false);
+  }
+  if (builder.subpipeline() != nullptr) {
+    std::unique_ptr<const ResolvedSubpipeline> tmp =
+        builder.release_subpipeline();
+    absl::StatusOr<std::unique_ptr<const ResolvedSubpipeline>> result =
+        Dispatch<std::unique_ptr<const ResolvedSubpipeline>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_subpipeline(*std::move(result));
+  }
+  if (builder.output_schema() != nullptr) {
+    std::unique_ptr<const ResolvedOutputSchema> tmp =
+        builder.release_output_schema();
+    absl::StatusOr<std::unique_ptr<const ResolvedOutputSchema>> result =
+        Dispatch<std::unique_ptr<const ResolvedOutputSchema>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_output_schema(*std::move(result));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedLogScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedPipeIfScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedPipeIfScan(*node));
+  ResolvedPipeIfScanBuilder builder = ToBuilder(std::move(node));
+  if (builder.input_scan() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_input_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_input_scan(*std::move(result));
+  }
+  if (!builder.if_case_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedPipeIfCase>> tmp =
+        builder.release_if_case_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedPipeIfCase>::element_type>(
+                 std::move(tmp)));
+    builder.set_if_case_list(std::move(tmp));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedPipeIfScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedPipeIfCase> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedPipeIfCase(*node));
+  ResolvedPipeIfCaseBuilder builder = ToBuilder(std::move(node));
+  if (builder.condition() != nullptr) {
+    std::unique_ptr<const ResolvedExpr> tmp =
+        builder.release_condition();
+    absl::StatusOr<std::unique_ptr<const ResolvedExpr>> result =
+        Dispatch<std::unique_ptr<const ResolvedExpr>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_condition(*std::move(result));
+  }
+  if (builder.subpipeline() != nullptr) {
+    std::unique_ptr<const ResolvedSubpipeline> tmp =
+        builder.release_subpipeline();
+    absl::StatusOr<std::unique_ptr<const ResolvedSubpipeline>> result =
+        Dispatch<std::unique_ptr<const ResolvedSubpipeline>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_subpipeline(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedPipeIfCase(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedPipeForkScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedPipeForkScan(*node));
+  ResolvedPipeForkScanBuilder builder = ToBuilder(std::move(node));
+  if (builder.input_scan() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_input_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_input_scan(*std::move(result));
+  }
+  if (!builder.subpipeline_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> tmp =
+        builder.release_subpipeline_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>::element_type>(
+                 std::move(tmp)));
+    builder.set_subpipeline_list(std::move(tmp));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedPipeForkScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedPipeExportDataScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedPipeExportDataScan(*node));
+  ResolvedPipeExportDataScanBuilder builder = ToBuilder(std::move(node));
+  if (builder.input_scan() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_input_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_input_scan(*std::move(result));
+  }
+  if (builder.export_data_stmt() != nullptr) {
+    std::unique_ptr<const ResolvedExportDataStmt> tmp =
+        builder.release_export_data_stmt();
+    absl::StatusOr<std::unique_ptr<const ResolvedExportDataStmt>> result =
+        Dispatch<std::unique_ptr<const ResolvedExportDataStmt>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_export_data_stmt(*std::move(result));
+  }
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedPipeExportDataScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedSubpipeline> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedSubpipeline(*node));
+  ResolvedSubpipelineBuilder builder = ToBuilder(std::move(node));
+  if (builder.scan() != nullptr) {
+    std::unique_ptr<const ResolvedScan> tmp =
+        builder.release_scan();
+    absl::StatusOr<std::unique_ptr<const ResolvedScan>> result =
+        Dispatch<std::unique_ptr<const ResolvedScan>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_scan(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedSubpipeline(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedSubpipelineInputScan> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedSubpipelineInputScan(*node));
+  ResolvedSubpipelineInputScanBuilder builder = ToBuilder(std::move(node));
+  if (!builder.column_list().empty()) {
+    std::vector<ResolvedColumn> tmp = builder.release_column_list();
+    for (int i = 0; i < tmp.size(); ++i) {
+      ZETASQL_ASSIGN_OR_RETURN(tmp[i], DefaultVisit(std::move(tmp[i])));
+    }
+    builder.set_column_list(std::move(tmp));
+  }
+  if (!builder.hint_list().empty()) {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp =
+        builder.release_hint_list();
+    ZETASQL_ASSIGN_OR_RETURN(
+        tmp, DispatchNodeList<
+                 std::unique_ptr<const ResolvedOption>::element_type>(
+                 std::move(tmp)));
+    builder.set_hint_list(std::move(tmp));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedSubpipelineInputScan(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedGeneralizedQuerySubpipeline(*node));
+  ResolvedGeneralizedQuerySubpipelineBuilder builder = ToBuilder(std::move(node));
+  if (builder.subpipeline() != nullptr) {
+    std::unique_ptr<const ResolvedSubpipeline> tmp =
+        builder.release_subpipeline();
+    absl::StatusOr<std::unique_ptr<const ResolvedSubpipeline>> result =
+        Dispatch<std::unique_ptr<const ResolvedSubpipeline>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_subpipeline(*std::move(result));
+  }
+  if (builder.output_schema() != nullptr) {
+    std::unique_ptr<const ResolvedOutputSchema> tmp =
+        builder.release_output_schema();
+    absl::StatusOr<std::unique_ptr<const ResolvedOutputSchema>> result =
+        Dispatch<std::unique_ptr<const ResolvedOutputSchema>::element_type>(
+            std::move(tmp));
+    if (!result.ok()) {
+      return std::move(result).status();
+    }
+    builder.set_output_schema(*std::move(result));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
+  return PostVisitResolvedGeneralizedQuerySubpipeline(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
     std::unique_ptr<const ResolvedBarrierScan> node) {
   ZETASQL_RETURN_IF_ERROR(PreVisitResolvedBarrierScan(*node));
   ResolvedBarrierScanBuilder builder = ToBuilder(std::move(node));
@@ -7017,6 +8515,13 @@ ResolvedASTRewriteVisitor::DefaultVisit(
   }
   ZETASQL_ASSIGN_OR_RETURN(auto built, std::move(builder).Build());
   return PostVisitResolvedAlterConnectionStmt(std::move(built));
+}
+
+absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+ResolvedASTRewriteVisitor::DefaultVisit(
+    std::unique_ptr<const ResolvedLockMode> node) {
+  ZETASQL_RETURN_IF_ERROR(PreVisitResolvedLockMode(*node));
+  return PostVisitResolvedLockMode(std::move(node));
 }
 
 absl::StatusOr<ResolvedColumn>

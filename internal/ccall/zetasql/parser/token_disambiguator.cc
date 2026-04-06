@@ -120,7 +120,7 @@ static bool IsKeywordToken(TokenKind token) {
   return IsReservedKeywordToken(token) || IsNonreservedKeywordToken(token);
 }
 
-static bool IsIdentifierOrKeyword(TokenKind token) {
+static bool IsIdentifierOrKeywordTokenKind(TokenKind token) {
   switch (token) {
     case Token::IDENTIFIER:
     case Token::EXP_IN_FLOAT_NO_SIGN:
@@ -215,7 +215,7 @@ static bool IsScriptLabel(TokenKind lookback,
     return false;
   }
   const TokenKind token = token_with_location.kind;
-  if (!IsIdentifierOrKeyword(token)) {
+  if (!IsIdentifierOrKeywordTokenKind(token)) {
     return false;
   }
   if (lookahead_1 != ':') {

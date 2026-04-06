@@ -6,12 +6,14 @@
 #include "zetasql/public/functions/percentile.cc"
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/mathutil/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/multiprecision_int/export.inc"
 #include "go-zetasql/public/collator/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
+#include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

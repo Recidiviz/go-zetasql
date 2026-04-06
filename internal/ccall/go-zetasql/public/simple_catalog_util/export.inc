@@ -13,6 +13,7 @@
 #include "go-zetasql/public/function_cc_proto/export.inc"
 #include "go-zetasql/public/function_headers/export.inc"
 #include "go-zetasql/public/simple_catalog/export.inc"
+#include "go-zetasql/public/sql_constant/export.inc"
 #include "go-zetasql/public/sql_function/export.inc"
 #include "go-zetasql/public/sql_tvf/export.inc"
 #include "go-zetasql/public/sql_view/export.inc"

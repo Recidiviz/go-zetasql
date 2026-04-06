@@ -22,6 +22,7 @@
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/base/varsetter/export.inc"
 #include "go-zetasql/common/errors/export.inc"
+#include "go-zetasql/common/graph_element_utils/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/public/aggregation_threshold_utils/export.inc"

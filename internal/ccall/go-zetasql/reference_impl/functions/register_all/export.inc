@@ -5,6 +5,7 @@
 // include sources
 #include "zetasql/reference_impl/functions/register_all.cc"
 // include dependencies
+#include "go-zetasql/reference_impl/functions/graph/export.inc"
 #include "go-zetasql/reference_impl/functions/hash/export.inc"
 #include "go-zetasql/reference_impl/functions/json/export.inc"
 #include "go-zetasql/reference_impl/functions/map/export.inc"

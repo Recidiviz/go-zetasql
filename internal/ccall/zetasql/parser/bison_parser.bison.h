@@ -32,7 +32,7 @@
 
 
 /**
- ** \file bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h
+ ** \file bison_parser.bison.h
  ** Define the zetasql_bison_parser::parser class.
  */
 
@@ -41,10 +41,10 @@
 // Undocumented macros, especially those whose name start with YY_,
 // are private implementation details.  Do not rely on them.
 
-#ifndef YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
-# define YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+#ifndef YY_ZETASQL_BISON_PARSER_BISON_PARSER_BISON_H_INCLUDED
+# define YY_ZETASQL_BISON_PARSER_BISON_PARSER_BISON_H_INCLUDED
 // //                    "%code requires" blocks.
-#line 17 "zetasql/parser/bison_parser.y" // lalr1.cc:401
+#line 17 "bison_parser.y" // lalr1.cc:401
 
 // Bison parser for ZetaSQL. This works in conjunction with
 // zetasql::parser::BisonParser.
@@ -76,7 +76,7 @@
 #define YYDEBUG 0
 #endif
 
-#line 80 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 80 "bison_parser.bison.h" // lalr1.cc:401
 
 
 # include <cstdlib> // std::abort
@@ -187,7 +187,7 @@
 
 
 namespace zetasql_bison_parser {
-#line 191 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 191 "bison_parser.bison.h" // lalr1.cc:401
 
 
 
@@ -199,7 +199,7 @@ namespace zetasql_bison_parser {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 84 "zetasql/parser/bison_parser.y" // lalr1.cc:401
+    #line 84 "bison_parser.y" // lalr1.cc:401
 
   bool boolean;
   int64_t int64_val;
@@ -343,7 +343,7 @@ namespace zetasql_bison_parser {
     zetasql::ASTNode* spanner_index_innerleaving_clause;
   } create_index_statement_suffix;
 
-#line 347 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 347 "bison_parser.bison.h" // lalr1.cc:401
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -1222,9 +1222,9 @@ namespace zetasql_bison_parser {
 
 
 } // zetasql_bison_parser
-#line 1226 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 1226 "bison_parser.bison.h" // lalr1.cc:401
 
 
 
 
-#endif // !YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+#endif // !YY_ZETASQL_BISON_PARSER_BISON_PARSER_BISON_H_INCLUDED

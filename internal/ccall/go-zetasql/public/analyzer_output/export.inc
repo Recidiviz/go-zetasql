@@ -8,6 +8,7 @@
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
+#include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/enum_utils/export.inc"
 #include "go-zetasql/base/map_util/export.inc"

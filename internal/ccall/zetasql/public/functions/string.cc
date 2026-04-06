@@ -2322,23 +2322,20 @@ bool ToBase64m(absl::string_view str, std::string* out, absl::Status* error) {
 }
 
 const ConversionFuncMap& GetConversionFuncMap() {
-  static const ConversionFuncMap* func_map = nullptr;
-  if (func_map == nullptr) {
-    auto* m = new ConversionFuncMap();
-    m->insert({{"base2", {ToBase2, FromBase2}},
-               {"base8", {ToBase8, FromBase8}},
-               {"base16", {ToHex, FromHex}},
-               {"hex", {ToHex, FromHex}},
-               {"base64", {ToBase64, FromBase64}},
-               {"base64m", {ToBase64m, FromBase64}},
-               {"ascii", {ASCIICheckAndCopy, ASCIICheckAndCopy}},
-               {"utf8", {UTF8CheckAndCopy, UTF8CheckAndCopy}},
-               {"utf-8", {UTF8CheckAndCopy, UTF8CheckAndCopy}}
-      });
-
-    func_map = m;
-  }
-  return *func_map;
+  static const ConversionFuncMap func_map = [] {
+    ConversionFuncMap m;
+    m.insert({{"base2", {ToBase2, FromBase2}},
+              {"base8", {ToBase8, FromBase8}},
+              {"base16", {ToHex, FromHex}},
+              {"hex", {ToHex, FromHex}},
+              {"base64", {ToBase64, FromBase64}},
+              {"base64m", {ToBase64m, FromBase64}},
+              {"ascii", {ASCIICheckAndCopy, ASCIICheckAndCopy}},
+              {"utf8", {UTF8CheckAndCopy, UTF8CheckAndCopy}},
+              {"utf-8", {UTF8CheckAndCopy, UTF8CheckAndCopy}}});
+    return m;
+  }();
+  return func_map;
 }
 
 absl::Status BytesToString(absl::string_view str, absl::string_view format,

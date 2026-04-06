@@ -33,6 +33,7 @@
 #include "google/protobuf/unknown_field_set.h"
 #include "zetasql/proto/function.pb.h"
 #include "zetasql/proto/options.pb.h"
+#include "zetasql/proto/simple_property_graph.pb.h"
 #include "zetasql/public/simple_connection.pb.h"
 #include "zetasql/public/simple_constant.pb.h"
 #include "zetasql/public/simple_model.pb.h"
@@ -399,6 +400,7 @@ class SimpleCatalogProto final :
     kProcedureFieldNumber = 8,
     kCustomTvfFieldNumber = 9,
     kConstantFieldNumber = 10,
+    kPropertyGraphFieldNumber = 11,
     kConnectionFieldNumber = 12,
     kModelFieldNumber = 13,
     kNameFieldNumber = 1,
@@ -545,6 +547,26 @@ class SimpleCatalogProto final :
   ::zetasql::SimpleConstantProto* add_constant();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimpleConstantProto >&
       constant() const;
+  // repeated .zetasql.SimplePropertyGraphProto property_graph = 11;
+  int property_graph_size() const;
+  private:
+  int _internal_property_graph_size() const;
+
+  public:
+  void clear_property_graph() ;
+  ::zetasql::SimplePropertyGraphProto* mutable_property_graph(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimplePropertyGraphProto >*
+      mutable_property_graph();
+  private:
+  const ::zetasql::SimplePropertyGraphProto& _internal_property_graph(int index) const;
+  ::zetasql::SimplePropertyGraphProto* _internal_add_property_graph();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::SimplePropertyGraphProto>& _internal_property_graph() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::SimplePropertyGraphProto>* _internal_mutable_property_graph();
+  public:
+  const ::zetasql::SimplePropertyGraphProto& property_graph(int index) const;
+  ::zetasql::SimplePropertyGraphProto* add_property_graph();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimplePropertyGraphProto >&
+      property_graph() const;
   // repeated .zetasql.SimpleConnectionProto connection = 12;
   int connection_size() const;
   private:
@@ -648,6 +670,7 @@ class SimpleCatalogProto final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::ProcedureProto > procedure_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::TableValuedFunctionProto > custom_tvf_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimpleConstantProto > constant_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimplePropertyGraphProto > property_graph_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimpleConnectionProto > connection_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimpleModelProto > model_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
@@ -1320,6 +1343,51 @@ SimpleCatalogProto::_internal_constant() const {
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::SimpleConstantProto>*
 SimpleCatalogProto::_internal_mutable_constant() {
   return &_impl_.constant_;
+}
+
+// repeated .zetasql.SimplePropertyGraphProto property_graph = 11;
+inline int SimpleCatalogProto::_internal_property_graph_size() const {
+  return _impl_.property_graph_.size();
+}
+inline int SimpleCatalogProto::property_graph_size() const {
+  return _internal_property_graph_size();
+}
+inline ::zetasql::SimplePropertyGraphProto* SimpleCatalogProto::mutable_property_graph(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.SimpleCatalogProto.property_graph)
+  return _internal_mutable_property_graph()->Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimplePropertyGraphProto >*
+SimpleCatalogProto::mutable_property_graph() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.SimpleCatalogProto.property_graph)
+  return _internal_mutable_property_graph();
+}
+inline const ::zetasql::SimplePropertyGraphProto& SimpleCatalogProto::_internal_property_graph(int index) const {
+  return _internal_property_graph().Get(index);
+}
+inline const ::zetasql::SimplePropertyGraphProto& SimpleCatalogProto::property_graph(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.SimpleCatalogProto.property_graph)
+  return _internal_property_graph(index);
+}
+inline ::zetasql::SimplePropertyGraphProto* SimpleCatalogProto::_internal_add_property_graph() {
+  return _internal_mutable_property_graph()->Add();
+}
+inline ::zetasql::SimplePropertyGraphProto* SimpleCatalogProto::add_property_graph() {
+  ::zetasql::SimplePropertyGraphProto* _add = _internal_add_property_graph();
+  // @@protoc_insertion_point(field_add:zetasql.SimpleCatalogProto.property_graph)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::SimplePropertyGraphProto >&
+SimpleCatalogProto::property_graph() const {
+  // @@protoc_insertion_point(field_list:zetasql.SimpleCatalogProto.property_graph)
+  return _internal_property_graph();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::SimplePropertyGraphProto>&
+SimpleCatalogProto::_internal_property_graph() const {
+  return _impl_.property_graph_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::SimplePropertyGraphProto>*
+SimpleCatalogProto::_internal_mutable_property_graph() {
+  return &_impl_.property_graph_;
 }
 
 // repeated .zetasql.SimpleConnectionProto connection = 12;

@@ -83,6 +83,18 @@ extern ResolvedFunctionCallBaseEnumsDefaultTypeInternal _ResolvedFunctionCallBas
 class ResolvedGeneratedColumnInfoEnums;
 struct ResolvedGeneratedColumnInfoEnumsDefaultTypeInternal;
 extern ResolvedGeneratedColumnInfoEnumsDefaultTypeInternal _ResolvedGeneratedColumnInfoEnums_default_instance_;
+class ResolvedGraphEdgeScanEnums;
+struct ResolvedGraphEdgeScanEnumsDefaultTypeInternal;
+extern ResolvedGraphEdgeScanEnumsDefaultTypeInternal _ResolvedGraphEdgeScanEnums_default_instance_;
+class ResolvedGraphLabelNaryExprEnums;
+struct ResolvedGraphLabelNaryExprEnumsDefaultTypeInternal;
+extern ResolvedGraphLabelNaryExprEnumsDefaultTypeInternal _ResolvedGraphLabelNaryExprEnums_default_instance_;
+class ResolvedGraphPathModeEnums;
+struct ResolvedGraphPathModeEnumsDefaultTypeInternal;
+extern ResolvedGraphPathModeEnumsDefaultTypeInternal _ResolvedGraphPathModeEnums_default_instance_;
+class ResolvedGraphPathSearchPrefixEnums;
+struct ResolvedGraphPathSearchPrefixEnumsDefaultTypeInternal;
+extern ResolvedGraphPathSearchPrefixEnumsDefaultTypeInternal _ResolvedGraphPathSearchPrefixEnums_default_instance_;
 class ResolvedImportStmtEnums;
 struct ResolvedImportStmtEnumsDefaultTypeInternal;
 extern ResolvedImportStmtEnumsDefaultTypeInternal _ResolvedImportStmtEnums_default_instance_;
@@ -92,12 +104,27 @@ extern ResolvedInsertStmtEnumsDefaultTypeInternal _ResolvedInsertStmtEnums_defau
 class ResolvedJoinScanEnums;
 struct ResolvedJoinScanEnumsDefaultTypeInternal;
 extern ResolvedJoinScanEnumsDefaultTypeInternal _ResolvedJoinScanEnums_default_instance_;
+class ResolvedLockModeEnums;
+struct ResolvedLockModeEnumsDefaultTypeInternal;
+extern ResolvedLockModeEnumsDefaultTypeInternal _ResolvedLockModeEnums_default_instance_;
+class ResolvedMatchRecognizePatternAnchorEnums;
+struct ResolvedMatchRecognizePatternAnchorEnumsDefaultTypeInternal;
+extern ResolvedMatchRecognizePatternAnchorEnumsDefaultTypeInternal _ResolvedMatchRecognizePatternAnchorEnums_default_instance_;
+class ResolvedMatchRecognizePatternOperationEnums;
+struct ResolvedMatchRecognizePatternOperationEnumsDefaultTypeInternal;
+extern ResolvedMatchRecognizePatternOperationEnumsDefaultTypeInternal _ResolvedMatchRecognizePatternOperationEnums_default_instance_;
+class ResolvedMatchRecognizeScanEnums;
+struct ResolvedMatchRecognizeScanEnumsDefaultTypeInternal;
+extern ResolvedMatchRecognizeScanEnumsDefaultTypeInternal _ResolvedMatchRecognizeScanEnums_default_instance_;
 class ResolvedMergeWhenEnums;
 struct ResolvedMergeWhenEnumsDefaultTypeInternal;
 extern ResolvedMergeWhenEnumsDefaultTypeInternal _ResolvedMergeWhenEnums_default_instance_;
 class ResolvedNonScalarFunctionCallBaseEnums;
 struct ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal;
 extern ResolvedNonScalarFunctionCallBaseEnumsDefaultTypeInternal _ResolvedNonScalarFunctionCallBaseEnums_default_instance_;
+class ResolvedOnConflictClauseEnums;
+struct ResolvedOnConflictClauseEnumsDefaultTypeInternal;
+extern ResolvedOnConflictClauseEnumsDefaultTypeInternal _ResolvedOnConflictClauseEnums_default_instance_;
 class ResolvedOptionEnums;
 struct ResolvedOptionEnumsDefaultTypeInternal;
 extern ResolvedOptionEnumsDefaultTypeInternal _ResolvedOptionEnums_default_instance_;
@@ -148,15 +175,33 @@ template <>
 template <>
 ::zetasql::ResolvedGeneratedColumnInfoEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedGeneratedColumnInfoEnums>(Arena*);
 template <>
+::zetasql::ResolvedGraphEdgeScanEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedGraphEdgeScanEnums>(Arena*);
+template <>
+::zetasql::ResolvedGraphLabelNaryExprEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedGraphLabelNaryExprEnums>(Arena*);
+template <>
+::zetasql::ResolvedGraphPathModeEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedGraphPathModeEnums>(Arena*);
+template <>
+::zetasql::ResolvedGraphPathSearchPrefixEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedGraphPathSearchPrefixEnums>(Arena*);
+template <>
 ::zetasql::ResolvedImportStmtEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedImportStmtEnums>(Arena*);
 template <>
 ::zetasql::ResolvedInsertStmtEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedInsertStmtEnums>(Arena*);
 template <>
 ::zetasql::ResolvedJoinScanEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedJoinScanEnums>(Arena*);
 template <>
+::zetasql::ResolvedLockModeEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedLockModeEnums>(Arena*);
+template <>
+::zetasql::ResolvedMatchRecognizePatternAnchorEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedMatchRecognizePatternAnchorEnums>(Arena*);
+template <>
+::zetasql::ResolvedMatchRecognizePatternOperationEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedMatchRecognizePatternOperationEnums>(Arena*);
+template <>
+::zetasql::ResolvedMatchRecognizeScanEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedMatchRecognizeScanEnums>(Arena*);
+template <>
 ::zetasql::ResolvedMergeWhenEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedMergeWhenEnums>(Arena*);
 template <>
 ::zetasql::ResolvedNonScalarFunctionCallBaseEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedNonScalarFunctionCallBaseEnums>(Arena*);
+template <>
+::zetasql::ResolvedOnConflictClauseEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedOnConflictClauseEnums>(Arena*);
 template <>
 ::zetasql::ResolvedOptionEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedOptionEnums>(Arena*);
 template <>
@@ -798,6 +843,34 @@ inline bool ResolvedMergeWhenEnums_ActionType_Parse(absl::string_view name, Reso
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedMergeWhenEnums_ActionType>(
       ResolvedMergeWhenEnums_ActionType_descriptor(), name, value);
 }
+enum ResolvedOnConflictClauseEnums_ConflictAction : int {
+  ResolvedOnConflictClauseEnums_ConflictAction_NOTHING = 0,
+  ResolvedOnConflictClauseEnums_ConflictAction_UPDATE = 1,
+};
+
+bool ResolvedOnConflictClauseEnums_ConflictAction_IsValid(int value);
+constexpr ResolvedOnConflictClauseEnums_ConflictAction ResolvedOnConflictClauseEnums_ConflictAction_ConflictAction_MIN = static_cast<ResolvedOnConflictClauseEnums_ConflictAction>(0);
+constexpr ResolvedOnConflictClauseEnums_ConflictAction ResolvedOnConflictClauseEnums_ConflictAction_ConflictAction_MAX = static_cast<ResolvedOnConflictClauseEnums_ConflictAction>(1);
+constexpr int ResolvedOnConflictClauseEnums_ConflictAction_ConflictAction_ARRAYSIZE = 1 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedOnConflictClauseEnums_ConflictAction_descriptor();
+template <typename T>
+const std::string& ResolvedOnConflictClauseEnums_ConflictAction_Name(T value) {
+  static_assert(std::is_same<T, ResolvedOnConflictClauseEnums_ConflictAction>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to ConflictAction_Name().");
+  return ResolvedOnConflictClauseEnums_ConflictAction_Name(static_cast<ResolvedOnConflictClauseEnums_ConflictAction>(value));
+}
+template <>
+inline const std::string& ResolvedOnConflictClauseEnums_ConflictAction_Name(ResolvedOnConflictClauseEnums_ConflictAction value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedOnConflictClauseEnums_ConflictAction_descriptor,
+                                                 0, 1>(
+      static_cast<int>(value));
+}
+inline bool ResolvedOnConflictClauseEnums_ConflictAction_Parse(absl::string_view name, ResolvedOnConflictClauseEnums_ConflictAction* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedOnConflictClauseEnums_ConflictAction>(
+      ResolvedOnConflictClauseEnums_ConflictAction_descriptor(), name, value);
+}
 enum ResolvedArgumentDefEnums_ArgumentKind : int {
   ResolvedArgumentDefEnums_ArgumentKind_SCALAR = 0,
   ResolvedArgumentDefEnums_ArgumentKind_AGGREGATE = 1,
@@ -1060,6 +1133,212 @@ inline bool ResolvedAuxLoadDataStmtEnums_InsertionMode_Parse(absl::string_view n
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedAuxLoadDataStmtEnums_InsertionMode>(
       ResolvedAuxLoadDataStmtEnums_InsertionMode_descriptor(), name, value);
 }
+enum ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode : int {
+  ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_AFTER_MATCH_SKIP_MODE_UNSPECIFIED = 0,
+  ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_END_OF_MATCH = 1,
+  ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_NEXT_ROW = 2,
+};
+
+bool ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_IsValid(int value);
+constexpr ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_AfterMatchSkipMode_MIN = static_cast<ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode>(0);
+constexpr ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_AfterMatchSkipMode_MAX = static_cast<ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode>(2);
+constexpr int ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_AfterMatchSkipMode_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_descriptor();
+template <typename T>
+const std::string& ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_Name(T value) {
+  static_assert(std::is_same<T, ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to AfterMatchSkipMode_Name().");
+  return ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_Name(static_cast<ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode>(value));
+}
+template <>
+inline const std::string& ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_Name(ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_Parse(absl::string_view name, ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode>(
+      ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_descriptor(), name, value);
+}
+enum ResolvedMatchRecognizePatternAnchorEnums_Mode : int {
+  ResolvedMatchRecognizePatternAnchorEnums_Mode_MODE_UNSPECIFIED = 0,
+  ResolvedMatchRecognizePatternAnchorEnums_Mode_START = 1,
+  ResolvedMatchRecognizePatternAnchorEnums_Mode_END = 2,
+};
+
+bool ResolvedMatchRecognizePatternAnchorEnums_Mode_IsValid(int value);
+constexpr ResolvedMatchRecognizePatternAnchorEnums_Mode ResolvedMatchRecognizePatternAnchorEnums_Mode_Mode_MIN = static_cast<ResolvedMatchRecognizePatternAnchorEnums_Mode>(0);
+constexpr ResolvedMatchRecognizePatternAnchorEnums_Mode ResolvedMatchRecognizePatternAnchorEnums_Mode_Mode_MAX = static_cast<ResolvedMatchRecognizePatternAnchorEnums_Mode>(2);
+constexpr int ResolvedMatchRecognizePatternAnchorEnums_Mode_Mode_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedMatchRecognizePatternAnchorEnums_Mode_descriptor();
+template <typename T>
+const std::string& ResolvedMatchRecognizePatternAnchorEnums_Mode_Name(T value) {
+  static_assert(std::is_same<T, ResolvedMatchRecognizePatternAnchorEnums_Mode>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to Mode_Name().");
+  return ResolvedMatchRecognizePatternAnchorEnums_Mode_Name(static_cast<ResolvedMatchRecognizePatternAnchorEnums_Mode>(value));
+}
+template <>
+inline const std::string& ResolvedMatchRecognizePatternAnchorEnums_Mode_Name(ResolvedMatchRecognizePatternAnchorEnums_Mode value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedMatchRecognizePatternAnchorEnums_Mode_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ResolvedMatchRecognizePatternAnchorEnums_Mode_Parse(absl::string_view name, ResolvedMatchRecognizePatternAnchorEnums_Mode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedMatchRecognizePatternAnchorEnums_Mode>(
+      ResolvedMatchRecognizePatternAnchorEnums_Mode_descriptor(), name, value);
+}
+enum ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType : int {
+  ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_OPERATION_TYPE_UNSPECIFIED = 0,
+  ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_CONCAT = 1,
+  ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_ALTERNATE = 2,
+};
+
+bool ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_IsValid(int value);
+constexpr ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_MatchRecognizePatternOperationType_MIN = static_cast<ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType>(0);
+constexpr ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_MatchRecognizePatternOperationType_MAX = static_cast<ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType>(2);
+constexpr int ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_MatchRecognizePatternOperationType_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_descriptor();
+template <typename T>
+const std::string& ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_Name(T value) {
+  static_assert(std::is_same<T, ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to MatchRecognizePatternOperationType_Name().");
+  return ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_Name(static_cast<ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType>(value));
+}
+template <>
+inline const std::string& ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_Name(ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_Parse(absl::string_view name, ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType>(
+      ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_descriptor(), name, value);
+}
+enum ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType : int {
+  ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_OPERATION_TYPE_UNSPECIFIED = 0,
+  ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_NOT = 1,
+  ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_AND = 2,
+  ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_OR = 3,
+};
+
+bool ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_IsValid(int value);
+constexpr ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_GraphLogicalOpType_MIN = static_cast<ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType>(0);
+constexpr ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_GraphLogicalOpType_MAX = static_cast<ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType>(3);
+constexpr int ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_GraphLogicalOpType_ARRAYSIZE = 3 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_descriptor();
+template <typename T>
+const std::string& ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_Name(T value) {
+  static_assert(std::is_same<T, ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to GraphLogicalOpType_Name().");
+  return ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_Name(static_cast<ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType>(value));
+}
+template <>
+inline const std::string& ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_Name(ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_descriptor,
+                                                 0, 3>(
+      static_cast<int>(value));
+}
+inline bool ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_Parse(absl::string_view name, ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType>(
+      ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_descriptor(), name, value);
+}
+enum ResolvedGraphEdgeScanEnums_EdgeOrientation : int {
+  ResolvedGraphEdgeScanEnums_EdgeOrientation_ANY = 0,
+  ResolvedGraphEdgeScanEnums_EdgeOrientation_LEFT = 1,
+  ResolvedGraphEdgeScanEnums_EdgeOrientation_RIGHT = 2,
+};
+
+bool ResolvedGraphEdgeScanEnums_EdgeOrientation_IsValid(int value);
+constexpr ResolvedGraphEdgeScanEnums_EdgeOrientation ResolvedGraphEdgeScanEnums_EdgeOrientation_EdgeOrientation_MIN = static_cast<ResolvedGraphEdgeScanEnums_EdgeOrientation>(0);
+constexpr ResolvedGraphEdgeScanEnums_EdgeOrientation ResolvedGraphEdgeScanEnums_EdgeOrientation_EdgeOrientation_MAX = static_cast<ResolvedGraphEdgeScanEnums_EdgeOrientation>(2);
+constexpr int ResolvedGraphEdgeScanEnums_EdgeOrientation_EdgeOrientation_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedGraphEdgeScanEnums_EdgeOrientation_descriptor();
+template <typename T>
+const std::string& ResolvedGraphEdgeScanEnums_EdgeOrientation_Name(T value) {
+  static_assert(std::is_same<T, ResolvedGraphEdgeScanEnums_EdgeOrientation>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to EdgeOrientation_Name().");
+  return ResolvedGraphEdgeScanEnums_EdgeOrientation_Name(static_cast<ResolvedGraphEdgeScanEnums_EdgeOrientation>(value));
+}
+template <>
+inline const std::string& ResolvedGraphEdgeScanEnums_EdgeOrientation_Name(ResolvedGraphEdgeScanEnums_EdgeOrientation value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedGraphEdgeScanEnums_EdgeOrientation_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ResolvedGraphEdgeScanEnums_EdgeOrientation_Parse(absl::string_view name, ResolvedGraphEdgeScanEnums_EdgeOrientation* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedGraphEdgeScanEnums_EdgeOrientation>(
+      ResolvedGraphEdgeScanEnums_EdgeOrientation_descriptor(), name, value);
+}
+enum ResolvedGraphPathModeEnums_PathMode : int {
+  ResolvedGraphPathModeEnums_PathMode_PATH_MODE_UNSPECIFIED = 0,
+  ResolvedGraphPathModeEnums_PathMode_WALK = 1,
+  ResolvedGraphPathModeEnums_PathMode_TRAIL = 2,
+  ResolvedGraphPathModeEnums_PathMode_SIMPLE = 3,
+  ResolvedGraphPathModeEnums_PathMode_ACYCLIC = 4,
+};
+
+bool ResolvedGraphPathModeEnums_PathMode_IsValid(int value);
+constexpr ResolvedGraphPathModeEnums_PathMode ResolvedGraphPathModeEnums_PathMode_PathMode_MIN = static_cast<ResolvedGraphPathModeEnums_PathMode>(0);
+constexpr ResolvedGraphPathModeEnums_PathMode ResolvedGraphPathModeEnums_PathMode_PathMode_MAX = static_cast<ResolvedGraphPathModeEnums_PathMode>(4);
+constexpr int ResolvedGraphPathModeEnums_PathMode_PathMode_ARRAYSIZE = 4 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedGraphPathModeEnums_PathMode_descriptor();
+template <typename T>
+const std::string& ResolvedGraphPathModeEnums_PathMode_Name(T value) {
+  static_assert(std::is_same<T, ResolvedGraphPathModeEnums_PathMode>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to PathMode_Name().");
+  return ResolvedGraphPathModeEnums_PathMode_Name(static_cast<ResolvedGraphPathModeEnums_PathMode>(value));
+}
+template <>
+inline const std::string& ResolvedGraphPathModeEnums_PathMode_Name(ResolvedGraphPathModeEnums_PathMode value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedGraphPathModeEnums_PathMode_descriptor,
+                                                 0, 4>(
+      static_cast<int>(value));
+}
+inline bool ResolvedGraphPathModeEnums_PathMode_Parse(absl::string_view name, ResolvedGraphPathModeEnums_PathMode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedGraphPathModeEnums_PathMode>(
+      ResolvedGraphPathModeEnums_PathMode_descriptor(), name, value);
+}
+enum ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType : int {
+  ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_PATH_SEARCH_PREFIX_TYPE_UNSPECIFIED = 0,
+  ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_ANY = 1,
+  ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_SHORTEST = 2,
+};
+
+bool ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_IsValid(int value);
+constexpr ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_PathSearchPrefixType_MIN = static_cast<ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType>(0);
+constexpr ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_PathSearchPrefixType_MAX = static_cast<ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType>(2);
+constexpr int ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_PathSearchPrefixType_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_descriptor();
+template <typename T>
+const std::string& ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_Name(T value) {
+  static_assert(std::is_same<T, ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to PathSearchPrefixType_Name().");
+  return ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_Name(static_cast<ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType>(value));
+}
+template <>
+inline const std::string& ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_Name(ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_Parse(absl::string_view name, ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType>(
+      ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_descriptor(), name, value);
+}
 enum ResolvedDropIndexStmtEnums_IndexType : int {
   ResolvedDropIndexStmtEnums_IndexType_INDEX_DEFAULT = 0,
   ResolvedDropIndexStmtEnums_IndexType_INDEX_SEARCH = 1,
@@ -1117,6 +1396,33 @@ inline const std::string& ResolvedOptionEnums_AssignmentOp_Name(ResolvedOptionEn
 inline bool ResolvedOptionEnums_AssignmentOp_Parse(absl::string_view name, ResolvedOptionEnums_AssignmentOp* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedOptionEnums_AssignmentOp>(
       ResolvedOptionEnums_AssignmentOp_descriptor(), name, value);
+}
+enum ResolvedLockModeEnums_LockStrengthType : int {
+  ResolvedLockModeEnums_LockStrengthType_UPDATE = 0,
+};
+
+bool ResolvedLockModeEnums_LockStrengthType_IsValid(int value);
+constexpr ResolvedLockModeEnums_LockStrengthType ResolvedLockModeEnums_LockStrengthType_LockStrengthType_MIN = static_cast<ResolvedLockModeEnums_LockStrengthType>(0);
+constexpr ResolvedLockModeEnums_LockStrengthType ResolvedLockModeEnums_LockStrengthType_LockStrengthType_MAX = static_cast<ResolvedLockModeEnums_LockStrengthType>(0);
+constexpr int ResolvedLockModeEnums_LockStrengthType_LockStrengthType_ARRAYSIZE = 0 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedLockModeEnums_LockStrengthType_descriptor();
+template <typename T>
+const std::string& ResolvedLockModeEnums_LockStrengthType_Name(T value) {
+  static_assert(std::is_same<T, ResolvedLockModeEnums_LockStrengthType>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to LockStrengthType_Name().");
+  return ResolvedLockModeEnums_LockStrengthType_Name(static_cast<ResolvedLockModeEnums_LockStrengthType>(value));
+}
+template <>
+inline const std::string& ResolvedLockModeEnums_LockStrengthType_Name(ResolvedLockModeEnums_LockStrengthType value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedLockModeEnums_LockStrengthType_descriptor,
+                                                 0, 0>(
+      static_cast<int>(value));
+}
+inline bool ResolvedLockModeEnums_LockStrengthType_Parse(absl::string_view name, ResolvedLockModeEnums_LockStrengthType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedLockModeEnums_LockStrengthType>(
+      ResolvedLockModeEnums_LockStrengthType_descriptor(), name, value);
 }
 
 // ===================================================================
@@ -3312,6 +3618,150 @@ class ResolvedMergeWhenEnums final :
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
 };// -------------------------------------------------------------------
 
+class ResolvedOnConflictClauseEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedOnConflictClauseEnums) */ {
+ public:
+  inline ResolvedOnConflictClauseEnums() : ResolvedOnConflictClauseEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedOnConflictClauseEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedOnConflictClauseEnums(const ResolvedOnConflictClauseEnums& from);
+  ResolvedOnConflictClauseEnums(ResolvedOnConflictClauseEnums&& from) noexcept
+    : ResolvedOnConflictClauseEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedOnConflictClauseEnums& operator=(const ResolvedOnConflictClauseEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedOnConflictClauseEnums& operator=(ResolvedOnConflictClauseEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedOnConflictClauseEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedOnConflictClauseEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedOnConflictClauseEnums*>(
+               &_ResolvedOnConflictClauseEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    14;
+
+  friend void swap(ResolvedOnConflictClauseEnums& a, ResolvedOnConflictClauseEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedOnConflictClauseEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedOnConflictClauseEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedOnConflictClauseEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedOnConflictClauseEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedOnConflictClauseEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedOnConflictClauseEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedOnConflictClauseEnums";
+  }
+  protected:
+  explicit ResolvedOnConflictClauseEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using ConflictAction = ResolvedOnConflictClauseEnums_ConflictAction;
+  static constexpr ConflictAction NOTHING = ResolvedOnConflictClauseEnums_ConflictAction_NOTHING;
+  static constexpr ConflictAction UPDATE = ResolvedOnConflictClauseEnums_ConflictAction_UPDATE;
+  static inline bool ConflictAction_IsValid(int value) {
+    return ResolvedOnConflictClauseEnums_ConflictAction_IsValid(value);
+  }
+  static constexpr ConflictAction ConflictAction_MIN = ResolvedOnConflictClauseEnums_ConflictAction_ConflictAction_MIN;
+  static constexpr ConflictAction ConflictAction_MAX = ResolvedOnConflictClauseEnums_ConflictAction_ConflictAction_MAX;
+  static constexpr int ConflictAction_ARRAYSIZE = ResolvedOnConflictClauseEnums_ConflictAction_ConflictAction_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ConflictAction_descriptor() {
+    return ResolvedOnConflictClauseEnums_ConflictAction_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& ConflictAction_Name(T value) {
+    return ResolvedOnConflictClauseEnums_ConflictAction_Name(value);
+  }
+  static inline bool ConflictAction_Parse(absl::string_view name, ConflictAction* value) {
+    return ResolvedOnConflictClauseEnums_ConflictAction_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedOnConflictClauseEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
 class ResolvedArgumentDefEnums final :
     public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedArgumentDefEnums) */ {
  public:
@@ -3367,7 +3817,7 @@ class ResolvedArgumentDefEnums final :
                &_ResolvedArgumentDefEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(ResolvedArgumentDefEnums& a, ResolvedArgumentDefEnums& b) {
     a.Swap(&b);
@@ -3512,7 +3962,7 @@ class ResolvedFunctionCallBaseEnums final :
                &_ResolvedFunctionCallBaseEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(ResolvedFunctionCallBaseEnums& a, ResolvedFunctionCallBaseEnums& b) {
     a.Swap(&b);
@@ -3656,7 +4106,7 @@ class ResolvedNonScalarFunctionCallBaseEnums final :
                &_ResolvedNonScalarFunctionCallBaseEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(ResolvedNonScalarFunctionCallBaseEnums& a, ResolvedNonScalarFunctionCallBaseEnums& b) {
     a.Swap(&b);
@@ -3801,7 +4251,7 @@ class ResolvedAggregateHavingModifierEnums final :
                &_ResolvedAggregateHavingModifierEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(ResolvedAggregateHavingModifierEnums& a, ResolvedAggregateHavingModifierEnums& b) {
     a.Swap(&b);
@@ -3946,7 +4396,7 @@ class ResolvedStatementEnums final :
                &_ResolvedStatementEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(ResolvedStatementEnums& a, ResolvedStatementEnums& b) {
     a.Swap(&b);
@@ -4092,7 +4542,7 @@ class ResolvedImportStmtEnums final :
                &_ResolvedImportStmtEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(ResolvedImportStmtEnums& a, ResolvedImportStmtEnums& b) {
     a.Swap(&b);
@@ -4237,7 +4687,7 @@ class ResolvedForeignKeyEnums final :
                &_ResolvedForeignKeyEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(ResolvedForeignKeyEnums& a, ResolvedForeignKeyEnums& b) {
     a.Swap(&b);
@@ -4404,7 +4854,7 @@ class ResolvedAuxLoadDataStmtEnums final :
                &_ResolvedAuxLoadDataStmtEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    22;
 
   friend void swap(ResolvedAuxLoadDataStmtEnums& a, ResolvedAuxLoadDataStmtEnums& b) {
     a.Swap(&b);
@@ -4494,6 +4944,1024 @@ class ResolvedAuxLoadDataStmtEnums final :
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
 };// -------------------------------------------------------------------
 
+class ResolvedMatchRecognizeScanEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedMatchRecognizeScanEnums) */ {
+ public:
+  inline ResolvedMatchRecognizeScanEnums() : ResolvedMatchRecognizeScanEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedMatchRecognizeScanEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedMatchRecognizeScanEnums(const ResolvedMatchRecognizeScanEnums& from);
+  ResolvedMatchRecognizeScanEnums(ResolvedMatchRecognizeScanEnums&& from) noexcept
+    : ResolvedMatchRecognizeScanEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedMatchRecognizeScanEnums& operator=(const ResolvedMatchRecognizeScanEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedMatchRecognizeScanEnums& operator=(ResolvedMatchRecognizeScanEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedMatchRecognizeScanEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedMatchRecognizeScanEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedMatchRecognizeScanEnums*>(
+               &_ResolvedMatchRecognizeScanEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    23;
+
+  friend void swap(ResolvedMatchRecognizeScanEnums& a, ResolvedMatchRecognizeScanEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedMatchRecognizeScanEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedMatchRecognizeScanEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedMatchRecognizeScanEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedMatchRecognizeScanEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedMatchRecognizeScanEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedMatchRecognizeScanEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedMatchRecognizeScanEnums";
+  }
+  protected:
+  explicit ResolvedMatchRecognizeScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using AfterMatchSkipMode = ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode;
+  static constexpr AfterMatchSkipMode AFTER_MATCH_SKIP_MODE_UNSPECIFIED = ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_AFTER_MATCH_SKIP_MODE_UNSPECIFIED;
+  static constexpr AfterMatchSkipMode END_OF_MATCH = ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_END_OF_MATCH;
+  static constexpr AfterMatchSkipMode NEXT_ROW = ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_NEXT_ROW;
+  static inline bool AfterMatchSkipMode_IsValid(int value) {
+    return ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_IsValid(value);
+  }
+  static constexpr AfterMatchSkipMode AfterMatchSkipMode_MIN = ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_AfterMatchSkipMode_MIN;
+  static constexpr AfterMatchSkipMode AfterMatchSkipMode_MAX = ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_AfterMatchSkipMode_MAX;
+  static constexpr int AfterMatchSkipMode_ARRAYSIZE = ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_AfterMatchSkipMode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* AfterMatchSkipMode_descriptor() {
+    return ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& AfterMatchSkipMode_Name(T value) {
+    return ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_Name(value);
+  }
+  static inline bool AfterMatchSkipMode_Parse(absl::string_view name, AfterMatchSkipMode* value) {
+    return ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedMatchRecognizeScanEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedMatchRecognizePatternAnchorEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedMatchRecognizePatternAnchorEnums) */ {
+ public:
+  inline ResolvedMatchRecognizePatternAnchorEnums() : ResolvedMatchRecognizePatternAnchorEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedMatchRecognizePatternAnchorEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedMatchRecognizePatternAnchorEnums(const ResolvedMatchRecognizePatternAnchorEnums& from);
+  ResolvedMatchRecognizePatternAnchorEnums(ResolvedMatchRecognizePatternAnchorEnums&& from) noexcept
+    : ResolvedMatchRecognizePatternAnchorEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedMatchRecognizePatternAnchorEnums& operator=(const ResolvedMatchRecognizePatternAnchorEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedMatchRecognizePatternAnchorEnums& operator=(ResolvedMatchRecognizePatternAnchorEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedMatchRecognizePatternAnchorEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedMatchRecognizePatternAnchorEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedMatchRecognizePatternAnchorEnums*>(
+               &_ResolvedMatchRecognizePatternAnchorEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    24;
+
+  friend void swap(ResolvedMatchRecognizePatternAnchorEnums& a, ResolvedMatchRecognizePatternAnchorEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedMatchRecognizePatternAnchorEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedMatchRecognizePatternAnchorEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedMatchRecognizePatternAnchorEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedMatchRecognizePatternAnchorEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedMatchRecognizePatternAnchorEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedMatchRecognizePatternAnchorEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedMatchRecognizePatternAnchorEnums";
+  }
+  protected:
+  explicit ResolvedMatchRecognizePatternAnchorEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using Mode = ResolvedMatchRecognizePatternAnchorEnums_Mode;
+  static constexpr Mode MODE_UNSPECIFIED = ResolvedMatchRecognizePatternAnchorEnums_Mode_MODE_UNSPECIFIED;
+  static constexpr Mode START = ResolvedMatchRecognizePatternAnchorEnums_Mode_START;
+  static constexpr Mode END = ResolvedMatchRecognizePatternAnchorEnums_Mode_END;
+  static inline bool Mode_IsValid(int value) {
+    return ResolvedMatchRecognizePatternAnchorEnums_Mode_IsValid(value);
+  }
+  static constexpr Mode Mode_MIN = ResolvedMatchRecognizePatternAnchorEnums_Mode_Mode_MIN;
+  static constexpr Mode Mode_MAX = ResolvedMatchRecognizePatternAnchorEnums_Mode_Mode_MAX;
+  static constexpr int Mode_ARRAYSIZE = ResolvedMatchRecognizePatternAnchorEnums_Mode_Mode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Mode_descriptor() {
+    return ResolvedMatchRecognizePatternAnchorEnums_Mode_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& Mode_Name(T value) {
+    return ResolvedMatchRecognizePatternAnchorEnums_Mode_Name(value);
+  }
+  static inline bool Mode_Parse(absl::string_view name, Mode* value) {
+    return ResolvedMatchRecognizePatternAnchorEnums_Mode_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedMatchRecognizePatternAnchorEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedMatchRecognizePatternOperationEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedMatchRecognizePatternOperationEnums) */ {
+ public:
+  inline ResolvedMatchRecognizePatternOperationEnums() : ResolvedMatchRecognizePatternOperationEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedMatchRecognizePatternOperationEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedMatchRecognizePatternOperationEnums(const ResolvedMatchRecognizePatternOperationEnums& from);
+  ResolvedMatchRecognizePatternOperationEnums(ResolvedMatchRecognizePatternOperationEnums&& from) noexcept
+    : ResolvedMatchRecognizePatternOperationEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedMatchRecognizePatternOperationEnums& operator=(const ResolvedMatchRecognizePatternOperationEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedMatchRecognizePatternOperationEnums& operator=(ResolvedMatchRecognizePatternOperationEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedMatchRecognizePatternOperationEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedMatchRecognizePatternOperationEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedMatchRecognizePatternOperationEnums*>(
+               &_ResolvedMatchRecognizePatternOperationEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    25;
+
+  friend void swap(ResolvedMatchRecognizePatternOperationEnums& a, ResolvedMatchRecognizePatternOperationEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedMatchRecognizePatternOperationEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedMatchRecognizePatternOperationEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedMatchRecognizePatternOperationEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedMatchRecognizePatternOperationEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedMatchRecognizePatternOperationEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedMatchRecognizePatternOperationEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedMatchRecognizePatternOperationEnums";
+  }
+  protected:
+  explicit ResolvedMatchRecognizePatternOperationEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using MatchRecognizePatternOperationType = ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType;
+  static constexpr MatchRecognizePatternOperationType OPERATION_TYPE_UNSPECIFIED = ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_OPERATION_TYPE_UNSPECIFIED;
+  static constexpr MatchRecognizePatternOperationType CONCAT = ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_CONCAT;
+  static constexpr MatchRecognizePatternOperationType ALTERNATE = ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_ALTERNATE;
+  static inline bool MatchRecognizePatternOperationType_IsValid(int value) {
+    return ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_IsValid(value);
+  }
+  static constexpr MatchRecognizePatternOperationType MatchRecognizePatternOperationType_MIN = ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_MatchRecognizePatternOperationType_MIN;
+  static constexpr MatchRecognizePatternOperationType MatchRecognizePatternOperationType_MAX = ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_MatchRecognizePatternOperationType_MAX;
+  static constexpr int MatchRecognizePatternOperationType_ARRAYSIZE = ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_MatchRecognizePatternOperationType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MatchRecognizePatternOperationType_descriptor() {
+    return ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& MatchRecognizePatternOperationType_Name(T value) {
+    return ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_Name(value);
+  }
+  static inline bool MatchRecognizePatternOperationType_Parse(absl::string_view name, MatchRecognizePatternOperationType* value) {
+    return ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedMatchRecognizePatternOperationEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedGraphLabelNaryExprEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedGraphLabelNaryExprEnums) */ {
+ public:
+  inline ResolvedGraphLabelNaryExprEnums() : ResolvedGraphLabelNaryExprEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedGraphLabelNaryExprEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedGraphLabelNaryExprEnums(const ResolvedGraphLabelNaryExprEnums& from);
+  ResolvedGraphLabelNaryExprEnums(ResolvedGraphLabelNaryExprEnums&& from) noexcept
+    : ResolvedGraphLabelNaryExprEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedGraphLabelNaryExprEnums& operator=(const ResolvedGraphLabelNaryExprEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedGraphLabelNaryExprEnums& operator=(ResolvedGraphLabelNaryExprEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedGraphLabelNaryExprEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedGraphLabelNaryExprEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedGraphLabelNaryExprEnums*>(
+               &_ResolvedGraphLabelNaryExprEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    26;
+
+  friend void swap(ResolvedGraphLabelNaryExprEnums& a, ResolvedGraphLabelNaryExprEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedGraphLabelNaryExprEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedGraphLabelNaryExprEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedGraphLabelNaryExprEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedGraphLabelNaryExprEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedGraphLabelNaryExprEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedGraphLabelNaryExprEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedGraphLabelNaryExprEnums";
+  }
+  protected:
+  explicit ResolvedGraphLabelNaryExprEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using GraphLogicalOpType = ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType;
+  static constexpr GraphLogicalOpType OPERATION_TYPE_UNSPECIFIED = ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_OPERATION_TYPE_UNSPECIFIED;
+  static constexpr GraphLogicalOpType NOT = ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_NOT;
+  static constexpr GraphLogicalOpType AND = ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_AND;
+  static constexpr GraphLogicalOpType OR = ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_OR;
+  static inline bool GraphLogicalOpType_IsValid(int value) {
+    return ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_IsValid(value);
+  }
+  static constexpr GraphLogicalOpType GraphLogicalOpType_MIN = ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_GraphLogicalOpType_MIN;
+  static constexpr GraphLogicalOpType GraphLogicalOpType_MAX = ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_GraphLogicalOpType_MAX;
+  static constexpr int GraphLogicalOpType_ARRAYSIZE = ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_GraphLogicalOpType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* GraphLogicalOpType_descriptor() {
+    return ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& GraphLogicalOpType_Name(T value) {
+    return ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_Name(value);
+  }
+  static inline bool GraphLogicalOpType_Parse(absl::string_view name, GraphLogicalOpType* value) {
+    return ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedGraphLabelNaryExprEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedGraphEdgeScanEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedGraphEdgeScanEnums) */ {
+ public:
+  inline ResolvedGraphEdgeScanEnums() : ResolvedGraphEdgeScanEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedGraphEdgeScanEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedGraphEdgeScanEnums(const ResolvedGraphEdgeScanEnums& from);
+  ResolvedGraphEdgeScanEnums(ResolvedGraphEdgeScanEnums&& from) noexcept
+    : ResolvedGraphEdgeScanEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedGraphEdgeScanEnums& operator=(const ResolvedGraphEdgeScanEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedGraphEdgeScanEnums& operator=(ResolvedGraphEdgeScanEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedGraphEdgeScanEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedGraphEdgeScanEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedGraphEdgeScanEnums*>(
+               &_ResolvedGraphEdgeScanEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    27;
+
+  friend void swap(ResolvedGraphEdgeScanEnums& a, ResolvedGraphEdgeScanEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedGraphEdgeScanEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedGraphEdgeScanEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedGraphEdgeScanEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedGraphEdgeScanEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedGraphEdgeScanEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedGraphEdgeScanEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedGraphEdgeScanEnums";
+  }
+  protected:
+  explicit ResolvedGraphEdgeScanEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using EdgeOrientation = ResolvedGraphEdgeScanEnums_EdgeOrientation;
+  static constexpr EdgeOrientation ANY = ResolvedGraphEdgeScanEnums_EdgeOrientation_ANY;
+  static constexpr EdgeOrientation LEFT = ResolvedGraphEdgeScanEnums_EdgeOrientation_LEFT;
+  static constexpr EdgeOrientation RIGHT = ResolvedGraphEdgeScanEnums_EdgeOrientation_RIGHT;
+  static inline bool EdgeOrientation_IsValid(int value) {
+    return ResolvedGraphEdgeScanEnums_EdgeOrientation_IsValid(value);
+  }
+  static constexpr EdgeOrientation EdgeOrientation_MIN = ResolvedGraphEdgeScanEnums_EdgeOrientation_EdgeOrientation_MIN;
+  static constexpr EdgeOrientation EdgeOrientation_MAX = ResolvedGraphEdgeScanEnums_EdgeOrientation_EdgeOrientation_MAX;
+  static constexpr int EdgeOrientation_ARRAYSIZE = ResolvedGraphEdgeScanEnums_EdgeOrientation_EdgeOrientation_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* EdgeOrientation_descriptor() {
+    return ResolvedGraphEdgeScanEnums_EdgeOrientation_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& EdgeOrientation_Name(T value) {
+    return ResolvedGraphEdgeScanEnums_EdgeOrientation_Name(value);
+  }
+  static inline bool EdgeOrientation_Parse(absl::string_view name, EdgeOrientation* value) {
+    return ResolvedGraphEdgeScanEnums_EdgeOrientation_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedGraphEdgeScanEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedGraphPathModeEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedGraphPathModeEnums) */ {
+ public:
+  inline ResolvedGraphPathModeEnums() : ResolvedGraphPathModeEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedGraphPathModeEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedGraphPathModeEnums(const ResolvedGraphPathModeEnums& from);
+  ResolvedGraphPathModeEnums(ResolvedGraphPathModeEnums&& from) noexcept
+    : ResolvedGraphPathModeEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedGraphPathModeEnums& operator=(const ResolvedGraphPathModeEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedGraphPathModeEnums& operator=(ResolvedGraphPathModeEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedGraphPathModeEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedGraphPathModeEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedGraphPathModeEnums*>(
+               &_ResolvedGraphPathModeEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    28;
+
+  friend void swap(ResolvedGraphPathModeEnums& a, ResolvedGraphPathModeEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedGraphPathModeEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedGraphPathModeEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedGraphPathModeEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedGraphPathModeEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedGraphPathModeEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedGraphPathModeEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedGraphPathModeEnums";
+  }
+  protected:
+  explicit ResolvedGraphPathModeEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using PathMode = ResolvedGraphPathModeEnums_PathMode;
+  static constexpr PathMode PATH_MODE_UNSPECIFIED = ResolvedGraphPathModeEnums_PathMode_PATH_MODE_UNSPECIFIED;
+  static constexpr PathMode WALK = ResolvedGraphPathModeEnums_PathMode_WALK;
+  static constexpr PathMode TRAIL = ResolvedGraphPathModeEnums_PathMode_TRAIL;
+  static constexpr PathMode SIMPLE = ResolvedGraphPathModeEnums_PathMode_SIMPLE;
+  static constexpr PathMode ACYCLIC = ResolvedGraphPathModeEnums_PathMode_ACYCLIC;
+  static inline bool PathMode_IsValid(int value) {
+    return ResolvedGraphPathModeEnums_PathMode_IsValid(value);
+  }
+  static constexpr PathMode PathMode_MIN = ResolvedGraphPathModeEnums_PathMode_PathMode_MIN;
+  static constexpr PathMode PathMode_MAX = ResolvedGraphPathModeEnums_PathMode_PathMode_MAX;
+  static constexpr int PathMode_ARRAYSIZE = ResolvedGraphPathModeEnums_PathMode_PathMode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PathMode_descriptor() {
+    return ResolvedGraphPathModeEnums_PathMode_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& PathMode_Name(T value) {
+    return ResolvedGraphPathModeEnums_PathMode_Name(value);
+  }
+  static inline bool PathMode_Parse(absl::string_view name, PathMode* value) {
+    return ResolvedGraphPathModeEnums_PathMode_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedGraphPathModeEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedGraphPathSearchPrefixEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedGraphPathSearchPrefixEnums) */ {
+ public:
+  inline ResolvedGraphPathSearchPrefixEnums() : ResolvedGraphPathSearchPrefixEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedGraphPathSearchPrefixEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedGraphPathSearchPrefixEnums(const ResolvedGraphPathSearchPrefixEnums& from);
+  ResolvedGraphPathSearchPrefixEnums(ResolvedGraphPathSearchPrefixEnums&& from) noexcept
+    : ResolvedGraphPathSearchPrefixEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedGraphPathSearchPrefixEnums& operator=(const ResolvedGraphPathSearchPrefixEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedGraphPathSearchPrefixEnums& operator=(ResolvedGraphPathSearchPrefixEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedGraphPathSearchPrefixEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedGraphPathSearchPrefixEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedGraphPathSearchPrefixEnums*>(
+               &_ResolvedGraphPathSearchPrefixEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    29;
+
+  friend void swap(ResolvedGraphPathSearchPrefixEnums& a, ResolvedGraphPathSearchPrefixEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedGraphPathSearchPrefixEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedGraphPathSearchPrefixEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedGraphPathSearchPrefixEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedGraphPathSearchPrefixEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedGraphPathSearchPrefixEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedGraphPathSearchPrefixEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedGraphPathSearchPrefixEnums";
+  }
+  protected:
+  explicit ResolvedGraphPathSearchPrefixEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using PathSearchPrefixType = ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType;
+  static constexpr PathSearchPrefixType PATH_SEARCH_PREFIX_TYPE_UNSPECIFIED = ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_PATH_SEARCH_PREFIX_TYPE_UNSPECIFIED;
+  static constexpr PathSearchPrefixType ANY = ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_ANY;
+  static constexpr PathSearchPrefixType SHORTEST = ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_SHORTEST;
+  static inline bool PathSearchPrefixType_IsValid(int value) {
+    return ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_IsValid(value);
+  }
+  static constexpr PathSearchPrefixType PathSearchPrefixType_MIN = ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_PathSearchPrefixType_MIN;
+  static constexpr PathSearchPrefixType PathSearchPrefixType_MAX = ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_PathSearchPrefixType_MAX;
+  static constexpr int PathSearchPrefixType_ARRAYSIZE = ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_PathSearchPrefixType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PathSearchPrefixType_descriptor() {
+    return ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& PathSearchPrefixType_Name(T value) {
+    return ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_Name(value);
+  }
+  static inline bool PathSearchPrefixType_Parse(absl::string_view name, PathSearchPrefixType* value) {
+    return ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedGraphPathSearchPrefixEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
 class ResolvedDropIndexStmtEnums final :
     public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedDropIndexStmtEnums) */ {
  public:
@@ -4549,7 +6017,7 @@ class ResolvedDropIndexStmtEnums final :
                &_ResolvedDropIndexStmtEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    30;
 
   friend void swap(ResolvedDropIndexStmtEnums& a, ResolvedDropIndexStmtEnums& b) {
     a.Swap(&b);
@@ -4694,7 +6162,7 @@ class ResolvedOptionEnums final :
                &_ResolvedOptionEnums_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    31;
 
   friend void swap(ResolvedOptionEnums& a, ResolvedOptionEnums& b) {
     a.Swap(&b);
@@ -4782,6 +6250,149 @@ class ResolvedOptionEnums final :
   struct Impl_ {
   };
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedLockModeEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedLockModeEnums) */ {
+ public:
+  inline ResolvedLockModeEnums() : ResolvedLockModeEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedLockModeEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedLockModeEnums(const ResolvedLockModeEnums& from);
+  ResolvedLockModeEnums(ResolvedLockModeEnums&& from) noexcept
+    : ResolvedLockModeEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedLockModeEnums& operator=(const ResolvedLockModeEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedLockModeEnums& operator=(ResolvedLockModeEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedLockModeEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedLockModeEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedLockModeEnums*>(
+               &_ResolvedLockModeEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    32;
+
+  friend void swap(ResolvedLockModeEnums& a, ResolvedLockModeEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedLockModeEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedLockModeEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedLockModeEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedLockModeEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedLockModeEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedLockModeEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedLockModeEnums";
+  }
+  protected:
+  explicit ResolvedLockModeEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using LockStrengthType = ResolvedLockModeEnums_LockStrengthType;
+  static constexpr LockStrengthType UPDATE = ResolvedLockModeEnums_LockStrengthType_UPDATE;
+  static inline bool LockStrengthType_IsValid(int value) {
+    return ResolvedLockModeEnums_LockStrengthType_IsValid(value);
+  }
+  static constexpr LockStrengthType LockStrengthType_MIN = ResolvedLockModeEnums_LockStrengthType_LockStrengthType_MIN;
+  static constexpr LockStrengthType LockStrengthType_MAX = ResolvedLockModeEnums_LockStrengthType_LockStrengthType_MAX;
+  static constexpr int LockStrengthType_ARRAYSIZE = ResolvedLockModeEnums_LockStrengthType_LockStrengthType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LockStrengthType_descriptor() {
+    return ResolvedLockModeEnums_LockStrengthType_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& LockStrengthType_Name(T value) {
+    return ResolvedLockModeEnums_LockStrengthType_Name(value);
+  }
+  static inline bool LockStrengthType_Parse(absl::string_view name, LockStrengthType* value) {
+    return ResolvedLockModeEnums_LockStrengthType_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedLockModeEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
 };
 
 // ===================================================================
@@ -4854,6 +6465,10 @@ class ResolvedOptionEnums final :
 
 // -------------------------------------------------------------------
 
+// ResolvedOnConflictClauseEnums
+
+// -------------------------------------------------------------------
+
 // ResolvedArgumentDefEnums
 
 // -------------------------------------------------------------------
@@ -4886,11 +6501,43 @@ class ResolvedOptionEnums final :
 
 // -------------------------------------------------------------------
 
+// ResolvedMatchRecognizeScanEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedMatchRecognizePatternAnchorEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedMatchRecognizePatternOperationEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedGraphLabelNaryExprEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedGraphEdgeScanEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedGraphPathModeEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedGraphPathSearchPrefixEnums
+
+// -------------------------------------------------------------------
+
 // ResolvedDropIndexStmtEnums
 
 // -------------------------------------------------------------------
 
 // ResolvedOptionEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedLockModeEnums
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -5029,6 +6676,12 @@ inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedMergeWhenEnums
   return ::zetasql::ResolvedMergeWhenEnums_ActionType_descriptor();
 }
 template <>
+struct is_proto_enum<::zetasql::ResolvedOnConflictClauseEnums_ConflictAction> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedOnConflictClauseEnums_ConflictAction>() {
+  return ::zetasql::ResolvedOnConflictClauseEnums_ConflictAction_descriptor();
+}
+template <>
 struct is_proto_enum<::zetasql::ResolvedArgumentDefEnums_ArgumentKind> : std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedArgumentDefEnums_ArgumentKind>() {
@@ -5083,6 +6736,48 @@ inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedAuxLoadDataStm
   return ::zetasql::ResolvedAuxLoadDataStmtEnums_InsertionMode_descriptor();
 }
 template <>
+struct is_proto_enum<::zetasql::ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode>() {
+  return ::zetasql::ResolvedMatchRecognizeScanEnums_AfterMatchSkipMode_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedMatchRecognizePatternAnchorEnums_Mode> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedMatchRecognizePatternAnchorEnums_Mode>() {
+  return ::zetasql::ResolvedMatchRecognizePatternAnchorEnums_Mode_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType>() {
+  return ::zetasql::ResolvedMatchRecognizePatternOperationEnums_MatchRecognizePatternOperationType_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType>() {
+  return ::zetasql::ResolvedGraphLabelNaryExprEnums_GraphLogicalOpType_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedGraphEdgeScanEnums_EdgeOrientation> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedGraphEdgeScanEnums_EdgeOrientation>() {
+  return ::zetasql::ResolvedGraphEdgeScanEnums_EdgeOrientation_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedGraphPathModeEnums_PathMode> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedGraphPathModeEnums_PathMode>() {
+  return ::zetasql::ResolvedGraphPathModeEnums_PathMode_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType>() {
+  return ::zetasql::ResolvedGraphPathSearchPrefixEnums_PathSearchPrefixType_descriptor();
+}
+template <>
 struct is_proto_enum<::zetasql::ResolvedDropIndexStmtEnums_IndexType> : std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedDropIndexStmtEnums_IndexType>() {
@@ -5093,6 +6788,12 @@ struct is_proto_enum<::zetasql::ResolvedOptionEnums_AssignmentOp> : std::true_ty
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedOptionEnums_AssignmentOp>() {
   return ::zetasql::ResolvedOptionEnums_AssignmentOp_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedLockModeEnums_LockStrengthType> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedLockModeEnums_LockStrengthType>() {
+  return ::zetasql::ResolvedLockModeEnums_LockStrengthType_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

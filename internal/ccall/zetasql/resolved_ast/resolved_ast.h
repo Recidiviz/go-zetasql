@@ -192,6 +192,8 @@ class ResolvedCheckConstraint;
 class ResolvedCheckConstraintBuilder;
 class ResolvedOutputColumn;
 class ResolvedOutputColumnBuilder;
+class ResolvedOutputSchema;
+class ResolvedOutputSchemaBuilder;
 class ResolvedProjectScan;
 class ResolvedProjectScanBuilder;
 class ResolvedTVFScan;
@@ -205,6 +207,8 @@ class ResolvedExplainStmt;
 class ResolvedExplainStmtBuilder;
 class ResolvedQueryStmt;
 class ResolvedQueryStmtBuilder;
+class ResolvedGeneralizedQueryStmt;
+class ResolvedGeneralizedQueryStmtBuilder;
 class ResolvedCreateDatabaseStmt;
 class ResolvedCreateDatabaseStmtBuilder;
 class ResolvedCreateStatement;
@@ -299,6 +303,8 @@ class ResolvedAssertStmt;
 class ResolvedAssertStmtBuilder;
 class ResolvedAssertRowsModified;
 class ResolvedAssertRowsModifiedBuilder;
+class ResolvedOnConflictClause;
+class ResolvedOnConflictClauseBuilder;
 class ResolvedInsertRow;
 class ResolvedInsertRowBuilder;
 class ResolvedInsertStmt;
@@ -469,6 +475,23 @@ class ResolvedUnpivotArg;
 class ResolvedUnpivotArgBuilder;
 class ResolvedUnpivotScan;
 class ResolvedUnpivotScanBuilder;
+class ResolvedMatchRecognizeScan;
+class ResolvedMatchRecognizeScanBuilder;
+class ResolvedMeasureGroup;
+class ResolvedMeasureGroupBuilder;
+class ResolvedMatchRecognizeVariableDefinition;
+class ResolvedMatchRecognizeVariableDefinitionBuilder;
+class ResolvedMatchRecognizePatternExpr;
+class ResolvedMatchRecognizePatternEmpty;
+class ResolvedMatchRecognizePatternEmptyBuilder;
+class ResolvedMatchRecognizePatternAnchor;
+class ResolvedMatchRecognizePatternAnchorBuilder;
+class ResolvedMatchRecognizePatternVariableRef;
+class ResolvedMatchRecognizePatternVariableRefBuilder;
+class ResolvedMatchRecognizePatternOperation;
+class ResolvedMatchRecognizePatternOperationBuilder;
+class ResolvedMatchRecognizePatternQuantification;
+class ResolvedMatchRecognizePatternQuantificationBuilder;
 class ResolvedCloneDataStmt;
 class ResolvedCloneDataStmtBuilder;
 class ResolvedTableAndColumnInfo;
@@ -479,6 +502,62 @@ class ResolvedAuxLoadDataPartitionFilter;
 class ResolvedAuxLoadDataPartitionFilterBuilder;
 class ResolvedAuxLoadDataStmt;
 class ResolvedAuxLoadDataStmtBuilder;
+class ResolvedCreatePropertyGraphStmt;
+class ResolvedCreatePropertyGraphStmtBuilder;
+class ResolvedGraphElementTable;
+class ResolvedGraphElementTableBuilder;
+class ResolvedGraphNodeTableReference;
+class ResolvedGraphNodeTableReferenceBuilder;
+class ResolvedGraphElementLabel;
+class ResolvedGraphElementLabelBuilder;
+class ResolvedGraphPropertyDeclaration;
+class ResolvedGraphPropertyDeclarationBuilder;
+class ResolvedGraphPropertyDefinition;
+class ResolvedGraphPropertyDefinitionBuilder;
+class ResolvedGraphScanBase;
+class ResolvedGraphRefScan;
+class ResolvedGraphRefScanBuilder;
+class ResolvedGraphLinearScan;
+class ResolvedGraphLinearScanBuilder;
+class ResolvedGraphTableScan;
+class ResolvedGraphTableScanBuilder;
+class ResolvedGraphScan;
+class ResolvedGraphScanBuilder;
+class ResolvedGraphPathPatternQuantifier;
+class ResolvedGraphPathPatternQuantifierBuilder;
+class ResolvedGraphPathSearchPrefix;
+class ResolvedGraphPathSearchPrefixBuilder;
+class ResolvedGraphPathScanBase;
+class ResolvedGraphElementScan;
+class ResolvedGraphNodeScan;
+class ResolvedGraphNodeScanBuilder;
+class ResolvedGraphEdgeScan;
+class ResolvedGraphEdgeScanBuilder;
+class ResolvedGraphGetElementProperty;
+class ResolvedGraphGetElementPropertyBuilder;
+class ResolvedGraphLabelExpr;
+class ResolvedGraphLabelNaryExpr;
+class ResolvedGraphLabelNaryExprBuilder;
+class ResolvedGraphLabel;
+class ResolvedGraphLabelBuilder;
+class ResolvedGraphWildCardLabel;
+class ResolvedGraphWildCardLabelBuilder;
+class ResolvedGraphElementIdentifier;
+class ResolvedGraphElementIdentifierBuilder;
+class ResolvedGraphElementProperty;
+class ResolvedGraphElementPropertyBuilder;
+class ResolvedGraphMakeElement;
+class ResolvedGraphMakeElementBuilder;
+class ResolvedArrayAggregate;
+class ResolvedArrayAggregateBuilder;
+class ResolvedGraphMakeArrayVariable;
+class ResolvedGraphMakeArrayVariableBuilder;
+class ResolvedGraphPathMode;
+class ResolvedGraphPathModeBuilder;
+class ResolvedGraphPathScan;
+class ResolvedGraphPathScanBuilder;
+class ResolvedGraphIsLabeledPredicate;
+class ResolvedGraphIsLabeledPredicateBuilder;
 class ResolvedUndropStmt;
 class ResolvedUndropStmtBuilder;
 class ResolvedIdentityColumnInfo;
@@ -487,12 +566,30 @@ class ResolvedStaticDescribeScan;
 class ResolvedStaticDescribeScanBuilder;
 class ResolvedAssertScan;
 class ResolvedAssertScanBuilder;
+class ResolvedLogScan;
+class ResolvedLogScanBuilder;
+class ResolvedPipeIfScan;
+class ResolvedPipeIfScanBuilder;
+class ResolvedPipeIfCase;
+class ResolvedPipeIfCaseBuilder;
+class ResolvedPipeForkScan;
+class ResolvedPipeForkScanBuilder;
+class ResolvedPipeExportDataScan;
+class ResolvedPipeExportDataScanBuilder;
+class ResolvedSubpipeline;
+class ResolvedSubpipelineBuilder;
+class ResolvedSubpipelineInputScan;
+class ResolvedSubpipelineInputScanBuilder;
+class ResolvedGeneralizedQuerySubpipeline;
+class ResolvedGeneralizedQuerySubpipelineBuilder;
 class ResolvedBarrierScan;
 class ResolvedBarrierScanBuilder;
 class ResolvedCreateConnectionStmt;
 class ResolvedCreateConnectionStmtBuilder;
 class ResolvedAlterConnectionStmt;
 class ResolvedAlterConnectionStmtBuilder;
+class ResolvedLockMode;
+class ResolvedLockModeBuilder;
 
 // Argument nodes are not self-contained nodes in the tree.  They exist
 // only to describe parameters to another node (e.g. columns in an OrderBy).
@@ -503,7 +600,7 @@ class ResolvedArgument  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 85;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 112;
 
  public:
 
@@ -577,6 +674,7 @@ class ResolvedArgument  : public ResolvedNode {
   friend class ResolvedColumnDefaultValueBuilder;
   friend class ResolvedColumnDefinitionBuilder;
   friend class ResolvedOutputColumnBuilder;
+  friend class ResolvedOutputSchemaBuilder;
   friend class ResolvedFunctionArgumentBuilder;
   friend class ResolvedIndexItemBuilder;
   friend class ResolvedUnnestItemBuilder;
@@ -592,6 +690,7 @@ class ResolvedArgument  : public ResolvedNode {
   friend class ResolvedWindowFrameExprBuilder;
   friend class ResolvedDMLValueBuilder;
   friend class ResolvedAssertRowsModifiedBuilder;
+  friend class ResolvedOnConflictClauseBuilder;
   friend class ResolvedInsertRowBuilder;
   friend class ResolvedUpdateItemBuilder;
   friend class ResolvedUpdateArrayItemBuilder;
@@ -606,9 +705,26 @@ class ResolvedArgument  : public ResolvedNode {
   friend class ResolvedPivotColumnBuilder;
   friend class ResolvedReturningClauseBuilder;
   friend class ResolvedUnpivotArgBuilder;
+  friend class ResolvedMeasureGroupBuilder;
+  friend class ResolvedMatchRecognizeVariableDefinitionBuilder;
   friend class ResolvedTableAndColumnInfoBuilder;
   friend class ResolvedAuxLoadDataPartitionFilterBuilder;
+  friend class ResolvedGraphElementTableBuilder;
+  friend class ResolvedGraphNodeTableReferenceBuilder;
+  friend class ResolvedGraphElementLabelBuilder;
+  friend class ResolvedGraphPropertyDeclarationBuilder;
+  friend class ResolvedGraphPropertyDefinitionBuilder;
+  friend class ResolvedGraphPathPatternQuantifierBuilder;
+  friend class ResolvedGraphPathSearchPrefixBuilder;
+  friend class ResolvedGraphElementIdentifierBuilder;
+  friend class ResolvedGraphElementPropertyBuilder;
+  friend class ResolvedGraphMakeArrayVariableBuilder;
+  friend class ResolvedGraphPathModeBuilder;
   friend class ResolvedIdentityColumnInfoBuilder;
+  friend class ResolvedPipeIfCaseBuilder;
+  friend class ResolvedSubpipelineBuilder;
+  friend class ResolvedGeneralizedQuerySubpipelineBuilder;
+  friend class ResolvedLockModeBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -620,7 +736,7 @@ class ResolvedExpr  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 25;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 29;
 
   bool IsExpression() const final { return true; }
 
@@ -739,6 +855,10 @@ class ResolvedExpr  : public ResolvedNode {
   friend class ResolvedWithExprBuilder;
   friend class ResolvedDMLDefaultBuilder;
   friend class ResolvedArgumentRefBuilder;
+  friend class ResolvedGraphGetElementPropertyBuilder;
+  friend class ResolvedGraphMakeElementBuilder;
+  friend class ResolvedArrayAggregateBuilder;
+  friend class ResolvedGraphIsLabeledPredicateBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
       ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
@@ -3487,7 +3607,7 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
       std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
       std::unique_ptr<const ResolvedExpr> limit,
       const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info,
-      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list,
+      std::vector<std::unique_ptr<const ResolvedComputedColumn>> group_by_list,
       std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list
   );
   ~ResolvedAggregateFunctionCall() final;
@@ -3615,7 +3735,7 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
   // compute the aggregates defined in `group_by_aggregate_list`.
   // Used only for multi-level aggregation, when
   // FEATURE_V_1_4_MULTILEVEL_AGGREGATION is enabled.
-  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& group_by_list() const {
+  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& group_by_list() const {
     accessed_ |= (1<<4);
     return group_by_list_;
   }
@@ -3623,19 +3743,19 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
     if (group_by_list_.empty()) accessed_ |= (1<<4);
     return static_cast<int>(group_by_list_.size());
   }
-  const ResolvedComputedColumnBase* group_by_list(int i) const {
+  const ResolvedComputedColumn* group_by_list(int i) const {
     accessed_ |= (1<<4);
     return group_by_list_.at(i).get();
   }
-  void add_group_by_list(std::unique_ptr<const ResolvedComputedColumnBase> v) {
+  void add_group_by_list(std::unique_ptr<const ResolvedComputedColumn> v) {
     group_by_list_.emplace_back(std::move(v));
   }
-  void set_group_by_list(std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> v) {
+  void set_group_by_list(std::vector<std::unique_ptr<const ResolvedComputedColumn>> v) {
     group_by_list_ = std::move(v);
   }
 
-  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_group_by_list() {
-    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> tmp;
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_group_by_list() {
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> tmp;
     group_by_list_.swap(tmp);
     return tmp;
   }
@@ -3692,7 +3812,7 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
       std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
       std::unique_ptr<const ResolvedExpr> limit,
       const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info,
-      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list,
+      std::vector<std::unique_ptr<const ResolvedComputedColumn>> group_by_list,
       std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list,
       ConstructorOverload)
       : ResolvedNonScalarFunctionCallBase(
@@ -3744,7 +3864,7 @@ class ResolvedAggregateFunctionCall final : public ResolvedNonScalarFunctionCall
   std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list_;
   std::unique_ptr<const ResolvedExpr> limit_;
   std::shared_ptr<ResolvedFunctionCallInfo> function_call_info_;
-  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list_;
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> group_by_list_;
   std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
@@ -3762,7 +3882,7 @@ inline std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunct
     std::vector<std::unique_ptr<const ResolvedOrderByItem>> order_by_item_list,
     std::unique_ptr<const ResolvedExpr> limit,
     const std::shared_ptr<ResolvedFunctionCallInfo>& function_call_info,
-    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_list,
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> group_by_list,
     std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> group_by_aggregate_list) {
   return std::unique_ptr<ResolvedAggregateFunctionCall>(new ResolvedAggregateFunctionCall(
         type,
@@ -3827,7 +3947,7 @@ template <
   typename order_by_item_list_t
       = std::vector<std::unique_ptr<const ResolvedOrderByItem>>,
   typename group_by_list_t
-      = std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>,
+      = std::vector<std::unique_ptr<const ResolvedComputedColumn>>,
   typename group_by_aggregate_list_t
       = std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>
 std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall(
@@ -3861,10 +3981,10 @@ std::unique_ptr<ResolvedAggregateFunctionCall> MakeResolvedAggregateFunctionCall
       "order_by_item_list must be a container of unique_ptr with elements of type "
       "ResolvedOrderByItem (or its descendants).");
   static_assert(std::is_base_of<
-      ResolvedComputedColumnBase,
+      ResolvedComputedColumn,
       typename std::decay<decltype(**(group_by_list.begin()))>::type>::value,
       "group_by_list must be a container of unique_ptr with elements of type "
-      "ResolvedComputedColumnBase (or its descendants).");
+      "ResolvedComputedColumn (or its descendants).");
   static_assert(std::is_base_of<
       ResolvedComputedColumnBase,
       typename std::decay<decltype(**(group_by_aggregate_list.begin()))>::type>::value,
@@ -7272,7 +7392,7 @@ class ResolvedScan  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 28;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 41;
 
   bool IsScan() const final { return true; }
 
@@ -7444,8 +7564,16 @@ class ResolvedScan  : public ResolvedNode {
   friend class ResolvedRelationArgumentScanBuilder;
   friend class ResolvedPivotScanBuilder;
   friend class ResolvedUnpivotScanBuilder;
+  friend class ResolvedMatchRecognizeScanBuilder;
+  friend class ResolvedGraphRefScanBuilder;
+  friend class ResolvedGraphTableScanBuilder;
   friend class ResolvedStaticDescribeScanBuilder;
   friend class ResolvedAssertScanBuilder;
+  friend class ResolvedLogScanBuilder;
+  friend class ResolvedPipeIfScanBuilder;
+  friend class ResolvedPipeForkScanBuilder;
+  friend class ResolvedPipeExportDataScanBuilder;
+  friend class ResolvedSubpipelineInputScanBuilder;
   friend class ResolvedBarrierScanBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
@@ -8206,6 +8334,7 @@ class ResolvedTableScan final : public ResolvedScan {
       , for_system_time_expr_()
       , column_index_list_()
       , alias_()
+      , lock_mode_()
   {}
 
  public:
@@ -8325,6 +8454,18 @@ class ResolvedTableScan final : public ResolvedScan {
     alias_ = v;
   }
 
+  const ResolvedLockMode* lock_mode() const {
+    accessed_ |= (1<<4);
+    return lock_mode_.get();
+  }
+  void set_lock_mode(std::unique_ptr<const ResolvedLockMode> v) {
+    lock_mode_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedLockMode> release_lock_mode() {
+    return std::move(lock_mode_);
+  }
+
  protected:
   explicit ResolvedTableScan(
       const std::vector<ResolvedColumn>& column_list,
@@ -8338,7 +8479,8 @@ class ResolvedTableScan final : public ResolvedScan {
       table_(table),
       for_system_time_expr_(std::move(for_system_time_expr)),
       column_index_list_(),
-      alias_(alias) {
+      alias_(alias),
+      lock_mode_() {
   }
 
   void CollectDebugStringFields(
@@ -8363,10 +8505,14 @@ class ResolvedTableScan final : public ResolvedScan {
   bool alias_accessed() const {
     return accessed_ & (1<<3);
  }
+  bool lock_mode_accessed() const {
+    return accessed_ & (1<<4);
+ }
   const Table* table_;
   std::unique_ptr<const ResolvedExpr> for_system_time_expr_;
   std::vector<int> column_index_list_;
   std::string alias_;
+  std::unique_ptr<const ResolvedLockMode> lock_mode_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
@@ -15574,8 +15720,9 @@ inline std::unique_ptr<ResolvedCheckConstraint> MakeResolvedCheckConstraint() {
       new ResolvedCheckConstraint());
 }
 
-// This is used in ResolvedQueryStmt to provide a user-visible name
-// for each output column.
+// This is used in ResolvedQueryStmt (and other places) to provide a
+// user-visible name for each output column, and to map from
+// physical ResolvedColumns to user-visible output columns.
 class ResolvedOutputColumn final : public ResolvedArgument {
  public:
   typedef ResolvedArgument SUPER;
@@ -15708,6 +15855,200 @@ inline std::unique_ptr<ResolvedOutputColumn> MakeResolvedOutputColumn(
 inline std::unique_ptr<ResolvedOutputColumn> MakeResolvedOutputColumn() {
   return std::unique_ptr<ResolvedOutputColumn>(
       new ResolvedOutputColumn());
+}
+
+// This describes the output schema for table, like what is produced for
+// a query statement.
+//
+// <output_column_list> maps the physical ResolvedColumns available to
+// the user-visible column names that are returned, with their actual
+// column names.  There may be duplicate names, and multiple output columns
+// may reference the same physical ResolvedColumn.
+// The list must be non-empty, since all output tables must have at least
+// one column.
+//
+// This node is used in some places, while many other older nodes just
+// have these two fields inlined into a parent object.
+// Ideally, all those cases could be migrated to use ResolvedOutputSchema.
+class ResolvedOutputSchema final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_OUTPUT_SCHEMA;
+
+ protected:
+  ResolvedOutputSchema()
+      : ResolvedArgument()
+      , output_column_list_()
+      , is_value_table_()
+  {}
+
+ public:
+
+  ResolvedOutputSchema(const ResolvedOutputSchema&) = delete;
+  ResolvedOutputSchema& operator=(const ResolvedOutputSchema&) = delete;
+
+  friend std::unique_ptr<ResolvedOutputSchema> MakeResolvedOutputSchema(
+      std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
+      bool is_value_table
+  );
+  ~ResolvedOutputSchema() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_OUTPUT_SCHEMA; }
+  std::string node_kind_string() const final { return "OutputSchema"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedOutputSchemaProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedOutputSchema>> RestoreFrom(
+      const ResolvedOutputSchemaProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::vector<std::unique_ptr<const ResolvedOutputColumn>>& output_column_list() const {
+    accessed_ |= (1<<0);
+    return output_column_list_;
+  }
+  int output_column_list_size() const {
+    if (output_column_list_.empty()) accessed_ |= (1<<0);
+    return static_cast<int>(output_column_list_.size());
+  }
+  const ResolvedOutputColumn* output_column_list(int i) const {
+    accessed_ |= (1<<0);
+    return output_column_list_.at(i).get();
+  }
+  void add_output_column_list(std::unique_ptr<const ResolvedOutputColumn> v) {
+    output_column_list_.emplace_back(std::move(v));
+  }
+  void set_output_column_list(std::vector<std::unique_ptr<const ResolvedOutputColumn>> v) {
+    output_column_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOutputColumn>> release_output_column_list() {
+    std::vector<std::unique_ptr<const ResolvedOutputColumn>> tmp;
+    output_column_list_.swap(tmp);
+    return tmp;
+  }
+
+  // If true, the result of this query is a value table. Rather than
+  // producing rows with named columns, it produces rows with a single
+  // unnamed value type.  output_column_list will have exactly one
+  // column, with an empty name. See (broken link).
+  bool is_value_table() const {
+    accessed_ |= (1<<1);
+    return is_value_table_;
+  }
+  void set_is_value_table(bool v) {
+    is_value_table_ = v;
+  }
+
+ protected:
+  explicit ResolvedOutputSchema(
+      std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
+      bool is_value_table,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      output_column_list_(std::move(output_column_list)),
+      is_value_table_(is_value_table) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedOutputSchema> MakeResolvedOutputSchema();
+  friend class ResolvedOutputSchemaBuilder;
+  friend ResolvedOutputSchemaBuilder ToBuilder(std::unique_ptr<const ResolvedOutputSchema>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool output_column_list_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool is_value_table_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list_;
+  bool is_value_table_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedOutputSchema> MakeResolvedOutputSchema(
+    std::vector<std::unique_ptr<const ResolvedOutputColumn>> output_column_list,
+    bool is_value_table) {
+  return std::unique_ptr<ResolvedOutputSchema>(new ResolvedOutputSchema(
+        std::move(output_column_list),
+        is_value_table,
+        ResolvedOutputSchema::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedOutputSchema with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  output_column_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename output_column_list_t
+      = std::vector<std::unique_ptr<const ResolvedOutputColumn>>>
+std::unique_ptr<ResolvedOutputSchema> MakeResolvedOutputSchema(
+    output_column_list_t output_column_list,
+    bool is_value_table) {
+  static_assert(std::is_base_of<
+      ResolvedOutputColumn,
+      typename std::decay<decltype(**(output_column_list.begin()))>::type>::value,
+      "output_column_list must be a container of unique_ptr with elements of type "
+      "ResolvedOutputColumn (or its descendants).");
+  return MakeResolvedOutputSchema(
+      {std::make_move_iterator(output_column_list.begin()),
+       std::make_move_iterator(output_column_list.end())},
+      is_value_table);
+}
+
+inline std::unique_ptr<ResolvedOutputSchema> MakeResolvedOutputSchema() {
+  return std::unique_ptr<ResolvedOutputSchema>(
+      new ResolvedOutputSchema());
 }
 
 // A Project node computes new expression values, and possibly drops
@@ -16841,7 +17182,7 @@ class ResolvedStatement  : public ResolvedNode {
   typedef ResolvedNode SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 75;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 77;
 
   typedef ResolvedStatementEnums::ObjectAccess ObjectAccess;
   static const ObjectAccess NONE = ResolvedStatementEnums::NONE;
@@ -16948,6 +17289,7 @@ class ResolvedStatement  : public ResolvedNode {
  private:
   friend class ResolvedExplainStmtBuilder;
   friend class ResolvedQueryStmtBuilder;
+  friend class ResolvedGeneralizedQueryStmtBuilder;
   friend class ResolvedCreateDatabaseStmtBuilder;
   friend class ResolvedExportModelStmtBuilder;
   friend class ResolvedExportDataStmtBuilder;
@@ -17336,6 +17678,170 @@ inline std::unique_ptr<ResolvedQueryStmt> MakeResolvedQueryStmt() {
       new ResolvedQueryStmt());
 }
 
+// This is a query statement variation that supports generalized queries
+// using operators that might not produce exactly one query result.
+// Queries using these operators can produce multiple output tables, or zero
+// output tables, and can also have statement side-effects like DML actions.
+//
+// This is used for any query containing pipe syntax operators like FORK
+// (that splits the query into multiple output tables) or terminal operators
+// like CREATE TABLE (that consume the output without returning a table).
+// See (broken link).
+//
+// This node can only occur if:
+// * FEATURE_PIPES is enabled,
+// * Some pipe operator that produces generalized output is enabled,
+// * One of those operators occurs in the query, and
+// * ResolvedGeneralizedQueryStmt is in SupportedStatementKinds in
+//   LanguageOptions.
+//
+// `output_schema` is nullable, and will be null if the outer `query`
+// doesn't return a table.
+//
+// Additional output tables or statement side-effects can be found
+// while traversing `query`, looking at ResolvedGeneralizedQuerySubpipeline
+// nodes.
+class ResolvedGeneralizedQueryStmt final : public ResolvedStatement {
+ public:
+  typedef ResolvedStatement SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GENERALIZED_QUERY_STMT;
+
+ protected:
+  ResolvedGeneralizedQueryStmt()
+      : ResolvedStatement()
+      , output_schema_()
+      , query_()
+  {}
+
+ public:
+
+  ResolvedGeneralizedQueryStmt(const ResolvedGeneralizedQueryStmt&) = delete;
+  ResolvedGeneralizedQueryStmt& operator=(const ResolvedGeneralizedQueryStmt&) = delete;
+
+  friend std::unique_ptr<ResolvedGeneralizedQueryStmt> MakeResolvedGeneralizedQueryStmt(
+      std::unique_ptr<const ResolvedOutputSchema> output_schema,
+      std::unique_ptr<const ResolvedScan> query
+  );
+  ~ResolvedGeneralizedQueryStmt() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GENERALIZED_QUERY_STMT; }
+  std::string node_kind_string() const final { return "GeneralizedQueryStmt"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGeneralizedQueryStmtProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedStatementProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGeneralizedQueryStmt>> RestoreFrom(
+      const ResolvedGeneralizedQueryStmtProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedOutputSchema* output_schema() const {
+    accessed_ |= (1<<0);
+    return output_schema_.get();
+  }
+  void set_output_schema(std::unique_ptr<const ResolvedOutputSchema> v) {
+    output_schema_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedOutputSchema> release_output_schema() {
+    return std::move(output_schema_);
+  }
+
+  const ResolvedScan* query() const {
+    accessed_ |= (1<<1);
+    return query_.get();
+  }
+  void set_query(std::unique_ptr<const ResolvedScan> v) {
+    query_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedScan> release_query() {
+    return std::move(query_);
+  }
+
+ protected:
+  explicit ResolvedGeneralizedQueryStmt(
+      std::unique_ptr<const ResolvedOutputSchema> output_schema,
+      std::unique_ptr<const ResolvedScan> query,
+      ConstructorOverload)
+      : ResolvedStatement(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      output_schema_(std::move(output_schema)),
+      query_(std::move(query)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGeneralizedQueryStmt> MakeResolvedGeneralizedQueryStmt();
+  friend class ResolvedGeneralizedQueryStmtBuilder;
+  friend ResolvedGeneralizedQueryStmtBuilder ToBuilder(std::unique_ptr<const ResolvedGeneralizedQueryStmt>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool output_schema_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool query_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::unique_ptr<const ResolvedOutputSchema> output_schema_;
+  std::unique_ptr<const ResolvedScan> query_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGeneralizedQueryStmt> MakeResolvedGeneralizedQueryStmt(
+    std::unique_ptr<const ResolvedOutputSchema> output_schema,
+    std::unique_ptr<const ResolvedScan> query) {
+  return std::unique_ptr<ResolvedGeneralizedQueryStmt>(new ResolvedGeneralizedQueryStmt(
+        std::move(output_schema),
+        std::move(query),
+        ResolvedGeneralizedQueryStmt::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGeneralizedQueryStmt> MakeResolvedGeneralizedQueryStmt() {
+  return std::unique_ptr<ResolvedGeneralizedQueryStmt>(
+      new ResolvedGeneralizedQueryStmt());
+}
+
 // This statement:
 //   CREATE DATABASE <name> [OPTIONS (...)]
 // <name_path> is a vector giving the identifier path in the database name.
@@ -17554,7 +18060,7 @@ class ResolvedCreateStatement  : public ResolvedStatement {
   typedef ResolvedStatement SUPER;
 
   // Number of leaf node types that exist as descendants of this abstract type.
-  static const int NUM_DESCENDANT_LEAF_TYPES = 18;
+  static const int NUM_DESCENDANT_LEAF_TYPES = 19;
 
   typedef ResolvedCreateStatementEnums::CreateScope CreateScope;
   typedef ResolvedCreateStatementEnums::CreateMode CreateMode;
@@ -17708,6 +18214,7 @@ class ResolvedCreateStatement  : public ResolvedStatement {
   friend class ResolvedCreateTableFunctionStmtBuilder;
   friend class ResolvedCreateProcedureStmtBuilder;
   friend class ResolvedCreateEntityStmtBuilder;
+  friend class ResolvedCreatePropertyGraphStmtBuilder;
   friend class ResolvedCreateConnectionStmtBuilder;
   // Define this locally so our free function factories (friends) can access it.
   constexpr static ConstructorOverload NEW_CONSTRUCTOR =
@@ -17730,6 +18237,11 @@ class ResolvedCreateStatement  : public ResolvedStatement {
 
 // Represents one of indexed items in CREATE INDEX statement, with the
 // ordering direction specified.
+//
+// `option_list` represents the per item options for the index. This is
+// used in both the case where ALL COLUMNS is used and the case where
+// specific items are specified. The list of options for a specific item
+// must not be empty in the case of ALL COLUMNS.
 class ResolvedIndexItem final : public ResolvedArgument {
  public:
   typedef ResolvedArgument SUPER;
@@ -17741,6 +18253,7 @@ class ResolvedIndexItem final : public ResolvedArgument {
       : ResolvedArgument()
       , column_ref_()
       , descending_()
+      , option_list_()
   {}
 
  public:
@@ -17750,7 +18263,8 @@ class ResolvedIndexItem final : public ResolvedArgument {
 
   friend std::unique_ptr<ResolvedIndexItem> MakeResolvedIndexItem(
       std::unique_ptr<const ResolvedColumnRef> column_ref,
-      bool descending
+      bool descending,
+      std::vector<std::unique_ptr<const ResolvedOption>> option_list
   );
   ~ResolvedIndexItem() final;
 
@@ -17821,15 +18335,42 @@ class ResolvedIndexItem final : public ResolvedArgument {
     descending_ = v;
   }
 
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    accessed_ |= (1<<2);
+    return option_list_;
+  }
+  int option_list_size() const {
+    if (option_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(option_list_.size());
+  }
+  const ResolvedOption* option_list(int i) const {
+    accessed_ |= (1<<2);
+    return option_list_.at(i).get();
+  }
+  void add_option_list(std::unique_ptr<const ResolvedOption> v) {
+    option_list_.emplace_back(std::move(v));
+  }
+  void set_option_list(std::vector<std::unique_ptr<const ResolvedOption>> v) {
+    option_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp;
+    option_list_.swap(tmp);
+    return tmp;
+  }
+
  protected:
   explicit ResolvedIndexItem(
       std::unique_ptr<const ResolvedColumnRef> column_ref,
       bool descending,
+      std::vector<std::unique_ptr<const ResolvedOption>> option_list,
       ConstructorOverload)
       : ResolvedArgument(
             ConstructorOverload::NEW_CONSTRUCTOR),
       column_ref_(std::move(column_ref)),
-      descending_(descending) {
+      descending_(descending),
+      option_list_(std::move(option_list)) {
   }
 
   void CollectDebugStringFields(
@@ -17848,18 +18389,53 @@ class ResolvedIndexItem final : public ResolvedArgument {
   bool descending_accessed() const {
     return accessed_ & (1<<1);
  }
+  bool option_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
   std::unique_ptr<const ResolvedColumnRef> column_ref_;
   bool descending_;
+  std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
 };
 
 inline std::unique_ptr<ResolvedIndexItem> MakeResolvedIndexItem(
     std::unique_ptr<const ResolvedColumnRef> column_ref,
-    bool descending) {
+    bool descending,
+    std::vector<std::unique_ptr<const ResolvedOption>> option_list) {
   return std::unique_ptr<ResolvedIndexItem>(new ResolvedIndexItem(
         std::move(column_ref),
         descending,
+        std::move(option_list),
         ResolvedIndexItem::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedIndexItem with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  option_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename option_list_t
+      = std::vector<std::unique_ptr<const ResolvedOption>>>
+std::unique_ptr<ResolvedIndexItem> MakeResolvedIndexItem(
+    std::unique_ptr<const ResolvedColumnRef> column_ref,
+    bool descending,
+    option_list_t option_list) {
+  static_assert(std::is_base_of<
+      ResolvedOption,
+      typename std::decay<decltype(**(option_list.begin()))>::type>::value,
+      "option_list must be a container of unique_ptr with elements of type "
+      "ResolvedOption (or its descendants).");
+  return MakeResolvedIndexItem(
+      std::move(column_ref),
+      descending,
+      {std::make_move_iterator(option_list.begin()),
+       std::make_move_iterator(option_list.end())});
 }
 
 inline std::unique_ptr<ResolvedIndexItem> MakeResolvedIndexItem() {
@@ -19541,7 +20117,7 @@ class ResolvedCreateTableStmtBase  : public ResolvedCreateStatement {
 //   [OPTIONS (...)]
 //
 // One of <clone_from> or <copy_from> can be present for CLONE or COPY.
-//   <clone_from> specifes the data source to clone from (cheap, typically
+//   <clone_from> specifies the data source to clone from (cheap, typically
 //   O(1) operation); while <copy_from> is intended for a full copy.
 //
 //   ResolvedTableScan will represent the source table, with an optional
@@ -22641,8 +23217,12 @@ inline std::unique_ptr<ResolvedExportModelStmt> MakeResolvedExportModelStmt() {
 
 // This statement:
 //   EXPORT DATA [WITH CONNECTION] <connection> (<option_list>) AS SELECT ...
-// which is used to run a query and export its result somewhere
-// without giving the result a table name.
+// or this pipe operator (without a query, in ResolvedPipeExportDataScan):
+//   |> EXPORT DATA [WITH CONNECTION] <connection> (<option_list>)
+//
+// This is used to run export a query result somewhere without giving the
+// result a table name.
+//
 // <connection> connection reference for accessing destination source.
 // <option_list> has engine-specific directives for how and where to
 //               materialize the query result.
@@ -22650,7 +23230,9 @@ inline std::unique_ptr<ResolvedExportModelStmt> MakeResolvedExportModelStmt() {
 //                      the query, and maps from <query>'s column_list
 //                      to these output columns.  The engine may ignore
 //                      the column names depending on the output format.
-// <query> is the query to run.
+// <query> is the query to run (when this node is used as a statement).
+//         When this node is used as part of ResolvedPipeExportDataScan,
+//         <query> is not present.  The input table is the pipe input table.
 //
 // The query must produce named columns with unique names.
 class ResolvedExportDataStmt final : public ResolvedStatement {
@@ -22804,6 +23386,8 @@ class ResolvedExportDataStmt final : public ResolvedStatement {
     is_value_table_ = v;
   }
 
+  // `query` is present when this node is used as a statement.
+  // `query` is not present when used in ResolvedPipeExportDataScan.
   const ResolvedScan* query() const {
     accessed_ |= (1<<4);
     return query_.get();
@@ -27665,6 +28249,348 @@ inline std::unique_ptr<ResolvedAssertRowsModified> MakeResolvedAssertRowsModifie
       new ResolvedAssertRowsModified());
 }
 
+// This represents the ON CONFLICT clause on an INSERT statement. It
+// specifies the alternate action to be taken if the insert row causes
+// unique constraint violations.
+//
+// <conflict_action> is the action to take if the insert row causes unique
+// constraint violations. Either NOTHING to ignore the insert row or UPDATE
+// to update the original table row with the constraint values.
+//
+// <conflict_target_column_list> is the list of columns to infer a unique
+// constraint - primary key or UNIQUE columns - for which the uniqueness
+// should be arbitrated. ZetaSQL only resolves them into valid column
+// references. It is the engine's responsibility to validate and infer
+// a unique constraint. See "Conflict target" section in
+// (broken link), http://shortn/_4GrUbFPEKm
+//
+// <unique_constraint_name> is the name of the UNIQUE constraint instead of
+// specifying the columns in conflict target. ZetaSQL only resolves it as
+// a valid identifier. It is the engine's responsibility to infer a UNIQUE
+// constraint. See "Conflict target" section in
+// (broken link). http://shortn/_4GrUbFPEKm
+//
+// <insert_row_scan> is a ResolvedTableScan on the target table. It returns
+// the new rows that were constructed to be inserted where the insert failed
+// with a conflict, using the underlying Table's columns.
+// The included columns are the columns from insert row referenced
+// in the update SET RHS expression and/or the update WHERE clause using
+// the `excluded` alias. It can also include generated columns or columns not
+// in the INSERT column list.
+// This is applicable only for conflict action UPDATE. It's null if the
+// conflict action is NOTHING.
+//
+// <update_item_list> is the list of update items if the conflict action is
+// UPDATE. They are refer columns in both the insert row and original table
+// row.
+//
+// <update_where_expression> is used to conditionally update the table row if
+// the conflict action is UPDATE.
+class ResolvedOnConflictClause final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_ON_CONFLICT_CLAUSE;
+
+  typedef ResolvedOnConflictClauseEnums::ConflictAction ConflictAction;
+  static const ConflictAction NOTHING = ResolvedOnConflictClauseEnums::NOTHING;
+  static const ConflictAction UPDATE = ResolvedOnConflictClauseEnums::UPDATE;
+
+  std::string GetConflictActionString() const;
+  static std::string ConflictActionToString(ConflictAction action);
+
+ protected:
+  ResolvedOnConflictClause()
+      : ResolvedArgument()
+      , conflict_action_()
+      , conflict_target_column_list_()
+      , unique_constraint_name_()
+      , insert_row_scan_()
+      , update_item_list_()
+      , update_where_expression_()
+  {}
+
+ public:
+
+  ResolvedOnConflictClause(const ResolvedOnConflictClause&) = delete;
+  ResolvedOnConflictClause& operator=(const ResolvedOnConflictClause&) = delete;
+
+  friend std::unique_ptr<ResolvedOnConflictClause> MakeResolvedOnConflictClause(
+      ResolvedOnConflictClauseEnums::ConflictAction conflict_action,
+      const std::vector<ResolvedColumn>& conflict_target_column_list,
+      absl::string_view unique_constraint_name,
+      std::unique_ptr<const ResolvedTableScan> insert_row_scan,
+      std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list,
+      std::unique_ptr<const ResolvedExpr> update_where_expression
+  );
+  ~ResolvedOnConflictClause() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_ON_CONFLICT_CLAUSE; }
+  std::string node_kind_string() const final { return "OnConflictClause"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedOnConflictClauseProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedOnConflictClause>> RestoreFrom(
+      const ResolvedOnConflictClauseProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  ResolvedOnConflictClauseEnums::ConflictAction conflict_action() const {
+    accessed_ |= (1<<0);
+    return conflict_action_;
+  }
+  void set_conflict_action(ResolvedOnConflictClauseEnums::ConflictAction v) {
+    conflict_action_ = v;
+  }
+
+  // IGNORABLE_DEFAULT because this is an optional field for NOTHING
+  // conflict action. It is also empty if unique constraint name
+  // is specified.
+  const std::vector<ResolvedColumn>& conflict_target_column_list() const {
+    accessed_ |= (1<<1);
+    return conflict_target_column_list_;
+  }
+  int conflict_target_column_list_size() const {
+    if (conflict_target_column_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(conflict_target_column_list_.size());
+  }
+  const ResolvedColumn& conflict_target_column_list(int i) const {
+    accessed_ |= (1<<1);
+    return conflict_target_column_list_.at(i);
+  }
+  void add_conflict_target_column_list(ResolvedColumn v) {
+    conflict_target_column_list_.push_back(v);
+  }
+  void set_conflict_target_column_list(const std::vector<ResolvedColumn>& v) {
+    conflict_target_column_list_ = v;
+  }
+  std::vector<ResolvedColumn>* mutable_conflict_target_column_list() {
+    accessed_ |= (1<<1);
+    return &conflict_target_column_list_;
+  }
+
+  std::vector<ResolvedColumn> release_conflict_target_column_list() {
+    std::vector<ResolvedColumn> tmp;
+    conflict_target_column_list_.swap(tmp);
+    return tmp;
+  }
+
+  // IGNORABLE_DEFAULT because this is an optional field for NOTHING
+  // conflict action. It is also empty if conflict target is specified.
+  const std::string& unique_constraint_name() const {
+    accessed_ |= (1<<2);
+    return unique_constraint_name_;
+  }
+  void set_unique_constraint_name(absl::string_view v) {
+    unique_constraint_name_ = v;
+  }
+
+  // IGNORABLE_DEFAULT because this is set for UPDATE conflict action
+  // only and if update_item_list and/or update_where_expression
+  // reference columns from the insert row using `excluded` alias.
+  const ResolvedTableScan* insert_row_scan() const {
+    accessed_ |= (1<<3);
+    return insert_row_scan_.get();
+  }
+  void set_insert_row_scan(std::unique_ptr<const ResolvedTableScan> v) {
+    insert_row_scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedTableScan> release_insert_row_scan() {
+    return std::move(insert_row_scan_);
+  }
+
+  // IGNORABLE_DEFAULT because this is set for UPDATE conflict action
+  // only.
+  const std::vector<std::unique_ptr<const ResolvedUpdateItem>>& update_item_list() const {
+    accessed_ |= (1<<4);
+    return update_item_list_;
+  }
+  int update_item_list_size() const {
+    if (update_item_list_.empty()) accessed_ |= (1<<4);
+    return static_cast<int>(update_item_list_.size());
+  }
+  const ResolvedUpdateItem* update_item_list(int i) const {
+    accessed_ |= (1<<4);
+    return update_item_list_.at(i).get();
+  }
+  void add_update_item_list(std::unique_ptr<const ResolvedUpdateItem> v) {
+    update_item_list_.emplace_back(std::move(v));
+  }
+  void set_update_item_list(std::vector<std::unique_ptr<const ResolvedUpdateItem>> v) {
+    update_item_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedUpdateItem>> release_update_item_list() {
+    std::vector<std::unique_ptr<const ResolvedUpdateItem>> tmp;
+    update_item_list_.swap(tmp);
+    return tmp;
+  }
+
+  // IGNORABLE_DEFAULT because this is set for UPDATE conflict action
+  // only.
+  const ResolvedExpr* update_where_expression() const {
+    accessed_ |= (1<<5);
+    return update_where_expression_.get();
+  }
+  void set_update_where_expression(std::unique_ptr<const ResolvedExpr> v) {
+    update_where_expression_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_update_where_expression() {
+    return std::move(update_where_expression_);
+  }
+
+ protected:
+  explicit ResolvedOnConflictClause(
+      ResolvedOnConflictClauseEnums::ConflictAction conflict_action,
+      const std::vector<ResolvedColumn>& conflict_target_column_list,
+      absl::string_view unique_constraint_name,
+      std::unique_ptr<const ResolvedTableScan> insert_row_scan,
+      std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list,
+      std::unique_ptr<const ResolvedExpr> update_where_expression,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      conflict_action_(conflict_action),
+      conflict_target_column_list_(conflict_target_column_list),
+      unique_constraint_name_(unique_constraint_name),
+      insert_row_scan_(std::move(insert_row_scan)),
+      update_item_list_(std::move(update_item_list)),
+      update_where_expression_(std::move(update_where_expression)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedOnConflictClause> MakeResolvedOnConflictClause();
+  friend class ResolvedOnConflictClauseBuilder;
+  friend ResolvedOnConflictClauseBuilder ToBuilder(std::unique_ptr<const ResolvedOnConflictClause>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool conflict_action_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool conflict_target_column_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool unique_constraint_name_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool insert_row_scan_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  bool update_item_list_accessed() const {
+    return accessed_ & (1<<4);
+ }
+  bool update_where_expression_accessed() const {
+    return accessed_ & (1<<5);
+ }
+  ResolvedOnConflictClauseEnums::ConflictAction conflict_action_;
+  std::vector<ResolvedColumn> conflict_target_column_list_;
+  std::string unique_constraint_name_;
+  std::unique_ptr<const ResolvedTableScan> insert_row_scan_;
+  std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list_;
+  std::unique_ptr<const ResolvedExpr> update_where_expression_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedOnConflictClause> MakeResolvedOnConflictClause(
+    ResolvedOnConflictClauseEnums::ConflictAction conflict_action,
+    const std::vector<ResolvedColumn>& conflict_target_column_list,
+    absl::string_view unique_constraint_name,
+    std::unique_ptr<const ResolvedTableScan> insert_row_scan,
+    std::vector<std::unique_ptr<const ResolvedUpdateItem>> update_item_list,
+    std::unique_ptr<const ResolvedExpr> update_where_expression) {
+  return std::unique_ptr<ResolvedOnConflictClause>(new ResolvedOnConflictClause(
+        conflict_action,
+        conflict_target_column_list,
+        unique_constraint_name,
+        std::move(insert_row_scan),
+        std::move(update_item_list),
+        std::move(update_where_expression),
+        ResolvedOnConflictClause::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedOnConflictClause with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  update_item_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename update_item_list_t
+      = std::vector<std::unique_ptr<const ResolvedUpdateItem>>>
+std::unique_ptr<ResolvedOnConflictClause> MakeResolvedOnConflictClause(
+    ResolvedOnConflictClauseEnums::ConflictAction conflict_action,
+    const std::vector<ResolvedColumn>& conflict_target_column_list,
+    absl::string_view unique_constraint_name,
+    std::unique_ptr<const ResolvedTableScan> insert_row_scan,
+    update_item_list_t update_item_list,
+    std::unique_ptr<const ResolvedExpr> update_where_expression) {
+  static_assert(std::is_base_of<
+      ResolvedUpdateItem,
+      typename std::decay<decltype(**(update_item_list.begin()))>::type>::value,
+      "update_item_list must be a container of unique_ptr with elements of type "
+      "ResolvedUpdateItem (or its descendants).");
+  return MakeResolvedOnConflictClause(
+      conflict_action,
+      conflict_target_column_list,
+      unique_constraint_name,
+      std::move(insert_row_scan),
+      {std::make_move_iterator(update_item_list.begin()),
+       std::make_move_iterator(update_item_list.end())},
+      std::move(update_where_expression));
+}
+
+inline std::unique_ptr<ResolvedOnConflictClause> MakeResolvedOnConflictClause() {
+  return std::unique_ptr<ResolvedOnConflictClause>(
+      new ResolvedOnConflictClause());
+}
+
 // This represents one row in the VALUES clause of an INSERT.
 class ResolvedInsertRow final : public ResolvedArgument {
  public:
@@ -27873,6 +28799,12 @@ inline std::unique_ptr<ResolvedInsertRow> MakeResolvedInsertRow() {
 // whether it was read and/or written. The query engine may also require
 // read or write permissions across all columns, including unreferenced
 // columns, depending on the operation.
+//
+// <on_conflict_clause> specifies the alternate action if the insert row
+// causes unique constraint violations. It handles violations in both primary
+// key and UNIQUE constraints. Alternate actions are (1) to do nothing
+// (ignore the insert row), or (2) update the original table row using the
+// specified SET clauses and the optional WHERE clause.
 class ResolvedInsertStmt final : public ResolvedStatement {
  public:
   typedef ResolvedStatement SUPER;
@@ -27901,6 +28833,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       , query_output_column_list_()
       , row_list_()
       , column_access_list_()
+      , on_conflict_clause_()
       , topologically_sorted_generated_column_id_list_()
       , generated_column_expr_list_()
   {}
@@ -27920,6 +28853,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       std::unique_ptr<const ResolvedScan> query,
       const std::vector<ResolvedColumn>& query_output_column_list,
       std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
+      std::unique_ptr<const ResolvedOnConflictClause> on_conflict_clause,
       const std::vector<int>& topologically_sorted_generated_column_id_list,
       std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list
   );
@@ -28167,6 +29101,18 @@ class ResolvedInsertStmt final : public ResolvedStatement {
     return tmp;
   }
 
+  const ResolvedOnConflictClause* on_conflict_clause() const {
+    accessed_ |= (1<<10);
+    return on_conflict_clause_.get();
+  }
+  void set_on_conflict_clause(std::unique_ptr<const ResolvedOnConflictClause> v) {
+    on_conflict_clause_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedOnConflictClause> release_on_conflict_clause() {
+    return std::move(on_conflict_clause_);
+  }
+
   // This returns a topologically sorted list of generated columns
   //  resolved ids in the table accessed by insert statement.
   //  For example for below table
@@ -28183,15 +29129,15 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   // the vector would have corresponding indexes of one of these values
   // gen1 gen2 gen3 OR gen1 gen3 gen2.
   const std::vector<int>& topologically_sorted_generated_column_id_list() const {
-    accessed_ |= (1<<10);
+    accessed_ |= (1<<11);
     return topologically_sorted_generated_column_id_list_;
   }
   int topologically_sorted_generated_column_id_list_size() const {
-    if (topologically_sorted_generated_column_id_list_.empty()) accessed_ |= (1<<10);
+    if (topologically_sorted_generated_column_id_list_.empty()) accessed_ |= (1<<11);
     return static_cast<int>(topologically_sorted_generated_column_id_list_.size());
   }
   int topologically_sorted_generated_column_id_list(int i) const {
-    accessed_ |= (1<<10);
+    accessed_ |= (1<<11);
     return topologically_sorted_generated_column_id_list_.at(i);
   }
   void add_topologically_sorted_generated_column_id_list(int v) {
@@ -28201,7 +29147,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
     topologically_sorted_generated_column_id_list_ = v;
   }
   std::vector<int>* mutable_topologically_sorted_generated_column_id_list() {
-    accessed_ |= (1<<10);
+    accessed_ |= (1<<11);
     return &topologically_sorted_generated_column_id_list_;
   }
 
@@ -28220,15 +29166,15 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   // the ResolvedExpressionColumn for the referred columns in the
   // catalog to corresponding ResolvedColumnRef.
   const std::vector<std::unique_ptr<const ResolvedExpr>>& generated_column_expr_list() const {
-    accessed_ |= (1<<11);
+    accessed_ |= (1<<12);
     return generated_column_expr_list_;
   }
   int generated_column_expr_list_size() const {
-    if (generated_column_expr_list_.empty()) accessed_ |= (1<<11);
+    if (generated_column_expr_list_.empty()) accessed_ |= (1<<12);
     return static_cast<int>(generated_column_expr_list_.size());
   }
   const ResolvedExpr* generated_column_expr_list(int i) const {
-    accessed_ |= (1<<11);
+    accessed_ |= (1<<12);
     return generated_column_expr_list_.at(i).get();
   }
   void add_generated_column_expr_list(std::unique_ptr<const ResolvedExpr> v) {
@@ -28255,6 +29201,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       std::unique_ptr<const ResolvedScan> query,
       const std::vector<ResolvedColumn>& query_output_column_list,
       std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
+      std::unique_ptr<const ResolvedOnConflictClause> on_conflict_clause,
       const std::vector<int>& topologically_sorted_generated_column_id_list,
       std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list,
       ConstructorOverload)
@@ -28270,6 +29217,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
       query_output_column_list_(query_output_column_list),
       row_list_(std::move(row_list)),
       column_access_list_(),
+      on_conflict_clause_(std::move(on_conflict_clause)),
       topologically_sorted_generated_column_id_list_(topologically_sorted_generated_column_id_list),
       generated_column_expr_list_(std::move(generated_column_expr_list)) {
   }
@@ -28314,11 +29262,14 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   bool column_access_list_accessed() const {
     return accessed_ & (1<<9);
  }
-  bool topologically_sorted_generated_column_id_list_accessed() const {
+  bool on_conflict_clause_accessed() const {
     return accessed_ & (1<<10);
  }
-  bool generated_column_expr_list_accessed() const {
+  bool topologically_sorted_generated_column_id_list_accessed() const {
     return accessed_ & (1<<11);
+ }
+  bool generated_column_expr_list_accessed() const {
+    return accessed_ & (1<<12);
  }
   std::unique_ptr<const ResolvedTableScan> table_scan_;
   ResolvedInsertStmt::InsertMode insert_mode_;
@@ -28330,6 +29281,7 @@ class ResolvedInsertStmt final : public ResolvedStatement {
   std::vector<ResolvedColumn> query_output_column_list_;
   std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list_;
   std::vector<ResolvedStatement::ObjectAccess> column_access_list_;
+  std::unique_ptr<const ResolvedOnConflictClause> on_conflict_clause_;
   std::vector<int> topologically_sorted_generated_column_id_list_;
   std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list_;
   mutable std::atomic<uint32_t> accessed_ = {0};
@@ -28345,6 +29297,7 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
     std::unique_ptr<const ResolvedScan> query,
     const std::vector<ResolvedColumn>& query_output_column_list,
     std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
+    std::unique_ptr<const ResolvedOnConflictClause> on_conflict_clause,
     const std::vector<int>& topologically_sorted_generated_column_id_list,
     std::vector<std::unique_ptr<const ResolvedExpr>> generated_column_expr_list) {
   return std::unique_ptr<ResolvedInsertStmt>(new ResolvedInsertStmt(
@@ -28357,6 +29310,7 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
         std::move(query),
         query_output_column_list,
         std::move(row_list),
+        std::move(on_conflict_clause),
         topologically_sorted_generated_column_id_list,
         std::move(generated_column_expr_list),
         ResolvedInsertStmt::NEW_CONSTRUCTOR));
@@ -28370,7 +29324,8 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
     std::vector<std::unique_ptr<const ResolvedColumnRef>> query_parameter_list,
     std::unique_ptr<const ResolvedScan> query,
     const std::vector<ResolvedColumn>& query_output_column_list,
-    std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list) {
+    std::vector<std::unique_ptr<const ResolvedInsertRow>> row_list,
+    std::unique_ptr<const ResolvedOnConflictClause> on_conflict_clause) {
   return MakeResolvedInsertStmt(
       std::move(table_scan),
       insert_mode,
@@ -28381,6 +29336,7 @@ inline std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
       std::move(query),
       query_output_column_list,
       std::move(row_list),
+      std::move(on_conflict_clause),
       /*topologically_sorted_generated_column_id_list=*/{},
       /*generated_column_expr_list=*/{});
 }
@@ -28412,6 +29368,7 @@ std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
     std::unique_ptr<const ResolvedScan> query,
     const std::vector<ResolvedColumn>& query_output_column_list,
     row_list_t row_list,
+    std::unique_ptr<const ResolvedOnConflictClause> on_conflict_clause,
     const std::vector<int>& topologically_sorted_generated_column_id_list,
     generated_column_expr_list_t generated_column_expr_list) {
   static_assert(std::is_base_of<
@@ -28441,6 +29398,7 @@ std::unique_ptr<ResolvedInsertStmt> MakeResolvedInsertStmt(
       query_output_column_list,
       {std::make_move_iterator(row_list.begin()),
        std::make_move_iterator(row_list.end())},
+      std::move(on_conflict_clause),
       topologically_sorted_generated_column_id_list,
       {std::make_move_iterator(generated_column_expr_list.begin()),
        std::make_move_iterator(generated_column_expr_list.end())});
@@ -45645,6 +46603,1534 @@ inline std::unique_ptr<ResolvedUnpivotScan> MakeResolvedUnpivotScan() {
       new ResolvedUnpivotScan());
 }
 
+// A scan for row pattern recognition (the MATCH_RECOGNIZE clause).
+// See (broken link) for details.
+class ResolvedMatchRecognizeScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_MATCH_RECOGNIZE_SCAN;
+
+  typedef ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode AfterMatchSkipMode;
+  static const AfterMatchSkipMode AFTER_MATCH_SKIP_MODE_UNSPECIFIED = ResolvedMatchRecognizeScanEnums::AFTER_MATCH_SKIP_MODE_UNSPECIFIED;
+  static const AfterMatchSkipMode END_OF_MATCH = ResolvedMatchRecognizeScanEnums::END_OF_MATCH;
+  static const AfterMatchSkipMode NEXT_ROW = ResolvedMatchRecognizeScanEnums::NEXT_ROW;
+
+ protected:
+  ResolvedMatchRecognizeScan()
+      : ResolvedScan()
+      , input_scan_()
+      , option_list_()
+      , partition_by_()
+      , order_by_()
+      , pattern_variable_definition_list_()
+      , pattern_()
+      , after_match_skip_mode_()
+      , measure_group_list_()
+  {}
+
+ public:
+
+  ResolvedMatchRecognizeScan(const ResolvedMatchRecognizeScan&) = delete;
+  ResolvedMatchRecognizeScan& operator=(const ResolvedMatchRecognizeScan&) = delete;
+
+  friend std::unique_ptr<ResolvedMatchRecognizeScan> MakeResolvedMatchRecognizeScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::vector<std::unique_ptr<const ResolvedOption>> option_list,
+      std::unique_ptr<const ResolvedWindowPartitioning> partition_by,
+      std::unique_ptr<const ResolvedWindowOrdering> order_by,
+      std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>> pattern_variable_definition_list,
+      std::unique_ptr<const ResolvedMatchRecognizePatternExpr> pattern,
+      ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode after_match_skip_mode,
+      std::vector<std::unique_ptr<const ResolvedMeasureGroup>> measure_group_list
+  );
+  ~ResolvedMatchRecognizeScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_MATCH_RECOGNIZE_SCAN; }
+  std::string node_kind_string() const final { return "MatchRecognizeScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMatchRecognizeScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizeScan>> RestoreFrom(
+      const ResolvedMatchRecognizeScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedScan* input_scan() const {
+    accessed_ |= (1<<0);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedScan> v) {
+    input_scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    accessed_ |= (1<<1);
+    return option_list_;
+  }
+  int option_list_size() const {
+    if (option_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(option_list_.size());
+  }
+  const ResolvedOption* option_list(int i) const {
+    accessed_ |= (1<<1);
+    return option_list_.at(i).get();
+  }
+  void add_option_list(std::unique_ptr<const ResolvedOption> v) {
+    option_list_.emplace_back(std::move(v));
+  }
+  void set_option_list(std::vector<std::unique_ptr<const ResolvedOption>> v) {
+    option_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp;
+    option_list_.swap(tmp);
+    return tmp;
+  }
+
+  // Partitioning columns for this pattern matching operation.
+  // Pattern matching occurs on individual partitions, just like
+  // windowing functions.
+  //
+  // If this list is empty, the whole input table is a single
+  // partition.
+  //
+  // Partitioning columns are always part of the scan's output columns,
+  // along with the measures.
+  const ResolvedWindowPartitioning* partition_by() const {
+    accessed_ |= (1<<2);
+    return partition_by_.get();
+  }
+  void set_partition_by(std::unique_ptr<const ResolvedWindowPartitioning> v) {
+    partition_by_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedWindowPartitioning> release_partition_by() {
+    return std::move(partition_by_);
+  }
+
+  // The ordering list can never be empty.
+  // Collation & hints supported, just like in window specification.
+  // However, ordinals are not allowed.
+  const ResolvedWindowOrdering* order_by() const {
+    accessed_ |= (1<<3);
+    return order_by_.get();
+  }
+  void set_order_by(std::unique_ptr<const ResolvedWindowOrdering> v) {
+    order_by_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedWindowOrdering> release_order_by() {
+    return std::move(order_by_);
+  }
+
+  // The pattern variable definitions. This list is never empty, and
+  // variable names must be unique (ignoring case).
+  const std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>>& pattern_variable_definition_list() const {
+    accessed_ |= (1<<4);
+    return pattern_variable_definition_list_;
+  }
+  int pattern_variable_definition_list_size() const {
+    if (pattern_variable_definition_list_.empty()) accessed_ |= (1<<4);
+    return static_cast<int>(pattern_variable_definition_list_.size());
+  }
+  const ResolvedMatchRecognizeVariableDefinition* pattern_variable_definition_list(int i) const {
+    accessed_ |= (1<<4);
+    return pattern_variable_definition_list_.at(i).get();
+  }
+  void add_pattern_variable_definition_list(std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition> v) {
+    pattern_variable_definition_list_.emplace_back(std::move(v));
+  }
+  void set_pattern_variable_definition_list(std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>> v) {
+    pattern_variable_definition_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>> release_pattern_variable_definition_list() {
+    std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>> tmp;
+    pattern_variable_definition_list_.swap(tmp);
+    return tmp;
+  }
+
+  // The pattern expression to use when matching rows. All row pattern
+  // variables referenced in this expression must be defined in
+  // pattern_variable_definition_list.
+  const ResolvedMatchRecognizePatternExpr* pattern() const {
+    accessed_ |= (1<<5);
+    return pattern_.get();
+  }
+  void set_pattern(std::unique_ptr<const ResolvedMatchRecognizePatternExpr> v) {
+    pattern_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedMatchRecognizePatternExpr> release_pattern() {
+    return std::move(pattern_);
+  }
+
+  // Represents the AFTER MATCH SKIP clause. Can never be
+  // 'UNSPECIFIED'.
+  // See (broken link) for details.
+  ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode after_match_skip_mode() const {
+    accessed_ |= (1<<6);
+    return after_match_skip_mode_;
+  }
+  void set_after_match_skip_mode(ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode v) {
+    after_match_skip_mode_ = v;
+  }
+
+  // The outputs as defined in the MEASURES clause.
+  const std::vector<std::unique_ptr<const ResolvedMeasureGroup>>& measure_group_list() const {
+    accessed_ |= (1<<7);
+    return measure_group_list_;
+  }
+  int measure_group_list_size() const {
+    if (measure_group_list_.empty()) accessed_ |= (1<<7);
+    return static_cast<int>(measure_group_list_.size());
+  }
+  const ResolvedMeasureGroup* measure_group_list(int i) const {
+    accessed_ |= (1<<7);
+    return measure_group_list_.at(i).get();
+  }
+  void add_measure_group_list(std::unique_ptr<const ResolvedMeasureGroup> v) {
+    measure_group_list_.emplace_back(std::move(v));
+  }
+  void set_measure_group_list(std::vector<std::unique_ptr<const ResolvedMeasureGroup>> v) {
+    measure_group_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedMeasureGroup>> release_measure_group_list() {
+    std::vector<std::unique_ptr<const ResolvedMeasureGroup>> tmp;
+    measure_group_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedMatchRecognizeScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::vector<std::unique_ptr<const ResolvedOption>> option_list,
+      std::unique_ptr<const ResolvedWindowPartitioning> partition_by,
+      std::unique_ptr<const ResolvedWindowOrdering> order_by,
+      std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>> pattern_variable_definition_list,
+      std::unique_ptr<const ResolvedMatchRecognizePatternExpr> pattern,
+      ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode after_match_skip_mode,
+      std::vector<std::unique_ptr<const ResolvedMeasureGroup>> measure_group_list,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      input_scan_(std::move(input_scan)),
+      option_list_(std::move(option_list)),
+      partition_by_(std::move(partition_by)),
+      order_by_(std::move(order_by)),
+      pattern_variable_definition_list_(std::move(pattern_variable_definition_list)),
+      pattern_(std::move(pattern)),
+      after_match_skip_mode_(after_match_skip_mode),
+      measure_group_list_(std::move(measure_group_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedMatchRecognizeScan> MakeResolvedMatchRecognizeScan();
+  friend class ResolvedMatchRecognizeScanBuilder;
+  friend ResolvedMatchRecognizeScanBuilder ToBuilder(std::unique_ptr<const ResolvedMatchRecognizeScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool option_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool partition_by_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool order_by_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  bool pattern_variable_definition_list_accessed() const {
+    return accessed_ & (1<<4);
+ }
+  bool pattern_accessed() const {
+    return accessed_ & (1<<5);
+ }
+  bool after_match_skip_mode_accessed() const {
+    return accessed_ & (1<<6);
+ }
+  bool measure_group_list_accessed() const {
+    return accessed_ & (1<<7);
+ }
+  std::unique_ptr<const ResolvedScan> input_scan_;
+  std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
+  std::unique_ptr<const ResolvedWindowPartitioning> partition_by_;
+  std::unique_ptr<const ResolvedWindowOrdering> order_by_;
+  std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>> pattern_variable_definition_list_;
+  std::unique_ptr<const ResolvedMatchRecognizePatternExpr> pattern_;
+  ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode after_match_skip_mode_;
+  std::vector<std::unique_ptr<const ResolvedMeasureGroup>> measure_group_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedMatchRecognizeScan> MakeResolvedMatchRecognizeScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    std::vector<std::unique_ptr<const ResolvedOption>> option_list,
+    std::unique_ptr<const ResolvedWindowPartitioning> partition_by,
+    std::unique_ptr<const ResolvedWindowOrdering> order_by,
+    std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>> pattern_variable_definition_list,
+    std::unique_ptr<const ResolvedMatchRecognizePatternExpr> pattern,
+    ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode after_match_skip_mode,
+    std::vector<std::unique_ptr<const ResolvedMeasureGroup>> measure_group_list) {
+  return std::unique_ptr<ResolvedMatchRecognizeScan>(new ResolvedMatchRecognizeScan(
+        column_list,
+        std::move(input_scan),
+        std::move(option_list),
+        std::move(partition_by),
+        std::move(order_by),
+        std::move(pattern_variable_definition_list),
+        std::move(pattern),
+        after_match_skip_mode,
+        std::move(measure_group_list),
+        ResolvedMatchRecognizeScan::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedMatchRecognizeScan with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  option_list, pattern_variable_definition_list, measure_group_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename option_list_t
+      = std::vector<std::unique_ptr<const ResolvedOption>>,
+  typename pattern_variable_definition_list_t
+      = std::vector<std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>>,
+  typename measure_group_list_t
+      = std::vector<std::unique_ptr<const ResolvedMeasureGroup>>>
+std::unique_ptr<ResolvedMatchRecognizeScan> MakeResolvedMatchRecognizeScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    option_list_t option_list,
+    std::unique_ptr<const ResolvedWindowPartitioning> partition_by,
+    std::unique_ptr<const ResolvedWindowOrdering> order_by,
+    pattern_variable_definition_list_t pattern_variable_definition_list,
+    std::unique_ptr<const ResolvedMatchRecognizePatternExpr> pattern,
+    ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode after_match_skip_mode,
+    measure_group_list_t measure_group_list) {
+  static_assert(std::is_base_of<
+      ResolvedOption,
+      typename std::decay<decltype(**(option_list.begin()))>::type>::value,
+      "option_list must be a container of unique_ptr with elements of type "
+      "ResolvedOption (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedMatchRecognizeVariableDefinition,
+      typename std::decay<decltype(**(pattern_variable_definition_list.begin()))>::type>::value,
+      "pattern_variable_definition_list must be a container of unique_ptr with elements of type "
+      "ResolvedMatchRecognizeVariableDefinition (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedMeasureGroup,
+      typename std::decay<decltype(**(measure_group_list.begin()))>::type>::value,
+      "measure_group_list must be a container of unique_ptr with elements of type "
+      "ResolvedMeasureGroup (or its descendants).");
+  return MakeResolvedMatchRecognizeScan(
+      column_list,
+      std::move(input_scan),
+      {std::make_move_iterator(option_list.begin()),
+       std::make_move_iterator(option_list.end())},
+      std::move(partition_by),
+      std::move(order_by),
+      {std::make_move_iterator(pattern_variable_definition_list.begin()),
+       std::make_move_iterator(pattern_variable_definition_list.end())},
+      std::move(pattern),
+      after_match_skip_mode,
+      {std::make_move_iterator(measure_group_list.begin()),
+       std::make_move_iterator(measure_group_list.end())});
+}
+
+inline std::unique_ptr<ResolvedMatchRecognizeScan> MakeResolvedMatchRecognizeScan() {
+  return std::unique_ptr<ResolvedMatchRecognizeScan>(
+      new ResolvedMatchRecognizeScan());
+}
+
+// Must be contained directly in a ResolvedMatchRecognizeScan. Groups all
+// aggregations ranging over the same pattern variable in the MEASURES clause
+// a MATCH_RECOGNIZE. This is a similar concept to
+// ResolvedAnalyticFunctionGroup.
+//
+// For example, for this MEASURES clause:
+//   MEASURES max(A.x) - min(b.x - b.y), sum(c.x) - avg(x) - min(A.z)
+// There will be 4 groups:
+//   1. (A, [max(A.x), min(A.z)])
+//   2. (b, [min(b.x - b.y)])
+//   3. (c, sum(c.x))
+//   4. [avg(x)] universal group.
+//
+// The last group is the universal group. It ranges over all rows in the
+// match. There can only be one such group in the ResolvedMatchRecognizeScan.
+class ResolvedMeasureGroup final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_MEASURE_GROUP;
+
+ protected:
+  ResolvedMeasureGroup()
+      : ResolvedArgument()
+      , pattern_variable_ref_()
+      , aggregate_list_()
+  {}
+
+ public:
+
+  ResolvedMeasureGroup(const ResolvedMeasureGroup&) = delete;
+  ResolvedMeasureGroup& operator=(const ResolvedMeasureGroup&) = delete;
+
+  friend std::unique_ptr<ResolvedMeasureGroup> MakeResolvedMeasureGroup(
+      std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> pattern_variable_ref,
+      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> aggregate_list
+  );
+  ~ResolvedMeasureGroup() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_MEASURE_GROUP; }
+  std::string node_kind_string() const final { return "MeasureGroup"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMeasureGroupProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedMeasureGroup>> RestoreFrom(
+      const ResolvedMeasureGroupProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  // Nullptr for the universal group, or name of the referenced pattern
+  // variable, in which case this must match the name exactly as listed
+  // in the `pattern_variable_definition_list` of the enclosing
+  // ResolvedMatchRecognizeScan.
+  const ResolvedMatchRecognizePatternVariableRef* pattern_variable_ref() const {
+    accessed_ |= (1<<0);
+    return pattern_variable_ref_.get();
+  }
+  void set_pattern_variable_ref(std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> v) {
+    pattern_variable_ref_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> release_pattern_variable_ref() {
+    return std::move(pattern_variable_ref_);
+  }
+
+  // Aggregations that are part of this group, all ranging over rows
+  // assigned to the designated pattern variable. If this is the
+  // universal group, the aggregations range over all rows in the
+  // match.
+  // This list is never empty.
+  const std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>& aggregate_list() const {
+    accessed_ |= (1<<1);
+    return aggregate_list_;
+  }
+  int aggregate_list_size() const {
+    if (aggregate_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(aggregate_list_.size());
+  }
+  const ResolvedComputedColumnBase* aggregate_list(int i) const {
+    accessed_ |= (1<<1);
+    return aggregate_list_.at(i).get();
+  }
+  void add_aggregate_list(std::unique_ptr<const ResolvedComputedColumnBase> v) {
+    aggregate_list_.emplace_back(std::move(v));
+  }
+  void set_aggregate_list(std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> v) {
+    aggregate_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> release_aggregate_list() {
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> tmp;
+    aggregate_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedMeasureGroup(
+      std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> pattern_variable_ref,
+      std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> aggregate_list,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      pattern_variable_ref_(std::move(pattern_variable_ref)),
+      aggregate_list_(std::move(aggregate_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedMeasureGroup> MakeResolvedMeasureGroup();
+  friend class ResolvedMeasureGroupBuilder;
+  friend ResolvedMeasureGroupBuilder ToBuilder(std::unique_ptr<const ResolvedMeasureGroup>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool pattern_variable_ref_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool aggregate_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> pattern_variable_ref_;
+  std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> aggregate_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedMeasureGroup> MakeResolvedMeasureGroup(
+    std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> pattern_variable_ref,
+    std::vector<std::unique_ptr<const ResolvedComputedColumnBase>> aggregate_list) {
+  return std::unique_ptr<ResolvedMeasureGroup>(new ResolvedMeasureGroup(
+        std::move(pattern_variable_ref),
+        std::move(aggregate_list),
+        ResolvedMeasureGroup::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedMeasureGroup with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  aggregate_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename aggregate_list_t
+      = std::vector<std::unique_ptr<const ResolvedComputedColumnBase>>>
+std::unique_ptr<ResolvedMeasureGroup> MakeResolvedMeasureGroup(
+    std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> pattern_variable_ref,
+    aggregate_list_t aggregate_list) {
+  static_assert(std::is_base_of<
+      ResolvedComputedColumnBase,
+      typename std::decay<decltype(**(aggregate_list.begin()))>::type>::value,
+      "aggregate_list must be a container of unique_ptr with elements of type "
+      "ResolvedComputedColumnBase (or its descendants).");
+  return MakeResolvedMeasureGroup(
+      std::move(pattern_variable_ref),
+      {std::make_move_iterator(aggregate_list.begin()),
+       std::make_move_iterator(aggregate_list.end())});
+}
+
+inline std::unique_ptr<ResolvedMeasureGroup> MakeResolvedMeasureGroup() {
+  return std::unique_ptr<ResolvedMeasureGroup>(
+      new ResolvedMeasureGroup());
+}
+
+// Represents a row pattern variable definition.
+// This node can only be used under ResolvedMatchRecognizeScan.
+class ResolvedMatchRecognizeVariableDefinition final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_MATCH_RECOGNIZE_VARIABLE_DEFINITION;
+
+ protected:
+  ResolvedMatchRecognizeVariableDefinition()
+      : ResolvedArgument()
+      , name_()
+      , predicate_()
+  {}
+
+ public:
+
+  ResolvedMatchRecognizeVariableDefinition(const ResolvedMatchRecognizeVariableDefinition&) = delete;
+  ResolvedMatchRecognizeVariableDefinition& operator=(const ResolvedMatchRecognizeVariableDefinition&) = delete;
+
+  friend std::unique_ptr<ResolvedMatchRecognizeVariableDefinition> MakeResolvedMatchRecognizeVariableDefinition(
+      absl::string_view name,
+      std::unique_ptr<const ResolvedExpr> predicate
+  );
+  ~ResolvedMatchRecognizeVariableDefinition() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_MATCH_RECOGNIZE_VARIABLE_DEFINITION; }
+  std::string node_kind_string() const final { return "MatchRecognizeVariableDefinition"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMatchRecognizeVariableDefinitionProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizeVariableDefinition>> RestoreFrom(
+      const ResolvedMatchRecognizeVariableDefinitionProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  // The name of the pattern variable. The name cannot be
+  // empty and must be unique (case-insensitively) within this
+  // ResolvedMatchRecognizeScan, but every place this name is
+  // referenced elsewhere (e.g. variable ref), it will be identical,
+  // including case.
+  const std::string& name() const {
+    accessed_ |= (1<<0);
+    return name_;
+  }
+  void set_name(absl::string_view v) {
+    name_ = v;
+  }
+
+  // Predicate for this pattern variable. This is a BOOL expression to
+  // compute whether or not a given row can be qualified for this
+  // pattern variable.
+  const ResolvedExpr* predicate() const {
+    accessed_ |= (1<<1);
+    return predicate_.get();
+  }
+  void set_predicate(std::unique_ptr<const ResolvedExpr> v) {
+    predicate_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_predicate() {
+    return std::move(predicate_);
+  }
+
+ protected:
+  explicit ResolvedMatchRecognizeVariableDefinition(
+      absl::string_view name,
+      std::unique_ptr<const ResolvedExpr> predicate,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      name_(name),
+      predicate_(std::move(predicate)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedMatchRecognizeVariableDefinition> MakeResolvedMatchRecognizeVariableDefinition();
+  friend class ResolvedMatchRecognizeVariableDefinitionBuilder;
+  friend ResolvedMatchRecognizeVariableDefinitionBuilder ToBuilder(std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool predicate_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::string name_;
+  std::unique_ptr<const ResolvedExpr> predicate_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedMatchRecognizeVariableDefinition> MakeResolvedMatchRecognizeVariableDefinition(
+    absl::string_view name,
+    std::unique_ptr<const ResolvedExpr> predicate) {
+  return std::unique_ptr<ResolvedMatchRecognizeVariableDefinition>(new ResolvedMatchRecognizeVariableDefinition(
+        name,
+        std::move(predicate),
+        ResolvedMatchRecognizeVariableDefinition::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedMatchRecognizeVariableDefinition> MakeResolvedMatchRecognizeVariableDefinition() {
+  return std::unique_ptr<ResolvedMatchRecognizeVariableDefinition>(
+      new ResolvedMatchRecognizeVariableDefinition());
+}
+
+// Abstract class for row pattern expression.
+class ResolvedMatchRecognizePatternExpr  : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  // Number of leaf node types that exist as descendants of this abstract type.
+  static const int NUM_DESCENDANT_LEAF_TYPES = 5;
+
+ public:
+
+  ResolvedMatchRecognizePatternExpr(const ResolvedMatchRecognizePatternExpr&) = delete;
+  ResolvedMatchRecognizePatternExpr& operator=(const ResolvedMatchRecognizePatternExpr&) = delete;
+
+  ~ResolvedMatchRecognizePatternExpr() override;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const override;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const override;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMatchRecognizePatternExprProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  virtual absl::Status SaveTo(
+      Type::FileDescriptorSetMap* file_descriptor_set_map,
+      AnyResolvedMatchRecognizePatternExprProto* proto) const = 0;
+  static absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizePatternExpr>> RestoreFrom(
+      const AnyResolvedMatchRecognizePatternExprProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  ResolvedMatchRecognizePatternExpr()
+      : ResolvedArgument()
+  {}
+
+  explicit ResolvedMatchRecognizePatternExpr(
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend class ResolvedMatchRecognizePatternEmptyBuilder;
+  friend class ResolvedMatchRecognizePatternAnchorBuilder;
+  friend class ResolvedMatchRecognizePatternVariableRefBuilder;
+  friend class ResolvedMatchRecognizePatternOperationBuilder;
+  friend class ResolvedMatchRecognizePatternQuantificationBuilder;
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+// Represents an empty pattern.
+// * An empty pattern consumes zero rows and always matches successfully.
+// * An empty pattern on zero input rows will not produce a match, since
+//   matches are just searched for at each distinct start row.
+class ResolvedMatchRecognizePatternEmpty final : public ResolvedMatchRecognizePatternExpr {
+ public:
+  typedef ResolvedMatchRecognizePatternExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_MATCH_RECOGNIZE_PATTERN_EMPTY;
+
+ protected:
+  ResolvedMatchRecognizePatternEmpty()
+      : ResolvedMatchRecognizePatternExpr()
+  {}
+
+ public:
+
+  ResolvedMatchRecognizePatternEmpty(const ResolvedMatchRecognizePatternEmpty&) = delete;
+  ResolvedMatchRecognizePatternEmpty& operator=(const ResolvedMatchRecognizePatternEmpty&) = delete;
+
+  ~ResolvedMatchRecognizePatternEmpty() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_MATCH_RECOGNIZE_PATTERN_EMPTY; }
+  std::string node_kind_string() const final { return "MatchRecognizePatternEmpty"; }
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMatchRecognizePatternEmptyProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedMatchRecognizePatternExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizePatternEmpty>> RestoreFrom(
+      const ResolvedMatchRecognizePatternEmptyProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  explicit ResolvedMatchRecognizePatternEmpty(
+      ConstructorOverload)
+      : ResolvedMatchRecognizePatternExpr(
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend std::unique_ptr<ResolvedMatchRecognizePatternEmpty> MakeResolvedMatchRecognizePatternEmpty();
+  friend class ResolvedMatchRecognizePatternEmptyBuilder;
+  friend ResolvedMatchRecognizePatternEmptyBuilder ToBuilder(std::unique_ptr<const ResolvedMatchRecognizePatternEmpty>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternEmpty> MakeResolvedMatchRecognizePatternEmpty() {
+  return std::unique_ptr<ResolvedMatchRecognizePatternEmpty>(
+      new ResolvedMatchRecognizePatternEmpty());
+}
+
+// Represents a start or end anchor (^ or $, respectively.)
+// * A START anchor requires the match to be at the start of the partition.
+// * An END anchor requires the match to be at the end of the partition.
+// * Just like the empty pattern, anchors consume zero rows and do not
+//   produce matches on zero input rows.
+class ResolvedMatchRecognizePatternAnchor final : public ResolvedMatchRecognizePatternExpr {
+ public:
+  typedef ResolvedMatchRecognizePatternExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_MATCH_RECOGNIZE_PATTERN_ANCHOR;
+
+  typedef ResolvedMatchRecognizePatternAnchorEnums::Mode Mode;
+  static const Mode MODE_UNSPECIFIED = ResolvedMatchRecognizePatternAnchorEnums::MODE_UNSPECIFIED;
+  static const Mode START = ResolvedMatchRecognizePatternAnchorEnums::START;
+  static const Mode END = ResolvedMatchRecognizePatternAnchorEnums::END;
+
+ protected:
+  ResolvedMatchRecognizePatternAnchor()
+      : ResolvedMatchRecognizePatternExpr()
+      , mode_()
+  {}
+
+ public:
+
+  ResolvedMatchRecognizePatternAnchor(const ResolvedMatchRecognizePatternAnchor&) = delete;
+  ResolvedMatchRecognizePatternAnchor& operator=(const ResolvedMatchRecognizePatternAnchor&) = delete;
+
+  friend std::unique_ptr<ResolvedMatchRecognizePatternAnchor> MakeResolvedMatchRecognizePatternAnchor(
+      ResolvedMatchRecognizePatternAnchorEnums::Mode mode
+  );
+  ~ResolvedMatchRecognizePatternAnchor() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_MATCH_RECOGNIZE_PATTERN_ANCHOR; }
+  std::string node_kind_string() const final { return "MatchRecognizePatternAnchor"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMatchRecognizePatternAnchorProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedMatchRecognizePatternExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizePatternAnchor>> RestoreFrom(
+      const ResolvedMatchRecognizePatternAnchorProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  ResolvedMatchRecognizePatternAnchorEnums::Mode mode() const {
+    accessed_ |= (1<<0);
+    return mode_;
+  }
+  void set_mode(ResolvedMatchRecognizePatternAnchorEnums::Mode v) {
+    mode_ = v;
+  }
+
+ protected:
+  explicit ResolvedMatchRecognizePatternAnchor(
+      ResolvedMatchRecognizePatternAnchorEnums::Mode mode,
+      ConstructorOverload)
+      : ResolvedMatchRecognizePatternExpr(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      mode_(mode) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedMatchRecognizePatternAnchor> MakeResolvedMatchRecognizePatternAnchor();
+  friend class ResolvedMatchRecognizePatternAnchorBuilder;
+  friend ResolvedMatchRecognizePatternAnchorBuilder ToBuilder(std::unique_ptr<const ResolvedMatchRecognizePatternAnchor>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool mode_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  ResolvedMatchRecognizePatternAnchorEnums::Mode mode_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternAnchor> MakeResolvedMatchRecognizePatternAnchor(
+    ResolvedMatchRecognizePatternAnchorEnums::Mode mode) {
+  return std::unique_ptr<ResolvedMatchRecognizePatternAnchor>(new ResolvedMatchRecognizePatternAnchor(
+        mode,
+        ResolvedMatchRecognizePatternAnchor::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternAnchor> MakeResolvedMatchRecognizePatternAnchor() {
+  return std::unique_ptr<ResolvedMatchRecognizePatternAnchor>(
+      new ResolvedMatchRecognizePatternAnchor());
+}
+
+// A reference to a row pattern variable.
+class ResolvedMatchRecognizePatternVariableRef final : public ResolvedMatchRecognizePatternExpr {
+ public:
+  typedef ResolvedMatchRecognizePatternExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_MATCH_RECOGNIZE_PATTERN_VARIABLE_REF;
+
+ protected:
+  ResolvedMatchRecognizePatternVariableRef()
+      : ResolvedMatchRecognizePatternExpr()
+      , name_()
+  {}
+
+ public:
+
+  ResolvedMatchRecognizePatternVariableRef(const ResolvedMatchRecognizePatternVariableRef&) = delete;
+  ResolvedMatchRecognizePatternVariableRef& operator=(const ResolvedMatchRecognizePatternVariableRef&) = delete;
+
+  friend std::unique_ptr<ResolvedMatchRecognizePatternVariableRef> MakeResolvedMatchRecognizePatternVariableRef(
+      absl::string_view name
+  );
+  ~ResolvedMatchRecognizePatternVariableRef() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_MATCH_RECOGNIZE_PATTERN_VARIABLE_REF; }
+  std::string node_kind_string() const final { return "MatchRecognizePatternVariableRef"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMatchRecognizePatternVariableRefProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedMatchRecognizePatternExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizePatternVariableRef>> RestoreFrom(
+      const ResolvedMatchRecognizePatternVariableRefProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  // Name of the referenced pattern variable. This must match the
+  // the name exactly as listed in the
+  // `pattern_variable_definition_list` of the enclosing
+  // ResolvedMatchRecognizeScan.
+  const std::string& name() const {
+    accessed_ |= (1<<0);
+    return name_;
+  }
+  void set_name(absl::string_view v) {
+    name_ = v;
+  }
+
+ protected:
+  explicit ResolvedMatchRecognizePatternVariableRef(
+      absl::string_view name,
+      ConstructorOverload)
+      : ResolvedMatchRecognizePatternExpr(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      name_(name) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedMatchRecognizePatternVariableRef> MakeResolvedMatchRecognizePatternVariableRef();
+  friend class ResolvedMatchRecognizePatternVariableRefBuilder;
+  friend ResolvedMatchRecognizePatternVariableRefBuilder ToBuilder(std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  std::string name_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternVariableRef> MakeResolvedMatchRecognizePatternVariableRef(
+    absl::string_view name) {
+  return std::unique_ptr<ResolvedMatchRecognizePatternVariableRef>(new ResolvedMatchRecognizePatternVariableRef(
+        name,
+        ResolvedMatchRecognizePatternVariableRef::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternVariableRef> MakeResolvedMatchRecognizePatternVariableRef() {
+  return std::unique_ptr<ResolvedMatchRecognizePatternVariableRef>(
+      new ResolvedMatchRecognizePatternVariableRef());
+}
+
+// An N-ary operation over row pattern sub-expressions.
+class ResolvedMatchRecognizePatternOperation final : public ResolvedMatchRecognizePatternExpr {
+ public:
+  typedef ResolvedMatchRecognizePatternExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_MATCH_RECOGNIZE_PATTERN_OPERATION;
+
+  typedef ResolvedMatchRecognizePatternOperationEnums::MatchRecognizePatternOperationType MatchRecognizePatternOperationType;
+  static const MatchRecognizePatternOperationType OPERATION_TYPE_UNSPECIFIED = ResolvedMatchRecognizePatternOperationEnums::OPERATION_TYPE_UNSPECIFIED;
+  static const MatchRecognizePatternOperationType CONCAT = ResolvedMatchRecognizePatternOperationEnums::CONCAT;
+  static const MatchRecognizePatternOperationType ALTERNATE = ResolvedMatchRecognizePatternOperationEnums::ALTERNATE;
+
+ protected:
+  ResolvedMatchRecognizePatternOperation()
+      : ResolvedMatchRecognizePatternExpr()
+      , op_type_()
+      , operand_list_()
+  {}
+
+ public:
+
+  ResolvedMatchRecognizePatternOperation(const ResolvedMatchRecognizePatternOperation&) = delete;
+  ResolvedMatchRecognizePatternOperation& operator=(const ResolvedMatchRecognizePatternOperation&) = delete;
+
+  friend std::unique_ptr<ResolvedMatchRecognizePatternOperation> MakeResolvedMatchRecognizePatternOperation(
+      ResolvedMatchRecognizePatternOperation::MatchRecognizePatternOperationType op_type,
+      std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> operand_list
+  );
+  ~ResolvedMatchRecognizePatternOperation() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_MATCH_RECOGNIZE_PATTERN_OPERATION; }
+  std::string node_kind_string() const final { return "MatchRecognizePatternOperation"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMatchRecognizePatternOperationProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedMatchRecognizePatternExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizePatternOperation>> RestoreFrom(
+      const ResolvedMatchRecognizePatternOperationProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  ResolvedMatchRecognizePatternOperation::MatchRecognizePatternOperationType op_type() const {
+    accessed_ |= (1<<0);
+    return op_type_;
+  }
+  void set_op_type(ResolvedMatchRecognizePatternOperation::MatchRecognizePatternOperationType v) {
+    op_type_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>>& operand_list() const {
+    accessed_ |= (1<<1);
+    return operand_list_;
+  }
+  int operand_list_size() const {
+    if (operand_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(operand_list_.size());
+  }
+  const ResolvedMatchRecognizePatternExpr* operand_list(int i) const {
+    accessed_ |= (1<<1);
+    return operand_list_.at(i).get();
+  }
+  void add_operand_list(std::unique_ptr<const ResolvedMatchRecognizePatternExpr> v) {
+    operand_list_.emplace_back(std::move(v));
+  }
+  void set_operand_list(std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> v) {
+    operand_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> release_operand_list() {
+    std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> tmp;
+    operand_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedMatchRecognizePatternOperation(
+      ResolvedMatchRecognizePatternOperation::MatchRecognizePatternOperationType op_type,
+      std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> operand_list,
+      ConstructorOverload)
+      : ResolvedMatchRecognizePatternExpr(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      op_type_(op_type),
+      operand_list_(std::move(operand_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedMatchRecognizePatternOperation> MakeResolvedMatchRecognizePatternOperation();
+  friend class ResolvedMatchRecognizePatternOperationBuilder;
+  friend ResolvedMatchRecognizePatternOperationBuilder ToBuilder(std::unique_ptr<const ResolvedMatchRecognizePatternOperation>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool op_type_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool operand_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  ResolvedMatchRecognizePatternOperation::MatchRecognizePatternOperationType op_type_;
+  std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> operand_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternOperation> MakeResolvedMatchRecognizePatternOperation(
+    ResolvedMatchRecognizePatternOperation::MatchRecognizePatternOperationType op_type,
+    std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>> operand_list) {
+  return std::unique_ptr<ResolvedMatchRecognizePatternOperation>(new ResolvedMatchRecognizePatternOperation(
+        op_type,
+        std::move(operand_list),
+        ResolvedMatchRecognizePatternOperation::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedMatchRecognizePatternOperation with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  operand_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename operand_list_t
+      = std::vector<std::unique_ptr<const ResolvedMatchRecognizePatternExpr>>>
+std::unique_ptr<ResolvedMatchRecognizePatternOperation> MakeResolvedMatchRecognizePatternOperation(
+    ResolvedMatchRecognizePatternOperation::MatchRecognizePatternOperationType op_type,
+    operand_list_t operand_list) {
+  static_assert(std::is_base_of<
+      ResolvedMatchRecognizePatternExpr,
+      typename std::decay<decltype(**(operand_list.begin()))>::type>::value,
+      "operand_list must be a container of unique_ptr with elements of type "
+      "ResolvedMatchRecognizePatternExpr (or its descendants).");
+  return MakeResolvedMatchRecognizePatternOperation(
+      op_type,
+      {std::make_move_iterator(operand_list.begin()),
+       std::make_move_iterator(operand_list.end())});
+}
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternOperation> MakeResolvedMatchRecognizePatternOperation() {
+  return std::unique_ptr<ResolvedMatchRecognizePatternOperation>(
+      new ResolvedMatchRecognizePatternOperation());
+}
+
+// Quantification on a row pattern expression, e.g. A+, A?, A{n, m}, ..etc.
+// Regardless of the original syntax used, e.g. a symbol or fixed- or custom-
+// bounded, e.g. A+, A{3} or A{1,2}?, the quantifier is represented by the
+// lower and upper bounds, and a boolean indicating whether the quantifier is
+// reluctant or not.
+//
+// The upper and lower bounds are represented as ResolvedExprs, but currently
+// must be literals or parameters. Their type is INT64.
+//
+// It is a runtime error if the upper bound is present and is smaller than
+// the lower bound.
+// Any pattern expression can be quantified, including already-quantified
+// pattern expressions, For example, the pattern expression
+//   ( (A|B){2} ) {2,4}
+// specifies either 2, 3 or 4 *pairs* of rows, each matches A or B.
+class ResolvedMatchRecognizePatternQuantification final : public ResolvedMatchRecognizePatternExpr {
+ public:
+  typedef ResolvedMatchRecognizePatternExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_MATCH_RECOGNIZE_PATTERN_QUANTIFICATION;
+
+ protected:
+  ResolvedMatchRecognizePatternQuantification()
+      : ResolvedMatchRecognizePatternExpr()
+      , operand_()
+      , lower_bound_()
+      , upper_bound_()
+      , is_reluctant_()
+  {}
+
+ public:
+
+  ResolvedMatchRecognizePatternQuantification(const ResolvedMatchRecognizePatternQuantification&) = delete;
+  ResolvedMatchRecognizePatternQuantification& operator=(const ResolvedMatchRecognizePatternQuantification&) = delete;
+
+  friend std::unique_ptr<ResolvedMatchRecognizePatternQuantification> MakeResolvedMatchRecognizePatternQuantification(
+      std::unique_ptr<const ResolvedMatchRecognizePatternExpr> operand,
+      std::unique_ptr<const ResolvedExpr> lower_bound,
+      std::unique_ptr<const ResolvedExpr> upper_bound,
+      bool is_reluctant
+  );
+  ~ResolvedMatchRecognizePatternQuantification() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_MATCH_RECOGNIZE_PATTERN_QUANTIFICATION; }
+  std::string node_kind_string() const final { return "MatchRecognizePatternQuantification"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedMatchRecognizePatternQuantificationProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedMatchRecognizePatternExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizePatternQuantification>> RestoreFrom(
+      const ResolvedMatchRecognizePatternQuantificationProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  // The sub-pattern to be repeated according to this quantifier.
+  // Cannot be nullptr.
+  const ResolvedMatchRecognizePatternExpr* operand() const {
+    accessed_ |= (1<<0);
+    return operand_.get();
+  }
+  void set_operand(std::unique_ptr<const ResolvedMatchRecognizePatternExpr> v) {
+    operand_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedMatchRecognizePatternExpr> release_operand() {
+    return std::move(operand_);
+  }
+
+  // Lower bound of the quantification. Cannot be nullptr.
+  const ResolvedExpr* lower_bound() const {
+    accessed_ |= (1<<1);
+    return lower_bound_.get();
+  }
+  void set_lower_bound(std::unique_ptr<const ResolvedExpr> v) {
+    lower_bound_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_lower_bound() {
+    return std::move(lower_bound_);
+  }
+
+  // The upper bound of the quantification. Can be nullptr, in which
+  // case it means there is no upper bound (i.e., unlimited).
+  const ResolvedExpr* upper_bound() const {
+    accessed_ |= (1<<2);
+    return upper_bound_.get();
+  }
+  void set_upper_bound(std::unique_ptr<const ResolvedExpr> v) {
+    upper_bound_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_upper_bound() {
+    return std::move(upper_bound_);
+  }
+
+  // If true, this quantifier is reluctant. If false, it is greedy.
+  bool is_reluctant() const {
+    accessed_ |= (1<<3);
+    return is_reluctant_;
+  }
+  void set_is_reluctant(bool v) {
+    is_reluctant_ = v;
+  }
+
+ protected:
+  explicit ResolvedMatchRecognizePatternQuantification(
+      std::unique_ptr<const ResolvedMatchRecognizePatternExpr> operand,
+      std::unique_ptr<const ResolvedExpr> lower_bound,
+      std::unique_ptr<const ResolvedExpr> upper_bound,
+      bool is_reluctant,
+      ConstructorOverload)
+      : ResolvedMatchRecognizePatternExpr(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      operand_(std::move(operand)),
+      lower_bound_(std::move(lower_bound)),
+      upper_bound_(std::move(upper_bound)),
+      is_reluctant_(is_reluctant) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedMatchRecognizePatternQuantification> MakeResolvedMatchRecognizePatternQuantification();
+  friend class ResolvedMatchRecognizePatternQuantificationBuilder;
+  friend ResolvedMatchRecognizePatternQuantificationBuilder ToBuilder(std::unique_ptr<const ResolvedMatchRecognizePatternQuantification>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool operand_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool lower_bound_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool upper_bound_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool is_reluctant_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  std::unique_ptr<const ResolvedMatchRecognizePatternExpr> operand_;
+  std::unique_ptr<const ResolvedExpr> lower_bound_;
+  std::unique_ptr<const ResolvedExpr> upper_bound_;
+  bool is_reluctant_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternQuantification> MakeResolvedMatchRecognizePatternQuantification(
+    std::unique_ptr<const ResolvedMatchRecognizePatternExpr> operand,
+    std::unique_ptr<const ResolvedExpr> lower_bound,
+    std::unique_ptr<const ResolvedExpr> upper_bound,
+    bool is_reluctant) {
+  return std::unique_ptr<ResolvedMatchRecognizePatternQuantification>(new ResolvedMatchRecognizePatternQuantification(
+        std::move(operand),
+        std::move(lower_bound),
+        std::move(upper_bound),
+        is_reluctant,
+        ResolvedMatchRecognizePatternQuantification::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedMatchRecognizePatternQuantification> MakeResolvedMatchRecognizePatternQuantification() {
+  return std::unique_ptr<ResolvedMatchRecognizePatternQuantification>(
+      new ResolvedMatchRecognizePatternQuantification());
+}
+
 // CLONE DATA INTO <table_name> FROM ...
 //
 // <target_table> the table to clone data into. Cannot be value table.
@@ -47074,6 +49560,5470 @@ inline std::unique_ptr<ResolvedAuxLoadDataStmt> MakeResolvedAuxLoadDataStmt() {
 }
 
 // This statement:
+//   CREATE [OR REPLACE] PROPERTY GRAPH [IF NOT EXISTS] <name_path>
+//   [OPTIONS (<option_list>)]
+//   NODE TABLES(<node_table_list>)
+//   [EDGE TABLES(<edge_table_list>)]
+//
+// <option_list> is a placeholder for engine-specific directives.
+// <node_table_list> has the list of node table definitions.
+// <edge_table_list> has the list of edge table definitions.
+class ResolvedCreatePropertyGraphStmt final : public ResolvedCreateStatement {
+ public:
+  typedef ResolvedCreateStatement SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_CREATE_PROPERTY_GRAPH_STMT;
+
+ protected:
+  ResolvedCreatePropertyGraphStmt()
+      : ResolvedCreateStatement()
+      , node_table_list_()
+      , edge_table_list_()
+      , label_list_()
+      , property_declaration_list_()
+      , option_list_()
+  {}
+
+ public:
+
+  ResolvedCreatePropertyGraphStmt(const ResolvedCreatePropertyGraphStmt&) = delete;
+  ResolvedCreatePropertyGraphStmt& operator=(const ResolvedCreatePropertyGraphStmt&) = delete;
+
+  friend std::unique_ptr<ResolvedCreatePropertyGraphStmt> MakeResolvedCreatePropertyGraphStmt(
+      const std::vector<std::string>& name_path,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
+      std::vector<std::unique_ptr<const ResolvedGraphElementTable>> node_table_list,
+      std::vector<std::unique_ptr<const ResolvedGraphElementTable>> edge_table_list,
+      std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> label_list,
+      std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> property_declaration_list,
+      std::vector<std::unique_ptr<const ResolvedOption>> option_list
+  );
+  ~ResolvedCreatePropertyGraphStmt() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_CREATE_PROPERTY_GRAPH_STMT; }
+  std::string node_kind_string() const final { return "CreatePropertyGraphStmt"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedCreatePropertyGraphStmtProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedCreateStatementProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedCreatePropertyGraphStmt>> RestoreFrom(
+      const ResolvedCreatePropertyGraphStmtProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::vector<std::unique_ptr<const ResolvedGraphElementTable>>& node_table_list() const {
+    accessed_ |= (1<<0);
+    return node_table_list_;
+  }
+  int node_table_list_size() const {
+    if (node_table_list_.empty()) accessed_ |= (1<<0);
+    return static_cast<int>(node_table_list_.size());
+  }
+  const ResolvedGraphElementTable* node_table_list(int i) const {
+    accessed_ |= (1<<0);
+    return node_table_list_.at(i).get();
+  }
+  void add_node_table_list(std::unique_ptr<const ResolvedGraphElementTable> v) {
+    node_table_list_.emplace_back(std::move(v));
+  }
+  void set_node_table_list(std::vector<std::unique_ptr<const ResolvedGraphElementTable>> v) {
+    node_table_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphElementTable>> release_node_table_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphElementTable>> tmp;
+    node_table_list_.swap(tmp);
+    return tmp;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGraphElementTable>>& edge_table_list() const {
+    accessed_ |= (1<<1);
+    return edge_table_list_;
+  }
+  int edge_table_list_size() const {
+    if (edge_table_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(edge_table_list_.size());
+  }
+  const ResolvedGraphElementTable* edge_table_list(int i) const {
+    accessed_ |= (1<<1);
+    return edge_table_list_.at(i).get();
+  }
+  void add_edge_table_list(std::unique_ptr<const ResolvedGraphElementTable> v) {
+    edge_table_list_.emplace_back(std::move(v));
+  }
+  void set_edge_table_list(std::vector<std::unique_ptr<const ResolvedGraphElementTable>> v) {
+    edge_table_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphElementTable>> release_edge_table_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphElementTable>> tmp;
+    edge_table_list_.swap(tmp);
+    return tmp;
+  }
+
+  // All labels defined in this property graph.
+  const std::vector<std::unique_ptr<const ResolvedGraphElementLabel>>& label_list() const {
+    accessed_ |= (1<<2);
+    return label_list_;
+  }
+  int label_list_size() const {
+    if (label_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(label_list_.size());
+  }
+  const ResolvedGraphElementLabel* label_list(int i) const {
+    accessed_ |= (1<<2);
+    return label_list_.at(i).get();
+  }
+  void add_label_list(std::unique_ptr<const ResolvedGraphElementLabel> v) {
+    label_list_.emplace_back(std::move(v));
+  }
+  void set_label_list(std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> v) {
+    label_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> release_label_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> tmp;
+    label_list_.swap(tmp);
+    return tmp;
+  }
+
+  // All property declarations exposed by labels in this property
+  // graph.
+  const std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>>& property_declaration_list() const {
+    accessed_ |= (1<<3);
+    return property_declaration_list_;
+  }
+  int property_declaration_list_size() const {
+    if (property_declaration_list_.empty()) accessed_ |= (1<<3);
+    return static_cast<int>(property_declaration_list_.size());
+  }
+  const ResolvedGraphPropertyDeclaration* property_declaration_list(int i) const {
+    accessed_ |= (1<<3);
+    return property_declaration_list_.at(i).get();
+  }
+  void add_property_declaration_list(std::unique_ptr<const ResolvedGraphPropertyDeclaration> v) {
+    property_declaration_list_.emplace_back(std::move(v));
+  }
+  void set_property_declaration_list(std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> v) {
+    property_declaration_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> release_property_declaration_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> tmp;
+    property_declaration_list_.swap(tmp);
+    return tmp;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& option_list() const {
+    accessed_ |= (1<<4);
+    return option_list_;
+  }
+  int option_list_size() const {
+    if (option_list_.empty()) accessed_ |= (1<<4);
+    return static_cast<int>(option_list_.size());
+  }
+  const ResolvedOption* option_list(int i) const {
+    accessed_ |= (1<<4);
+    return option_list_.at(i).get();
+  }
+  void add_option_list(std::unique_ptr<const ResolvedOption> v) {
+    option_list_.emplace_back(std::move(v));
+  }
+  void set_option_list(std::vector<std::unique_ptr<const ResolvedOption>> v) {
+    option_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_option_list() {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp;
+    option_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedCreatePropertyGraphStmt(
+      const std::vector<std::string>& name_path,
+      ResolvedCreateStatement::CreateScope create_scope,
+      ResolvedCreateStatement::CreateMode create_mode,
+      std::vector<std::unique_ptr<const ResolvedGraphElementTable>> node_table_list,
+      std::vector<std::unique_ptr<const ResolvedGraphElementTable>> edge_table_list,
+      std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> label_list,
+      std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> property_declaration_list,
+      std::vector<std::unique_ptr<const ResolvedOption>> option_list,
+      ConstructorOverload)
+      : ResolvedCreateStatement(
+            name_path,
+            create_scope,
+            create_mode,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      node_table_list_(std::move(node_table_list)),
+      edge_table_list_(std::move(edge_table_list)),
+      label_list_(std::move(label_list)),
+      property_declaration_list_(std::move(property_declaration_list)),
+      option_list_(std::move(option_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedCreatePropertyGraphStmt> MakeResolvedCreatePropertyGraphStmt();
+  friend class ResolvedCreatePropertyGraphStmtBuilder;
+  friend ResolvedCreatePropertyGraphStmtBuilder ToBuilder(std::unique_ptr<const ResolvedCreatePropertyGraphStmt>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool node_table_list_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool edge_table_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool label_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool property_declaration_list_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  bool option_list_accessed() const {
+    return accessed_ & (1<<4);
+ }
+  std::vector<std::unique_ptr<const ResolvedGraphElementTable>> node_table_list_;
+  std::vector<std::unique_ptr<const ResolvedGraphElementTable>> edge_table_list_;
+  std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> label_list_;
+  std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> property_declaration_list_;
+  std::vector<std::unique_ptr<const ResolvedOption>> option_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedCreatePropertyGraphStmt> MakeResolvedCreatePropertyGraphStmt(
+    const std::vector<std::string>& name_path,
+    ResolvedCreateStatement::CreateScope create_scope,
+    ResolvedCreateStatement::CreateMode create_mode,
+    std::vector<std::unique_ptr<const ResolvedGraphElementTable>> node_table_list,
+    std::vector<std::unique_ptr<const ResolvedGraphElementTable>> edge_table_list,
+    std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> label_list,
+    std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> property_declaration_list,
+    std::vector<std::unique_ptr<const ResolvedOption>> option_list) {
+  return std::unique_ptr<ResolvedCreatePropertyGraphStmt>(new ResolvedCreatePropertyGraphStmt(
+        name_path,
+        create_scope,
+        create_mode,
+        std::move(node_table_list),
+        std::move(edge_table_list),
+        std::move(label_list),
+        std::move(property_declaration_list),
+        std::move(option_list),
+        ResolvedCreatePropertyGraphStmt::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedCreatePropertyGraphStmt> MakeResolvedCreatePropertyGraphStmt(
+    const std::vector<std::string>& name_path,
+    ResolvedCreateStatement::CreateScope create_scope,
+    ResolvedCreateStatement::CreateMode create_mode,
+    std::vector<std::unique_ptr<const ResolvedGraphElementTable>> node_table_list,
+    std::vector<std::unique_ptr<const ResolvedGraphElementLabel>> label_list,
+    std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>> property_declaration_list) {
+  return MakeResolvedCreatePropertyGraphStmt(
+      name_path,
+      create_scope,
+      create_mode,
+      std::move(node_table_list),
+      /*edge_table_list=*/{},
+      std::move(label_list),
+      std::move(property_declaration_list),
+      /*option_list=*/{});
+}
+
+// Overloaded factory method for the construction of ResolvedCreatePropertyGraphStmt with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  node_table_list, edge_table_list, label_list, property_declaration_list, option_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename node_table_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphElementTable>>,
+  typename edge_table_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphElementTable>>,
+  typename label_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphElementLabel>>,
+  typename property_declaration_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphPropertyDeclaration>>,
+  typename option_list_t
+      = std::vector<std::unique_ptr<const ResolvedOption>>>
+std::unique_ptr<ResolvedCreatePropertyGraphStmt> MakeResolvedCreatePropertyGraphStmt(
+    const std::vector<std::string>& name_path,
+    ResolvedCreateStatement::CreateScope create_scope,
+    ResolvedCreateStatement::CreateMode create_mode,
+    node_table_list_t node_table_list,
+    edge_table_list_t edge_table_list,
+    label_list_t label_list,
+    property_declaration_list_t property_declaration_list,
+    option_list_t option_list) {
+  static_assert(std::is_base_of<
+      ResolvedGraphElementTable,
+      typename std::decay<decltype(**(node_table_list.begin()))>::type>::value,
+      "node_table_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphElementTable (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedGraphElementTable,
+      typename std::decay<decltype(**(edge_table_list.begin()))>::type>::value,
+      "edge_table_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphElementTable (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedGraphElementLabel,
+      typename std::decay<decltype(**(label_list.begin()))>::type>::value,
+      "label_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphElementLabel (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedGraphPropertyDeclaration,
+      typename std::decay<decltype(**(property_declaration_list.begin()))>::type>::value,
+      "property_declaration_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphPropertyDeclaration (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedOption,
+      typename std::decay<decltype(**(option_list.begin()))>::type>::value,
+      "option_list must be a container of unique_ptr with elements of type "
+      "ResolvedOption (or its descendants).");
+  return MakeResolvedCreatePropertyGraphStmt(
+      name_path,
+      create_scope,
+      create_mode,
+      {std::make_move_iterator(node_table_list.begin()),
+       std::make_move_iterator(node_table_list.end())},
+      {std::make_move_iterator(edge_table_list.begin()),
+       std::make_move_iterator(edge_table_list.end())},
+      {std::make_move_iterator(label_list.begin()),
+       std::make_move_iterator(label_list.end())},
+      {std::make_move_iterator(property_declaration_list.begin()),
+       std::make_move_iterator(property_declaration_list.end())},
+      {std::make_move_iterator(option_list.begin()),
+       std::make_move_iterator(option_list.end())});
+}
+
+inline std::unique_ptr<ResolvedCreatePropertyGraphStmt> MakeResolvedCreatePropertyGraphStmt() {
+  return std::unique_ptr<ResolvedCreatePropertyGraphStmt>(
+      new ResolvedCreatePropertyGraphStmt());
+}
+
+// GraphElementTable definition:
+//   <name> [AS <alias>]
+//   [KEY(<key_list>)]
+//   [<source_node_reference>]
+//   [<dest_node_reference>]
+//   [<label_name_list>]
+//   [<property_definition_list]
+//
+// <alias> identifier of the element table in the property graph.
+// <key_list> has a set of references to ResolvedColumn from input_scan that
+// can uniquely identify rows in the element table.
+// <source_node_reference> describes how rows in edge table connect to
+// rows in the referenced source node table.
+// <dest_node_reference> describes how rows in edge table connect to
+// rows in the referenced destination node table by same value columns.
+// <label_name_list> is a list of label names.
+// <property_definition_list> is a list of property definitions exposed by
+// labels.
+class ResolvedGraphElementTable final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_ELEMENT_TABLE;
+
+ protected:
+  ResolvedGraphElementTable()
+      : ResolvedArgument()
+      , alias_()
+      , input_scan_()
+      , key_list_()
+      , source_node_reference_()
+      , dest_node_reference_()
+      , label_name_list_()
+      , property_definition_list_()
+  {}
+
+ public:
+
+  ResolvedGraphElementTable(const ResolvedGraphElementTable&) = delete;
+  ResolvedGraphElementTable& operator=(const ResolvedGraphElementTable&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphElementTable> MakeResolvedGraphElementTable(
+      absl::string_view alias,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::vector<std::unique_ptr<const ResolvedExpr>> key_list,
+      std::unique_ptr<const ResolvedGraphNodeTableReference> source_node_reference,
+      std::unique_ptr<const ResolvedGraphNodeTableReference> dest_node_reference,
+      const std::vector<std::string>& label_name_list,
+      std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>> property_definition_list
+  );
+  ~ResolvedGraphElementTable() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_ELEMENT_TABLE; }
+  std::string node_kind_string() const final { return "GraphElementTable"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphElementTableProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphElementTable>> RestoreFrom(
+      const ResolvedGraphElementTableProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::string& alias() const {
+    accessed_ |= (1<<0);
+    return alias_;
+  }
+  void set_alias(absl::string_view v) {
+    alias_ = v;
+  }
+
+  // ResolvedScan of the underlying table, view etc for column
+  // references in key_list and source/dest_node_reference.
+  const ResolvedScan* input_scan() const {
+    accessed_ |= (1<<1);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedScan> v) {
+    input_scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& key_list() const {
+    accessed_ |= (1<<2);
+    return key_list_;
+  }
+  int key_list_size() const {
+    if (key_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(key_list_.size());
+  }
+  const ResolvedExpr* key_list(int i) const {
+    accessed_ |= (1<<2);
+    return key_list_.at(i).get();
+  }
+  void add_key_list(std::unique_ptr<const ResolvedExpr> v) {
+    key_list_.emplace_back(std::move(v));
+  }
+  void set_key_list(std::vector<std::unique_ptr<const ResolvedExpr>> v) {
+    key_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_key_list() {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp;
+    key_list_.swap(tmp);
+    return tmp;
+  }
+
+  const ResolvedGraphNodeTableReference* source_node_reference() const {
+    accessed_ |= (1<<3);
+    return source_node_reference_.get();
+  }
+  void set_source_node_reference(std::unique_ptr<const ResolvedGraphNodeTableReference> v) {
+    source_node_reference_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphNodeTableReference> release_source_node_reference() {
+    return std::move(source_node_reference_);
+  }
+
+  const ResolvedGraphNodeTableReference* dest_node_reference() const {
+    accessed_ |= (1<<4);
+    return dest_node_reference_.get();
+  }
+  void set_dest_node_reference(std::unique_ptr<const ResolvedGraphNodeTableReference> v) {
+    dest_node_reference_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphNodeTableReference> release_dest_node_reference() {
+    return std::move(dest_node_reference_);
+  }
+
+  const std::vector<std::string>& label_name_list() const {
+    accessed_ |= (1<<5);
+    return label_name_list_;
+  }
+  int label_name_list_size() const {
+    if (label_name_list_.empty()) accessed_ |= (1<<5);
+    return static_cast<int>(label_name_list_.size());
+  }
+  const std::string& label_name_list(int i) const {
+    accessed_ |= (1<<5);
+    return label_name_list_.at(i);
+  }
+  void add_label_name_list(std::string v) {
+    label_name_list_.push_back(v);
+  }
+  void set_label_name_list(const std::vector<std::string>& v) {
+    label_name_list_ = v;
+  }
+  std::vector<std::string>* mutable_label_name_list() {
+    accessed_ |= (1<<5);
+    return &label_name_list_;
+  }
+
+  std::vector<std::string> release_label_name_list() {
+    std::vector<std::string> tmp;
+    label_name_list_.swap(tmp);
+    return tmp;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>>& property_definition_list() const {
+    accessed_ |= (1<<6);
+    return property_definition_list_;
+  }
+  int property_definition_list_size() const {
+    if (property_definition_list_.empty()) accessed_ |= (1<<6);
+    return static_cast<int>(property_definition_list_.size());
+  }
+  const ResolvedGraphPropertyDefinition* property_definition_list(int i) const {
+    accessed_ |= (1<<6);
+    return property_definition_list_.at(i).get();
+  }
+  void add_property_definition_list(std::unique_ptr<const ResolvedGraphPropertyDefinition> v) {
+    property_definition_list_.emplace_back(std::move(v));
+  }
+  void set_property_definition_list(std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>> v) {
+    property_definition_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>> release_property_definition_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>> tmp;
+    property_definition_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedGraphElementTable(
+      absl::string_view alias,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::vector<std::unique_ptr<const ResolvedExpr>> key_list,
+      std::unique_ptr<const ResolvedGraphNodeTableReference> source_node_reference,
+      std::unique_ptr<const ResolvedGraphNodeTableReference> dest_node_reference,
+      const std::vector<std::string>& label_name_list,
+      std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>> property_definition_list,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      alias_(alias),
+      input_scan_(std::move(input_scan)),
+      key_list_(std::move(key_list)),
+      source_node_reference_(std::move(source_node_reference)),
+      dest_node_reference_(std::move(dest_node_reference)),
+      label_name_list_(label_name_list),
+      property_definition_list_(std::move(property_definition_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphElementTable> MakeResolvedGraphElementTable();
+  friend class ResolvedGraphElementTableBuilder;
+  friend ResolvedGraphElementTableBuilder ToBuilder(std::unique_ptr<const ResolvedGraphElementTable>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool alias_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool key_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool source_node_reference_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  bool dest_node_reference_accessed() const {
+    return accessed_ & (1<<4);
+ }
+  bool label_name_list_accessed() const {
+    return accessed_ & (1<<5);
+ }
+  bool property_definition_list_accessed() const {
+    return accessed_ & (1<<6);
+ }
+  std::string alias_;
+  std::unique_ptr<const ResolvedScan> input_scan_;
+  std::vector<std::unique_ptr<const ResolvedExpr>> key_list_;
+  std::unique_ptr<const ResolvedGraphNodeTableReference> source_node_reference_;
+  std::unique_ptr<const ResolvedGraphNodeTableReference> dest_node_reference_;
+  std::vector<std::string> label_name_list_;
+  std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>> property_definition_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphElementTable> MakeResolvedGraphElementTable(
+    absl::string_view alias,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    std::vector<std::unique_ptr<const ResolvedExpr>> key_list,
+    std::unique_ptr<const ResolvedGraphNodeTableReference> source_node_reference,
+    std::unique_ptr<const ResolvedGraphNodeTableReference> dest_node_reference,
+    const std::vector<std::string>& label_name_list,
+    std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>> property_definition_list) {
+  return std::unique_ptr<ResolvedGraphElementTable>(new ResolvedGraphElementTable(
+        alias,
+        std::move(input_scan),
+        std::move(key_list),
+        std::move(source_node_reference),
+        std::move(dest_node_reference),
+        label_name_list,
+        std::move(property_definition_list),
+        ResolvedGraphElementTable::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedGraphElementTable> MakeResolvedGraphElementTable(
+    absl::string_view alias,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    std::vector<std::unique_ptr<const ResolvedExpr>> key_list,
+    const std::vector<std::string>& label_name_list) {
+  return MakeResolvedGraphElementTable(
+      alias,
+      std::move(input_scan),
+      std::move(key_list),
+      /*source_node_reference=*/{},
+      /*dest_node_reference=*/{},
+      label_name_list,
+      /*property_definition_list=*/{});
+}
+
+// Overloaded factory method for the construction of ResolvedGraphElementTable with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  key_list, property_definition_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename key_list_t
+      = std::vector<std::unique_ptr<const ResolvedExpr>>,
+  typename property_definition_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphPropertyDefinition>>>
+std::unique_ptr<ResolvedGraphElementTable> MakeResolvedGraphElementTable(
+    absl::string_view alias,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    key_list_t key_list,
+    std::unique_ptr<const ResolvedGraphNodeTableReference> source_node_reference,
+    std::unique_ptr<const ResolvedGraphNodeTableReference> dest_node_reference,
+    const std::vector<std::string>& label_name_list,
+    property_definition_list_t property_definition_list) {
+  static_assert(std::is_base_of<
+      ResolvedExpr,
+      typename std::decay<decltype(**(key_list.begin()))>::type>::value,
+      "key_list must be a container of unique_ptr with elements of type "
+      "ResolvedExpr (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedGraphPropertyDefinition,
+      typename std::decay<decltype(**(property_definition_list.begin()))>::type>::value,
+      "property_definition_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphPropertyDefinition (or its descendants).");
+  return MakeResolvedGraphElementTable(
+      alias,
+      std::move(input_scan),
+      {std::make_move_iterator(key_list.begin()),
+       std::make_move_iterator(key_list.end())},
+      std::move(source_node_reference),
+      std::move(dest_node_reference),
+      label_name_list,
+      {std::make_move_iterator(property_definition_list.begin()),
+       std::make_move_iterator(property_definition_list.end())});
+}
+
+inline std::unique_ptr<ResolvedGraphElementTable> MakeResolvedGraphElementTable() {
+  return std::unique_ptr<ResolvedGraphElementTable>(
+      new ResolvedGraphElementTable());
+}
+
+// GraphNodeTableReference definition:
+//   SOURCE|DESTINATION KEY(<edge_table_column_list>) REFERENCES
+//   <node_table_identifier>(<node_table_column_list>)
+//
+// <node_table_identifier> must be a defined node table's alias.
+// <edge_table_column_list> contains columns from the edge table referencing
+// corresponding node table columns at the same ordinal position in
+// <node_table_column_list>.
+class ResolvedGraphNodeTableReference final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_NODE_TABLE_REFERENCE;
+
+ protected:
+  ResolvedGraphNodeTableReference()
+      : ResolvedArgument()
+      , node_table_identifier_()
+      , edge_table_column_list_()
+      , node_table_column_list_()
+  {}
+
+ public:
+
+  ResolvedGraphNodeTableReference(const ResolvedGraphNodeTableReference&) = delete;
+  ResolvedGraphNodeTableReference& operator=(const ResolvedGraphNodeTableReference&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphNodeTableReference> MakeResolvedGraphNodeTableReference(
+      absl::string_view node_table_identifier,
+      std::vector<std::unique_ptr<const ResolvedExpr>> edge_table_column_list,
+      std::vector<std::unique_ptr<const ResolvedExpr>> node_table_column_list
+  );
+  ~ResolvedGraphNodeTableReference() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_NODE_TABLE_REFERENCE; }
+  std::string node_kind_string() const final { return "GraphNodeTableReference"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphNodeTableReferenceProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphNodeTableReference>> RestoreFrom(
+      const ResolvedGraphNodeTableReferenceProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::string& node_table_identifier() const {
+    accessed_ |= (1<<0);
+    return node_table_identifier_;
+  }
+  void set_node_table_identifier(absl::string_view v) {
+    node_table_identifier_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& edge_table_column_list() const {
+    accessed_ |= (1<<1);
+    return edge_table_column_list_;
+  }
+  int edge_table_column_list_size() const {
+    if (edge_table_column_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(edge_table_column_list_.size());
+  }
+  const ResolvedExpr* edge_table_column_list(int i) const {
+    accessed_ |= (1<<1);
+    return edge_table_column_list_.at(i).get();
+  }
+  void add_edge_table_column_list(std::unique_ptr<const ResolvedExpr> v) {
+    edge_table_column_list_.emplace_back(std::move(v));
+  }
+  void set_edge_table_column_list(std::vector<std::unique_ptr<const ResolvedExpr>> v) {
+    edge_table_column_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_edge_table_column_list() {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp;
+    edge_table_column_list_.swap(tmp);
+    return tmp;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& node_table_column_list() const {
+    accessed_ |= (1<<2);
+    return node_table_column_list_;
+  }
+  int node_table_column_list_size() const {
+    if (node_table_column_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(node_table_column_list_.size());
+  }
+  const ResolvedExpr* node_table_column_list(int i) const {
+    accessed_ |= (1<<2);
+    return node_table_column_list_.at(i).get();
+  }
+  void add_node_table_column_list(std::unique_ptr<const ResolvedExpr> v) {
+    node_table_column_list_.emplace_back(std::move(v));
+  }
+  void set_node_table_column_list(std::vector<std::unique_ptr<const ResolvedExpr>> v) {
+    node_table_column_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_node_table_column_list() {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp;
+    node_table_column_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedGraphNodeTableReference(
+      absl::string_view node_table_identifier,
+      std::vector<std::unique_ptr<const ResolvedExpr>> edge_table_column_list,
+      std::vector<std::unique_ptr<const ResolvedExpr>> node_table_column_list,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      node_table_identifier_(node_table_identifier),
+      edge_table_column_list_(std::move(edge_table_column_list)),
+      node_table_column_list_(std::move(node_table_column_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphNodeTableReference> MakeResolvedGraphNodeTableReference();
+  friend class ResolvedGraphNodeTableReferenceBuilder;
+  friend ResolvedGraphNodeTableReferenceBuilder ToBuilder(std::unique_ptr<const ResolvedGraphNodeTableReference>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool node_table_identifier_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool edge_table_column_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool node_table_column_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  std::string node_table_identifier_;
+  std::vector<std::unique_ptr<const ResolvedExpr>> edge_table_column_list_;
+  std::vector<std::unique_ptr<const ResolvedExpr>> node_table_column_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphNodeTableReference> MakeResolvedGraphNodeTableReference(
+    absl::string_view node_table_identifier,
+    std::vector<std::unique_ptr<const ResolvedExpr>> edge_table_column_list,
+    std::vector<std::unique_ptr<const ResolvedExpr>> node_table_column_list) {
+  return std::unique_ptr<ResolvedGraphNodeTableReference>(new ResolvedGraphNodeTableReference(
+        node_table_identifier,
+        std::move(edge_table_column_list),
+        std::move(node_table_column_list),
+        ResolvedGraphNodeTableReference::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedGraphNodeTableReference> MakeResolvedGraphNodeTableReference(
+    absl::string_view node_table_identifier,
+    std::vector<std::unique_ptr<const ResolvedExpr>> edge_table_column_list) {
+  return MakeResolvedGraphNodeTableReference(
+      node_table_identifier,
+      std::move(edge_table_column_list),
+      /*node_table_column_list=*/{});
+}
+
+// Overloaded factory method for the construction of ResolvedGraphNodeTableReference with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  edge_table_column_list, node_table_column_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename edge_table_column_list_t
+      = std::vector<std::unique_ptr<const ResolvedExpr>>,
+  typename node_table_column_list_t
+      = std::vector<std::unique_ptr<const ResolvedExpr>>>
+std::unique_ptr<ResolvedGraphNodeTableReference> MakeResolvedGraphNodeTableReference(
+    absl::string_view node_table_identifier,
+    edge_table_column_list_t edge_table_column_list,
+    node_table_column_list_t node_table_column_list) {
+  static_assert(std::is_base_of<
+      ResolvedExpr,
+      typename std::decay<decltype(**(edge_table_column_list.begin()))>::type>::value,
+      "edge_table_column_list must be a container of unique_ptr with elements of type "
+      "ResolvedExpr (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedExpr,
+      typename std::decay<decltype(**(node_table_column_list.begin()))>::type>::value,
+      "node_table_column_list must be a container of unique_ptr with elements of type "
+      "ResolvedExpr (or its descendants).");
+  return MakeResolvedGraphNodeTableReference(
+      node_table_identifier,
+      {std::make_move_iterator(edge_table_column_list.begin()),
+       std::make_move_iterator(edge_table_column_list.end())},
+      {std::make_move_iterator(node_table_column_list.begin()),
+       std::make_move_iterator(node_table_column_list.end())});
+}
+
+inline std::unique_ptr<ResolvedGraphNodeTableReference> MakeResolvedGraphNodeTableReference() {
+  return std::unique_ptr<ResolvedGraphNodeTableReference>(
+      new ResolvedGraphNodeTableReference());
+}
+
+// <name> is the name of the label.
+// <property_declaration_name_list> is a list of property declarations
+// exposed by the label.
+class ResolvedGraphElementLabel final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_ELEMENT_LABEL;
+
+ protected:
+  ResolvedGraphElementLabel()
+      : ResolvedArgument()
+      , name_()
+      , property_declaration_name_list_()
+  {}
+
+ public:
+
+  ResolvedGraphElementLabel(const ResolvedGraphElementLabel&) = delete;
+  ResolvedGraphElementLabel& operator=(const ResolvedGraphElementLabel&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphElementLabel> MakeResolvedGraphElementLabel(
+      absl::string_view name,
+      const std::vector<std::string>& property_declaration_name_list
+  );
+  ~ResolvedGraphElementLabel() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_ELEMENT_LABEL; }
+  std::string node_kind_string() const final { return "GraphElementLabel"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphElementLabelProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphElementLabel>> RestoreFrom(
+      const ResolvedGraphElementLabelProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::string& name() const {
+    accessed_ |= (1<<0);
+    return name_;
+  }
+  void set_name(absl::string_view v) {
+    name_ = v;
+  }
+
+  const std::vector<std::string>& property_declaration_name_list() const {
+    accessed_ |= (1<<1);
+    return property_declaration_name_list_;
+  }
+  int property_declaration_name_list_size() const {
+    if (property_declaration_name_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(property_declaration_name_list_.size());
+  }
+  const std::string& property_declaration_name_list(int i) const {
+    accessed_ |= (1<<1);
+    return property_declaration_name_list_.at(i);
+  }
+  void add_property_declaration_name_list(std::string v) {
+    property_declaration_name_list_.push_back(v);
+  }
+  void set_property_declaration_name_list(const std::vector<std::string>& v) {
+    property_declaration_name_list_ = v;
+  }
+  std::vector<std::string>* mutable_property_declaration_name_list() {
+    accessed_ |= (1<<1);
+    return &property_declaration_name_list_;
+  }
+
+  std::vector<std::string> release_property_declaration_name_list() {
+    std::vector<std::string> tmp;
+    property_declaration_name_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedGraphElementLabel(
+      absl::string_view name,
+      const std::vector<std::string>& property_declaration_name_list,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      name_(name),
+      property_declaration_name_list_(property_declaration_name_list) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphElementLabel> MakeResolvedGraphElementLabel();
+  friend class ResolvedGraphElementLabelBuilder;
+  friend ResolvedGraphElementLabelBuilder ToBuilder(std::unique_ptr<const ResolvedGraphElementLabel>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool property_declaration_name_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::string name_;
+  std::vector<std::string> property_declaration_name_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphElementLabel> MakeResolvedGraphElementLabel(
+    absl::string_view name,
+    const std::vector<std::string>& property_declaration_name_list) {
+  return std::unique_ptr<ResolvedGraphElementLabel>(new ResolvedGraphElementLabel(
+        name,
+        property_declaration_name_list,
+        ResolvedGraphElementLabel::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedGraphElementLabel> MakeResolvedGraphElementLabel(
+    absl::string_view name) {
+  return MakeResolvedGraphElementLabel(
+      name,
+      /*property_declaration_name_list=*/{});
+}
+
+inline std::unique_ptr<ResolvedGraphElementLabel> MakeResolvedGraphElementLabel() {
+  return std::unique_ptr<ResolvedGraphElementLabel>(
+      new ResolvedGraphElementLabel());
+}
+
+// Represents a property name and type exposed by a GraphElementLabel.
+class ResolvedGraphPropertyDeclaration final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_PROPERTY_DECLARATION;
+
+ protected:
+  ResolvedGraphPropertyDeclaration()
+      : ResolvedArgument()
+      , name_()
+      , type_()
+  {}
+
+ public:
+
+  ResolvedGraphPropertyDeclaration(const ResolvedGraphPropertyDeclaration&) = delete;
+  ResolvedGraphPropertyDeclaration& operator=(const ResolvedGraphPropertyDeclaration&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphPropertyDeclaration> MakeResolvedGraphPropertyDeclaration(
+      absl::string_view name,
+      const Type* type
+  );
+  ~ResolvedGraphPropertyDeclaration() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_PROPERTY_DECLARATION; }
+  std::string node_kind_string() const final { return "GraphPropertyDeclaration"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphPropertyDeclarationProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphPropertyDeclaration>> RestoreFrom(
+      const ResolvedGraphPropertyDeclarationProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::string& name() const {
+    accessed_ |= (1<<0);
+    return name_;
+  }
+  void set_name(absl::string_view v) {
+    name_ = v;
+  }
+
+  const Type* type() const {
+    accessed_ |= (1<<1);
+    return type_;
+  }
+  void set_type(const Type* v) {
+    type_ = v;
+  }
+
+ protected:
+  explicit ResolvedGraphPropertyDeclaration(
+      absl::string_view name,
+      const Type* type,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      name_(name),
+      type_(type) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphPropertyDeclaration> MakeResolvedGraphPropertyDeclaration();
+  friend class ResolvedGraphPropertyDeclarationBuilder;
+  friend ResolvedGraphPropertyDeclarationBuilder ToBuilder(std::unique_ptr<const ResolvedGraphPropertyDeclaration>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool name_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool type_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::string name_;
+  const Type* type_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphPropertyDeclaration> MakeResolvedGraphPropertyDeclaration(
+    absl::string_view name,
+    const Type* type) {
+  return std::unique_ptr<ResolvedGraphPropertyDeclaration>(new ResolvedGraphPropertyDeclaration(
+        name,
+        type,
+        ResolvedGraphPropertyDeclaration::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphPropertyDeclaration> MakeResolvedGraphPropertyDeclaration() {
+  return std::unique_ptr<ResolvedGraphPropertyDeclaration>(
+      new ResolvedGraphPropertyDeclaration());
+}
+
+// Represents a property exposed by a GraphElementLabel on a specific
+// GraphElementTable.
+// <expr> [ AS <property_declaration_name> ]
+//
+// <expr> is the property definition, a ResolvedExpression to identify a
+// column.
+// <sql> is the original sql string of the property definition.
+// <property_declaration_name> refers to a property declaration.
+class ResolvedGraphPropertyDefinition final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_PROPERTY_DEFINITION;
+
+ protected:
+  ResolvedGraphPropertyDefinition()
+      : ResolvedArgument()
+      , expr_()
+      , sql_()
+      , property_declaration_name_()
+  {}
+
+ public:
+
+  ResolvedGraphPropertyDefinition(const ResolvedGraphPropertyDefinition&) = delete;
+  ResolvedGraphPropertyDefinition& operator=(const ResolvedGraphPropertyDefinition&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphPropertyDefinition> MakeResolvedGraphPropertyDefinition(
+      std::unique_ptr<const ResolvedExpr> expr,
+      absl::string_view sql,
+      absl::string_view property_declaration_name
+  );
+  ~ResolvedGraphPropertyDefinition() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_PROPERTY_DEFINITION; }
+  std::string node_kind_string() const final { return "GraphPropertyDefinition"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphPropertyDefinitionProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphPropertyDefinition>> RestoreFrom(
+      const ResolvedGraphPropertyDefinitionProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedExpr* expr() const {
+    accessed_ |= (1<<0);
+    return expr_.get();
+  }
+  void set_expr(std::unique_ptr<const ResolvedExpr> v) {
+    expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_expr() {
+    return std::move(expr_);
+  }
+
+  const std::string& sql() const {
+    accessed_ |= (1<<1);
+    return sql_;
+  }
+  void set_sql(absl::string_view v) {
+    sql_ = v;
+  }
+
+  const std::string& property_declaration_name() const {
+    accessed_ |= (1<<2);
+    return property_declaration_name_;
+  }
+  void set_property_declaration_name(absl::string_view v) {
+    property_declaration_name_ = v;
+  }
+
+ protected:
+  explicit ResolvedGraphPropertyDefinition(
+      std::unique_ptr<const ResolvedExpr> expr,
+      absl::string_view sql,
+      absl::string_view property_declaration_name,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      expr_(std::move(expr)),
+      sql_(sql),
+      property_declaration_name_(property_declaration_name) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphPropertyDefinition> MakeResolvedGraphPropertyDefinition();
+  friend class ResolvedGraphPropertyDefinitionBuilder;
+  friend ResolvedGraphPropertyDefinitionBuilder ToBuilder(std::unique_ptr<const ResolvedGraphPropertyDefinition>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool sql_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool property_declaration_name_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  std::unique_ptr<const ResolvedExpr> expr_;
+  std::string sql_;
+  std::string property_declaration_name_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphPropertyDefinition> MakeResolvedGraphPropertyDefinition(
+    std::unique_ptr<const ResolvedExpr> expr,
+    absl::string_view sql,
+    absl::string_view property_declaration_name) {
+  return std::unique_ptr<ResolvedGraphPropertyDefinition>(new ResolvedGraphPropertyDefinition(
+        std::move(expr),
+        sql,
+        property_declaration_name,
+        ResolvedGraphPropertyDefinition::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphPropertyDefinition> MakeResolvedGraphPropertyDefinition() {
+  return std::unique_ptr<ResolvedGraphPropertyDefinition>(
+      new ResolvedGraphPropertyDefinition());
+}
+
+// Base scan class for graph scans
+class ResolvedGraphScanBase  : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  // Number of leaf node types that exist as descendants of this abstract type.
+  static const int NUM_DESCENDANT_LEAF_TYPES = 2;
+
+ public:
+
+  ResolvedGraphScanBase(const ResolvedGraphScanBase&) = delete;
+  ResolvedGraphScanBase& operator=(const ResolvedGraphScanBase&) = delete;
+
+  ~ResolvedGraphScanBase() override;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const override;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const override;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphScanBaseProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  virtual absl::Status SaveTo(
+      Type::FileDescriptorSetMap* file_descriptor_set_map,
+      AnyResolvedGraphScanBaseProto* proto) const = 0;
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphScanBase>> RestoreFrom(
+      const AnyResolvedGraphScanBaseProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  ResolvedGraphScanBase()
+      : ResolvedScan()
+  {}
+
+  explicit ResolvedGraphScanBase(
+      const std::vector<ResolvedColumn>& column_list,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend class ResolvedGraphLinearScanBuilder;
+  friend class ResolvedGraphScanBuilder;
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+// A reference scan that can be used as input by a scan op
+// to its previous scan op within the same parent GraphLinearScan.
+class ResolvedGraphRefScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_REF_SCAN;
+
+ protected:
+  ResolvedGraphRefScan()
+      : ResolvedScan()
+  {}
+
+ public:
+
+  ResolvedGraphRefScan(const ResolvedGraphRefScan&) = delete;
+  ResolvedGraphRefScan& operator=(const ResolvedGraphRefScan&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphRefScan> MakeResolvedGraphRefScan(
+      const std::vector<ResolvedColumn>& column_list
+  );
+  ~ResolvedGraphRefScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_REF_SCAN; }
+  std::string node_kind_string() const final { return "GraphRefScan"; }
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphRefScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphRefScan>> RestoreFrom(
+      const ResolvedGraphRefScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  explicit ResolvedGraphRefScan(
+      const std::vector<ResolvedColumn>& column_list,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend std::unique_ptr<ResolvedGraphRefScan> MakeResolvedGraphRefScan();
+  friend class ResolvedGraphRefScanBuilder;
+  friend ResolvedGraphRefScanBuilder ToBuilder(std::unique_ptr<const ResolvedGraphRefScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+inline std::unique_ptr<ResolvedGraphRefScan> MakeResolvedGraphRefScan(
+    const std::vector<ResolvedColumn>& column_list) {
+  return std::unique_ptr<ResolvedGraphRefScan>(new ResolvedGraphRefScan(
+        column_list,
+        ResolvedGraphRefScan::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphRefScan> MakeResolvedGraphRefScan() {
+  return std::unique_ptr<ResolvedGraphRefScan>(
+      new ResolvedGraphRefScan());
+}
+
+// GraphLinearScan consists of multiple child scans executed in
+// order and outputs the last scan
+class ResolvedGraphLinearScan final : public ResolvedGraphScanBase {
+ public:
+  typedef ResolvedGraphScanBase SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_LINEAR_SCAN;
+
+ protected:
+  ResolvedGraphLinearScan()
+      : ResolvedGraphScanBase()
+      , scan_list_()
+  {}
+
+ public:
+
+  ResolvedGraphLinearScan(const ResolvedGraphLinearScan&) = delete;
+  ResolvedGraphLinearScan& operator=(const ResolvedGraphLinearScan&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphLinearScan> MakeResolvedGraphLinearScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::vector<std::unique_ptr<const ResolvedScan>> scan_list
+  );
+  ~ResolvedGraphLinearScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_LINEAR_SCAN; }
+  std::string node_kind_string() const final { return "GraphLinearScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphLinearScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphScanBaseProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphLinearScan>> RestoreFrom(
+      const ResolvedGraphLinearScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::vector<std::unique_ptr<const ResolvedScan>>& scan_list() const {
+    accessed_ |= (1<<0);
+    return scan_list_;
+  }
+  int scan_list_size() const {
+    if (scan_list_.empty()) accessed_ |= (1<<0);
+    return static_cast<int>(scan_list_.size());
+  }
+  const ResolvedScan* scan_list(int i) const {
+    accessed_ |= (1<<0);
+    return scan_list_.at(i).get();
+  }
+  void add_scan_list(std::unique_ptr<const ResolvedScan> v) {
+    scan_list_.emplace_back(std::move(v));
+  }
+  void set_scan_list(std::vector<std::unique_ptr<const ResolvedScan>> v) {
+    scan_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedScan>> release_scan_list() {
+    std::vector<std::unique_ptr<const ResolvedScan>> tmp;
+    scan_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedGraphLinearScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::vector<std::unique_ptr<const ResolvedScan>> scan_list,
+      ConstructorOverload)
+      : ResolvedGraphScanBase(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      scan_list_(std::move(scan_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphLinearScan> MakeResolvedGraphLinearScan();
+  friend class ResolvedGraphLinearScanBuilder;
+  friend ResolvedGraphLinearScanBuilder ToBuilder(std::unique_ptr<const ResolvedGraphLinearScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool scan_list_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  std::vector<std::unique_ptr<const ResolvedScan>> scan_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphLinearScan> MakeResolvedGraphLinearScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::vector<std::unique_ptr<const ResolvedScan>> scan_list) {
+  return std::unique_ptr<ResolvedGraphLinearScan>(new ResolvedGraphLinearScan(
+        column_list,
+        std::move(scan_list),
+        ResolvedGraphLinearScan::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedGraphLinearScan with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  scan_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename scan_list_t
+      = std::vector<std::unique_ptr<const ResolvedScan>>>
+std::unique_ptr<ResolvedGraphLinearScan> MakeResolvedGraphLinearScan(
+    const std::vector<ResolvedColumn>& column_list,
+    scan_list_t scan_list) {
+  static_assert(std::is_base_of<
+      ResolvedScan,
+      typename std::decay<decltype(**(scan_list.begin()))>::type>::value,
+      "scan_list must be a container of unique_ptr with elements of type "
+      "ResolvedScan (or its descendants).");
+  return MakeResolvedGraphLinearScan(
+      column_list,
+      {std::make_move_iterator(scan_list.begin()),
+       std::make_move_iterator(scan_list.end())});
+}
+
+inline std::unique_ptr<ResolvedGraphLinearScan> MakeResolvedGraphLinearScan() {
+  return std::unique_ptr<ResolvedGraphLinearScan>(
+      new ResolvedGraphLinearScan());
+}
+
+// A scan produced by <graph table> as described in
+// (broken link):graph-table-syntax, or gql enabled <graph table>,
+// as described in (broken link):gql-graph-table.
+//
+// It produces columns of non-graph SQL type, either defined by
+// <shape_expr_list> or from <input_scan> directly.
+// When FEATURE_V_1_4_SQL_GRAPH_EXPOSE_GRAPH_ELEMENT is enabled it may
+// produce columns of graph element type.
+//
+// If <shape_expr_list> is not empty, it defines the output columns of
+// ResolvedGraphTableScan, it can only access columns produced from
+// <input_scan>.
+class ResolvedGraphTableScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_TABLE_SCAN;
+
+ protected:
+  ResolvedGraphTableScan()
+      : ResolvedScan()
+      , property_graph_()
+      , input_scan_()
+      , shape_expr_list_()
+  {}
+
+ public:
+
+  ResolvedGraphTableScan(const ResolvedGraphTableScan&) = delete;
+  ResolvedGraphTableScan& operator=(const ResolvedGraphTableScan&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphTableScan> MakeResolvedGraphTableScan(
+      const std::vector<ResolvedColumn>& column_list,
+      const PropertyGraph* property_graph,
+      std::unique_ptr<const ResolvedGraphScanBase> input_scan,
+      std::vector<std::unique_ptr<const ResolvedComputedColumn>> shape_expr_list
+  );
+  ~ResolvedGraphTableScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_TABLE_SCAN; }
+  std::string node_kind_string() const final { return "GraphTableScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphTableScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphTableScan>> RestoreFrom(
+      const ResolvedGraphTableScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const PropertyGraph* property_graph() const {
+    accessed_ |= (1<<0);
+    return property_graph_;
+  }
+  void set_property_graph(const PropertyGraph* v) {
+    property_graph_ = v;
+  }
+
+  const ResolvedGraphScanBase* input_scan() const {
+    accessed_ |= (1<<1);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedGraphScanBase> v) {
+    input_scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphScanBase> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& shape_expr_list() const {
+    accessed_ |= (1<<2);
+    return shape_expr_list_;
+  }
+  int shape_expr_list_size() const {
+    if (shape_expr_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(shape_expr_list_.size());
+  }
+  const ResolvedComputedColumn* shape_expr_list(int i) const {
+    accessed_ |= (1<<2);
+    return shape_expr_list_.at(i).get();
+  }
+  void add_shape_expr_list(std::unique_ptr<const ResolvedComputedColumn> v) {
+    shape_expr_list_.emplace_back(std::move(v));
+  }
+  void set_shape_expr_list(std::vector<std::unique_ptr<const ResolvedComputedColumn>> v) {
+    shape_expr_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_shape_expr_list() {
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> tmp;
+    shape_expr_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedGraphTableScan(
+      const std::vector<ResolvedColumn>& column_list,
+      const PropertyGraph* property_graph,
+      std::unique_ptr<const ResolvedGraphScanBase> input_scan,
+      std::vector<std::unique_ptr<const ResolvedComputedColumn>> shape_expr_list,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      property_graph_(property_graph),
+      input_scan_(std::move(input_scan)),
+      shape_expr_list_(std::move(shape_expr_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphTableScan> MakeResolvedGraphTableScan();
+  friend class ResolvedGraphTableScanBuilder;
+  friend ResolvedGraphTableScanBuilder ToBuilder(std::unique_ptr<const ResolvedGraphTableScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool property_graph_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool shape_expr_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  const PropertyGraph* property_graph_;
+  std::unique_ptr<const ResolvedGraphScanBase> input_scan_;
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> shape_expr_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphTableScan> MakeResolvedGraphTableScan(
+    const std::vector<ResolvedColumn>& column_list,
+    const PropertyGraph* property_graph,
+    std::unique_ptr<const ResolvedGraphScanBase> input_scan,
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> shape_expr_list) {
+  return std::unique_ptr<ResolvedGraphTableScan>(new ResolvedGraphTableScan(
+        column_list,
+        property_graph,
+        std::move(input_scan),
+        std::move(shape_expr_list),
+        ResolvedGraphTableScan::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedGraphTableScan with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  shape_expr_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename shape_expr_list_t
+      = std::vector<std::unique_ptr<const ResolvedComputedColumn>>>
+std::unique_ptr<ResolvedGraphTableScan> MakeResolvedGraphTableScan(
+    const std::vector<ResolvedColumn>& column_list,
+    const PropertyGraph* property_graph,
+    std::unique_ptr<const ResolvedGraphScanBase> input_scan,
+    shape_expr_list_t shape_expr_list) {
+  static_assert(std::is_base_of<
+      ResolvedComputedColumn,
+      typename std::decay<decltype(**(shape_expr_list.begin()))>::type>::value,
+      "shape_expr_list must be a container of unique_ptr with elements of type "
+      "ResolvedComputedColumn (or its descendants).");
+  return MakeResolvedGraphTableScan(
+      column_list,
+      property_graph,
+      std::move(input_scan),
+      {std::make_move_iterator(shape_expr_list.begin()),
+       std::make_move_iterator(shape_expr_list.end())});
+}
+
+inline std::unique_ptr<ResolvedGraphTableScan> MakeResolvedGraphTableScan() {
+  return std::unique_ptr<ResolvedGraphTableScan>(
+      new ResolvedGraphTableScan());
+}
+
+// A scan produced by a <graph pattern> in <graph table>. It represents the
+// cross product of input ResolvedGraphPathScans, each represents a matching
+// sequences of graph elements (i.e. paths) in the property graph.
+//
+// The <column_list> will contain columns from the <column_list>s of the
+// input path scans.
+//
+// <filter_expr> contains expressions resolved from
+// graph pattern where clause, and possible equalities for joining path scans
+// on multiply-declared variables. It further filters the set of matched
+// paths.
+//
+// When <input_scan> exists, the natural join semantics mentioned in
+// (broken link):gql-linear-comp would be applied to the <graph pattern> scan and
+// this <input_scan>.
+//
+// When <optional> is true and <input_scan> exists, LEFT OUTER JOIN semantics
+// mentioned in (broken link):optional-match would be applied to <input_scan> and
+// scan produced from <graph pattern>.
+class ResolvedGraphScan final : public ResolvedGraphScanBase {
+ public:
+  typedef ResolvedGraphScanBase SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_SCAN;
+
+ protected:
+  ResolvedGraphScan()
+      : ResolvedGraphScanBase()
+      , input_scan_list_()
+      , filter_expr_()
+      , input_scan_()
+      , optional_()
+  {}
+
+ public:
+
+  ResolvedGraphScan(const ResolvedGraphScan&) = delete;
+  ResolvedGraphScan& operator=(const ResolvedGraphScan&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphScan> MakeResolvedGraphScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::vector<std::unique_ptr<const ResolvedGraphPathScan>> input_scan_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      bool optional
+  );
+  ~ResolvedGraphScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_SCAN; }
+  std::string node_kind_string() const final { return "GraphScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphScanBaseProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphScan>> RestoreFrom(
+      const ResolvedGraphScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  // path pattern list contained in the graph pattern
+  const std::vector<std::unique_ptr<const ResolvedGraphPathScan>>& input_scan_list() const {
+    accessed_ |= (1<<0);
+    return input_scan_list_;
+  }
+  int input_scan_list_size() const {
+    if (input_scan_list_.empty()) accessed_ |= (1<<0);
+    return static_cast<int>(input_scan_list_.size());
+  }
+  const ResolvedGraphPathScan* input_scan_list(int i) const {
+    accessed_ |= (1<<0);
+    return input_scan_list_.at(i).get();
+  }
+  void add_input_scan_list(std::unique_ptr<const ResolvedGraphPathScan> v) {
+    input_scan_list_.emplace_back(std::move(v));
+  }
+  void set_input_scan_list(std::vector<std::unique_ptr<const ResolvedGraphPathScan>> v) {
+    input_scan_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphPathScan>> release_input_scan_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphPathScan>> tmp;
+    input_scan_list_.swap(tmp);
+    return tmp;
+  }
+
+  const ResolvedExpr* filter_expr() const {
+    accessed_ |= (1<<1);
+    return filter_expr_.get();
+  }
+  void set_filter_expr(std::unique_ptr<const ResolvedExpr> v) {
+    filter_expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_filter_expr() {
+    return std::move(filter_expr_);
+  }
+
+  // current tabular result in the graph query to be joined with.
+  // See (broken link):gql-linear-comp for more details. This can only be a
+  // ResolvedGraphRefScan after resolution, and would become a
+  // ProjectScan / other GraphScan when linear query is rewritten into
+  // a nested tree structure.
+  const ResolvedScan* input_scan() const {
+    accessed_ |= (1<<2);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedScan> v) {
+    input_scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+  // this is the result of an OPTIONAL MATCH. See
+  // (broken link):optional-match for more details. Corresponds to a left
+  // outer join.
+  bool optional() const {
+    accessed_ |= (1<<3);
+    return optional_;
+  }
+  void set_optional(bool v) {
+    optional_ = v;
+  }
+
+ protected:
+  explicit ResolvedGraphScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::vector<std::unique_ptr<const ResolvedGraphPathScan>> input_scan_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      bool optional,
+      ConstructorOverload)
+      : ResolvedGraphScanBase(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      input_scan_list_(std::move(input_scan_list)),
+      filter_expr_(std::move(filter_expr)),
+      input_scan_(std::move(input_scan)),
+      optional_(optional) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphScan> MakeResolvedGraphScan();
+  friend class ResolvedGraphScanBuilder;
+  friend ResolvedGraphScanBuilder ToBuilder(std::unique_ptr<const ResolvedGraphScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool input_scan_list_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool filter_expr_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool optional_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  std::vector<std::unique_ptr<const ResolvedGraphPathScan>> input_scan_list_;
+  std::unique_ptr<const ResolvedExpr> filter_expr_;
+  std::unique_ptr<const ResolvedScan> input_scan_;
+  bool optional_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphScan> MakeResolvedGraphScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::vector<std::unique_ptr<const ResolvedGraphPathScan>> input_scan_list,
+    std::unique_ptr<const ResolvedExpr> filter_expr,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    bool optional) {
+  return std::unique_ptr<ResolvedGraphScan>(new ResolvedGraphScan(
+        column_list,
+        std::move(input_scan_list),
+        std::move(filter_expr),
+        std::move(input_scan),
+        optional,
+        ResolvedGraphScan::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedGraphScan> MakeResolvedGraphScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::vector<std::unique_ptr<const ResolvedGraphPathScan>> input_scan_list) {
+  return MakeResolvedGraphScan(
+      column_list,
+      std::move(input_scan_list),
+      /*filter_expr=*/{},
+      /*input_scan=*/{},
+      /*optional=*/{});
+}
+
+// Overloaded factory method for the construction of ResolvedGraphScan with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  input_scan_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename input_scan_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphPathScan>>>
+std::unique_ptr<ResolvedGraphScan> MakeResolvedGraphScan(
+    const std::vector<ResolvedColumn>& column_list,
+    input_scan_list_t input_scan_list,
+    std::unique_ptr<const ResolvedExpr> filter_expr,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    bool optional) {
+  static_assert(std::is_base_of<
+      ResolvedGraphPathScan,
+      typename std::decay<decltype(**(input_scan_list.begin()))>::type>::value,
+      "input_scan_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphPathScan (or its descendants).");
+  return MakeResolvedGraphScan(
+      column_list,
+      {std::make_move_iterator(input_scan_list.begin()),
+       std::make_move_iterator(input_scan_list.end())},
+      std::move(filter_expr),
+      std::move(input_scan),
+      optional);
+}
+
+inline std::unique_ptr<ResolvedGraphScan> MakeResolvedGraphScan() {
+  return std::unique_ptr<ResolvedGraphScan>(
+      new ResolvedGraphScan());
+}
+
+// A graph path pattern quantifier is used to represent the repetition of
+// a path pattern.
+class ResolvedGraphPathPatternQuantifier final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_PATH_PATTERN_QUANTIFIER;
+
+ protected:
+  ResolvedGraphPathPatternQuantifier()
+      : ResolvedArgument()
+      , lower_bound_()
+      , upper_bound_()
+  {}
+
+ public:
+
+  ResolvedGraphPathPatternQuantifier(const ResolvedGraphPathPatternQuantifier&) = delete;
+  ResolvedGraphPathPatternQuantifier& operator=(const ResolvedGraphPathPatternQuantifier&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphPathPatternQuantifier> MakeResolvedGraphPathPatternQuantifier(
+      std::unique_ptr<const ResolvedExpr> lower_bound,
+      std::unique_ptr<const ResolvedExpr> upper_bound
+  );
+  ~ResolvedGraphPathPatternQuantifier() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_PATH_PATTERN_QUANTIFIER; }
+  std::string node_kind_string() const final { return "GraphPathPatternQuantifier"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphPathPatternQuantifierProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphPathPatternQuantifier>> RestoreFrom(
+      const ResolvedGraphPathPatternQuantifierProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedExpr* lower_bound() const {
+    accessed_ |= (1<<0);
+    return lower_bound_.get();
+  }
+  void set_lower_bound(std::unique_ptr<const ResolvedExpr> v) {
+    lower_bound_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_lower_bound() {
+    return std::move(lower_bound_);
+  }
+
+  const ResolvedExpr* upper_bound() const {
+    accessed_ |= (1<<1);
+    return upper_bound_.get();
+  }
+  void set_upper_bound(std::unique_ptr<const ResolvedExpr> v) {
+    upper_bound_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_upper_bound() {
+    return std::move(upper_bound_);
+  }
+
+ protected:
+  explicit ResolvedGraphPathPatternQuantifier(
+      std::unique_ptr<const ResolvedExpr> lower_bound,
+      std::unique_ptr<const ResolvedExpr> upper_bound,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      lower_bound_(std::move(lower_bound)),
+      upper_bound_(std::move(upper_bound)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphPathPatternQuantifier> MakeResolvedGraphPathPatternQuantifier();
+  friend class ResolvedGraphPathPatternQuantifierBuilder;
+  friend ResolvedGraphPathPatternQuantifierBuilder ToBuilder(std::unique_ptr<const ResolvedGraphPathPatternQuantifier>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool lower_bound_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool upper_bound_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::unique_ptr<const ResolvedExpr> lower_bound_;
+  std::unique_ptr<const ResolvedExpr> upper_bound_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphPathPatternQuantifier> MakeResolvedGraphPathPatternQuantifier(
+    std::unique_ptr<const ResolvedExpr> lower_bound,
+    std::unique_ptr<const ResolvedExpr> upper_bound) {
+  return std::unique_ptr<ResolvedGraphPathPatternQuantifier>(new ResolvedGraphPathPatternQuantifier(
+        std::move(lower_bound),
+        std::move(upper_bound),
+        ResolvedGraphPathPatternQuantifier::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphPathPatternQuantifier> MakeResolvedGraphPathPatternQuantifier() {
+  return std::unique_ptr<ResolvedGraphPathPatternQuantifier>(
+      new ResolvedGraphPathPatternQuantifier());
+}
+
+// A graph path pattern search prefix, which restricts the result from a
+// graph pattern match by grouping the resulting paths by their
+// endpoints (the first and last vertices) and makes a selection of
+// paths from each group.
+class ResolvedGraphPathSearchPrefix final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_PATH_SEARCH_PREFIX;
+
+  typedef ResolvedGraphPathSearchPrefixEnums::PathSearchPrefixType PathSearchPrefixType;
+  static const PathSearchPrefixType PATH_SEARCH_PREFIX_TYPE_UNSPECIFIED = ResolvedGraphPathSearchPrefixEnums::PATH_SEARCH_PREFIX_TYPE_UNSPECIFIED;
+  static const PathSearchPrefixType ANY = ResolvedGraphPathSearchPrefixEnums::ANY;
+  static const PathSearchPrefixType SHORTEST = ResolvedGraphPathSearchPrefixEnums::SHORTEST;
+
+ protected:
+  ResolvedGraphPathSearchPrefix()
+      : ResolvedArgument()
+      , type_()
+  {}
+
+ public:
+
+  ResolvedGraphPathSearchPrefix(const ResolvedGraphPathSearchPrefix&) = delete;
+  ResolvedGraphPathSearchPrefix& operator=(const ResolvedGraphPathSearchPrefix&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphPathSearchPrefix> MakeResolvedGraphPathSearchPrefix(
+      ResolvedGraphPathSearchPrefix::PathSearchPrefixType type
+  );
+  ~ResolvedGraphPathSearchPrefix() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_PATH_SEARCH_PREFIX; }
+  std::string node_kind_string() const final { return "GraphPathSearchPrefix"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphPathSearchPrefixProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphPathSearchPrefix>> RestoreFrom(
+      const ResolvedGraphPathSearchPrefixProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  ResolvedGraphPathSearchPrefix::PathSearchPrefixType type() const {
+    accessed_ |= (1<<0);
+    return type_;
+  }
+  void set_type(ResolvedGraphPathSearchPrefix::PathSearchPrefixType v) {
+    type_ = v;
+  }
+
+ protected:
+  explicit ResolvedGraphPathSearchPrefix(
+      ResolvedGraphPathSearchPrefix::PathSearchPrefixType type,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      type_(type) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphPathSearchPrefix> MakeResolvedGraphPathSearchPrefix();
+  friend class ResolvedGraphPathSearchPrefixBuilder;
+  friend ResolvedGraphPathSearchPrefixBuilder ToBuilder(std::unique_ptr<const ResolvedGraphPathSearchPrefix>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool type_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  ResolvedGraphPathSearchPrefix::PathSearchPrefixType type_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphPathSearchPrefix> MakeResolvedGraphPathSearchPrefix(
+    ResolvedGraphPathSearchPrefix::PathSearchPrefixType type) {
+  return std::unique_ptr<ResolvedGraphPathSearchPrefix>(new ResolvedGraphPathSearchPrefix(
+        type,
+        ResolvedGraphPathSearchPrefix::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphPathSearchPrefix> MakeResolvedGraphPathSearchPrefix() {
+  return std::unique_ptr<ResolvedGraphPathSearchPrefix>(
+      new ResolvedGraphPathSearchPrefix());
+}
+
+// Common base class for path scan and element scan.
+// This is needed to support parenthesized path pattern.
+class ResolvedGraphPathScanBase  : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  // Number of leaf node types that exist as descendants of this abstract type.
+  static const int NUM_DESCENDANT_LEAF_TYPES = 3;
+
+ public:
+
+  ResolvedGraphPathScanBase(const ResolvedGraphPathScanBase&) = delete;
+  ResolvedGraphPathScanBase& operator=(const ResolvedGraphPathScanBase&) = delete;
+
+  ~ResolvedGraphPathScanBase() override;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const override;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const override;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphPathScanBaseProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  virtual absl::Status SaveTo(
+      Type::FileDescriptorSetMap* file_descriptor_set_map,
+      AnyResolvedGraphPathScanBaseProto* proto) const = 0;
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphPathScanBase>> RestoreFrom(
+      const AnyResolvedGraphPathScanBaseProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  ResolvedGraphPathScanBase()
+      : ResolvedScan()
+  {}
+
+  explicit ResolvedGraphPathScanBase(
+      const std::vector<ResolvedColumn>& column_list,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend class ResolvedGraphPathScanBuilder;
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+// A base scan produced by a <element pattern>.
+// Outputs a stream of single-columned rows where <filter_expr> evaluates
+// to true and <label_expr> is satisfied. Column is of
+// GraphElementType(kind=Node|Edge).
+// Element tables matching the label expression and the element kind
+// are accessible in <target_element_table_list>.
+class ResolvedGraphElementScan  : public ResolvedGraphPathScanBase {
+ public:
+  typedef ResolvedGraphPathScanBase SUPER;
+
+  // Number of leaf node types that exist as descendants of this abstract type.
+  static const int NUM_DESCENDANT_LEAF_TYPES = 2;
+
+ public:
+
+  ResolvedGraphElementScan(const ResolvedGraphElementScan&) = delete;
+  ResolvedGraphElementScan& operator=(const ResolvedGraphElementScan&) = delete;
+
+  ~ResolvedGraphElementScan() override;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const override;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const override;
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      override;
+  absl::Status CheckNoFieldsAccessed() const override;
+  void ClearFieldsAccessed() const override;
+  void MarkFieldsAccessed() const override;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphElementScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphPathScanBaseProto* proto) const final;
+
+  virtual absl::Status SaveTo(
+      Type::FileDescriptorSetMap* file_descriptor_set_map,
+      AnyResolvedGraphElementScanProto* proto) const = 0;
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphElementScan>> RestoreFrom(
+      const AnyResolvedGraphElementScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const override;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) override;
+
+  // Member fields
+
+  const ResolvedExpr* filter_expr() const {
+    accessed_ |= (1<<0);
+    return filter_expr_.get();
+  }
+  void set_filter_expr(std::unique_ptr<const ResolvedExpr> v) {
+    filter_expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_filter_expr() {
+    return std::move(filter_expr_);
+  }
+
+  // This is a logical combination of individual labels belonging
+  // to a property graph using conjunctions (&), disjunctions (|),
+  // negations (!), and grouping parentheses. During query evaluation,
+  // relevant graph element tables are retrieved that satisfy
+  // <label_expr>.
+  const ResolvedGraphLabelExpr* label_expr() const {
+    accessed_ |= (1<<1);
+    return label_expr_.get();
+  }
+  void set_label_expr(std::unique_ptr<const ResolvedGraphLabelExpr> v) {
+    label_expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphLabelExpr> release_label_expr() {
+    return std::move(label_expr_);
+  }
+
+  // This is a vector of element tables of kind Node or Edge that
+  // were found to satisfy <labelexpr> during resolution.
+  const std::vector<const GraphElementTable*>& target_element_table_list() const {
+    accessed_ |= (1<<2);
+    return target_element_table_list_;
+  }
+  int target_element_table_list_size() const {
+    if (target_element_table_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(target_element_table_list_.size());
+  }
+  const GraphElementTable* target_element_table_list(int i) const {
+    accessed_ |= (1<<2);
+    return target_element_table_list_.at(i);
+  }
+  void add_target_element_table_list(const GraphElementTable* v) {
+    target_element_table_list_.push_back(v);
+  }
+  void set_target_element_table_list(const std::vector<const GraphElementTable*>& v) {
+    target_element_table_list_ = v;
+  }
+  std::vector<const GraphElementTable*>* mutable_target_element_table_list() {
+    accessed_ |= (1<<2);
+    return &target_element_table_list_;
+  }
+
+  std::vector<const GraphElementTable*> release_target_element_table_list() {
+    std::vector<const GraphElementTable*> tmp;
+    target_element_table_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  ResolvedGraphElementScan()
+      : ResolvedGraphPathScanBase()
+      , filter_expr_()
+      , label_expr_()
+      , target_element_table_list_()
+  {}
+
+  explicit ResolvedGraphElementScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedGraphLabelExpr> label_expr,
+      const std::vector<const GraphElementTable*>& target_element_table_list,
+      ConstructorOverload)
+      : ResolvedGraphPathScanBase(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      filter_expr_(std::move(filter_expr)),
+      label_expr_(std::move(label_expr)),
+      target_element_table_list_(target_element_table_list) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const override;
+ private:
+  friend class ResolvedGraphNodeScanBuilder;
+  friend class ResolvedGraphEdgeScanBuilder;
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool filter_expr_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool label_expr_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool target_element_table_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  std::unique_ptr<const ResolvedExpr> filter_expr_;
+  std::unique_ptr<const ResolvedGraphLabelExpr> label_expr_;
+  std::vector<const GraphElementTable*> target_element_table_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+// A ResolvedGraphElementScan produced by <node pattern>, whose the single
+// output column is of GraphElementType(kind=Node).
+class ResolvedGraphNodeScan final : public ResolvedGraphElementScan {
+ public:
+  typedef ResolvedGraphElementScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_NODE_SCAN;
+
+ protected:
+  ResolvedGraphNodeScan()
+      : ResolvedGraphElementScan()
+  {}
+
+ public:
+
+  ResolvedGraphNodeScan(const ResolvedGraphNodeScan&) = delete;
+  ResolvedGraphNodeScan& operator=(const ResolvedGraphNodeScan&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphNodeScan> MakeResolvedGraphNodeScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedGraphLabelExpr> label_expr,
+      const std::vector<const GraphElementTable*>& target_element_table_list
+  );
+  ~ResolvedGraphNodeScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_NODE_SCAN; }
+  std::string node_kind_string() const final { return "GraphNodeScan"; }
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphNodeScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphElementScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphNodeScan>> RestoreFrom(
+      const ResolvedGraphNodeScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  explicit ResolvedGraphNodeScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedGraphLabelExpr> label_expr,
+      const std::vector<const GraphElementTable*>& target_element_table_list,
+      ConstructorOverload)
+      : ResolvedGraphElementScan(
+            column_list,
+            std::move(filter_expr),
+            std::move(label_expr),
+            target_element_table_list,
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend std::unique_ptr<ResolvedGraphNodeScan> MakeResolvedGraphNodeScan();
+  friend class ResolvedGraphNodeScanBuilder;
+  friend ResolvedGraphNodeScanBuilder ToBuilder(std::unique_ptr<const ResolvedGraphNodeScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+inline std::unique_ptr<ResolvedGraphNodeScan> MakeResolvedGraphNodeScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedExpr> filter_expr,
+    std::unique_ptr<const ResolvedGraphLabelExpr> label_expr,
+    const std::vector<const GraphElementTable*>& target_element_table_list) {
+  return std::unique_ptr<ResolvedGraphNodeScan>(new ResolvedGraphNodeScan(
+        column_list,
+        std::move(filter_expr),
+        std::move(label_expr),
+        target_element_table_list,
+        ResolvedGraphNodeScan::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphNodeScan> MakeResolvedGraphNodeScan() {
+  return std::unique_ptr<ResolvedGraphNodeScan>(
+      new ResolvedGraphNodeScan());
+}
+
+// A ResolvedGraphElementScan produced by <edge pattern>, whose the single
+// output column is of GraphElementType(kind=Edge).
+//
+// The edge scan also specifies the orientation requirement: only edges
+// matches the orientation should be returned.
+class ResolvedGraphEdgeScan final : public ResolvedGraphElementScan {
+ public:
+  typedef ResolvedGraphElementScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_EDGE_SCAN;
+
+  typedef ResolvedGraphEdgeScanEnums::EdgeOrientation EdgeOrientation;
+  static const EdgeOrientation ANY = ResolvedGraphEdgeScanEnums::ANY;
+  static const EdgeOrientation LEFT = ResolvedGraphEdgeScanEnums::LEFT;
+  static const EdgeOrientation RIGHT = ResolvedGraphEdgeScanEnums::RIGHT;
+
+ protected:
+  ResolvedGraphEdgeScan()
+      : ResolvedGraphElementScan()
+      , orientation_()
+      , lhs_hint_list_()
+      , rhs_hint_list_()
+  {}
+
+ public:
+
+  ResolvedGraphEdgeScan(const ResolvedGraphEdgeScan&) = delete;
+  ResolvedGraphEdgeScan& operator=(const ResolvedGraphEdgeScan&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphEdgeScan> MakeResolvedGraphEdgeScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedGraphLabelExpr> label_expr,
+      const std::vector<const GraphElementTable*>& target_element_table_list,
+      ResolvedGraphEdgeScan::EdgeOrientation orientation
+  );
+  ~ResolvedGraphEdgeScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_EDGE_SCAN; }
+  std::string node_kind_string() const final { return "GraphEdgeScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphEdgeScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphElementScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphEdgeScan>> RestoreFrom(
+      const ResolvedGraphEdgeScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  ResolvedGraphEdgeScan::EdgeOrientation orientation() const {
+    accessed_ |= (1<<0);
+    return orientation_;
+  }
+  void set_orientation(ResolvedGraphEdgeScan::EdgeOrientation v) {
+    orientation_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& lhs_hint_list() const {
+    accessed_ |= (1<<1);
+    return lhs_hint_list_;
+  }
+  int lhs_hint_list_size() const {
+    if (lhs_hint_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(lhs_hint_list_.size());
+  }
+  const ResolvedOption* lhs_hint_list(int i) const {
+    accessed_ |= (1<<1);
+    return lhs_hint_list_.at(i).get();
+  }
+  void add_lhs_hint_list(std::unique_ptr<const ResolvedOption> v) {
+    lhs_hint_list_.emplace_back(std::move(v));
+  }
+  void set_lhs_hint_list(std::vector<std::unique_ptr<const ResolvedOption>> v) {
+    lhs_hint_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_lhs_hint_list() {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp;
+    lhs_hint_list_.swap(tmp);
+    return tmp;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& rhs_hint_list() const {
+    accessed_ |= (1<<2);
+    return rhs_hint_list_;
+  }
+  int rhs_hint_list_size() const {
+    if (rhs_hint_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(rhs_hint_list_.size());
+  }
+  const ResolvedOption* rhs_hint_list(int i) const {
+    accessed_ |= (1<<2);
+    return rhs_hint_list_.at(i).get();
+  }
+  void add_rhs_hint_list(std::unique_ptr<const ResolvedOption> v) {
+    rhs_hint_list_.emplace_back(std::move(v));
+  }
+  void set_rhs_hint_list(std::vector<std::unique_ptr<const ResolvedOption>> v) {
+    rhs_hint_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_rhs_hint_list() {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp;
+    rhs_hint_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedGraphEdgeScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedGraphLabelExpr> label_expr,
+      const std::vector<const GraphElementTable*>& target_element_table_list,
+      ResolvedGraphEdgeScan::EdgeOrientation orientation,
+      ConstructorOverload)
+      : ResolvedGraphElementScan(
+            column_list,
+            std::move(filter_expr),
+            std::move(label_expr),
+            target_element_table_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      orientation_(orientation),
+      lhs_hint_list_(),
+      rhs_hint_list_() {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphEdgeScan> MakeResolvedGraphEdgeScan();
+  friend class ResolvedGraphEdgeScanBuilder;
+  friend ResolvedGraphEdgeScanBuilder ToBuilder(std::unique_ptr<const ResolvedGraphEdgeScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool orientation_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool lhs_hint_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool rhs_hint_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  ResolvedGraphEdgeScan::EdgeOrientation orientation_;
+  std::vector<std::unique_ptr<const ResolvedOption>> lhs_hint_list_;
+  std::vector<std::unique_ptr<const ResolvedOption>> rhs_hint_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphEdgeScan> MakeResolvedGraphEdgeScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedExpr> filter_expr,
+    std::unique_ptr<const ResolvedGraphLabelExpr> label_expr,
+    const std::vector<const GraphElementTable*>& target_element_table_list,
+    ResolvedGraphEdgeScan::EdgeOrientation orientation) {
+  return std::unique_ptr<ResolvedGraphEdgeScan>(new ResolvedGraphEdgeScan(
+        column_list,
+        std::move(filter_expr),
+        std::move(label_expr),
+        target_element_table_list,
+        orientation,
+        ResolvedGraphEdgeScan::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphEdgeScan> MakeResolvedGraphEdgeScan() {
+  return std::unique_ptr<ResolvedGraphEdgeScan>(
+      new ResolvedGraphEdgeScan());
+}
+
+// Get property <property_name> from the graph element in <expr>. <expr> must
+// be of GraphElementType.
+class ResolvedGraphGetElementProperty final : public ResolvedExpr {
+ public:
+  typedef ResolvedExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_GET_ELEMENT_PROPERTY;
+
+ protected:
+  ResolvedGraphGetElementProperty()
+      : ResolvedExpr()
+      , expr_()
+      , property_()
+  {}
+
+ public:
+
+  ResolvedGraphGetElementProperty(const ResolvedGraphGetElementProperty&) = delete;
+  ResolvedGraphGetElementProperty& operator=(const ResolvedGraphGetElementProperty&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphGetElementProperty> MakeResolvedGraphGetElementProperty(
+      const Type* type,
+      std::unique_ptr<const ResolvedExpr> expr,
+      const GraphPropertyDeclaration* property
+  );
+  ~ResolvedGraphGetElementProperty() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_GET_ELEMENT_PROPERTY; }
+  std::string node_kind_string() const final { return "GraphGetElementProperty"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphGetElementPropertyProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphGetElementProperty>> RestoreFrom(
+      const ResolvedGraphGetElementPropertyProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedExpr* expr() const {
+    accessed_ |= (1<<0);
+    return expr_.get();
+  }
+  void set_expr(std::unique_ptr<const ResolvedExpr> v) {
+    expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_expr() {
+    return std::move(expr_);
+  }
+
+  const GraphPropertyDeclaration* property() const {
+    accessed_ |= (1<<1);
+    return property_;
+  }
+  void set_property(const GraphPropertyDeclaration* v) {
+    property_ = v;
+  }
+
+ protected:
+  explicit ResolvedGraphGetElementProperty(
+      const Type* type,
+      std::unique_ptr<const ResolvedExpr> expr,
+      const GraphPropertyDeclaration* property,
+      ConstructorOverload)
+      : ResolvedExpr(
+            type,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      expr_(std::move(expr)),
+      property_(property) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphGetElementProperty> MakeResolvedGraphGetElementProperty();
+  friend class ResolvedGraphGetElementPropertyBuilder;
+  friend ResolvedGraphGetElementPropertyBuilder ToBuilder(std::unique_ptr<const ResolvedGraphGetElementProperty>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool expr_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool property_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::unique_ptr<const ResolvedExpr> expr_;
+  const GraphPropertyDeclaration* property_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphGetElementProperty> MakeResolvedGraphGetElementProperty(
+    const Type* type,
+    std::unique_ptr<const ResolvedExpr> expr,
+    const GraphPropertyDeclaration* property) {
+  return std::unique_ptr<ResolvedGraphGetElementProperty>(new ResolvedGraphGetElementProperty(
+        type,
+        std::move(expr),
+        property,
+        ResolvedGraphGetElementProperty::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphGetElementProperty> MakeResolvedGraphGetElementProperty() {
+  return std::unique_ptr<ResolvedGraphGetElementProperty>(
+      new ResolvedGraphGetElementProperty());
+}
+
+// A label is an element of a graph that declares what properties
+// are exposed by some node/edge table.
+// A label expression is an arbitrarily complex expression of labels with the
+// operators &, |, and ! as well as grouping parentheses.
+class ResolvedGraphLabelExpr  : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  // Number of leaf node types that exist as descendants of this abstract type.
+  static const int NUM_DESCENDANT_LEAF_TYPES = 3;
+
+ public:
+
+  ResolvedGraphLabelExpr(const ResolvedGraphLabelExpr&) = delete;
+  ResolvedGraphLabelExpr& operator=(const ResolvedGraphLabelExpr&) = delete;
+
+  ~ResolvedGraphLabelExpr() override;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const override;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const override;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphLabelExprProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  virtual absl::Status SaveTo(
+      Type::FileDescriptorSetMap* file_descriptor_set_map,
+      AnyResolvedGraphLabelExprProto* proto) const = 0;
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphLabelExpr>> RestoreFrom(
+      const AnyResolvedGraphLabelExprProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  ResolvedGraphLabelExpr()
+      : ResolvedArgument()
+  {}
+
+  explicit ResolvedGraphLabelExpr(
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend class ResolvedGraphLabelNaryExprBuilder;
+  friend class ResolvedGraphLabelBuilder;
+  friend class ResolvedGraphWildCardLabelBuilder;
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+// This represents a logical operation performed on a set of individual
+// labels, where <op> specifies the type of operation (&, |, !) and
+// <operand_list> contains the operands of type ResolvedGraphLabelExpr. Note
+// that & and | are N-ary instead of binary to flatten the expressions
+// and avoid deep stacks. Note that ! is unary and therefore expects
+// that <operand_list> has 1 element.
+class ResolvedGraphLabelNaryExpr final : public ResolvedGraphLabelExpr {
+ public:
+  typedef ResolvedGraphLabelExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_LABEL_NARY_EXPR;
+
+  typedef ResolvedGraphLabelNaryExprEnums::GraphLogicalOpType GraphLogicalOpType;
+  static const GraphLogicalOpType OPERATION_TYPE_UNSPECIFIED = ResolvedGraphLabelNaryExprEnums::OPERATION_TYPE_UNSPECIFIED;
+  static const GraphLogicalOpType NOT = ResolvedGraphLabelNaryExprEnums::NOT;
+  static const GraphLogicalOpType AND = ResolvedGraphLabelNaryExprEnums::AND;
+  static const GraphLogicalOpType OR = ResolvedGraphLabelNaryExprEnums::OR;
+
+  std::string GetGraphLogicalOpTypeString() const;
+  static std::string
+  GraphLogicalOpTypeToString(GraphLogicalOpType logical_op_type);
+
+ protected:
+  ResolvedGraphLabelNaryExpr()
+      : ResolvedGraphLabelExpr()
+      , op_()
+      , operand_list_()
+  {}
+
+ public:
+
+  ResolvedGraphLabelNaryExpr(const ResolvedGraphLabelNaryExpr&) = delete;
+  ResolvedGraphLabelNaryExpr& operator=(const ResolvedGraphLabelNaryExpr&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphLabelNaryExpr> MakeResolvedGraphLabelNaryExpr(
+      ResolvedGraphLabelNaryExpr::GraphLogicalOpType op,
+      std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>> operand_list
+  );
+  ~ResolvedGraphLabelNaryExpr() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_LABEL_NARY_EXPR; }
+  std::string node_kind_string() const final { return "GraphLabelNaryExpr"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphLabelNaryExprProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphLabelExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphLabelNaryExpr>> RestoreFrom(
+      const ResolvedGraphLabelNaryExprProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  ResolvedGraphLabelNaryExpr::GraphLogicalOpType op() const {
+    accessed_ |= (1<<0);
+    return op_;
+  }
+  void set_op(ResolvedGraphLabelNaryExpr::GraphLogicalOpType v) {
+    op_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>>& operand_list() const {
+    accessed_ |= (1<<1);
+    return operand_list_;
+  }
+  int operand_list_size() const {
+    if (operand_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(operand_list_.size());
+  }
+  const ResolvedGraphLabelExpr* operand_list(int i) const {
+    accessed_ |= (1<<1);
+    return operand_list_.at(i).get();
+  }
+  void add_operand_list(std::unique_ptr<const ResolvedGraphLabelExpr> v) {
+    operand_list_.emplace_back(std::move(v));
+  }
+  void set_operand_list(std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>> v) {
+    operand_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>> release_operand_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>> tmp;
+    operand_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedGraphLabelNaryExpr(
+      ResolvedGraphLabelNaryExpr::GraphLogicalOpType op,
+      std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>> operand_list,
+      ConstructorOverload)
+      : ResolvedGraphLabelExpr(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      op_(op),
+      operand_list_(std::move(operand_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphLabelNaryExpr> MakeResolvedGraphLabelNaryExpr();
+  friend class ResolvedGraphLabelNaryExprBuilder;
+  friend ResolvedGraphLabelNaryExprBuilder ToBuilder(std::unique_ptr<const ResolvedGraphLabelNaryExpr>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool op_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool operand_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  ResolvedGraphLabelNaryExpr::GraphLogicalOpType op_;
+  std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>> operand_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphLabelNaryExpr> MakeResolvedGraphLabelNaryExpr(
+    ResolvedGraphLabelNaryExpr::GraphLogicalOpType op,
+    std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>> operand_list) {
+  return std::unique_ptr<ResolvedGraphLabelNaryExpr>(new ResolvedGraphLabelNaryExpr(
+        op,
+        std::move(operand_list),
+        ResolvedGraphLabelNaryExpr::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedGraphLabelNaryExpr with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  operand_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename operand_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphLabelExpr>>>
+std::unique_ptr<ResolvedGraphLabelNaryExpr> MakeResolvedGraphLabelNaryExpr(
+    ResolvedGraphLabelNaryExpr::GraphLogicalOpType op,
+    operand_list_t operand_list) {
+  static_assert(std::is_base_of<
+      ResolvedGraphLabelExpr,
+      typename std::decay<decltype(**(operand_list.begin()))>::type>::value,
+      "operand_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphLabelExpr (or its descendants).");
+  return MakeResolvedGraphLabelNaryExpr(
+      op,
+      {std::make_move_iterator(operand_list.begin()),
+       std::make_move_iterator(operand_list.end())});
+}
+
+inline std::unique_ptr<ResolvedGraphLabelNaryExpr> MakeResolvedGraphLabelNaryExpr() {
+  return std::unique_ptr<ResolvedGraphLabelNaryExpr>(
+      new ResolvedGraphLabelNaryExpr());
+}
+
+// This represents a single resolved graph label. A label is an element
+// belonging to a property graph that has a unique name identifier and
+// references a set of property declarations. An element table with
+// a given label exposes all the properties declared by that label.
+class ResolvedGraphLabel final : public ResolvedGraphLabelExpr {
+ public:
+  typedef ResolvedGraphLabelExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_LABEL;
+
+ protected:
+  ResolvedGraphLabel()
+      : ResolvedGraphLabelExpr()
+      , label_()
+  {}
+
+ public:
+
+  ResolvedGraphLabel(const ResolvedGraphLabel&) = delete;
+  ResolvedGraphLabel& operator=(const ResolvedGraphLabel&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphLabel> MakeResolvedGraphLabel(
+      const GraphElementLabel* label
+  );
+  ~ResolvedGraphLabel() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_LABEL; }
+  std::string node_kind_string() const final { return "GraphLabel"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphLabelProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphLabelExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphLabel>> RestoreFrom(
+      const ResolvedGraphLabelProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  // Points to a label in the catalog
+  const GraphElementLabel* label() const {
+    accessed_ |= (1<<0);
+    return label_;
+  }
+  void set_label(const GraphElementLabel* v) {
+    label_ = v;
+  }
+
+ protected:
+  explicit ResolvedGraphLabel(
+      const GraphElementLabel* label,
+      ConstructorOverload)
+      : ResolvedGraphLabelExpr(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      label_(label) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphLabel> MakeResolvedGraphLabel();
+  friend class ResolvedGraphLabelBuilder;
+  friend ResolvedGraphLabelBuilder ToBuilder(std::unique_ptr<const ResolvedGraphLabel>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool label_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  const GraphElementLabel* label_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphLabel> MakeResolvedGraphLabel(
+    const GraphElementLabel* label) {
+  return std::unique_ptr<ResolvedGraphLabel>(new ResolvedGraphLabel(
+        label,
+        ResolvedGraphLabel::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphLabel> MakeResolvedGraphLabel() {
+  return std::unique_ptr<ResolvedGraphLabel>(
+      new ResolvedGraphLabel());
+}
+
+// This represents the wildcard label % that matches any label in the graph.
+class ResolvedGraphWildCardLabel final : public ResolvedGraphLabelExpr {
+ public:
+  typedef ResolvedGraphLabelExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_WILD_CARD_LABEL;
+
+ protected:
+  ResolvedGraphWildCardLabel()
+      : ResolvedGraphLabelExpr()
+  {}
+
+ public:
+
+  ResolvedGraphWildCardLabel(const ResolvedGraphWildCardLabel&) = delete;
+  ResolvedGraphWildCardLabel& operator=(const ResolvedGraphWildCardLabel&) = delete;
+
+  ~ResolvedGraphWildCardLabel() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_WILD_CARD_LABEL; }
+  std::string node_kind_string() const final { return "GraphWildCardLabel"; }
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphWildCardLabelProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphLabelExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphWildCardLabel>> RestoreFrom(
+      const ResolvedGraphWildCardLabelProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  explicit ResolvedGraphWildCardLabel(
+      ConstructorOverload)
+      : ResolvedGraphLabelExpr(
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend std::unique_ptr<ResolvedGraphWildCardLabel> MakeResolvedGraphWildCardLabel();
+  friend class ResolvedGraphWildCardLabelBuilder;
+  friend ResolvedGraphWildCardLabelBuilder ToBuilder(std::unique_ptr<const ResolvedGraphWildCardLabel>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+inline std::unique_ptr<ResolvedGraphWildCardLabel> MakeResolvedGraphWildCardLabel() {
+  return std::unique_ptr<ResolvedGraphWildCardLabel>(
+      new ResolvedGraphWildCardLabel());
+}
+
+// Represents the identifier of a graph element within a graph.
+// See (broken link):graph-element-identifiers for more details.
+//
+// <element_table>: the ElementTable that produced this graph element;
+// <key_list>: references to the key columns of the <element_table>;
+// <source/dest_node_identifier>: identifiers of source/destination node
+//    of an edge: must be set if the element is an edge; must be null if
+//    the element is a node.
+class ResolvedGraphElementIdentifier final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_ELEMENT_IDENTIFIER;
+
+ protected:
+  ResolvedGraphElementIdentifier()
+      : ResolvedArgument()
+      , element_table_()
+      , key_list_()
+      , source_node_identifier_()
+      , dest_node_identifier_()
+  {}
+
+ public:
+
+  ResolvedGraphElementIdentifier(const ResolvedGraphElementIdentifier&) = delete;
+  ResolvedGraphElementIdentifier& operator=(const ResolvedGraphElementIdentifier&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphElementIdentifier> MakeResolvedGraphElementIdentifier(
+      const GraphElementTable* element_table,
+      std::vector<std::unique_ptr<const ResolvedExpr>> key_list,
+      std::unique_ptr<const ResolvedGraphElementIdentifier> source_node_identifier,
+      std::unique_ptr<const ResolvedGraphElementIdentifier> dest_node_identifier
+  );
+  ~ResolvedGraphElementIdentifier() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_ELEMENT_IDENTIFIER; }
+  std::string node_kind_string() const final { return "GraphElementIdentifier"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphElementIdentifierProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphElementIdentifier>> RestoreFrom(
+      const ResolvedGraphElementIdentifierProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const GraphElementTable* element_table() const {
+    accessed_ |= (1<<0);
+    return element_table_;
+  }
+  void set_element_table(const GraphElementTable* v) {
+    element_table_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedExpr>>& key_list() const {
+    accessed_ |= (1<<1);
+    return key_list_;
+  }
+  int key_list_size() const {
+    if (key_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(key_list_.size());
+  }
+  const ResolvedExpr* key_list(int i) const {
+    accessed_ |= (1<<1);
+    return key_list_.at(i).get();
+  }
+  void add_key_list(std::unique_ptr<const ResolvedExpr> v) {
+    key_list_.emplace_back(std::move(v));
+  }
+  void set_key_list(std::vector<std::unique_ptr<const ResolvedExpr>> v) {
+    key_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedExpr>> release_key_list() {
+    std::vector<std::unique_ptr<const ResolvedExpr>> tmp;
+    key_list_.swap(tmp);
+    return tmp;
+  }
+
+  const ResolvedGraphElementIdentifier* source_node_identifier() const {
+    accessed_ |= (1<<2);
+    return source_node_identifier_.get();
+  }
+  void set_source_node_identifier(std::unique_ptr<const ResolvedGraphElementIdentifier> v) {
+    source_node_identifier_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphElementIdentifier> release_source_node_identifier() {
+    return std::move(source_node_identifier_);
+  }
+
+  const ResolvedGraphElementIdentifier* dest_node_identifier() const {
+    accessed_ |= (1<<3);
+    return dest_node_identifier_.get();
+  }
+  void set_dest_node_identifier(std::unique_ptr<const ResolvedGraphElementIdentifier> v) {
+    dest_node_identifier_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphElementIdentifier> release_dest_node_identifier() {
+    return std::move(dest_node_identifier_);
+  }
+
+ protected:
+  explicit ResolvedGraphElementIdentifier(
+      const GraphElementTable* element_table,
+      std::vector<std::unique_ptr<const ResolvedExpr>> key_list,
+      std::unique_ptr<const ResolvedGraphElementIdentifier> source_node_identifier,
+      std::unique_ptr<const ResolvedGraphElementIdentifier> dest_node_identifier,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      element_table_(element_table),
+      key_list_(std::move(key_list)),
+      source_node_identifier_(std::move(source_node_identifier)),
+      dest_node_identifier_(std::move(dest_node_identifier)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphElementIdentifier> MakeResolvedGraphElementIdentifier();
+  friend class ResolvedGraphElementIdentifierBuilder;
+  friend ResolvedGraphElementIdentifierBuilder ToBuilder(std::unique_ptr<const ResolvedGraphElementIdentifier>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool element_table_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool key_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool source_node_identifier_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool dest_node_identifier_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  const GraphElementTable* element_table_;
+  std::vector<std::unique_ptr<const ResolvedExpr>> key_list_;
+  std::unique_ptr<const ResolvedGraphElementIdentifier> source_node_identifier_;
+  std::unique_ptr<const ResolvedGraphElementIdentifier> dest_node_identifier_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphElementIdentifier> MakeResolvedGraphElementIdentifier(
+    const GraphElementTable* element_table,
+    std::vector<std::unique_ptr<const ResolvedExpr>> key_list,
+    std::unique_ptr<const ResolvedGraphElementIdentifier> source_node_identifier,
+    std::unique_ptr<const ResolvedGraphElementIdentifier> dest_node_identifier) {
+  return std::unique_ptr<ResolvedGraphElementIdentifier>(new ResolvedGraphElementIdentifier(
+        element_table,
+        std::move(key_list),
+        std::move(source_node_identifier),
+        std::move(dest_node_identifier),
+        ResolvedGraphElementIdentifier::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedGraphElementIdentifier> MakeResolvedGraphElementIdentifier(
+    const GraphElementTable* element_table,
+    std::vector<std::unique_ptr<const ResolvedExpr>> key_list) {
+  return MakeResolvedGraphElementIdentifier(
+      element_table,
+      std::move(key_list),
+      /*source_node_identifier=*/{},
+      /*dest_node_identifier=*/{});
+}
+
+// Overloaded factory method for the construction of ResolvedGraphElementIdentifier with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  key_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename key_list_t
+      = std::vector<std::unique_ptr<const ResolvedExpr>>>
+std::unique_ptr<ResolvedGraphElementIdentifier> MakeResolvedGraphElementIdentifier(
+    const GraphElementTable* element_table,
+    key_list_t key_list,
+    std::unique_ptr<const ResolvedGraphElementIdentifier> source_node_identifier,
+    std::unique_ptr<const ResolvedGraphElementIdentifier> dest_node_identifier) {
+  static_assert(std::is_base_of<
+      ResolvedExpr,
+      typename std::decay<decltype(**(key_list.begin()))>::type>::value,
+      "key_list must be a container of unique_ptr with elements of type "
+      "ResolvedExpr (or its descendants).");
+  return MakeResolvedGraphElementIdentifier(
+      element_table,
+      {std::make_move_iterator(key_list.begin()),
+       std::make_move_iterator(key_list.end())},
+      std::move(source_node_identifier),
+      std::move(dest_node_identifier));
+}
+
+inline std::unique_ptr<ResolvedGraphElementIdentifier> MakeResolvedGraphElementIdentifier() {
+  return std::unique_ptr<ResolvedGraphElementIdentifier>(
+      new ResolvedGraphElementIdentifier());
+}
+
+// Represents a graph element property of a graph element.
+//
+// <declaration> refers to the property declaration catalog object;
+// <expr> is the value expression for the <declaration>.
+class ResolvedGraphElementProperty final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_ELEMENT_PROPERTY;
+
+ protected:
+  ResolvedGraphElementProperty()
+      : ResolvedArgument()
+      , declaration_()
+      , expr_()
+  {}
+
+ public:
+
+  ResolvedGraphElementProperty(const ResolvedGraphElementProperty&) = delete;
+  ResolvedGraphElementProperty& operator=(const ResolvedGraphElementProperty&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphElementProperty> MakeResolvedGraphElementProperty(
+      const GraphPropertyDeclaration* declaration,
+      std::unique_ptr<const ResolvedExpr> expr
+  );
+  ~ResolvedGraphElementProperty() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_ELEMENT_PROPERTY; }
+  std::string node_kind_string() const final { return "GraphElementProperty"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphElementPropertyProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphElementProperty>> RestoreFrom(
+      const ResolvedGraphElementPropertyProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const GraphPropertyDeclaration* declaration() const {
+    accessed_ |= (1<<0);
+    return declaration_;
+  }
+  void set_declaration(const GraphPropertyDeclaration* v) {
+    declaration_ = v;
+  }
+
+  const ResolvedExpr* expr() const {
+    accessed_ |= (1<<1);
+    return expr_.get();
+  }
+  void set_expr(std::unique_ptr<const ResolvedExpr> v) {
+    expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_expr() {
+    return std::move(expr_);
+  }
+
+ protected:
+  explicit ResolvedGraphElementProperty(
+      const GraphPropertyDeclaration* declaration,
+      std::unique_ptr<const ResolvedExpr> expr,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      declaration_(declaration),
+      expr_(std::move(expr)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphElementProperty> MakeResolvedGraphElementProperty();
+  friend class ResolvedGraphElementPropertyBuilder;
+  friend ResolvedGraphElementPropertyBuilder ToBuilder(std::unique_ptr<const ResolvedGraphElementProperty>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool declaration_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool expr_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  const GraphPropertyDeclaration* declaration_;
+  std::unique_ptr<const ResolvedExpr> expr_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphElementProperty> MakeResolvedGraphElementProperty(
+    const GraphPropertyDeclaration* declaration,
+    std::unique_ptr<const ResolvedExpr> expr) {
+  return std::unique_ptr<ResolvedGraphElementProperty>(new ResolvedGraphElementProperty(
+        declaration,
+        std::move(expr),
+        ResolvedGraphElementProperty::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphElementProperty> MakeResolvedGraphElementProperty() {
+  return std::unique_ptr<ResolvedGraphElementProperty>(
+      new ResolvedGraphElementProperty());
+}
+
+// Constructs a graph element. <type> is always a GraphElementType.
+//
+// <identifier> uniquely identifies a graph element in the graph;
+// <property_list> contains a list of properties and their definitions;
+// <label_list> contains a list of label catalog objects that are exposed
+//   by the graph element.
+class ResolvedGraphMakeElement final : public ResolvedExpr {
+ public:
+  typedef ResolvedExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_MAKE_ELEMENT;
+
+ protected:
+  ResolvedGraphMakeElement()
+      : ResolvedExpr()
+      , identifier_()
+      , property_list_()
+      , label_list_()
+  {}
+
+ public:
+
+  ResolvedGraphMakeElement(const ResolvedGraphMakeElement&) = delete;
+  ResolvedGraphMakeElement& operator=(const ResolvedGraphMakeElement&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphMakeElement> MakeResolvedGraphMakeElement(
+      const Type* type,
+      std::unique_ptr<const ResolvedGraphElementIdentifier> identifier,
+      std::vector<std::unique_ptr<const ResolvedGraphElementProperty>> property_list,
+      const std::vector<const GraphElementLabel*>& label_list
+  );
+  ~ResolvedGraphMakeElement() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_MAKE_ELEMENT; }
+  std::string node_kind_string() const final { return "GraphMakeElement"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphMakeElementProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphMakeElement>> RestoreFrom(
+      const ResolvedGraphMakeElementProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedGraphElementIdentifier* identifier() const {
+    accessed_ |= (1<<0);
+    return identifier_.get();
+  }
+  void set_identifier(std::unique_ptr<const ResolvedGraphElementIdentifier> v) {
+    identifier_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphElementIdentifier> release_identifier() {
+    return std::move(identifier_);
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGraphElementProperty>>& property_list() const {
+    accessed_ |= (1<<1);
+    return property_list_;
+  }
+  int property_list_size() const {
+    if (property_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(property_list_.size());
+  }
+  const ResolvedGraphElementProperty* property_list(int i) const {
+    accessed_ |= (1<<1);
+    return property_list_.at(i).get();
+  }
+  void add_property_list(std::unique_ptr<const ResolvedGraphElementProperty> v) {
+    property_list_.emplace_back(std::move(v));
+  }
+  void set_property_list(std::vector<std::unique_ptr<const ResolvedGraphElementProperty>> v) {
+    property_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphElementProperty>> release_property_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphElementProperty>> tmp;
+    property_list_.swap(tmp);
+    return tmp;
+  }
+
+  const std::vector<const GraphElementLabel*>& label_list() const {
+    accessed_ |= (1<<2);
+    return label_list_;
+  }
+  int label_list_size() const {
+    if (label_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(label_list_.size());
+  }
+  const GraphElementLabel* label_list(int i) const {
+    accessed_ |= (1<<2);
+    return label_list_.at(i);
+  }
+  void add_label_list(const GraphElementLabel* v) {
+    label_list_.push_back(v);
+  }
+  void set_label_list(const std::vector<const GraphElementLabel*>& v) {
+    label_list_ = v;
+  }
+  std::vector<const GraphElementLabel*>* mutable_label_list() {
+    accessed_ |= (1<<2);
+    return &label_list_;
+  }
+
+  std::vector<const GraphElementLabel*> release_label_list() {
+    std::vector<const GraphElementLabel*> tmp;
+    label_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedGraphMakeElement(
+      const Type* type,
+      std::unique_ptr<const ResolvedGraphElementIdentifier> identifier,
+      std::vector<std::unique_ptr<const ResolvedGraphElementProperty>> property_list,
+      const std::vector<const GraphElementLabel*>& label_list,
+      ConstructorOverload)
+      : ResolvedExpr(
+            type,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      identifier_(std::move(identifier)),
+      property_list_(std::move(property_list)),
+      label_list_(label_list) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphMakeElement> MakeResolvedGraphMakeElement();
+  friend class ResolvedGraphMakeElementBuilder;
+  friend ResolvedGraphMakeElementBuilder ToBuilder(std::unique_ptr<const ResolvedGraphMakeElement>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool identifier_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool property_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool label_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  std::unique_ptr<const ResolvedGraphElementIdentifier> identifier_;
+  std::vector<std::unique_ptr<const ResolvedGraphElementProperty>> property_list_;
+  std::vector<const GraphElementLabel*> label_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphMakeElement> MakeResolvedGraphMakeElement(
+    const Type* type,
+    std::unique_ptr<const ResolvedGraphElementIdentifier> identifier,
+    std::vector<std::unique_ptr<const ResolvedGraphElementProperty>> property_list,
+    const std::vector<const GraphElementLabel*>& label_list) {
+  return std::unique_ptr<ResolvedGraphMakeElement>(new ResolvedGraphMakeElement(
+        type,
+        std::move(identifier),
+        std::move(property_list),
+        label_list,
+        ResolvedGraphMakeElement::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedGraphMakeElement with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  property_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename property_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphElementProperty>>>
+std::unique_ptr<ResolvedGraphMakeElement> MakeResolvedGraphMakeElement(
+    const Type* type,
+    std::unique_ptr<const ResolvedGraphElementIdentifier> identifier,
+    property_list_t property_list,
+    const std::vector<const GraphElementLabel*>& label_list) {
+  static_assert(std::is_base_of<
+      ResolvedGraphElementProperty,
+      typename std::decay<decltype(**(property_list.begin()))>::type>::value,
+      "property_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphElementProperty (or its descendants).");
+  return MakeResolvedGraphMakeElement(
+      type,
+      std::move(identifier),
+      {std::make_move_iterator(property_list.begin()),
+       std::make_move_iterator(property_list.end())},
+      label_list);
+}
+
+inline std::unique_ptr<ResolvedGraphMakeElement> MakeResolvedGraphMakeElement() {
+  return std::unique_ptr<ResolvedGraphMakeElement>(
+      new ResolvedGraphMakeElement());
+}
+
+// Computes an aggregate over the elements of an array.
+//
+// For each element in <array>, produce an input row for the aggregate
+// as follows:
+//  - Let <element_column> be the array element.
+//  - Compute the expressions in <pre_aggregate_computed_column_list>,
+//    which may refer to <element_column> and <array>.
+// Then evaluate <aggregate> over these rows.  It may reference these
+// new columns, or any other columns in scope for this node.
+//
+// The aggregate input rows use the original <array>'s order unless
+// <aggregate> has an ORDER BY modifier.
+//
+// <element_column> and the columns in
+// <pre_aggregate_computed_column_list> are not visible outside this node.
+//
+// <array> can be any ResolvedExpr. Today it's always a ResolvedColumnRef
+// because the only user is graph's horizontal aggregation and that is
+// baked into the SQLBuilder implementation.
+class ResolvedArrayAggregate final : public ResolvedExpr {
+ public:
+  typedef ResolvedExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_ARRAY_AGGREGATE;
+
+ protected:
+  ResolvedArrayAggregate()
+      : ResolvedExpr()
+      , array_()
+      , element_column_()
+      , pre_aggregate_computed_column_list_()
+      , aggregate_()
+  {}
+
+ public:
+
+  ResolvedArrayAggregate(const ResolvedArrayAggregate&) = delete;
+  ResolvedArrayAggregate& operator=(const ResolvedArrayAggregate&) = delete;
+
+  friend std::unique_ptr<ResolvedArrayAggregate> MakeResolvedArrayAggregate(
+      const Type* type,
+      std::unique_ptr<const ResolvedExpr> array,
+      const ResolvedColumn& element_column,
+      std::vector<std::unique_ptr<const ResolvedComputedColumn>> pre_aggregate_computed_column_list,
+      std::unique_ptr<const ResolvedAggregateFunctionCall> aggregate
+  );
+  ~ResolvedArrayAggregate() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_ARRAY_AGGREGATE; }
+  std::string node_kind_string() const final { return "ArrayAggregate"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedArrayAggregateProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedArrayAggregate>> RestoreFrom(
+      const ResolvedArrayAggregateProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedExpr* array() const {
+    accessed_ |= (1<<0);
+    return array_.get();
+  }
+  void set_array(std::unique_ptr<const ResolvedExpr> v) {
+    array_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_array() {
+    return std::move(array_);
+  }
+
+  const ResolvedColumn& element_column() const {
+    accessed_ |= (1<<1);
+    return element_column_;
+  }
+  void set_element_column(const ResolvedColumn& v) {
+    element_column_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedComputedColumn>>& pre_aggregate_computed_column_list() const {
+    accessed_ |= (1<<2);
+    return pre_aggregate_computed_column_list_;
+  }
+  int pre_aggregate_computed_column_list_size() const {
+    if (pre_aggregate_computed_column_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(pre_aggregate_computed_column_list_.size());
+  }
+  const ResolvedComputedColumn* pre_aggregate_computed_column_list(int i) const {
+    accessed_ |= (1<<2);
+    return pre_aggregate_computed_column_list_.at(i).get();
+  }
+  void add_pre_aggregate_computed_column_list(std::unique_ptr<const ResolvedComputedColumn> v) {
+    pre_aggregate_computed_column_list_.emplace_back(std::move(v));
+  }
+  void set_pre_aggregate_computed_column_list(std::vector<std::unique_ptr<const ResolvedComputedColumn>> v) {
+    pre_aggregate_computed_column_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> release_pre_aggregate_computed_column_list() {
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> tmp;
+    pre_aggregate_computed_column_list_.swap(tmp);
+    return tmp;
+  }
+
+  const ResolvedAggregateFunctionCall* aggregate() const {
+    accessed_ |= (1<<3);
+    return aggregate_.get();
+  }
+  void set_aggregate(std::unique_ptr<const ResolvedAggregateFunctionCall> v) {
+    aggregate_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedAggregateFunctionCall> release_aggregate() {
+    return std::move(aggregate_);
+  }
+
+ protected:
+  explicit ResolvedArrayAggregate(
+      const Type* type,
+      std::unique_ptr<const ResolvedExpr> array,
+      const ResolvedColumn& element_column,
+      std::vector<std::unique_ptr<const ResolvedComputedColumn>> pre_aggregate_computed_column_list,
+      std::unique_ptr<const ResolvedAggregateFunctionCall> aggregate,
+      ConstructorOverload)
+      : ResolvedExpr(
+            type,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      array_(std::move(array)),
+      element_column_(element_column),
+      pre_aggregate_computed_column_list_(std::move(pre_aggregate_computed_column_list)),
+      aggregate_(std::move(aggregate)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedArrayAggregate> MakeResolvedArrayAggregate();
+  friend class ResolvedArrayAggregateBuilder;
+  friend ResolvedArrayAggregateBuilder ToBuilder(std::unique_ptr<const ResolvedArrayAggregate>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool array_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool element_column_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool pre_aggregate_computed_column_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool aggregate_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  std::unique_ptr<const ResolvedExpr> array_;
+  ResolvedColumn element_column_;
+  std::vector<std::unique_ptr<const ResolvedComputedColumn>> pre_aggregate_computed_column_list_;
+  std::unique_ptr<const ResolvedAggregateFunctionCall> aggregate_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedArrayAggregate> MakeResolvedArrayAggregate(
+    const Type* type,
+    std::unique_ptr<const ResolvedExpr> array,
+    const ResolvedColumn& element_column,
+    std::vector<std::unique_ptr<const ResolvedComputedColumn>> pre_aggregate_computed_column_list,
+    std::unique_ptr<const ResolvedAggregateFunctionCall> aggregate) {
+  return std::unique_ptr<ResolvedArrayAggregate>(new ResolvedArrayAggregate(
+        type,
+        std::move(array),
+        element_column,
+        std::move(pre_aggregate_computed_column_list),
+        std::move(aggregate),
+        ResolvedArrayAggregate::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedArrayAggregate with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  pre_aggregate_computed_column_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename pre_aggregate_computed_column_list_t
+      = std::vector<std::unique_ptr<const ResolvedComputedColumn>>>
+std::unique_ptr<ResolvedArrayAggregate> MakeResolvedArrayAggregate(
+    const Type* type,
+    std::unique_ptr<const ResolvedExpr> array,
+    const ResolvedColumn& element_column,
+    pre_aggregate_computed_column_list_t pre_aggregate_computed_column_list,
+    std::unique_ptr<const ResolvedAggregateFunctionCall> aggregate) {
+  static_assert(std::is_base_of<
+      ResolvedComputedColumn,
+      typename std::decay<decltype(**(pre_aggregate_computed_column_list.begin()))>::type>::value,
+      "pre_aggregate_computed_column_list must be a container of unique_ptr with elements of type "
+      "ResolvedComputedColumn (or its descendants).");
+  return MakeResolvedArrayAggregate(
+      type,
+      std::move(array),
+      element_column,
+      {std::make_move_iterator(pre_aggregate_computed_column_list.begin()),
+       std::make_move_iterator(pre_aggregate_computed_column_list.end())},
+      std::move(aggregate));
+}
+
+inline std::unique_ptr<ResolvedArrayAggregate> MakeResolvedArrayAggregate() {
+  return std::unique_ptr<ResolvedArrayAggregate>(
+      new ResolvedArrayAggregate());
+}
+
+// ResolvedGraphMakeArrayVariable populates the newly created <array>
+// column with the values that <element> takes across iterations of the
+// quantified path. For example, the resolved path `((a) - (b)){3}` will
+// contain two ResolvedGraphMakeArrayVariables, one creating the
+// array-typed column with the three values that `a` takes along the
+// quantified path; same for `b`.
+//
+// The type of <array> must be an array with element type <scalar>.
+class ResolvedGraphMakeArrayVariable final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_MAKE_ARRAY_VARIABLE;
+
+ protected:
+  ResolvedGraphMakeArrayVariable()
+      : ResolvedArgument()
+      , element_()
+      , array_()
+  {}
+
+ public:
+
+  ResolvedGraphMakeArrayVariable(const ResolvedGraphMakeArrayVariable&) = delete;
+  ResolvedGraphMakeArrayVariable& operator=(const ResolvedGraphMakeArrayVariable&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphMakeArrayVariable> MakeResolvedGraphMakeArrayVariable(
+      const ResolvedColumn& element,
+      const ResolvedColumn& array
+  );
+  ~ResolvedGraphMakeArrayVariable() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_MAKE_ARRAY_VARIABLE; }
+  std::string node_kind_string() const final { return "GraphMakeArrayVariable"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphMakeArrayVariableProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphMakeArrayVariable>> RestoreFrom(
+      const ResolvedGraphMakeArrayVariableProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedColumn& element() const {
+    accessed_ |= (1<<0);
+    return element_;
+  }
+  void set_element(const ResolvedColumn& v) {
+    element_ = v;
+  }
+
+  const ResolvedColumn& array() const {
+    accessed_ |= (1<<1);
+    return array_;
+  }
+  void set_array(const ResolvedColumn& v) {
+    array_ = v;
+  }
+
+ protected:
+  explicit ResolvedGraphMakeArrayVariable(
+      const ResolvedColumn& element,
+      const ResolvedColumn& array,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      element_(element),
+      array_(array) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphMakeArrayVariable> MakeResolvedGraphMakeArrayVariable();
+  friend class ResolvedGraphMakeArrayVariableBuilder;
+  friend ResolvedGraphMakeArrayVariableBuilder ToBuilder(std::unique_ptr<const ResolvedGraphMakeArrayVariable>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool element_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool array_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  ResolvedColumn element_;
+  ResolvedColumn array_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphMakeArrayVariable> MakeResolvedGraphMakeArrayVariable(
+    const ResolvedColumn& element,
+    const ResolvedColumn& array) {
+  return std::unique_ptr<ResolvedGraphMakeArrayVariable>(new ResolvedGraphMakeArrayVariable(
+        element,
+        array,
+        ResolvedGraphMakeArrayVariable::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphMakeArrayVariable> MakeResolvedGraphMakeArrayVariable() {
+  return std::unique_ptr<ResolvedGraphMakeArrayVariable>(
+      new ResolvedGraphMakeArrayVariable());
+}
+
+// Path mode specifies ways to restrict the nodes and edges on a particular
+// path. It currently provides the ability to prevent duplicate edges with
+// TRAIL, duplicate nodes with ACYCLIC, and duplicate nodes except possibly
+// the head and the tail of the path with SIMPLE.
+class ResolvedGraphPathMode final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_PATH_MODE;
+
+  typedef ResolvedGraphPathModeEnums::PathMode PathMode;
+  static const PathMode PATH_MODE_UNSPECIFIED = ResolvedGraphPathModeEnums::PATH_MODE_UNSPECIFIED;
+  static const PathMode WALK = ResolvedGraphPathModeEnums::WALK;
+  static const PathMode TRAIL = ResolvedGraphPathModeEnums::TRAIL;
+  static const PathMode SIMPLE = ResolvedGraphPathModeEnums::SIMPLE;
+  static const PathMode ACYCLIC = ResolvedGraphPathModeEnums::ACYCLIC;
+
+ protected:
+  ResolvedGraphPathMode()
+      : ResolvedArgument()
+      , path_mode_()
+  {}
+
+ public:
+
+  ResolvedGraphPathMode(const ResolvedGraphPathMode&) = delete;
+  ResolvedGraphPathMode& operator=(const ResolvedGraphPathMode&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphPathMode> MakeResolvedGraphPathMode(
+      ResolvedGraphPathMode::PathMode path_mode
+  );
+  ~ResolvedGraphPathMode() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_PATH_MODE; }
+  std::string node_kind_string() const final { return "GraphPathMode"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphPathModeProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphPathMode>> RestoreFrom(
+      const ResolvedGraphPathModeProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  ResolvedGraphPathMode::PathMode path_mode() const {
+    accessed_ |= (1<<0);
+    return path_mode_;
+  }
+  void set_path_mode(ResolvedGraphPathMode::PathMode v) {
+    path_mode_ = v;
+  }
+
+ protected:
+  explicit ResolvedGraphPathMode(
+      ResolvedGraphPathMode::PathMode path_mode,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      path_mode_(path_mode) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphPathMode> MakeResolvedGraphPathMode();
+  friend class ResolvedGraphPathModeBuilder;
+  friend ResolvedGraphPathModeBuilder ToBuilder(std::unique_ptr<const ResolvedGraphPathMode>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool path_mode_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  ResolvedGraphPathMode::PathMode path_mode_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphPathMode> MakeResolvedGraphPathMode(
+    ResolvedGraphPathMode::PathMode path_mode) {
+  return std::unique_ptr<ResolvedGraphPathMode>(new ResolvedGraphPathMode(
+        path_mode,
+        ResolvedGraphPathMode::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphPathMode> MakeResolvedGraphPathMode() {
+  return std::unique_ptr<ResolvedGraphPathMode>(
+      new ResolvedGraphPathMode());
+}
+
+// ResolvedGraphPathScan represents a scan of matching sequences of
+// sub-paths or graph elements (i.e. paths) from the graph.
+//
+// ResolvedGraphPathScan matches paths that: for the sequence of elements
+// along the path:
+//   1) node/edge output from successive node pattern and edge pattern
+//      satisfy edge pattern's orientation constraint:
+//      the matching node must be the source or the destination of the
+//      matching edge;
+//   2) <filter_expr> evaluates true for the matching graph elements.
+//   3) <path_hint_list> denotes a hint on a traversal between the
+//      previous path to this path, so the first path in a graph pattern
+//      will not contain a 'path hint'. Note that this is different from
+//      the parent ResolvedScan node's 'hint_list' which belongs to the
+//      scan itself.
+//
+//
+// <head> and <tail> are the first and last graph node of the path
+// respectively.
+//
+// Consecutive paths match when the <tail> of the first path is the same
+// as the <head> of the second path.
+//
+// A path is either quantified or not. If quantified:
+//   1) <quantifier> and <group_variable_list> must be present.
+//   2) <group_variable_list> is a list of (<element>, <array>) columns.
+//      For each <element> column, this scan will populate the
+//      corresponding <array> column with an array of all the values
+//      that <scalar> column took across the iterations of the
+//      quantified path in iteration order. Every <element> column comes
+//      from <input_scan_list>. <column_list> contains the <head>,
+//      <tail>, and all of the <array> columns from <group_variable_list>
+//
+//
+// If the path is not quantified:
+//   1) <quantifier> and <group_variable_list> must not be present.
+//   2) The <column_list> will contain columns from the <column_list>s of
+//      the input scans, which represents elements in the path.
+//
+// If <path> is present, it must be a path-typed column that can be
+// constructed from the paths and graph elements in <input_scan_list>.
+// This scan will populate <path> with the nodes and edges that are
+// matched along the path. If <path> is set on a ResolvedGraphPathScan it
+// must be set on all descendant ResolvedGraphPathScans. <path> must be a
+// new column.
+class ResolvedGraphPathScan final : public ResolvedGraphPathScanBase {
+ public:
+  typedef ResolvedGraphPathScanBase SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_PATH_SCAN;
+
+ protected:
+  ResolvedGraphPathScan()
+      : ResolvedGraphPathScanBase()
+      , input_scan_list_()
+      , filter_expr_()
+      , path_()
+      , head_()
+      , tail_()
+      , path_hint_list_()
+      , quantifier_()
+      , group_variable_list_()
+      , path_mode_()
+      , search_prefix_()
+  {}
+
+ public:
+
+  ResolvedGraphPathScan(const ResolvedGraphPathScan&) = delete;
+  ResolvedGraphPathScan& operator=(const ResolvedGraphPathScan&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphPathScan> MakeResolvedGraphPathScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> input_scan_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedColumnHolder> path,
+      const ResolvedColumn& head,
+      const ResolvedColumn& tail,
+      std::unique_ptr<const ResolvedGraphPathPatternQuantifier> quantifier,
+      std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> group_variable_list,
+      std::unique_ptr<const ResolvedGraphPathMode> path_mode,
+      std::unique_ptr<const ResolvedGraphPathSearchPrefix> search_prefix
+  );
+  ~ResolvedGraphPathScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_PATH_SCAN; }
+  std::string node_kind_string() const final { return "GraphPathScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphPathScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedGraphPathScanBaseProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphPathScan>> RestoreFrom(
+      const ResolvedGraphPathScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>>& input_scan_list() const {
+    accessed_ |= (1<<0);
+    return input_scan_list_;
+  }
+  int input_scan_list_size() const {
+    if (input_scan_list_.empty()) accessed_ |= (1<<0);
+    return static_cast<int>(input_scan_list_.size());
+  }
+  const ResolvedGraphPathScanBase* input_scan_list(int i) const {
+    accessed_ |= (1<<0);
+    return input_scan_list_.at(i).get();
+  }
+  void add_input_scan_list(std::unique_ptr<const ResolvedGraphPathScanBase> v) {
+    input_scan_list_.emplace_back(std::move(v));
+  }
+  void set_input_scan_list(std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> v) {
+    input_scan_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> release_input_scan_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> tmp;
+    input_scan_list_.swap(tmp);
+    return tmp;
+  }
+
+  const ResolvedExpr* filter_expr() const {
+    accessed_ |= (1<<1);
+    return filter_expr_.get();
+  }
+  void set_filter_expr(std::unique_ptr<const ResolvedExpr> v) {
+    filter_expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_filter_expr() {
+    return std::move(filter_expr_);
+  }
+
+  const ResolvedColumnHolder* path() const {
+    accessed_ |= (1<<2);
+    return path_.get();
+  }
+  void set_path(std::unique_ptr<const ResolvedColumnHolder> v) {
+    path_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedColumnHolder> release_path() {
+    return std::move(path_);
+  }
+
+  const ResolvedColumn& head() const {
+    accessed_ |= (1<<3);
+    return head_;
+  }
+  void set_head(const ResolvedColumn& v) {
+    head_ = v;
+  }
+
+  const ResolvedColumn& tail() const {
+    accessed_ |= (1<<4);
+    return tail_;
+  }
+  void set_tail(const ResolvedColumn& v) {
+    tail_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedOption>>& path_hint_list() const {
+    accessed_ |= (1<<5);
+    return path_hint_list_;
+  }
+  int path_hint_list_size() const {
+    if (path_hint_list_.empty()) accessed_ |= (1<<5);
+    return static_cast<int>(path_hint_list_.size());
+  }
+  const ResolvedOption* path_hint_list(int i) const {
+    accessed_ |= (1<<5);
+    return path_hint_list_.at(i).get();
+  }
+  void add_path_hint_list(std::unique_ptr<const ResolvedOption> v) {
+    path_hint_list_.emplace_back(std::move(v));
+  }
+  void set_path_hint_list(std::vector<std::unique_ptr<const ResolvedOption>> v) {
+    path_hint_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedOption>> release_path_hint_list() {
+    std::vector<std::unique_ptr<const ResolvedOption>> tmp;
+    path_hint_list_.swap(tmp);
+    return tmp;
+  }
+
+  //
+  const ResolvedGraphPathPatternQuantifier* quantifier() const {
+    accessed_ |= (1<<6);
+    return quantifier_.get();
+  }
+  void set_quantifier(std::unique_ptr<const ResolvedGraphPathPatternQuantifier> v) {
+    quantifier_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphPathPatternQuantifier> release_quantifier() {
+    return std::move(quantifier_);
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>>& group_variable_list() const {
+    accessed_ |= (1<<7);
+    return group_variable_list_;
+  }
+  int group_variable_list_size() const {
+    if (group_variable_list_.empty()) accessed_ |= (1<<7);
+    return static_cast<int>(group_variable_list_.size());
+  }
+  const ResolvedGraphMakeArrayVariable* group_variable_list(int i) const {
+    accessed_ |= (1<<7);
+    return group_variable_list_.at(i).get();
+  }
+  void add_group_variable_list(std::unique_ptr<const ResolvedGraphMakeArrayVariable> v) {
+    group_variable_list_.emplace_back(std::move(v));
+  }
+  void set_group_variable_list(std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> v) {
+    group_variable_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> release_group_variable_list() {
+    std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> tmp;
+    group_variable_list_.swap(tmp);
+    return tmp;
+  }
+
+  const ResolvedGraphPathMode* path_mode() const {
+    accessed_ |= (1<<8);
+    return path_mode_.get();
+  }
+  void set_path_mode(std::unique_ptr<const ResolvedGraphPathMode> v) {
+    path_mode_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphPathMode> release_path_mode() {
+    return std::move(path_mode_);
+  }
+
+  const ResolvedGraphPathSearchPrefix* search_prefix() const {
+    accessed_ |= (1<<9);
+    return search_prefix_.get();
+  }
+  void set_search_prefix(std::unique_ptr<const ResolvedGraphPathSearchPrefix> v) {
+    search_prefix_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphPathSearchPrefix> release_search_prefix() {
+    return std::move(search_prefix_);
+  }
+
+ protected:
+  explicit ResolvedGraphPathScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> input_scan_list,
+      std::unique_ptr<const ResolvedExpr> filter_expr,
+      std::unique_ptr<const ResolvedColumnHolder> path,
+      const ResolvedColumn& head,
+      const ResolvedColumn& tail,
+      std::unique_ptr<const ResolvedGraphPathPatternQuantifier> quantifier,
+      std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> group_variable_list,
+      std::unique_ptr<const ResolvedGraphPathMode> path_mode,
+      std::unique_ptr<const ResolvedGraphPathSearchPrefix> search_prefix,
+      ConstructorOverload)
+      : ResolvedGraphPathScanBase(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      input_scan_list_(std::move(input_scan_list)),
+      filter_expr_(std::move(filter_expr)),
+      path_(std::move(path)),
+      head_(head),
+      tail_(tail),
+      path_hint_list_(),
+      quantifier_(std::move(quantifier)),
+      group_variable_list_(std::move(group_variable_list)),
+      path_mode_(std::move(path_mode)),
+      search_prefix_(std::move(search_prefix)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphPathScan> MakeResolvedGraphPathScan();
+  friend class ResolvedGraphPathScanBuilder;
+  friend ResolvedGraphPathScanBuilder ToBuilder(std::unique_ptr<const ResolvedGraphPathScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool input_scan_list_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool filter_expr_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool path_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool head_accessed() const {
+    return accessed_ & (1<<3);
+ }
+  bool tail_accessed() const {
+    return accessed_ & (1<<4);
+ }
+  bool path_hint_list_accessed() const {
+    return accessed_ & (1<<5);
+ }
+  bool quantifier_accessed() const {
+    return accessed_ & (1<<6);
+ }
+  bool group_variable_list_accessed() const {
+    return accessed_ & (1<<7);
+ }
+  bool path_mode_accessed() const {
+    return accessed_ & (1<<8);
+ }
+  bool search_prefix_accessed() const {
+    return accessed_ & (1<<9);
+ }
+  std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> input_scan_list_;
+  std::unique_ptr<const ResolvedExpr> filter_expr_;
+  std::unique_ptr<const ResolvedColumnHolder> path_;
+  ResolvedColumn head_;
+  ResolvedColumn tail_;
+  std::vector<std::unique_ptr<const ResolvedOption>> path_hint_list_;
+  std::unique_ptr<const ResolvedGraphPathPatternQuantifier> quantifier_;
+  std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> group_variable_list_;
+  std::unique_ptr<const ResolvedGraphPathMode> path_mode_;
+  std::unique_ptr<const ResolvedGraphPathSearchPrefix> search_prefix_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphPathScan> MakeResolvedGraphPathScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> input_scan_list,
+    std::unique_ptr<const ResolvedExpr> filter_expr,
+    std::unique_ptr<const ResolvedColumnHolder> path,
+    const ResolvedColumn& head,
+    const ResolvedColumn& tail,
+    std::unique_ptr<const ResolvedGraphPathPatternQuantifier> quantifier,
+    std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> group_variable_list,
+    std::unique_ptr<const ResolvedGraphPathMode> path_mode,
+    std::unique_ptr<const ResolvedGraphPathSearchPrefix> search_prefix) {
+  return std::unique_ptr<ResolvedGraphPathScan>(new ResolvedGraphPathScan(
+        column_list,
+        std::move(input_scan_list),
+        std::move(filter_expr),
+        std::move(path),
+        head,
+        tail,
+        std::move(quantifier),
+        std::move(group_variable_list),
+        std::move(path_mode),
+        std::move(search_prefix),
+        ResolvedGraphPathScan::NEW_CONSTRUCTOR));
+}
+inline std::unique_ptr<ResolvedGraphPathScan> MakeResolvedGraphPathScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>> input_scan_list,
+    std::unique_ptr<const ResolvedExpr> filter_expr,
+    std::unique_ptr<const ResolvedColumnHolder> path,
+    const ResolvedColumn& head,
+    const ResolvedColumn& tail,
+    std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>> group_variable_list,
+    std::unique_ptr<const ResolvedGraphPathMode> path_mode) {
+  return MakeResolvedGraphPathScan(
+      column_list,
+      std::move(input_scan_list),
+      std::move(filter_expr),
+      std::move(path),
+      head,
+      tail,
+      /*quantifier=*/{},
+      std::move(group_variable_list),
+      std::move(path_mode),
+      /*search_prefix=*/{});
+}
+
+// Overloaded factory method for the construction of ResolvedGraphPathScan with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  input_scan_list, group_variable_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename input_scan_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphPathScanBase>>,
+  typename group_variable_list_t
+      = std::vector<std::unique_ptr<const ResolvedGraphMakeArrayVariable>>>
+std::unique_ptr<ResolvedGraphPathScan> MakeResolvedGraphPathScan(
+    const std::vector<ResolvedColumn>& column_list,
+    input_scan_list_t input_scan_list,
+    std::unique_ptr<const ResolvedExpr> filter_expr,
+    std::unique_ptr<const ResolvedColumnHolder> path,
+    const ResolvedColumn& head,
+    const ResolvedColumn& tail,
+    std::unique_ptr<const ResolvedGraphPathPatternQuantifier> quantifier,
+    group_variable_list_t group_variable_list,
+    std::unique_ptr<const ResolvedGraphPathMode> path_mode,
+    std::unique_ptr<const ResolvedGraphPathSearchPrefix> search_prefix) {
+  static_assert(std::is_base_of<
+      ResolvedGraphPathScanBase,
+      typename std::decay<decltype(**(input_scan_list.begin()))>::type>::value,
+      "input_scan_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphPathScanBase (or its descendants).");
+  static_assert(std::is_base_of<
+      ResolvedGraphMakeArrayVariable,
+      typename std::decay<decltype(**(group_variable_list.begin()))>::type>::value,
+      "group_variable_list must be a container of unique_ptr with elements of type "
+      "ResolvedGraphMakeArrayVariable (or its descendants).");
+  return MakeResolvedGraphPathScan(
+      column_list,
+      {std::make_move_iterator(input_scan_list.begin()),
+       std::make_move_iterator(input_scan_list.end())},
+      std::move(filter_expr),
+      std::move(path),
+      head,
+      tail,
+      std::move(quantifier),
+      {std::make_move_iterator(group_variable_list.begin()),
+       std::make_move_iterator(group_variable_list.end())},
+      std::move(path_mode),
+      std::move(search_prefix));
+}
+
+inline std::unique_ptr<ResolvedGraphPathScan> MakeResolvedGraphPathScan() {
+  return std::unique_ptr<ResolvedGraphPathScan>(
+      new ResolvedGraphPathScan());
+}
+
+// Represents IS LABELED predicate for graph elements, a boolean expression
+// that evaluates to true if the graph element satisfies the given
+// label expression.
+// <expr> represents the LHS which should always be a column reference of
+// GraphElementType.
+// <label_expr> represents the RHS which should always be a
+// ResolvedGraphLabelExpr.
+// <is_not> is true if the predicate is negated.
+class ResolvedGraphIsLabeledPredicate final : public ResolvedExpr {
+ public:
+  typedef ResolvedExpr SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GRAPH_IS_LABELED_PREDICATE;
+
+ protected:
+  ResolvedGraphIsLabeledPredicate()
+      : ResolvedExpr()
+      , is_not_()
+      , expr_()
+      , label_expr_()
+  {}
+
+ public:
+
+  ResolvedGraphIsLabeledPredicate(const ResolvedGraphIsLabeledPredicate&) = delete;
+  ResolvedGraphIsLabeledPredicate& operator=(const ResolvedGraphIsLabeledPredicate&) = delete;
+
+  friend std::unique_ptr<ResolvedGraphIsLabeledPredicate> MakeResolvedGraphIsLabeledPredicate(
+      const Type* type,
+      bool is_not,
+      std::unique_ptr<const ResolvedExpr> expr,
+      std::unique_ptr<const ResolvedGraphLabelExpr> label_expr
+  );
+  ~ResolvedGraphIsLabeledPredicate() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GRAPH_IS_LABELED_PREDICATE; }
+  std::string node_kind_string() const final { return "GraphIsLabeledPredicate"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGraphIsLabeledPredicateProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedExprProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGraphIsLabeledPredicate>> RestoreFrom(
+      const ResolvedGraphIsLabeledPredicateProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  bool is_not() const {
+    accessed_ |= (1<<0);
+    return is_not_;
+  }
+  void set_is_not(bool v) {
+    is_not_ = v;
+  }
+
+  const ResolvedExpr* expr() const {
+    accessed_ |= (1<<1);
+    return expr_.get();
+  }
+  void set_expr(std::unique_ptr<const ResolvedExpr> v) {
+    expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_expr() {
+    return std::move(expr_);
+  }
+
+  const ResolvedGraphLabelExpr* label_expr() const {
+    accessed_ |= (1<<2);
+    return label_expr_.get();
+  }
+  void set_label_expr(std::unique_ptr<const ResolvedGraphLabelExpr> v) {
+    label_expr_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedGraphLabelExpr> release_label_expr() {
+    return std::move(label_expr_);
+  }
+
+ protected:
+  explicit ResolvedGraphIsLabeledPredicate(
+      const Type* type,
+      bool is_not,
+      std::unique_ptr<const ResolvedExpr> expr,
+      std::unique_ptr<const ResolvedGraphLabelExpr> label_expr,
+      ConstructorOverload)
+      : ResolvedExpr(
+            type,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      is_not_(is_not),
+      expr_(std::move(expr)),
+      label_expr_(std::move(label_expr)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGraphIsLabeledPredicate> MakeResolvedGraphIsLabeledPredicate();
+  friend class ResolvedGraphIsLabeledPredicateBuilder;
+  friend ResolvedGraphIsLabeledPredicateBuilder ToBuilder(std::unique_ptr<const ResolvedGraphIsLabeledPredicate>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool is_not_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool expr_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool label_expr_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  bool is_not_;
+  std::unique_ptr<const ResolvedExpr> expr_;
+  std::unique_ptr<const ResolvedGraphLabelExpr> label_expr_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGraphIsLabeledPredicate> MakeResolvedGraphIsLabeledPredicate(
+    const Type* type,
+    bool is_not,
+    std::unique_ptr<const ResolvedExpr> expr,
+    std::unique_ptr<const ResolvedGraphLabelExpr> label_expr) {
+  return std::unique_ptr<ResolvedGraphIsLabeledPredicate>(new ResolvedGraphIsLabeledPredicate(
+        type,
+        is_not,
+        std::move(expr),
+        std::move(label_expr),
+        ResolvedGraphIsLabeledPredicate::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGraphIsLabeledPredicate> MakeResolvedGraphIsLabeledPredicate() {
+  return std::unique_ptr<ResolvedGraphIsLabeledPredicate>(
+      new ResolvedGraphIsLabeledPredicate());
+}
+
+// This statement:
 //   UNDROP <schema_object_kind> [IF NOT EXISTS] <name_path>
 //   FOR SYSTEM_TIME AS OF [<for_system_time_expr>]
 //   [OPTIONS (name=value, ...)];
@@ -47901,6 +55851,1349 @@ inline std::unique_ptr<ResolvedAssertScan> MakeResolvedAssertScan() {
       new ResolvedAssertScan());
 }
 
+// This represents the pipe ABSL_LOG operator, which is controlled by
+// FEATURE_PIPE_LOG.
+//
+// Execute `subpipeline` over `input_scan` and send its output to an
+// implementation-defined log.
+//
+// `output_schema` describes the visible schema of the output to send to
+// the log. (This is not the output of the ResolvedLogScan in the query.)
+//
+// In the main query flow, ResolvedLogScan is a no-op and just returns
+// the result from `input_scan` unchanged.
+class ResolvedLogScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_LOG_SCAN;
+
+ protected:
+  ResolvedLogScan()
+      : ResolvedScan()
+      , input_scan_()
+      , subpipeline_()
+      , output_schema_()
+  {}
+
+ public:
+
+  ResolvedLogScan(const ResolvedLogScan&) = delete;
+  ResolvedLogScan& operator=(const ResolvedLogScan&) = delete;
+
+  friend std::unique_ptr<ResolvedLogScan> MakeResolvedLogScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::unique_ptr<const ResolvedSubpipeline> subpipeline,
+      std::unique_ptr<const ResolvedOutputSchema> output_schema
+  );
+  ~ResolvedLogScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_LOG_SCAN; }
+  std::string node_kind_string() const final { return "LogScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedLogScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedLogScan>> RestoreFrom(
+      const ResolvedLogScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedScan* input_scan() const {
+    accessed_ |= (1<<0);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedScan> v,
+                          bool propagate_order=true) {
+    input_scan_ = std::move(v);
+    if (propagate_order) {
+      set_is_ordered(input_scan_->is_ordered());
+    }
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+  const ResolvedSubpipeline* subpipeline() const {
+    accessed_ |= (1<<1);
+    return subpipeline_.get();
+  }
+  void set_subpipeline(std::unique_ptr<const ResolvedSubpipeline> v) {
+    subpipeline_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedSubpipeline> release_subpipeline() {
+    return std::move(subpipeline_);
+  }
+
+  const ResolvedOutputSchema* output_schema() const {
+    accessed_ |= (1<<2);
+    return output_schema_.get();
+  }
+  void set_output_schema(std::unique_ptr<const ResolvedOutputSchema> v) {
+    output_schema_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedOutputSchema> release_output_schema() {
+    return std::move(output_schema_);
+  }
+
+ protected:
+  explicit ResolvedLogScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::unique_ptr<const ResolvedSubpipeline> subpipeline,
+      std::unique_ptr<const ResolvedOutputSchema> output_schema,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      input_scan_(std::move(input_scan)),
+      subpipeline_(std::move(subpipeline)),
+      output_schema_(std::move(output_schema)) {
+    set_is_ordered(input_scan_->is_ordered());
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedLogScan> MakeResolvedLogScan();
+  friend class ResolvedLogScanBuilder;
+  friend ResolvedLogScanBuilder ToBuilder(std::unique_ptr<const ResolvedLogScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool subpipeline_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool output_schema_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  std::unique_ptr<const ResolvedScan> input_scan_;
+  std::unique_ptr<const ResolvedSubpipeline> subpipeline_;
+  std::unique_ptr<const ResolvedOutputSchema> output_schema_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedLogScan> MakeResolvedLogScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    std::unique_ptr<const ResolvedSubpipeline> subpipeline,
+    std::unique_ptr<const ResolvedOutputSchema> output_schema) {
+  return std::unique_ptr<ResolvedLogScan>(new ResolvedLogScan(
+        column_list,
+        std::move(input_scan),
+        std::move(subpipeline),
+        std::move(output_schema),
+        ResolvedLogScan::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedLogScan> MakeResolvedLogScan() {
+  return std::unique_ptr<ResolvedLogScan>(
+      new ResolvedLogScan());
+}
+
+// This represents the pipe IF operator, which is controlled by
+// FEATURE_PIPE_IF.  See (broken link).
+//
+// `if_case_list` must have at least one element with a `condition`.
+// If there's an ELSE case, if will be last and will have no `condition`.
+//
+// `selected_case` indicates the chosen case and must be a valid index into
+// `if_case_list`.  `selected_case` is -1 if no case is selected and there's
+// no ELSE case.
+//
+// The constant `condition` for `selected_case` must evaluate to true unless
+// it's the ELSE case.  All preceding `condition` expressions must evaluate
+// to non-true values.  (Later `condition` expressions could return errors.)
+//
+// The selected case includes a valid resolved `subpipeline` that takes
+// `input_scan` as its input table.
+//
+// Execution semantics:
+// Only the selected case runs.  The condition expressions have already been
+// evaluated statically at analysis time so are not evaluated at runtime.
+// If `selected_case` is -1, this scan is a no-op.
+//
+// The subpipeline for the selected case runs over `input_scan`.
+// Its output is this node's output.
+// This node's `column_list` must be a subset of the subpipeline's final
+// column list.
+//
+// `if_case_list` is ignorable because if `selected_case` is -1, it's
+// not necessary to look at any cases.
+class ResolvedPipeIfScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_PIPE_IF_SCAN;
+
+  // Get the ResolvedScan for the case that was selected.
+  // When no case is selected (and there's no ELSE), this will be `input_scan`.
+  const ResolvedScan* GetSelectedCaseScan() const;
+
+ protected:
+  ResolvedPipeIfScan()
+      : ResolvedScan()
+      , input_scan_()
+      , selected_case_()
+      , if_case_list_()
+  {}
+
+ public:
+
+  ResolvedPipeIfScan(const ResolvedPipeIfScan&) = delete;
+  ResolvedPipeIfScan& operator=(const ResolvedPipeIfScan&) = delete;
+
+  friend std::unique_ptr<ResolvedPipeIfScan> MakeResolvedPipeIfScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      int selected_case,
+      std::vector<std::unique_ptr<const ResolvedPipeIfCase>> if_case_list
+  );
+  ~ResolvedPipeIfScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_PIPE_IF_SCAN; }
+  std::string node_kind_string() const final { return "PipeIfScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedPipeIfScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedPipeIfScan>> RestoreFrom(
+      const ResolvedPipeIfScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedScan* input_scan() const {
+    accessed_ |= (1<<0);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedScan> v) {
+    input_scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+  int selected_case() const {
+    accessed_ |= (1<<1);
+    return selected_case_;
+  }
+  void set_selected_case(int v) {
+    selected_case_ = v;
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedPipeIfCase>>& if_case_list() const {
+    accessed_ |= (1<<2);
+    return if_case_list_;
+  }
+  int if_case_list_size() const {
+    if (if_case_list_.empty()) accessed_ |= (1<<2);
+    return static_cast<int>(if_case_list_.size());
+  }
+  const ResolvedPipeIfCase* if_case_list(int i) const {
+    accessed_ |= (1<<2);
+    return if_case_list_.at(i).get();
+  }
+  void add_if_case_list(std::unique_ptr<const ResolvedPipeIfCase> v) {
+    if_case_list_.emplace_back(std::move(v));
+  }
+  void set_if_case_list(std::vector<std::unique_ptr<const ResolvedPipeIfCase>> v) {
+    if_case_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedPipeIfCase>> release_if_case_list() {
+    std::vector<std::unique_ptr<const ResolvedPipeIfCase>> tmp;
+    if_case_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedPipeIfScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      int selected_case,
+      std::vector<std::unique_ptr<const ResolvedPipeIfCase>> if_case_list,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      input_scan_(std::move(input_scan)),
+      selected_case_(selected_case),
+      if_case_list_(std::move(if_case_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedPipeIfScan> MakeResolvedPipeIfScan();
+  friend class ResolvedPipeIfScanBuilder;
+  friend ResolvedPipeIfScanBuilder ToBuilder(std::unique_ptr<const ResolvedPipeIfScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool selected_case_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool if_case_list_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  std::unique_ptr<const ResolvedScan> input_scan_;
+  int selected_case_;
+  std::vector<std::unique_ptr<const ResolvedPipeIfCase>> if_case_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedPipeIfScan> MakeResolvedPipeIfScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    int selected_case,
+    std::vector<std::unique_ptr<const ResolvedPipeIfCase>> if_case_list) {
+  return std::unique_ptr<ResolvedPipeIfScan>(new ResolvedPipeIfScan(
+        column_list,
+        std::move(input_scan),
+        selected_case,
+        std::move(if_case_list),
+        ResolvedPipeIfScan::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedPipeIfScan with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  if_case_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename if_case_list_t
+      = std::vector<std::unique_ptr<const ResolvedPipeIfCase>>>
+std::unique_ptr<ResolvedPipeIfScan> MakeResolvedPipeIfScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    int selected_case,
+    if_case_list_t if_case_list) {
+  static_assert(std::is_base_of<
+      ResolvedPipeIfCase,
+      typename std::decay<decltype(**(if_case_list.begin()))>::type>::value,
+      "if_case_list must be a container of unique_ptr with elements of type "
+      "ResolvedPipeIfCase (or its descendants).");
+  return MakeResolvedPipeIfScan(
+      column_list,
+      std::move(input_scan),
+      selected_case,
+      {std::make_move_iterator(if_case_list.begin()),
+       std::make_move_iterator(if_case_list.end())});
+}
+
+inline std::unique_ptr<ResolvedPipeIfScan> MakeResolvedPipeIfScan() {
+  return std::unique_ptr<ResolvedPipeIfScan>(
+      new ResolvedPipeIfScan());
+}
+
+// This represents one case in a ResolvedPipeIf.
+//
+// `condition` and `subpipeline_sql` must be present for all cases except
+// the last case (if it's an ELSE case).
+// `condition` must be present except on the ELSE case.
+// `subpipeline_sql` must be present for all cases.
+//
+// Where `condition` is present, it must be a valid boolean constant
+// expression.
+//
+// `subpipeline_sql` gives the SQL for the subpipeline, including the
+// wrapping parentheses.  This is required even for the selected case
+// because the SQLBuilder currently relies on it.
+//
+// `subpipeline_sql` for non-selected cases doesn't have to be resolvable
+// but should be parsable.
+//
+// `subpipeline` must be present for the selected case, and can optionally
+// be present for other cases (only when the SQL is valid).
+//
+// `condition` is ignorable because conditions are evaluated at analysis time
+// and the case to run has already been chosen.
+//
+// `subpipeline` is ignorable because it doesn't need to be consumed in the
+// non-selected cases.
+class ResolvedPipeIfCase final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_PIPE_IF_CASE;
+
+  bool IsElse() const { return condition() == nullptr; }
+
+ protected:
+  ResolvedPipeIfCase()
+      : ResolvedArgument()
+      , condition_()
+      , subpipeline_sql_()
+      , subpipeline_()
+  {}
+
+ public:
+
+  ResolvedPipeIfCase(const ResolvedPipeIfCase&) = delete;
+  ResolvedPipeIfCase& operator=(const ResolvedPipeIfCase&) = delete;
+
+  friend std::unique_ptr<ResolvedPipeIfCase> MakeResolvedPipeIfCase(
+      std::unique_ptr<const ResolvedExpr> condition,
+      absl::string_view subpipeline_sql,
+      std::unique_ptr<const ResolvedSubpipeline> subpipeline
+  );
+  ~ResolvedPipeIfCase() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_PIPE_IF_CASE; }
+  std::string node_kind_string() const final { return "PipeIfCase"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedPipeIfCaseProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedPipeIfCase>> RestoreFrom(
+      const ResolvedPipeIfCaseProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedExpr* condition() const {
+    accessed_ |= (1<<0);
+    return condition_.get();
+  }
+  void set_condition(std::unique_ptr<const ResolvedExpr> v) {
+    condition_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExpr> release_condition() {
+    return std::move(condition_);
+  }
+
+  const std::string& subpipeline_sql() const {
+    accessed_ |= (1<<1);
+    return subpipeline_sql_;
+  }
+  void set_subpipeline_sql(absl::string_view v) {
+    subpipeline_sql_ = v;
+  }
+
+  const ResolvedSubpipeline* subpipeline() const {
+    accessed_ |= (1<<2);
+    return subpipeline_.get();
+  }
+  void set_subpipeline(std::unique_ptr<const ResolvedSubpipeline> v) {
+    subpipeline_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedSubpipeline> release_subpipeline() {
+    return std::move(subpipeline_);
+  }
+
+ protected:
+  explicit ResolvedPipeIfCase(
+      std::unique_ptr<const ResolvedExpr> condition,
+      absl::string_view subpipeline_sql,
+      std::unique_ptr<const ResolvedSubpipeline> subpipeline,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      condition_(std::move(condition)),
+      subpipeline_sql_(subpipeline_sql),
+      subpipeline_(std::move(subpipeline)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedPipeIfCase> MakeResolvedPipeIfCase();
+  friend class ResolvedPipeIfCaseBuilder;
+  friend ResolvedPipeIfCaseBuilder ToBuilder(std::unique_ptr<const ResolvedPipeIfCase>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool condition_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool subpipeline_sql_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  bool subpipeline_accessed() const {
+    return accessed_ & (1<<2);
+ }
+  std::unique_ptr<const ResolvedExpr> condition_;
+  std::string subpipeline_sql_;
+  std::unique_ptr<const ResolvedSubpipeline> subpipeline_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedPipeIfCase> MakeResolvedPipeIfCase(
+    std::unique_ptr<const ResolvedExpr> condition,
+    absl::string_view subpipeline_sql,
+    std::unique_ptr<const ResolvedSubpipeline> subpipeline) {
+  return std::unique_ptr<ResolvedPipeIfCase>(new ResolvedPipeIfCase(
+        std::move(condition),
+        subpipeline_sql,
+        std::move(subpipeline),
+        ResolvedPipeIfCase::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedPipeIfCase> MakeResolvedPipeIfCase() {
+  return std::unique_ptr<ResolvedPipeIfCase>(
+      new ResolvedPipeIfCase());
+}
+
+// This represents the pipe FORK operator, which is controlled by
+// FEATURE_PIPE_FORK.  See (broken link).
+//
+// This only occurs inside ResolvedGeneralizedQueryStmts, so that statement
+// must be enabled in SupportedStatementKinds.
+class ResolvedPipeForkScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_PIPE_FORK_SCAN;
+
+ protected:
+  ResolvedPipeForkScan()
+      : ResolvedScan()
+      , input_scan_()
+      , subpipeline_list_()
+  {}
+
+ public:
+
+  ResolvedPipeForkScan(const ResolvedPipeForkScan&) = delete;
+  ResolvedPipeForkScan& operator=(const ResolvedPipeForkScan&) = delete;
+
+  friend std::unique_ptr<ResolvedPipeForkScan> MakeResolvedPipeForkScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> subpipeline_list
+  );
+  ~ResolvedPipeForkScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_PIPE_FORK_SCAN; }
+  std::string node_kind_string() const final { return "PipeForkScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedPipeForkScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedPipeForkScan>> RestoreFrom(
+      const ResolvedPipeForkScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedScan* input_scan() const {
+    accessed_ |= (1<<0);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedScan> v) {
+    input_scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+  const std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>>& subpipeline_list() const {
+    accessed_ |= (1<<1);
+    return subpipeline_list_;
+  }
+  int subpipeline_list_size() const {
+    if (subpipeline_list_.empty()) accessed_ |= (1<<1);
+    return static_cast<int>(subpipeline_list_.size());
+  }
+  const ResolvedGeneralizedQuerySubpipeline* subpipeline_list(int i) const {
+    accessed_ |= (1<<1);
+    return subpipeline_list_.at(i).get();
+  }
+  void add_subpipeline_list(std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline> v) {
+    subpipeline_list_.emplace_back(std::move(v));
+  }
+  void set_subpipeline_list(std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> v) {
+    subpipeline_list_ = std::move(v);
+  }
+
+  std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> release_subpipeline_list() {
+    std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> tmp;
+    subpipeline_list_.swap(tmp);
+    return tmp;
+  }
+
+ protected:
+  explicit ResolvedPipeForkScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> subpipeline_list,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      input_scan_(std::move(input_scan)),
+      subpipeline_list_(std::move(subpipeline_list)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedPipeForkScan> MakeResolvedPipeForkScan();
+  friend class ResolvedPipeForkScanBuilder;
+  friend ResolvedPipeForkScanBuilder ToBuilder(std::unique_ptr<const ResolvedPipeForkScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool subpipeline_list_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::unique_ptr<const ResolvedScan> input_scan_;
+  std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> subpipeline_list_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedPipeForkScan> MakeResolvedPipeForkScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> subpipeline_list) {
+  return std::unique_ptr<ResolvedPipeForkScan>(new ResolvedPipeForkScan(
+        column_list,
+        std::move(input_scan),
+        std::move(subpipeline_list),
+        ResolvedPipeForkScan::NEW_CONSTRUCTOR));
+}
+
+// Overloaded factory method for the construction of ResolvedPipeForkScan with
+// a wider range of inputs for node-vector inputs.  In particular allows:
+// 1. unique_ptr element type can be non-const.
+// 2. unique_ptr element type can be any descendant of the required type.
+// 3. input container can be any object with a `begin()` and `end()`.
+//
+// Note, initializer lists cannot be used to pass
+//  subpipeline_list
+// due to incompatibility with unique_ptr.  Use zetasql::MakeNodeVector
+// instead.
+template <
+  typename subpipeline_list_t
+      = std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>>>
+std::unique_ptr<ResolvedPipeForkScan> MakeResolvedPipeForkScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    subpipeline_list_t subpipeline_list) {
+  static_assert(std::is_base_of<
+      ResolvedGeneralizedQuerySubpipeline,
+      typename std::decay<decltype(**(subpipeline_list.begin()))>::type>::value,
+      "subpipeline_list must be a container of unique_ptr with elements of type "
+      "ResolvedGeneralizedQuerySubpipeline (or its descendants).");
+  return MakeResolvedPipeForkScan(
+      column_list,
+      std::move(input_scan),
+      {std::make_move_iterator(subpipeline_list.begin()),
+       std::make_move_iterator(subpipeline_list.end())});
+}
+
+inline std::unique_ptr<ResolvedPipeForkScan> MakeResolvedPipeForkScan() {
+  return std::unique_ptr<ResolvedPipeForkScan>(
+      new ResolvedPipeForkScan());
+}
+
+// This represents the pipe EXPORT DATA operator, which is controlled by
+// FEATURE_PIPE_EXPORT_DATA.  See (broken link).
+//
+// This only occurs inside ResolvedGeneralizedQueryStmts, so that statement
+// must be enabled in SupportedStatementKinds.
+class ResolvedPipeExportDataScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_PIPE_EXPORT_DATA_SCAN;
+
+ protected:
+  ResolvedPipeExportDataScan()
+      : ResolvedScan()
+      , input_scan_()
+      , export_data_stmt_()
+  {}
+
+ public:
+
+  ResolvedPipeExportDataScan(const ResolvedPipeExportDataScan&) = delete;
+  ResolvedPipeExportDataScan& operator=(const ResolvedPipeExportDataScan&) = delete;
+
+  friend std::unique_ptr<ResolvedPipeExportDataScan> MakeResolvedPipeExportDataScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::unique_ptr<const ResolvedExportDataStmt> export_data_stmt
+  );
+  ~ResolvedPipeExportDataScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_PIPE_EXPORT_DATA_SCAN; }
+  std::string node_kind_string() const final { return "PipeExportDataScan"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedPipeExportDataScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedPipeExportDataScan>> RestoreFrom(
+      const ResolvedPipeExportDataScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedScan* input_scan() const {
+    accessed_ |= (1<<0);
+    return input_scan_.get();
+  }
+  void set_input_scan(std::unique_ptr<const ResolvedScan> v) {
+    input_scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedScan> release_input_scan() {
+    return std::move(input_scan_);
+  }
+
+  const ResolvedExportDataStmt* export_data_stmt() const {
+    accessed_ |= (1<<1);
+    return export_data_stmt_.get();
+  }
+  void set_export_data_stmt(std::unique_ptr<const ResolvedExportDataStmt> v) {
+    export_data_stmt_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedExportDataStmt> release_export_data_stmt() {
+    return std::move(export_data_stmt_);
+  }
+
+ protected:
+  explicit ResolvedPipeExportDataScan(
+      const std::vector<ResolvedColumn>& column_list,
+      std::unique_ptr<const ResolvedScan> input_scan,
+      std::unique_ptr<const ResolvedExportDataStmt> export_data_stmt,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      input_scan_(std::move(input_scan)),
+      export_data_stmt_(std::move(export_data_stmt)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedPipeExportDataScan> MakeResolvedPipeExportDataScan();
+  friend class ResolvedPipeExportDataScanBuilder;
+  friend ResolvedPipeExportDataScanBuilder ToBuilder(std::unique_ptr<const ResolvedPipeExportDataScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool input_scan_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool export_data_stmt_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::unique_ptr<const ResolvedScan> input_scan_;
+  std::unique_ptr<const ResolvedExportDataStmt> export_data_stmt_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedPipeExportDataScan> MakeResolvedPipeExportDataScan(
+    const std::vector<ResolvedColumn>& column_list,
+    std::unique_ptr<const ResolvedScan> input_scan,
+    std::unique_ptr<const ResolvedExportDataStmt> export_data_stmt) {
+  return std::unique_ptr<ResolvedPipeExportDataScan>(new ResolvedPipeExportDataScan(
+        column_list,
+        std::move(input_scan),
+        std::move(export_data_stmt),
+        ResolvedPipeExportDataScan::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedPipeExportDataScan> MakeResolvedPipeExportDataScan() {
+  return std::unique_ptr<ResolvedPipeExportDataScan>(
+      new ResolvedPipeExportDataScan());
+}
+
+// This represents a subpipeline.
+// These occur inside various pipe operators, expressing a subpipeline of
+// pipe operators to apply on some input table.
+// See (broken link).
+//
+// The operator that contains this ResolvedSubpipeline defines how it's
+// being used and what table is passed in.  Most commonly, this is used
+// inside pipe operator scans, and is passed the `input_scan` of the
+// containing ResolvedScan.  When some other intermediate table is passed to
+// the subpipeline, that will be documented in the containing node.
+//
+// Inside `scan`, there must be exactly one instance of
+// ResolvedSubpipelineInputScan as a leaf scan receiving the subpipeline's
+// input table.  That scan's column_list includes a subset of columns
+// available from the input table provided to this ResolvedSubpipeline.
+//
+// ResolvedSubpipeline is like the final subquery in a ResolvedWithScan.
+// The ResolvedSubpipelineInputScan is like the ResolvedWithRefScan.
+// The node containing this ResolvedSubpipeline is like the ResolvedWithScan
+// and has to define the CTE-like table that will be referenced.
+class ResolvedSubpipeline final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_SUBPIPELINE;
+
+ protected:
+  ResolvedSubpipeline()
+      : ResolvedArgument()
+      , scan_()
+  {}
+
+ public:
+
+  ResolvedSubpipeline(const ResolvedSubpipeline&) = delete;
+  ResolvedSubpipeline& operator=(const ResolvedSubpipeline&) = delete;
+
+  friend std::unique_ptr<ResolvedSubpipeline> MakeResolvedSubpipeline(
+      std::unique_ptr<const ResolvedScan> scan
+  );
+  ~ResolvedSubpipeline() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_SUBPIPELINE; }
+  std::string node_kind_string() const final { return "Subpipeline"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedSubpipelineProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedSubpipeline>> RestoreFrom(
+      const ResolvedSubpipelineProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedScan* scan() const {
+    accessed_ |= (1<<0);
+    return scan_.get();
+  }
+  void set_scan(std::unique_ptr<const ResolvedScan> v) {
+    scan_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedScan> release_scan() {
+    return std::move(scan_);
+  }
+
+ protected:
+  explicit ResolvedSubpipeline(
+      std::unique_ptr<const ResolvedScan> scan,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      scan_(std::move(scan)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedSubpipeline> MakeResolvedSubpipeline();
+  friend class ResolvedSubpipelineBuilder;
+  friend ResolvedSubpipelineBuilder ToBuilder(std::unique_ptr<const ResolvedSubpipeline>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool scan_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  std::unique_ptr<const ResolvedScan> scan_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedSubpipeline> MakeResolvedSubpipeline(
+    std::unique_ptr<const ResolvedScan> scan) {
+  return std::unique_ptr<ResolvedSubpipeline>(new ResolvedSubpipeline(
+        std::move(scan),
+        ResolvedSubpipeline::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedSubpipeline> MakeResolvedSubpipeline() {
+  return std::unique_ptr<ResolvedSubpipeline>(
+      new ResolvedSubpipeline());
+}
+
+// This is the scan inside a ResolvedSubpipeline representing the initial
+// input table passed into the subpipeline.  This works like a CTE in WITH.
+//
+// The node containing the ResolvedSubpipeline (which is like a
+// ResolvedWithScan) specifies what table this is. Often it's a table that
+// just gets a copy of the node's `input_scan`, to pass through to the
+// subpipeline.
+//
+// The ResolvedSubpipelineInputScan is like a ResolvedWithRefScan, doing the
+// scan of that specified table inside the subpupline query.
+//
+// The `column_list` columns are a subset of columns available on that
+// input table.
+class ResolvedSubpipelineInputScan final : public ResolvedScan {
+ public:
+  typedef ResolvedScan SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_SUBPIPELINE_INPUT_SCAN;
+
+ protected:
+  ResolvedSubpipelineInputScan()
+      : ResolvedScan()
+  {}
+
+ public:
+
+  ResolvedSubpipelineInputScan(const ResolvedSubpipelineInputScan&) = delete;
+  ResolvedSubpipelineInputScan& operator=(const ResolvedSubpipelineInputScan&) = delete;
+
+  friend std::unique_ptr<ResolvedSubpipelineInputScan> MakeResolvedSubpipelineInputScan(
+      const std::vector<ResolvedColumn>& column_list
+  );
+  ~ResolvedSubpipelineInputScan() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_SUBPIPELINE_INPUT_SCAN; }
+  std::string node_kind_string() const final { return "SubpipelineInputScan"; }
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedSubpipelineInputScanProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedScanProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedSubpipelineInputScan>> RestoreFrom(
+      const ResolvedSubpipelineInputScanProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  // Member fields
+
+ protected:
+  explicit ResolvedSubpipelineInputScan(
+      const std::vector<ResolvedColumn>& column_list,
+      ConstructorOverload)
+      : ResolvedScan(
+            column_list,
+            ConstructorOverload::NEW_CONSTRUCTOR) {
+  }
+
+ private:
+  friend std::unique_ptr<ResolvedSubpipelineInputScan> MakeResolvedSubpipelineInputScan();
+  friend class ResolvedSubpipelineInputScanBuilder;
+  friend ResolvedSubpipelineInputScanBuilder ToBuilder(std::unique_ptr<const ResolvedSubpipelineInputScan>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+};
+
+inline std::unique_ptr<ResolvedSubpipelineInputScan> MakeResolvedSubpipelineInputScan(
+    const std::vector<ResolvedColumn>& column_list) {
+  return std::unique_ptr<ResolvedSubpipelineInputScan>(new ResolvedSubpipelineInputScan(
+        column_list,
+        ResolvedSubpipelineInputScan::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedSubpipelineInputScan> MakeResolvedSubpipelineInputScan() {
+  return std::unique_ptr<ResolvedSubpipelineInputScan>(
+      new ResolvedSubpipelineInputScan());
+}
+
+// This represents a subpipeline that is part of a ResolvedGeneralizedQueryStmt
+// and could produce an output table or a statement side-effect.
+// This node can only occur inside a ResolvedGeneralizedQueryStmt.
+//
+// These subpipelines occur inside operators like FORK that create
+// generalized query shapes.  See (broken link).
+//
+// `output_schema` is present if this subpipeline produces a final output
+// table to be returned as part of the ResolvedGeneralizedQueryStmt, and
+// provides the schema of that table.
+class ResolvedGeneralizedQuerySubpipeline final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_GENERALIZED_QUERY_SUBPIPELINE;
+
+ protected:
+  ResolvedGeneralizedQuerySubpipeline()
+      : ResolvedArgument()
+      , subpipeline_()
+      , output_schema_()
+  {}
+
+ public:
+
+  ResolvedGeneralizedQuerySubpipeline(const ResolvedGeneralizedQuerySubpipeline&) = delete;
+  ResolvedGeneralizedQuerySubpipeline& operator=(const ResolvedGeneralizedQuerySubpipeline&) = delete;
+
+  friend std::unique_ptr<ResolvedGeneralizedQuerySubpipeline> MakeResolvedGeneralizedQuerySubpipeline(
+      std::unique_ptr<const ResolvedSubpipeline> subpipeline,
+      std::unique_ptr<const ResolvedOutputSchema> output_schema
+  );
+  ~ResolvedGeneralizedQuerySubpipeline() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_GENERALIZED_QUERY_SUBPIPELINE; }
+  std::string node_kind_string() const final { return "GeneralizedQuerySubpipeline"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedGeneralizedQuerySubpipelineProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedGeneralizedQuerySubpipeline>> RestoreFrom(
+      const ResolvedGeneralizedQuerySubpipelineProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  const ResolvedSubpipeline* subpipeline() const {
+    accessed_ |= (1<<0);
+    return subpipeline_.get();
+  }
+  void set_subpipeline(std::unique_ptr<const ResolvedSubpipeline> v) {
+    subpipeline_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedSubpipeline> release_subpipeline() {
+    return std::move(subpipeline_);
+  }
+
+  const ResolvedOutputSchema* output_schema() const {
+    accessed_ |= (1<<1);
+    return output_schema_.get();
+  }
+  void set_output_schema(std::unique_ptr<const ResolvedOutputSchema> v) {
+    output_schema_ = std::move(v);
+  }
+
+  std::unique_ptr<const ResolvedOutputSchema> release_output_schema() {
+    return std::move(output_schema_);
+  }
+
+ protected:
+  explicit ResolvedGeneralizedQuerySubpipeline(
+      std::unique_ptr<const ResolvedSubpipeline> subpipeline,
+      std::unique_ptr<const ResolvedOutputSchema> output_schema,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      subpipeline_(std::move(subpipeline)),
+      output_schema_(std::move(output_schema)) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedGeneralizedQuerySubpipeline> MakeResolvedGeneralizedQuerySubpipeline();
+  friend class ResolvedGeneralizedQuerySubpipelineBuilder;
+  friend ResolvedGeneralizedQuerySubpipelineBuilder ToBuilder(std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool subpipeline_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  bool output_schema_accessed() const {
+    return accessed_ & (1<<1);
+ }
+  std::unique_ptr<const ResolvedSubpipeline> subpipeline_;
+  std::unique_ptr<const ResolvedOutputSchema> output_schema_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedGeneralizedQuerySubpipeline> MakeResolvedGeneralizedQuerySubpipeline(
+    std::unique_ptr<const ResolvedSubpipeline> subpipeline,
+    std::unique_ptr<const ResolvedOutputSchema> output_schema) {
+  return std::unique_ptr<ResolvedGeneralizedQuerySubpipeline>(new ResolvedGeneralizedQuerySubpipeline(
+        std::move(subpipeline),
+        std::move(output_schema),
+        ResolvedGeneralizedQuerySubpipeline::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedGeneralizedQuerySubpipeline> MakeResolvedGeneralizedQuerySubpipeline() {
+  return std::unique_ptr<ResolvedGeneralizedQuerySubpipeline>(
+      new ResolvedGeneralizedQuerySubpipeline());
+}
+
 // ResolvedBarrierScan marks an optimization barrier during query planning.
 // It wraps an `input_scan` and ensures `input_scan` is evaluated as if
 // `input_scan` stands alone; plan transformations that may cause
@@ -48362,6 +57655,128 @@ std::unique_ptr<ResolvedAlterConnectionStmt> MakeResolvedAlterConnectionStmt(
 inline std::unique_ptr<ResolvedAlterConnectionStmt> MakeResolvedAlterConnectionStmt() {
   return std::unique_ptr<ResolvedAlterConnectionStmt>(
       new ResolvedAlterConnectionStmt());
+}
+
+// ResolvedLockMode optionally indicates whether locks should be
+// acquired on the data accessed during a ResolvedTableScan.
+//
+// `strength` specifies the strength of the locks to be acquired.
+class ResolvedLockMode final : public ResolvedArgument {
+ public:
+  typedef ResolvedArgument SUPER;
+
+  static const ResolvedNodeKind TYPE = RESOLVED_LOCK_MODE;
+
+  typedef ResolvedLockModeEnums::LockStrengthType LockStrengthType;
+  static const LockStrengthType UPDATE = ResolvedLockModeEnums::UPDATE;
+
+ protected:
+  ResolvedLockMode()
+      : ResolvedArgument()
+      , strength_()
+  {}
+
+ public:
+
+  ResolvedLockMode(const ResolvedLockMode&) = delete;
+  ResolvedLockMode& operator=(const ResolvedLockMode&) = delete;
+
+  friend std::unique_ptr<ResolvedLockMode> MakeResolvedLockMode(
+      ResolvedLockMode::LockStrengthType strength
+  );
+  ~ResolvedLockMode() final;
+
+  absl::Status Accept(ResolvedASTVisitor* visitor) const final;
+  absl::Status ChildrenAccept(ResolvedASTVisitor* visitor) const final;
+
+  ResolvedNodeKind node_kind() const final { return RESOLVED_LOCK_MODE; }
+  std::string node_kind_string() const final { return "LockMode"; }
+
+  absl::Status CheckFieldsAccessedImpl(const ResolvedNode* root) const
+      final;
+  absl::Status CheckNoFieldsAccessed() const final;
+  void ClearFieldsAccessed() const final;
+  void MarkFieldsAccessed() const final;
+
+  template <typename SUBTYPE>
+  bool Is() const {
+    return dynamic_cast<const SUBTYPE*>(this) != nullptr;
+  }
+
+  template <typename SUBTYPE>
+  const SUBTYPE* GetAs() const {
+    return static_cast<const SUBTYPE*>(this);
+  }
+  template <typename SUBTYPE>
+  SUBTYPE* GetAs() {
+    return static_cast<SUBTYPE*>(this);
+  }
+
+  using SUPER::SaveTo;
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      ResolvedLockModeProto* proto) const;
+
+  absl::Status SaveTo(Type::FileDescriptorSetMap* file_descriptor_set_map,
+                      AnyResolvedArgumentProto* proto) const final;
+
+  static absl::StatusOr<std::unique_ptr<ResolvedLockMode>> RestoreFrom(
+      const ResolvedLockModeProto& proto,
+      const ResolvedNode::RestoreParams& params);
+
+  void GetChildNodes(
+      std::vector<const ResolvedNode*>* child_nodes)
+          const final;
+
+  void AddMutableChildNodePointers(
+      std::vector<std::unique_ptr<const ResolvedNode>*>*
+          mutable_child_node_ptrs) final;
+
+  // Member fields
+
+  ResolvedLockMode::LockStrengthType strength() const {
+    accessed_ |= (1<<0);
+    return strength_;
+  }
+  void set_strength(ResolvedLockMode::LockStrengthType v) {
+    strength_ = v;
+  }
+
+ protected:
+  explicit ResolvedLockMode(
+      ResolvedLockMode::LockStrengthType strength,
+      ConstructorOverload)
+      : ResolvedArgument(
+            ConstructorOverload::NEW_CONSTRUCTOR),
+      strength_(strength) {
+  }
+
+  void CollectDebugStringFields(
+      std::vector<DebugStringField>* fields) const final;
+ private:
+  friend std::unique_ptr<ResolvedLockMode> MakeResolvedLockMode();
+  friend class ResolvedLockModeBuilder;
+  friend ResolvedLockModeBuilder ToBuilder(std::unique_ptr<const ResolvedLockMode>);
+  // Define this locally so our free function factories (friends) can access it.
+  constexpr static ConstructorOverload NEW_CONSTRUCTOR =
+      ResolvedNode::ConstructorOverload::NEW_CONSTRUCTOR;
+
+  bool strength_accessed() const {
+    return accessed_ & (1<<0);
+ }
+  ResolvedLockMode::LockStrengthType strength_;
+  mutable std::atomic<uint32_t> accessed_ = {0};
+};
+
+inline std::unique_ptr<ResolvedLockMode> MakeResolvedLockMode(
+    ResolvedLockMode::LockStrengthType strength) {
+  return std::unique_ptr<ResolvedLockMode>(new ResolvedLockMode(
+        strength,
+        ResolvedLockMode::NEW_CONSTRUCTOR));
+}
+
+inline std::unique_ptr<ResolvedLockMode> MakeResolvedLockMode() {
+  return std::unique_ptr<ResolvedLockMode>(
+      new ResolvedLockMode());
 }
 
 inline std::unique_ptr<ResolvedLiteral> MakeResolvedLiteral(

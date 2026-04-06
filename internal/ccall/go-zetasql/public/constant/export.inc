@@ -7,6 +7,7 @@
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/ret_check/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #endif

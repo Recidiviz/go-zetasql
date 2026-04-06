@@ -90,6 +90,7 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 	prelude = filterBisonExportDuplicateFlexTokenizer(packageDir, prelude)
 	prelude = filterFlexTokenizerExportDuplicateSources(packageDir, prelude)
 	prelude = wrapUnicodeUtilsCCInclude(prelude)
+	prelude = filterParserPackageExportDuplicateFlex(packageDir, prelude)
 	if !strings.Contains(packageDir, "/go-absl/types/") {
 		return prelude
 	}
@@ -146,6 +147,16 @@ func filterFlexTokenizerExportDuplicateSources(packageDir string, prelude []stri
 		}
 	}
 	return out
+}
+
+// filterParserPackageExportDuplicateFlex used to drop flex_tokenizer.{cc,flex.cc} from
+// go-zetasql/parser/parser/export.inc to avoid duplicate lexer symbols when the root and parser
+// packages linked different namespace-isolated copies. Root analyzer amalgamation must still
+// compile the same flex + TextMapper sources as parser/bind.cc (with root namespace macros), or
+// references from bison_parser.cc / flex_tokenizer stay undefined. Parser vs root symbols do not
+// unify across CGO packages, so each TU needs its own copy.
+func filterParserPackageExportDuplicateFlex(packageDir string, prelude []string) []string {
+	return prelude
 }
 
 func slicesInsert(s []string, at int, val string) []string {

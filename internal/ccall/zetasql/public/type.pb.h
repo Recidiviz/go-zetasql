@@ -24,7 +24,6 @@
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/arena.h"
 #include "google/protobuf/arenastring.h"
-#include "google/protobuf/generated_message_bases.h"
 #include "google/protobuf/generated_message_util.h"
 #include "google/protobuf/metadata_lite.h"
 #include "google/protobuf/generated_message_reflection.h"
@@ -60,6 +59,15 @@ extern ArrayTypeProtoDefaultTypeInternal _ArrayTypeProto_default_instance_;
 class EnumTypeProto;
 struct EnumTypeProtoDefaultTypeInternal;
 extern EnumTypeProtoDefaultTypeInternal _EnumTypeProto_default_instance_;
+class GraphElementTypeProto;
+struct GraphElementTypeProtoDefaultTypeInternal;
+extern GraphElementTypeProtoDefaultTypeInternal _GraphElementTypeProto_default_instance_;
+class GraphElementTypeProto_PropertyTypeProto;
+struct GraphElementTypeProto_PropertyTypeProtoDefaultTypeInternal;
+extern GraphElementTypeProto_PropertyTypeProtoDefaultTypeInternal _GraphElementTypeProto_PropertyTypeProto_default_instance_;
+class GraphPathTypeProto;
+struct GraphPathTypeProtoDefaultTypeInternal;
+extern GraphPathTypeProtoDefaultTypeInternal _GraphPathTypeProto_default_instance_;
 class MapTypeProto;
 struct MapTypeProtoDefaultTypeInternal;
 extern MapTypeProtoDefaultTypeInternal _MapTypeProto_default_instance_;
@@ -94,6 +102,12 @@ template <>
 template <>
 ::zetasql::EnumTypeProto* Arena::CreateMaybeMessage<::zetasql::EnumTypeProto>(Arena*);
 template <>
+::zetasql::GraphElementTypeProto* Arena::CreateMaybeMessage<::zetasql::GraphElementTypeProto>(Arena*);
+template <>
+::zetasql::GraphElementTypeProto_PropertyTypeProto* Arena::CreateMaybeMessage<::zetasql::GraphElementTypeProto_PropertyTypeProto>(Arena*);
+template <>
+::zetasql::GraphPathTypeProto* Arena::CreateMaybeMessage<::zetasql::GraphPathTypeProto>(Arena*);
+template <>
 ::zetasql::MapTypeProto* Arena::CreateMaybeMessage<::zetasql::MapTypeProto>(Arena*);
 template <>
 ::zetasql::MeasureTypeProto* Arena::CreateMaybeMessage<::zetasql::MeasureTypeProto>(Arena*);
@@ -114,6 +128,35 @@ template <>
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace zetasql {
+enum GraphElementTypeProto_ElementKind : int {
+  GraphElementTypeProto_ElementKind_KIND_INVALID = 0,
+  GraphElementTypeProto_ElementKind_KIND_NODE = 1,
+  GraphElementTypeProto_ElementKind_KIND_EDGE = 2,
+};
+
+bool GraphElementTypeProto_ElementKind_IsValid(int value);
+constexpr GraphElementTypeProto_ElementKind GraphElementTypeProto_ElementKind_ElementKind_MIN = static_cast<GraphElementTypeProto_ElementKind>(0);
+constexpr GraphElementTypeProto_ElementKind GraphElementTypeProto_ElementKind_ElementKind_MAX = static_cast<GraphElementTypeProto_ElementKind>(2);
+constexpr int GraphElementTypeProto_ElementKind_ElementKind_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+GraphElementTypeProto_ElementKind_descriptor();
+template <typename T>
+const std::string& GraphElementTypeProto_ElementKind_Name(T value) {
+  static_assert(std::is_same<T, GraphElementTypeProto_ElementKind>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to ElementKind_Name().");
+  return GraphElementTypeProto_ElementKind_Name(static_cast<GraphElementTypeProto_ElementKind>(value));
+}
+template <>
+inline const std::string& GraphElementTypeProto_ElementKind_Name(GraphElementTypeProto_ElementKind value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<GraphElementTypeProto_ElementKind_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool GraphElementTypeProto_ElementKind_Parse(absl::string_view name, GraphElementTypeProto_ElementKind* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<GraphElementTypeProto_ElementKind>(
+      GraphElementTypeProto_ElementKind_descriptor(), name, value);
+}
 enum TypeKind : int {
   __TypeKind__switch_must_have_a_default__ = -1,
   TYPE_UNKNOWN = 0,
@@ -128,6 +171,7 @@ enum TypeKind : int {
   TYPE_BYTES = 9,
   TYPE_DATE = 10,
   TYPE_TIMESTAMP = 19,
+  TYPE_TIMESTAMP_PICOS = 35,
   TYPE_ENUM = 15,
   TYPE_ARRAY = 16,
   TYPE_STRUCT = 17,
@@ -142,14 +186,17 @@ enum TypeKind : int {
   TYPE_INTERVAL = 27,
   TYPE_TOKENLIST = 28,
   TYPE_RANGE = 29,
+  TYPE_GRAPH_ELEMENT = 30,
+  TYPE_GRAPH_PATH = 33,
   TYPE_MAP = 31,
   TYPE_UUID = 32,
+  TYPE_MEASURE = 34,
 };
 
 bool TypeKind_IsValid(int value);
 constexpr TypeKind TypeKind_MIN = static_cast<TypeKind>(-1);
-constexpr TypeKind TypeKind_MAX = static_cast<TypeKind>(32);
-constexpr int TypeKind_ARRAYSIZE = 32 + 1;
+constexpr TypeKind TypeKind_MAX = static_cast<TypeKind>(35);
+constexpr int TypeKind_ARRAYSIZE = 35 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 TypeKind_descriptor();
 template <typename T>
@@ -162,7 +209,7 @@ const std::string& TypeKind_Name(T value) {
 template <>
 inline const std::string& TypeKind_Name(TypeKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<TypeKind_descriptor,
-                                                 -1, 32>(
+                                                 -1, 35>(
       static_cast<int>(value));
 }
 inline bool TypeKind_Parse(absl::string_view name, TypeKind* value) {
@@ -310,7 +357,10 @@ class TypeProto final :
     kProtoTypeFieldNumber = 4,
     kEnumTypeFieldNumber = 5,
     kRangeTypeFieldNumber = 8,
+    kGraphElementTypeFieldNumber = 9,
     kMapTypeFieldNumber = 10,
+    kGraphPathTypeFieldNumber = 11,
+    kMeasureTypeFieldNumber = 12,
     kTypeKindFieldNumber = 1,
   };
   // repeated .google.protobuf.FileDescriptorSet file_descriptor_set = 6;
@@ -424,6 +474,20 @@ class TypeProto final :
   void unsafe_arena_set_allocated_range_type(
       ::zetasql::RangeTypeProto* range_type);
   ::zetasql::RangeTypeProto* unsafe_arena_release_range_type();
+  // optional .zetasql.GraphElementTypeProto graph_element_type = 9;
+  bool has_graph_element_type() const;
+  void clear_graph_element_type() ;
+  const ::zetasql::GraphElementTypeProto& graph_element_type() const;
+  PROTOBUF_NODISCARD ::zetasql::GraphElementTypeProto* release_graph_element_type();
+  ::zetasql::GraphElementTypeProto* mutable_graph_element_type();
+  void set_allocated_graph_element_type(::zetasql::GraphElementTypeProto* graph_element_type);
+  private:
+  const ::zetasql::GraphElementTypeProto& _internal_graph_element_type() const;
+  ::zetasql::GraphElementTypeProto* _internal_mutable_graph_element_type();
+  public:
+  void unsafe_arena_set_allocated_graph_element_type(
+      ::zetasql::GraphElementTypeProto* graph_element_type);
+  ::zetasql::GraphElementTypeProto* unsafe_arena_release_graph_element_type();
   // optional .zetasql.MapTypeProto map_type = 10;
   bool has_map_type() const;
   void clear_map_type() ;
@@ -438,6 +502,34 @@ class TypeProto final :
   void unsafe_arena_set_allocated_map_type(
       ::zetasql::MapTypeProto* map_type);
   ::zetasql::MapTypeProto* unsafe_arena_release_map_type();
+  // optional .zetasql.GraphPathTypeProto graph_path_type = 11;
+  bool has_graph_path_type() const;
+  void clear_graph_path_type() ;
+  const ::zetasql::GraphPathTypeProto& graph_path_type() const;
+  PROTOBUF_NODISCARD ::zetasql::GraphPathTypeProto* release_graph_path_type();
+  ::zetasql::GraphPathTypeProto* mutable_graph_path_type();
+  void set_allocated_graph_path_type(::zetasql::GraphPathTypeProto* graph_path_type);
+  private:
+  const ::zetasql::GraphPathTypeProto& _internal_graph_path_type() const;
+  ::zetasql::GraphPathTypeProto* _internal_mutable_graph_path_type();
+  public:
+  void unsafe_arena_set_allocated_graph_path_type(
+      ::zetasql::GraphPathTypeProto* graph_path_type);
+  ::zetasql::GraphPathTypeProto* unsafe_arena_release_graph_path_type();
+  // optional .zetasql.MeasureTypeProto measure_type = 12;
+  bool has_measure_type() const;
+  void clear_measure_type() ;
+  const ::zetasql::MeasureTypeProto& measure_type() const;
+  PROTOBUF_NODISCARD ::zetasql::MeasureTypeProto* release_measure_type();
+  ::zetasql::MeasureTypeProto* mutable_measure_type();
+  void set_allocated_measure_type(::zetasql::MeasureTypeProto* measure_type);
+  private:
+  const ::zetasql::MeasureTypeProto& _internal_measure_type() const;
+  ::zetasql::MeasureTypeProto* _internal_mutable_measure_type();
+  public:
+  void unsafe_arena_set_allocated_measure_type(
+      ::zetasql::MeasureTypeProto* measure_type);
+  ::zetasql::MeasureTypeProto* unsafe_arena_release_measure_type();
   // optional .zetasql.TypeKind type_kind = 1;
   bool has_type_kind() const;
   void clear_type_kind() ;
@@ -619,7 +711,10 @@ class TypeProto final :
     ::zetasql::ProtoTypeProto* proto_type_;
     ::zetasql::EnumTypeProto* enum_type_;
     ::zetasql::RangeTypeProto* range_type_;
+    ::zetasql::GraphElementTypeProto* graph_element_type_;
     ::zetasql::MapTypeProto* map_type_;
+    ::zetasql::GraphPathTypeProto* graph_path_type_;
+    ::zetasql::MeasureTypeProto* measure_type_;
     int type_kind_;
   };
   union { Impl_ _impl_; };
@@ -2277,10 +2372,604 @@ class OpaqueEnumValueOptions final :
   friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
 };// -------------------------------------------------------------------
 
+class GraphElementTypeProto_PropertyTypeProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.GraphElementTypeProto.PropertyTypeProto) */ {
+ public:
+  inline GraphElementTypeProto_PropertyTypeProto() : GraphElementTypeProto_PropertyTypeProto(nullptr) {}
+  ~GraphElementTypeProto_PropertyTypeProto() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GraphElementTypeProto_PropertyTypeProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GraphElementTypeProto_PropertyTypeProto(const GraphElementTypeProto_PropertyTypeProto& from);
+  GraphElementTypeProto_PropertyTypeProto(GraphElementTypeProto_PropertyTypeProto&& from) noexcept
+    : GraphElementTypeProto_PropertyTypeProto() {
+    *this = ::std::move(from);
+  }
+
+  inline GraphElementTypeProto_PropertyTypeProto& operator=(const GraphElementTypeProto_PropertyTypeProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GraphElementTypeProto_PropertyTypeProto& operator=(GraphElementTypeProto_PropertyTypeProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GraphElementTypeProto_PropertyTypeProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GraphElementTypeProto_PropertyTypeProto* internal_default_instance() {
+    return reinterpret_cast<const GraphElementTypeProto_PropertyTypeProto*>(
+               &_GraphElementTypeProto_PropertyTypeProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(GraphElementTypeProto_PropertyTypeProto& a, GraphElementTypeProto_PropertyTypeProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GraphElementTypeProto_PropertyTypeProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GraphElementTypeProto_PropertyTypeProto* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GraphElementTypeProto_PropertyTypeProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GraphElementTypeProto_PropertyTypeProto>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GraphElementTypeProto_PropertyTypeProto& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const GraphElementTypeProto_PropertyTypeProto& from) {
+    GraphElementTypeProto_PropertyTypeProto::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GraphElementTypeProto_PropertyTypeProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.GraphElementTypeProto.PropertyTypeProto";
+  }
+  protected:
+  explicit GraphElementTypeProto_PropertyTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNameFieldNumber = 1,
+    kValueTypeFieldNumber = 2,
+  };
+  // optional string name = 1;
+  bool has_name() const;
+  void clear_name() ;
+  const std::string& name() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_name(Arg_&& arg, Args_... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* ptr);
+
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(
+      const std::string& value);
+  std::string* _internal_mutable_name();
+
+  public:
+  // optional .zetasql.TypeProto value_type = 2;
+  bool has_value_type() const;
+  void clear_value_type() ;
+  const ::zetasql::TypeProto& value_type() const;
+  PROTOBUF_NODISCARD ::zetasql::TypeProto* release_value_type();
+  ::zetasql::TypeProto* mutable_value_type();
+  void set_allocated_value_type(::zetasql::TypeProto* value_type);
+  private:
+  const ::zetasql::TypeProto& _internal_value_type() const;
+  ::zetasql::TypeProto* _internal_mutable_value_type();
+  public:
+  void unsafe_arena_set_allocated_value_type(
+      ::zetasql::TypeProto* value_type);
+  ::zetasql::TypeProto* unsafe_arena_release_value_type();
+  // @@protoc_insertion_point(class_scope:zetasql.GraphElementTypeProto.PropertyTypeProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+    ::zetasql::TypeProto* value_type_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
+};// -------------------------------------------------------------------
+
+class GraphElementTypeProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.GraphElementTypeProto) */ {
+ public:
+  inline GraphElementTypeProto() : GraphElementTypeProto(nullptr) {}
+  ~GraphElementTypeProto() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GraphElementTypeProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GraphElementTypeProto(const GraphElementTypeProto& from);
+  GraphElementTypeProto(GraphElementTypeProto&& from) noexcept
+    : GraphElementTypeProto() {
+    *this = ::std::move(from);
+  }
+
+  inline GraphElementTypeProto& operator=(const GraphElementTypeProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GraphElementTypeProto& operator=(GraphElementTypeProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GraphElementTypeProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GraphElementTypeProto* internal_default_instance() {
+    return reinterpret_cast<const GraphElementTypeProto*>(
+               &_GraphElementTypeProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(GraphElementTypeProto& a, GraphElementTypeProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GraphElementTypeProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GraphElementTypeProto* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GraphElementTypeProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GraphElementTypeProto>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GraphElementTypeProto& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const GraphElementTypeProto& from) {
+    GraphElementTypeProto::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GraphElementTypeProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.GraphElementTypeProto";
+  }
+  protected:
+  explicit GraphElementTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  typedef GraphElementTypeProto_PropertyTypeProto PropertyTypeProto;
+
+  using ElementKind = GraphElementTypeProto_ElementKind;
+  static constexpr ElementKind KIND_INVALID = GraphElementTypeProto_ElementKind_KIND_INVALID;
+  static constexpr ElementKind KIND_NODE = GraphElementTypeProto_ElementKind_KIND_NODE;
+  static constexpr ElementKind KIND_EDGE = GraphElementTypeProto_ElementKind_KIND_EDGE;
+  static inline bool ElementKind_IsValid(int value) {
+    return GraphElementTypeProto_ElementKind_IsValid(value);
+  }
+  static constexpr ElementKind ElementKind_MIN = GraphElementTypeProto_ElementKind_ElementKind_MIN;
+  static constexpr ElementKind ElementKind_MAX = GraphElementTypeProto_ElementKind_ElementKind_MAX;
+  static constexpr int ElementKind_ARRAYSIZE = GraphElementTypeProto_ElementKind_ElementKind_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ElementKind_descriptor() {
+    return GraphElementTypeProto_ElementKind_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& ElementKind_Name(T value) {
+    return GraphElementTypeProto_ElementKind_Name(value);
+  }
+  static inline bool ElementKind_Parse(absl::string_view name, ElementKind* value) {
+    return GraphElementTypeProto_ElementKind_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPropertyTypeFieldNumber = 2,
+    kGraphReferenceFieldNumber = 4,
+    kKindFieldNumber = 1,
+  };
+  // repeated .zetasql.GraphElementTypeProto.PropertyTypeProto property_type = 2;
+  int property_type_size() const;
+  private:
+  int _internal_property_type_size() const;
+
+  public:
+  void clear_property_type() ;
+  ::zetasql::GraphElementTypeProto_PropertyTypeProto* mutable_property_type(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::GraphElementTypeProto_PropertyTypeProto >*
+      mutable_property_type();
+  private:
+  const ::zetasql::GraphElementTypeProto_PropertyTypeProto& _internal_property_type(int index) const;
+  ::zetasql::GraphElementTypeProto_PropertyTypeProto* _internal_add_property_type();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::GraphElementTypeProto_PropertyTypeProto>& _internal_property_type() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::GraphElementTypeProto_PropertyTypeProto>* _internal_mutable_property_type();
+  public:
+  const ::zetasql::GraphElementTypeProto_PropertyTypeProto& property_type(int index) const;
+  ::zetasql::GraphElementTypeProto_PropertyTypeProto* add_property_type();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::GraphElementTypeProto_PropertyTypeProto >&
+      property_type() const;
+  // repeated string graph_reference = 4;
+  int graph_reference_size() const;
+  private:
+  int _internal_graph_reference_size() const;
+
+  public:
+  void clear_graph_reference() ;
+  const std::string& graph_reference(int index) const;
+  std::string* mutable_graph_reference(int index);
+  void set_graph_reference(int index, const std::string& value);
+  void set_graph_reference(int index, std::string&& value);
+  void set_graph_reference(int index, const char* value);
+  void set_graph_reference(int index, const char* value, std::size_t size);
+  void set_graph_reference(int index, absl::string_view value);
+  std::string* add_graph_reference();
+  void add_graph_reference(const std::string& value);
+  void add_graph_reference(std::string&& value);
+  void add_graph_reference(const char* value);
+  void add_graph_reference(const char* value, std::size_t size);
+  void add_graph_reference(absl::string_view value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& graph_reference() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_graph_reference();
+
+  private:
+  const std::string& _internal_graph_reference(int index) const;
+  std::string* _internal_add_graph_reference();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& _internal_graph_reference() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* _internal_mutable_graph_reference();
+
+  public:
+  // optional .zetasql.GraphElementTypeProto.ElementKind kind = 1;
+  bool has_kind() const;
+  void clear_kind() ;
+  ::zetasql::GraphElementTypeProto_ElementKind kind() const;
+  void set_kind(::zetasql::GraphElementTypeProto_ElementKind value);
+
+  private:
+  ::zetasql::GraphElementTypeProto_ElementKind _internal_kind() const;
+  void _internal_set_kind(::zetasql::GraphElementTypeProto_ElementKind value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:zetasql.GraphElementTypeProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::GraphElementTypeProto_PropertyTypeProto > property_type_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> graph_reference_;
+    int kind_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
+};// -------------------------------------------------------------------
+
+class GraphPathTypeProto final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.GraphPathTypeProto) */ {
+ public:
+  inline GraphPathTypeProto() : GraphPathTypeProto(nullptr) {}
+  ~GraphPathTypeProto() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GraphPathTypeProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GraphPathTypeProto(const GraphPathTypeProto& from);
+  GraphPathTypeProto(GraphPathTypeProto&& from) noexcept
+    : GraphPathTypeProto() {
+    *this = ::std::move(from);
+  }
+
+  inline GraphPathTypeProto& operator=(const GraphPathTypeProto& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GraphPathTypeProto& operator=(GraphPathTypeProto&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GraphPathTypeProto& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GraphPathTypeProto* internal_default_instance() {
+    return reinterpret_cast<const GraphPathTypeProto*>(
+               &_GraphPathTypeProto_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    12;
+
+  friend void swap(GraphPathTypeProto& a, GraphPathTypeProto& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GraphPathTypeProto* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GraphPathTypeProto* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GraphPathTypeProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GraphPathTypeProto>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GraphPathTypeProto& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const GraphPathTypeProto& from) {
+    GraphPathTypeProto::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GraphPathTypeProto* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.GraphPathTypeProto";
+  }
+  protected:
+  explicit GraphPathTypeProto(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNodeTypeFieldNumber = 1,
+    kEdgeTypeFieldNumber = 2,
+  };
+  // optional .zetasql.GraphElementTypeProto node_type = 1;
+  bool has_node_type() const;
+  void clear_node_type() ;
+  const ::zetasql::GraphElementTypeProto& node_type() const;
+  PROTOBUF_NODISCARD ::zetasql::GraphElementTypeProto* release_node_type();
+  ::zetasql::GraphElementTypeProto* mutable_node_type();
+  void set_allocated_node_type(::zetasql::GraphElementTypeProto* node_type);
+  private:
+  const ::zetasql::GraphElementTypeProto& _internal_node_type() const;
+  ::zetasql::GraphElementTypeProto* _internal_mutable_node_type();
+  public:
+  void unsafe_arena_set_allocated_node_type(
+      ::zetasql::GraphElementTypeProto* node_type);
+  ::zetasql::GraphElementTypeProto* unsafe_arena_release_node_type();
+  // optional .zetasql.GraphElementTypeProto edge_type = 2;
+  bool has_edge_type() const;
+  void clear_edge_type() ;
+  const ::zetasql::GraphElementTypeProto& edge_type() const;
+  PROTOBUF_NODISCARD ::zetasql::GraphElementTypeProto* release_edge_type();
+  ::zetasql::GraphElementTypeProto* mutable_edge_type();
+  void set_allocated_edge_type(::zetasql::GraphElementTypeProto* edge_type);
+  private:
+  const ::zetasql::GraphElementTypeProto& _internal_edge_type() const;
+  ::zetasql::GraphElementTypeProto* _internal_mutable_edge_type();
+  public:
+  void unsafe_arena_set_allocated_edge_type(
+      ::zetasql::GraphElementTypeProto* edge_type);
+  ::zetasql::GraphElementTypeProto* unsafe_arena_release_edge_type();
+  // @@protoc_insertion_point(class_scope:zetasql.GraphPathTypeProto)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::zetasql::GraphElementTypeProto* node_type_;
+    ::zetasql::GraphElementTypeProto* edge_type_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
+};// -------------------------------------------------------------------
+
 class MeasureTypeProto final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.MeasureTypeProto) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.MeasureTypeProto) */ {
  public:
   inline MeasureTypeProto() : MeasureTypeProto(nullptr) {}
+  ~MeasureTypeProto() override;
   template<typename = void>
   explicit PROTOBUF_CONSTEXPR MeasureTypeProto(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
@@ -2332,7 +3021,7 @@ class MeasureTypeProto final :
                &_MeasureTypeProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    13;
 
   friend void swap(MeasureTypeProto& a, MeasureTypeProto& b) {
     a.Swap(&b);
@@ -2361,15 +3050,29 @@ class MeasureTypeProto final :
   MeasureTypeProto* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<MeasureTypeProto>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const MeasureTypeProto& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const MeasureTypeProto& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const MeasureTypeProto& from) {
+    MeasureTypeProto::MergeImpl(*this, from);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const MeasureTypeProto& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(MeasureTypeProto* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -2389,6 +3092,23 @@ class MeasureTypeProto final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kResultTypeFieldNumber = 1,
+  };
+  // optional .zetasql.TypeProto result_type = 1;
+  bool has_result_type() const;
+  void clear_result_type() ;
+  const ::zetasql::TypeProto& result_type() const;
+  PROTOBUF_NODISCARD ::zetasql::TypeProto* release_result_type();
+  ::zetasql::TypeProto* mutable_result_type();
+  void set_allocated_result_type(::zetasql::TypeProto* result_type);
+  private:
+  const ::zetasql::TypeProto& _internal_result_type() const;
+  ::zetasql::TypeProto* _internal_mutable_result_type();
+  public:
+  void unsafe_arena_set_allocated_result_type(
+      ::zetasql::TypeProto* result_type);
+  ::zetasql::TypeProto* unsafe_arena_release_result_type();
   // @@protoc_insertion_point(class_scope:zetasql.MeasureTypeProto)
  private:
   class _Internal;
@@ -2397,7 +3117,11 @@ class MeasureTypeProto final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::zetasql::TypeProto* result_type_;
   };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fpublic_2ftype_2eproto;
 };
 
@@ -2427,12 +3151,12 @@ extern ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::PROTOBUF_NAMESP
 
 // optional .zetasql.TypeKind type_kind = 1;
 inline bool TypeProto::has_type_kind() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000400u) != 0;
   return value;
 }
 inline void TypeProto::clear_type_kind() {
   _impl_.type_kind_ = -1;
-  _impl_._has_bits_[0] &= ~0x00000080u;
+  _impl_._has_bits_[0] &= ~0x00000400u;
 }
 inline ::zetasql::TypeKind TypeProto::type_kind() const {
   // @@protoc_insertion_point(field_get:zetasql.TypeProto.type_kind)
@@ -2447,7 +3171,7 @@ inline ::zetasql::TypeKind TypeProto::_internal_type_kind() const {
 }
 inline void TypeProto::_internal_set_type_kind(::zetasql::TypeKind value) {
   assert(::zetasql::TypeKind_IsValid(value));
-  _impl_._has_bits_[0] |= 0x00000080u;
+  _impl_._has_bits_[0] |= 0x00000400u;
   _impl_.type_kind_ = value;
 }
 
@@ -2886,15 +3610,189 @@ inline void TypeProto::set_allocated_range_type(::zetasql::RangeTypeProto* range
   // @@protoc_insertion_point(field_set_allocated:zetasql.TypeProto.range_type)
 }
 
+// optional .zetasql.GraphElementTypeProto graph_element_type = 9;
+inline bool TypeProto::has_graph_element_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.graph_element_type_ != nullptr);
+  return value;
+}
+inline void TypeProto::clear_graph_element_type() {
+  if (_impl_.graph_element_type_ != nullptr) _impl_.graph_element_type_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000040u;
+}
+inline const ::zetasql::GraphElementTypeProto& TypeProto::_internal_graph_element_type() const {
+  const ::zetasql::GraphElementTypeProto* p = _impl_.graph_element_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::GraphElementTypeProto&>(
+      ::zetasql::_GraphElementTypeProto_default_instance_);
+}
+inline const ::zetasql::GraphElementTypeProto& TypeProto::graph_element_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.TypeProto.graph_element_type)
+  return _internal_graph_element_type();
+}
+inline void TypeProto::unsafe_arena_set_allocated_graph_element_type(
+    ::zetasql::GraphElementTypeProto* graph_element_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.graph_element_type_);
+  }
+  _impl_.graph_element_type_ = graph_element_type;
+  if (graph_element_type) {
+    _impl_._has_bits_[0] |= 0x00000040u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000040u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.TypeProto.graph_element_type)
+}
+inline ::zetasql::GraphElementTypeProto* TypeProto::release_graph_element_type() {
+  _impl_._has_bits_[0] &= ~0x00000040u;
+  ::zetasql::GraphElementTypeProto* temp = _impl_.graph_element_type_;
+  _impl_.graph_element_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::GraphElementTypeProto* TypeProto::unsafe_arena_release_graph_element_type() {
+  // @@protoc_insertion_point(field_release:zetasql.TypeProto.graph_element_type)
+  _impl_._has_bits_[0] &= ~0x00000040u;
+  ::zetasql::GraphElementTypeProto* temp = _impl_.graph_element_type_;
+  _impl_.graph_element_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::GraphElementTypeProto* TypeProto::_internal_mutable_graph_element_type() {
+  _impl_._has_bits_[0] |= 0x00000040u;
+  if (_impl_.graph_element_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::GraphElementTypeProto>(GetArenaForAllocation());
+    _impl_.graph_element_type_ = p;
+  }
+  return _impl_.graph_element_type_;
+}
+inline ::zetasql::GraphElementTypeProto* TypeProto::mutable_graph_element_type() {
+  ::zetasql::GraphElementTypeProto* _msg = _internal_mutable_graph_element_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.TypeProto.graph_element_type)
+  return _msg;
+}
+inline void TypeProto::set_allocated_graph_element_type(::zetasql::GraphElementTypeProto* graph_element_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.graph_element_type_;
+  }
+  if (graph_element_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(graph_element_type);
+    if (message_arena != submessage_arena) {
+      graph_element_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, graph_element_type, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000040u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000040u;
+  }
+  _impl_.graph_element_type_ = graph_element_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.TypeProto.graph_element_type)
+}
+
+// optional .zetasql.GraphPathTypeProto graph_path_type = 11;
+inline bool TypeProto::has_graph_path_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000100u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.graph_path_type_ != nullptr);
+  return value;
+}
+inline void TypeProto::clear_graph_path_type() {
+  if (_impl_.graph_path_type_ != nullptr) _impl_.graph_path_type_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000100u;
+}
+inline const ::zetasql::GraphPathTypeProto& TypeProto::_internal_graph_path_type() const {
+  const ::zetasql::GraphPathTypeProto* p = _impl_.graph_path_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::GraphPathTypeProto&>(
+      ::zetasql::_GraphPathTypeProto_default_instance_);
+}
+inline const ::zetasql::GraphPathTypeProto& TypeProto::graph_path_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.TypeProto.graph_path_type)
+  return _internal_graph_path_type();
+}
+inline void TypeProto::unsafe_arena_set_allocated_graph_path_type(
+    ::zetasql::GraphPathTypeProto* graph_path_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.graph_path_type_);
+  }
+  _impl_.graph_path_type_ = graph_path_type;
+  if (graph_path_type) {
+    _impl_._has_bits_[0] |= 0x00000100u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000100u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.TypeProto.graph_path_type)
+}
+inline ::zetasql::GraphPathTypeProto* TypeProto::release_graph_path_type() {
+  _impl_._has_bits_[0] &= ~0x00000100u;
+  ::zetasql::GraphPathTypeProto* temp = _impl_.graph_path_type_;
+  _impl_.graph_path_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::GraphPathTypeProto* TypeProto::unsafe_arena_release_graph_path_type() {
+  // @@protoc_insertion_point(field_release:zetasql.TypeProto.graph_path_type)
+  _impl_._has_bits_[0] &= ~0x00000100u;
+  ::zetasql::GraphPathTypeProto* temp = _impl_.graph_path_type_;
+  _impl_.graph_path_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::GraphPathTypeProto* TypeProto::_internal_mutable_graph_path_type() {
+  _impl_._has_bits_[0] |= 0x00000100u;
+  if (_impl_.graph_path_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::GraphPathTypeProto>(GetArenaForAllocation());
+    _impl_.graph_path_type_ = p;
+  }
+  return _impl_.graph_path_type_;
+}
+inline ::zetasql::GraphPathTypeProto* TypeProto::mutable_graph_path_type() {
+  ::zetasql::GraphPathTypeProto* _msg = _internal_mutable_graph_path_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.TypeProto.graph_path_type)
+  return _msg;
+}
+inline void TypeProto::set_allocated_graph_path_type(::zetasql::GraphPathTypeProto* graph_path_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.graph_path_type_;
+  }
+  if (graph_path_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(graph_path_type);
+    if (message_arena != submessage_arena) {
+      graph_path_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, graph_path_type, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000100u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000100u;
+  }
+  _impl_.graph_path_type_ = graph_path_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.TypeProto.graph_path_type)
+}
+
 // optional .zetasql.MapTypeProto map_type = 10;
 inline bool TypeProto::has_map_type() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.map_type_ != nullptr);
   return value;
 }
 inline void TypeProto::clear_map_type() {
   if (_impl_.map_type_ != nullptr) _impl_.map_type_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000040u;
+  _impl_._has_bits_[0] &= ~0x00000080u;
 }
 inline const ::zetasql::MapTypeProto& TypeProto::_internal_map_type() const {
   const ::zetasql::MapTypeProto* p = _impl_.map_type_;
@@ -2912,14 +3810,14 @@ inline void TypeProto::unsafe_arena_set_allocated_map_type(
   }
   _impl_.map_type_ = map_type;
   if (map_type) {
-    _impl_._has_bits_[0] |= 0x00000040u;
+    _impl_._has_bits_[0] |= 0x00000080u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000040u;
+    _impl_._has_bits_[0] &= ~0x00000080u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.TypeProto.map_type)
 }
 inline ::zetasql::MapTypeProto* TypeProto::release_map_type() {
-  _impl_._has_bits_[0] &= ~0x00000040u;
+  _impl_._has_bits_[0] &= ~0x00000080u;
   ::zetasql::MapTypeProto* temp = _impl_.map_type_;
   _impl_.map_type_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -2935,13 +3833,13 @@ inline ::zetasql::MapTypeProto* TypeProto::release_map_type() {
 }
 inline ::zetasql::MapTypeProto* TypeProto::unsafe_arena_release_map_type() {
   // @@protoc_insertion_point(field_release:zetasql.TypeProto.map_type)
-  _impl_._has_bits_[0] &= ~0x00000040u;
+  _impl_._has_bits_[0] &= ~0x00000080u;
   ::zetasql::MapTypeProto* temp = _impl_.map_type_;
   _impl_.map_type_ = nullptr;
   return temp;
 }
 inline ::zetasql::MapTypeProto* TypeProto::_internal_mutable_map_type() {
-  _impl_._has_bits_[0] |= 0x00000040u;
+  _impl_._has_bits_[0] |= 0x00000080u;
   if (_impl_.map_type_ == nullptr) {
     auto* p = CreateMaybeMessage<::zetasql::MapTypeProto>(GetArenaForAllocation());
     _impl_.map_type_ = p;
@@ -2965,12 +3863,99 @@ inline void TypeProto::set_allocated_map_type(::zetasql::MapTypeProto* map_type)
       map_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, map_type, submessage_arena);
     }
-    _impl_._has_bits_[0] |= 0x00000040u;
+    _impl_._has_bits_[0] |= 0x00000080u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000040u;
+    _impl_._has_bits_[0] &= ~0x00000080u;
   }
   _impl_.map_type_ = map_type;
   // @@protoc_insertion_point(field_set_allocated:zetasql.TypeProto.map_type)
+}
+
+// optional .zetasql.MeasureTypeProto measure_type = 12;
+inline bool TypeProto::has_measure_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000200u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.measure_type_ != nullptr);
+  return value;
+}
+inline void TypeProto::clear_measure_type() {
+  if (_impl_.measure_type_ != nullptr) _impl_.measure_type_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000200u;
+}
+inline const ::zetasql::MeasureTypeProto& TypeProto::_internal_measure_type() const {
+  const ::zetasql::MeasureTypeProto* p = _impl_.measure_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::MeasureTypeProto&>(
+      ::zetasql::_MeasureTypeProto_default_instance_);
+}
+inline const ::zetasql::MeasureTypeProto& TypeProto::measure_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.TypeProto.measure_type)
+  return _internal_measure_type();
+}
+inline void TypeProto::unsafe_arena_set_allocated_measure_type(
+    ::zetasql::MeasureTypeProto* measure_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.measure_type_);
+  }
+  _impl_.measure_type_ = measure_type;
+  if (measure_type) {
+    _impl_._has_bits_[0] |= 0x00000200u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000200u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.TypeProto.measure_type)
+}
+inline ::zetasql::MeasureTypeProto* TypeProto::release_measure_type() {
+  _impl_._has_bits_[0] &= ~0x00000200u;
+  ::zetasql::MeasureTypeProto* temp = _impl_.measure_type_;
+  _impl_.measure_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::MeasureTypeProto* TypeProto::unsafe_arena_release_measure_type() {
+  // @@protoc_insertion_point(field_release:zetasql.TypeProto.measure_type)
+  _impl_._has_bits_[0] &= ~0x00000200u;
+  ::zetasql::MeasureTypeProto* temp = _impl_.measure_type_;
+  _impl_.measure_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::MeasureTypeProto* TypeProto::_internal_mutable_measure_type() {
+  _impl_._has_bits_[0] |= 0x00000200u;
+  if (_impl_.measure_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::MeasureTypeProto>(GetArenaForAllocation());
+    _impl_.measure_type_ = p;
+  }
+  return _impl_.measure_type_;
+}
+inline ::zetasql::MeasureTypeProto* TypeProto::mutable_measure_type() {
+  ::zetasql::MeasureTypeProto* _msg = _internal_mutable_measure_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.TypeProto.measure_type)
+  return _msg;
+}
+inline void TypeProto::set_allocated_measure_type(::zetasql::MeasureTypeProto* measure_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.measure_type_;
+  }
+  if (measure_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(measure_type);
+    if (message_arena != submessage_arena) {
+      measure_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, measure_type, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000200u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000200u;
+  }
+  _impl_.measure_type_ = measure_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.TypeProto.measure_type)
 }
 
 // repeated .google.protobuf.FileDescriptorSet file_descriptor_set = 6;
@@ -4280,7 +5265,599 @@ inline void OpaqueEnumValueOptions::_internal_set_invalid_enum_value(bool value)
 
 // -------------------------------------------------------------------
 
+// GraphElementTypeProto_PropertyTypeProto
+
+// optional string name = 1;
+inline bool GraphElementTypeProto_PropertyTypeProto::has_name() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void GraphElementTypeProto_PropertyTypeProto::clear_name() {
+  _impl_.name_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& GraphElementTypeProto_PropertyTypeProto::name() const {
+  // @@protoc_insertion_point(field_get:zetasql.GraphElementTypeProto.PropertyTypeProto.name)
+  return _internal_name();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GraphElementTypeProto_PropertyTypeProto::set_name(Arg_&& arg,
+                                                     Args_... args) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:zetasql.GraphElementTypeProto.PropertyTypeProto.name)
+}
+inline std::string* GraphElementTypeProto_PropertyTypeProto::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:zetasql.GraphElementTypeProto.PropertyTypeProto.name)
+  return _s;
+}
+inline const std::string& GraphElementTypeProto_PropertyTypeProto::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void GraphElementTypeProto_PropertyTypeProto::_internal_set_name(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+
+
+  _impl_.name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GraphElementTypeProto_PropertyTypeProto::_internal_mutable_name() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.name_.Mutable( GetArenaForAllocation());
+}
+inline std::string* GraphElementTypeProto_PropertyTypeProto::release_name() {
+  // @@protoc_insertion_point(field_release:zetasql.GraphElementTypeProto.PropertyTypeProto.name)
+  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* released = _impl_.name_.Release();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return released;
+}
+inline void GraphElementTypeProto_PropertyTypeProto::set_allocated_name(std::string* value) {
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.name_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.name_.IsDefault()) {
+          _impl_.name_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:zetasql.GraphElementTypeProto.PropertyTypeProto.name)
+}
+
+// optional .zetasql.TypeProto value_type = 2;
+inline bool GraphElementTypeProto_PropertyTypeProto::has_value_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.value_type_ != nullptr);
+  return value;
+}
+inline void GraphElementTypeProto_PropertyTypeProto::clear_value_type() {
+  if (_impl_.value_type_ != nullptr) _impl_.value_type_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const ::zetasql::TypeProto& GraphElementTypeProto_PropertyTypeProto::_internal_value_type() const {
+  const ::zetasql::TypeProto* p = _impl_.value_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::TypeProto&>(
+      ::zetasql::_TypeProto_default_instance_);
+}
+inline const ::zetasql::TypeProto& GraphElementTypeProto_PropertyTypeProto::value_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.GraphElementTypeProto.PropertyTypeProto.value_type)
+  return _internal_value_type();
+}
+inline void GraphElementTypeProto_PropertyTypeProto::unsafe_arena_set_allocated_value_type(
+    ::zetasql::TypeProto* value_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.value_type_);
+  }
+  _impl_.value_type_ = value_type;
+  if (value_type) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.GraphElementTypeProto.PropertyTypeProto.value_type)
+}
+inline ::zetasql::TypeProto* GraphElementTypeProto_PropertyTypeProto::release_value_type() {
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::zetasql::TypeProto* temp = _impl_.value_type_;
+  _impl_.value_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::TypeProto* GraphElementTypeProto_PropertyTypeProto::unsafe_arena_release_value_type() {
+  // @@protoc_insertion_point(field_release:zetasql.GraphElementTypeProto.PropertyTypeProto.value_type)
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::zetasql::TypeProto* temp = _impl_.value_type_;
+  _impl_.value_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::TypeProto* GraphElementTypeProto_PropertyTypeProto::_internal_mutable_value_type() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  if (_impl_.value_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::TypeProto>(GetArenaForAllocation());
+    _impl_.value_type_ = p;
+  }
+  return _impl_.value_type_;
+}
+inline ::zetasql::TypeProto* GraphElementTypeProto_PropertyTypeProto::mutable_value_type() {
+  ::zetasql::TypeProto* _msg = _internal_mutable_value_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.GraphElementTypeProto.PropertyTypeProto.value_type)
+  return _msg;
+}
+inline void GraphElementTypeProto_PropertyTypeProto::set_allocated_value_type(::zetasql::TypeProto* value_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.value_type_;
+  }
+  if (value_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(value_type);
+    if (message_arena != submessage_arena) {
+      value_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, value_type, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.value_type_ = value_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.GraphElementTypeProto.PropertyTypeProto.value_type)
+}
+
+// -------------------------------------------------------------------
+
+// GraphElementTypeProto
+
+// optional .zetasql.GraphElementTypeProto.ElementKind kind = 1;
+inline bool GraphElementTypeProto::has_kind() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void GraphElementTypeProto::clear_kind() {
+  _impl_.kind_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline ::zetasql::GraphElementTypeProto_ElementKind GraphElementTypeProto::kind() const {
+  // @@protoc_insertion_point(field_get:zetasql.GraphElementTypeProto.kind)
+  return _internal_kind();
+}
+inline void GraphElementTypeProto::set_kind(::zetasql::GraphElementTypeProto_ElementKind value) {
+   _internal_set_kind(value);
+  // @@protoc_insertion_point(field_set:zetasql.GraphElementTypeProto.kind)
+}
+inline ::zetasql::GraphElementTypeProto_ElementKind GraphElementTypeProto::_internal_kind() const {
+  return static_cast<::zetasql::GraphElementTypeProto_ElementKind>(_impl_.kind_);
+}
+inline void GraphElementTypeProto::_internal_set_kind(::zetasql::GraphElementTypeProto_ElementKind value) {
+  assert(::zetasql::GraphElementTypeProto_ElementKind_IsValid(value));
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.kind_ = value;
+}
+
+// repeated .zetasql.GraphElementTypeProto.PropertyTypeProto property_type = 2;
+inline int GraphElementTypeProto::_internal_property_type_size() const {
+  return _impl_.property_type_.size();
+}
+inline int GraphElementTypeProto::property_type_size() const {
+  return _internal_property_type_size();
+}
+inline void GraphElementTypeProto::clear_property_type() {
+  _internal_mutable_property_type()->Clear();
+}
+inline ::zetasql::GraphElementTypeProto_PropertyTypeProto* GraphElementTypeProto::mutable_property_type(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.GraphElementTypeProto.property_type)
+  return _internal_mutable_property_type()->Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::GraphElementTypeProto_PropertyTypeProto >*
+GraphElementTypeProto::mutable_property_type() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.GraphElementTypeProto.property_type)
+  return _internal_mutable_property_type();
+}
+inline const ::zetasql::GraphElementTypeProto_PropertyTypeProto& GraphElementTypeProto::_internal_property_type(int index) const {
+  return _internal_property_type().Get(index);
+}
+inline const ::zetasql::GraphElementTypeProto_PropertyTypeProto& GraphElementTypeProto::property_type(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.GraphElementTypeProto.property_type)
+  return _internal_property_type(index);
+}
+inline ::zetasql::GraphElementTypeProto_PropertyTypeProto* GraphElementTypeProto::_internal_add_property_type() {
+  return _internal_mutable_property_type()->Add();
+}
+inline ::zetasql::GraphElementTypeProto_PropertyTypeProto* GraphElementTypeProto::add_property_type() {
+  ::zetasql::GraphElementTypeProto_PropertyTypeProto* _add = _internal_add_property_type();
+  // @@protoc_insertion_point(field_add:zetasql.GraphElementTypeProto.property_type)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::GraphElementTypeProto_PropertyTypeProto >&
+GraphElementTypeProto::property_type() const {
+  // @@protoc_insertion_point(field_list:zetasql.GraphElementTypeProto.property_type)
+  return _internal_property_type();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::GraphElementTypeProto_PropertyTypeProto>&
+GraphElementTypeProto::_internal_property_type() const {
+  return _impl_.property_type_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::GraphElementTypeProto_PropertyTypeProto>*
+GraphElementTypeProto::_internal_mutable_property_type() {
+  return &_impl_.property_type_;
+}
+
+// repeated string graph_reference = 4;
+inline int GraphElementTypeProto::_internal_graph_reference_size() const {
+  return _impl_.graph_reference_.size();
+}
+inline int GraphElementTypeProto::graph_reference_size() const {
+  return _internal_graph_reference_size();
+}
+inline void GraphElementTypeProto::clear_graph_reference() {
+  _internal_mutable_graph_reference()->Clear();
+}
+inline std::string* GraphElementTypeProto::add_graph_reference() {
+  std::string* _s = _internal_add_graph_reference();
+  // @@protoc_insertion_point(field_add_mutable:zetasql.GraphElementTypeProto.graph_reference)
+  return _s;
+}
+inline const std::string& GraphElementTypeProto::graph_reference(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.GraphElementTypeProto.graph_reference)
+  return _internal_graph_reference(index);
+}
+inline std::string* GraphElementTypeProto::mutable_graph_reference(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.GraphElementTypeProto.graph_reference)
+  return _internal_mutable_graph_reference()->Mutable(index);
+}
+inline void GraphElementTypeProto::set_graph_reference(int index, const std::string& value) {
+  _internal_mutable_graph_reference()->Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::set_graph_reference(int index, std::string&& value) {
+  _internal_mutable_graph_reference()->Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::set_graph_reference(int index, const char* value) {
+  ABSL_DCHECK(value != nullptr);
+  _internal_mutable_graph_reference()->Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::set_graph_reference(int index, const char* value,
+                              std::size_t size) {
+  _internal_mutable_graph_reference()->Mutable(index)->assign(
+      reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::set_graph_reference(int index, absl::string_view value) {
+  _internal_mutable_graph_reference()->Mutable(index)->assign(value.data(),
+                                                     value.size());
+  // @@protoc_insertion_point(field_set_string_piece:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::add_graph_reference(const std::string& value) {
+  _internal_mutable_graph_reference()->Add()->assign(value);
+  // @@protoc_insertion_point(field_add:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::add_graph_reference(std::string&& value) {
+  _internal_mutable_graph_reference()->Add(std::move(value));
+  // @@protoc_insertion_point(field_add:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::add_graph_reference(const char* value) {
+  ABSL_DCHECK(value != nullptr);
+  _internal_mutable_graph_reference()->Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::add_graph_reference(const char* value, std::size_t size) {
+  _internal_mutable_graph_reference()->Add()->assign(
+      reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline void GraphElementTypeProto::add_graph_reference(absl::string_view value) {
+  _internal_mutable_graph_reference()->Add()->assign(value.data(), value.size());
+  // @@protoc_insertion_point(field_add_string_piece:zetasql.GraphElementTypeProto.graph_reference)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+GraphElementTypeProto::graph_reference() const {
+  // @@protoc_insertion_point(field_list:zetasql.GraphElementTypeProto.graph_reference)
+  return _internal_graph_reference();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* GraphElementTypeProto::mutable_graph_reference() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.GraphElementTypeProto.graph_reference)
+  return _internal_mutable_graph_reference();
+}
+inline const std::string& GraphElementTypeProto::_internal_graph_reference(int index) const {
+  return _internal_graph_reference().Get(index);
+}
+inline std::string* GraphElementTypeProto::_internal_add_graph_reference() {
+  return _internal_mutable_graph_reference()->Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+GraphElementTypeProto::_internal_graph_reference() const {
+  return _impl_.graph_reference_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+GraphElementTypeProto::_internal_mutable_graph_reference() {
+  return &_impl_.graph_reference_;
+}
+
+// -------------------------------------------------------------------
+
+// GraphPathTypeProto
+
+// optional .zetasql.GraphElementTypeProto node_type = 1;
+inline bool GraphPathTypeProto::has_node_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.node_type_ != nullptr);
+  return value;
+}
+inline void GraphPathTypeProto::clear_node_type() {
+  if (_impl_.node_type_ != nullptr) _impl_.node_type_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::GraphElementTypeProto& GraphPathTypeProto::_internal_node_type() const {
+  const ::zetasql::GraphElementTypeProto* p = _impl_.node_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::GraphElementTypeProto&>(
+      ::zetasql::_GraphElementTypeProto_default_instance_);
+}
+inline const ::zetasql::GraphElementTypeProto& GraphPathTypeProto::node_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.GraphPathTypeProto.node_type)
+  return _internal_node_type();
+}
+inline void GraphPathTypeProto::unsafe_arena_set_allocated_node_type(
+    ::zetasql::GraphElementTypeProto* node_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.node_type_);
+  }
+  _impl_.node_type_ = node_type;
+  if (node_type) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.GraphPathTypeProto.node_type)
+}
+inline ::zetasql::GraphElementTypeProto* GraphPathTypeProto::release_node_type() {
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::zetasql::GraphElementTypeProto* temp = _impl_.node_type_;
+  _impl_.node_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::GraphElementTypeProto* GraphPathTypeProto::unsafe_arena_release_node_type() {
+  // @@protoc_insertion_point(field_release:zetasql.GraphPathTypeProto.node_type)
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::zetasql::GraphElementTypeProto* temp = _impl_.node_type_;
+  _impl_.node_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::GraphElementTypeProto* GraphPathTypeProto::_internal_mutable_node_type() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.node_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::GraphElementTypeProto>(GetArenaForAllocation());
+    _impl_.node_type_ = p;
+  }
+  return _impl_.node_type_;
+}
+inline ::zetasql::GraphElementTypeProto* GraphPathTypeProto::mutable_node_type() {
+  ::zetasql::GraphElementTypeProto* _msg = _internal_mutable_node_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.GraphPathTypeProto.node_type)
+  return _msg;
+}
+inline void GraphPathTypeProto::set_allocated_node_type(::zetasql::GraphElementTypeProto* node_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.node_type_;
+  }
+  if (node_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(node_type);
+    if (message_arena != submessage_arena) {
+      node_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, node_type, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.node_type_ = node_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.GraphPathTypeProto.node_type)
+}
+
+// optional .zetasql.GraphElementTypeProto edge_type = 2;
+inline bool GraphPathTypeProto::has_edge_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.edge_type_ != nullptr);
+  return value;
+}
+inline void GraphPathTypeProto::clear_edge_type() {
+  if (_impl_.edge_type_ != nullptr) _impl_.edge_type_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const ::zetasql::GraphElementTypeProto& GraphPathTypeProto::_internal_edge_type() const {
+  const ::zetasql::GraphElementTypeProto* p = _impl_.edge_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::GraphElementTypeProto&>(
+      ::zetasql::_GraphElementTypeProto_default_instance_);
+}
+inline const ::zetasql::GraphElementTypeProto& GraphPathTypeProto::edge_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.GraphPathTypeProto.edge_type)
+  return _internal_edge_type();
+}
+inline void GraphPathTypeProto::unsafe_arena_set_allocated_edge_type(
+    ::zetasql::GraphElementTypeProto* edge_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.edge_type_);
+  }
+  _impl_.edge_type_ = edge_type;
+  if (edge_type) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.GraphPathTypeProto.edge_type)
+}
+inline ::zetasql::GraphElementTypeProto* GraphPathTypeProto::release_edge_type() {
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::zetasql::GraphElementTypeProto* temp = _impl_.edge_type_;
+  _impl_.edge_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::GraphElementTypeProto* GraphPathTypeProto::unsafe_arena_release_edge_type() {
+  // @@protoc_insertion_point(field_release:zetasql.GraphPathTypeProto.edge_type)
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::zetasql::GraphElementTypeProto* temp = _impl_.edge_type_;
+  _impl_.edge_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::GraphElementTypeProto* GraphPathTypeProto::_internal_mutable_edge_type() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  if (_impl_.edge_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::GraphElementTypeProto>(GetArenaForAllocation());
+    _impl_.edge_type_ = p;
+  }
+  return _impl_.edge_type_;
+}
+inline ::zetasql::GraphElementTypeProto* GraphPathTypeProto::mutable_edge_type() {
+  ::zetasql::GraphElementTypeProto* _msg = _internal_mutable_edge_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.GraphPathTypeProto.edge_type)
+  return _msg;
+}
+inline void GraphPathTypeProto::set_allocated_edge_type(::zetasql::GraphElementTypeProto* edge_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.edge_type_;
+  }
+  if (edge_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(edge_type);
+    if (message_arena != submessage_arena) {
+      edge_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, edge_type, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.edge_type_ = edge_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.GraphPathTypeProto.edge_type)
+}
+
+// -------------------------------------------------------------------
+
 // MeasureTypeProto
+
+// optional .zetasql.TypeProto result_type = 1;
+inline bool MeasureTypeProto::has_result_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.result_type_ != nullptr);
+  return value;
+}
+inline void MeasureTypeProto::clear_result_type() {
+  if (_impl_.result_type_ != nullptr) _impl_.result_type_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::zetasql::TypeProto& MeasureTypeProto::_internal_result_type() const {
+  const ::zetasql::TypeProto* p = _impl_.result_type_;
+  return p != nullptr ? *p : reinterpret_cast<const ::zetasql::TypeProto&>(
+      ::zetasql::_TypeProto_default_instance_);
+}
+inline const ::zetasql::TypeProto& MeasureTypeProto::result_type() const {
+  // @@protoc_insertion_point(field_get:zetasql.MeasureTypeProto.result_type)
+  return _internal_result_type();
+}
+inline void MeasureTypeProto::unsafe_arena_set_allocated_result_type(
+    ::zetasql::TypeProto* result_type) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.result_type_);
+  }
+  _impl_.result_type_ = result_type;
+  if (result_type) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:zetasql.MeasureTypeProto.result_type)
+}
+inline ::zetasql::TypeProto* MeasureTypeProto::release_result_type() {
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::zetasql::TypeProto* temp = _impl_.result_type_;
+  _impl_.result_type_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::zetasql::TypeProto* MeasureTypeProto::unsafe_arena_release_result_type() {
+  // @@protoc_insertion_point(field_release:zetasql.MeasureTypeProto.result_type)
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::zetasql::TypeProto* temp = _impl_.result_type_;
+  _impl_.result_type_ = nullptr;
+  return temp;
+}
+inline ::zetasql::TypeProto* MeasureTypeProto::_internal_mutable_result_type() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.result_type_ == nullptr) {
+    auto* p = CreateMaybeMessage<::zetasql::TypeProto>(GetArenaForAllocation());
+    _impl_.result_type_ = p;
+  }
+  return _impl_.result_type_;
+}
+inline ::zetasql::TypeProto* MeasureTypeProto::mutable_result_type() {
+  ::zetasql::TypeProto* _msg = _internal_mutable_result_type();
+  // @@protoc_insertion_point(field_mutable:zetasql.MeasureTypeProto.result_type)
+  return _msg;
+}
+inline void MeasureTypeProto::set_allocated_result_type(::zetasql::TypeProto* result_type) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.result_type_;
+  }
+  if (result_type) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(result_type);
+    if (message_arena != submessage_arena) {
+      result_type = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, result_type, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.result_type_ = result_type;
+  // @@protoc_insertion_point(field_set_allocated:zetasql.MeasureTypeProto.result_type)
+}
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -4292,6 +5869,12 @@ inline void OpaqueEnumValueOptions::_internal_set_invalid_enum_value(bool value)
 
 PROTOBUF_NAMESPACE_OPEN
 
+template <>
+struct is_proto_enum<::zetasql::GraphElementTypeProto_ElementKind> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::GraphElementTypeProto_ElementKind>() {
+  return ::zetasql::GraphElementTypeProto_ElementKind_descriptor();
+}
 template <>
 struct is_proto_enum<::zetasql::TypeKind> : std::true_type {};
 template <>

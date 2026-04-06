@@ -1520,27 +1520,81 @@ void GO_EXPORT(ASTPartitionBy_partitioning_expression)(void * arg0,int arg1,void
 
 void GO_EXPORT(ASTSetOperation_set_op_type)(void * arg0,int arg1){
   zetasql::ASTSetOperation *node = (zetasql::ASTSetOperation *)arg0;
-  node->set_op_type((zetasql::ASTSetOperation::OperationType)arg1);
+  const zetasql::ASTSetOperationMetadataList* meta_list = node->metadata();
+  if (meta_list == nullptr || meta_list->set_operation_metadata_list().empty()) {
+    return;
+  }
+  zetasql::ASTSetOperationMetadata* meta =
+      const_cast<zetasql::ASTSetOperationMetadata*>(
+          meta_list->set_operation_metadata_list(0));
+  if (meta == nullptr || meta->op_type() == nullptr) {
+    return;
+  }
+  const_cast<zetasql::ASTSetOperationType*>(meta->op_type())->set_value(
+      static_cast<zetasql::ASTSetOperation::OperationType>(arg1));
 }
 
 void GO_EXPORT(ASTSetOperation_op_type)(void * arg0,int* arg1){
   zetasql::ASTSetOperation *node = (zetasql::ASTSetOperation *)arg0;
-  *arg1 = node->op_type();
+  const zetasql::ASTSetOperationMetadataList* meta_list = node->metadata();
+  if (meta_list == nullptr || meta_list->set_operation_metadata_list().empty()) {
+    *arg1 = zetasql::ASTSetOperation::NOT_SET;
+    return;
+  }
+  const zetasql::ASTSetOperationMetadata* meta =
+      meta_list->set_operation_metadata_list(0);
+  if (meta == nullptr || meta->op_type() == nullptr) {
+    *arg1 = zetasql::ASTSetOperation::NOT_SET;
+    return;
+  }
+  *arg1 = meta->op_type()->value();
 }
 
 void GO_EXPORT(ASTSetOperation_set_distinct)(void * arg0,int arg1){
   zetasql::ASTSetOperation *node = (zetasql::ASTSetOperation *)arg0;
-  node->set_distinct(arg1);
+  const zetasql::ASTSetOperationMetadataList* meta_list = node->metadata();
+  if (meta_list == nullptr || meta_list->set_operation_metadata_list().empty()) {
+    return;
+  }
+  zetasql::ASTSetOperationMetadata* meta =
+      const_cast<zetasql::ASTSetOperationMetadata*>(
+          meta_list->set_operation_metadata_list(0));
+  if (meta == nullptr || meta->all_or_distinct() == nullptr) {
+    return;
+  }
+  const_cast<zetasql::ASTSetOperationAllOrDistinct*>(meta->all_or_distinct())
+      ->set_value(arg1 ? zetasql::ASTSetOperation::DISTINCT
+                       : zetasql::ASTSetOperation::ALL);
 }
 
 void GO_EXPORT(ASTSetOperation_distinct)(void * arg0,char* arg1){
   zetasql::ASTSetOperation *node = (zetasql::ASTSetOperation *)arg0;
-  *arg1 = node->distinct();
+  const zetasql::ASTSetOperationMetadataList* meta_list = node->metadata();
+  if (meta_list == nullptr || meta_list->set_operation_metadata_list().empty()) {
+    *arg1 = 0;
+    return;
+  }
+  const zetasql::ASTSetOperationMetadata* meta =
+      meta_list->set_operation_metadata_list(0);
+  if (meta == nullptr || meta->all_or_distinct() == nullptr) {
+    *arg1 = 0;
+    return;
+  }
+  *arg1 = (meta->all_or_distinct()->value() == zetasql::ASTSetOperation::DISTINCT)
+              ? 1
+              : 0;
 }
 
 void GO_EXPORT(ASTSetOperation_hint)(void * arg0,void ** arg1){
   zetasql::ASTSetOperation *node = (zetasql::ASTSetOperation *)arg0;
-  *arg1 = (void *)node->hint();
+  const zetasql::ASTSetOperationMetadataList* meta_list = node->metadata();
+  if (meta_list == nullptr || meta_list->set_operation_metadata_list().empty()) {
+    *arg1 = nullptr;
+    return;
+  }
+  const zetasql::ASTSetOperationMetadata* meta =
+      meta_list->set_operation_metadata_list(0);
+  *arg1 = (void *)(meta != nullptr ? meta->hint() : nullptr);
 }
 
 void GO_EXPORT(ASTSetOperation_inputs_num)(void * arg0,int* arg1){
@@ -1555,7 +1609,18 @@ void GO_EXPORT(ASTSetOperation_input)(void * arg0,int arg1,void ** arg2){
 
 void GO_EXPORT(ASTSetOperation_GetSQLForOperation)(void * arg0,void ** arg1){
   zetasql::ASTSetOperation *node = (zetasql::ASTSetOperation *)arg0;
-  *arg1 = (void *)((new std::string(node->GetSQLForOperation()))->c_str());
+  const zetasql::ASTSetOperationMetadataList* meta_list = node->metadata();
+  if (meta_list == nullptr || meta_list->set_operation_metadata_list().empty()) {
+    *arg1 = (void *)((new std::string())->c_str());
+    return;
+  }
+  const zetasql::ASTSetOperationMetadata* meta =
+      meta_list->set_operation_metadata_list(0);
+  if (meta == nullptr) {
+    *arg1 = (void *)((new std::string())->c_str());
+    return;
+  }
+  *arg1 = (void *)((new std::string(meta->GetSQLForOperation()))->c_str());
 }
 
 void GO_EXPORT(ASTStarExceptList_identifiers_num)(void * arg0,int* arg1){

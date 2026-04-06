@@ -52,11 +52,11 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields
 };
 
 static const ::_pbi::MigrationSchema
-    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    unsupported_fields_pb_migration_schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         { 0, -1, -1, sizeof(::zetasql::functions::UnsupportedFieldsEnum)},
 };
 
-static const ::_pb::Message* const file_default_instances[] = {
+static const ::_pb::Message* const unsupported_fields_pb_file_default_instances[] = {
     &::zetasql::functions::_UnsupportedFieldsEnum_default_instance_._instance,
 };
 const char descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -84,8 +84,8 @@ const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunctions_2fun
     descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto_deps,
     1,
     1,
-    schemas,
-    file_default_instances,
+    unsupported_fields_pb_migration_schemas,
+    unsupported_fields_pb_file_default_instances,
     TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto::offsets,
     file_level_metadata_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto,
     file_level_enum_descriptors_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto,

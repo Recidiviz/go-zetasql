@@ -4,7 +4,6 @@
 // nested includes that reach zetasql amalgamation headers; those must see the
 // root analyzer zetasql namespace macro (e.g. WarningSink).
 #include "root_analyzer_amalgamation_macros.inc"
-#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
 // bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h later.
 #include "_cgo_export.h"
 #include "go-zetasql/public/analyzer/export.inc"
@@ -31,7 +30,3 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-// flex_tokenizer.cc.inc sets YY_DECL to GetNextTokenFlexImpl, so flex never
-// emits yyFlexLexer::yylex(). The FlexLexer vtable still needs yylex() (FlexLexer.h).
-int ZetaSqlFlexTokenizerBase::yylex() { return 0; }
