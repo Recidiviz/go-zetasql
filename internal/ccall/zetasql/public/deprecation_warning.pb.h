@@ -78,12 +78,13 @@ enum DeprecationWarning_Kind : int {
   DeprecationWarning_Kind_DEPRECATED_ANONYMIZATION_OPTION_KAPPA = 5,
   DeprecationWarning_Kind_PIVOT_OR_UNPIVOT_ON_ARRAY_SCAN = 6,
   DeprecationWarning_Kind_TABLE_SYNTAX_ARGUMENT_RESOLUTION_ORDER = 7,
+  DeprecationWarning_Kind_PIPE_WINDOW = 8,
 };
 
 bool DeprecationWarning_Kind_IsValid(int value);
 constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MIN = static_cast<DeprecationWarning_Kind>(-1);
-constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MAX = static_cast<DeprecationWarning_Kind>(7);
-constexpr int DeprecationWarning_Kind_Kind_ARRAYSIZE = 7 + 1;
+constexpr DeprecationWarning_Kind DeprecationWarning_Kind_Kind_MAX = static_cast<DeprecationWarning_Kind>(8);
+constexpr int DeprecationWarning_Kind_Kind_ARRAYSIZE = 8 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 DeprecationWarning_Kind_descriptor();
 template <typename T>
@@ -96,7 +97,7 @@ const std::string& DeprecationWarning_Kind_Name(T value) {
 template <>
 inline const std::string& DeprecationWarning_Kind_Name(DeprecationWarning_Kind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<DeprecationWarning_Kind_descriptor,
-                                                 -1, 7>(
+                                                 -1, 8>(
       static_cast<int>(value));
 }
 inline bool DeprecationWarning_Kind_Parse(absl::string_view name, DeprecationWarning_Kind* value) {
@@ -244,6 +245,7 @@ class DeprecationWarning final :
   static constexpr Kind DEPRECATED_ANONYMIZATION_OPTION_KAPPA = DeprecationWarning_Kind_DEPRECATED_ANONYMIZATION_OPTION_KAPPA;
   static constexpr Kind PIVOT_OR_UNPIVOT_ON_ARRAY_SCAN = DeprecationWarning_Kind_PIVOT_OR_UNPIVOT_ON_ARRAY_SCAN;
   static constexpr Kind TABLE_SYNTAX_ARGUMENT_RESOLUTION_ORDER = DeprecationWarning_Kind_TABLE_SYNTAX_ARGUMENT_RESOLUTION_ORDER;
+  static constexpr Kind PIPE_WINDOW = DeprecationWarning_Kind_PIPE_WINDOW;
   static inline bool Kind_IsValid(int value) {
     return DeprecationWarning_Kind_IsValid(value);
   }

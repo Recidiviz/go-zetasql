@@ -562,6 +562,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedGeneralizedQueryStmt(
       const ResolvedGeneralizedQueryStmt* node);
 
+  absl::Status CopyVisitResolvedMultiStmt(
+      const ResolvedMultiStmt* node);
+
+  absl::Status CopyVisitResolvedCreateWithEntryStmt(
+      const ResolvedCreateWithEntryStmt* node);
+
   absl::Status CopyVisitResolvedCreateDatabaseStmt(
       const ResolvedCreateDatabaseStmt* node);
 
@@ -742,6 +748,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAlterDatabaseStmt(
       const ResolvedAlterDatabaseStmt* node);
 
+  absl::Status CopyVisitResolvedAlterIndexStmt(
+      const ResolvedAlterIndexStmt* node);
+
   absl::Status CopyVisitResolvedAlterMaterializedViewStmt(
       const ResolvedAlterMaterializedViewStmt* node);
 
@@ -777,6 +786,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedAddColumnAction(
       const ResolvedAddColumnAction* node);
+
+  absl::Status CopyVisitResolvedAddColumnIdentifierAction(
+      const ResolvedAddColumnIdentifierAction* node);
+
+  absl::Status CopyVisitResolvedRebuildAction(
+      const ResolvedRebuildAction* node);
 
   absl::Status CopyVisitResolvedAddConstraintAction(
       const ResolvedAddConstraintAction* node);
@@ -1090,8 +1105,17 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedPipeForkScan(
       const ResolvedPipeForkScan* node);
 
+  absl::Status CopyVisitResolvedPipeTeeScan(
+      const ResolvedPipeTeeScan* node);
+
   absl::Status CopyVisitResolvedPipeExportDataScan(
       const ResolvedPipeExportDataScan* node);
+
+  absl::Status CopyVisitResolvedPipeCreateTableScan(
+      const ResolvedPipeCreateTableScan* node);
+
+  absl::Status CopyVisitResolvedPipeInsertScan(
+      const ResolvedPipeInsertScan* node);
 
   absl::Status CopyVisitResolvedSubpipeline(
       const ResolvedSubpipeline* node);
@@ -1113,6 +1137,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedLockMode(
       const ResolvedLockMode* node);
+
+  absl::Status CopyVisitResolvedUpdateFieldItem(
+      const ResolvedUpdateFieldItem* node);
+
+  absl::Status CopyVisitResolvedUpdateConstructor(
+      const ResolvedUpdateConstructor* node);
 
   absl::Status DefaultVisit(const ResolvedNode* node) override;
 
@@ -1343,6 +1373,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedGeneralizedQueryStmt(
       const ResolvedGeneralizedQueryStmt* node) override;
 
+  absl::Status VisitResolvedMultiStmt(
+      const ResolvedMultiStmt* node) override;
+
+  absl::Status VisitResolvedCreateWithEntryStmt(
+      const ResolvedCreateWithEntryStmt* node) override;
+
   absl::Status VisitResolvedCreateDatabaseStmt(
       const ResolvedCreateDatabaseStmt* node) override;
 
@@ -1523,6 +1559,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAlterDatabaseStmt(
       const ResolvedAlterDatabaseStmt* node) override;
 
+  absl::Status VisitResolvedAlterIndexStmt(
+      const ResolvedAlterIndexStmt* node) override;
+
   absl::Status VisitResolvedAlterMaterializedViewStmt(
       const ResolvedAlterMaterializedViewStmt* node) override;
 
@@ -1558,6 +1597,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedAddColumnAction(
       const ResolvedAddColumnAction* node) override;
+
+  absl::Status VisitResolvedAddColumnIdentifierAction(
+      const ResolvedAddColumnIdentifierAction* node) override;
+
+  absl::Status VisitResolvedRebuildAction(
+      const ResolvedRebuildAction* node) override;
 
   absl::Status VisitResolvedAddConstraintAction(
       const ResolvedAddConstraintAction* node) override;
@@ -1871,8 +1916,17 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedPipeForkScan(
       const ResolvedPipeForkScan* node) override;
 
+  absl::Status VisitResolvedPipeTeeScan(
+      const ResolvedPipeTeeScan* node) override;
+
   absl::Status VisitResolvedPipeExportDataScan(
       const ResolvedPipeExportDataScan* node) override;
+
+  absl::Status VisitResolvedPipeCreateTableScan(
+      const ResolvedPipeCreateTableScan* node) override;
+
+  absl::Status VisitResolvedPipeInsertScan(
+      const ResolvedPipeInsertScan* node) override;
 
   absl::Status VisitResolvedSubpipeline(
       const ResolvedSubpipeline* node) override;
@@ -1894,6 +1948,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedLockMode(
       const ResolvedLockMode* node) override;
+
+  absl::Status VisitResolvedUpdateFieldItem(
+      const ResolvedUpdateFieldItem* node) override;
+
+  absl::Status VisitResolvedUpdateConstructor(
+      const ResolvedUpdateConstructor* node) override;
 
   // Assumes that 'ResolvedNodeType' contains 'hint_list' and copies it
   // 'from' -> 'to'.
@@ -1922,21 +1982,6 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   }
 
  private:
-  // Copies the WITH GROUP ROWS parameter list from the original node to the
-  // copied node. This is required, as with_group_rows_parameter_list is not a
-  // constructor arg, and the only way to transfer ownership is to explicitly
-  // set it after constructing the copy.
-  template <typename ResolvedNodeType>
-  absl::Status CopyWithGroupRowsParameterList(const ResolvedNodeType* from,
-                                              ResolvedNodeType* to) {
-    for (const std::unique_ptr<const ResolvedColumnRef>& param :
-         from->with_group_rows_parameter_list()) {
-      ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<ResolvedColumnRef> copied_ref,
-                       ProcessNode(param.get()));
-      to->add_with_group_rows_parameter_list(std::move(copied_ref));
-    }
-    return absl::OkStatus();
-  }
 
   // The stack is used for making the recursive copying work:
   // 1. A copied node is pushed to the stack before the VisitX function returns.

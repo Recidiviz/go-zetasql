@@ -209,6 +209,8 @@ class FormatterOptionsProto final :
     kExpandFormatRangesFieldNumber = 7,
     kEnforceSingleQuotesFieldNumber = 8,
     kCapitalizeFunctionsFieldNumber = 9,
+    kFormatStructuredStringsFieldNumber = 10,
+    kFormatCommentsFieldNumber = 11,
   };
   // optional string new_line_type = 1;
   bool has_new_line_type() const;
@@ -319,6 +321,28 @@ class FormatterOptionsProto final :
   void _internal_set_capitalize_functions(bool value);
 
   public:
+  // optional bool format_structured_strings = 10;
+  bool has_format_structured_strings() const;
+  void clear_format_structured_strings() ;
+  bool format_structured_strings() const;
+  void set_format_structured_strings(bool value);
+
+  private:
+  bool _internal_format_structured_strings() const;
+  void _internal_set_format_structured_strings(bool value);
+
+  public:
+  // optional bool format_comments = 11;
+  bool has_format_comments() const;
+  void clear_format_comments() ;
+  bool format_comments() const;
+  void set_format_comments(bool value);
+
+  private:
+  bool _internal_format_comments() const;
+  void _internal_set_format_comments(bool value);
+
+  public:
   // @@protoc_insertion_point(class_scope:zetasql.FormatterOptionsProto)
  private:
   class _Internal;
@@ -338,6 +362,8 @@ class FormatterOptionsProto final :
     bool expand_format_ranges_;
     bool enforce_single_quotes_;
     bool capitalize_functions_;
+    bool format_structured_strings_;
+    bool format_comments_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fpublic_2fformatter_5foptions_2eproto;
@@ -792,6 +818,56 @@ inline bool FormatterOptionsProto::_internal_capitalize_functions() const {
 inline void FormatterOptionsProto::_internal_set_capitalize_functions(bool value) {
   _impl_._has_bits_[0] |= 0x00000100u;
   _impl_.capitalize_functions_ = value;
+}
+
+// optional bool format_structured_strings = 10;
+inline bool FormatterOptionsProto::has_format_structured_strings() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000200u) != 0;
+  return value;
+}
+inline void FormatterOptionsProto::clear_format_structured_strings() {
+  _impl_.format_structured_strings_ = false;
+  _impl_._has_bits_[0] &= ~0x00000200u;
+}
+inline bool FormatterOptionsProto::format_structured_strings() const {
+  // @@protoc_insertion_point(field_get:zetasql.FormatterOptionsProto.format_structured_strings)
+  return _internal_format_structured_strings();
+}
+inline void FormatterOptionsProto::set_format_structured_strings(bool value) {
+  _internal_set_format_structured_strings(value);
+  // @@protoc_insertion_point(field_set:zetasql.FormatterOptionsProto.format_structured_strings)
+}
+inline bool FormatterOptionsProto::_internal_format_structured_strings() const {
+  return _impl_.format_structured_strings_;
+}
+inline void FormatterOptionsProto::_internal_set_format_structured_strings(bool value) {
+  _impl_._has_bits_[0] |= 0x00000200u;
+  _impl_.format_structured_strings_ = value;
+}
+
+// optional bool format_comments = 11;
+inline bool FormatterOptionsProto::has_format_comments() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000400u) != 0;
+  return value;
+}
+inline void FormatterOptionsProto::clear_format_comments() {
+  _impl_.format_comments_ = false;
+  _impl_._has_bits_[0] &= ~0x00000400u;
+}
+inline bool FormatterOptionsProto::format_comments() const {
+  // @@protoc_insertion_point(field_get:zetasql.FormatterOptionsProto.format_comments)
+  return _internal_format_comments();
+}
+inline void FormatterOptionsProto::set_format_comments(bool value) {
+  _internal_set_format_comments(value);
+  // @@protoc_insertion_point(field_set:zetasql.FormatterOptionsProto.format_comments)
+}
+inline bool FormatterOptionsProto::_internal_format_comments() const {
+  return _impl_.format_comments_;
+}
+inline void FormatterOptionsProto::_internal_set_format_comments(bool value) {
+  _impl_._has_bits_[0] |= 0x00000400u;
+  _impl_.format_comments_ = value;
 }
 
 // -------------------------------------------------------------------

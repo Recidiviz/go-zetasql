@@ -46,6 +46,8 @@ class ParseTreeVisitor {
 
   virtual void visitASTPipeTablesample(const ASTPipeTablesample* node, void* data) = 0;
 
+  virtual void visitASTPipeMatchRecognize(const ASTPipeMatchRecognize* node, void* data) = 0;
+
   virtual void visitASTPipeAs(const ASTPipeAs* node, void* data) = 0;
 
   virtual void visitASTPipeStaticDescribe(const ASTPipeStaticDescribe* node, void* data) = 0;
@@ -70,7 +72,15 @@ class ParseTreeVisitor {
 
   virtual void visitASTPipeFork(const ASTPipeFork* node, void* data) = 0;
 
+  virtual void visitASTPipeTee(const ASTPipeTee* node, void* data) = 0;
+
+  virtual void visitASTPipeWith(const ASTPipeWith* node, void* data) = 0;
+
   virtual void visitASTPipeExportData(const ASTPipeExportData* node, void* data) = 0;
+
+  virtual void visitASTPipeCreateTable(const ASTPipeCreateTable* node, void* data) = 0;
+
+  virtual void visitASTPipeInsert(const ASTPipeInsert* node, void* data) = 0;
 
   virtual void visitASTSelect(const ASTSelect* node, void* data) = 0;
 
@@ -414,6 +424,10 @@ class ParseTreeVisitor {
 
   virtual void visitASTBracedNewConstructor(const ASTBracedNewConstructor* node, void* data) = 0;
 
+  virtual void visitASTExtendedPathExpression(const ASTExtendedPathExpression* node, void* data) = 0;
+
+  virtual void visitASTUpdateConstructor(const ASTUpdateConstructor* node, void* data) = 0;
+
   virtual void visitASTStructBracedConstructor(const ASTStructBracedConstructor* node, void* data) = 0;
 
   virtual void visitASTOptionsList(const ASTOptionsList* node, void* data) = 0;
@@ -483,6 +497,8 @@ class ParseTreeVisitor {
   virtual void visitASTCallStatement(const ASTCallStatement* node, void* data) = 0;
 
   virtual void visitASTDefineTableStatement(const ASTDefineTableStatement* node, void* data) = 0;
+
+  virtual void visitASTCreateLocalityGroupStatement(const ASTCreateLocalityGroupStatement* node, void* data) = 0;
 
   virtual void visitASTWithPartitionColumnsClause(const ASTWithPartitionColumnsClause* node, void* data) = 0;
 
@@ -601,6 +617,8 @@ class ParseTreeVisitor {
   virtual void visitASTAlterConstraintEnforcementAction(const ASTAlterConstraintEnforcementAction* node, void* data) = 0;
 
   virtual void visitASTAlterConstraintSetOptionsAction(const ASTAlterConstraintSetOptionsAction* node, void* data) = 0;
+
+  virtual void visitASTAddColumnIdentifierAction(const ASTAddColumnIdentifierAction* node, void* data) = 0;
 
   virtual void visitASTAddColumnAction(const ASTAddColumnAction* node, void* data) = 0;
 
@@ -778,6 +796,10 @@ class ParseTreeVisitor {
 
   virtual void visitASTAlterEntityStatement(const ASTAlterEntityStatement* node, void* data) = 0;
 
+  virtual void visitASTRebuildAction(const ASTRebuildAction* node, void* data) = 0;
+
+  virtual void visitASTAlterIndexStatement(const ASTAlterIndexStatement* node, void* data) = 0;
+
   virtual void visitASTCreateFunctionStatement(const ASTCreateFunctionStatement* node, void* data) = 0;
 
   virtual void visitASTCreateTableFunctionStatement(const ASTCreateTableFunctionStatement* node, void* data) = 0;
@@ -869,6 +891,8 @@ class ParseTreeVisitor {
   virtual void visitASTGraphRhsHint(const ASTGraphRhsHint* node, void* data) = 0;
 
   virtual void visitASTGraphPathSearchPrefix(const ASTGraphPathSearchPrefix* node, void* data) = 0;
+
+  virtual void visitASTGraphPathSearchPrefixCount(const ASTGraphPathSearchPrefixCount* node, void* data) = 0;
 
   virtual void visitASTGraphEdgePattern(const ASTGraphEdgePattern* node, void* data) = 0;
 
@@ -1024,6 +1048,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTPipeMatchRecognize(const ASTPipeMatchRecognize* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTPipeAs(const ASTPipeAs* node, void* data) override {
     defaultVisit(node, data);
   }
@@ -1072,7 +1100,23 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTPipeTee(const ASTPipeTee* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTPipeWith(const ASTPipeWith* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTPipeExportData(const ASTPipeExportData* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTPipeCreateTable(const ASTPipeCreateTable* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTPipeInsert(const ASTPipeInsert* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -1760,6 +1804,14 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTExtendedPathExpression(const ASTExtendedPathExpression* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTUpdateConstructor(const ASTUpdateConstructor* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTStructBracedConstructor(const ASTStructBracedConstructor* node, void* data) override {
     defaultVisit(node, data);
   }
@@ -1897,6 +1949,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTDefineTableStatement(const ASTDefineTableStatement* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTCreateLocalityGroupStatement(const ASTCreateLocalityGroupStatement* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -2133,6 +2189,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTAlterConstraintSetOptionsAction(const ASTAlterConstraintSetOptionsAction* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTAddColumnIdentifierAction(const ASTAddColumnIdentifierAction* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -2488,6 +2548,14 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
     defaultVisit(node, data);
   }
 
+  void visitASTRebuildAction(const ASTRebuildAction* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTAlterIndexStatement(const ASTAlterIndexStatement* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
   void visitASTCreateFunctionStatement(const ASTCreateFunctionStatement* node, void* data) override {
     defaultVisit(node, data);
   }
@@ -2669,6 +2737,10 @@ class DefaultParseTreeVisitor : public ParseTreeVisitor {
   }
 
   void visitASTGraphPathSearchPrefix(const ASTGraphPathSearchPrefix* node, void* data) override {
+    defaultVisit(node, data);
+  }
+
+  void visitASTGraphPathSearchPrefixCount(const ASTGraphPathSearchPrefixCount* node, void* data) override {
     defaultVisit(node, data);
   }
 
@@ -2859,6 +2931,8 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTPipeTablesample(const ASTPipeTablesample* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTPipeMatchRecognize(const ASTPipeMatchRecognize* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTPipeAs(const ASTPipeAs* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTPipeStaticDescribe(const ASTPipeStaticDescribe* node) {return defaultVisit(node);};
@@ -2883,7 +2957,15 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTPipeFork(const ASTPipeFork* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTPipeTee(const ASTPipeTee* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTPipeWith(const ASTPipeWith* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTPipeExportData(const ASTPipeExportData* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTPipeCreateTable(const ASTPipeCreateTable* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTPipeInsert(const ASTPipeInsert* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTSelect(const ASTSelect* node) {return defaultVisit(node);};
 
@@ -3227,6 +3309,10 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTBracedNewConstructor(const ASTBracedNewConstructor* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTExtendedPathExpression(const ASTExtendedPathExpression* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTUpdateConstructor(const ASTUpdateConstructor* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTStructBracedConstructor(const ASTStructBracedConstructor* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTOptionsList(const ASTOptionsList* node) {return defaultVisit(node);};
@@ -3296,6 +3382,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTCallStatement(const ASTCallStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTDefineTableStatement(const ASTDefineTableStatement* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTCreateLocalityGroupStatement(const ASTCreateLocalityGroupStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTWithPartitionColumnsClause(const ASTWithPartitionColumnsClause* node) {return defaultVisit(node);};
 
@@ -3414,6 +3502,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTAlterConstraintEnforcementAction(const ASTAlterConstraintEnforcementAction* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTAlterConstraintSetOptionsAction(const ASTAlterConstraintSetOptionsAction* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTAddColumnIdentifierAction(const ASTAddColumnIdentifierAction* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTAddColumnAction(const ASTAddColumnAction* node) {return defaultVisit(node);};
 
@@ -3591,6 +3681,10 @@ class NonRecursiveParseTreeVisitor {
 
   virtual absl::StatusOr<VisitResult> visitASTAlterEntityStatement(const ASTAlterEntityStatement* node) {return defaultVisit(node);};
 
+  virtual absl::StatusOr<VisitResult> visitASTRebuildAction(const ASTRebuildAction* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTAlterIndexStatement(const ASTAlterIndexStatement* node) {return defaultVisit(node);};
+
   virtual absl::StatusOr<VisitResult> visitASTCreateFunctionStatement(const ASTCreateFunctionStatement* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTCreateTableFunctionStatement(const ASTCreateTableFunctionStatement* node) {return defaultVisit(node);};
@@ -3682,6 +3776,8 @@ class NonRecursiveParseTreeVisitor {
   virtual absl::StatusOr<VisitResult> visitASTGraphRhsHint(const ASTGraphRhsHint* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTGraphPathSearchPrefix(const ASTGraphPathSearchPrefix* node) {return defaultVisit(node);};
+
+  virtual absl::StatusOr<VisitResult> visitASTGraphPathSearchPrefixCount(const ASTGraphPathSearchPrefixCount* node) {return defaultVisit(node);};
 
   virtual absl::StatusOr<VisitResult> visitASTGraphEdgePattern(const ASTGraphEdgePattern* node) {return defaultVisit(node);};
 

@@ -23,6 +23,7 @@
 #include "zetasql/parser/tm_lexer.h"
 #include "zetasql/parser/tm_token.h"
 #include "zetasql/parser/token_codes.h"
+#include "absl/flags/declare.h"
 
 // Some contortions to avoid duplicate inclusion of FlexLexer.h in the
 // generated flex_tokenizer.flex.cc.
@@ -35,6 +36,8 @@
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
+
+ABSL_DECLARE_FLAG(bool, use_textmapper_lexer);
 
 namespace zetasql {
 namespace parser {
@@ -60,8 +63,7 @@ class LegacyFlexTokenizer final : public ZetaSqlFlexTokenizerBase {
   // This method is implemented by the flex generated tokenizer. On input,
   // 'yylloc' must be the location of the previous token that was returned.
   // Returns the next token id, returning its location in 'yylloc'.
-  // Flex returns int (incl. raw char values for punctuation).
-  int GetNextTokenFlexImpl(ParseLocationRange* location);
+  Token GetNextTokenFlexImpl(ParseLocationRange* location);
 
   // The (optional) filename from which the statement is being parsed.
   absl::string_view filename_;
@@ -81,10 +83,10 @@ class LegacyFlexTokenizer final : public ZetaSqlFlexTokenizerBase {
 };
 
 // A wrapper class for the generated TextMapper lexer class with access to
-// the private fields of `Lexer`.
-// TODO: b/322871843: Find a way to use the `Lexer` class directly, maybe by
+// the private fields of `TmGeneratedLexer`.
+// TODO: b/322871843: Find a way to use the `TmGeneratedLexer` class directly, maybe by
 // updating the TextMapper template.
-class TextMapperTokenizer final : Lexer {
+class TextMapperTokenizer final : TmGeneratedLexer {
  public:
   TextMapperTokenizer(absl::string_view filename, absl::string_view input,
                       int start_offset);
@@ -98,7 +100,7 @@ class TextMapperTokenizer final : Lexer {
 class ZetaSqlTokenizer {
  public:
   ZetaSqlTokenizer(absl::string_view filename, absl::string_view input,
-                     int start_offset);
+                     int start_offset, bool force_flex);
 
   ZetaSqlTokenizer(const ZetaSqlTokenizer&) = delete;
   ZetaSqlTokenizer& operator=(const ZetaSqlTokenizer&) = delete;
@@ -120,6 +122,7 @@ class ZetaSqlTokenizer {
   const absl::string_view filename_;
   const absl::string_view input_;
   const int start_offset_;
+  const bool force_flex_;
 };
 
 using ZetaSqlFlexTokenizer ABSL_DEPRECATED("Inline me!") = ZetaSqlTokenizer;

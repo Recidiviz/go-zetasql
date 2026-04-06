@@ -36,10 +36,10 @@
 #include "zetasql/public/functions/normalize_mode.pb.h"
 #include "zetasql/public/functions/util.h"
 #include "zetasql/public/strings.h"
-#include "zetasql/base/case.h"
 #include "zetasql/base/string_numbers.h"
 #include "absl/algorithm/container.h"
 #include "absl/base/casts.h"
+#include "zetasql/base/no_destructor.h"
 #include "absl/base/optimization.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
@@ -48,7 +48,6 @@
 #include "absl/strings/ascii.h"
 #include "absl/strings/escaping.h"
 #include "absl/strings/match.h"
-#include "absl/strings/numbers.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
@@ -2322,7 +2321,7 @@ bool ToBase64m(absl::string_view str, std::string* out, absl::Status* error) {
 }
 
 const ConversionFuncMap& GetConversionFuncMap() {
-  static const ConversionFuncMap func_map = [] {
+  static const zetasql_base::NoDestructor<ConversionFuncMap> func_map([] {
     ConversionFuncMap m;
     m.insert({{"base2", {ToBase2, FromBase2}},
               {"base8", {ToBase8, FromBase8}},
@@ -2334,8 +2333,8 @@ const ConversionFuncMap& GetConversionFuncMap() {
               {"utf8", {UTF8CheckAndCopy, UTF8CheckAndCopy}},
               {"utf-8", {UTF8CheckAndCopy, UTF8CheckAndCopy}}});
     return m;
-  }();
-  return func_map;
+  }());
+  return *func_map;
 }
 
 absl::Status BytesToString(absl::string_view str, absl::string_view format,

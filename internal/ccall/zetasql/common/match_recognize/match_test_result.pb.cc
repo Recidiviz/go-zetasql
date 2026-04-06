@@ -27,8 +27,6 @@ PROTOBUF_CONSTEXPR MatchResultProto::MatchResultProto(
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
   , /*decltype(_impl_.match_)*/{}
-  , /*decltype(_impl_.total_rows_fully_processed_)*/ 0
-
   , /*decltype(_impl_.rep_count_)*/ 0
 } {}
 struct MatchResultProtoDefaultTypeInternal {
@@ -77,11 +75,9 @@ const ::uint32_t TableStruct_zetasql_2fcommon_2fmatch_5frecognize_2fmatch_5ftest
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::MatchResultProto, _impl_.match_),
-    PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::MatchResultProto, _impl_.total_rows_fully_processed_),
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::MatchResultProto, _impl_.rep_count_),
     ~0u,
     0,
-    1,
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::MatchPartitionResultProto, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::MatchPartitionResultProto, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -98,8 +94,8 @@ const ::uint32_t TableStruct_zetasql_2fcommon_2fmatch_5frecognize_2fmatch_5ftest
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        { 0, 11, -1, sizeof(::zetasql::functions::match_recognize::MatchResultProto)},
-        { 14, 24, -1, sizeof(::zetasql::functions::match_recognize::MatchPartitionResultProto)},
+        { 0, 10, -1, sizeof(::zetasql::functions::match_recognize::MatchResultProto)},
+        { 12, 22, -1, sizeof(::zetasql::functions::match_recognize::MatchPartitionResultProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -109,19 +105,18 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_zetasql_2fcommon_2fmatch_5frecognize_2fmatch_5ftest_5fresult_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n6zetasql/common/match_recognize/match_t"
     "est_result.proto\022!zetasql.functions.matc"
-    "h_recognize\"X\n\020MatchResultProto\022\r\n\005match"
-    "\030\001 \003(\t\022\"\n\032total_rows_fully_processed\030\002 \001"
-    "(\005\022\021\n\trep_count\030\003 \001(\005\"\250\001\n\031MatchPartition"
-    "ResultProto\022D\n\007add_row\030\001 \003(\01323.zetasql.f"
-    "unctions.match_recognize.MatchResultProt"
-    "o\022E\n\010finalize\030\002 \001(\01323.zetasql.functions."
-    "match_recognize.MatchResultProto"
+    "h_recognize\"4\n\020MatchResultProto\022\r\n\005match"
+    "\030\001 \003(\t\022\021\n\trep_count\030\003 \001(\005\"\250\001\n\031MatchParti"
+    "tionResultProto\022D\n\007add_row\030\001 \003(\01323.zetas"
+    "ql.functions.match_recognize.MatchResult"
+    "Proto\022E\n\010finalize\030\002 \001(\01323.zetasql.functi"
+    "ons.match_recognize.MatchResultProto"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fcommon_2fmatch_5frecognize_2fmatch_5ftest_5fresult_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fcommon_2fmatch_5frecognize_2fmatch_5ftest_5fresult_2eproto = {
     false,
     false,
-    352,
+    316,
     descriptor_table_protodef_zetasql_2fcommon_2fmatch_5frecognize_2fmatch_5ftest_5fresult_2eproto,
     "zetasql/common/match_recognize/match_test_result.proto",
     &descriptor_table_zetasql_2fcommon_2fmatch_5frecognize_2fmatch_5ftest_5fresult_2eproto_once,
@@ -163,11 +158,8 @@ class MatchResultProto::_Internal {
   using HasBits = decltype(std::declval<MatchResultProto>()._impl_._has_bits_);
   static constexpr ::int32_t kHasBitsOffset =
     8 * PROTOBUF_FIELD_OFFSET(MatchResultProto, _impl_._has_bits_);
-  static void set_has_total_rows_fully_processed(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
   static void set_has_rep_count(HasBits* has_bits) {
-    (*has_bits)[0] |= 2u;
+    (*has_bits)[0] |= 1u;
   }
 };
 
@@ -183,15 +175,11 @@ MatchResultProto::MatchResultProto(const MatchResultProto& from)
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.match_){from._impl_.match_}
-    , decltype(_impl_.total_rows_fully_processed_) {}
-
     , decltype(_impl_.rep_count_) {}
   };
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.total_rows_fully_processed_, &from._impl_.total_rows_fully_processed_,
-    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.rep_count_) -
-    reinterpret_cast<char*>(&_impl_.total_rows_fully_processed_)) + sizeof(_impl_.rep_count_));
+  _this->_impl_.rep_count_ = from._impl_.rep_count_;
   // @@protoc_insertion_point(copy_constructor:zetasql.functions.match_recognize.MatchResultProto)
 }
 
@@ -201,8 +189,6 @@ inline void MatchResultProto::SharedCtor(::_pb::Arena* arena) {
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.match_){arena}
-    , decltype(_impl_.total_rows_fully_processed_) { 0 }
-
     , decltype(_impl_.rep_count_) { 0 }
 
   };
@@ -233,12 +219,7 @@ void MatchResultProto::Clear() {
   (void) cached_has_bits;
 
   _internal_mutable_match()->Clear();
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    ::memset(&_impl_.total_rows_fully_processed_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.rep_count_) -
-        reinterpret_cast<char*>(&_impl_.total_rows_fully_processed_)) + sizeof(_impl_.rep_count_));
-  }
+  _impl_.rep_count_ = 0;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -264,16 +245,6 @@ const char* MatchResultProto::_InternalParse(const char* ptr, ::_pbi::ParseConte
             #endif  // !NDEBUG
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // optional int32 total_rows_fully_processed = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
-          _Internal::set_has_total_rows_fully_processed(&has_bits);
-          _impl_.total_rows_fully_processed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
         } else {
           goto handle_unusual;
         }
@@ -327,15 +298,8 @@ failure:
   }
 
   cached_has_bits = _impl_._has_bits_[0];
-  // optional int32 total_rows_fully_processed = 2;
-  if (cached_has_bits & 0x00000001u) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-        2, this->_internal_total_rows_fully_processed(), target);
-  }
-
   // optional int32 rep_count = 3;
-  if (cached_has_bits & 0x00000002u) {
+  if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(
         3, this->_internal_rep_count(), target);
@@ -364,21 +328,13 @@ failure:
         _internal_match().Get(i));
   }
 
+  // optional int32 rep_count = 3;
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    // optional int32 total_rows_fully_processed = 2;
-    if (cached_has_bits & 0x00000001u) {
-      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
-          this->_internal_total_rows_fully_processed());
-    }
-
-    // optional int32 rep_count = 3;
-    if (cached_has_bits & 0x00000002u) {
-      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
-          this->_internal_rep_count());
-    }
-
+  if (cached_has_bits & 0x00000001u) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+        this->_internal_rep_count());
   }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -398,15 +354,8 @@ void MatchResultProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const
   (void) cached_has_bits;
 
   _this->_internal_mutable_match()->MergeFrom(from._internal_match());
-  cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    if (cached_has_bits & 0x00000001u) {
-      _this->_impl_.total_rows_fully_processed_ = from._impl_.total_rows_fully_processed_;
-    }
-    if (cached_has_bits & 0x00000002u) {
-      _this->_impl_.rep_count_ = from._impl_.rep_count_;
-    }
-    _this->_impl_._has_bits_[0] |= cached_has_bits;
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_set_rep_count(from._internal_rep_count());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -428,12 +377,8 @@ void MatchResultProto::InternalSwap(MatchResultProto* other) {
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   _internal_mutable_match()->InternalSwap(
       other->_internal_mutable_match());
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(MatchResultProto, _impl_.rep_count_)
-      + sizeof(MatchResultProto::_impl_.rep_count_)
-      - PROTOBUF_FIELD_OFFSET(MatchResultProto, _impl_.total_rows_fully_processed_)>(
-          reinterpret_cast<char*>(&_impl_.total_rows_fully_processed_),
-          reinterpret_cast<char*>(&other->_impl_.total_rows_fully_processed_));
+
+  swap(_impl_.rep_count_, other->_impl_.rep_count_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata MatchResultProto::GetMetadata() const {

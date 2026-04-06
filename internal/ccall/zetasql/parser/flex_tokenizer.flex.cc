@@ -20,10 +20,9 @@
      * We will address this in a future release of flex, or omit the C++ scanner
      * altogether.
      */
-    /* go-zetasql: must match yyFlexLexer in flex_tokenizer.h so flex-generated member definitions
-     * attach to ZetaSqlFlexTokenizerBase; LegacyFlexLexer would be a second FlexLexer.h flavor and
-     * break the vtable for LegacyFlexTokenizer : public ZetaSqlFlexTokenizerBase. */
+#ifndef yyFlexLexer
     #define yyFlexLexer ZetaSqlFlexTokenizerBase
+#endif
 
 #ifdef yyalloc
 #define Legacyalloc_ALREADY_DEFINED
@@ -319,21 +318,6 @@ void yyfree ( void *  );
 typedef flex_uint8_t YY_CHAR;
 
 #define yytext_ptr yytext
-
-/* Second FlexLexer.h include skipped: ZetaSqlFlexTokenizerBase is already defined from flex_tokenizer.h
- * (first yyFlexLexer flavor). yyFlexLexer above aliases to that same class name. */
-#if 0
-#include <FlexLexer.h>
-#endif
-
-int yyFlexLexer::yywrap() { return 1; }
-int yyFlexLexer::yylex()
-	{
-	LexerError( "yyFlexLexer::yylex invoked but %option yyclass used" );
-	return 0;
-	}
-
-#define YY_DECL int FlexTokenizer::yylex()
 
 static const flex_int16_t yy_nxt[][256] =
     {
@@ -46135,7 +46119,7 @@ static int yy_flex_strlen ( const char * );
  */
 #ifndef YY_DECL
 #define YY_DECL_IS_OURS 1
-#define YY_DECL int yyFlexLexer::yylex()
+#define YY_DECL int ZetaSqlFlexTokenizerBase::yylex()
 #endif /* !YY_DECL */
 
 /* Code executed at the beginning of each rule, after yytext and yyleng
@@ -46258,1584 +46242,1584 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 193 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INTERLEAVE);
+return Tokens::KW_INTERLEAVE;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 194 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NULL_FILTERED);
+return Tokens::KW_NULL_FILTERED;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 195 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PARENT);
+return Tokens::KW_PARENT;
 	YY_BREAK
 /* End of Spanner-specific keywords */
 /* (broken link) start */
 case 4:
 YY_RULE_SETUP
 #line 199 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ABORT);
+return Tokens::KW_ABORT;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 200 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ACCESS);
+return Tokens::KW_ACCESS;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 201 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ACTION);
+return Tokens::KW_ACTION;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 202 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ACYCLIC);
+return Tokens::KW_ACYCLIC;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 203 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ADD);
+return Tokens::KW_ADD;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 204 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_AFTER);
+return Tokens::KW_AFTER;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 205 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_AGGREGATE);
+return Tokens::KW_AGGREGATE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 206 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ALL);
+return Tokens::KW_ALL;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 207 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ALTER);
+return Tokens::KW_ALTER;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 208 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ALWAYS);
+return Tokens::KW_ALWAYS;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 209 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ANALYZE);
+return Tokens::KW_ANALYZE;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 210 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_AND);
+return Tokens::KW_AND;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 211 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ANY);
+return Tokens::KW_ANY;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 212 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_APPROX);
+return Tokens::KW_APPROX;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 213 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ARE);
+return Tokens::KW_ARE;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 214 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ARRAY);
+return Tokens::KW_ARRAY;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 215 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_AS);
+return Tokens::KW_AS;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 216 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ASC);
+return Tokens::KW_ASC;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 217 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ASCENDING);
+return Tokens::KW_ASCENDING;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 218 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ASSERT);
+return Tokens::KW_ASSERT;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 219 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ASSERT_ROWS_MODIFIED);
+return Tokens::KW_ASSERT_ROWS_MODIFIED;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 220 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_AT);
+return Tokens::KW_AT;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 221 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_BATCH);
+return Tokens::KW_BATCH;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 222 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_BEGIN);
+return Tokens::KW_BEGIN;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 223 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_BETWEEN);
+return Tokens::KW_BETWEEN;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 224 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_BIGDECIMAL);
+return Tokens::KW_BIGDECIMAL;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 225 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_BIGNUMERIC);
+return Tokens::KW_BIGNUMERIC;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 226 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_BREAK);
+return Tokens::KW_BREAK;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 227 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_BY);
+return Tokens::KW_BY;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 228 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CALL);
+return Tokens::KW_CALL;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 229 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CASCADE);
+return Tokens::KW_CASCADE;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 230 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CASE);
+return Tokens::KW_CASE;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 231 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CAST);
+return Tokens::KW_CAST;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 232 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CHECK);
+return Tokens::KW_CHECK;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 233 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CLAMPED);
+return Tokens::KW_CLAMPED;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 234 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CLONE);
+return Tokens::KW_CLONE;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 235 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CLUSTER);
+return Tokens::KW_CLUSTER;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 236 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_COLLATE);
+return Tokens::KW_COLLATE;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 237 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_COLUMN);
+return Tokens::KW_COLUMN;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 238 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_COLUMNS);
+return Tokens::KW_COLUMNS;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 239 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_COMMIT);
+return Tokens::KW_COMMIT;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 240 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CONFLICT);
+return Tokens::KW_CONFLICT;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 241 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CONNECTION);
+return Tokens::KW_CONNECTION;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
 #line 242 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CONSTANT);
+return Tokens::KW_CONSTANT;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 243 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CONSTRAINT);
+return Tokens::KW_CONSTRAINT;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 244 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CONTAINS);
+return Tokens::KW_CONTAINS;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 245 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CONTINUE);
+return Tokens::KW_CONTINUE;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 246 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_COPY);
+return Tokens::KW_COPY;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 247 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CORRESPONDING);
+return Tokens::KW_CORRESPONDING;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 248 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CREATE);
+return Tokens::KW_CREATE;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 249 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CROSS);
+return Tokens::KW_CROSS;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 250 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CUBE);
+return Tokens::KW_CUBE;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 251 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CURRENT);
+return Tokens::KW_CURRENT;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
 #line 252 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CYCLE);
+return Tokens::KW_CYCLE;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
 #line 253 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DATA);
+return Tokens::KW_DATA;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
 #line 254 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DATABASE);
+return Tokens::KW_DATABASE;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
 #line 255 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DATE);
+return Tokens::KW_DATE;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
 #line 256 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DATETIME);
+return Tokens::KW_DATETIME;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
 #line 257 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DECIMAL);
+return Tokens::KW_DECIMAL;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
 #line 258 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DECLARE);
+return Tokens::KW_DECLARE;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
 #line 259 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DEFAULT);
+return Tokens::KW_DEFAULT;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
 #line 260 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DEFINE);
+return Tokens::KW_DEFINE;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
 #line 261 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DEFINER);
+return Tokens::KW_DEFINER;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
 #line 262 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DELETE);
+return Tokens::KW_DELETE;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
 #line 263 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DELETION);
+return Tokens::KW_DELETION;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
 #line 264 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DEPTH);
+return Tokens::KW_DEPTH;
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
 #line 265 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DESC);
+return Tokens::KW_DESC;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
 #line 266 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DESCENDING);
+return Tokens::KW_DESCENDING;
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
 #line 267 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DESCRIBE);
+return Tokens::KW_DESCRIBE;
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
 #line 268 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DESCRIPTOR);
+return Tokens::KW_DESCRIPTOR;
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
 #line 269 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DESTINATION);
+return Tokens::KW_DESTINATION;
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
 #line 270 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DETERMINISTIC);
+return Tokens::KW_DETERMINISTIC;
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
 #line 271 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DISTINCT);
+return Tokens::KW_DISTINCT;
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
 #line 272 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DO);
+return Tokens::KW_DO;
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
 #line 273 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DROP);
+return Tokens::KW_DROP;
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
 #line 274 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EDGE);
+return Tokens::KW_EDGE;
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
 #line 275 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ELSE);
+return Tokens::KW_ELSE;
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
 #line 276 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ELSEIF);
+return Tokens::KW_ELSEIF;
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
 #line 277 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_END);
+return Tokens::KW_END;
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
 #line 278 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ENFORCED);
+return Tokens::KW_ENFORCED;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
 #line 279 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ENUM);
+return Tokens::KW_ENUM;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
 #line 280 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ERROR);
+return Tokens::KW_ERROR;
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
 #line 281 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ESCAPE);
+return Tokens::KW_ESCAPE;
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
 #line 282 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXCEPT);
+return Tokens::KW_EXCEPT;
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
 #line 283 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXCEPTION);
+return Tokens::KW_EXCEPTION;
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
 #line 284 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXCLUDE);
+return Tokens::KW_EXCLUDE;
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
 #line 285 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXECUTE);
+return Tokens::KW_EXECUTE;
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
 #line 286 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXISTS);
+return Tokens::KW_EXISTS;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
 #line 287 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXPLAIN);
+return Tokens::KW_EXPLAIN;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
 #line 288 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXPORT);
+return Tokens::KW_EXPORT;
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
 #line 289 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXTEND);
+return Tokens::KW_EXTEND;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
 #line 290 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXTERNAL);
+return Tokens::KW_EXTERNAL;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
 #line 291 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_EXTRACT);
+return Tokens::KW_EXTRACT;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
 #line 292 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FALSE);
+return Tokens::KW_FALSE;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
 #line 293 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FETCH);
+return Tokens::KW_FETCH;
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
 #line 294 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FILES);
+return Tokens::KW_FILES;
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
 #line 295 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FILL);
+return Tokens::KW_FILL;
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
 #line 296 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FILTER);
+return Tokens::KW_FILTER;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
 #line 297 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FIRST);
+return Tokens::KW_FIRST;
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
 #line 298 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FOLLOWING);
+return Tokens::KW_FOLLOWING;
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
 #line 299 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FOR);
+return Tokens::KW_FOR;
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
 #line 300 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FOREIGN);
+return Tokens::KW_FOREIGN;
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
 #line 301 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FORK);
+return Tokens::KW_FORK;
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
 #line 302 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FORMAT);
+return Tokens::KW_FORMAT;
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
 #line 303 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FROM);
+return Tokens::KW_FROM;
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
 #line 304 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FULL);
+return Tokens::KW_FULL;
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
 #line 305 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_FUNCTION);
+return Tokens::KW_FUNCTION;
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
 #line 306 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GENERATED);
+return Tokens::KW_GENERATED;
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
 #line 307 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GRANT);
+return Tokens::KW_GRANT;
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
 #line 308 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GRAPH);
+return Tokens::KW_GRAPH;
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
 #line 309 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GRAPH_TABLE_NONRESERVED);
+return Tokens::KW_GRAPH_TABLE_NONRESERVED;
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
 #line 310 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GROUP);
+return Tokens::KW_GROUP;
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
 #line 311 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GROUP_ROWS);
+return Tokens::KW_GROUP_ROWS;
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
 #line 312 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GROUPING);
+return Tokens::KW_GROUPING;
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
 #line 313 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GROUPS);
+return Tokens::KW_GROUPS;
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
 #line 314 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_HASH);
+return Tokens::KW_HASH;
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
 #line 315 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_HAVING);
+return Tokens::KW_HAVING;
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
 #line 316 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_HIDDEN);
+return Tokens::KW_HIDDEN;
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
 #line 317 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_IDENTITY);
+return Tokens::KW_IDENTITY;
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
 #line 318 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_IF);
+return Tokens::KW_IF;
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
 #line 319 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_IGNORE);
+return Tokens::KW_IGNORE;
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
 #line 320 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_IMMEDIATE);
+return Tokens::KW_IMMEDIATE;
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
 #line 321 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_IMMUTABLE);
+return Tokens::KW_IMMUTABLE;
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
 #line 322 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_IMPORT);
+return Tokens::KW_IMPORT;
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
 #line 323 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_IN);
+return Tokens::KW_IN;
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
 #line 324 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INCLUDE);
+return Tokens::KW_INCLUDE;
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
 #line 325 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INCREMENT);
+return Tokens::KW_INCREMENT;
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
 #line 326 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INDEX);
+return Tokens::KW_INDEX;
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
 #line 327 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INNER);
+return Tokens::KW_INNER;
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
 #line 328 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INOUT);
+return Tokens::KW_INOUT;
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
 #line 329 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INPUT);
+return Tokens::KW_INPUT;
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
 #line 330 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INSERT);
+return Tokens::KW_INSERT;
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
 #line 331 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INTERSECT);
+return Tokens::KW_INTERSECT;
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
 #line 332 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INTERVAL);
+return Tokens::KW_INTERVAL;
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
 #line 333 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INTO);
+return Tokens::KW_INTO;
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
 #line 334 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_INVOKER);
+return Tokens::KW_INVOKER;
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
 #line 335 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_IS);
+return Tokens::KW_IS;
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
 #line 336 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ISOLATION);
+return Tokens::KW_ISOLATION;
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
 #line 337 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ITERATE);
+return Tokens::KW_ITERATE;
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
 #line 338 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_JOIN);
+return Tokens::KW_JOIN;
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
 #line 339 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_JSON);
+return Tokens::KW_JSON;
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
 #line 340 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_KEY);
+return Tokens::KW_KEY;
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
 #line 341 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LABEL);
+return Tokens::KW_LABEL;
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
 #line 342 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LABELED);
+return Tokens::KW_LABELED;
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
 #line 343 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LANGUAGE);
+return Tokens::KW_LANGUAGE;
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
 #line 344 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LAST);
+return Tokens::KW_LAST;
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
 #line 345 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LATERAL);
+return Tokens::KW_LATERAL;
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
 #line 346 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LEAVE);
+return Tokens::KW_LEAVE;
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
 #line 347 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LEFT);
+return Tokens::KW_LEFT;
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
 #line 348 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LET);
+return Tokens::KW_LET;
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
 #line 349 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LEVEL);
+return Tokens::KW_LEVEL;
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
 #line 350 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LIKE);
+return Tokens::KW_LIKE;
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
 #line 351 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LIMIT);
+return Tokens::KW_LIMIT;
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
 #line 352 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LOAD);
+return Tokens::KW_LOAD;
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
 #line 353 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LOG);
+return Tokens::KW_LOG;
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
 #line 354 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LOOKUP);
+return Tokens::KW_LOOKUP;
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
 #line 355 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LOOP);
+return Tokens::KW_LOOP;
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
 #line 356 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MACRO);
+return Tokens::KW_MACRO;
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
 #line 357 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MAP);
+return Tokens::KW_MAP;
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
 #line 358 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MATCH);
+return Tokens::KW_MATCH;
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
 #line 359 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MATCH_RECOGNIZE_NONRESERVED);
+return Tokens::KW_MATCH_RECOGNIZE_NONRESERVED;
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
 #line 360 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MATCHED);
+return Tokens::KW_MATCHED;
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
 #line 361 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MATERIALIZED);
+return Tokens::KW_MATERIALIZED;
 	YY_BREAK
 case 167:
 YY_RULE_SETUP
 #line 362 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MAX);
+return Tokens::KW_MAX;
 	YY_BREAK
 case 168:
 YY_RULE_SETUP
 #line 363 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MAXVALUE);
+return Tokens::KW_MAXVALUE;
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
 #line 364 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MEASURES);
+return Tokens::KW_MEASURES;
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
 #line 365 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MERGE);
+return Tokens::KW_MERGE;
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
 #line 366 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MESSAGE);
+return Tokens::KW_MESSAGE;
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
 #line 367 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_METADATA);
+return Tokens::KW_METADATA;
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
 #line 368 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MIN);
+return Tokens::KW_MIN;
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
 #line 369 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MINVALUE);
+return Tokens::KW_MINVALUE;
 	YY_BREAK
 case 175:
 YY_RULE_SETUP
 #line 370 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MODEL);
+return Tokens::KW_MODEL;
 	YY_BREAK
 case 176:
 YY_RULE_SETUP
 #line 371 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_MODULE);
+return Tokens::KW_MODULE;
 	YY_BREAK
 case 177:
 YY_RULE_SETUP
 #line 372 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NAME);
+return Tokens::KW_NAME;
 	YY_BREAK
 case 178:
 YY_RULE_SETUP
 #line 373 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NATURAL);
+return Tokens::KW_NATURAL;
 	YY_BREAK
 case 179:
 YY_RULE_SETUP
 #line 374 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NEW);
+return Tokens::KW_NEW;
 	YY_BREAK
 case 180:
 YY_RULE_SETUP
 #line 375 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NEXT);
+return Tokens::KW_NEXT;
 	YY_BREAK
 case 181:
 YY_RULE_SETUP
 #line 376 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NO);
+return Tokens::KW_NO;
 	YY_BREAK
 case 182:
 YY_RULE_SETUP
 #line 377 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NODE);
+return Tokens::KW_NODE;
 	YY_BREAK
 case 183:
 YY_RULE_SETUP
 #line 378 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NOT);
+return Tokens::KW_NOT;
 	YY_BREAK
 case 184:
 YY_RULE_SETUP
 #line 379 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NOTHING);
+return Tokens::KW_NOTHING;
 	YY_BREAK
 case 185:
 YY_RULE_SETUP
 #line 380 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NULL);
+return Tokens::KW_NULL;
 	YY_BREAK
 case 186:
 YY_RULE_SETUP
 #line 381 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NULLS);
+return Tokens::KW_NULLS;
 	YY_BREAK
 case 187:
 YY_RULE_SETUP
 #line 382 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NUMERIC);
+return Tokens::KW_NUMERIC;
 	YY_BREAK
 case 188:
 YY_RULE_SETUP
 #line 383 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OF);
+return Tokens::KW_OF;
 	YY_BREAK
 case 189:
 YY_RULE_SETUP
 #line 384 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OFFSET);
+return Tokens::KW_OFFSET;
 	YY_BREAK
 case 190:
 YY_RULE_SETUP
 #line 385 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ON);
+return Tokens::KW_ON;
 	YY_BREAK
 case 191:
 YY_RULE_SETUP
 #line 386 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ONLY);
+return Tokens::KW_ONLY;
 	YY_BREAK
 case 192:
 YY_RULE_SETUP
 #line 387 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OPTIONAL);
+return Tokens::KW_OPTIONAL;
 	YY_BREAK
 case 193:
 YY_RULE_SETUP
 #line 388 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OPTIONS);
+return Tokens::KW_OPTIONS;
 	YY_BREAK
 case 194:
 YY_RULE_SETUP
 #line 389 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OR);
+return Tokens::KW_OR;
 	YY_BREAK
 case 195:
 YY_RULE_SETUP
 #line 390 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ORDER);
+return Tokens::KW_ORDER;
 	YY_BREAK
 case 196:
 YY_RULE_SETUP
 #line 391 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OUT);
+return Tokens::KW_OUT;
 	YY_BREAK
 case 197:
 YY_RULE_SETUP
 #line 392 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OUTER);
+return Tokens::KW_OUTER;
 	YY_BREAK
 case 198:
 YY_RULE_SETUP
 #line 393 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OUTPUT);
+return Tokens::KW_OUTPUT;
 	YY_BREAK
 case 199:
 YY_RULE_SETUP
 #line 394 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OVER);
+return Tokens::KW_OVER;
 	YY_BREAK
 case 200:
 YY_RULE_SETUP
 #line 395 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_OVERWRITE);
+return Tokens::KW_OVERWRITE;
 	YY_BREAK
 case 201:
 YY_RULE_SETUP
 #line 396 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PARTITION);
+return Tokens::KW_PARTITION;
 	YY_BREAK
 case 202:
 YY_RULE_SETUP
 #line 397 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PARTITIONS);
+return Tokens::KW_PARTITIONS;
 	YY_BREAK
 case 203:
 YY_RULE_SETUP
 #line 398 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PAST);
+return Tokens::KW_PAST;
 	YY_BREAK
 case 204:
 YY_RULE_SETUP
 #line 399 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PATH);
+return Tokens::KW_PATH;
 	YY_BREAK
 case 205:
 YY_RULE_SETUP
 #line 400 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PATHS);
+return Tokens::KW_PATHS;
 	YY_BREAK
 case 206:
 YY_RULE_SETUP
 #line 401 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PATTERN);
+return Tokens::KW_PATTERN;
 	YY_BREAK
 case 207:
 YY_RULE_SETUP
 #line 402 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PERCENT);
+return Tokens::KW_PERCENT;
 	YY_BREAK
 case 208:
 YY_RULE_SETUP
 #line 403 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PIVOT);
+return Tokens::KW_PIVOT;
 	YY_BREAK
 case 209:
 YY_RULE_SETUP
 #line 404 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_POLICIES);
+return Tokens::KW_POLICIES;
 	YY_BREAK
 case 210:
 YY_RULE_SETUP
 #line 405 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_POLICY);
+return Tokens::KW_POLICY;
 	YY_BREAK
 case 211:
 YY_RULE_SETUP
 #line 406 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PRECEDING);
+return Tokens::KW_PRECEDING;
 	YY_BREAK
 case 212:
 YY_RULE_SETUP
 #line 407 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PRIMARY);
+return Tokens::KW_PRIMARY;
 	YY_BREAK
 case 213:
 YY_RULE_SETUP
 #line 408 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PRIVATE);
+return Tokens::KW_PRIVATE;
 	YY_BREAK
 case 214:
 YY_RULE_SETUP
 #line 409 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PRIVILEGE);
+return Tokens::KW_PRIVILEGE;
 	YY_BREAK
 case 215:
 YY_RULE_SETUP
 #line 410 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PRIVILEGES);
+return Tokens::KW_PRIVILEGES;
 	YY_BREAK
 case 216:
 YY_RULE_SETUP
 #line 411 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PROCEDURE);
+return Tokens::KW_PROCEDURE;
 	YY_BREAK
 case 217:
 YY_RULE_SETUP
 #line 412 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PROJECT);
+return Tokens::KW_PROJECT;
 	YY_BREAK
 case 218:
 YY_RULE_SETUP
 #line 413 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PROPERTIES);
+return Tokens::KW_PROPERTIES;
 	YY_BREAK
 case 219:
 YY_RULE_SETUP
 #line 414 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PROPERTY);
+return Tokens::KW_PROPERTY;
 	YY_BREAK
 case 220:
 YY_RULE_SETUP
 #line 415 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PROTO);
+return Tokens::KW_PROTO;
 	YY_BREAK
 case 221:
 YY_RULE_SETUP
 #line 416 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PUBLIC);
+return Tokens::KW_PUBLIC;
 	YY_BREAK
 case 222:
 YY_RULE_SETUP
 #line 417 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_QUALIFY_NONRESERVED);
+return Tokens::KW_QUALIFY_NONRESERVED;
 	YY_BREAK
 case 223:
 YY_RULE_SETUP
 #line 418 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RAISE);
+return Tokens::KW_RAISE;
 	YY_BREAK
 case 224:
 YY_RULE_SETUP
 #line 419 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RANGE);
+return Tokens::KW_RANGE;
 	YY_BREAK
 case 225:
 YY_RULE_SETUP
 #line 420 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_READ);
+return Tokens::KW_READ;
 	YY_BREAK
 case 226:
 YY_RULE_SETUP
 #line 421 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RECURSIVE);
+return Tokens::KW_RECURSIVE;
 	YY_BREAK
 case 227:
 YY_RULE_SETUP
 #line 422 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REFERENCES);
+return Tokens::KW_REFERENCES;
 	YY_BREAK
 case 228:
 YY_RULE_SETUP
 #line 423 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REMOTE);
+return Tokens::KW_REMOTE;
 	YY_BREAK
 case 229:
 YY_RULE_SETUP
 #line 424 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REMOVE);
+return Tokens::KW_REMOVE;
 	YY_BREAK
 case 230:
 YY_RULE_SETUP
 #line 425 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RENAME);
+return Tokens::KW_RENAME;
 	YY_BREAK
 case 231:
 YY_RULE_SETUP
 #line 426 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REPEAT);
+return Tokens::KW_REPEAT;
 	YY_BREAK
 case 232:
 YY_RULE_SETUP
 #line 427 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REPEATABLE);
+return Tokens::KW_REPEATABLE;
 	YY_BREAK
 case 233:
 YY_RULE_SETUP
 #line 428 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REPLACE);
+return Tokens::KW_REPLACE;
 	YY_BREAK
 case 234:
 YY_RULE_SETUP
 #line 429 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REPLACE_FIELDS);
+return Tokens::KW_REPLACE_FIELDS;
 	YY_BREAK
 case 235:
 YY_RULE_SETUP
 #line 430 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REPLICA);
+return Tokens::KW_REPLICA;
 	YY_BREAK
 case 236:
 YY_RULE_SETUP
 #line 431 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REPORT);
+return Tokens::KW_REPORT;
 	YY_BREAK
 case 237:
 YY_RULE_SETUP
 #line 432 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RESPECT);
+return Tokens::KW_RESPECT;
 	YY_BREAK
 case 238:
 YY_RULE_SETUP
 #line 433 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RESTRICT);
+return Tokens::KW_RESTRICT;
 	YY_BREAK
 case 239:
 YY_RULE_SETUP
 #line 434 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RESTRICTION);
+return Tokens::KW_RESTRICTION;
 	YY_BREAK
 case 240:
 YY_RULE_SETUP
 #line 435 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RETURN);
+return Tokens::KW_RETURN;
 	YY_BREAK
 case 241:
 YY_RULE_SETUP
 #line 436 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RETURNS);
+return Tokens::KW_RETURNS;
 	YY_BREAK
 case 242:
 YY_RULE_SETUP
 #line 437 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_REVOKE);
+return Tokens::KW_REVOKE;
 	YY_BREAK
 case 243:
 YY_RULE_SETUP
 #line 438 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RIGHT);
+return Tokens::KW_RIGHT;
 	YY_BREAK
 case 244:
 YY_RULE_SETUP
 #line 439 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ROLLBACK);
+return Tokens::KW_ROLLBACK;
 	YY_BREAK
 case 245:
 YY_RULE_SETUP
 #line 440 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ROLLUP);
+return Tokens::KW_ROLLUP;
 	YY_BREAK
 case 246:
 YY_RULE_SETUP
 #line 441 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ROW);
+return Tokens::KW_ROW;
 	YY_BREAK
 case 247:
 YY_RULE_SETUP
 #line 442 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ROWS);
+return Tokens::KW_ROWS;
 	YY_BREAK
 case 248:
 YY_RULE_SETUP
 #line 443 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_RUN);
+return Tokens::KW_RUN;
 	YY_BREAK
 case 249:
 YY_RULE_SETUP
 #line 444 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SAFE_CAST);
+return Tokens::KW_SAFE_CAST;
 	YY_BREAK
 case 250:
 YY_RULE_SETUP
 #line 445 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SCHEMA);
+return Tokens::KW_SCHEMA;
 	YY_BREAK
 case 251:
 YY_RULE_SETUP
 #line 446 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SEARCH);
+return Tokens::KW_SEARCH;
 	YY_BREAK
 case 252:
 YY_RULE_SETUP
 #line 447 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SECURITY);
+return Tokens::KW_SECURITY;
 	YY_BREAK
 case 253:
 YY_RULE_SETUP
 #line 448 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SELECT);
+return Tokens::KW_SELECT;
 	YY_BREAK
 case 254:
 YY_RULE_SETUP
 #line 449 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SEQUENCE);
+return Tokens::KW_SEQUENCE;
 	YY_BREAK
 case 255:
 YY_RULE_SETUP
 #line 450 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SET);
+return Tokens::KW_SET;
 	YY_BREAK
 case 256:
 YY_RULE_SETUP
 #line 451 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SETS);
+return Tokens::KW_SETS;
 	YY_BREAK
 case 257:
 YY_RULE_SETUP
 #line 452 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SHORTEST);
+return Tokens::KW_SHORTEST;
 	YY_BREAK
 case 258:
 YY_RULE_SETUP
 #line 453 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SHOW);
+return Tokens::KW_SHOW;
 	YY_BREAK
 case 259:
 YY_RULE_SETUP
 #line 454 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SIMPLE);
+return Tokens::KW_SIMPLE;
 	YY_BREAK
 case 260:
 YY_RULE_SETUP
 #line 455 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SKIP);
+return Tokens::KW_SKIP;
 	YY_BREAK
 case 261:
 YY_RULE_SETUP
 #line 456 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SNAPSHOT);
+return Tokens::KW_SNAPSHOT;
 	YY_BREAK
 case 262:
 YY_RULE_SETUP
 #line 457 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SOME);
+return Tokens::KW_SOME;
 	YY_BREAK
 case 263:
 YY_RULE_SETUP
 #line 458 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SOURCE);
+return Tokens::KW_SOURCE;
 	YY_BREAK
 case 264:
 YY_RULE_SETUP
 #line 459 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SQL);
+return Tokens::KW_SQL;
 	YY_BREAK
 case 265:
 YY_RULE_SETUP
 #line 460 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_STABLE);
+return Tokens::KW_STABLE;
 	YY_BREAK
 case 266:
 YY_RULE_SETUP
 #line 461 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_START);
+return Tokens::KW_START;
 	YY_BREAK
 case 267:
 YY_RULE_SETUP
 #line 462 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_STATIC_DESCRIBE);
+return Tokens::KW_STATIC_DESCRIBE;
 	YY_BREAK
 case 268:
 YY_RULE_SETUP
 #line 463 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_STORED);
+return Tokens::KW_STORED;
 	YY_BREAK
 case 269:
 YY_RULE_SETUP
 #line 464 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_STORING);
+return Tokens::KW_STORING;
 	YY_BREAK
 case 270:
 YY_RULE_SETUP
 #line 465 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_STRICT);
+return Tokens::KW_STRICT;
 	YY_BREAK
 case 271:
 YY_RULE_SETUP
 #line 466 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_STRUCT);
+return Tokens::KW_STRUCT;
 	YY_BREAK
 case 272:
 YY_RULE_SETUP
 #line 467 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SYSTEM);
+return Tokens::KW_SYSTEM;
 	YY_BREAK
 case 273:
 YY_RULE_SETUP
 #line 468 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SYSTEM_TIME);
+return Tokens::KW_SYSTEM_TIME;
 	YY_BREAK
 case 274:
 YY_RULE_SETUP
 #line 469 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TABLE);
+return Tokens::KW_TABLE;
 	YY_BREAK
 case 275:
 YY_RULE_SETUP
 #line 470 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TABLES);
+return Tokens::KW_TABLES;
 	YY_BREAK
 case 276:
 YY_RULE_SETUP
 #line 471 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TABLESAMPLE);
+return Tokens::KW_TABLESAMPLE;
 	YY_BREAK
 case 277:
 YY_RULE_SETUP
 #line 472 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TARGET);
+return Tokens::KW_TARGET;
 	YY_BREAK
 case 278:
 YY_RULE_SETUP
 #line 473 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TEMP);
+return Tokens::KW_TEMP;
 	YY_BREAK
 case 279:
 YY_RULE_SETUP
 #line 474 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TEMPORARY);
+return Tokens::KW_TEMPORARY;
 	YY_BREAK
 case 280:
 YY_RULE_SETUP
 #line 475 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_THEN);
+return Tokens::KW_THEN;
 	YY_BREAK
 case 281:
 YY_RULE_SETUP
 #line 476 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TIME);
+return Tokens::KW_TIME;
 	YY_BREAK
 case 282:
 YY_RULE_SETUP
 #line 477 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TIMESTAMP);
+return Tokens::KW_TIMESTAMP;
 	YY_BREAK
 case 283:
 YY_RULE_SETUP
 #line 478 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TO);
+return Tokens::KW_TO;
 	YY_BREAK
 case 284:
 YY_RULE_SETUP
 #line 479 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TRAIL);
+return Tokens::KW_TRAIL;
 	YY_BREAK
 case 285:
 YY_RULE_SETUP
 #line 480 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TRANSACTION);
+return Tokens::KW_TRANSACTION;
 	YY_BREAK
 case 286:
 YY_RULE_SETUP
 #line 481 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TRANSFORM);
+return Tokens::KW_TRANSFORM;
 	YY_BREAK
 case 287:
 YY_RULE_SETUP
 #line 482 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TREAT);
+return Tokens::KW_TREAT;
 	YY_BREAK
 case 288:
 YY_RULE_SETUP
 #line 483 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TRUE);
+return Tokens::KW_TRUE;
 	YY_BREAK
 case 289:
 YY_RULE_SETUP
 #line 484 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TRUNCATE);
+return Tokens::KW_TRUNCATE;
 	YY_BREAK
 case 290:
 YY_RULE_SETUP
 #line 485 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_TYPE);
+return Tokens::KW_TYPE;
 	YY_BREAK
 case 291:
 YY_RULE_SETUP
 #line 486 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UNBOUNDED);
+return Tokens::KW_UNBOUNDED;
 	YY_BREAK
 case 292:
 YY_RULE_SETUP
 #line 487 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UNDROP);
+return Tokens::KW_UNDROP;
 	YY_BREAK
 case 293:
 YY_RULE_SETUP
 #line 488 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UNION);
+return Tokens::KW_UNION;
 	YY_BREAK
 case 294:
 YY_RULE_SETUP
 #line 489 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UNIQUE);
+return Tokens::KW_UNIQUE;
 	YY_BREAK
 case 295:
 YY_RULE_SETUP
 #line 490 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UNKNOWN);
+return Tokens::KW_UNKNOWN;
 	YY_BREAK
 case 296:
 YY_RULE_SETUP
 #line 491 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UNNEST);
+return Tokens::KW_UNNEST;
 	YY_BREAK
 case 297:
 YY_RULE_SETUP
 #line 492 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UNPIVOT);
+return Tokens::KW_UNPIVOT;
 	YY_BREAK
 case 298:
 YY_RULE_SETUP
 #line 493 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UNTIL);
+return Tokens::KW_UNTIL;
 	YY_BREAK
 case 299:
 YY_RULE_SETUP
 #line 494 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_UPDATE);
+return Tokens::KW_UPDATE;
 	YY_BREAK
 case 300:
 YY_RULE_SETUP
 #line 495 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_USING);
+return Tokens::KW_USING;
 	YY_BREAK
 case 301:
 YY_RULE_SETUP
 #line 496 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_VALUE);
+return Tokens::KW_VALUE;
 	YY_BREAK
 case 302:
 YY_RULE_SETUP
 #line 497 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_VALUES);
+return Tokens::KW_VALUES;
 	YY_BREAK
 case 303:
 YY_RULE_SETUP
 #line 498 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_VECTOR);
+return Tokens::KW_VECTOR;
 	YY_BREAK
 case 304:
 YY_RULE_SETUP
 #line 499 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_VIEW);
+return Tokens::KW_VIEW;
 	YY_BREAK
 case 305:
 YY_RULE_SETUP
 #line 500 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_VIEWS);
+return Tokens::KW_VIEWS;
 	YY_BREAK
 case 306:
 YY_RULE_SETUP
 #line 501 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_VOLATILE);
+return Tokens::KW_VOLATILE;
 	YY_BREAK
 case 307:
 YY_RULE_SETUP
 #line 502 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WALK);
+return Tokens::KW_WALK;
 	YY_BREAK
 case 308:
 YY_RULE_SETUP
 #line 503 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WEIGHT);
+return Tokens::KW_WEIGHT;
 	YY_BREAK
 case 309:
 YY_RULE_SETUP
 #line 504 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WHEN);
+return Tokens::KW_WHEN;
 	YY_BREAK
 case 310:
 YY_RULE_SETUP
 #line 505 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WHERE);
+return Tokens::KW_WHERE;
 	YY_BREAK
 case 311:
 YY_RULE_SETUP
 #line 506 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WHILE);
+return Tokens::KW_WHILE;
 	YY_BREAK
 case 312:
 YY_RULE_SETUP
 #line 507 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WINDOW);
+return Tokens::KW_WINDOW;
 	YY_BREAK
 case 313:
 YY_RULE_SETUP
 #line 508 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WITH);
+return Tokens::KW_WITH;
 	YY_BREAK
 case 314:
 YY_RULE_SETUP
 #line 509 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WITHIN);
+return Tokens::KW_WITHIN;
 	YY_BREAK
 case 315:
 YY_RULE_SETUP
 #line 510 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_WRITE);
+return Tokens::KW_WRITE;
 	YY_BREAK
 case 316:
 YY_RULE_SETUP
 #line 511 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ZONE);
+return Tokens::KW_ZONE;
 	YY_BREAK
 /* (broken link) end */
 /* KEYWORDS_END */
@@ -47845,7 +47829,7 @@ case 317:
 /* rule 317 can match eol */
 YY_RULE_SETUP
 #line 517 "flex_tokenizer.l"
-return static_cast<int>(Tokens::STRING_LITERAL);
+return Tokens::STRING_LITERAL;
 	YY_BREAK
 case 318:
 /* rule 318 can match eol */
@@ -47875,7 +47859,7 @@ case 322:
 /* rule 322 can match eol */
 YY_RULE_SETUP
 #line 523 "flex_tokenizer.l"
-return static_cast<int>(Tokens::BYTES_LITERAL);
+return Tokens::BYTES_LITERAL;
 	YY_BREAK
 case 323:
 /* rule 323 can match eol */
@@ -47907,18 +47891,18 @@ UNCLOSED_3("raw bytes literal");
 case 327:
 YY_RULE_SETUP
 #line 532 "flex_tokenizer.l"
-return static_cast<int>(Tokens::STANDALONE_EXPONENT_SIGN);
+return Tokens::STANDALONE_EXPONENT_SIGN;
 	YY_BREAK
 case 328:
 YY_RULE_SETUP
 #line 533 "flex_tokenizer.l"
-return static_cast<int>(Tokens::EXP_IN_FLOAT_NO_SIGN);
+return Tokens::EXP_IN_FLOAT_NO_SIGN;
 	YY_BREAK
 case 329:
 /* rule 329 can match eol */
 YY_RULE_SETUP
 #line 535 "flex_tokenizer.l"
-return static_cast<int>(Tokens::IDENTIFIER);
+return Tokens::IDENTIFIER;
 	YY_BREAK
 case 330:
 /* rule 330 can match eol */
@@ -47929,12 +47913,12 @@ UNCLOSED("identifier literal");
 case 331:
 YY_RULE_SETUP
 #line 538 "flex_tokenizer.l"
-return static_cast<int>(Tokens::DECIMAL_INTEGER_LITERAL);
+return Tokens::DECIMAL_INTEGER_LITERAL;
 	YY_BREAK
 case 332:
 YY_RULE_SETUP
 #line 539 "flex_tokenizer.l"
-return static_cast<int>(Tokens::HEX_INTEGER_LITERAL);
+return Tokens::HEX_INTEGER_LITERAL;
 	YY_BREAK
 case 333:
 /* rule 333 can match eol */
@@ -47945,202 +47929,202 @@ UNCLOSED("comment");
 case 334:
 YY_RULE_SETUP
 #line 543 "flex_tokenizer.l"
-return static_cast<int>(Tokens::LPAREN);
+return Tokens::LPAREN;
 	YY_BREAK
 case 335:
 YY_RULE_SETUP
 #line 544 "flex_tokenizer.l"
-return static_cast<int>(Tokens::LBRACK);
+return Tokens::LBRACK;
 	YY_BREAK
 case 336:
 YY_RULE_SETUP
 #line 545 "flex_tokenizer.l"
-return static_cast<int>(Tokens::LBRACE);
+return Tokens::LBRACE;
 	YY_BREAK
 case 337:
 YY_RULE_SETUP
 #line 546 "flex_tokenizer.l"
-return static_cast<int>(Tokens::RPAREN);
+return Tokens::RPAREN;
 	YY_BREAK
 case 338:
 YY_RULE_SETUP
 #line 547 "flex_tokenizer.l"
-return static_cast<int>(Tokens::RBRACK);
+return Tokens::RBRACK;
 	YY_BREAK
 case 339:
 YY_RULE_SETUP
 #line 548 "flex_tokenizer.l"
-return static_cast<int>(Tokens::RBRACE);
+return Tokens::RBRACE;
 	YY_BREAK
 case 340:
 YY_RULE_SETUP
 #line 549 "flex_tokenizer.l"
-return static_cast<int>(Tokens::MULT);
+return Tokens::MULT;
 	YY_BREAK
 case 341:
 YY_RULE_SETUP
 #line 550 "flex_tokenizer.l"
-return static_cast<int>(Tokens::COMMA);
+return Tokens::COMMA;
 	YY_BREAK
 case 342:
 YY_RULE_SETUP
 #line 551 "flex_tokenizer.l"
-return static_cast<int>(Tokens::ASSIGN);
+return Tokens::ASSIGN;
 	YY_BREAK
 case 343:
 YY_RULE_SETUP
 #line 552 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_ADD_ASSIGN);
+return Tokens::KW_ADD_ASSIGN;
 	YY_BREAK
 case 344:
 YY_RULE_SETUP
 #line 553 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SUB_ASSIGN);
+return Tokens::KW_SUB_ASSIGN;
 	YY_BREAK
 case 345:
 YY_RULE_SETUP
 #line 554 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NOT_EQUALS_C_STYLE);
+return Tokens::KW_NOT_EQUALS_C_STYLE;
 	YY_BREAK
 case 346:
 YY_RULE_SETUP
 #line 555 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LESS_EQUALS);
+return Tokens::KW_LESS_EQUALS;
 	YY_BREAK
 case 347:
 YY_RULE_SETUP
 #line 556 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_SHIFT_LEFT);
+return Tokens::KW_SHIFT_LEFT;
 	YY_BREAK
 case 348:
 YY_RULE_SETUP
 #line 557 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_NAMED_ARGUMENT_ASSIGNMENT);
+return Tokens::KW_NAMED_ARGUMENT_ASSIGNMENT;
 	YY_BREAK
 case 349:
 YY_RULE_SETUP
 #line 558 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_LAMBDA_ARROW);
+return Tokens::KW_LAMBDA_ARROW;
 	YY_BREAK
 case 350:
 YY_RULE_SETUP
 #line 559 "flex_tokenizer.l"
-return static_cast<int>(Tokens::LT);
+return Tokens::LT;
 	YY_BREAK
 case 351:
 YY_RULE_SETUP
 #line 560 "flex_tokenizer.l"
-return static_cast<int>(Tokens::GT);
+return Tokens::GT;
 	YY_BREAK
 case 352:
 YY_RULE_SETUP
 #line 561 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_GREATER_EQUALS);
+return Tokens::KW_GREATER_EQUALS;
 	YY_BREAK
 case 353:
 YY_RULE_SETUP
 #line 562 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_CONCAT_OP);
+return Tokens::KW_CONCAT_OP;
 	YY_BREAK
 case 354:
 YY_RULE_SETUP
 #line 563 "flex_tokenizer.l"
-return static_cast<int>(Tokens::OR);
+return Tokens::OR;
 	YY_BREAK
 case 355:
 YY_RULE_SETUP
 #line 564 "flex_tokenizer.l"
-return static_cast<int>(Tokens::XOR);
+return Tokens::XOR;
 	YY_BREAK
 case 356:
 YY_RULE_SETUP
 #line 565 "flex_tokenizer.l"
-return static_cast<int>(Tokens::AND);
+return Tokens::AND;
 	YY_BREAK
 case 357:
 YY_RULE_SETUP
 #line 566 "flex_tokenizer.l"
-return static_cast<int>(Tokens::PLUS);
+return Tokens::PLUS;
 	YY_BREAK
 case 358:
 YY_RULE_SETUP
 #line 567 "flex_tokenizer.l"
-return static_cast<int>(Tokens::MINUS);
+return Tokens::MINUS;
 	YY_BREAK
 case 359:
 YY_RULE_SETUP
 #line 568 "flex_tokenizer.l"
-return static_cast<int>(Tokens::DIV);
+return Tokens::DIV;
 	YY_BREAK
 case 360:
 YY_RULE_SETUP
 #line 569 "flex_tokenizer.l"
-return static_cast<int>(Tokens::TILDE);
+return Tokens::TILDE;
 	YY_BREAK
 case 361:
 YY_RULE_SETUP
 #line 570 "flex_tokenizer.l"
-return static_cast<int>(Tokens::QUEST);
+return Tokens::QUEST;
 	YY_BREAK
 case 362:
 YY_RULE_SETUP
 #line 571 "flex_tokenizer.l"
-return static_cast<int>(Tokens::EXCL);
+return Tokens::EXCL;
 	YY_BREAK
 case 363:
 YY_RULE_SETUP
 #line 572 "flex_tokenizer.l"
-return static_cast<int>(Tokens::REM);
+return Tokens::REM;
 	YY_BREAK
 case 364:
 YY_RULE_SETUP
 #line 573 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_PIPE);
+return Tokens::KW_PIPE;
 	YY_BREAK
 case 365:
 YY_RULE_SETUP
 #line 574 "flex_tokenizer.l"
-return static_cast<int>(Tokens::ATSIGN);
+return Tokens::ATSIGN;
 	YY_BREAK
 case 366:
 YY_RULE_SETUP
 #line 575 "flex_tokenizer.l"
-return static_cast<int>(Tokens::KW_DOUBLE_AT);
+return Tokens::KW_DOUBLE_AT;
 	YY_BREAK
 case 367:
 YY_RULE_SETUP
 #line 576 "flex_tokenizer.l"
-return static_cast<int>(Tokens::DOT);
+return Tokens::DOT;
 	YY_BREAK
 case 368:
 YY_RULE_SETUP
 #line 577 "flex_tokenizer.l"
-return static_cast<int>(52); /* Token::COLON; avoid ICU COLON macro */
+return Tokens::COLON; /* avoid ICU COLON macro in flex: use Tokens::COLON not bare COLON */
 	YY_BREAK
 case 369:
 YY_RULE_SETUP
 #line 578 "flex_tokenizer.l"
-return static_cast<int>(Tokens::BACKSLASH);
+return Tokens::BACKSLASH;
 	YY_BREAK
 case 370:
 YY_RULE_SETUP
 #line 579 "flex_tokenizer.l"
-return static_cast<int>(Tokens::SEMICOLON);
+return Tokens::SEMICOLON;
 	YY_BREAK
 case 371:
 YY_RULE_SETUP
 #line 580 "flex_tokenizer.l"
-return static_cast<int>(Tokens::MACRO_INVOCATION);
+return Tokens::MACRO_INVOCATION;
 	YY_BREAK
 case 372:
 YY_RULE_SETUP
 #line 581 "flex_tokenizer.l"
-return static_cast<int>(Tokens::MACRO_ARGUMENT_REFERENCE);
+return Tokens::MACRO_ARGUMENT_REFERENCE;
 	YY_BREAK
 case 373:
 YY_RULE_SETUP
 #line 582 "flex_tokenizer.l"
-return static_cast<int>(Tokens::DOLLAR_SIGN);
+return Tokens::DOLLAR_SIGN;
 	YY_BREAK
 /* Whitespace and EOF rule.
 
@@ -48159,7 +48143,7 @@ case 375:
 /* rule 375 can match eol */
 YY_RULE_SETUP
 #line 593 "flex_tokenizer.l"
-return static_cast<int>(Tokens::COMMENT);
+return Tokens::COMMENT;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 #line 595 "flex_tokenizer.l"
@@ -48318,7 +48302,7 @@ YY_FATAL_ERROR( "flex scanner jammed" );
  * This constructor simply maintains backward compatibility.
  * DEPRECATED
  */
-yyFlexLexer::yyFlexLexer( std::istream* arg_yyin, std::ostream* arg_yyout ):
+ZetaSqlFlexTokenizerBase::ZetaSqlFlexTokenizerBase( std::istream* arg_yyin, std::ostream* arg_yyout ):
 	yyin(arg_yyin ? arg_yyin->rdbuf() : std::cin.rdbuf()),
 	yyout(arg_yyout ? arg_yyout->rdbuf() : std::cout.rdbuf())
 {
@@ -48327,7 +48311,7 @@ yyFlexLexer::yyFlexLexer( std::istream* arg_yyin, std::ostream* arg_yyout ):
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-yyFlexLexer::yyFlexLexer( std::istream& arg_yyin, std::ostream& arg_yyout ):
+ZetaSqlFlexTokenizerBase::ZetaSqlFlexTokenizerBase( std::istream& arg_yyin, std::ostream& arg_yyout ):
 	yyin(arg_yyin.rdbuf()),
 	yyout(arg_yyout.rdbuf())
 {
@@ -48336,7 +48320,7 @@ yyFlexLexer::yyFlexLexer( std::istream& arg_yyin, std::ostream& arg_yyout ):
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-void yyFlexLexer::ctor_common()
+void ZetaSqlFlexTokenizerBase::ctor_common()
 {
 	yy_c_buf_p = 0;
 	yy_init = 0;
@@ -48364,7 +48348,7 @@ void yyFlexLexer::ctor_common()
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-yyFlexLexer::~yyFlexLexer()
+ZetaSqlFlexTokenizerBase::~ZetaSqlFlexTokenizerBase()
 {
 	delete [] yy_state_buf;
 	yyfree( yy_start_stack  );
@@ -48374,7 +48358,7 @@ yyFlexLexer::~yyFlexLexer()
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-void yyFlexLexer::switch_streams( std::istream& new_in, std::ostream& new_out )
+void ZetaSqlFlexTokenizerBase::switch_streams( std::istream& new_in, std::ostream& new_out )
 {
 	// was if( new_in )
 	yy_delete_buffer( YY_CURRENT_BUFFER );
@@ -48386,7 +48370,7 @@ void yyFlexLexer::switch_streams( std::istream& new_in, std::ostream& new_out )
 
 /* The contents of this function are C++ specific, so the () macro is not used.
  */
-void yyFlexLexer::switch_streams( std::istream* new_in, std::ostream* new_out )
+void ZetaSqlFlexTokenizerBase::switch_streams( std::istream* new_in, std::ostream* new_out )
 {
 	if( ! new_in ) {
 		new_in = &yyin;
@@ -48400,9 +48384,9 @@ void yyFlexLexer::switch_streams( std::istream* new_in, std::ostream* new_out )
 }
 
 #ifdef YY_INTERACTIVE
-int yyFlexLexer::LexerInput( char* buf, int /* max_size */ )
+int ZetaSqlFlexTokenizerBase::LexerInput( char* buf, int /* max_size */ )
 #else
-int yyFlexLexer::LexerInput( char* buf, int max_size )
+int ZetaSqlFlexTokenizerBase::LexerInput( char* buf, int max_size )
 #endif
 {
 	if ( yyin.eof() || yyin.fail() )
@@ -48429,7 +48413,7 @@ int yyFlexLexer::LexerInput( char* buf, int max_size )
 #endif
 }
 
-void yyFlexLexer::LexerOutput( const char* buf, int size )
+void ZetaSqlFlexTokenizerBase::LexerOutput( const char* buf, int size )
 {
 	(void) yyout.write( buf, size );
 }
@@ -48441,7 +48425,7 @@ void yyFlexLexer::LexerOutput( const char* buf, int size )
  *	EOB_ACT_CONTINUE_SCAN - continue scanning from current position
  *	EOB_ACT_END_OF_FILE - end of file
  */
-int yyFlexLexer::yy_get_next_buffer()
+int ZetaSqlFlexTokenizerBase::yy_get_next_buffer()
 {
     	char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
 	char *source = (yytext_ptr);
@@ -48579,7 +48563,7 @@ int yyFlexLexer::yy_get_next_buffer()
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
-    yy_state_type yyFlexLexer::yy_get_previous_state()
+    yy_state_type ZetaSqlFlexTokenizerBase::yy_get_previous_state()
 {
 	yy_state_type yy_current_state;
 	char *yy_cp;
@@ -48609,7 +48593,7 @@ int yyFlexLexer::yy_get_next_buffer()
  * synopsis
  *	next_state = yy_try_NUL_trans( current_state );
  */
-    yy_state_type yyFlexLexer::yy_try_NUL_trans( yy_state_type yy_current_state )
+    yy_state_type ZetaSqlFlexTokenizerBase::yy_try_NUL_trans( yy_state_type yy_current_state )
 {
 	int yy_is_jam;
     	char *yy_cp = (yy_c_buf_p);
@@ -48630,7 +48614,7 @@ int yyFlexLexer::yy_get_next_buffer()
 }
 
 #ifndef YY_NO_UNPUT
-    void yyFlexLexer::yyunput( int c, char* yy_bp)
+    void ZetaSqlFlexTokenizerBase::yyunput( int c, char* yy_bp)
 {
 	char *yy_cp;
     
@@ -48668,7 +48652,7 @@ int yyFlexLexer::yy_get_next_buffer()
 }
 #endif
 
-    int yyFlexLexer::yyinput()
+    int ZetaSqlFlexTokenizerBase::yyinput()
 {
 	int c;
     
@@ -48740,7 +48724,7 @@ int yyFlexLexer::yy_get_next_buffer()
  * 
  * @note This function does not reset the start condition to @c INITIAL .
  */
-    void yyFlexLexer::yyrestart( std::istream& input_file )
+    void ZetaSqlFlexTokenizerBase::yyrestart( std::istream& input_file )
 {
     
 	if ( ! YY_CURRENT_BUFFER ){
@@ -48758,7 +48742,7 @@ int yyFlexLexer::yy_get_next_buffer()
  * 
  * @note This function does not reset the start condition to @c INITIAL .
  */
-void yyFlexLexer::yyrestart( std::istream* input_file )
+void ZetaSqlFlexTokenizerBase::yyrestart( std::istream* input_file )
 {
 	if( ! input_file ) {
 		input_file = &yyin;
@@ -48770,7 +48754,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
  * @param new_buffer The new input buffer.
  * 
  */
-    void yyFlexLexer::yy_switch_to_buffer( YY_BUFFER_STATE new_buffer )
+    void ZetaSqlFlexTokenizerBase::yy_switch_to_buffer( YY_BUFFER_STATE new_buffer )
 {
     
 	/* TODO. We should be able to replace this entire function body
@@ -48801,7 +48785,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
 	(yy_did_buffer_switch_on_eof) = 1;
 }
 
-    void yyFlexLexer::yy_load_buffer_state()
+    void ZetaSqlFlexTokenizerBase::yy_load_buffer_state()
 {
     	(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
 	(yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
@@ -48815,7 +48799,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
  * 
  * @return the allocated buffer state.
  */
-    YY_BUFFER_STATE yyFlexLexer::yy_create_buffer( std::istream& file, int size )
+    YY_BUFFER_STATE ZetaSqlFlexTokenizerBase::yy_create_buffer( std::istream& file, int size )
 {
 	YY_BUFFER_STATE b;
     
@@ -48845,7 +48829,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
  * 
  * @return the allocated buffer state.
  */
-	YY_BUFFER_STATE yyFlexLexer::yy_create_buffer( std::istream* file, int size )
+	YY_BUFFER_STATE ZetaSqlFlexTokenizerBase::yy_create_buffer( std::istream* file, int size )
 {
 	return yy_create_buffer( *file, size );
 }
@@ -48854,7 +48838,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
  * @param b a buffer created with yy_create_buffer()
  * 
  */
-    void yyFlexLexer::yy_delete_buffer( YY_BUFFER_STATE b )
+    void ZetaSqlFlexTokenizerBase::yy_delete_buffer( YY_BUFFER_STATE b )
 {
     
 	if ( ! b )
@@ -48873,7 +48857,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
  * This function is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
  */
-    void yyFlexLexer::yy_init_buffer( YY_BUFFER_STATE b, std::istream& file )
+    void ZetaSqlFlexTokenizerBase::yy_init_buffer( YY_BUFFER_STATE b, std::istream& file )
 
 {
 	int oerrno = errno;
@@ -48900,7 +48884,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
  * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
  * 
  */
-    void yyFlexLexer::yy_flush_buffer( YY_BUFFER_STATE b )
+    void ZetaSqlFlexTokenizerBase::yy_flush_buffer( YY_BUFFER_STATE b )
 {
     	if ( ! b )
 		return;
@@ -48929,7 +48913,7 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
  *  @param new_buffer The new state.
  *  
  */
-void yyFlexLexer::yypush_buffer_state (YY_BUFFER_STATE new_buffer)
+void ZetaSqlFlexTokenizerBase::yypush_buffer_state (YY_BUFFER_STATE new_buffer)
 {
     	if (new_buffer == NULL)
 		return;
@@ -48959,7 +48943,7 @@ void yyFlexLexer::yypush_buffer_state (YY_BUFFER_STATE new_buffer)
  *  The next element becomes the new top.
  *  
  */
-void yyFlexLexer::yypop_buffer_state (void)
+void ZetaSqlFlexTokenizerBase::yypop_buffer_state (void)
 {
     	if (!YY_CURRENT_BUFFER)
 		return;
@@ -48978,7 +48962,7 @@ void yyFlexLexer::yypop_buffer_state (void)
 /* Allocates the stack if it does not exist.
  *  Guarantees space for at least one push.
  */
-void yyFlexLexer::yyensure_buffer_stack(void)
+void ZetaSqlFlexTokenizerBase::yyensure_buffer_stack(void)
 {
 	yy_size_t num_to_alloc;
     
@@ -49021,7 +49005,7 @@ void yyFlexLexer::yyensure_buffer_stack(void)
 	}
 }
 
-    void yyFlexLexer::yy_push_state( int _new_state )
+    void ZetaSqlFlexTokenizerBase::yy_push_state( int _new_state )
 {
     	if ( (yy_start_stack_ptr) >= (yy_start_stack_depth) )
 		{
@@ -49046,7 +49030,7 @@ void yyFlexLexer::yyensure_buffer_stack(void)
 	BEGIN(_new_state);
 }
 
-    void yyFlexLexer::yy_pop_state()
+    void ZetaSqlFlexTokenizerBase::yy_pop_state()
 {
     	if ( --(yy_start_stack_ptr) < 0 )
 		YY_FATAL_ERROR( "start-condition stack underflow" );
@@ -49054,7 +49038,7 @@ void yyFlexLexer::yyensure_buffer_stack(void)
 	BEGIN((yy_start_stack)[(yy_start_stack_ptr)]);
 }
 
-    int yyFlexLexer::yy_top_state()
+    int ZetaSqlFlexTokenizerBase::yy_top_state()
 {
     	return (yy_start_stack)[(yy_start_stack_ptr) - 1];
 }
@@ -49063,7 +49047,7 @@ void yyFlexLexer::yyensure_buffer_stack(void)
 #define YY_EXIT_FAILURE 2
 #endif
 
-void yyFlexLexer::LexerError( const char* msg )
+void ZetaSqlFlexTokenizerBase::LexerError( const char* msg )
 {
     	std::cerr << msg << std::endl;
 	exit( YY_EXIT_FAILURE );

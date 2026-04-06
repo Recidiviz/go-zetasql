@@ -193,6 +193,10 @@ class ResolvedASTComparator {
                                                    const ResolvedQueryStmt* node2);
   static absl::StatusOr<bool> CompareResolvedGeneralizedQueryStmt(const ResolvedGeneralizedQueryStmt* node1,
                                                    const ResolvedGeneralizedQueryStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedMultiStmt(const ResolvedMultiStmt* node1,
+                                                   const ResolvedMultiStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedCreateWithEntryStmt(const ResolvedCreateWithEntryStmt* node1,
+                                                   const ResolvedCreateWithEntryStmt* node2);
   static absl::StatusOr<bool> CompareResolvedCreateDatabaseStmt(const ResolvedCreateDatabaseStmt* node1,
                                                    const ResolvedCreateDatabaseStmt* node2);
   static absl::StatusOr<bool> CompareResolvedIndexItem(const ResolvedIndexItem* node1,
@@ -313,6 +317,8 @@ class ResolvedASTComparator {
                                                    const ResolvedRevokeStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterDatabaseStmt(const ResolvedAlterDatabaseStmt* node1,
                                                    const ResolvedAlterDatabaseStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterIndexStmt(const ResolvedAlterIndexStmt* node1,
+                                                   const ResolvedAlterIndexStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterMaterializedViewStmt(const ResolvedAlterMaterializedViewStmt* node1,
                                                    const ResolvedAlterMaterializedViewStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterApproxViewStmt(const ResolvedAlterApproxViewStmt* node1,
@@ -337,6 +343,10 @@ class ResolvedASTComparator {
                                                    const ResolvedDropSubEntityAction* node2);
   static absl::StatusOr<bool> CompareResolvedAddColumnAction(const ResolvedAddColumnAction* node1,
                                                    const ResolvedAddColumnAction* node2);
+  static absl::StatusOr<bool> CompareResolvedAddColumnIdentifierAction(const ResolvedAddColumnIdentifierAction* node1,
+                                                   const ResolvedAddColumnIdentifierAction* node2);
+  static absl::StatusOr<bool> CompareResolvedRebuildAction(const ResolvedRebuildAction* node1,
+                                                   const ResolvedRebuildAction* node2);
   static absl::StatusOr<bool> CompareResolvedAddConstraintAction(const ResolvedAddConstraintAction* node1,
                                                    const ResolvedAddConstraintAction* node2);
   static absl::StatusOr<bool> CompareResolvedDropConstraintAction(const ResolvedDropConstraintAction* node1,
@@ -545,8 +555,14 @@ class ResolvedASTComparator {
                                                    const ResolvedPipeIfCase* node2);
   static absl::StatusOr<bool> CompareResolvedPipeForkScan(const ResolvedPipeForkScan* node1,
                                                    const ResolvedPipeForkScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeTeeScan(const ResolvedPipeTeeScan* node1,
+                                                   const ResolvedPipeTeeScan* node2);
   static absl::StatusOr<bool> CompareResolvedPipeExportDataScan(const ResolvedPipeExportDataScan* node1,
                                                    const ResolvedPipeExportDataScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeCreateTableScan(const ResolvedPipeCreateTableScan* node1,
+                                                   const ResolvedPipeCreateTableScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeInsertScan(const ResolvedPipeInsertScan* node1,
+                                                   const ResolvedPipeInsertScan* node2);
   static absl::StatusOr<bool> CompareResolvedSubpipeline(const ResolvedSubpipeline* node1,
                                                    const ResolvedSubpipeline* node2);
   static absl::StatusOr<bool> CompareResolvedSubpipelineInputScan(const ResolvedSubpipelineInputScan* node1,
@@ -561,6 +577,10 @@ class ResolvedASTComparator {
                                                    const ResolvedAlterConnectionStmt* node2);
   static absl::StatusOr<bool> CompareResolvedLockMode(const ResolvedLockMode* node1,
                                                    const ResolvedLockMode* node2);
+  static absl::StatusOr<bool> CompareResolvedUpdateFieldItem(const ResolvedUpdateFieldItem* node1,
+                                                   const ResolvedUpdateFieldItem* node2);
+  static absl::StatusOr<bool> CompareResolvedUpdateConstructor(const ResolvedUpdateConstructor* node1,
+                                                   const ResolvedUpdateConstructor* node2);
 };
 
 }  // namespace zetasql

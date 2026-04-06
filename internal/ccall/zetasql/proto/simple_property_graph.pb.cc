@@ -276,7 +276,7 @@ const ::uint32_t TableStruct_zetasql_2fproto_2fsimple_5fproperty_5fgraph_2eproto
 };
 
 static const ::_pbi::MigrationSchema
-    simple_property_graph_pb_schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         { 0, 14, -1, sizeof(::zetasql::SimplePropertyGraphProto)},
         { 20, 37, -1, sizeof(::zetasql::SimpleGraphElementTableProto)},
         { 46, 57, -1, sizeof(::zetasql::SimpleGraphElementLabelProto)},
@@ -285,7 +285,7 @@ static const ::_pbi::MigrationSchema
         { 88, 98, -1, sizeof(::zetasql::SimpleGraphPropertyDefinitionProto)},
 };
 
-static const ::_pb::Message* const simple_property_graph_pb_file_default_instances[] = {
+static const ::_pb::Message* const file_default_instances[] = {
     &::zetasql::_SimplePropertyGraphProto_default_instance_._instance,
     &::zetasql::_SimpleGraphElementTableProto_default_instance_._instance,
     &::zetasql::_SimpleGraphElementLabelProto_default_instance_._instance,
@@ -345,8 +345,8 @@ const ::_pbi::DescriptorTable descriptor_table_zetasql_2fproto_2fsimple_5fproper
     descriptor_table_zetasql_2fproto_2fsimple_5fproperty_5fgraph_2eproto_deps,
     1,
     6,
-    simple_property_graph_pb_schemas,
-    simple_property_graph_pb_file_default_instances,
+    schemas,
+    file_default_instances,
     TableStruct_zetasql_2fproto_2fsimple_5fproperty_5fgraph_2eproto::offsets,
     file_level_metadata_zetasql_2fproto_2fsimple_5fproperty_5fgraph_2eproto,
     file_level_enum_descriptors_zetasql_2fproto_2fsimple_5fproperty_5fgraph_2eproto,

@@ -119,6 +119,19 @@ struct ValueProto_MapDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ValueProto_MapDefaultTypeInternal _ValueProto_Map_default_instance_;
 template <typename>
+PROTOBUF_CONSTEXPR ValueProto_TimestampPicos::ValueProto_TimestampPicos(
+    ::_pbi::ConstantInitialized) {}
+struct ValueProto_TimestampPicosDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ValueProto_TimestampPicosDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ValueProto_TimestampPicosDefaultTypeInternal() {}
+  union {
+    ValueProto_TimestampPicos _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ValueProto_TimestampPicosDefaultTypeInternal _ValueProto_TimestampPicos_default_instance_;
+template <typename>
 PROTOBUF_CONSTEXPR ValueProto::ValueProto(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.value_)*/{}
@@ -135,7 +148,7 @@ struct ValueProtoDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ValueProtoDefaultTypeInternal _ValueProto_default_instance_;
 }  // namespace zetasql
-static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[7];
+static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[8];
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_zetasql_2fpublic_2fvalue_2eproto = nullptr;
 static constexpr const ::_pb::ServiceDescriptor**
@@ -206,6 +219,14 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2fvalue_2eproto::offsets[] PROTOBU
     ~0u,  // no sizeof(Split)
     PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto_Map, _impl_.entry_),
     ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto_TimestampPicos, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto, _internal_metadata_),
     ~0u,  // no _extensions_
     PROTOBUF_FIELD_OFFSET(::zetasql::ValueProto, _impl_._oneof_case_[0]),
@@ -252,7 +273,8 @@ static const ::_pbi::MigrationSchema
         { 30, 40, -1, sizeof(::zetasql::ValueProto_Range)},
         { 42, 52, -1, sizeof(::zetasql::ValueProto_MapEntry)},
         { 54, -1, -1, sizeof(::zetasql::ValueProto_Map)},
-        { 63, -1, -1, sizeof(::zetasql::ValueProto)},
+        { 63, -1, -1, sizeof(::zetasql::ValueProto_TimestampPicos)},
+        { 71, -1, -1, sizeof(::zetasql::ValueProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -262,11 +284,12 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::zetasql::_ValueProto_Range_default_instance_._instance,
     &::zetasql::_ValueProto_MapEntry_default_instance_._instance,
     &::zetasql::_ValueProto_Map_default_instance_._instance,
+    &::zetasql::_ValueProto_TimestampPicos_default_instance_._instance,
     &::zetasql::_ValueProto_default_instance_._instance,
 };
 const char descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\032zetasql/public/value.proto\022\007zetasql\032\037g"
-    "oogle/protobuf/timestamp.proto\"\374\t\n\nValue"
+    "oogle/protobuf/timestamp.proto\"\216\n\n\nValue"
     "Proto\022\025\n\013int32_value\030\001 \001(\005H\000\022\025\n\013int64_va"
     "lue\030\002 \001(\003H\000\022\026\n\014uint32_value\030\003 \001(\rH\000\022\026\n\014u"
     "int64_value\030\004 \001(\004H\000\022\024\n\nbool_value\030\005 \001(\010H"
@@ -298,8 +321,9 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto[] PROTOBUF
     "pEntry\022 \n\003key\030\001 \001(\0132\023.zetasql.ValueProto"
     "\022\"\n\005value\030\002 \001(\0132\023.zetasql.ValueProto\0322\n\003"
     "Map\022+\n\005entry\030\001 \003(\0132\034.zetasql.ValueProto."
-    "MapEntryB\007\n\005valueJ\004\010\013\020\014J\004\010\026\020\027B%\n\022com.goo"
-    "gle.zetasqlB\014ZetaSQLValue\370\001\001"
+    "MapEntry\032\020\n\016TimestampPicosB\007\n\005valueJ\004\010\013\020"
+    "\014J\004\010\026\020\027B%\n\022com.google.zetasqlB\014ZetaSQLVa"
+    "lue\370\001\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fvalue_2eproto_deps[1] =
     {
@@ -309,13 +333,13 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fvalue_2eproto = {
     false,
     false,
-    1388,
+    1406,
     descriptor_table_protodef_zetasql_2fpublic_2fvalue_2eproto,
     "zetasql/public/value.proto",
     &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once,
     descriptor_table_zetasql_2fpublic_2fvalue_2eproto_deps,
     1,
-    7,
+    8,
     schemas,
     file_default_instances,
     TableStruct_zetasql_2fpublic_2fvalue_2eproto::offsets,
@@ -1648,6 +1672,44 @@ void ValueProto_Map::InternalSwap(ValueProto_Map* other) {
 }
 // ===================================================================
 
+class ValueProto_TimestampPicos::_Internal {
+ public:
+};
+
+ValueProto_TimestampPicos::ValueProto_TimestampPicos(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  // @@protoc_insertion_point(arena_constructor:zetasql.ValueProto.TimestampPicos)
+}
+ValueProto_TimestampPicos::ValueProto_TimestampPicos(const ValueProto_TimestampPicos& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ValueProto_TimestampPicos* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.ValueProto.TimestampPicos)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ValueProto_TimestampPicos::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ValueProto_TimestampPicos::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata ValueProto_TimestampPicos::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once,
+      file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[6]);
+}
+// ===================================================================
+
 class ValueProto::_Internal {
  public:
   static constexpr ::int32_t kOneofCaseOffset =
@@ -2925,7 +2987,7 @@ void ValueProto::InternalSwap(ValueProto* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ValueProto::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_getter, &descriptor_table_zetasql_2fpublic_2fvalue_2eproto_once,
-      file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[6]);
+      file_level_metadata_zetasql_2fpublic_2fvalue_2eproto[7]);
 }
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
@@ -2953,6 +3015,10 @@ Arena::CreateMaybeMessage< ::zetasql::ValueProto_MapEntry >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::zetasql::ValueProto_Map*
 Arena::CreateMaybeMessage< ::zetasql::ValueProto_Map >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ValueProto_Map >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ValueProto_TimestampPicos*
+Arena::CreateMaybeMessage< ::zetasql::ValueProto_TimestampPicos >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ValueProto_TimestampPicos >(arena);
 }
 template<> PROTOBUF_NOINLINE ::zetasql::ValueProto*
 Arena::CreateMaybeMessage< ::zetasql::ValueProto >(Arena* arena) {

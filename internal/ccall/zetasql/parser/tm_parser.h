@@ -36,169 +36,304 @@ namespace zetasql::parser {
 struct symbol {
   int32_t symbol = 0;
   absl::string_view text;
-  TextMapperLexerAdapter::Location location = TextMapperLexerAdapter::Location();
+  Lexer::Location location = Lexer::Location();
 };
+
+static_assert(std::is_default_constructible_v<ASTNode*>,
+              "Symbol associated value type ASTNode* is not default constructible.");
+static_assert(std::is_default_constructible_v<SchemaObjectKind>,
+              "Symbol associated value type SchemaObjectKind is not default constructible.");
+static_assert(std::is_default_constructible_v<OptionsBodySet>,
+              "Symbol associated value type OptionsBodySet is not default constructible.");
+static_assert(std::is_default_constructible_v<bool>,
+              "Symbol associated value type bool is not default constructible.");
+static_assert(std::is_default_constructible_v<BeginEndBlockOrLanguageAsCode>,
+              "Symbol associated value type BeginEndBlockOrLanguageAsCode is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTCreateStatement::SqlSecurity>,
+              "Symbol associated value type ASTCreateStatement::SqlSecurity is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTFunctionParameter::ProcedureParameterMode>,
+              "Symbol associated value type ASTFunctionParameter::ProcedureParameterMode is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTCreateFunctionStmtBase::DeterminismLevel>,
+              "Symbol associated value type ASTCreateFunctionStmtBase::DeterminismLevel is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTIdentifier*>,
+              "Symbol associated value type ASTIdentifier* is not default constructible.");
+static_assert(std::is_default_constructible_v<LanguageOrRemoteWithConnection>,
+              "Symbol associated value type LanguageOrRemoteWithConnection is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTExpression*>,
+              "Symbol associated value type ASTExpression* is not default constructible.");
+static_assert(std::is_default_constructible_v<ExternalTableWithClauses>,
+              "Symbol associated value type ExternalTableWithClauses is not default constructible.");
+static_assert(std::is_default_constructible_v<CreateIndexStatementSuffix>,
+              "Symbol associated value type CreateIndexStatementSuffix is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTQuery*>,
+              "Symbol associated value type ASTQuery* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTExpressionSubquery*>,
+              "Symbol associated value type ASTExpressionSubquery* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphProperties*>,
+              "Symbol associated value type ASTGraphProperties* is not default constructible.");
+static_assert(std::is_default_constructible_v<LanguageOptionsSet>,
+              "Symbol associated value type LanguageOptionsSet is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTAuxLoadDataStatement::InsertionMode>,
+              "Symbol associated value type ASTAuxLoadDataStatement::InsertionMode is not default constructible.");
+static_assert(std::is_default_constructible_v<PathExpressionWithScope>,
+              "Symbol associated value type PathExpressionWithScope is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGeneratedColumnInfo::GeneratedMode>,
+              "Symbol associated value type ASTGeneratedColumnInfo::GeneratedMode is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGeneratedColumnInfo::StoredMode>,
+              "Symbol associated value type ASTGeneratedColumnInfo::StoredMode is not default constructible.");
+static_assert(std::is_default_constructible_v<GeneratedOrDefaultColumnInfo>,
+              "Symbol associated value type GeneratedOrDefaultColumnInfo is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTForeignKeyReference*>,
+              "Symbol associated value type ASTForeignKeyReference* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTForeignKeyReference::Match>,
+              "Symbol associated value type ASTForeignKeyReference::Match is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTForeignKeyActions::Action>,
+              "Symbol associated value type ASTForeignKeyActions::Action is not default constructible.");
+static_assert(std::is_default_constructible_v<TableOrTableFunctionKeywords>,
+              "Symbol associated value type TableOrTableFunctionKeywords is not default constructible.");
+static_assert(std::is_default_constructible_v<QueryOrReplicaSourceInfo>,
+              "Symbol associated value type QueryOrReplicaSourceInfo is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTSetOperationAllOrDistinct*>,
+              "Symbol associated value type ASTSetOperationAllOrDistinct* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTSetOperationType*>,
+              "Symbol associated value type ASTSetOperationType* is not default constructible.");
+static_assert(std::is_default_constructible_v<const char*>,
+              "Symbol associated value type const char* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTPipeOperator*>,
+              "Symbol associated value type ASTPipeOperator* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTSetOperationColumnPropagationMode*>,
+              "Symbol associated value type ASTSetOperationColumnPropagationMode* is not default constructible.");
+static_assert(std::is_default_constructible_v<ColumnMatchSuffix>,
+              "Symbol associated value type ColumnMatchSuffix is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTSetOperation*>,
+              "Symbol associated value type ASTSetOperation* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTSelect*>,
+              "Symbol associated value type ASTSelect* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTSelectWith*>,
+              "Symbol associated value type ASTSelectWith* is not default constructible.");
+static_assert(std::is_default_constructible_v<absl::string_view>,
+              "Symbol associated value type absl::string_view is not default constructible.");
+static_assert(std::is_default_constructible_v<AllOrDistinctKeyword>,
+              "Symbol associated value type AllOrDistinctKeyword is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTAlias*>,
+              "Symbol associated value type ASTAlias* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTSampleSize::Unit>,
+              "Symbol associated value type ASTSampleSize::Unit is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTSampleClause*>,
+              "Symbol associated value type ASTSampleClause* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTPivotClause*>,
+              "Symbol associated value type ASTPivotClause* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTUnpivotClause::NullFilter>,
+              "Symbol associated value type ASTUnpivotClause::NullFilter is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTUnpivotClause*>,
+              "Symbol associated value type ASTUnpivotClause* is not default constructible.");
+static_assert(std::is_default_constructible_v<PivotOrUnpivotClause>,
+              "Symbol associated value type PivotOrUnpivotClause is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTPostfixTableOperator*>,
+              "Symbol associated value type ASTPostfixTableOperator* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTRowPatternExpression*>,
+              "Symbol associated value type ASTRowPatternExpression* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTQuantifier*>,
+              "Symbol associated value type ASTQuantifier* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTTableExpression*>,
+              "Symbol associated value type ASTTableExpression* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTOrderingExpression::OrderingSpec>,
+              "Symbol associated value type ASTOrderingExpression::OrderingSpec is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGqlOperatorList*>,
+              "Symbol associated value type ASTGqlOperatorList* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphPattern*>,
+              "Symbol associated value type ASTGraphPattern* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphPathSearchPrefix*>,
+              "Symbol associated value type ASTGraphPathSearchPrefix* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphPathMode*>,
+              "Symbol associated value type ASTGraphPathMode* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphPathPattern*>,
+              "Symbol associated value type ASTGraphPathPattern* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphPathBase*>,
+              "Symbol associated value type ASTGraphPathBase* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphElementPattern*>,
+              "Symbol associated value type ASTGraphElementPattern* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphElementPatternFiller*>,
+              "Symbol associated value type ASTGraphElementPatternFiller* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTGraphLabelExpression*>,
+              "Symbol associated value type ASTGraphLabelExpression* is not default constructible.");
+static_assert(std::is_default_constructible_v<NotKeywordPresence>,
+              "Symbol associated value type NotKeywordPresence is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTJoin::JoinType>,
+              "Symbol associated value type ASTJoin::JoinType is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTJoin::JoinHint>,
+              "Symbol associated value type ASTJoin::JoinHint is not default constructible.");
+static_assert(std::is_default_constructible_v<ClausesFollowingFrom>,
+              "Symbol associated value type ClausesFollowingFrom is not default constructible.");
+static_assert(std::is_default_constructible_v<GroupByPreamble>,
+              "Symbol associated value type GroupByPreamble is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTLockMode*>,
+              "Symbol associated value type ASTLockMode* is not default constructible.");
+static_assert(std::is_default_constructible_v<GroupByModifier>,
+              "Symbol associated value type GroupByModifier is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTFunctionCall::NullHandlingModifier>,
+              "Symbol associated value type ASTFunctionCall::NullHandlingModifier is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTBinaryExpression::Op>,
+              "Symbol associated value type ASTBinaryExpression::Op is not default constructible.");
+static_assert(std::is_default_constructible_v<ShiftOperator>,
+              "Symbol associated value type ShiftOperator is not default constructible.");
+static_assert(std::is_default_constructible_v<ImportType>,
+              "Symbol associated value type ImportType is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTUnaryExpression::Op>,
+              "Symbol associated value type ASTUnaryExpression::Op is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTPathExpression*>,
+              "Symbol associated value type ASTPathExpression* is not default constructible.");
+static_assert(std::is_default_constructible_v<SeparatedIdentifierTmpNode*>,
+              "Symbol associated value type SeparatedIdentifierTmpNode* is not default constructible.");
+static_assert(std::is_default_constructible_v<TypeKind>,
+              "Symbol associated value type TypeKind is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTTemplatedParameterType::TemplatedTypeKind>,
+              "Symbol associated value type ASTTemplatedParameterType::TemplatedTypeKind is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTBracedConstructorFieldValue*>,
+              "Symbol associated value type ASTBracedConstructorFieldValue* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTBracedConstructorField*>,
+              "Symbol associated value type ASTBracedConstructorField* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTBracedConstructor*>,
+              "Symbol associated value type ASTBracedConstructor* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTFunctionCall*>,
+              "Symbol associated value type ASTFunctionCall* is not default constructible.");
+static_assert(std::is_default_constructible_v<PrecedingOrFollowingKeyword>,
+              "Symbol associated value type PrecedingOrFollowingKeyword is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTWindowFrame::FrameUnit>,
+              "Symbol associated value type ASTWindowFrame::FrameUnit is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTStringLiteralComponent*>,
+              "Symbol associated value type ASTStringLiteralComponent* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTStringLiteral*>,
+              "Symbol associated value type ASTStringLiteral* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTBytesLiteralComponent*>,
+              "Symbol associated value type ASTBytesLiteralComponent* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTBytesLiteral*>,
+              "Symbol associated value type ASTBytesLiteral* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTCreateStatement::Scope>,
+              "Symbol associated value type ASTCreateStatement::Scope is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTOptionsEntry::AssignmentOp>,
+              "Symbol associated value type ASTOptionsEntry::AssignmentOp is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTOnConflictClause*>,
+              "Symbol associated value type ASTOnConflictClause* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTInsertStatement::InsertMode>,
+              "Symbol associated value type ASTInsertStatement::InsertMode is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTInsertStatement*>,
+              "Symbol associated value type ASTInsertStatement* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTInsertValuesRowList*>,
+              "Symbol associated value type ASTInsertValuesRowList* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTDropStatement::DropMode>,
+              "Symbol associated value type ASTDropStatement::DropMode is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTAlterIndexStatement::IndexType>,
+              "Symbol associated value type ASTAlterIndexStatement::IndexType is not default constructible.");
+static_assert(std::is_default_constructible_v<IndexTypeKeywords>,
+              "Symbol associated value type IndexTypeKeywords is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTStatementList*>,
+              "Symbol associated value type ASTStatementList* is not default constructible.");
+static_assert(std::is_default_constructible_v<ASTNodeKind>,
+              "Symbol associated value type ASTNodeKind is not default constructible.");
 
 struct stackEntry {
   symbol sym;
   int16_t state = 0;
-  union
-{
-  bool boolean;
-  int64_t int64_val;
-  struct {
-    const char* str;
-    size_t len;
-  } string_view;
-  const char* string_constant;
-  zetasql::TypeKind type_kind;
-  zetasql::ASTFunctionCall::NullHandlingModifier null_handling_modifier;
-  zetasql::ASTWindowFrame::FrameUnit frame_unit;
-  zetasql::ASTTemplatedParameterType::TemplatedTypeKind
-      templated_parameter_kind;
-  zetasql::ASTBinaryExpression::Op binary_op;
-  zetasql::ASTUnaryExpression::Op unary_op;
-  zetasql::ASTOptionsEntry::AssignmentOp options_assignment_op;
-  zetasql::ASTJoin::JoinType join_type;
-  zetasql::ASTJoin::JoinHint join_hint;
-  zetasql::ASTSampleSize::Unit sample_size_unit;
-  zetasql::ASTInsertStatement::InsertMode insert_mode;
-  zetasql::ASTNodeKind ast_node_kind;
-  zetasql::ASTUnpivotClause::NullFilter opt_unpivot_nulls_filter;
-  zetasql::parser_internal::NotKeywordPresence not_keyword_presence;
-  zetasql::parser_internal::AllOrDistinctKeyword all_or_distinct_keyword;
-  zetasql::SchemaObjectKind schema_object_kind_keyword;
-  zetasql::parser_internal::PrecedingOrFollowingKeyword
-      preceding_or_following_keyword;
-  zetasql::parser_internal::TableOrTableFunctionKeywords
-      table_or_table_function_keywords;
-  zetasql::parser_internal::IndexTypeKeywords
-      index_type_keywords;
-  zetasql::parser_internal::ShiftOperator shift_operator;
-  zetasql::parser_internal::ImportType import_type;
-  zetasql::ASTAuxLoadDataStatement::InsertionMode insertion_mode;
-  zetasql::ASTCreateStatement::Scope create_scope;
-  zetasql::ASTCreateStatement::SqlSecurity sql_security;
-  zetasql::ASTCreateStatement::SqlSecurity external_security;
-  zetasql::ASTDropStatement::DropMode drop_mode;
-  zetasql::ASTForeignKeyReference::Match foreign_key_match;
-  zetasql::ASTForeignKeyActions::Action foreign_key_action;
-  zetasql::ASTFunctionParameter::ProcedureParameterMode parameter_mode;
-  zetasql::ASTCreateFunctionStmtBase::DeterminismLevel determinism_level;
-  zetasql::ASTGeneratedColumnInfo::StoredMode stored_mode;
-  zetasql::ASTGeneratedColumnInfo::GeneratedMode generated_mode;
-  zetasql::ASTOrderingExpression::OrderingSpec ordering_spec;
-  zetasql::ASTSelectWith* select_with;
-  zetasql::ASTSetOperationColumnMatchMode* column_match_mode;
-  zetasql::ASTSetOperationColumnPropagationMode* column_propagation_mode;
-
-  // Not owned. The allocated nodes are all owned by the parser.
-  // Nodes should use the most specific type available.
-  zetasql::ASTForeignKeyReference* foreign_key_reference;
-  zetasql::ASTSetOperation* query_set_operation;
-  zetasql::ASTInsertValuesRowList* insert_values_row_list;
-  zetasql::ASTQuery* query;
-  zetasql::ASTExpression* expression;
-  zetasql::ASTExpressionSubquery* expression_subquery;
-  zetasql::ASTPathExpression* path_expression;
-  zetasql::ASTFunctionCall* function_call;
-  zetasql::ASTAlias* alias;
-  zetasql::ASTIdentifier* identifier;
-  zetasql::ASTInsertStatement* insert_statement;
-  zetasql::ASTNode* node;
-  zetasql::ASTStatementList* statement_list;
-  zetasql::parser_internal::SeparatedIdentifierTmpNode* slashed_identifier;
-  zetasql::ASTPivotClause* pivot_clause;
-  zetasql::ASTUnpivotClause* unpivot_clause;
-  zetasql::ASTRowPatternExpression* row_pattern_expression;
-  zetasql::ASTQuantifier* quantifier;
-  zetasql::ASTSetOperationType* set_operation_type;
-  zetasql::ASTSetOperationAllOrDistinct* set_operation_all_or_distinct;
-  zetasql::ASTBytesLiteral* bytes_literal;
-  zetasql::ASTBytesLiteralComponent* bytes_literal_component;
-  zetasql::ASTStringLiteral* string_literal;
-  zetasql::ASTStringLiteralComponent* string_literal_component;
-  zetasql::ASTPipeOperator* pipe_operator;
-  zetasql::ASTSampleClause* sample_clause;
-  zetasql::ASTLockMode* lock_mode;
-  zetasql::ASTOnConflictClause* on_conflict_clause;
-  struct {
-    zetasql::ASTPivotClause* pivot_clause;
-    zetasql::ASTUnpivotClause* unpivot_clause;
-    zetasql::ASTAlias* alias;
-  } pivot_or_unpivot_clause_and_alias;
-  zetasql::ASTPostfixTableOperator* postfix_table_operator;
-  zetasql::ASTTableExpression* table_expression;
-  struct {
-    zetasql::ASTNode* where;
-    zetasql::ASTNode* group_by;
-    zetasql::ASTNode* having;
-    zetasql::ASTNode* qualify;
-    zetasql::ASTNode* window;
-  } clauses_following_from;
-  struct {
-    zetasql::ASTExpression* default_expression;
-    zetasql::ASTGeneratedColumnInfo* generated_column_info;
-  } generated_or_default_column_info;
-  struct {
-    zetasql::ASTWithPartitionColumnsClause* with_partition_columns_clause;
-    zetasql::ASTWithConnectionClause* with_connection_clause;
-  } external_table_with_clauses;
-  struct {
-    zetasql::ASTIdentifier* language;
-    bool is_remote;
-    zetasql::ASTWithConnectionClause* with_connection_clause;
-  } language_or_remote_with_connection;
-  struct {
-    zetasql::ASTIdentifier* language;
-    zetasql::ASTNode* options;
-  } language_options_set;
-  struct {
-    zetasql::ASTNode* options;
-    zetasql::ASTNode* body;
-  } options_body_set;
-  struct {
-    zetasql::ASTScript* body;
-    zetasql::ASTIdentifier* language;
-    zetasql::ASTNode* code;
-  } begin_end_block_or_language_as_code;
-  struct {
-    zetasql::ASTExpression* maybe_dashed_path_expression;
-    bool is_temp_table;
-  } path_expression_with_scope;
-  struct {
-    zetasql::ASTSetOperationColumnMatchMode* column_match_mode;
-    zetasql::ASTColumnList* column_list;
-  } column_match_suffix;
-  struct {
-    zetasql::ASTQuery* query;
-    zetasql::ASTPathExpression* replica_source;
-  } query_or_replica_source_info;
-  struct {
-    zetasql::ASTNode* hint;
-    bool and_order_by;
-  } group_by_preamble;
-  zetasql::ASTGraphLabelExpression* label_expr;
-  zetasql::ASTGraphElementPatternFiller* graph_element_pattern_filler;
-  zetasql::ASTGraphProperties* properties;
-  zetasql::ASTGraphPathPattern* graph_path_pattern;
-  zetasql::ASTGraphPathMode* path_mode;
-  zetasql::ASTGraphPathBase* graph_path_pattern_base;
-  zetasql::ASTGraphElementPattern* graph_element_pattern;
-  zetasql::ASTGraphPathSearchPrefix* graph_search_prefix;
-  zetasql::ASTGqlOperatorList* gql_operator_list;
-  zetasql::ASTGraphPattern* graph_pattern;
-  zetasql::ASTStructBracedConstructor* struct_braced_constructor;
-  zetasql::ASTBracedConstructor* braced_constructor;
-  zetasql::ASTBracedConstructorField* braced_constructor_field;
-  zetasql::ASTBracedConstructorFieldValue* braced_constructor_field_value;
-
-  struct {
-    zetasql::ASTNode* partition_by;
-    zetasql::ASTNode* options_list;
-    zetasql::ASTNode* spanner_index_innerleaving_clause;
-  } create_index_statement_suffix;
-}  value;
+  std::variant<
+    ASTNode*,
+    SchemaObjectKind,
+    OptionsBodySet,
+    bool,
+    BeginEndBlockOrLanguageAsCode,
+    ASTCreateStatement::SqlSecurity,
+    ASTFunctionParameter::ProcedureParameterMode,
+    ASTCreateFunctionStmtBase::DeterminismLevel,
+    ASTIdentifier*,
+    LanguageOrRemoteWithConnection,
+    ASTExpression*,
+    ExternalTableWithClauses,
+    CreateIndexStatementSuffix,
+    ASTQuery*,
+    ASTExpressionSubquery*,
+    ASTGraphProperties*,
+    LanguageOptionsSet,
+    ASTAuxLoadDataStatement::InsertionMode,
+    PathExpressionWithScope,
+    ASTGeneratedColumnInfo::GeneratedMode,
+    ASTGeneratedColumnInfo::StoredMode,
+    GeneratedOrDefaultColumnInfo,
+    ASTForeignKeyReference*,
+    ASTForeignKeyReference::Match,
+    ASTForeignKeyActions::Action,
+    TableOrTableFunctionKeywords,
+    QueryOrReplicaSourceInfo,
+    ASTSetOperationAllOrDistinct*,
+    ASTSetOperationType*,
+    const char*,
+    ASTPipeOperator*,
+    ASTSetOperationColumnPropagationMode*,
+    ColumnMatchSuffix,
+    ASTSetOperation*,
+    ASTSelect*,
+    ASTSelectWith*,
+    absl::string_view,
+    AllOrDistinctKeyword,
+    ASTAlias*,
+    ASTSampleSize::Unit,
+    ASTSampleClause*,
+    ASTPivotClause*,
+    ASTUnpivotClause::NullFilter,
+    ASTUnpivotClause*,
+    PivotOrUnpivotClause,
+    ASTPostfixTableOperator*,
+    ASTRowPatternExpression*,
+    ASTQuantifier*,
+    ASTTableExpression*,
+    ASTOrderingExpression::OrderingSpec,
+    ASTGqlOperatorList*,
+    ASTGraphPattern*,
+    ASTGraphPathSearchPrefix*,
+    ASTGraphPathMode*,
+    ASTGraphPathPattern*,
+    ASTGraphPathBase*,
+    ASTGraphElementPattern*,
+    ASTGraphElementPatternFiller*,
+    ASTGraphLabelExpression*,
+    NotKeywordPresence,
+    ASTJoin::JoinType,
+    ASTJoin::JoinHint,
+    ClausesFollowingFrom,
+    GroupByPreamble,
+    ASTLockMode*,
+    GroupByModifier,
+    ASTFunctionCall::NullHandlingModifier,
+    ASTBinaryExpression::Op,
+    ShiftOperator,
+    ImportType,
+    ASTUnaryExpression::Op,
+    ASTPathExpression*,
+    SeparatedIdentifierTmpNode*,
+    TypeKind,
+    ASTTemplatedParameterType::TemplatedTypeKind,
+    ASTBracedConstructorFieldValue*,
+    ASTBracedConstructorField*,
+    ASTBracedConstructor*,
+    ASTFunctionCall*,
+    PrecedingOrFollowingKeyword,
+    ASTWindowFrame::FrameUnit,
+    ASTStringLiteralComponent*,
+    ASTStringLiteral*,
+    ASTBytesLiteralComponent*,
+    ASTBytesLiteral*,
+    ASTCreateStatement::Scope,
+    ASTOptionsEntry::AssignmentOp,
+    ASTOnConflictClause*,
+    ASTInsertStatement::InsertMode,
+    ASTInsertStatement*,
+    ASTInsertValuesRowList*,
+    ASTDropStatement::DropMode,
+    ASTAlterIndexStatement::IndexType,
+    IndexTypeKeywords,
+    ASTStatementList*,
+    ASTNodeKind,
+    std::monostate
+  > value;
 };
 
 
@@ -214,3258 +349,3338 @@ ABSL_MUST_USE_RESULT std::string symbolName(int32_t sym);
 class Parser final {
  public:
 
-template <typename Location>
-  void error(const Location& loc,
-             const std::string& msg) {
-    *error_message = msg;
-    *error_location = loc.start();
-  }
 
   Parser(parser::LookaheadTransformer* tokenizer_arg, parser::BisonParser* parser_arg, ASTNode** ast_node_result_arg, parser::ASTStatementProperties* ast_statement_properties_arg, std::string* error_message_arg, ParseLocationPoint* error_location_arg, int* statement_end_byte_offset_arg) : tokenizer(tokenizer_arg), parser(parser_arg), ast_node_result(ast_node_result_arg), ast_statement_properties(ast_statement_properties_arg), error_message(error_message_arg), error_location(error_location_arg), statement_end_byte_offset(statement_end_byte_offset_arg) {}
 
-  absl::Status Parse( TextMapperLexerAdapter& lexer) {
-    return Parse(0, 3755, lexer);
+  absl::Status Parse( Lexer& lexer) {
+    return Parse(0, 3857, lexer);
   }
 
 
 
 
  private:
-  void fetchNext(TextMapperLexerAdapter& lexer, std::vector<stackEntry>& stack);
-  absl::Status Action0__ReduceOf_start_mode__AtLine_1008_Column_34([[maybe_unused]] stackEntry& lhs,
+  void fetchNext(Lexer& lexer, std::vector<stackEntry>& stack);
+  absl::Status Action0__ReduceOf_start_mode__AtLine_1041_Column_34([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1__ReduceOf_start_mode__AtLine_1009_Column_26([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1__ReduceOf_start_mode__AtLine_1042_Column_26([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2__ReduceOf_start_mode__AtLine_1010_Column_42([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2__ReduceOf_start_mode__AtLine_1043_Column_42([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action3__ReduceOf_start_mode__AtLine_1011_Column_56([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action3__ReduceOf_start_mode__AtLine_1044_Column_56([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action4__ReduceOf_start_mode__AtLine_1013_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action4__ReduceOf_start_mode__AtLine_1046_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action5__ReduceOf_start_mode__AtLine_1014_Column_34([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action5__ReduceOf_start_mode__AtLine_1047_Column_34([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action6__ReduceOf_start_mode__AtLine_1015_Column_22([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action6__ReduceOf_start_mode__AtLine_1048_Column_22([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action9__ReduceOf_sql_statement__AtLine_1023_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action9__ReduceOf_sql_statement__AtLine_1056_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action10__ReduceOf_next_script_statement__AtLine_1030_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action10__ReduceOf_next_script_statement__AtLine_1063_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action11__ReduceOf_next_script_statement__AtLine_1036_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action11__ReduceOf_next_script_statement__AtLine_1069_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action12__ReduceOf_next_statement__AtLine_1045_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action12__ReduceOf_next_statement__AtLine_1078_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action13__ReduceOf_next_statement__AtLine_1051_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action13__ReduceOf_next_statement__AtLine_1084_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action14__ReduceOf_pre_statement__AtLine_1070_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action14__ReduceOf_pre_statement__AtLine_1103_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action15__ReduceOf_unterminated_statement__AtLine_1075_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action15__ReduceOf_unterminated_statement__AtLine_1108_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action16__ReduceOf_unterminated_statement__AtLine_1080_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action16__ReduceOf_unterminated_statement__AtLine_1113_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action17__ReduceOf_statement_level_hint__AtLine_1088_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action17__ReduceOf_statement_level_hint__AtLine_1121_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action19__ReduceOf_unterminated_sql_statement__AtLine_1097_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action19__ReduceOf_unterminated_sql_statement__AtLine_1130_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action20__ReduceOf_unterminated_sql_statement__AtLine_1101_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action20__ReduceOf_unterminated_sql_statement__AtLine_1134_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action21__ReduceOf_unterminated_sql_statement__AtLine_1114_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action21__ReduceOf_unterminated_sql_statement__AtLine_1146_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action22__ReduceOf_unterminated_sql_statement__AtLine_1119_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action22__ReduceOf_unterminated_sql_statement__AtLine_1154_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action36__ReduceOf_unterminated_script_statement__AtLine_1158_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action36__ReduceOf_unterminated_script_statement__AtLine_1193_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action91__ReduceOf_define_macro_statement__AtLine_1245_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action92__ReduceOf_define_macro_statement__AtLine_1276_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action92__ReduceOf_macro_body__AtLine_1278_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action93__ReduceOf_macro_body__AtLine_1309_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action93__ReduceOf_macro_body__AtLine_1284_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action94__ReduceOf_macro_body__AtLine_1315_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action96__ReduceOf_query_statement__AtLine_1298_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action97__ReduceOf_query_statement__AtLine_1333_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action97__ReduceOf_alter_action__AtLine_1305_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action98__ReduceOf_alter_action__AtLine_1340_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action98__ReduceOf_alter_action__AtLine_1310_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action99__ReduceOf_alter_action__AtLine_1345_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action99__ReduceOf_alter_action__AtLine_1314_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action100__ReduceOf_alter_action__AtLine_1349_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action100__ReduceOf_alter_action__AtLine_1318_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action101__ReduceOf_alter_action__AtLine_1353_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action101__ReduceOf_alter_action__AtLine_1323_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action102__ReduceOf_alter_action__AtLine_1358_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action102__ReduceOf_alter_action__AtLine_1332_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action103__ReduceOf_alter_action__AtLine_1367_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action103__ReduceOf_alter_action__AtLine_1339_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action104__ReduceOf_alter_action__AtLine_1374_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action104__ReduceOf_alter_action__AtLine_1345_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action105__ReduceOf_alter_action__AtLine_1380_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action105__ReduceOf_alter_action__AtLine_1353_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action106__ReduceOf_alter_action__AtLine_1388_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action106__ReduceOf_alter_action__AtLine_1361_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action107__ReduceOf_alter_action__AtLine_1396_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action107__ReduceOf_alter_action__AtLine_1367_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action108__ReduceOf_alter_action__AtLine_1402_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action108__ReduceOf_alter_action__AtLine_1373_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action109__ReduceOf_alter_action__AtLine_1408_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action109__ReduceOf_alter_action__AtLine_1380_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action110__ReduceOf_alter_action__AtLine_1415_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action110__ReduceOf_alter_action__AtLine_1386_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action111__ReduceOf_alter_action__AtLine_1421_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action111__ReduceOf_alter_action__AtLine_1392_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action112__ReduceOf_alter_action__AtLine_1427_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action112__ReduceOf_alter_action__AtLine_1398_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action113__ReduceOf_alter_action__AtLine_1433_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action113__ReduceOf_alter_action__AtLine_1404_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action114__ReduceOf_alter_action__AtLine_1439_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action114__ReduceOf_alter_action__AtLine_1410_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action115__ReduceOf_alter_action__AtLine_1445_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action115__ReduceOf_alter_action__AtLine_1417_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action116__ReduceOf_alter_action__AtLine_1452_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action116__ReduceOf_alter_action__AtLine_1421_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action117__ReduceOf_alter_action__AtLine_1456_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action117__ReduceOf_alter_action__AtLine_1425_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action118__ReduceOf_alter_action__AtLine_1460_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action118__ReduceOf_alter_action__AtLine_1436_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action119__ReduceOf_alter_action__AtLine_1471_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action119__ReduceOf_alter_action__AtLine_1447_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action120__ReduceOf_alter_action__AtLine_1482_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action120__ReduceOf_alter_action__AtLine_1458_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action121__ReduceOf_alter_action__AtLine_1493_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action121__ReduceOf_alter_action__AtLine_1465_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action122__ReduceOf_alter_action__AtLine_1500_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action122__ReduceOf_alter_action__AtLine_1471_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action123__ReduceOf_alter_action__AtLine_1506_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action125__ReduceOf_alter_action_list__AtLine_1482_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action126__ReduceOf_alter_action_list__AtLine_1517_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action126__ReduceOf_alter_action_list__AtLine_1486_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action127__ReduceOf_alter_action_list__AtLine_1521_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action128__ReduceOf_privilege_restriction_alter_action__AtLine_1496_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action129__ReduceOf_privilege_restriction_alter_action__AtLine_1531_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action129__ReduceOf_privilege_restriction_alter_action__AtLine_1502_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action130__ReduceOf_privilege_restriction_alter_action__AtLine_1537_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action130__ReduceOf_privilege_restriction_alter_action_list__AtLine_1515_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action131__ReduceOf_privilege_restriction_alter_action_list__AtLine_1550_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action131__ReduceOf_privilege_restriction_alter_action_list__AtLine_1520_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action132__ReduceOf_privilege_restriction_alter_action_list__AtLine_1555_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action133__ReduceOf_row_access_policy_alter_action__AtLine_1530_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action133__ReduceOf_alter_index_action_list__AtLine_1568_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action134__ReduceOf_row_access_policy_alter_action__AtLine_1537_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action134__ReduceOf_alter_index_action_list__AtLine_1572_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action135__ReduceOf_row_access_policy_alter_action__AtLine_1541_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action135__ReduceOf_alter_index_action__AtLine_1579_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action136__ReduceOf_row_access_policy_alter_action__AtLine_1548_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action136__ReduceOf_alter_index_action__AtLine_1583_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action137__ReduceOf_row_access_policy_alter_action_list__AtLine_1559_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action137__ReduceOf_alter_index_action__AtLine_1589_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action138__ReduceOf_row_access_policy_alter_action_list__AtLine_1563_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action138__ReduceOf_alter_index_action__AtLine_1595_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action139__ReduceOf_schema_object_kind__AtLine_1579_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action139__ReduceOf_alter_index_action__AtLine_1601_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action140__ReduceOf_schema_object_kind__AtLine_1581_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action141__ReduceOf_row_access_policy_alter_action__AtLine_1612_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action141__ReduceOf_schema_object_kind__AtLine_1583_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action142__ReduceOf_row_access_policy_alter_action__AtLine_1619_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action142__ReduceOf_schema_object_kind__AtLine_1585_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action143__ReduceOf_row_access_policy_alter_action__AtLine_1623_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action143__ReduceOf_schema_object_kind__AtLine_1587_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action144__ReduceOf_row_access_policy_alter_action__AtLine_1630_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action144__ReduceOf_schema_object_kind__AtLine_1588_Column_42([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action145__ReduceOf_row_access_policy_alter_action_list__AtLine_1641_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action145__ReduceOf_schema_object_kind__AtLine_1597_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action146__ReduceOf_row_access_policy_alter_action_list__AtLine_1645_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action146__ReduceOf_schema_object_kind__AtLine_1599_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action147__ReduceOf_schema_object_kind__AtLine_1661_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action147__ReduceOf_schema_object_kind__AtLine_1601_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action148__ReduceOf_schema_object_kind__AtLine_1663_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action148__ReduceOf_schema_object_kind__AtLine_1603_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action149__ReduceOf_schema_object_kind__AtLine_1665_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action149__ReduceOf_schema_object_kind__AtLine_1605_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action150__ReduceOf_schema_object_kind__AtLine_1667_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action150__ReduceOf_schema_object_kind__AtLine_1607_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action151__ReduceOf_schema_object_kind__AtLine_1669_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action151__ReduceOf_schema_object_kind__AtLine_1609_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action152__ReduceOf_schema_object_kind__AtLine_1670_Column_42([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action152__ReduceOf_schema_object_kind__AtLine_1611_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action153__ReduceOf_schema_object_kind__AtLine_1679_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action153__ReduceOf_schema_object_kind__AtLine_1613_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action154__ReduceOf_schema_object_kind__AtLine_1681_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action154__ReduceOf_alter_statement__AtLine_1619_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action155__ReduceOf_schema_object_kind__AtLine_1683_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action155__ReduceOf_alter_statement__AtLine_1631_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action156__ReduceOf_schema_object_kind__AtLine_1685_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action156__ReduceOf_alter_statement__AtLine_1661_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action157__ReduceOf_schema_object_kind__AtLine_1687_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action157__ReduceOf_alter_statement__AtLine_1667_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action158__ReduceOf_schema_object_kind__AtLine_1689_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action158__ReduceOf_alter_statement__AtLine_1683_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action159__ReduceOf_schema_object_kind__AtLine_1691_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action159__ReduceOf_alter_statement__AtLine_1691_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action160__ReduceOf_schema_object_kind__AtLine_1693_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action160__ReduceOf_alter_statement__AtLine_1699_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action161__ReduceOf_schema_object_kind__AtLine_1695_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action161__ReduceOf_opt_input_output_clause__AtLine_1708_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action162__ReduceOf_alter_statement__AtLine_1701_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action162__ReduceOf_opt_input_output_clause__AtLine_1721_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action163__ReduceOf_alter_statement__AtLine_1712_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action163__ReduceOf_opt_transform_clause__AtLine_1726_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action164__ReduceOf_alter_statement__AtLine_1747_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action164__ReduceOf_opt_transform_clause__AtLine_1729_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action165__ReduceOf_alter_statement__AtLine_1753_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action165__ReduceOf_assert_statement__AtLine_1734_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action166__ReduceOf_alter_statement__AtLine_1761_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action166__ReduceOf_opt_description__AtLine_1741_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action167__ReduceOf_alter_statement__AtLine_1769_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action167__ReduceOf_opt_description__AtLine_1745_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action168__ReduceOf_alter_statement__AtLine_1777_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action168__ReduceOf_analyze_statement__AtLine_1752_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action169__ReduceOf_alter_statement__AtLine_1782_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action170__ReduceOf_opt_table_and_column_info_list__AtLine_1759_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action170__ReduceOf_opt_input_output_clause__AtLine_1794_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action171__ReduceOf_table_and_column_info_list__AtLine_1764_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action171__ReduceOf_opt_input_output_clause__AtLine_1807_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action172__ReduceOf_table_and_column_info_list__AtLine_1768_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action172__ReduceOf_opt_transform_clause__AtLine_1812_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action173__ReduceOf_table_and_column_info__AtLine_1775_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action173__ReduceOf_opt_transform_clause__AtLine_1815_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action174__ReduceOf_transaction_mode__AtLine_1782_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action174__ReduceOf_assert_statement__AtLine_1820_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action175__ReduceOf_transaction_mode__AtLine_1788_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action175__ReduceOf_opt_description__AtLine_1827_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action176__ReduceOf_transaction_mode__AtLine_1794_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action176__ReduceOf_opt_description__AtLine_1831_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action177__ReduceOf_transaction_mode__AtLine_1798_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action177__ReduceOf_analyze_statement__AtLine_1838_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action178__ReduceOf_transaction_mode_list__AtLine_1805_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action179__ReduceOf_opt_table_and_column_info_list__AtLine_1845_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action179__ReduceOf_transaction_mode_list__AtLine_1809_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action180__ReduceOf_table_and_column_info_list__AtLine_1850_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action181__ReduceOf_opt_transaction_mode_list__AtLine_1817_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action181__ReduceOf_table_and_column_info_list__AtLine_1854_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action182__ReduceOf_begin_statement__AtLine_1824_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action182__ReduceOf_table_and_column_info__AtLine_1861_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action188__ReduceOf_set_statement__AtLine_1845_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action183__ReduceOf_transaction_mode__AtLine_1868_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action189__ReduceOf_set_statement__AtLine_1849_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action184__ReduceOf_transaction_mode__AtLine_1874_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action190__ReduceOf_set_statement__AtLine_1853_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action185__ReduceOf_transaction_mode__AtLine_1880_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action191__ReduceOf_set_statement__AtLine_1857_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action186__ReduceOf_transaction_mode__AtLine_1884_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action192__ReduceOf_set_statement__AtLine_1861_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action187__ReduceOf_transaction_mode_list__AtLine_1891_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action193__ReduceOf_set_statement__AtLine_1865_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action188__ReduceOf_transaction_mode_list__AtLine_1895_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action194__ReduceOf_set_statement__AtLine_1871_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action190__ReduceOf_opt_transaction_mode_list__AtLine_1903_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action195__ReduceOf_commit_statement__AtLine_1882_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action191__ReduceOf_begin_statement__AtLine_1910_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action196__ReduceOf_rollback_statement__AtLine_1889_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action197__ReduceOf_set_statement__AtLine_1931_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action197__ReduceOf_start_batch_statement__AtLine_1896_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action198__ReduceOf_set_statement__AtLine_1935_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action198__ReduceOf_run_batch_statement__AtLine_1903_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action199__ReduceOf_set_statement__AtLine_1939_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action199__ReduceOf_abort_batch_statement__AtLine_1910_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action200__ReduceOf_set_statement__AtLine_1943_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action200__ReduceOf_create_constant_statement__AtLine_1918_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action201__ReduceOf_set_statement__AtLine_1947_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action201__ReduceOf_create_database_statement__AtLine_1929_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action202__ReduceOf_set_statement__AtLine_1951_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action202__ReduceOf_unordered_options_body__AtLine_1936_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action203__ReduceOf_set_statement__AtLine_1957_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action203__ReduceOf_unordered_options_body__AtLine_1941_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action204__ReduceOf_commit_statement__AtLine_1968_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action204__ReduceOf_unordered_options_body__AtLine_1952_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action205__ReduceOf_rollback_statement__AtLine_1975_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action205__ReduceOf_create_function_statement__AtLine_1966_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action206__ReduceOf_start_batch_statement__AtLine_1982_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action206__ReduceOf_opt_aggregate__AtLine_1984_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action207__ReduceOf_run_batch_statement__AtLine_1989_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action207__ReduceOf_opt_aggregate__AtLine_1985_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action208__ReduceOf_abort_batch_statement__AtLine_1996_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action208__ReduceOf_opt_not_aggregate__AtLine_1990_Column_23([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action209__ReduceOf_create_constant_statement__AtLine_2004_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action209__ReduceOf_opt_not_aggregate__AtLine_1991_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action210__ReduceOf_create_database_statement__AtLine_2015_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action210__ReduceOf_function_declaration__AtLine_1996_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action211__ReduceOf_unordered_options_body__AtLine_2022_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action211__ReduceOf_function_parameter__AtLine_2004_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action212__ReduceOf_unordered_options_body__AtLine_2027_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action212__ReduceOf_function_parameter__AtLine_2010_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action213__ReduceOf_unordered_options_body__AtLine_2038_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action213__ReduceOf_function_parameters_prefix__AtLine_2019_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action214__ReduceOf_create_function_statement__AtLine_2052_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action214__ReduceOf_function_parameters_prefix__AtLine_2023_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action215__ReduceOf_opt_aggregate__AtLine_2070_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action215__ReduceOf_function_parameters__AtLine_2030_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action216__ReduceOf_opt_aggregate__AtLine_2071_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action216__ReduceOf_function_parameters__AtLine_2034_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action217__ReduceOf_opt_not_aggregate__AtLine_2076_Column_23([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action217__ReduceOf_begin_end_block_or_language_as_code__AtLine_2041_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action218__ReduceOf_opt_not_aggregate__AtLine_2077_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action218__ReduceOf_begin_end_block_or_language_as_code__AtLine_2050_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action219__ReduceOf_function_declaration__AtLine_2082_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action219__ReduceOf_opt_external_security_clause__AtLine_2063_Column_57([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action220__ReduceOf_function_parameter__AtLine_2090_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action220__ReduceOf_opt_external_security_clause__AtLine_2065_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action221__ReduceOf_function_parameter__AtLine_2096_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action221__ReduceOf_external_security_clause_kind__AtLine_2071_Column_13([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action222__ReduceOf_function_parameters_prefix__AtLine_2105_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action222__ReduceOf_external_security_clause_kind__AtLine_2072_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action223__ReduceOf_function_parameters_prefix__AtLine_2109_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action223__ReduceOf_create_procedure_statement__AtLine_2080_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action224__ReduceOf_function_parameters__AtLine_2116_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action224__ReduceOf_procedure_parameters_prefix__AtLine_2094_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action225__ReduceOf_function_parameters__AtLine_2120_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action225__ReduceOf_procedure_parameters_prefix__AtLine_2098_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action226__ReduceOf_begin_end_block_or_language_as_code__AtLine_2127_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action226__ReduceOf_procedure_parameters__AtLine_2105_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action227__ReduceOf_begin_end_block_or_language_as_code__AtLine_2136_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action227__ReduceOf_procedure_parameters__AtLine_2109_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action228__ReduceOf_opt_external_security_clause__AtLine_2149_Column_57([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action230__ReduceOf_procedure_parameter__AtLine_2121_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action229__ReduceOf_opt_external_security_clause__AtLine_2151_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action231__ReduceOf_procedure_parameter__AtLine_2127_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action230__ReduceOf_external_security_clause_kind__AtLine_2157_Column_13([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action232__ReduceOf_opt_procedure_parameter_mode__AtLine_2144_Column_10([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action231__ReduceOf_external_security_clause_kind__AtLine_2158_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action233__ReduceOf_opt_procedure_parameter_mode__AtLine_2146_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action232__ReduceOf_create_procedure_statement__AtLine_2166_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action234__ReduceOf_opt_procedure_parameter_mode__AtLine_2148_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action233__ReduceOf_procedure_parameters_prefix__AtLine_2180_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action235__ReduceOf_opt_procedure_parameter_mode__AtLine_2150_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action234__ReduceOf_procedure_parameters_prefix__AtLine_2184_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action236__ReduceOf_opt_returns__AtLine_2155_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action235__ReduceOf_procedure_parameters__AtLine_2191_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action237__ReduceOf_opt_returns__AtLine_2168_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action236__ReduceOf_procedure_parameters__AtLine_2195_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action238__ReduceOf_opt_function_returns__AtLine_2175_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action239__ReduceOf_procedure_parameter__AtLine_2207_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action239__ReduceOf_opt_determinism_level__AtLine_2185_Column_21([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action240__ReduceOf_procedure_parameter__AtLine_2213_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action240__ReduceOf_opt_determinism_level__AtLine_2187_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action241__ReduceOf_opt_procedure_parameter_mode__AtLine_2230_Column_10([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action241__ReduceOf_opt_determinism_level__AtLine_2189_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action242__ReduceOf_opt_procedure_parameter_mode__AtLine_2232_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action242__ReduceOf_opt_determinism_level__AtLine_2191_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action243__ReduceOf_opt_procedure_parameter_mode__AtLine_2234_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action243__ReduceOf_opt_determinism_level__AtLine_2193_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action244__ReduceOf_opt_procedure_parameter_mode__AtLine_2236_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action244__ReduceOf_opt_determinism_level__AtLine_2195_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action245__ReduceOf_opt_returns__AtLine_2241_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action245__ReduceOf_language__AtLine_2200_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action246__ReduceOf_opt_returns__AtLine_2254_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action246__ReduceOf_opt_language__AtLine_2207_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action247__ReduceOf_opt_function_returns__AtLine_2261_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action247__ReduceOf_opt_language__AtLine_2211_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action248__ReduceOf_opt_determinism_level__AtLine_2271_Column_21([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action248__ReduceOf_remote_with_connection_clause__AtLine_2218_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action249__ReduceOf_opt_determinism_level__AtLine_2273_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action249__ReduceOf_remote_with_connection_clause__AtLine_2234_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action250__ReduceOf_opt_determinism_level__AtLine_2275_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action250__ReduceOf_opt_remote_with_connection_clause__AtLine_2254_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action251__ReduceOf_opt_determinism_level__AtLine_2277_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action251__ReduceOf_opt_remote_with_connection_clause__AtLine_2258_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action252__ReduceOf_opt_determinism_level__AtLine_2279_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action252__ReduceOf_opt_language_or_remote_with_connection__AtLine_2268_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action253__ReduceOf_opt_determinism_level__AtLine_2281_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action253__ReduceOf_opt_language_or_remote_with_connection__AtLine_2273_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action254__ReduceOf_language__AtLine_2286_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action254__ReduceOf_opt_language_or_remote_with_connection__AtLine_2278_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action255__ReduceOf_opt_language__AtLine_2293_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action255__ReduceOf_opt_sql_security_clause__AtLine_2287_Column_47([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action256__ReduceOf_opt_language__AtLine_2297_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action256__ReduceOf_opt_sql_security_clause__AtLine_2289_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action257__ReduceOf_remote_with_connection_clause__AtLine_2304_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action257__ReduceOf_sql_security_clause_kind__AtLine_2295_Column_13([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action258__ReduceOf_remote_with_connection_clause__AtLine_2320_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action258__ReduceOf_sql_security_clause_kind__AtLine_2296_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action259__ReduceOf_opt_remote_with_connection_clause__AtLine_2340_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action259__ReduceOf_as_sql_function_body_or_string__AtLine_2301_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action260__ReduceOf_opt_remote_with_connection_clause__AtLine_2344_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action260__ReduceOf_as_sql_function_body_or_string__AtLine_2312_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action261__ReduceOf_opt_language_or_remote_with_connection__AtLine_2354_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action262__ReduceOf_opt_as_sql_function_body_or_string__AtLine_2320_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action262__ReduceOf_opt_language_or_remote_with_connection__AtLine_2359_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action263__ReduceOf_opt_as_code__AtLine_2327_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action263__ReduceOf_opt_language_or_remote_with_connection__AtLine_2364_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action264__ReduceOf_opt_as_code__AtLine_2331_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action264__ReduceOf_opt_sql_security_clause__AtLine_2373_Column_47([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action265__ReduceOf_path_expression_or_string__AtLine_2338_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action265__ReduceOf_opt_sql_security_clause__AtLine_2375_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action266__ReduceOf_path_expression_or_string__AtLine_2342_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action266__ReduceOf_sql_security_clause_kind__AtLine_2381_Column_13([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action267__ReduceOf_path_expression_or_default__AtLine_2349_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action267__ReduceOf_sql_security_clause_kind__AtLine_2382_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action268__ReduceOf_path_expression_or_default__AtLine_2353_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action268__ReduceOf_as_sql_function_body_or_string__AtLine_2387_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action269__ReduceOf_sql_function_body__AtLine_2360_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action269__ReduceOf_as_sql_function_body_or_string__AtLine_2398_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action270__ReduceOf_sql_function_body__AtLine_2364_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action271__ReduceOf_opt_as_sql_function_body_or_string__AtLine_2406_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action271__ReduceOf_restrict_to_clause__AtLine_2378_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action272__ReduceOf_opt_as_code__AtLine_2413_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action272__ReduceOf_opt_restrict_to_clause__AtLine_2387_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action273__ReduceOf_opt_as_code__AtLine_2417_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action273__ReduceOf_opt_restrict_to_clause__AtLine_2391_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action274__ReduceOf_path_expression_or_string__AtLine_2424_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action274__ReduceOf_grant_to_clause__AtLine_2398_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action275__ReduceOf_path_expression_or_string__AtLine_2428_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action276__ReduceOf_create_row_access_policy_grant_to_clause__AtLine_2409_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action276__ReduceOf_path_expression_or_default__AtLine_2435_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action277__ReduceOf_opt_create_row_access_policy_grant_to_clause__AtLine_2419_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action277__ReduceOf_path_expression_or_default__AtLine_2439_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action278__ReduceOf_opt_create_row_access_policy_grant_to_clause__AtLine_2423_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action278__ReduceOf_sql_function_body__AtLine_2446_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action279__ReduceOf_opt_filter__AtLine_2431_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action279__ReduceOf_sql_function_body__AtLine_2450_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action280__ReduceOf_opt_filter__AtLine_2435_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action280__ReduceOf_restrict_to_clause__AtLine_2464_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action281__ReduceOf_filter_using_clause__AtLine_2442_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action281__ReduceOf_opt_restrict_to_clause__AtLine_2473_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action282__ReduceOf_create_privilege_restriction_statement__AtLine_2454_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action282__ReduceOf_opt_restrict_to_clause__AtLine_2477_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action283__ReduceOf_create_row_access_policy_statement__AtLine_2468_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action283__ReduceOf_grant_to_clause__AtLine_2484_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action284__ReduceOf_with_partition_columns_clause__AtLine_2483_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action285__ReduceOf_create_row_access_policy_grant_to_clause__AtLine_2495_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action285__ReduceOf_with_connection_clause__AtLine_2492_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action286__ReduceOf_opt_create_row_access_policy_grant_to_clause__AtLine_2505_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action286__ReduceOf_opt_external_table_with_clauses__AtLine_2508_Column_58([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action287__ReduceOf_opt_create_row_access_policy_grant_to_clause__AtLine_2509_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action287__ReduceOf_opt_external_table_with_clauses__AtLine_2514_Column_37([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action288__ReduceOf_opt_filter__AtLine_2517_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action288__ReduceOf_opt_external_table_with_clauses__AtLine_2519_Column_30([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action289__ReduceOf_opt_filter__AtLine_2521_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action289__ReduceOf_opt_external_table_with_clauses__AtLine_2524_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action290__ReduceOf_filter_using_clause__AtLine_2528_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action290__ReduceOf_create_external_table_statement__AtLine_2535_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action291__ReduceOf_create_privilege_restriction_statement__AtLine_2540_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action291__ReduceOf_create_external_table_function_statement__AtLine_2560_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action292__ReduceOf_create_row_access_policy_statement__AtLine_2554_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action292__ReduceOf_opt_create_index_statement_suffix__AtLine_2575_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action293__ReduceOf_with_partition_columns_clause__AtLine_2569_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action293__ReduceOf_opt_create_index_statement_suffix__AtLine_2580_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action294__ReduceOf_with_connection_clause__AtLine_2578_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action294__ReduceOf_opt_create_index_statement_suffix__AtLine_2585_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action295__ReduceOf_opt_external_table_with_clauses__AtLine_2594_Column_58([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action295__ReduceOf_opt_create_index_statement_suffix__AtLine_2590_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action296__ReduceOf_opt_external_table_with_clauses__AtLine_2600_Column_37([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action296__ReduceOf_create_index_statement__AtLine_2601_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action297__ReduceOf_opt_external_table_with_clauses__AtLine_2605_Column_30([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action297__ReduceOf_braced_graph_subquery__AtLine_2625_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action298__ReduceOf_opt_external_table_with_clauses__AtLine_2610_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action298__ReduceOf_braced_graph_subquery__AtLine_2629_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action299__ReduceOf_create_external_table_statement__AtLine_2621_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action299__ReduceOf_exists_graph_pattern_subquery__AtLine_2636_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action300__ReduceOf_create_external_table_function_statement__AtLine_2646_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action300__ReduceOf_exists_graph_pattern_subquery__AtLine_2641_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action301__ReduceOf_opt_create_index_statement_suffix__AtLine_2661_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action301__ReduceOf_exists_linear_ops_subquery__AtLine_2649_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action302__ReduceOf_opt_create_index_statement_suffix__AtLine_2666_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action302__ReduceOf_exists_linear_ops_subquery__AtLine_2654_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action303__ReduceOf_opt_create_index_statement_suffix__AtLine_2671_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action305__ReduceOf_exists_graph_subquery__AtLine_2664_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action304__ReduceOf_opt_create_index_statement_suffix__AtLine_2676_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action306__ReduceOf_create_property_graph_statement__AtLine_2674_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action305__ReduceOf_create_index_statement__AtLine_2687_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action307__ReduceOf_element_table_list_prefix__AtLine_2690_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action306__ReduceOf_braced_graph_subquery__AtLine_2711_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action308__ReduceOf_element_table_list_prefix__AtLine_2694_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action307__ReduceOf_braced_graph_subquery__AtLine_2715_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action309__ReduceOf_element_table_list__AtLine_2701_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action308__ReduceOf_exists_graph_pattern_subquery__AtLine_2722_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action310__ReduceOf_element_table_list__AtLine_2706_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action309__ReduceOf_exists_graph_pattern_subquery__AtLine_2727_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action311__ReduceOf_element_table_definition__AtLine_2715_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action310__ReduceOf_exists_linear_ops_subquery__AtLine_2735_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action312__ReduceOf_opt_key_clause__AtLine_2728_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action311__ReduceOf_exists_linear_ops_subquery__AtLine_2740_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action313__ReduceOf_opt_key_clause__AtLine_2730_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action314__ReduceOf_exists_graph_subquery__AtLine_2750_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action314__ReduceOf_opt_source_node_table_clause__AtLine_2736_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action315__ReduceOf_create_property_graph_statement__AtLine_2760_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action315__ReduceOf_opt_source_node_table_clause__AtLine_2738_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action316__ReduceOf_element_table_list_prefix__AtLine_2776_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action316__ReduceOf_opt_dest_node_table_clause__AtLine_2747_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action317__ReduceOf_element_table_list_prefix__AtLine_2780_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action317__ReduceOf_opt_dest_node_table_clause__AtLine_2749_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action318__ReduceOf_element_table_list__AtLine_2787_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action318__ReduceOf_opt_edge_table_clause__AtLine_2758_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action319__ReduceOf_element_table_list__AtLine_2792_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action319__ReduceOf_opt_edge_table_clause__AtLine_2760_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action320__ReduceOf_element_table_definition__AtLine_2801_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action320__ReduceOf_opt_label_and_properties_clause__AtLine_2767_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action321__ReduceOf_opt_key_clause__AtLine_2814_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action321__ReduceOf_opt_label_and_properties_clause__AtLine_2778_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action322__ReduceOf_opt_key_clause__AtLine_2816_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action322__ReduceOf_opt_label_and_properties_clause__AtLine_2786_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action323__ReduceOf_opt_source_node_table_clause__AtLine_2822_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action323__ReduceOf_label_and_properties_list__AtLine_2793_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action324__ReduceOf_opt_source_node_table_clause__AtLine_2824_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action324__ReduceOf_label_and_properties_list__AtLine_2797_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action325__ReduceOf_opt_dest_node_table_clause__AtLine_2833_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action325__ReduceOf_label_and_properties__AtLine_2804_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action326__ReduceOf_opt_dest_node_table_clause__AtLine_2835_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action326__ReduceOf_label_and_properties__AtLine_2808_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action327__ReduceOf_opt_edge_table_clause__AtLine_2844_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action327__ReduceOf_opt_properties_clause__AtLine_2816_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action328__ReduceOf_opt_edge_table_clause__AtLine_2846_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action328__ReduceOf_opt_properties_clause__AtLine_2824_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action329__ReduceOf_opt_label_and_properties_clause__AtLine_2853_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action329__ReduceOf_properties_clause__AtLine_2831_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action330__ReduceOf_opt_label_and_properties_clause__AtLine_2864_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action330__ReduceOf_properties_clause__AtLine_2838_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action331__ReduceOf_opt_label_and_properties_clause__AtLine_2872_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action331__ReduceOf_properties_clause__AtLine_2845_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action332__ReduceOf_label_and_properties_list__AtLine_2879_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action334__ReduceOf_opt_except_column_list__AtLine_2859_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action333__ReduceOf_label_and_properties_list__AtLine_2883_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action335__ReduceOf_opt_except_column_list__AtLine_2861_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action334__ReduceOf_label_and_properties__AtLine_2890_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action336__ReduceOf_derived_property_list__AtLine_2868_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action335__ReduceOf_label_and_properties__AtLine_2894_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action337__ReduceOf_derived_property_list__AtLine_2872_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action336__ReduceOf_opt_properties_clause__AtLine_2902_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action338__ReduceOf_derived_property__AtLine_2879_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action337__ReduceOf_opt_properties_clause__AtLine_2910_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action339__ReduceOf_create_schema_statement__AtLine_2887_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action338__ReduceOf_properties_clause__AtLine_2917_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action340__ReduceOf_create_external_schema_statement__AtLine_2898_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action339__ReduceOf_properties_clause__AtLine_2924_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action341__ReduceOf_create_connection_statement__AtLine_2910_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action340__ReduceOf_properties_clause__AtLine_2931_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action342__ReduceOf_undrop_statement__AtLine_2921_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action343__ReduceOf_opt_except_column_list__AtLine_2945_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action343__ReduceOf_create_snapshot_statement__AtLine_2936_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action344__ReduceOf_opt_except_column_list__AtLine_2947_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action344__ReduceOf_create_snapshot_statement__AtLine_2945_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action345__ReduceOf_derived_property_list__AtLine_2954_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action345__ReduceOf_unordered_language_options__AtLine_2961_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action346__ReduceOf_derived_property_list__AtLine_2958_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action346__ReduceOf_unordered_language_options__AtLine_2966_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action347__ReduceOf_derived_property__AtLine_2965_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action347__ReduceOf_unordered_language_options__AtLine_2972_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action348__ReduceOf_create_schema_statement__AtLine_2973_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action348__ReduceOf_create_table_function_statement__AtLine_2991_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action349__ReduceOf_create_locality_group_statement__AtLine_2983_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action349__ReduceOf_create_table_statement__AtLine_3030_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action350__ReduceOf_create_external_schema_statement__AtLine_2996_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action350__ReduceOf_append_or_overwrite__AtLine_3055_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action351__ReduceOf_create_connection_statement__AtLine_3008_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action351__ReduceOf_append_or_overwrite__AtLine_3058_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action352__ReduceOf_undrop_statement__AtLine_3019_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action352__ReduceOf_aux_load_data_from_files_options_list__AtLine_3065_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action353__ReduceOf_create_snapshot_statement__AtLine_3039_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action353__ReduceOf_opt_overwrite__AtLine_3071_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action354__ReduceOf_create_snapshot_statement__AtLine_3048_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action354__ReduceOf_opt_overwrite__AtLine_3072_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action355__ReduceOf_unordered_language_options__AtLine_3069_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action355__ReduceOf_load_data_partitions_clause__AtLine_3077_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action356__ReduceOf_unordered_language_options__AtLine_3074_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action357__ReduceOf_opt_load_data_partitions_clause__AtLine_3093_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action357__ReduceOf_unordered_language_options__AtLine_3080_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action358__ReduceOf_maybe_dashed_path_expression_with_scope__AtLine_3098_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action358__ReduceOf_create_table_function_statement__AtLine_3099_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action359__ReduceOf_maybe_dashed_path_expression_with_scope__AtLine_3104_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action359__ReduceOf_create_table_statement_prefix__AtLine_3140_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action360__ReduceOf_maybe_dashed_path_expression_with_scope__AtLine_3110_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action360__ReduceOf_create_table_statement__AtLine_3165_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action361__ReduceOf_aux_load_data_statement__AtLine_3129_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action361__ReduceOf_append_or_overwrite__AtLine_3173_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action362__ReduceOf_generic_entity_type_unchecked__AtLine_3153_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action362__ReduceOf_append_or_overwrite__AtLine_3176_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action363__ReduceOf_generic_entity_type_unchecked__AtLine_3160_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action363__ReduceOf_aux_load_data_from_files_options_list__AtLine_3183_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action364__ReduceOf_generic_entity_type__AtLine_3167_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action364__ReduceOf_opt_overwrite__AtLine_3189_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action365__ReduceOf_sub_entity_type_identifier__AtLine_3187_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action365__ReduceOf_opt_overwrite__AtLine_3190_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action366__ReduceOf_sub_entity_type_identifier__AtLine_3191_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action366__ReduceOf_load_data_partitions_clause__AtLine_3195_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action367__ReduceOf_generic_sub_entity_type__AtLine_3198_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action368__ReduceOf_opt_load_data_partitions_clause__AtLine_3211_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action368__ReduceOf_generic_entity_body__AtLine_3211_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action369__ReduceOf_maybe_dashed_path_expression_with_scope__AtLine_3216_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action369__ReduceOf_generic_entity_body__AtLine_3215_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action370__ReduceOf_maybe_dashed_path_expression_with_scope__AtLine_3222_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action370__ReduceOf_opt_generic_entity_body__AtLine_3222_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action371__ReduceOf_maybe_dashed_path_expression_with_scope__AtLine_3228_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action371__ReduceOf_opt_generic_entity_body__AtLine_3225_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action372__ReduceOf_aux_load_data_statement__AtLine_3247_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action372__ReduceOf_create_entity_statement__AtLine_3231_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action373__ReduceOf_generic_entity_type_unchecked__AtLine_3271_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action373__ReduceOf_create_model_statement__AtLine_3252_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action374__ReduceOf_generic_entity_type_unchecked__AtLine_3278_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action375__ReduceOf_opt_table_element_list__AtLine_3274_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action375__ReduceOf_generic_entity_type__AtLine_3285_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action376__ReduceOf_table_element_list__AtLine_3279_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action376__ReduceOf_sub_entity_type_identifier__AtLine_3305_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action377__ReduceOf_table_element_list__AtLine_3283_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action377__ReduceOf_sub_entity_type_identifier__AtLine_3309_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action378__ReduceOf_table_element_list_prefix__AtLine_3295_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action378__ReduceOf_generic_sub_entity_type__AtLine_3316_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action379__ReduceOf_table_element_list_prefix__AtLine_3299_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action379__ReduceOf_generic_entity_body__AtLine_3329_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action380__ReduceOf_table_element_list_prefix__AtLine_3303_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action380__ReduceOf_generic_entity_body__AtLine_3333_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action383__ReduceOf_table_column_definition__AtLine_3347_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action381__ReduceOf_opt_generic_entity_body__AtLine_3340_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action384__ReduceOf_table_column_schema__AtLine_3356_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action382__ReduceOf_opt_generic_entity_body__AtLine_3343_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action385__ReduceOf_table_column_schema__AtLine_3372_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action383__ReduceOf_create_entity_statement__AtLine_3349_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action386__ReduceOf_simple_column_schema_inner__AtLine_3379_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action384__ReduceOf_create_model_statement__AtLine_3370_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action387__ReduceOf_simple_column_schema_inner__AtLine_3384_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action386__ReduceOf_opt_table_element_list__AtLine_3392_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action388__ReduceOf_array_column_schema_inner__AtLine_3393_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action387__ReduceOf_table_element_list__AtLine_3397_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action389__ReduceOf_range_column_schema_inner__AtLine_3400_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action388__ReduceOf_table_element_list__AtLine_3401_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action390__ReduceOf_struct_column_field__AtLine_3424_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action389__ReduceOf_table_element_list_prefix__AtLine_3413_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action391__ReduceOf_struct_column_field__AtLine_3430_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action390__ReduceOf_table_element_list_prefix__AtLine_3417_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action392__ReduceOf_struct_column_schema_prefix__AtLine_3437_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action391__ReduceOf_table_element_list_prefix__AtLine_3421_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action393__ReduceOf_struct_column_schema_prefix__AtLine_3441_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action394__ReduceOf_table_column_definition__AtLine_3465_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action394__ReduceOf_struct_column_schema_inner__AtLine_3450_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action395__ReduceOf_table_column_schema__AtLine_3474_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action400__ReduceOf_column_schema_inner__AtLine_3465_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action396__ReduceOf_table_column_schema__AtLine_3490_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action401__ReduceOf_generated_mode__AtLine_3471_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action397__ReduceOf_simple_column_schema_inner__AtLine_3497_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action402__ReduceOf_generated_mode__AtLine_3475_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action398__ReduceOf_simple_column_schema_inner__AtLine_3502_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action403__ReduceOf_generated_mode__AtLine_3479_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action399__ReduceOf_array_column_schema_inner__AtLine_3511_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action404__ReduceOf_generated_mode__AtLine_3483_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action400__ReduceOf_range_column_schema_inner__AtLine_3518_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action405__ReduceOf_stored_mode__AtLine_3490_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action401__ReduceOf_struct_column_field__AtLine_3542_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action406__ReduceOf_stored_mode__AtLine_3494_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action402__ReduceOf_struct_column_field__AtLine_3548_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action407__ReduceOf_stored_mode__AtLine_3498_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action403__ReduceOf_struct_column_schema_prefix__AtLine_3555_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action411__ReduceOf_signed_numerical_literal__AtLine_3508_Column_2([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action404__ReduceOf_struct_column_schema_prefix__AtLine_3559_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action412__ReduceOf_signed_numerical_literal__AtLine_3512_Column_2([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action405__ReduceOf_struct_column_schema_inner__AtLine_3568_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action413__ReduceOf_signed_numerical_literal__AtLine_3518_Column_2([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action411__ReduceOf_column_schema_inner__AtLine_3583_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action414__ReduceOf_opt_start_with__AtLine_3527_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action412__ReduceOf_generated_mode__AtLine_3589_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action415__ReduceOf_opt_start_with__AtLine_3531_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action413__ReduceOf_generated_mode__AtLine_3593_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action416__ReduceOf_opt_increment_by__AtLine_3538_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action414__ReduceOf_generated_mode__AtLine_3597_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action417__ReduceOf_opt_increment_by__AtLine_3542_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action415__ReduceOf_generated_mode__AtLine_3601_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action418__ReduceOf_opt_maxvalue__AtLine_3549_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action416__ReduceOf_stored_mode__AtLine_3608_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action419__ReduceOf_opt_maxvalue__AtLine_3553_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action417__ReduceOf_stored_mode__AtLine_3612_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action420__ReduceOf_opt_minvalue__AtLine_3560_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action418__ReduceOf_stored_mode__AtLine_3616_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action421__ReduceOf_opt_minvalue__AtLine_3564_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action422__ReduceOf_signed_numerical_literal__AtLine_3626_Column_2([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action422__ReduceOf_opt_cycle__AtLine_3571_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action423__ReduceOf_signed_numerical_literal__AtLine_3630_Column_2([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action423__ReduceOf_opt_cycle__AtLine_3575_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action424__ReduceOf_signed_numerical_literal__AtLine_3636_Column_2([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action424__ReduceOf_opt_cycle__AtLine_3579_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action425__ReduceOf_opt_start_with__AtLine_3645_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action425__ReduceOf_identity_column_info__AtLine_3587_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action426__ReduceOf_opt_start_with__AtLine_3649_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action426__ReduceOf_generated_column_info__AtLine_3597_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action427__ReduceOf_opt_increment_by__AtLine_3656_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action427__ReduceOf_generated_column_info__AtLine_3604_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action428__ReduceOf_opt_increment_by__AtLine_3660_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action428__ReduceOf_invalid_generated_column__AtLine_3613_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action429__ReduceOf_opt_maxvalue__AtLine_3667_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action429__ReduceOf_invalid_generated_column__AtLine_3617_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action430__ReduceOf_opt_maxvalue__AtLine_3671_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action430__ReduceOf_default_column_info__AtLine_3624_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action431__ReduceOf_opt_minvalue__AtLine_3678_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action431__ReduceOf_invalid_default_column__AtLine_3636_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action432__ReduceOf_opt_minvalue__AtLine_3682_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action432__ReduceOf_invalid_default_column__AtLine_3640_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action433__ReduceOf_opt_cycle__AtLine_3689_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action433__ReduceOf_opt_column_info__AtLine_3647_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action434__ReduceOf_opt_cycle__AtLine_3693_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action434__ReduceOf_opt_column_info__AtLine_3657_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action435__ReduceOf_opt_cycle__AtLine_3697_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action435__ReduceOf_opt_column_info__AtLine_3666_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action436__ReduceOf_identity_column_info__AtLine_3705_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action436__ReduceOf_field_schema__AtLine_3674_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action437__ReduceOf_generated_column_info__AtLine_3715_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action437__ReduceOf_primary_key_column_attribute__AtLine_3681_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action438__ReduceOf_generated_column_info__AtLine_3722_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action438__ReduceOf_foreign_key_column_attribute__AtLine_3688_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action439__ReduceOf_invalid_generated_column__AtLine_3731_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action439__ReduceOf_hidden_column_attribute__AtLine_3696_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action440__ReduceOf_invalid_generated_column__AtLine_3735_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action440__ReduceOf_not_null_column_attribute__AtLine_3703_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action441__ReduceOf_default_column_info__AtLine_3742_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action445__ReduceOf_column_attributes__AtLine_3733_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action442__ReduceOf_invalid_default_column__AtLine_3754_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action446__ReduceOf_column_attributes__AtLine_3737_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action443__ReduceOf_invalid_default_column__AtLine_3758_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action447__ReduceOf_column_attributes__AtLine_3741_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action444__ReduceOf_opt_column_info__AtLine_3765_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action449__ReduceOf_opt_column_attributes__AtLine_3772_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action445__ReduceOf_opt_column_info__AtLine_3775_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action450__ReduceOf_opt_field_attributes__AtLine_3777_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action446__ReduceOf_opt_column_info__AtLine_3784_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action451__ReduceOf_opt_field_attributes__AtLine_3780_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action447__ReduceOf_field_schema__AtLine_3792_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action452__ReduceOf_column_position__AtLine_3785_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action448__ReduceOf_primary_key_column_attribute__AtLine_3799_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action453__ReduceOf_column_position__AtLine_3791_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action449__ReduceOf_foreign_key_column_attribute__AtLine_3806_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action455__ReduceOf_opt_column_position__AtLine_3800_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action450__ReduceOf_hidden_column_attribute__AtLine_3814_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action456__ReduceOf_fill_using_expression__AtLine_3805_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action451__ReduceOf_not_null_column_attribute__AtLine_3821_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action458__ReduceOf_opt_fill_using_expression__AtLine_3812_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action456__ReduceOf_column_attributes__AtLine_3851_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action459__ReduceOf_table_constraint_spec__AtLine_3817_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action457__ReduceOf_column_attributes__AtLine_3855_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action460__ReduceOf_table_constraint_spec__AtLine_3824_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action458__ReduceOf_column_attributes__AtLine_3859_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action461__ReduceOf_primary_key_element__AtLine_3833_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action460__ReduceOf_opt_column_attributes__AtLine_3890_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action462__ReduceOf_primary_key_element_list_prefix__AtLine_3853_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action461__ReduceOf_opt_field_attributes__AtLine_3895_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action463__ReduceOf_primary_key_element_list_prefix__AtLine_3857_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action462__ReduceOf_opt_field_attributes__AtLine_3898_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action464__ReduceOf_primary_key_element_list__AtLine_3864_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action463__ReduceOf_column_position__AtLine_3903_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action465__ReduceOf_primary_key_element_list__AtLine_3867_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action464__ReduceOf_column_position__AtLine_3909_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action466__ReduceOf_primary_key_spec__AtLine_3873_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action466__ReduceOf_opt_column_position__AtLine_3918_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action471__ReduceOf_table_constraint_definition__AtLine_3891_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action467__ReduceOf_fill_using_expression__AtLine_3923_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action472__ReduceOf_foreign_key_reference__AtLine_3919_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action469__ReduceOf_opt_fill_using_expression__AtLine_3930_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action473__ReduceOf_opt_foreign_key_match__AtLine_3927_Column_36([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action470__ReduceOf_table_constraint_spec__AtLine_3935_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action474__ReduceOf_opt_foreign_key_match__AtLine_3928_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action471__ReduceOf_table_constraint_spec__AtLine_3942_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action475__ReduceOf_foreign_key_match_mode__AtLine_3932_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action472__ReduceOf_primary_key_element__AtLine_3951_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action476__ReduceOf_foreign_key_match_mode__AtLine_3933_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action473__ReduceOf_primary_key_element_list_prefix__AtLine_3971_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action477__ReduceOf_foreign_key_match_mode__AtLine_3934_Column_32([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action474__ReduceOf_primary_key_element_list_prefix__AtLine_3975_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action478__ReduceOf_opt_foreign_key_actions__AtLine_3941_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action475__ReduceOf_primary_key_element_list__AtLine_3982_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action479__ReduceOf_opt_foreign_key_actions__AtLine_3948_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action476__ReduceOf_primary_key_element_list__AtLine_3985_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action480__ReduceOf_opt_foreign_key_actions__AtLine_3955_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action477__ReduceOf_primary_key_spec__AtLine_3991_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action482__ReduceOf_opt_foreign_key_on_update__AtLine_3962_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action482__ReduceOf_table_constraint_definition__AtLine_4009_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action484__ReduceOf_opt_foreign_key_on_delete__AtLine_3967_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action483__ReduceOf_foreign_key_reference__AtLine_4037_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action485__ReduceOf_foreign_key_on_update__AtLine_3971_Column_38([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action484__ReduceOf_opt_foreign_key_match__AtLine_4045_Column_36([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action486__ReduceOf_foreign_key_on_delete__AtLine_3975_Column_38([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action485__ReduceOf_opt_foreign_key_match__AtLine_4046_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action487__ReduceOf_foreign_key_action__AtLine_3979_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action486__ReduceOf_foreign_key_match_mode__AtLine_4050_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action488__ReduceOf_foreign_key_action__AtLine_3980_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action487__ReduceOf_foreign_key_match_mode__AtLine_4051_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action489__ReduceOf_foreign_key_action__AtLine_3981_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action488__ReduceOf_foreign_key_match_mode__AtLine_4052_Column_32([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action490__ReduceOf_foreign_key_action__AtLine_3982_Column_20([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action489__ReduceOf_opt_foreign_key_actions__AtLine_4059_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action491__ReduceOf_opt_constraint_identity__AtLine_3986_Column_29([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action490__ReduceOf_opt_foreign_key_actions__AtLine_4066_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action492__ReduceOf_opt_constraint_identity__AtLine_3987_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action491__ReduceOf_opt_foreign_key_actions__AtLine_4073_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action494__ReduceOf_opt_constraint_enforcement__AtLine_3992_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action493__ReduceOf_opt_foreign_key_on_update__AtLine_4080_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action495__ReduceOf_constraint_enforcement__AtLine_3996_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action495__ReduceOf_opt_foreign_key_on_delete__AtLine_4085_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action496__ReduceOf_constraint_enforcement__AtLine_3997_Column_24([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action496__ReduceOf_foreign_key_on_update__AtLine_4089_Column_38([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action497__ReduceOf_table_or_table_function__AtLine_4004_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action497__ReduceOf_foreign_key_on_delete__AtLine_4093_Column_38([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action498__ReduceOf_table_or_table_function__AtLine_4008_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action498__ReduceOf_foreign_key_action__AtLine_4097_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action499__ReduceOf_tvf_schema_column__AtLine_4015_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action499__ReduceOf_foreign_key_action__AtLine_4098_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action500__ReduceOf_tvf_schema_column__AtLine_4019_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action500__ReduceOf_foreign_key_action__AtLine_4099_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action501__ReduceOf_tvf_schema_prefix__AtLine_4026_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action501__ReduceOf_foreign_key_action__AtLine_4100_Column_20([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action502__ReduceOf_tvf_schema_prefix__AtLine_4031_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action502__ReduceOf_opt_constraint_identity__AtLine_4104_Column_29([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action503__ReduceOf_tvf_schema__AtLine_4038_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action503__ReduceOf_opt_constraint_identity__AtLine_4105_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action504__ReduceOf_opt_recursive__AtLine_4043_Column_38([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action505__ReduceOf_opt_constraint_enforcement__AtLine_4110_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action505__ReduceOf_opt_recursive__AtLine_4044_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action506__ReduceOf_constraint_enforcement__AtLine_4114_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action506__ReduceOf_create_view_statement__AtLine_4052_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action507__ReduceOf_constraint_enforcement__AtLine_4115_Column_24([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action507__ReduceOf_create_view_statement__AtLine_4068_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action508__ReduceOf_table_or_table_function__AtLine_4122_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action508__ReduceOf_create_view_statement__AtLine_4083_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action509__ReduceOf_table_or_table_function__AtLine_4126_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action509__ReduceOf_query_or_replica_source__AtLine_4096_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action510__ReduceOf_tvf_schema_column__AtLine_4133_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action510__ReduceOf_query_or_replica_source__AtLine_4107_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action511__ReduceOf_tvf_schema_column__AtLine_4137_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action512__ReduceOf_as_query__AtLine_4119_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action512__ReduceOf_tvf_schema_prefix__AtLine_4144_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action513__ReduceOf_opt_as_query__AtLine_4132_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action513__ReduceOf_tvf_schema_prefix__AtLine_4149_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action514__ReduceOf_opt_as_query__AtLine_4133_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action514__ReduceOf_tvf_schema__AtLine_4156_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action515__ReduceOf_opt_as_query_or_string__AtLine_4137_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action515__ReduceOf_opt_recursive__AtLine_4161_Column_35([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action516__ReduceOf_opt_as_query_or_string__AtLine_4138_Column_38([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action516__ReduceOf_opt_recursive__AtLine_4162_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action517__ReduceOf_opt_as_query_or_string__AtLine_4139_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action517__ReduceOf_create_view_statement__AtLine_4170_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action518__ReduceOf_opt_as_query_or_aliased_query_list__AtLine_4143_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action518__ReduceOf_create_view_statement__AtLine_4186_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action519__ReduceOf_opt_as_query_or_aliased_query_list__AtLine_4144_Column_50([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action519__ReduceOf_create_view_statement__AtLine_4201_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action520__ReduceOf_opt_as_query_or_aliased_query_list__AtLine_4145_Column_29([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action520__ReduceOf_query_or_replica_source__AtLine_4214_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action521__ReduceOf_opt_if_not_exists__AtLine_4149_Column_25([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action521__ReduceOf_query_or_replica_source__AtLine_4225_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action522__ReduceOf_opt_if_not_exists__AtLine_4150_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action523__ReduceOf_as_query__AtLine_4237_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action523__ReduceOf_describe_statement__AtLine_4155_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action524__ReduceOf_opt_as_query__AtLine_4250_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action524__ReduceOf_describe_info__AtLine_4162_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action525__ReduceOf_opt_as_query__AtLine_4251_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action525__ReduceOf_describe_info__AtLine_4166_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action526__ReduceOf_opt_as_query_or_string__AtLine_4255_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action526__ReduceOf_opt_from_path_expression__AtLine_4173_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action527__ReduceOf_opt_as_query_or_string__AtLine_4256_Column_38([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action527__ReduceOf_opt_from_path_expression__AtLine_4176_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action528__ReduceOf_opt_as_query_or_string__AtLine_4257_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action528__ReduceOf_explain_statement__AtLine_4181_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action529__ReduceOf_opt_as_query_or_aliased_query_list__AtLine_4261_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action529__ReduceOf_export_data_no_query__AtLine_4188_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action530__ReduceOf_opt_as_query_or_aliased_query_list__AtLine_4262_Column_50([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action530__ReduceOf_export_data_statement__AtLine_4196_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action531__ReduceOf_opt_as_query_or_aliased_query_list__AtLine_4263_Column_29([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action531__ReduceOf_export_model_statement__AtLine_4205_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action532__ReduceOf_opt_if_not_exists__AtLine_4267_Column_25([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action532__ReduceOf_export_metadata_statement__AtLine_4213_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action533__ReduceOf_opt_if_not_exists__AtLine_4268_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action533__ReduceOf_grant_statement__AtLine_4228_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action534__ReduceOf_describe_statement__AtLine_4273_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action534__ReduceOf_grant_statement__AtLine_4233_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action535__ReduceOf_describe_info__AtLine_4280_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action535__ReduceOf_grant_statement__AtLine_4237_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action536__ReduceOf_describe_info__AtLine_4284_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action536__ReduceOf_revoke_statement__AtLine_4244_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action537__ReduceOf_opt_from_path_expression__AtLine_4291_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action537__ReduceOf_revoke_statement__AtLine_4249_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action538__ReduceOf_opt_from_path_expression__AtLine_4294_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action538__ReduceOf_revoke_statement__AtLine_4253_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action539__ReduceOf_explain_statement__AtLine_4299_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action539__ReduceOf_privileges__AtLine_4260_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action540__ReduceOf_export_data_no_query__AtLine_4306_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action540__ReduceOf_privileges__AtLine_4264_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action541__ReduceOf_export_data_statement__AtLine_4314_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action543__ReduceOf_privilege_list__AtLine_4276_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action542__ReduceOf_export_model_statement__AtLine_4323_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action544__ReduceOf_privilege_list__AtLine_4280_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action543__ReduceOf_export_metadata_statement__AtLine_4331_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action545__ReduceOf_privilege__AtLine_4287_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action544__ReduceOf_grant_statement__AtLine_4346_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action546__ReduceOf_privilege_name__AtLine_4294_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action545__ReduceOf_grant_statement__AtLine_4351_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action547__ReduceOf_privilege_name__AtLine_4298_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action546__ReduceOf_grant_statement__AtLine_4355_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action548__ReduceOf_rename_statement__AtLine_4306_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action547__ReduceOf_revoke_statement__AtLine_4362_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action549__ReduceOf_import_statement__AtLine_4314_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action548__ReduceOf_revoke_statement__AtLine_4367_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action550__ReduceOf_module_statement__AtLine_4330_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action549__ReduceOf_revoke_statement__AtLine_4371_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action551__ReduceOf_column_ordering_and_options_expr__AtLine_4338_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action550__ReduceOf_privileges__AtLine_4378_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action552__ReduceOf_index_order_by_and_options_prefix__AtLine_4353_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action551__ReduceOf_privileges__AtLine_4382_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action553__ReduceOf_index_order_by_and_options_prefix__AtLine_4357_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action554__ReduceOf_privilege_list__AtLine_4394_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action555__ReduceOf_opt_with_column_options__AtLine_4368_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action555__ReduceOf_privilege_list__AtLine_4398_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action556__ReduceOf_opt_with_column_options__AtLine_4371_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action556__ReduceOf_privilege__AtLine_4405_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action557__ReduceOf_index_all_columns__AtLine_4376_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action557__ReduceOf_privilege_name__AtLine_4412_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action558__ReduceOf_index_order_by_and_options__AtLine_4390_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action558__ReduceOf_privilege_name__AtLine_4416_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action559__ReduceOf_index_order_by_and_options__AtLine_4394_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action559__ReduceOf_rename_statement__AtLine_4424_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action560__ReduceOf_index_unnest_expression_list__AtLine_4401_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action560__ReduceOf_import_statement__AtLine_4432_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action561__ReduceOf_index_unnest_expression_list__AtLine_4406_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action561__ReduceOf_module_statement__AtLine_4448_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action563__ReduceOf_opt_index_unnest_expression_list__AtLine_4413_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action562__ReduceOf_column_ordering_and_options_expr__AtLine_4456_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action564__ReduceOf_index_storing_expression_list_prefix__AtLine_4418_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action563__ReduceOf_index_order_by_and_options_prefix__AtLine_4471_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action565__ReduceOf_index_storing_expression_list_prefix__AtLine_4422_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action564__ReduceOf_index_order_by_and_options_prefix__AtLine_4475_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action566__ReduceOf_index_storing_expression_list__AtLine_4429_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action566__ReduceOf_opt_with_column_options__AtLine_4486_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action567__ReduceOf_index_storing_list__AtLine_4435_Column_43([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action567__ReduceOf_opt_with_column_options__AtLine_4489_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action569__ReduceOf_opt_index_storing_list__AtLine_4442_Column_13([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action568__ReduceOf_index_all_columns__AtLine_4494_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action570__ReduceOf_column_list_prefix__AtLine_4447_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action569__ReduceOf_index_order_by_and_options__AtLine_4508_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action571__ReduceOf_column_list_prefix__AtLine_4451_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action570__ReduceOf_index_order_by_and_options__AtLine_4512_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action572__ReduceOf_column_list__AtLine_4460_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action571__ReduceOf_index_unnest_expression_list__AtLine_4519_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action574__ReduceOf_opt_column_list__AtLine_4467_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action572__ReduceOf_index_unnest_expression_list__AtLine_4524_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action575__ReduceOf_column_with_options__AtLine_4472_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action574__ReduceOf_opt_index_unnest_expression_list__AtLine_4531_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action576__ReduceOf_column_with_options_list_prefix__AtLine_4479_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action575__ReduceOf_index_storing_expression_list_prefix__AtLine_4536_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action577__ReduceOf_column_with_options_list_prefix__AtLine_4483_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action576__ReduceOf_index_storing_expression_list_prefix__AtLine_4540_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action578__ReduceOf_column_with_options_list__AtLine_4490_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action577__ReduceOf_index_storing_expression_list__AtLine_4547_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action580__ReduceOf_opt_column_with_options_list__AtLine_4497_Column_29([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action578__ReduceOf_index_storing_list__AtLine_4553_Column_43([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action581__ReduceOf_grantee_list__AtLine_4502_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action580__ReduceOf_opt_index_storing_list__AtLine_4560_Column_13([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action582__ReduceOf_grantee_list__AtLine_4506_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action581__ReduceOf_column_list_prefix__AtLine_4565_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action583__ReduceOf_grantee_list_with_parens_prefix__AtLine_4513_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action582__ReduceOf_column_list_prefix__AtLine_4569_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action584__ReduceOf_grantee_list_with_parens_prefix__AtLine_4517_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action583__ReduceOf_column_list__AtLine_4578_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action585__ReduceOf_possibly_empty_grantee_list__AtLine_4524_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action585__ReduceOf_opt_column_list__AtLine_4585_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action586__ReduceOf_possibly_empty_grantee_list__AtLine_4528_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action586__ReduceOf_column_with_options__AtLine_4590_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action587__ReduceOf_show_statement__AtLine_4535_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action587__ReduceOf_column_with_options_list_prefix__AtLine_4597_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action588__ReduceOf_show_target__AtLine_4542_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action588__ReduceOf_column_with_options_list_prefix__AtLine_4601_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action589__ReduceOf_show_target__AtLine_4546_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action589__ReduceOf_column_with_options_list__AtLine_4608_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action590__ReduceOf_opt_like_string_literal__AtLine_4553_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action591__ReduceOf_opt_column_with_options_list__AtLine_4615_Column_29([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action591__ReduceOf_opt_like_string_literal__AtLine_4556_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action592__ReduceOf_grantee_list__AtLine_4620_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action592__ReduceOf_opt_like_path_expression__AtLine_4561_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action593__ReduceOf_grantee_list__AtLine_4624_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action593__ReduceOf_opt_like_path_expression__AtLine_4564_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action594__ReduceOf_grantee_list_with_parens_prefix__AtLine_4631_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action594__ReduceOf_opt_clone_table__AtLine_4569_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action595__ReduceOf_grantee_list_with_parens_prefix__AtLine_4635_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action595__ReduceOf_opt_clone_table__AtLine_4572_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action596__ReduceOf_possibly_empty_grantee_list__AtLine_4642_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action596__ReduceOf_opt_copy_table__AtLine_4577_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action597__ReduceOf_possibly_empty_grantee_list__AtLine_4646_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action597__ReduceOf_opt_copy_table__AtLine_4580_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action598__ReduceOf_show_statement__AtLine_4653_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action598__ReduceOf_all_or_distinct__AtLine_4584_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action599__ReduceOf_show_target__AtLine_4660_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action599__ReduceOf_all_or_distinct__AtLine_4588_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action600__ReduceOf_show_target__AtLine_4664_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action600__ReduceOf_query_set_operation_type__AtLine_4598_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action601__ReduceOf_opt_like_string_literal__AtLine_4671_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action601__ReduceOf_query_set_operation_type__AtLine_4603_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action602__ReduceOf_opt_like_string_literal__AtLine_4674_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action602__ReduceOf_query_set_operation_type__AtLine_4608_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action603__ReduceOf_opt_like_path_expression__AtLine_4679_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action605__ReduceOf_parenthesized_query__AtLine_4621_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action604__ReduceOf_opt_like_path_expression__AtLine_4682_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action608__ReduceOf_bad_keyword_after_from_query__AtLine_4636_Column_13([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action605__ReduceOf_opt_clone_table__AtLine_4687_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action609__ReduceOf_bad_keyword_after_from_query__AtLine_4637_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action606__ReduceOf_opt_clone_table__AtLine_4690_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action610__ReduceOf_bad_keyword_after_from_query__AtLine_4638_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action607__ReduceOf_opt_copy_table__AtLine_4695_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action611__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4643_Column_13([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action608__ReduceOf_opt_copy_table__AtLine_4698_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action612__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4644_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action609__ReduceOf_all_or_distinct__AtLine_4702_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action613__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4645_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action610__ReduceOf_all_or_distinct__AtLine_4706_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action614__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4646_Column_27([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action611__ReduceOf_query_set_operation_type__AtLine_4716_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action615__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4647_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action612__ReduceOf_query_set_operation_type__AtLine_4721_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action616__ReduceOf_query_without_pipe_operators__AtLine_4657_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action613__ReduceOf_query_set_operation_type__AtLine_4726_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action617__ReduceOf_query_without_pipe_operators__AtLine_4663_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action616__ReduceOf_parenthesized_query__AtLine_4739_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action618__ReduceOf_query_without_pipe_operators__AtLine_4671_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action619__ReduceOf_bad_keyword_after_from_query__AtLine_4757_Column_13([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action619__ReduceOf_query_without_pipe_operators__AtLine_4687_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action620__ReduceOf_bad_keyword_after_from_query__AtLine_4758_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action620__ReduceOf_query_without_pipe_operators__AtLine_4711_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action621__ReduceOf_bad_keyword_after_from_query__AtLine_4759_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action621__ReduceOf_query_without_pipe_operators__AtLine_4720_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action622__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4764_Column_13([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action622__ReduceOf_query_without_pipe_operators__AtLine_4732_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action623__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4765_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action624__ReduceOf_query__AtLine_4748_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action624__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4766_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action635__ReduceOf_subpipeline_prefix_invalid__AtLine_4782_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action625__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4767_Column_27([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action636__ReduceOf_subpipeline_prefix_invalid__AtLine_4788_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action626__ReduceOf_bad_keyword_after_from_query_allows_parens__AtLine_4768_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action637__ReduceOf_subpipeline_prefix_valid__AtLine_4796_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action627__ReduceOf_query_without_pipe_operators__AtLine_4778_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action638__ReduceOf_subpipeline_prefix_valid__AtLine_4800_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action628__ReduceOf_query_without_pipe_operators__AtLine_4784_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action639__ReduceOf_subpipeline_valid__AtLine_4807_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action629__ReduceOf_query_without_pipe_operators__AtLine_4792_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action643__ReduceOf_opt_subpipeline__AtLine_4820_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action630__ReduceOf_query_without_pipe_operators__AtLine_4808_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action644__ReduceOf_pipe_and_pipe_operator__AtLine_4825_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action631__ReduceOf_query_without_pipe_operators__AtLine_4829_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action673__ReduceOf_pipe_where__AtLine_4864_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action632__ReduceOf_query_without_pipe_operators__AtLine_4838_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action674__ReduceOf_pipe_select__AtLine_4871_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action633__ReduceOf_query_without_pipe_operators__AtLine_4850_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action675__ReduceOf_pipe_limit_offset__AtLine_4878_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action635__ReduceOf_query__AtLine_4866_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action676__ReduceOf_pipe_order_by__AtLine_4885_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action646__ReduceOf_subpipeline_prefix_invalid__AtLine_4900_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action677__ReduceOf_pipe_extend__AtLine_4892_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action647__ReduceOf_subpipeline_prefix_invalid__AtLine_4906_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action680__ReduceOf_pipe_selection_item_with_order__AtLine_4910_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action648__ReduceOf_subpipeline_prefix_valid__AtLine_4914_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action682__ReduceOf_pipe_selection_item_list_no_comma__AtLine_4920_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action649__ReduceOf_subpipeline_prefix_valid__AtLine_4918_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action683__ReduceOf_pipe_selection_item_list_no_comma__AtLine_4924_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action650__ReduceOf_subpipeline_valid__AtLine_4925_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action684__ReduceOf_pipe_selection_item_list_no_comma_with_order__AtLine_4931_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action654__ReduceOf_opt_subpipeline__AtLine_4938_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action685__ReduceOf_pipe_selection_item_list_no_comma_with_order__AtLine_4936_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action655__ReduceOf_pipe_and_pipe_operator__AtLine_4943_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action686__ReduceOf_pipe_selection_item_list__AtLine_4945_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action689__ReduceOf_pipe_where__AtLine_4987_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action687__ReduceOf_pipe_selection_item_list_with_order__AtLine_4954_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action690__ReduceOf_pipe_select__AtLine_4994_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action688__ReduceOf_pipe_selection_item_list_with_order_or_empty__AtLine_4961_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action691__ReduceOf_pipe_limit_offset__AtLine_5002_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action689__ReduceOf_pipe_selection_item_list_with_order_or_empty__AtLine_4965_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action692__ReduceOf_pipe_order_by__AtLine_5009_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action690__ReduceOf_pipe_rename_item__AtLine_4972_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action693__ReduceOf_pipe_extend__AtLine_5017_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action691__ReduceOf_pipe_rename_item__AtLine_4976_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action696__ReduceOf_pipe_selection_item_with_order__AtLine_5035_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action692__ReduceOf_pipe_rename_item_list__AtLine_4987_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action698__ReduceOf_pipe_selection_item_list_no_comma__AtLine_5045_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action693__ReduceOf_pipe_rename_item_list__AtLine_4991_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action699__ReduceOf_pipe_selection_item_list_no_comma__AtLine_5049_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action694__ReduceOf_pipe_rename__AtLine_4998_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action700__ReduceOf_pipe_selection_item_list_no_comma_with_order__AtLine_5056_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action697__ReduceOf_pipe_aggregate__AtLine_5017_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action701__ReduceOf_pipe_selection_item_list_no_comma_with_order__AtLine_5061_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action698__ReduceOf_pipe_group_by__AtLine_5028_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action702__ReduceOf_pipe_selection_item_list__AtLine_5070_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action699__ReduceOf_pipe_set_operation_base__AtLine_5038_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action703__ReduceOf_pipe_selection_item_list_with_order__AtLine_5079_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action700__ReduceOf_pipe_set_operation_base__AtLine_5043_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action704__ReduceOf_pipe_selection_item_list_with_order_or_empty__AtLine_5086_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action703__ReduceOf_subquery_or_subpipeline__AtLine_5059_Column_37([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action705__ReduceOf_pipe_selection_item_list_with_order_or_empty__AtLine_5090_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action704__ReduceOf_pipe_recursive_union_no_alias__AtLine_5068_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action706__ReduceOf_pipe_rename_item__AtLine_5097_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action705__ReduceOf_pipe_recursive_union__AtLine_5077_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action707__ReduceOf_pipe_rename_item__AtLine_5101_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action706__ReduceOf_pipe_recursive_union__AtLine_5081_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action708__ReduceOf_pipe_rename_item_list__AtLine_5112_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action707__ReduceOf_pipe_join__AtLine_5092_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action709__ReduceOf_pipe_rename_item_list__AtLine_5116_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action708__ReduceOf_pipe_call__AtLine_5125_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action710__ReduceOf_pipe_rename__AtLine_5123_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action709__ReduceOf_pipe_window__AtLine_5132_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action713__ReduceOf_pipe_aggregate__AtLine_5142_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action710__ReduceOf_pipe_distinct__AtLine_5142_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action714__ReduceOf_pipe_group_by__AtLine_5153_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action711__ReduceOf_pipe_tablesample__AtLine_5149_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action715__ReduceOf_pipe_set_operation_base__AtLine_5163_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action712__ReduceOf_pipe_as__AtLine_5156_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action716__ReduceOf_pipe_set_operation_base__AtLine_5168_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action713__ReduceOf_pipe_static_describe__AtLine_5164_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action719__ReduceOf_subquery_or_subpipeline__AtLine_5184_Column_37([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action714__ReduceOf_pipe_assert_base__AtLine_5171_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action720__ReduceOf_pipe_recursive_union_no_alias__AtLine_5194_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action715__ReduceOf_pipe_assert_base__AtLine_5175_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action721__ReduceOf_pipe_recursive_union__AtLine_5203_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action716__ReduceOf_pipe_assert__AtLine_5182_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action722__ReduceOf_pipe_recursive_union__AtLine_5207_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action717__ReduceOf_pipe_log__AtLine_5189_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action723__ReduceOf_pipe_join__AtLine_5218_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action718__ReduceOf_identifier_in_pipe_drop__AtLine_5196_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action724__ReduceOf_pipe_call__AtLine_5251_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action719__ReduceOf_identifier_in_pipe_drop__AtLine_5200_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action725__ReduceOf_pipe_window__AtLine_5258_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action720__ReduceOf_identifier_list_in_pipe_drop__AtLine_5215_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action726__ReduceOf_pipe_distinct__AtLine_5268_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action721__ReduceOf_identifier_list_in_pipe_drop__AtLine_5219_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action727__ReduceOf_pipe_tablesample__AtLine_5275_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action722__ReduceOf_pipe_drop__AtLine_5226_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action728__ReduceOf_pipe_as__AtLine_5282_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action723__ReduceOf_pipe_set_item__AtLine_5233_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action729__ReduceOf_pipe_static_describe__AtLine_5290_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action724__ReduceOf_pipe_set_item__AtLine_5237_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action730__ReduceOf_pipe_assert_base__AtLine_5297_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action725__ReduceOf_pipe_set_item_list__AtLine_5250_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action731__ReduceOf_pipe_assert_base__AtLine_5301_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action726__ReduceOf_pipe_set_item_list__AtLine_5254_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action732__ReduceOf_pipe_assert__AtLine_5308_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action727__ReduceOf_pipe_set__AtLine_5261_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action733__ReduceOf_pipe_log__AtLine_5315_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action728__ReduceOf_pipe_pivot__AtLine_5268_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action734__ReduceOf_identifier_in_pipe_drop__AtLine_5322_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action729__ReduceOf_pipe_unpivot__AtLine_5277_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action735__ReduceOf_identifier_in_pipe_drop__AtLine_5326_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action731__ReduceOf_pipe_if__AtLine_5287_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action736__ReduceOf_identifier_list_in_pipe_drop__AtLine_5341_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action732__ReduceOf_pipe_if_prefix__AtLine_5294_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action737__ReduceOf_identifier_list_in_pipe_drop__AtLine_5345_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action733__ReduceOf_pipe_if_prefix__AtLine_5299_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action738__ReduceOf_pipe_drop__AtLine_5352_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action734__ReduceOf_pipe_if_elseif__AtLine_5306_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action739__ReduceOf_pipe_set_item__AtLine_5359_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action735__ReduceOf_pipe_if_elseif__AtLine_5310_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action740__ReduceOf_pipe_set_item__AtLine_5363_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action736__ReduceOf_pipe_elseif__AtLine_5319_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action741__ReduceOf_pipe_set_item_list__AtLine_5376_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action737__ReduceOf_pipe_else__AtLine_5330_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action742__ReduceOf_pipe_set_item_list__AtLine_5380_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action738__ReduceOf_pipe_fork__AtLine_5340_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action743__ReduceOf_pipe_set__AtLine_5387_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action739__ReduceOf_pipe_fork_impl__AtLine_5347_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action744__ReduceOf_pipe_pivot__AtLine_5394_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action740__ReduceOf_pipe_fork_impl__AtLine_5351_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action745__ReduceOf_pipe_unpivot__AtLine_5403_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action741__ReduceOf_pipe_export_data__AtLine_5358_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action747__ReduceOf_pipe_if__AtLine_5413_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action742__ReduceOf_pipe_export_data__AtLine_5362_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action748__ReduceOf_pipe_if_prefix__AtLine_5420_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action743__ReduceOf_opt_corresponding_outer_mode__AtLine_5370_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action749__ReduceOf_pipe_if_prefix__AtLine_5425_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action744__ReduceOf_opt_corresponding_outer_mode__AtLine_5375_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action750__ReduceOf_pipe_if_elseif__AtLine_5432_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action745__ReduceOf_opt_corresponding_outer_mode__AtLine_5380_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action751__ReduceOf_pipe_if_elseif__AtLine_5436_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action746__ReduceOf_opt_corresponding_outer_mode__AtLine_5385_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action752__ReduceOf_pipe_elseif__AtLine_5445_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action747__ReduceOf_opt_corresponding_outer_mode__AtLine_5390_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action753__ReduceOf_pipe_else__AtLine_5456_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action748__ReduceOf_opt_strict__AtLine_5397_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action754__ReduceOf_pipe_fork__AtLine_5466_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action749__ReduceOf_opt_strict__AtLine_5402_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action755__ReduceOf_pipe_fork_impl__AtLine_5473_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action750__ReduceOf_opt_column_match_suffix__AtLine_5409_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action756__ReduceOf_pipe_fork_impl__AtLine_5477_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action751__ReduceOf_opt_column_match_suffix__AtLine_5416_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action757__ReduceOf_pipe_tee__AtLine_5484_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action752__ReduceOf_opt_column_match_suffix__AtLine_5423_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action758__ReduceOf_pipe_tee__AtLine_5488_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action753__ReduceOf_opt_column_match_suffix__AtLine_5430_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action759__ReduceOf_pipe_tee_impl__AtLine_5495_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action754__ReduceOf_opt_column_match_suffix__AtLine_5437_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action760__ReduceOf_pipe_tee_impl__AtLine_5499_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action755__ReduceOf_query_set_operation_prefix__AtLine_5451_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action761__ReduceOf_pipe_with__AtLine_5506_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action756__ReduceOf_query_set_operation_prefix__AtLine_5458_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action762__ReduceOf_pipe_export_data__AtLine_5513_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action757__ReduceOf_query_set_operation_prefix__AtLine_5463_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action763__ReduceOf_pipe_export_data__AtLine_5517_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action758__ReduceOf_query_set_operation_prefix__AtLine_5473_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action764__ReduceOf_pipe_create_table__AtLine_5525_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action759__ReduceOf_set_operation_metadata__AtLine_5489_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action765__ReduceOf_pipe_create_table__AtLine_5529_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action760__ReduceOf_query_set_operation__AtLine_5515_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action766__ReduceOf_pipe_insert__AtLine_5537_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action762__ReduceOf_query_primary__AtLine_5523_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action767__ReduceOf_pipe_match_recognize__AtLine_5544_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action763__ReduceOf_query_primary__AtLine_5527_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action768__ReduceOf_opt_corresponding_outer_mode__AtLine_5551_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action764__ReduceOf_select_clause__AtLine_5549_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action769__ReduceOf_opt_corresponding_outer_mode__AtLine_5556_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action765__ReduceOf_select_clause__AtLine_5559_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action770__ReduceOf_opt_corresponding_outer_mode__AtLine_5561_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action766__ReduceOf_select__AtLine_5568_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action771__ReduceOf_opt_corresponding_outer_mode__AtLine_5566_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action767__ReduceOf_pre_select_with__AtLine_5577_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action772__ReduceOf_opt_corresponding_outer_mode__AtLine_5571_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action768__ReduceOf_opt_select_with__AtLine_5582_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action773__ReduceOf_opt_strict__AtLine_5578_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action769__ReduceOf_opt_select_with__AtLine_5586_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action774__ReduceOf_opt_strict__AtLine_5583_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action770__ReduceOf_opt_select_with__AtLine_5589_Column_23([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action775__ReduceOf_opt_column_match_suffix__AtLine_5590_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action771__ReduceOf_opt_select_as_clause__AtLine_5596_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action776__ReduceOf_opt_column_match_suffix__AtLine_5597_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action772__ReduceOf_opt_select_as_clause__AtLine_5602_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action777__ReduceOf_opt_column_match_suffix__AtLine_5604_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action773__ReduceOf_opt_select_as_clause__AtLine_5622_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action778__ReduceOf_opt_column_match_suffix__AtLine_5611_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action778__ReduceOf_identifier_in_hints__AtLine_5634_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action779__ReduceOf_opt_column_match_suffix__AtLine_5618_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action779__ReduceOf_hint_entry__AtLine_5641_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action780__ReduceOf_query_set_operation_prefix__AtLine_5632_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action780__ReduceOf_hint_entry__AtLine_5645_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action781__ReduceOf_query_set_operation_prefix__AtLine_5639_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action781__ReduceOf_hint_with_body_prefix__AtLine_5652_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action782__ReduceOf_query_set_operation_prefix__AtLine_5644_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action782__ReduceOf_hint_with_body_prefix__AtLine_5656_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action783__ReduceOf_query_set_operation_prefix__AtLine_5654_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action783__ReduceOf_hint_with_body_prefix__AtLine_5660_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action784__ReduceOf_set_operation_metadata__AtLine_5670_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action784__ReduceOf_hint_with_body__AtLine_5667_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action785__ReduceOf_query_set_operation__AtLine_5696_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action785__ReduceOf_hint__AtLine_5677_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action787__ReduceOf_query_primary__AtLine_5704_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action786__ReduceOf_hint__AtLine_5683_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action788__ReduceOf_query_primary__AtLine_5708_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action787__ReduceOf_opt_all_or_distinct__AtLine_5692_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action789__ReduceOf_select_clause__AtLine_5730_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action788__ReduceOf_opt_all_or_distinct__AtLine_5693_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action790__ReduceOf_select_clause__AtLine_5740_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action789__ReduceOf_opt_all_or_distinct__AtLine_5694_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action791__ReduceOf_select__AtLine_5749_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action790__ReduceOf_select_list_prefix__AtLine_5699_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action792__ReduceOf_pre_select_with__AtLine_5758_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action791__ReduceOf_select_list_prefix__AtLine_5703_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action793__ReduceOf_opt_select_with__AtLine_5763_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action792__ReduceOf_select_list__AtLine_5710_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action794__ReduceOf_opt_select_with__AtLine_5767_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action793__ReduceOf_select_list__AtLine_5715_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action795__ReduceOf_opt_select_with__AtLine_5770_Column_23([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action794__ReduceOf_star_except_list_prefix__AtLine_5722_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action796__ReduceOf_opt_select_as_clause__AtLine_5777_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action795__ReduceOf_star_except_list_prefix__AtLine_5726_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action797__ReduceOf_opt_select_as_clause__AtLine_5783_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action796__ReduceOf_star_except_list__AtLine_5733_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action798__ReduceOf_opt_select_as_clause__AtLine_5806_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action797__ReduceOf_star_replace_item__AtLine_5740_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action803__ReduceOf_identifier_in_hints__AtLine_5818_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action798__ReduceOf_star_modifiers_with_replace_prefix__AtLine_5747_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action804__ReduceOf_hint_entry__AtLine_5825_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action799__ReduceOf_star_modifiers_with_replace_prefix__AtLine_5751_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action805__ReduceOf_hint_entry__AtLine_5829_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action800__ReduceOf_star_modifiers_with_replace_prefix__AtLine_5755_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action806__ReduceOf_hint_with_body_prefix__AtLine_5836_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action801__ReduceOf_star_modifiers__AtLine_5762_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action807__ReduceOf_hint_with_body_prefix__AtLine_5840_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action802__ReduceOf_star_modifiers__AtLine_5766_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action808__ReduceOf_hint_with_body_prefix__AtLine_5844_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action806__ReduceOf_select_column_expr__AtLine_5780_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action809__ReduceOf_hint_with_body__AtLine_5851_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action808__ReduceOf_select_column_expr__AtLine_5785_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action810__ReduceOf_hint__AtLine_5861_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action809__ReduceOf_select_list_prefix_with_as_aliases__AtLine_5793_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action811__ReduceOf_hint__AtLine_5867_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action810__ReduceOf_select_list_prefix_with_as_aliases__AtLine_5797_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action812__ReduceOf_opt_all_or_distinct__AtLine_5876_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action811__ReduceOf_select_column_expr_with_as_alias__AtLine_5804_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action813__ReduceOf_opt_all_or_distinct__AtLine_5877_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action812__ReduceOf_select_column_dot_star__AtLine_5817_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action814__ReduceOf_opt_all_or_distinct__AtLine_5878_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action813__ReduceOf_select_column_dot_star__AtLine_5825_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action815__ReduceOf_select_list_prefix__AtLine_5883_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action814__ReduceOf_select_column_star__AtLine_5836_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action816__ReduceOf_select_list_prefix__AtLine_5887_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action815__ReduceOf_select_column_star__AtLine_5842_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action817__ReduceOf_select_list__AtLine_5894_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action816__ReduceOf_opt_as_alias__AtLine_5850_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action818__ReduceOf_select_list__AtLine_5899_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action817__ReduceOf_opt_as_alias__AtLine_5853_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action819__ReduceOf_star_except_list_prefix__AtLine_5906_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action818__ReduceOf_opt_as_alias_with_required_as__AtLine_5858_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action820__ReduceOf_star_except_list_prefix__AtLine_5910_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action819__ReduceOf_opt_as_alias_with_required_as__AtLine_5861_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action821__ReduceOf_star_except_list__AtLine_5917_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action820__ReduceOf_opt_as_or_into_alias__AtLine_5866_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action822__ReduceOf_star_replace_item__AtLine_5924_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action821__ReduceOf_opt_as_or_into_alias__AtLine_5870_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action823__ReduceOf_star_modifiers_with_replace_prefix__AtLine_5931_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action822__ReduceOf_opt_as_or_into_alias__AtLine_5873_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action824__ReduceOf_star_modifiers_with_replace_prefix__AtLine_5935_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action825__ReduceOf_opt_natural__AtLine_5883_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action825__ReduceOf_star_modifiers_with_replace_prefix__AtLine_5939_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action826__ReduceOf_opt_natural__AtLine_5884_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action826__ReduceOf_star_modifiers__AtLine_5946_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action830__ReduceOf_opt_int_literal_or_parameter__AtLine_5891_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action827__ReduceOf_star_modifiers__AtLine_5950_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action834__ReduceOf_cast_int_literal_or_parameter__AtLine_5901_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action831__ReduceOf_select_column_expr__AtLine_5964_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action837__ReduceOf_repeatable_clause__AtLine_5915_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action833__ReduceOf_select_column_expr__AtLine_5969_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action840__ReduceOf_sample_size_unit__AtLine_5927_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action834__ReduceOf_select_list_prefix_with_as_aliases__AtLine_5977_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action841__ReduceOf_sample_size_unit__AtLine_5928_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action835__ReduceOf_select_list_prefix_with_as_aliases__AtLine_5981_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action842__ReduceOf_sample_size__AtLine_5933_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action836__ReduceOf_select_column_expr_with_as_alias__AtLine_5988_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action844__ReduceOf_opt_repeatable_clause__AtLine_5942_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action837__ReduceOf_select_column_dot_star__AtLine_6001_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action845__ReduceOf_opt_sample_clause_suffix__AtLine_5949_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action838__ReduceOf_select_column_dot_star__AtLine_6009_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action846__ReduceOf_opt_sample_clause_suffix__AtLine_5953_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action839__ReduceOf_select_column_star__AtLine_6020_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action847__ReduceOf_opt_sample_clause_suffix__AtLine_5958_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action840__ReduceOf_select_column_star__AtLine_6026_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action848__ReduceOf_opt_sample_clause_suffix__AtLine_5964_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action841__ReduceOf_opt_as_alias__AtLine_6034_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action849__ReduceOf_opt_sample_clause_suffix__AtLine_5969_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action842__ReduceOf_opt_as_alias__AtLine_6037_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action850__ReduceOf_opt_graph_sample_clause_suffix__AtLine_5977_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action843__ReduceOf_opt_as_alias_with_required_as__AtLine_6042_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action851__ReduceOf_opt_graph_sample_clause_suffix__AtLine_5981_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action844__ReduceOf_opt_as_alias_with_required_as__AtLine_6045_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action852__ReduceOf_opt_graph_sample_clause_suffix__AtLine_5986_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action845__ReduceOf_opt_as_or_into_alias__AtLine_6050_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action853__ReduceOf_opt_graph_sample_clause_suffix__AtLine_5991_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action846__ReduceOf_opt_as_or_into_alias__AtLine_6054_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action854__ReduceOf_sample_clause__AtLine_5996_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action847__ReduceOf_opt_as_or_into_alias__AtLine_6057_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action855__ReduceOf_graph_sample_clause__AtLine_6003_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action850__ReduceOf_opt_natural__AtLine_6067_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action856__ReduceOf_pivot_expression__AtLine_6009_Column_27([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action851__ReduceOf_opt_natural__AtLine_6068_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action857__ReduceOf_pivot_expression_list__AtLine_6015_Column_20([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action855__ReduceOf_opt_int_literal_or_parameter__AtLine_6075_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action858__ReduceOf_pivot_expression_list__AtLine_6018_Column_48([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action859__ReduceOf_cast_int_literal_or_parameter__AtLine_6085_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action859__ReduceOf_pivot_value__AtLine_6024_Column_27([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action862__ReduceOf_repeatable_clause__AtLine_6099_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action860__ReduceOf_pivot_value_list__AtLine_6029_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action865__ReduceOf_sample_size_unit__AtLine_6111_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action861__ReduceOf_pivot_value_list__AtLine_6032_Column_38([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action866__ReduceOf_sample_size_unit__AtLine_6112_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action862__ReduceOf_pivot_clause__AtLine_6039_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action867__ReduceOf_sample_size__AtLine_6117_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action863__ReduceOf_opt_as_string_or_integer__AtLine_6048_Column_24([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action869__ReduceOf_opt_repeatable_clause__AtLine_6126_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action864__ReduceOf_opt_as_string_or_integer__AtLine_6051_Column_27([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action870__ReduceOf_opt_sample_clause_suffix__AtLine_6133_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action865__ReduceOf_opt_as_string_or_integer__AtLine_6054_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action871__ReduceOf_opt_sample_clause_suffix__AtLine_6137_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action866__ReduceOf_path_expression_list__AtLine_6058_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action872__ReduceOf_opt_sample_clause_suffix__AtLine_6142_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action867__ReduceOf_path_expression_list__AtLine_6062_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action873__ReduceOf_opt_sample_clause_suffix__AtLine_6148_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action868__ReduceOf_path_expression_list_with_opt_parens__AtLine_6067_Column_31([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action874__ReduceOf_opt_sample_clause_suffix__AtLine_6153_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action869__ReduceOf_path_expression_list_with_opt_parens__AtLine_6071_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action875__ReduceOf_opt_graph_sample_clause_suffix__AtLine_6161_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action870__ReduceOf_path_expression_list_prefix__AtLine_6077_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action876__ReduceOf_opt_graph_sample_clause_suffix__AtLine_6165_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action871__ReduceOf_path_expression_list_prefix__AtLine_6081_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action877__ReduceOf_opt_graph_sample_clause_suffix__AtLine_6170_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action872__ReduceOf_path_expression_list_with_parens__AtLine_6088_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action878__ReduceOf_opt_graph_sample_clause_suffix__AtLine_6175_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action874__ReduceOf_opt_path_expression_list_with_parens__AtLine_6095_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action879__ReduceOf_sample_clause__AtLine_6180_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action875__ReduceOf_unpivot_in_item__AtLine_6099_Column_65([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action880__ReduceOf_graph_sample_clause__AtLine_6187_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action876__ReduceOf_unpivot_in_item_list_prefix__AtLine_6104_Column_23([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action881__ReduceOf_pivot_expression__AtLine_6193_Column_27([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action877__ReduceOf_unpivot_in_item_list_prefix__AtLine_6107_Column_53([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action882__ReduceOf_pivot_expression_list__AtLine_6199_Column_20([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action878__ReduceOf_unpivot_in_item_list__AtLine_6112_Column_35([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action883__ReduceOf_pivot_expression_list__AtLine_6202_Column_48([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action879__ReduceOf_opt_unpivot_nulls_filter__AtLine_6117_Column_23([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action884__ReduceOf_pivot_value__AtLine_6208_Column_27([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action880__ReduceOf_opt_unpivot_nulls_filter__AtLine_6118_Column_25([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action885__ReduceOf_pivot_value_list__AtLine_6213_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action881__ReduceOf_opt_unpivot_nulls_filter__AtLine_6119_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action886__ReduceOf_pivot_value_list__AtLine_6216_Column_38([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action882__ReduceOf_unpivot_clause__AtLine_6125_Column_56([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action887__ReduceOf_pivot_clause__AtLine_6223_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action883__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6144_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action888__ReduceOf_opt_as_string_or_integer__AtLine_6232_Column_24([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action884__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6149_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action889__ReduceOf_opt_as_string_or_integer__AtLine_6235_Column_27([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action885__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6154_Column_47([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action890__ReduceOf_opt_as_string_or_integer__AtLine_6238_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action886__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6160_Column_49([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action891__ReduceOf_path_expression_list__AtLine_6242_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action887__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6166_Column_48([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action892__ReduceOf_path_expression_list__AtLine_6246_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action888__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6172_Column_42([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action893__ReduceOf_path_expression_list_with_opt_parens__AtLine_6251_Column_31([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action889__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6177_Column_44([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action894__ReduceOf_path_expression_list_with_opt_parens__AtLine_6255_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action890__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6182_Column_43([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action895__ReduceOf_path_expression_list_prefix__AtLine_6261_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action891__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6188_Column_31([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action896__ReduceOf_path_expression_list_prefix__AtLine_6265_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action892__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6193_Column_33([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action897__ReduceOf_path_expression_list_with_parens__AtLine_6272_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action893__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6198_Column_32([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action899__ReduceOf_opt_path_expression_list_with_parens__AtLine_6279_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action894__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6204_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action900__ReduceOf_unpivot_in_item__AtLine_6283_Column_65([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action895__ReduceOf_match_recognize_clause__AtLine_6221_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action901__ReduceOf_unpivot_in_item_list_prefix__AtLine_6288_Column_23([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action896__ReduceOf_measures_clause__AtLine_6231_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action902__ReduceOf_unpivot_in_item_list_prefix__AtLine_6291_Column_53([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action897__ReduceOf_opt_after_match_skip_clause__AtLine_6237_Column_10([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action903__ReduceOf_unpivot_in_item_list__AtLine_6296_Column_35([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action898__ReduceOf_opt_after_match_skip_clause__AtLine_6239_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action904__ReduceOf_opt_unpivot_nulls_filter__AtLine_6301_Column_23([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action899__ReduceOf_skip_to_target__AtLine_6245_Column_23([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action905__ReduceOf_opt_unpivot_nulls_filter__AtLine_6302_Column_25([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action900__ReduceOf_skip_to_target__AtLine_6251_Column_23([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action906__ReduceOf_opt_unpivot_nulls_filter__AtLine_6303_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action902__ReduceOf_row_pattern_expr__AtLine_6262_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action907__ReduceOf_unpivot_clause__AtLine_6309_Column_56([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action903__ReduceOf_row_pattern_expr__AtLine_6267_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action908__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6328_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action905__ReduceOf_row_pattern_concatenation_or_empty__AtLine_6292_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action909__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6333_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action907__ReduceOf_row_pattern_concatenation__AtLine_6302_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action910__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6338_Column_47([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action911__ReduceOf_row_pattern_anchor__AtLine_6316_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action911__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6344_Column_49([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action912__ReduceOf_row_pattern_anchor__AtLine_6322_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action912__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6350_Column_48([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action913__ReduceOf_quantified_row_pattern__AtLine_6331_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action913__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6356_Column_42([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action914__ReduceOf_row_pattern_primary__AtLine_6338_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action914__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6361_Column_44([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action915__ReduceOf_row_pattern_primary__AtLine_6342_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action915__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6366_Column_43([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action916__ReduceOf_row_pattern_quantifier__AtLine_6353_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action916__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6372_Column_31([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action917__ReduceOf_row_pattern_quantifier__AtLine_6357_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action917__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6377_Column_33([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action918__ReduceOf_row_pattern_quantifier__AtLine_6362_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action918__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6382_Column_32([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action919__ReduceOf_potentially_reluctant_quantifier__AtLine_6371_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action919__ReduceOf_opt_pivot_or_unpivot_clause_and_alias__AtLine_6388_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action920__ReduceOf_potentially_reluctant_quantifier__AtLine_6377_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action920__ReduceOf_match_recognize_clause__AtLine_6405_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action921__ReduceOf_potentially_reluctant_quantifier__AtLine_6383_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action921__ReduceOf_measures_clause__AtLine_6415_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action922__ReduceOf_potentially_reluctant_quantifier__AtLine_6390_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action922__ReduceOf_opt_after_match_skip_clause__AtLine_6421_Column_10([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action923__ReduceOf_table_subquery__AtLine_6400_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action923__ReduceOf_opt_after_match_skip_clause__AtLine_6423_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action924__ReduceOf_table_clause_no_keyword__AtLine_6420_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action924__ReduceOf_skip_to_target__AtLine_6429_Column_23([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action925__ReduceOf_table_clause_no_keyword__AtLine_6424_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action925__ReduceOf_skip_to_target__AtLine_6435_Column_23([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action926__ReduceOf_table_clause_reserved__AtLine_6431_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action927__ReduceOf_row_pattern_expr__AtLine_6446_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action927__ReduceOf_table_clause_unreserved__AtLine_6438_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action928__ReduceOf_row_pattern_expr__AtLine_6451_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action930__ReduceOf_model_clause__AtLine_6447_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action930__ReduceOf_row_pattern_concatenation_or_empty__AtLine_6476_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action931__ReduceOf_connection_clause__AtLine_6454_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action932__ReduceOf_row_pattern_concatenation__AtLine_6486_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action932__ReduceOf_descriptor_column__AtLine_6461_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action936__ReduceOf_row_pattern_anchor__AtLine_6500_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action933__ReduceOf_descriptor_column_list__AtLine_6468_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action937__ReduceOf_row_pattern_anchor__AtLine_6506_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action934__ReduceOf_descriptor_column_list__AtLine_6472_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action938__ReduceOf_quantified_row_pattern__AtLine_6515_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action935__ReduceOf_descriptor_argument__AtLine_6479_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action939__ReduceOf_row_pattern_primary__AtLine_6522_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action936__ReduceOf_tvf_argument__AtLine_6486_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action940__ReduceOf_row_pattern_primary__AtLine_6526_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action937__ReduceOf_tvf_argument__AtLine_6490_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action941__ReduceOf_row_pattern_quantifier__AtLine_6537_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action938__ReduceOf_tvf_argument__AtLine_6494_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action942__ReduceOf_row_pattern_quantifier__AtLine_6541_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action939__ReduceOf_tvf_argument__AtLine_6498_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action943__ReduceOf_row_pattern_quantifier__AtLine_6546_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action940__ReduceOf_tvf_argument__AtLine_6502_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action944__ReduceOf_potentially_reluctant_quantifier__AtLine_6555_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action941__ReduceOf_tvf_argument__AtLine_6506_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action945__ReduceOf_potentially_reluctant_quantifier__AtLine_6561_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action942__ReduceOf_tvf_argument__AtLine_6510_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action946__ReduceOf_potentially_reluctant_quantifier__AtLine_6567_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action943__ReduceOf_tvf_argument__AtLine_6518_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action947__ReduceOf_potentially_reluctant_quantifier__AtLine_6574_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action944__ReduceOf_tvf_argument__AtLine_6527_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action948__ReduceOf_table_subquery__AtLine_6584_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action945__ReduceOf_tvf_argument__AtLine_6536_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action949__ReduceOf_table_clause_no_keyword__AtLine_6604_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action946__ReduceOf_tvf_argument__AtLine_6544_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action950__ReduceOf_table_clause_no_keyword__AtLine_6608_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action947__ReduceOf_tvf_prefix_no_args__AtLine_6555_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action951__ReduceOf_table_clause_reserved__AtLine_6615_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action948__ReduceOf_tvf_prefix_no_args__AtLine_6559_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action952__ReduceOf_table_clause_unreserved__AtLine_6622_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action949__ReduceOf_tvf_prefix__AtLine_6568_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action955__ReduceOf_model_clause__AtLine_6631_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action950__ReduceOf_tvf_prefix__AtLine_6572_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action956__ReduceOf_connection_clause__AtLine_6638_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action951__ReduceOf_tvf__AtLine_6579_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action957__ReduceOf_descriptor_column__AtLine_6645_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action952__ReduceOf_tvf__AtLine_6583_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action958__ReduceOf_descriptor_column_list__AtLine_6652_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action953__ReduceOf_tvf_with_suffixes__AtLine_6593_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action959__ReduceOf_descriptor_column_list__AtLine_6656_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action954__ReduceOf_tvf_with_suffixes__AtLine_6604_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action960__ReduceOf_descriptor_argument__AtLine_6663_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action956__ReduceOf_table_path_expression_base__AtLine_6616_Column_47([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action961__ReduceOf_tvf_argument__AtLine_6670_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action957__ReduceOf_table_path_expression_base__AtLine_6618_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action962__ReduceOf_tvf_argument__AtLine_6674_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action958__ReduceOf_table_path_expression_base__AtLine_6625_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action963__ReduceOf_tvf_argument__AtLine_6678_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action959__ReduceOf_table_path_expression_base__AtLine_6632_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action964__ReduceOf_tvf_argument__AtLine_6682_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action960__ReduceOf_table_path_expression_base__AtLine_6639_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action965__ReduceOf_tvf_argument__AtLine_6686_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action961__ReduceOf_table_path_expression__AtLine_6653_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action966__ReduceOf_tvf_argument__AtLine_6690_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action964__ReduceOf_table_primary__AtLine_6704_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action967__ReduceOf_tvf_argument__AtLine_6694_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action967__ReduceOf_table_primary__AtLine_6721_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action968__ReduceOf_tvf_argument__AtLine_6702_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action968__ReduceOf_table_primary__AtLine_6725_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action969__ReduceOf_tvf_argument__AtLine_6711_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action969__ReduceOf_gql_statement__AtLine_6732_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action970__ReduceOf_tvf_argument__AtLine_6720_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action970__ReduceOf_graph_table_query__AtLine_6748_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action971__ReduceOf_tvf_argument__AtLine_6728_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action971__ReduceOf_graph_table_query__AtLine_6757_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action972__ReduceOf_tvf_prefix_no_args__AtLine_6739_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action972__ReduceOf_graph_shape_clause__AtLine_6765_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action973__ReduceOf_tvf_prefix_no_args__AtLine_6743_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action973__ReduceOf_graph_shape_clause__AtLine_6768_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action974__ReduceOf_tvf_prefix__AtLine_6752_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action974__ReduceOf_graph_return_item__AtLine_6773_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action975__ReduceOf_tvf_prefix__AtLine_6756_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action975__ReduceOf_graph_return_item__AtLine_6777_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action976__ReduceOf_tvf__AtLine_6763_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action976__ReduceOf_graph_return_item__AtLine_6782_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action977__ReduceOf_tvf__AtLine_6767_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action977__ReduceOf_graph_return_item_list__AtLine_6791_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action978__ReduceOf_tvf_with_suffixes__AtLine_6777_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action978__ReduceOf_graph_return_item_list__AtLine_6795_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action979__ReduceOf_tvf_with_suffixes__AtLine_6788_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action979__ReduceOf_graph_return_operator__AtLine_6807_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action981__ReduceOf_table_path_expression_base__AtLine_6800_Column_47([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action981__ReduceOf_opt_graph_asc_or_desc__AtLine_6819_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action982__ReduceOf_table_path_expression_base__AtLine_6802_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action982__ReduceOf_opt_graph_asc_or_desc__AtLine_6820_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action983__ReduceOf_table_path_expression_base__AtLine_6809_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action983__ReduceOf_graph_ordering_expression__AtLine_6826_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action984__ReduceOf_table_path_expression_base__AtLine_6816_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action984__ReduceOf_graph_order_by_clause_prefix__AtLine_6836_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action985__ReduceOf_table_path_expression_base__AtLine_6823_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action985__ReduceOf_graph_order_by_clause_prefix__AtLine_6841_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action986__ReduceOf_table_path_expression__AtLine_6837_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action986__ReduceOf_graph_order_by_clause__AtLine_6848_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action989__ReduceOf_table_primary__AtLine_6888_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action987__ReduceOf_opt_graph_order_by_clause__AtLine_6854_Column_35([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action992__ReduceOf_table_primary__AtLine_6905_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action988__ReduceOf_opt_graph_order_by_clause__AtLine_6855_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action993__ReduceOf_table_primary__AtLine_6909_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action989__ReduceOf_graph_order_by_operator__AtLine_6860_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action994__ReduceOf_gql_statement__AtLine_6916_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action990__ReduceOf_graph_page_operator__AtLine_6867_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action995__ReduceOf_graph_table_query__AtLine_6932_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action991__ReduceOf_graph_page_clause__AtLine_6880_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action996__ReduceOf_graph_table_query__AtLine_6941_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action992__ReduceOf_graph_page_clause__AtLine_6887_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action997__ReduceOf_graph_shape_clause__AtLine_6949_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action993__ReduceOf_graph_page_clause__AtLine_6893_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action998__ReduceOf_graph_shape_clause__AtLine_6952_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action994__ReduceOf_graph_page_clause__AtLine_6898_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action999__ReduceOf_graph_return_item__AtLine_6957_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action995__ReduceOf_graph_page_clause__AtLine_6903_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1000__ReduceOf_graph_return_item__AtLine_6961_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action996__ReduceOf_opt_graph_page_clause__AtLine_6910_Column_27([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1001__ReduceOf_graph_return_item__AtLine_6966_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action997__ReduceOf_opt_graph_page_clause__AtLine_6911_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1002__ReduceOf_graph_return_item_list__AtLine_6975_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action998__ReduceOf_graph_match_operator__AtLine_6916_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1003__ReduceOf_graph_return_item_list__AtLine_6979_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action999__ReduceOf_graph_optional_match_operator__AtLine_6923_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1004__ReduceOf_graph_return_operator__AtLine_6991_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1000__ReduceOf_graph_let_operator__AtLine_6932_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1006__ReduceOf_opt_graph_asc_or_desc__AtLine_7003_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1001__ReduceOf_graph_let_variable_definition_list__AtLine_6939_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1007__ReduceOf_opt_graph_asc_or_desc__AtLine_7004_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1002__ReduceOf_graph_let_variable_definition_list__AtLine_6943_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1008__ReduceOf_graph_ordering_expression__AtLine_7010_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1003__ReduceOf_graph_let_variable_definition__AtLine_6950_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1009__ReduceOf_graph_order_by_clause_prefix__AtLine_7020_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1004__ReduceOf_graph_filter_operator__AtLine_6957_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1010__ReduceOf_graph_order_by_clause_prefix__AtLine_7025_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1005__ReduceOf_graph_filter_operator__AtLine_6961_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1011__ReduceOf_graph_order_by_clause__AtLine_7032_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1006__ReduceOf_graph_with_operator__AtLine_6970_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1012__ReduceOf_opt_graph_order_by_clause__AtLine_7038_Column_35([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1007__ReduceOf_graph_for_operator__AtLine_6981_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1013__ReduceOf_opt_graph_order_by_clause__AtLine_7039_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1008__ReduceOf_opt_with_offset_and_alias_with_required_as__AtLine_6989_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1014__ReduceOf_graph_order_by_operator__AtLine_7044_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1009__ReduceOf_opt_with_offset_and_alias_with_required_as__AtLine_6992_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1015__ReduceOf_graph_page_operator__AtLine_7051_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1019__ReduceOf_graph_linear_operator_list__AtLine_7019_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1016__ReduceOf_graph_page_clause__AtLine_7064_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1020__ReduceOf_graph_linear_operator_list__AtLine_7023_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1017__ReduceOf_graph_page_clause__AtLine_7071_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1021__ReduceOf_graph_linear_query_operation__AtLine_7030_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1018__ReduceOf_graph_page_clause__AtLine_7077_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1022__ReduceOf_graph_linear_query_operation__AtLine_7034_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1019__ReduceOf_graph_page_clause__AtLine_7082_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1023__ReduceOf_graph_set_operation_metadata__AtLine_7041_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1020__ReduceOf_graph_page_clause__AtLine_7087_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1024__ReduceOf_graph_composite_query_prefix__AtLine_7054_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1021__ReduceOf_opt_graph_page_clause__AtLine_7094_Column_27([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1025__ReduceOf_graph_composite_query_prefix__AtLine_7062_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1022__ReduceOf_opt_graph_page_clause__AtLine_7095_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1028__ReduceOf_graph_operation_block__AtLine_7075_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1023__ReduceOf_graph_match_operator__AtLine_7100_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1029__ReduceOf_graph_operation_block__AtLine_7080_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1024__ReduceOf_graph_optional_match_operator__AtLine_7107_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1030__ReduceOf_graph_pattern__AtLine_7087_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1025__ReduceOf_graph_let_operator__AtLine_7116_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1031__ReduceOf_graph_path_pattern_list__AtLine_7094_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1026__ReduceOf_graph_let_variable_definition_list__AtLine_7123_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1032__ReduceOf_graph_path_pattern_list__AtLine_7098_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1027__ReduceOf_graph_let_variable_definition_list__AtLine_7127_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1033__ReduceOf_opt_graph_search_prefix__AtLine_7109_Column_10([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1028__ReduceOf_graph_let_variable_definition__AtLine_7134_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1034__ReduceOf_opt_graph_search_prefix__AtLine_7111_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1029__ReduceOf_graph_filter_operator__AtLine_7141_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1035__ReduceOf_opt_graph_search_prefix__AtLine_7116_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1030__ReduceOf_graph_filter_operator__AtLine_7145_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1036__ReduceOf_opt_graph_search_prefix__AtLine_7121_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1031__ReduceOf_graph_with_operator__AtLine_7154_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1037__ReduceOf_opt_graph_search_prefix__AtLine_7126_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1032__ReduceOf_graph_for_operator__AtLine_7165_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1038__ReduceOf_opt_graph_path_mode__AtLine_7133_Column_10([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1033__ReduceOf_opt_with_offset_and_alias_with_required_as__AtLine_7173_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1039__ReduceOf_opt_graph_path_mode__AtLine_7135_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1034__ReduceOf_opt_with_offset_and_alias_with_required_as__AtLine_7176_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1040__ReduceOf_opt_graph_path_mode__AtLine_7140_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1035__ReduceOf_graph_sample_operator__AtLine_7181_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1041__ReduceOf_opt_graph_path_mode__AtLine_7145_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1045__ReduceOf_graph_linear_operator_list__AtLine_7209_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1042__ReduceOf_opt_graph_path_mode__AtLine_7150_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1046__ReduceOf_graph_linear_operator_list__AtLine_7213_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1046__ReduceOf_opt_graph_path_mode_prefix__AtLine_7161_Column_39([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1047__ReduceOf_graph_linear_query_operation__AtLine_7220_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1047__ReduceOf_graph_path_pattern__AtLine_7166_Column_74([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1048__ReduceOf_graph_linear_query_operation__AtLine_7224_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1048__ReduceOf_graph_path_pattern_expr__AtLine_7194_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1049__ReduceOf_graph_set_operation_metadata__AtLine_7231_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1049__ReduceOf_graph_path_pattern_expr__AtLine_7203_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1050__ReduceOf_graph_composite_query_prefix__AtLine_7244_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1052__ReduceOf_graph_path_primary__AtLine_7271_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1051__ReduceOf_graph_composite_query_prefix__AtLine_7252_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1053__ReduceOf_graph_path_primary__AtLine_7275_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1054__ReduceOf_graph_operation_block__AtLine_7265_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1054__ReduceOf_opt_path_variable_assignment__AtLine_7282_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1055__ReduceOf_graph_operation_block__AtLine_7270_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1055__ReduceOf_opt_path_variable_assignment__AtLine_7285_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1056__ReduceOf_graph_pattern__AtLine_7277_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1056__ReduceOf_graph_parenthesized_path_pattern__AtLine_7290_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1057__ReduceOf_graph_path_pattern_list__AtLine_7284_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1057__ReduceOf_graph_quantified_path_primary__AtLine_7315_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1058__ReduceOf_graph_path_pattern_list__AtLine_7288_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1058__ReduceOf_graph_quantified_path_primary__AtLine_7341_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1059__ReduceOf_opt_graph_search_prefix__AtLine_7299_Column_10([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1062__ReduceOf_graph_identifier__AtLine_7366_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1060__ReduceOf_opt_graph_search_prefix__AtLine_7301_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1064__ReduceOf_opt_graph_element_identifier__AtLine_7373_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1061__ReduceOf_opt_graph_search_prefix__AtLine_7306_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1065__ReduceOf_graph_element_pattern_filler__AtLine_7379_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1062__ReduceOf_opt_graph_search_prefix__AtLine_7311_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1066__ReduceOf_graph_element_pattern_filler__AtLine_7384_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1063__ReduceOf_opt_graph_search_prefix__AtLine_7317_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1067__ReduceOf_graph_element_pattern_filler__AtLine_7389_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1064__ReduceOf_opt_graph_search_prefix__AtLine_7323_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1068__ReduceOf_graph_property_specification__AtLine_7396_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1065__ReduceOf_opt_graph_search_prefix__AtLine_7328_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1070__ReduceOf_opt_graph_property_specification__AtLine_7403_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1066__ReduceOf_opt_graph_path_mode__AtLine_7335_Column_10([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1071__ReduceOf_graph_property_specification_prefix__AtLine_7408_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1067__ReduceOf_opt_graph_path_mode__AtLine_7337_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1072__ReduceOf_graph_property_specification_prefix__AtLine_7412_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1068__ReduceOf_opt_graph_path_mode__AtLine_7342_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1073__ReduceOf_graph_property_name_and_value__AtLine_7419_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1069__ReduceOf_opt_graph_path_mode__AtLine_7347_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1074__ReduceOf_graph_node_pattern__AtLine_7426_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1070__ReduceOf_opt_graph_path_mode__AtLine_7352_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1075__ReduceOf_graph_edge_pattern__AtLine_7436_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1074__ReduceOf_opt_graph_path_mode_prefix__AtLine_7363_Column_39([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1076__ReduceOf_graph_edge_pattern__AtLine_7443_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1075__ReduceOf_graph_path_pattern__AtLine_7368_Column_74([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1077__ReduceOf_graph_edge_pattern__AtLine_7451_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1076__ReduceOf_graph_path_pattern__AtLine_7393_Column_74([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1078__ReduceOf_graph_edge_pattern__AtLine_7459_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1077__ReduceOf_graph_path_pattern_expr__AtLine_7417_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1079__ReduceOf_graph_edge_pattern__AtLine_7464_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1078__ReduceOf_graph_path_pattern_expr__AtLine_7426_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1080__ReduceOf_graph_edge_pattern__AtLine_7470_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1081__ReduceOf_graph_path_primary__AtLine_7492_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1081__ReduceOf_opt_is_label_expression__AtLine_7478_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1082__ReduceOf_graph_path_primary__AtLine_7496_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1082__ReduceOf_opt_is_label_expression__AtLine_7482_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1083__ReduceOf_graph_parenthesized_path_pattern__AtLine_7503_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1083__ReduceOf_opt_is_label_expression__AtLine_7485_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1084__ReduceOf_graph_quantified_path_primary__AtLine_7528_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1085__ReduceOf_label_expression__AtLine_7491_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1085__ReduceOf_graph_quantified_path_primary__AtLine_7554_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1086__ReduceOf_label_expression__AtLine_7496_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1089__ReduceOf_graph_identifier__AtLine_7579_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1087__ReduceOf_label_expression__AtLine_7501_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1091__ReduceOf_opt_graph_element_identifier__AtLine_7586_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1088__ReduceOf_label_primary__AtLine_7510_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1092__ReduceOf_graph_element_pattern_filler__AtLine_7592_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1089__ReduceOf_label_primary__AtLine_7514_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1093__ReduceOf_graph_element_pattern_filler__AtLine_7597_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1091__ReduceOf_parenthesized_label_expression__AtLine_7522_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1094__ReduceOf_graph_element_pattern_filler__AtLine_7602_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1092__ReduceOf_graph_expression__AtLine_7533_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1095__ReduceOf_graph_property_specification__AtLine_7609_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1093__ReduceOf_graph_expression__AtLine_7542_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1097__ReduceOf_opt_graph_property_specification__AtLine_7616_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1094__ReduceOf_graph_expression__AtLine_7551_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1098__ReduceOf_graph_property_specification_prefix__AtLine_7621_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1095__ReduceOf_graph_expression__AtLine_7558_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1099__ReduceOf_graph_property_specification_prefix__AtLine_7625_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1096__ReduceOf_edge_source_endpoint_operator__AtLine_7576_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1100__ReduceOf_graph_property_name_and_value__AtLine_7632_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1097__ReduceOf_edge_source_endpoint_operator__AtLine_7580_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1101__ReduceOf_graph_node_pattern__AtLine_7639_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1098__ReduceOf_edge_source_endpoint_operator__AtLine_7584_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1102__ReduceOf_graph_edge_pattern__AtLine_7649_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1099__ReduceOf_edge_source_endpoint_operator__AtLine_7589_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1103__ReduceOf_graph_edge_pattern__AtLine_7656_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1100__ReduceOf_edge_dest_endpoint_operator__AtLine_7597_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1104__ReduceOf_graph_edge_pattern__AtLine_7664_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1101__ReduceOf_edge_dest_endpoint_operator__AtLine_7601_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1105__ReduceOf_graph_edge_pattern__AtLine_7672_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1102__ReduceOf_edge_dest_endpoint_operator__AtLine_7605_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1106__ReduceOf_graph_edge_pattern__AtLine_7677_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1103__ReduceOf_edge_dest_endpoint_operator__AtLine_7610_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1107__ReduceOf_graph_edge_pattern__AtLine_7683_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1104__ReduceOf_is_labeled_operator__AtLine_7618_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1108__ReduceOf_opt_is_label_expression__AtLine_7691_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1105__ReduceOf_is_labeled_operator__AtLine_7622_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1109__ReduceOf_opt_is_label_expression__AtLine_7695_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1106__ReduceOf_opt_at_system_time__AtLine_7630_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1110__ReduceOf_opt_is_label_expression__AtLine_7698_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1107__ReduceOf_opt_at_system_time__AtLine_7634_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1112__ReduceOf_label_expression__AtLine_7704_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1108__ReduceOf_opt_at_system_time__AtLine_7638_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1113__ReduceOf_label_expression__AtLine_7709_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1109__ReduceOf_on_clause__AtLine_7643_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1114__ReduceOf_label_expression__AtLine_7714_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1110__ReduceOf_using_clause_prefix__AtLine_7650_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1115__ReduceOf_label_primary__AtLine_7723_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1111__ReduceOf_using_clause_prefix__AtLine_7654_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1116__ReduceOf_label_primary__AtLine_7727_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1112__ReduceOf_using_clause__AtLine_7661_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1118__ReduceOf_parenthesized_label_expression__AtLine_7735_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1114__ReduceOf_opt_on_or_using_clause_list__AtLine_7669_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1119__ReduceOf_graph_expression__AtLine_7746_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1115__ReduceOf_on_or_using_clause_list__AtLine_7676_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1120__ReduceOf_graph_expression__AtLine_7755_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1116__ReduceOf_on_or_using_clause_list__AtLine_7680_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1121__ReduceOf_graph_expression__AtLine_7764_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1120__ReduceOf_opt_on_or_using_clause__AtLine_7702_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1122__ReduceOf_graph_expression__AtLine_7771_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1121__ReduceOf_join_type__AtLine_7707_Column_13([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1123__ReduceOf_edge_source_endpoint_operator__AtLine_7789_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1122__ReduceOf_join_type__AtLine_7708_Column_24([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1124__ReduceOf_edge_source_endpoint_operator__AtLine_7793_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1123__ReduceOf_join_type__AtLine_7709_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1125__ReduceOf_edge_source_endpoint_operator__AtLine_7797_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1124__ReduceOf_join_type__AtLine_7710_Column_24([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1126__ReduceOf_edge_source_endpoint_operator__AtLine_7802_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1125__ReduceOf_join_type__AtLine_7711_Column_25([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1127__ReduceOf_edge_dest_endpoint_operator__AtLine_7810_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1126__ReduceOf_join_type__AtLine_7712_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1128__ReduceOf_edge_dest_endpoint_operator__AtLine_7814_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1127__ReduceOf_join_hint__AtLine_7717_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1129__ReduceOf_edge_dest_endpoint_operator__AtLine_7818_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1128__ReduceOf_join_hint__AtLine_7718_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1130__ReduceOf_edge_dest_endpoint_operator__AtLine_7823_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1129__ReduceOf_join_hint__AtLine_7719_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1131__ReduceOf_is_labeled_operator__AtLine_7831_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1132__ReduceOf_join__AtLine_7734_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1132__ReduceOf_is_labeled_operator__AtLine_7835_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1133__ReduceOf_from_clause_contents__AtLine_7750_Column_26([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1133__ReduceOf_opt_at_system_time__AtLine_7843_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1134__ReduceOf_from_clause_contents__AtLine_7752_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1134__ReduceOf_opt_at_system_time__AtLine_7847_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1135__ReduceOf_from_clause_contents__AtLine_7765_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1135__ReduceOf_opt_at_system_time__AtLine_7851_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1136__ReduceOf_from_clause_contents__AtLine_7811_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1136__ReduceOf_on_clause__AtLine_7856_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1137__ReduceOf_from_clause_contents__AtLine_7816_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1137__ReduceOf_using_clause_prefix__AtLine_7863_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1138__ReduceOf_from_clause_contents__AtLine_7821_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1138__ReduceOf_using_clause_prefix__AtLine_7867_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1140__ReduceOf_opt_from_clause__AtLine_7829_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1139__ReduceOf_using_clause__AtLine_7874_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1141__ReduceOf_from_clause__AtLine_7834_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1141__ReduceOf_opt_on_or_using_clause_list__AtLine_7882_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1142__ReduceOf_opt_clauses_following_from__AtLine_7859_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1142__ReduceOf_on_or_using_clause_list__AtLine_7889_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1143__ReduceOf_opt_clauses_following_from__AtLine_7863_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1143__ReduceOf_on_or_using_clause_list__AtLine_7893_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1144__ReduceOf_opt_clauses_following_where__AtLine_7869_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1147__ReduceOf_opt_on_or_using_clause__AtLine_7915_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1145__ReduceOf_opt_clauses_following_where__AtLine_7873_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1148__ReduceOf_join_type__AtLine_7920_Column_13([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1146__ReduceOf_opt_clauses_following_group_by__AtLine_7880_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1149__ReduceOf_join_type__AtLine_7921_Column_24([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1147__ReduceOf_opt_clauses_following_group_by__AtLine_7884_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1150__ReduceOf_join_type__AtLine_7922_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1148__ReduceOf_where_clause__AtLine_7890_Column_24([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1151__ReduceOf_join_type__AtLine_7923_Column_24([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1150__ReduceOf_opt_where_clause__AtLine_7894_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1152__ReduceOf_join_type__AtLine_7924_Column_25([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1151__ReduceOf_rollup_list__AtLine_7899_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1153__ReduceOf_join_type__AtLine_7925_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1152__ReduceOf_rollup_list__AtLine_7903_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1154__ReduceOf_join_hint__AtLine_7930_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1153__ReduceOf_cube_list__AtLine_7910_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1155__ReduceOf_join_hint__AtLine_7931_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1154__ReduceOf_cube_list__AtLine_7914_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1156__ReduceOf_join_hint__AtLine_7932_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1155__ReduceOf_grouping_set__AtLine_7921_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1159__ReduceOf_join__AtLine_7947_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1156__ReduceOf_grouping_set__AtLine_7926_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1160__ReduceOf_from_clause_contents__AtLine_7963_Column_26([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1157__ReduceOf_grouping_set__AtLine_7930_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1161__ReduceOf_from_clause_contents__AtLine_7965_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1158__ReduceOf_grouping_set__AtLine_7934_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1162__ReduceOf_from_clause_contents__AtLine_7978_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1159__ReduceOf_grouping_set_list__AtLine_7941_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1163__ReduceOf_from_clause_contents__AtLine_8024_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1160__ReduceOf_grouping_set_list__AtLine_7945_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1164__ReduceOf_from_clause_contents__AtLine_8029_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1161__ReduceOf_opt_selection_item_order__AtLine_7953_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1165__ReduceOf_from_clause_contents__AtLine_8034_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1162__ReduceOf_opt_selection_item_order__AtLine_7959_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1167__ReduceOf_opt_from_clause__AtLine_8042_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1164__ReduceOf_opt_grouping_item_order__AtLine_7966_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1168__ReduceOf_from_clause__AtLine_8047_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1165__ReduceOf_grouping_item__AtLine_7975_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1169__ReduceOf_opt_clauses_following_from__AtLine_8072_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1166__ReduceOf_grouping_item__AtLine_7983_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1170__ReduceOf_opt_clauses_following_from__AtLine_8076_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1167__ReduceOf_grouping_item__AtLine_8002_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1171__ReduceOf_opt_clauses_following_where__AtLine_8082_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1168__ReduceOf_grouping_item__AtLine_8006_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1172__ReduceOf_opt_clauses_following_where__AtLine_8086_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1169__ReduceOf_grouping_item__AtLine_8010_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1173__ReduceOf_opt_clauses_following_group_by__AtLine_8093_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1170__ReduceOf_opt_and_order__AtLine_8016_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1174__ReduceOf_opt_clauses_following_group_by__AtLine_8097_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1171__ReduceOf_opt_and_order__AtLine_8025_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1175__ReduceOf_where_clause__AtLine_8103_Column_24([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1172__ReduceOf_group_by_preamble__AtLine_8032_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1177__ReduceOf_opt_where_clause__AtLine_8107_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1173__ReduceOf_group_by_clause_prefix__AtLine_8040_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1178__ReduceOf_rollup_list__AtLine_8112_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1174__ReduceOf_group_by_clause_prefix__AtLine_8046_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1179__ReduceOf_rollup_list__AtLine_8116_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1175__ReduceOf_group_by_all__AtLine_8053_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1180__ReduceOf_cube_list__AtLine_8123_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1179__ReduceOf_opt_group_by_clause__AtLine_8068_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1181__ReduceOf_cube_list__AtLine_8127_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1180__ReduceOf_opt_group_by_clause_with_opt_comma__AtLine_8079_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1182__ReduceOf_grouping_set__AtLine_8134_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1181__ReduceOf_opt_group_by_clause_with_opt_comma__AtLine_8082_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1183__ReduceOf_grouping_set__AtLine_8139_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1182__ReduceOf_having_clause__AtLine_8087_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1184__ReduceOf_grouping_set__AtLine_8143_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1184__ReduceOf_opt_having_clause__AtLine_8093_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1185__ReduceOf_grouping_set__AtLine_8147_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1185__ReduceOf_window_definition__AtLine_8098_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1186__ReduceOf_grouping_set_list__AtLine_8154_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1186__ReduceOf_window_clause_prefix__AtLine_8105_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1187__ReduceOf_grouping_set_list__AtLine_8158_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1187__ReduceOf_window_clause_prefix__AtLine_8109_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1188__ReduceOf_opt_selection_item_order__AtLine_8166_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1188__ReduceOf_opt_window_clause__AtLine_8116_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1189__ReduceOf_opt_selection_item_order__AtLine_8172_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1189__ReduceOf_opt_window_clause__AtLine_8119_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1191__ReduceOf_opt_grouping_item_order__AtLine_8179_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1190__ReduceOf_opt_qualify_clause__AtLine_8123_Column_31([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1192__ReduceOf_grouping_item_base__AtLine_8188_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1191__ReduceOf_opt_qualify_clause__AtLine_8124_Column_34([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1193__ReduceOf_grouping_item_base__AtLine_8193_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1192__ReduceOf_opt_qualify_clause__AtLine_8125_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1194__ReduceOf_grouping_item_base__AtLine_8197_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1193__ReduceOf_qualify_clause_reserved__AtLine_8130_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1195__ReduceOf_grouping_item_base__AtLine_8201_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1194__ReduceOf_opt_qualify_clause_reserved__AtLine_8140_Column_28([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1197__ReduceOf_grouping_item__AtLine_8211_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1195__ReduceOf_opt_qualify_clause_reserved__AtLine_8141_Column_13([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1199__ReduceOf_grouping_item_in_pipe__AtLine_8221_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1196__ReduceOf_qualify_clause_nonreserved__AtLine_8146_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1200__ReduceOf_opt_and_order__AtLine_8227_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1197__ReduceOf_limit_offset_clause__AtLine_8158_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1201__ReduceOf_opt_and_order__AtLine_8236_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1198__ReduceOf_limit_offset_clause__AtLine_8162_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1202__ReduceOf_group_by_preamble__AtLine_8241_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1199__ReduceOf_opt_limit_offset_clause__AtLine_8168_Column_25([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1203__ReduceOf_group_by_preamble_in_pipe__AtLine_8249_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1200__ReduceOf_opt_limit_offset_clause__AtLine_8169_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1204__ReduceOf_group_by_clause_prefix__AtLine_8257_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1201__ReduceOf_opt_lock_mode_clause__AtLine_8174_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1205__ReduceOf_group_by_clause_prefix__AtLine_8261_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1202__ReduceOf_opt_lock_mode_clause__AtLine_8183_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1206__ReduceOf_group_by_clause_prefix_in_pipe__AtLine_8268_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1203__ReduceOf_opt_having_or_group_by_modifier__AtLine_8189_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1207__ReduceOf_group_by_clause_prefix_in_pipe__AtLine_8274_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1204__ReduceOf_opt_having_or_group_by_modifier__AtLine_8196_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1208__ReduceOf_group_by_all__AtLine_8281_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1205__ReduceOf_opt_having_or_group_by_modifier__AtLine_8203_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1212__ReduceOf_opt_group_by_clause__AtLine_8297_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1206__ReduceOf_opt_having_or_group_by_modifier__AtLine_8206_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1213__ReduceOf_opt_group_by_clause_in_pipe__AtLine_8314_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1207__ReduceOf_opt_clamped_between_modifier__AtLine_8211_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1214__ReduceOf_opt_group_by_clause_in_pipe__AtLine_8317_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1208__ReduceOf_opt_clamped_between_modifier__AtLine_8214_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1215__ReduceOf_having_clause__AtLine_8322_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1209__ReduceOf_opt_with_report_modifier__AtLine_8219_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1217__ReduceOf_opt_having_clause__AtLine_8328_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1210__ReduceOf_opt_with_report_modifier__AtLine_8222_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1218__ReduceOf_window_definition__AtLine_8333_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1211__ReduceOf_opt_with_report_format__AtLine_8226_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1219__ReduceOf_window_clause_prefix__AtLine_8340_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1212__ReduceOf_opt_with_report_format__AtLine_8227_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1220__ReduceOf_window_clause_prefix__AtLine_8344_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1213__ReduceOf_opt_null_handling_modifier__AtLine_8232_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1221__ReduceOf_opt_window_clause__AtLine_8350_Column_26([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1214__ReduceOf_opt_null_handling_modifier__AtLine_8236_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1222__ReduceOf_opt_window_clause__AtLine_8351_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1215__ReduceOf_opt_null_handling_modifier__AtLine_8240_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1223__ReduceOf_opt_window_clause_with_trailing_comma__AtLine_8356_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1216__ReduceOf_possibly_unbounded_int_literal_or_parameter__AtLine_8246_Column_30([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1224__ReduceOf_opt_window_clause_with_trailing_comma__AtLine_8359_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1217__ReduceOf_possibly_unbounded_int_literal_or_parameter__AtLine_8247_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1225__ReduceOf_opt_qualify_clause__AtLine_8363_Column_31([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1218__ReduceOf_recursion_depth_modifier__AtLine_8252_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1226__ReduceOf_opt_qualify_clause__AtLine_8364_Column_34([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1219__ReduceOf_recursion_depth_modifier__AtLine_8269_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1227__ReduceOf_opt_qualify_clause__AtLine_8365_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1220__ReduceOf_recursion_depth_modifier__AtLine_8275_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1228__ReduceOf_qualify_clause_reserved__AtLine_8370_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1222__ReduceOf_opt_recursion_depth_modifier__AtLine_8287_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1229__ReduceOf_opt_qualify_clause_reserved__AtLine_8380_Column_28([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1223__ReduceOf_aliased_query_modifiers__AtLine_8292_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1230__ReduceOf_opt_qualify_clause_reserved__AtLine_8381_Column_13([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1224__ReduceOf_aliased_query_modifiers__AtLine_8296_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1231__ReduceOf_qualify_clause_nonreserved__AtLine_8386_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1225__ReduceOf_aliased_query__AtLine_8303_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1232__ReduceOf_limit_offset_clause__AtLine_8398_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1226__ReduceOf_aliased_query_list__AtLine_8309_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1233__ReduceOf_limit_offset_clause__AtLine_8402_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1227__ReduceOf_aliased_query_list__AtLine_8311_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1234__ReduceOf_opt_limit_offset_clause__AtLine_8408_Column_25([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1228__ReduceOf_with_clause__AtLine_8318_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1235__ReduceOf_opt_limit_offset_clause__AtLine_8409_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1229__ReduceOf_with_clause__AtLine_8323_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1236__ReduceOf_opt_lock_mode_clause__AtLine_8414_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1230__ReduceOf_with_clause__AtLine_8331_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1237__ReduceOf_opt_lock_mode_clause__AtLine_8423_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1232__ReduceOf_opt_with_clause__AtLine_8338_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1238__ReduceOf_opt_having_modifier__AtLine_8428_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1234__ReduceOf_opt_with_connection_clause__AtLine_8343_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1239__ReduceOf_opt_having_modifier__AtLine_8435_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1235__ReduceOf_with_clause_with_trailing_comma__AtLine_8348_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1240__ReduceOf_opt_having_modifier__AtLine_8441_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1236__ReduceOf_asc_or_desc__AtLine_8354_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1241__ReduceOf_opt_group_by_modifier__AtLine_8449_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1237__ReduceOf_asc_or_desc__AtLine_8355_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1242__ReduceOf_opt_group_by_modifier__AtLine_8453_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1238__ReduceOf_opt_asc_or_desc__AtLine_8359_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1243__ReduceOf_opt_clamped_between_modifier__AtLine_8460_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1239__ReduceOf_opt_asc_or_desc__AtLine_8360_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1244__ReduceOf_opt_clamped_between_modifier__AtLine_8463_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1240__ReduceOf_null_order__AtLine_8365_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1245__ReduceOf_opt_with_report_modifier__AtLine_8468_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1241__ReduceOf_null_order__AtLine_8371_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1246__ReduceOf_opt_with_report_modifier__AtLine_8471_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1243__ReduceOf_opt_null_order__AtLine_8380_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1247__ReduceOf_opt_with_report_format__AtLine_8475_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1244__ReduceOf_string_literal_or_parameter__AtLine_8384_Column_20([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1248__ReduceOf_opt_with_report_format__AtLine_8476_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1247__ReduceOf_collate_clause__AtLine_8390_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1249__ReduceOf_opt_null_handling_modifier__AtLine_8481_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1249__ReduceOf_opt_collate_clause__AtLine_8397_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1250__ReduceOf_opt_null_handling_modifier__AtLine_8485_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1250__ReduceOf_opt_default_collate_clause__AtLine_8402_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1251__ReduceOf_opt_null_handling_modifier__AtLine_8489_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1251__ReduceOf_opt_default_collate_clause__AtLine_8405_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1252__ReduceOf_possibly_unbounded_int_literal_or_parameter__AtLine_8495_Column_30([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1252__ReduceOf_ordering_expression__AtLine_8410_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1253__ReduceOf_possibly_unbounded_int_literal_or_parameter__AtLine_8496_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1253__ReduceOf_order_by_clause_prefix__AtLine_8420_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1254__ReduceOf_recursion_depth_modifier__AtLine_8501_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1254__ReduceOf_order_by_clause_prefix__AtLine_8424_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1255__ReduceOf_recursion_depth_modifier__AtLine_8518_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1255__ReduceOf_order_by_clause__AtLine_8431_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1256__ReduceOf_recursion_depth_modifier__AtLine_8524_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1256__ReduceOf_order_by_clause_with_opt_comma__AtLine_8438_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1258__ReduceOf_opt_recursion_depth_modifier__AtLine_8536_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1257__ReduceOf_opt_order_by_clause__AtLine_8444_Column_21([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1259__ReduceOf_aliased_query_modifiers__AtLine_8541_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1258__ReduceOf_opt_order_by_clause__AtLine_8445_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1260__ReduceOf_aliased_query_modifiers__AtLine_8545_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1259__ReduceOf_parenthesized_in_rhs__AtLine_8450_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1261__ReduceOf_aliased_query_with_overridden_next_token_lookback__AtLine_8561_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1260__ReduceOf_parenthesized_in_rhs__AtLine_8454_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1262__ReduceOf_aliased_query__AtLine_8570_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1261__ReduceOf_parenthesized_in_rhs__AtLine_8459_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1263__ReduceOf_aliased_query_list__AtLine_8576_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1262__ReduceOf_parenthesized_anysomeall_list_in_rhs__AtLine_8474_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1264__ReduceOf_aliased_query_list__AtLine_8578_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1263__ReduceOf_parenthesized_anysomeall_list_in_rhs__AtLine_8488_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1265__ReduceOf_with_clause__AtLine_8585_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1264__ReduceOf_parenthesized_anysomeall_list_in_rhs__AtLine_8493_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1266__ReduceOf_with_clause__AtLine_8590_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1265__ReduceOf_in_list_two_or_more_prefix__AtLine_8502_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1267__ReduceOf_with_clause__AtLine_8598_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1266__ReduceOf_in_list_two_or_more_prefix__AtLine_8508_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1269__ReduceOf_opt_with_clause__AtLine_8605_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1267__ReduceOf_expression_with_opt_alias__AtLine_8515_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1271__ReduceOf_opt_with_connection_clause__AtLine_8610_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1268__ReduceOf_unnest_expression_prefix__AtLine_8522_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1272__ReduceOf_with_clause_with_trailing_comma__AtLine_8615_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1269__ReduceOf_unnest_expression_prefix__AtLine_8526_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1273__ReduceOf_asc_or_desc__AtLine_8621_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1270__ReduceOf_opt_array_zip_mode__AtLine_8532_Column_24([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1274__ReduceOf_asc_or_desc__AtLine_8622_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1271__ReduceOf_opt_array_zip_mode__AtLine_8533_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1275__ReduceOf_opt_asc_or_desc__AtLine_8626_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1272__ReduceOf_unnest_expression__AtLine_8538_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1276__ReduceOf_opt_asc_or_desc__AtLine_8627_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1273__ReduceOf_unnest_expression__AtLine_8543_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1277__ReduceOf_null_order__AtLine_8632_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1274__ReduceOf_unnest_expression_with_opt_alias_and_offset__AtLine_8554_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1278__ReduceOf_null_order__AtLine_8638_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1275__ReduceOf_comparative_operator__AtLine_8562_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1280__ReduceOf_opt_null_order__AtLine_8647_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1276__ReduceOf_comparative_operator__AtLine_8563_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1281__ReduceOf_string_literal_or_parameter__AtLine_8651_Column_20([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1277__ReduceOf_comparative_operator__AtLine_8564_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1284__ReduceOf_collate_clause__AtLine_8657_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1278__ReduceOf_comparative_operator__AtLine_8565_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1286__ReduceOf_opt_collate_clause__AtLine_8664_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1279__ReduceOf_comparative_operator__AtLine_8566_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1287__ReduceOf_opt_default_collate_clause__AtLine_8669_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1280__ReduceOf_comparative_operator__AtLine_8567_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1288__ReduceOf_opt_default_collate_clause__AtLine_8672_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1281__ReduceOf_comparative_operator__AtLine_8568_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1289__ReduceOf_ordering_expression__AtLine_8677_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1282__ReduceOf_additive_operator__AtLine_8571_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1290__ReduceOf_order_by_clause_prefix__AtLine_8687_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1283__ReduceOf_additive_operator__AtLine_8572_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1291__ReduceOf_order_by_clause_prefix__AtLine_8691_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1284__ReduceOf_multiplicative_operator__AtLine_8576_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1292__ReduceOf_order_by_clause__AtLine_8698_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1285__ReduceOf_multiplicative_operator__AtLine_8577_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1293__ReduceOf_order_by_clause_with_opt_comma__AtLine_8705_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1286__ReduceOf_shift_operator__AtLine_8582_Column_10([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1294__ReduceOf_opt_order_by_clause__AtLine_8711_Column_21([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1287__ReduceOf_shift_operator__AtLine_8583_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1295__ReduceOf_opt_order_by_clause__AtLine_8712_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1288__ReduceOf_import_type__AtLine_8588_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1296__ReduceOf_parenthesized_in_rhs__AtLine_8717_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1289__ReduceOf_import_type__AtLine_8589_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1297__ReduceOf_parenthesized_in_rhs__AtLine_8721_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1290__ReduceOf_any_some_all__AtLine_8595_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1298__ReduceOf_parenthesized_in_rhs__AtLine_8726_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1291__ReduceOf_any_some_all__AtLine_8606_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1299__ReduceOf_parenthesized_anysomeall_list_in_rhs__AtLine_8741_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1292__ReduceOf_any_some_all__AtLine_8617_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1300__ReduceOf_parenthesized_anysomeall_list_in_rhs__AtLine_8755_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1293__ReduceOf_like_operator__AtLine_8631_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1301__ReduceOf_parenthesized_anysomeall_list_in_rhs__AtLine_8760_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1294__ReduceOf_like_operator__AtLine_8633_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1302__ReduceOf_in_list_two_or_more_prefix__AtLine_8769_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1295__ReduceOf_between_operator__AtLine_8642_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1303__ReduceOf_in_list_two_or_more_prefix__AtLine_8775_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1296__ReduceOf_between_operator__AtLine_8646_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1304__ReduceOf_expression_with_opt_alias__AtLine_8782_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1297__ReduceOf_distinct_operator__AtLine_8654_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1305__ReduceOf_unnest_expression_prefix__AtLine_8789_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1298__ReduceOf_distinct_operator__AtLine_8658_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1306__ReduceOf_unnest_expression_prefix__AtLine_8793_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1299__ReduceOf_in_operator__AtLine_8666_Column_10([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1307__ReduceOf_opt_array_zip_mode__AtLine_8799_Column_24([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1300__ReduceOf_in_operator__AtLine_8668_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1308__ReduceOf_opt_array_zip_mode__AtLine_8800_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1301__ReduceOf_is_operator__AtLine_8676_Column_10([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1309__ReduceOf_unnest_expression__AtLine_8805_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1302__ReduceOf_is_operator__AtLine_8677_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1310__ReduceOf_unnest_expression__AtLine_8810_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1303__ReduceOf_unary_operator__AtLine_8682_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1311__ReduceOf_unnest_expression_with_opt_alias_and_offset__AtLine_8821_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1304__ReduceOf_unary_operator__AtLine_8686_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1312__ReduceOf_comparative_operator__AtLine_8829_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1305__ReduceOf_unary_operator__AtLine_8690_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1313__ReduceOf_comparative_operator__AtLine_8830_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1306__ReduceOf_with_expression_variable__AtLine_8697_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1314__ReduceOf_comparative_operator__AtLine_8831_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1307__ReduceOf_with_expression_variable_prefix__AtLine_8705_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1315__ReduceOf_comparative_operator__AtLine_8832_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1308__ReduceOf_with_expression_variable_prefix__AtLine_8710_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1316__ReduceOf_comparative_operator__AtLine_8833_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1309__ReduceOf_with_expression__AtLine_8717_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1317__ReduceOf_comparative_operator__AtLine_8834_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1313__ReduceOf_or_expression__AtLine_8736_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1318__ReduceOf_comparative_operator__AtLine_8835_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1314__ReduceOf_and_expression__AtLine_8749_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1319__ReduceOf_additive_operator__AtLine_8838_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1315__ReduceOf_and_expression__AtLine_8754_Column_8([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1320__ReduceOf_additive_operator__AtLine_8839_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1318__ReduceOf_expression_higher_prec_than_and__AtLine_8767_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1321__ReduceOf_multiplicative_operator__AtLine_8843_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1323__ReduceOf_parenthesized_expression_not_a_query__AtLine_8787_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1322__ReduceOf_multiplicative_operator__AtLine_8844_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1326__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8800_Column_22([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1323__ReduceOf_shift_operator__AtLine_8849_Column_10([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1327__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8801_Column_21([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1324__ReduceOf_shift_operator__AtLine_8850_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1339__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8813_Column_32([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1325__ReduceOf_import_type__AtLine_8855_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1349__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8824_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1326__ReduceOf_import_type__AtLine_8856_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1351__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8851_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1327__ReduceOf_any_some_all__AtLine_8862_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1352__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8855_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1328__ReduceOf_any_some_all__AtLine_8873_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1353__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8860_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1329__ReduceOf_any_some_all__AtLine_8884_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1354__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8864_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1330__ReduceOf_like_operator__AtLine_8898_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1355__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8881_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1331__ReduceOf_like_operator__AtLine_8900_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1356__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8887_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1332__ReduceOf_between_operator__AtLine_8909_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1357__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8907_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1333__ReduceOf_between_operator__AtLine_8913_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1358__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8933_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1334__ReduceOf_distinct_operator__AtLine_8921_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1359__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8954_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1335__ReduceOf_distinct_operator__AtLine_8925_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1360__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8969_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1336__ReduceOf_in_operator__AtLine_8933_Column_10([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1361__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_8989_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1337__ReduceOf_in_operator__AtLine_8935_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1362__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9019_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1338__ReduceOf_is_operator__AtLine_8943_Column_10([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1363__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9051_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1339__ReduceOf_is_operator__AtLine_8944_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1364__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9065_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1340__ReduceOf_unary_operator__AtLine_8949_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1365__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9086_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1341__ReduceOf_unary_operator__AtLine_8953_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1366__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9102_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1342__ReduceOf_unary_operator__AtLine_8957_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1367__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9118_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1343__ReduceOf_with_expression_variable__AtLine_8964_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1368__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9141_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1344__ReduceOf_with_expression_variable_prefix__AtLine_8972_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1369__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9156_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1345__ReduceOf_with_expression_variable_prefix__AtLine_8977_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1370__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9171_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1346__ReduceOf_with_expression__AtLine_8984_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1371__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9186_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1350__ReduceOf_or_expression__AtLine_9003_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1372__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9201_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1351__ReduceOf_and_expression__AtLine_9016_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1373__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9216_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1352__ReduceOf_and_expression__AtLine_9021_Column_8([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1374__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9230_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1355__ReduceOf_expression_higher_prec_than_and__AtLine_9034_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1375__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9244_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1360__ReduceOf_parenthesized_expression_not_a_query__AtLine_9054_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1377__ReduceOf_path_expression__AtLine_9266_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1363__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9067_Column_22([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1378__ReduceOf_path_expression__AtLine_9270_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1364__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9068_Column_21([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1379__ReduceOf_dashed_identifier__AtLine_9277_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1376__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9080_Column_32([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1380__ReduceOf_dashed_identifier__AtLine_9292_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1386__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9091_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1381__ReduceOf_dashed_identifier__AtLine_9310_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1388__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9117_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1382__ReduceOf_dashed_identifier__AtLine_9325_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1389__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9121_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1383__ReduceOf_dashed_identifier__AtLine_9339_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1390__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9126_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1384__ReduceOf_dashed_identifier__AtLine_9359_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1391__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9130_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1385__ReduceOf_dashed_path_expression__AtLine_9384_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1392__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9147_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1386__ReduceOf_dashed_path_expression__AtLine_9394_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1393__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9153_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1387__ReduceOf_maybe_dashed_path_expression__AtLine_9400_Column_21([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1394__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9173_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1388__ReduceOf_maybe_dashed_path_expression__AtLine_9402_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1395__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9199_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1389__ReduceOf_maybe_slashed_or_dashed_path_expression__AtLine_9419_Column_34([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1396__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9220_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1390__ReduceOf_maybe_slashed_or_dashed_path_expression__AtLine_9421_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1397__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9235_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1397__ReduceOf_slashed_identifier__AtLine_9448_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1398__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9255_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1398__ReduceOf_slashed_identifier__AtLine_9464_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1399__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9285_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1399__ReduceOf_slashed_identifier__AtLine_9488_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1400__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9317_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1400__ReduceOf_slashed_path_expression__AtLine_9540_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1401__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9331_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1401__ReduceOf_slashed_path_expression__AtLine_9552_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1402__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9352_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1402__ReduceOf_slashed_path_expression__AtLine_9605_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1403__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9368_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1403__ReduceOf_slashed_path_expression__AtLine_9650_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1404__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9384_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1404__ReduceOf_array_constructor_prefix_no_expressions__AtLine_9656_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1405__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9407_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1405__ReduceOf_array_constructor_prefix_no_expressions__AtLine_9657_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1406__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9422_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1406__ReduceOf_array_constructor_prefix_no_expressions__AtLine_9659_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1407__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9437_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1407__ReduceOf_array_constructor_prefix__AtLine_9666_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1408__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9452_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1408__ReduceOf_array_constructor_prefix__AtLine_9670_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1409__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9467_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1409__ReduceOf_array_constructor__AtLine_9677_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1410__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9482_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1410__ReduceOf_array_constructor__AtLine_9681_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1411__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9496_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1411__ReduceOf_range_literal__AtLine_9688_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1412__ReduceOf_unparenthesized_expression_higher_prec_than_and__AtLine_9510_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1412__ReduceOf_date_or_time_literal_kind__AtLine_9694_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1414__ReduceOf_path_expression__AtLine_9532_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1413__ReduceOf_date_or_time_literal_kind__AtLine_9695_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1415__ReduceOf_path_expression__AtLine_9536_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1414__ReduceOf_date_or_time_literal_kind__AtLine_9696_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1416__ReduceOf_dashed_identifier__AtLine_9543_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1415__ReduceOf_date_or_time_literal_kind__AtLine_9697_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1417__ReduceOf_dashed_identifier__AtLine_9556_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1416__ReduceOf_date_or_time_literal__AtLine_9702_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1418__ReduceOf_dashed_identifier__AtLine_9573_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1417__ReduceOf_interval_expression__AtLine_9711_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1419__ReduceOf_dashed_identifier__AtLine_9586_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1418__ReduceOf_interval_expression__AtLine_9715_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1420__ReduceOf_dashed_identifier__AtLine_9599_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1420__ReduceOf_parameter_expression__AtLine_9723_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1421__ReduceOf_dashed_identifier__AtLine_9616_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1421__ReduceOf_named_parameter_expression__AtLine_9735_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1422__ReduceOf_dashed_path_expression__AtLine_9639_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1422__ReduceOf_type_name__AtLine_9745_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1423__ReduceOf_dashed_path_expression__AtLine_9649_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1423__ReduceOf_type_name__AtLine_9750_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1424__ReduceOf_maybe_dashed_path_expression__AtLine_9655_Column_21([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1424__ReduceOf_template_type_open__AtLine_9760_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1425__ReduceOf_maybe_dashed_path_expression__AtLine_9657_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1425__ReduceOf_template_type_close__AtLine_9766_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1426__ReduceOf_maybe_slashed_or_dashed_path_expression__AtLine_9682_Column_34([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1426__ReduceOf_array_type__AtLine_9771_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1427__ReduceOf_maybe_slashed_or_dashed_path_expression__AtLine_9684_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1427__ReduceOf_struct_field__AtLine_9778_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1431__ReduceOf_identifier_or_integer__AtLine_9715_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1428__ReduceOf_struct_field__AtLine_9782_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1434__ReduceOf_slashed_identifier__AtLine_9733_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1429__ReduceOf_struct_type_prefix__AtLine_9789_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1435__ReduceOf_slashed_identifier__AtLine_9748_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1430__ReduceOf_struct_type_prefix__AtLine_9793_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1436__ReduceOf_slashed_identifier__AtLine_9773_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1431__ReduceOf_struct_type__AtLine_9800_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1437__ReduceOf_slashed_path_expression__AtLine_9822_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1432__ReduceOf_struct_type__AtLine_9804_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1438__ReduceOf_slashed_path_expression__AtLine_9834_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1433__ReduceOf_range_type__AtLine_9811_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1439__ReduceOf_slashed_path_expression__AtLine_9886_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1434__ReduceOf_function_type_prefix__AtLine_9818_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1440__ReduceOf_slashed_path_expression__AtLine_9930_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1435__ReduceOf_function_type_prefix__AtLine_9822_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1441__ReduceOf_array_constructor_prefix_no_expressions__AtLine_9936_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1436__ReduceOf_function_type__AtLine_9829_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1442__ReduceOf_array_constructor_prefix_no_expressions__AtLine_9937_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1437__ReduceOf_function_type__AtLine_9835_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1443__ReduceOf_array_constructor_prefix_no_expressions__AtLine_9939_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1438__ReduceOf_function_type__AtLine_9841_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1444__ReduceOf_array_constructor_prefix__AtLine_9946_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1439__ReduceOf_map_type__AtLine_9848_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1445__ReduceOf_array_constructor_prefix__AtLine_9950_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1448__ReduceOf_type_parameter__AtLine_9860_Column_22([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1446__ReduceOf_array_constructor__AtLine_9957_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1449__ReduceOf_type_parameter__AtLine_9861_Column_21([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1447__ReduceOf_array_constructor__AtLine_9961_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1450__ReduceOf_type_parameter__AtLine_9862_Column_30([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1448__ReduceOf_range_literal__AtLine_9968_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1451__ReduceOf_type_parameter__AtLine_9864_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1449__ReduceOf_date_or_time_literal_kind__AtLine_9974_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1452__ReduceOf_type_parameters_prefix__AtLine_9871_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1450__ReduceOf_date_or_time_literal_kind__AtLine_9975_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1453__ReduceOf_type_parameters_prefix__AtLine_9875_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1451__ReduceOf_date_or_time_literal_kind__AtLine_9976_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1454__ReduceOf_opt_type_parameters__AtLine_9881_Column_32([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1452__ReduceOf_date_or_time_literal_kind__AtLine_9977_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1455__ReduceOf_opt_type_parameters__AtLine_9883_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1453__ReduceOf_date_or_time_literal__AtLine_9982_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1456__ReduceOf_opt_type_parameters__AtLine_9888_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1454__ReduceOf_interval_expression__AtLine_9991_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1457__ReduceOf_type__AtLine_9892_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1455__ReduceOf_interval_expression__AtLine_9995_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1458__ReduceOf_templated_parameter_kind__AtLine_9898_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1457__ReduceOf_parameter_expression__AtLine_10003_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1459__ReduceOf_templated_parameter_kind__AtLine_9902_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1458__ReduceOf_named_parameter_expression__AtLine_10015_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1460__ReduceOf_templated_parameter_kind__AtLine_9906_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1459__ReduceOf_type_name__AtLine_10025_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1461__ReduceOf_templated_parameter_kind__AtLine_9910_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1460__ReduceOf_type_name__AtLine_10030_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1462__ReduceOf_templated_parameter_kind__AtLine_9914_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1461__ReduceOf_template_type_open__AtLine_10040_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1463__ReduceOf_templated_parameter_type__AtLine_9929_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1462__ReduceOf_template_type_close__AtLine_10046_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1467__ReduceOf_new_constructor_prefix_no_arg__AtLine_9941_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1463__ReduceOf_array_type__AtLine_10051_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1468__ReduceOf_new_constructor_arg__AtLine_9948_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1464__ReduceOf_struct_field__AtLine_10058_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1469__ReduceOf_new_constructor_arg__AtLine_9952_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1465__ReduceOf_struct_field__AtLine_10062_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1470__ReduceOf_new_constructor_arg__AtLine_9956_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1466__ReduceOf_struct_type_prefix__AtLine_10069_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1471__ReduceOf_new_constructor_prefix__AtLine_9965_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1467__ReduceOf_struct_type_prefix__AtLine_10073_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1472__ReduceOf_new_constructor_prefix__AtLine_9969_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1468__ReduceOf_struct_type__AtLine_10080_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1473__ReduceOf_new_constructor__AtLine_9976_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1469__ReduceOf_struct_type__AtLine_10084_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1474__ReduceOf_new_constructor__AtLine_9980_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1470__ReduceOf_range_type__AtLine_10091_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1475__ReduceOf_braced_constructor_field_value__AtLine_9987_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1471__ReduceOf_function_type_prefix__AtLine_10098_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1476__ReduceOf_braced_constructor_field_value__AtLine_9992_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1472__ReduceOf_function_type_prefix__AtLine_10102_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1477__ReduceOf_braced_constructor_extension_expression_start__AtLine_9999_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1473__ReduceOf_function_type__AtLine_10109_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1479__ReduceOf_braced_constructor_extension_lhs__AtLine_10013_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1474__ReduceOf_function_type__AtLine_10115_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1480__ReduceOf_braced_constructor_extension__AtLine_10020_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1475__ReduceOf_function_type__AtLine_10121_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1481__ReduceOf_braced_constructor_lhs__AtLine_10027_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1476__ReduceOf_map_type__AtLine_10128_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1482__ReduceOf_braced_constructor_field__AtLine_10034_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1485__ReduceOf_type_parameter__AtLine_10140_Column_22([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1483__ReduceOf_braced_constructor_start__AtLine_10041_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1486__ReduceOf_type_parameter__AtLine_10141_Column_21([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1484__ReduceOf_braced_constructor_prefix__AtLine_10052_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1487__ReduceOf_type_parameter__AtLine_10142_Column_30([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1485__ReduceOf_braced_constructor_prefix__AtLine_10056_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1488__ReduceOf_type_parameter__AtLine_10144_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1486__ReduceOf_braced_constructor_prefix__AtLine_10060_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1489__ReduceOf_type_parameters_prefix__AtLine_10151_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1487__ReduceOf_braced_constructor_prefix__AtLine_10065_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1490__ReduceOf_type_parameters_prefix__AtLine_10155_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1488__ReduceOf_braced_constructor_prefix__AtLine_10079_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1491__ReduceOf_opt_type_parameters__AtLine_10161_Column_32([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1489__ReduceOf_braced_constructor__AtLine_10087_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1492__ReduceOf_opt_type_parameters__AtLine_10163_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1490__ReduceOf_braced_constructor__AtLine_10091_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1493__ReduceOf_opt_type_parameters__AtLine_10168_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1491__ReduceOf_braced_constructor__AtLine_10096_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1494__ReduceOf_type__AtLine_10172_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1492__ReduceOf_braced_new_constructor__AtLine_10103_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1495__ReduceOf_templated_parameter_kind__AtLine_10178_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1493__ReduceOf_struct_braced_constructor__AtLine_10110_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1496__ReduceOf_templated_parameter_kind__AtLine_10182_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1494__ReduceOf_struct_braced_constructor__AtLine_10114_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1497__ReduceOf_templated_parameter_kind__AtLine_10186_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1495__ReduceOf_case_no_value_expression_prefix__AtLine_10121_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1498__ReduceOf_templated_parameter_kind__AtLine_10190_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1496__ReduceOf_case_no_value_expression_prefix__AtLine_10125_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1499__ReduceOf_templated_parameter_kind__AtLine_10194_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1497__ReduceOf_case_value_expression_prefix__AtLine_10132_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1500__ReduceOf_templated_parameter_type__AtLine_10209_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1498__ReduceOf_case_value_expression_prefix__AtLine_10136_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1504__ReduceOf_new_constructor_prefix_no_arg__AtLine_10221_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1501__ReduceOf_case_expression__AtLine_10148_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1505__ReduceOf_new_constructor_arg__AtLine_10228_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1502__ReduceOf_case_expression__AtLine_10152_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1506__ReduceOf_new_constructor_arg__AtLine_10232_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1503__ReduceOf_opt_at_time_zone__AtLine_10159_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1507__ReduceOf_new_constructor_arg__AtLine_10236_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1504__ReduceOf_opt_at_time_zone__AtLine_10162_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1508__ReduceOf_new_constructor_prefix__AtLine_10245_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1505__ReduceOf_opt_format__AtLine_10168_Column_8([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1509__ReduceOf_new_constructor_prefix__AtLine_10249_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1506__ReduceOf_opt_format__AtLine_10171_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1510__ReduceOf_new_constructor__AtLine_10256_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1507__ReduceOf_cast_expression__AtLine_10176_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1511__ReduceOf_new_constructor__AtLine_10260_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1508__ReduceOf_cast_expression__AtLine_10182_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1512__ReduceOf_braced_constructor_field_value__AtLine_10267_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1509__ReduceOf_cast_expression__AtLine_10192_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1513__ReduceOf_braced_constructor_field_value__AtLine_10272_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1510__ReduceOf_cast_expression__AtLine_10198_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1514__ReduceOf_braced_constructor_extension_expression_start__AtLine_10279_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1511__ReduceOf_extract_expression_base__AtLine_10209_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1516__ReduceOf_braced_constructor_extension_expression__AtLine_10294_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1512__ReduceOf_extract_expression__AtLine_10216_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1517__ReduceOf_braced_constructor_extension_expression__AtLine_10303_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1513__ReduceOf_extract_expression__AtLine_10220_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1518__ReduceOf_braced_constructor_extension_lhs__AtLine_10310_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1514__ReduceOf_replace_fields_arg__AtLine_10227_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1519__ReduceOf_braced_constructor_extension_lhs__AtLine_10316_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1515__ReduceOf_replace_fields_arg__AtLine_10231_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1520__ReduceOf_braced_constructor_extension_lhs__AtLine_10322_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1516__ReduceOf_replace_fields_prefix__AtLine_10238_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1521__ReduceOf_braced_constructor_extension__AtLine_10331_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1517__ReduceOf_replace_fields_prefix__AtLine_10242_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1522__ReduceOf_braced_constructor_lhs__AtLine_10338_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1518__ReduceOf_replace_fields_expression__AtLine_10249_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1523__ReduceOf_braced_constructor_lhs__AtLine_10344_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1519__ReduceOf_function_name_from_keyword__AtLine_10256_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1524__ReduceOf_braced_constructor_lhs__AtLine_10350_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1520__ReduceOf_function_name_from_keyword__AtLine_10260_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1525__ReduceOf_braced_constructor_field__AtLine_10359_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1521__ReduceOf_function_name_from_keyword__AtLine_10264_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1526__ReduceOf_braced_constructor_start__AtLine_10366_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1522__ReduceOf_function_name_from_keyword__AtLine_10268_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1527__ReduceOf_braced_constructor_prefix__AtLine_10377_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1523__ReduceOf_function_name_from_keyword__AtLine_10272_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1528__ReduceOf_braced_constructor_prefix__AtLine_10381_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1524__ReduceOf_function_name_from_keyword__AtLine_10276_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1529__ReduceOf_braced_constructor_prefix__AtLine_10385_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1525__ReduceOf_function_call_expression_base__AtLine_10297_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1530__ReduceOf_braced_constructor_prefix__AtLine_10390_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1526__ReduceOf_function_call_expression_base__AtLine_10335_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1531__ReduceOf_braced_constructor_prefix__AtLine_10404_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1527__ReduceOf_function_call_expression_base__AtLine_10372_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1532__ReduceOf_braced_constructor__AtLine_10412_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1528__ReduceOf_function_call_argument__AtLine_10385_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1533__ReduceOf_braced_constructor__AtLine_10416_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1532__ReduceOf_function_call_argument__AtLine_10401_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1534__ReduceOf_braced_constructor__AtLine_10421_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1533__ReduceOf_sequence_arg__AtLine_10412_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1535__ReduceOf_braced_new_constructor__AtLine_10428_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1534__ReduceOf_named_argument__AtLine_10419_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1536__ReduceOf_struct_braced_constructor__AtLine_10435_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1535__ReduceOf_named_argument__AtLine_10423_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1537__ReduceOf_struct_braced_constructor__AtLine_10439_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1536__ReduceOf_lambda_argument__AtLine_10430_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1538__ReduceOf_case_no_value_expression_prefix__AtLine_10446_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1537__ReduceOf_lambda_argument_list__AtLine_10449_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1539__ReduceOf_case_no_value_expression_prefix__AtLine_10450_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1538__ReduceOf_lambda_argument_list__AtLine_10460_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1540__ReduceOf_case_value_expression_prefix__AtLine_10457_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1539__ReduceOf_function_call_expression_with_args_prefix__AtLine_10467_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1541__ReduceOf_case_value_expression_prefix__AtLine_10461_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1540__ReduceOf_function_call_expression_with_args_prefix__AtLine_10475_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1544__ReduceOf_case_expression__AtLine_10473_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1541__ReduceOf_function_call_expression_with_args_prefix__AtLine_10481_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1545__ReduceOf_case_expression__AtLine_10477_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1542__ReduceOf_function_call_expression__AtLine_10490_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1546__ReduceOf_opt_at_time_zone__AtLine_10484_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1543__ReduceOf_function_call_expression__AtLine_10503_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1547__ReduceOf_opt_at_time_zone__AtLine_10487_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1545__ReduceOf_opt_identifier__AtLine_10516_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1548__ReduceOf_opt_format__AtLine_10493_Column_8([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1546__ReduceOf_partition_by_clause_prefix__AtLine_10521_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1549__ReduceOf_opt_format__AtLine_10496_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1547__ReduceOf_partition_by_clause_prefix__AtLine_10525_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1550__ReduceOf_cast_expression__AtLine_10501_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1548__ReduceOf_opt_partition_by_clause__AtLine_10531_Column_32([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1551__ReduceOf_cast_expression__AtLine_10507_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1549__ReduceOf_opt_partition_by_clause__AtLine_10532_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1552__ReduceOf_cast_expression__AtLine_10517_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1550__ReduceOf_partition_by_clause_prefix_no_hint__AtLine_10537_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1553__ReduceOf_cast_expression__AtLine_10523_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1551__ReduceOf_partition_by_clause_prefix_no_hint__AtLine_10541_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1554__ReduceOf_extract_expression_base__AtLine_10534_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1552__ReduceOf_opt_partition_by_clause_no_hint__AtLine_10547_Column_40([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1555__ReduceOf_extract_expression__AtLine_10541_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1553__ReduceOf_opt_partition_by_clause_no_hint__AtLine_10548_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1556__ReduceOf_extract_expression__AtLine_10545_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1554__ReduceOf_cluster_by_clause_prefix_no_hint__AtLine_10553_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1557__ReduceOf_replace_fields_arg__AtLine_10552_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1555__ReduceOf_cluster_by_clause_prefix_no_hint__AtLine_10557_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1558__ReduceOf_replace_fields_arg__AtLine_10556_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1556__ReduceOf_opt_cluster_by_clause_no_hint__AtLine_10563_Column_38([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1559__ReduceOf_replace_fields_prefix__AtLine_10563_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1557__ReduceOf_opt_cluster_by_clause_no_hint__AtLine_10564_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1560__ReduceOf_replace_fields_prefix__AtLine_10567_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1558__ReduceOf_opt_ttl_clause__AtLine_10569_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1561__ReduceOf_replace_fields_expression__AtLine_10574_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1559__ReduceOf_opt_ttl_clause__AtLine_10576_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1562__ReduceOf_function_name_from_keyword__AtLine_10581_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1560__ReduceOf_preceding_or_following__AtLine_10581_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1563__ReduceOf_function_name_from_keyword__AtLine_10585_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1561__ReduceOf_preceding_or_following__AtLine_10582_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1564__ReduceOf_function_name_from_keyword__AtLine_10589_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1562__ReduceOf_window_frame_bound__AtLine_10587_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1565__ReduceOf_function_name_from_keyword__AtLine_10593_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1563__ReduceOf_window_frame_bound__AtLine_10596_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1566__ReduceOf_function_name_from_keyword__AtLine_10597_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1564__ReduceOf_window_frame_bound__AtLine_10603_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1567__ReduceOf_function_name_from_keyword__AtLine_10601_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1565__ReduceOf_frame_unit__AtLine_10614_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1568__ReduceOf_function_call_expression_base__AtLine_10622_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1566__ReduceOf_frame_unit__AtLine_10615_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1569__ReduceOf_function_call_expression_base__AtLine_10667_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1567__ReduceOf_opt_window_frame_clause__AtLine_10620_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1570__ReduceOf_function_call_expression_base__AtLine_10704_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1568__ReduceOf_opt_window_frame_clause__AtLine_10626_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1571__ReduceOf_function_call_argument__AtLine_10717_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1569__ReduceOf_opt_window_frame_clause__AtLine_10631_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1575__ReduceOf_function_call_argument__AtLine_10733_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1570__ReduceOf_window_specification__AtLine_10636_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1576__ReduceOf_sequence_arg__AtLine_10744_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1571__ReduceOf_window_specification__AtLine_10641_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1577__ReduceOf_named_argument__AtLine_10751_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1572__ReduceOf_function_call_expression_with_clauses__AtLine_10648_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1578__ReduceOf_named_argument__AtLine_10755_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1573__ReduceOf_opt_with_group_rows__AtLine_10671_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1579__ReduceOf_lambda_argument__AtLine_10762_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1574__ReduceOf_opt_with_group_rows__AtLine_10674_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1580__ReduceOf_lambda_argument_list__AtLine_10781_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1575__ReduceOf_opt_over_clause__AtLine_10679_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1581__ReduceOf_lambda_argument_list__AtLine_10792_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1576__ReduceOf_opt_over_clause__AtLine_10682_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1582__ReduceOf_function_call_expression_with_args_prefix__AtLine_10799_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1577__ReduceOf_struct_constructor_prefix_with_keyword_no_arg__AtLine_10687_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1583__ReduceOf_function_call_expression_with_args_prefix__AtLine_10807_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1578__ReduceOf_struct_constructor_prefix_with_keyword_no_arg__AtLine_10691_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1584__ReduceOf_function_call_expression_with_args_prefix__AtLine_10813_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1579__ReduceOf_struct_constructor_prefix_with_keyword__AtLine_10698_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1585__ReduceOf_function_call_expression__AtLine_10826_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1580__ReduceOf_struct_constructor_prefix_with_keyword__AtLine_10702_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1586__ReduceOf_function_call_expression__AtLine_10849_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1581__ReduceOf_struct_constructor_arg__AtLine_10709_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1588__ReduceOf_opt_identifier__AtLine_10865_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1582__ReduceOf_struct_constructor_prefix_without_keyword__AtLine_10718_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1589__ReduceOf_partition_by_clause_prefix__AtLine_10870_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1583__ReduceOf_struct_constructor_prefix_without_keyword__AtLine_10722_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1590__ReduceOf_partition_by_clause_prefix__AtLine_10874_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1584__ReduceOf_struct_constructor__AtLine_10729_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1591__ReduceOf_opt_partition_by_clause__AtLine_10880_Column_32([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1585__ReduceOf_struct_constructor__AtLine_10733_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1592__ReduceOf_opt_partition_by_clause__AtLine_10881_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1586__ReduceOf_struct_constructor__AtLine_10737_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1593__ReduceOf_partition_by_clause_prefix_no_hint__AtLine_10886_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1587__ReduceOf_expression_subquery_with_keyword__AtLine_10744_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1594__ReduceOf_partition_by_clause_prefix_no_hint__AtLine_10890_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1588__ReduceOf_expression_subquery_with_keyword__AtLine_10750_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1595__ReduceOf_opt_partition_by_clause_no_hint__AtLine_10896_Column_40([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1589__ReduceOf_expression_subquery_with_keyword__AtLine_10756_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1596__ReduceOf_opt_partition_by_clause_no_hint__AtLine_10897_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1590__ReduceOf_expression_subquery_with_keyword__AtLine_10762_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1597__ReduceOf_cluster_by_clause_prefix_no_hint__AtLine_10902_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1591__ReduceOf_expression_subquery_with_keyword__AtLine_10766_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1598__ReduceOf_cluster_by_clause_prefix_no_hint__AtLine_10906_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1592__ReduceOf_null_literal__AtLine_10775_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1599__ReduceOf_opt_cluster_by_clause_no_hint__AtLine_10912_Column_38([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1593__ReduceOf_boolean_literal__AtLine_10786_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1600__ReduceOf_opt_cluster_by_clause_no_hint__AtLine_10913_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1594__ReduceOf_boolean_literal__AtLine_10795_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1601__ReduceOf_opt_ttl_clause__AtLine_10918_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1595__ReduceOf_string_literal_component__AtLine_10807_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1602__ReduceOf_opt_ttl_clause__AtLine_10925_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1596__ReduceOf_string_literal__AtLine_10839_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1603__ReduceOf_preceding_or_following__AtLine_10930_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1597__ReduceOf_string_literal__AtLine_10844_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1604__ReduceOf_preceding_or_following__AtLine_10931_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1598__ReduceOf_string_literal__AtLine_10856_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1605__ReduceOf_window_frame_bound__AtLine_10936_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1599__ReduceOf_bytes_literal_component__AtLine_10866_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1606__ReduceOf_window_frame_bound__AtLine_10945_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1600__ReduceOf_bytes_literal__AtLine_10902_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1607__ReduceOf_window_frame_bound__AtLine_10952_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1601__ReduceOf_bytes_literal__AtLine_10907_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1608__ReduceOf_frame_unit__AtLine_10963_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1602__ReduceOf_bytes_literal__AtLine_10921_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1609__ReduceOf_frame_unit__AtLine_10964_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1603__ReduceOf_integer_literal__AtLine_10929_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1610__ReduceOf_opt_window_frame_clause__AtLine_10969_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1606__ReduceOf_numeric_literal__AtLine_10943_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1611__ReduceOf_opt_window_frame_clause__AtLine_10975_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1609__ReduceOf_bignumeric_literal__AtLine_10955_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1612__ReduceOf_opt_window_frame_clause__AtLine_10980_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1610__ReduceOf_json_literal__AtLine_10962_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1613__ReduceOf_window_specification__AtLine_10985_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1611__ReduceOf_floating_point_literal__AtLine_10969_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1614__ReduceOf_window_specification__AtLine_10990_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1612__ReduceOf_token_identifier__AtLine_10978_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1615__ReduceOf_function_call_expression_with_clauses__AtLine_10997_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1614__ReduceOf_identifier__AtLine_11012_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1616__ReduceOf_function_call_expression_with_clauses__AtLine_11018_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1615__ReduceOf_label__AtLine_11019_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1617__ReduceOf_opt_with_group_rows__AtLine_11025_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1616__ReduceOf_system_variable_expression__AtLine_11052_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1618__ReduceOf_opt_with_group_rows__AtLine_11028_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1687__ReduceOf_common_keyword_as_identifier__AtLine_11138_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1619__ReduceOf_opt_over_clause__AtLine_11033_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1760__ReduceOf_common_keyword_as_identifier__AtLine_11219_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1620__ReduceOf_opt_over_clause__AtLine_11036_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1839__ReduceOf_opt_or_replace__AtLine_11312_Column_42([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1621__ReduceOf_struct_constructor_prefix_with_keyword_no_arg__AtLine_11041_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1840__ReduceOf_opt_or_replace__AtLine_11312_Column_66([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1622__ReduceOf_struct_constructor_prefix_with_keyword_no_arg__AtLine_11045_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1841__ReduceOf_opt_create_scope__AtLine_11315_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1623__ReduceOf_struct_constructor_prefix_with_keyword__AtLine_11052_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1842__ReduceOf_opt_create_scope__AtLine_11316_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1624__ReduceOf_struct_constructor_prefix_with_keyword__AtLine_11056_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1843__ReduceOf_opt_create_scope__AtLine_11317_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1625__ReduceOf_struct_constructor_arg__AtLine_11063_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1844__ReduceOf_opt_create_scope__AtLine_11318_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1626__ReduceOf_struct_constructor_prefix_without_keyword__AtLine_11072_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1845__ReduceOf_opt_create_scope__AtLine_11319_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1627__ReduceOf_struct_constructor_prefix_without_keyword__AtLine_11076_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1846__ReduceOf_opt_unique__AtLine_11322_Column_32([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1628__ReduceOf_struct_constructor__AtLine_11083_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1847__ReduceOf_opt_unique__AtLine_11322_Column_56([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1629__ReduceOf_struct_constructor__AtLine_11087_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1851__ReduceOf_opt_hint__AtLine_11328_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1630__ReduceOf_struct_constructor__AtLine_11091_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1852__ReduceOf_options_entry__AtLine_11333_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1631__ReduceOf_expression_subquery_with_keyword__AtLine_11098_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1853__ReduceOf_options_assignment_operator__AtLine_11342_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1632__ReduceOf_expression_subquery_with_keyword__AtLine_11104_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1854__ReduceOf_options_assignment_operator__AtLine_11343_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1633__ReduceOf_expression_subquery_with_keyword__AtLine_11110_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1855__ReduceOf_options_assignment_operator__AtLine_11344_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1634__ReduceOf_expression_subquery_with_keyword__AtLine_11116_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1856__ReduceOf_expression_or_proto__AtLine_11349_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1635__ReduceOf_expression_subquery_with_keyword__AtLine_11120_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1858__ReduceOf_options_list_prefix__AtLine_11359_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1636__ReduceOf_null_literal__AtLine_11129_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1859__ReduceOf_options_list_prefix__AtLine_11363_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1637__ReduceOf_boolean_literal__AtLine_11140_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1860__ReduceOf_options_list__AtLine_11370_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1638__ReduceOf_boolean_literal__AtLine_11149_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1861__ReduceOf_options_list__AtLine_11374_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1639__ReduceOf_string_literal_component__AtLine_11161_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1862__ReduceOf_options__AtLine_11380_Column_28([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1640__ReduceOf_string_literal__AtLine_11192_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1863__ReduceOf_opt_options_list__AtLine_11384_Column_13([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1641__ReduceOf_string_literal__AtLine_11197_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1864__ReduceOf_opt_options_list__AtLine_11385_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1642__ReduceOf_string_literal__AtLine_11209_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1865__ReduceOf_define_table_statement__AtLine_11390_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1643__ReduceOf_bytes_literal_component__AtLine_11219_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1866__ReduceOf_dml_statement__AtLine_11396_Column_22([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1644__ReduceOf_bytes_literal__AtLine_11254_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1871__ReduceOf_opt_where_expression__AtLine_11405_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1645__ReduceOf_bytes_literal__AtLine_11259_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1872__ReduceOf_opt_where_expression__AtLine_11409_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1646__ReduceOf_bytes_literal__AtLine_11273_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1873__ReduceOf_opt_assert_rows_modified__AtLine_11416_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1647__ReduceOf_integer_literal__AtLine_11281_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1874__ReduceOf_opt_assert_rows_modified__AtLine_11420_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1650__ReduceOf_numeric_literal__AtLine_11295_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1875__ReduceOf_opt_returning_clause__AtLine_11427_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1653__ReduceOf_bignumeric_literal__AtLine_11307_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1876__ReduceOf_opt_returning_clause__AtLine_11431_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1654__ReduceOf_json_literal__AtLine_11314_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1877__ReduceOf_opt_returning_clause__AtLine_11438_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1655__ReduceOf_floating_point_literal__AtLine_11321_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1878__ReduceOf_opt_returning_clause__AtLine_11442_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1656__ReduceOf_token_identifier__AtLine_11330_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1879__ReduceOf_opt_conflict_target__AtLine_11446_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1658__ReduceOf_identifier__AtLine_11364_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1880__ReduceOf_opt_conflict_target__AtLine_11447_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1659__ReduceOf_label__AtLine_11371_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1881__ReduceOf_opt_conflict_target__AtLine_11449_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1660__ReduceOf_system_variable_expression__AtLine_11404_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1882__ReduceOf_on_conflict_clause__AtLine_11456_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1732__ReduceOf_common_keyword_as_identifier__AtLine_11491_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1883__ReduceOf_on_conflict_clause__AtLine_11463_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1806__ReduceOf_common_keyword_as_identifier__AtLine_11573_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1885__ReduceOf_opt_on_conflict_clause__AtLine_11472_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1887__ReduceOf_opt_or_replace__AtLine_11669_Column_39([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1886__ReduceOf_opt_or_ignore_replace_update__AtLine_11476_Column_19([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1888__ReduceOf_opt_or_replace__AtLine_11669_Column_63([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1887__ReduceOf_opt_or_ignore_replace_update__AtLine_11477_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1889__ReduceOf_opt_create_scope__AtLine_11672_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1888__ReduceOf_opt_or_ignore_replace_update__AtLine_11478_Column_22([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1890__ReduceOf_opt_create_scope__AtLine_11673_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1889__ReduceOf_opt_or_ignore_replace_update__AtLine_11479_Column_31([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1891__ReduceOf_opt_create_scope__AtLine_11674_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1890__ReduceOf_opt_or_ignore_replace_update__AtLine_11480_Column_21([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1892__ReduceOf_opt_create_scope__AtLine_11675_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1891__ReduceOf_opt_or_ignore_replace_update__AtLine_11481_Column_30([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1893__ReduceOf_opt_create_scope__AtLine_11676_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1892__ReduceOf_opt_or_ignore_replace_update__AtLine_11482_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1894__ReduceOf_opt_unique__AtLine_11679_Column_29([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1893__ReduceOf_insert_statement_prefix__AtLine_11487_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1895__ReduceOf_opt_unique__AtLine_11679_Column_53([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1894__ReduceOf_insert_statement__AtLine_11499_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1899__ReduceOf_opt_hint__AtLine_11685_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1895__ReduceOf_insert_statement__AtLine_11503_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1900__ReduceOf_options_entry__AtLine_11690_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1896__ReduceOf_insert_statement__AtLine_11507_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1901__ReduceOf_options_assignment_operator__AtLine_11699_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1897__ReduceOf_insert_statement__AtLine_11511_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1902__ReduceOf_options_assignment_operator__AtLine_11700_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1898__ReduceOf_insert_statement__AtLine_11515_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1903__ReduceOf_options_assignment_operator__AtLine_11701_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1899__ReduceOf_insert_statement__AtLine_11519_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1904__ReduceOf_expression_or_proto__AtLine_11706_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1900__ReduceOf_copy_data_source__AtLine_11526_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1906__ReduceOf_options_list_prefix__AtLine_11716_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1901__ReduceOf_clone_data_source__AtLine_11533_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1907__ReduceOf_options_list_prefix__AtLine_11720_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1902__ReduceOf_clone_data_source_list__AtLine_11540_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1908__ReduceOf_options_list__AtLine_11727_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1903__ReduceOf_clone_data_source_list__AtLine_11544_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1909__ReduceOf_options_list__AtLine_11731_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1904__ReduceOf_clone_data_statement__AtLine_11552_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1910__ReduceOf_options__AtLine_11737_Column_28([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1906__ReduceOf_expression_or_default__AtLine_11560_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1911__ReduceOf_opt_options_list__AtLine_11741_Column_13([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1907__ReduceOf_insert_values_row_prefix__AtLine_11567_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1912__ReduceOf_opt_options_list__AtLine_11742_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1908__ReduceOf_insert_values_row_prefix__AtLine_11571_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1913__ReduceOf_define_table_statement__AtLine_11747_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1909__ReduceOf_insert_values_row__AtLine_11578_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1914__ReduceOf_dml_statement__AtLine_11753_Column_22([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1910__ReduceOf_insert_values_list_or_table_clause__AtLine_11584_Column_24([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1919__ReduceOf_opt_where_expression__AtLine_11762_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1911__ReduceOf_insert_values_list_or_table_clause__AtLine_11585_Column_31([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1920__ReduceOf_opt_where_expression__AtLine_11766_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1912__ReduceOf_insert_values_or_query__AtLine_11589_Column_38([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1921__ReduceOf_opt_assert_rows_modified__AtLine_11773_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1913__ReduceOf_insert_values_or_query__AtLine_11590_Column_11([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1922__ReduceOf_opt_assert_rows_modified__AtLine_11777_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1914__ReduceOf_insert_values_list__AtLine_11595_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1923__ReduceOf_opt_returning_clause__AtLine_11784_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1915__ReduceOf_insert_values_list__AtLine_11599_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1924__ReduceOf_opt_returning_clause__AtLine_11788_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1916__ReduceOf_delete_statement__AtLine_11608_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1925__ReduceOf_opt_returning_clause__AtLine_11795_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1917__ReduceOf_opt_with_offset_and_alias__AtLine_11615_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1926__ReduceOf_opt_returning_clause__AtLine_11799_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1918__ReduceOf_opt_with_offset_and_alias__AtLine_11618_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1927__ReduceOf_opt_conflict_target__AtLine_11803_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1919__ReduceOf_update_statement__AtLine_11625_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1928__ReduceOf_opt_conflict_target__AtLine_11804_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1920__ReduceOf_truncate_statement__AtLine_11632_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1929__ReduceOf_opt_conflict_target__AtLine_11806_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1921__ReduceOf_nested_dml_statement__AtLine_11640_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1930__ReduceOf_on_conflict_clause__AtLine_11813_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1922__ReduceOf_generalized_path_expression__AtLine_11652_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1931__ReduceOf_on_conflict_clause__AtLine_11820_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1923__ReduceOf_generalized_path_expression__AtLine_11656_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1933__ReduceOf_opt_on_conflict_clause__AtLine_11829_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1924__ReduceOf_generalized_path_expression__AtLine_11666_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1934__ReduceOf_opt_or_ignore_replace_update__AtLine_11833_Column_19([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1925__ReduceOf_generalized_path_expression__AtLine_11674_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1935__ReduceOf_opt_or_ignore_replace_update__AtLine_11834_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1926__ReduceOf_maybe_dashed_generalized_path_expression__AtLine_11681_Column_31([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1936__ReduceOf_opt_or_ignore_replace_update__AtLine_11835_Column_22([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1927__ReduceOf_maybe_dashed_generalized_path_expression__AtLine_11687_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1937__ReduceOf_opt_or_ignore_replace_update__AtLine_11836_Column_31([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1928__ReduceOf_generalized_extension_path__AtLine_11711_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1938__ReduceOf_opt_or_ignore_replace_update__AtLine_11837_Column_21([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1929__ReduceOf_generalized_extension_path__AtLine_11716_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1939__ReduceOf_opt_or_ignore_replace_update__AtLine_11838_Column_30([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1930__ReduceOf_generalized_extension_path__AtLine_11720_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1940__ReduceOf_opt_or_ignore_replace_update__AtLine_11839_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1931__ReduceOf_update_set_value__AtLine_11727_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1941__ReduceOf_insert_statement_prefix__AtLine_11844_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1932__ReduceOf_update_item__AtLine_11734_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1942__ReduceOf_insert_statement_middle__AtLine_11857_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1933__ReduceOf_update_item__AtLine_11738_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1943__ReduceOf_insert_statement_middle__AtLine_11861_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1934__ReduceOf_update_item_list__AtLine_11745_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1944__ReduceOf_insert_statement_middle__AtLine_11865_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1935__ReduceOf_update_item_list__AtLine_11749_Column_6([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1945__ReduceOf_insert_statement_middle__AtLine_11869_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1940__ReduceOf_opt_and_expression__AtLine_11766_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1946__ReduceOf_insert_statement_middle__AtLine_11873_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1941__ReduceOf_opt_and_expression__AtLine_11770_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1947__ReduceOf_insert_statement_middle__AtLine_11877_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1942__ReduceOf_merge_insert_value_list_or_source_row__AtLine_11777_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1948__ReduceOf_insert_statement__AtLine_11885_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1943__ReduceOf_merge_insert_value_list_or_source_row__AtLine_11781_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1949__ReduceOf_insert_statement_in_pipe__AtLine_11902_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1944__ReduceOf_merge_action__AtLine_11788_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1950__ReduceOf_copy_data_source__AtLine_11909_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1945__ReduceOf_merge_action__AtLine_11794_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1951__ReduceOf_clone_data_source__AtLine_11916_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1946__ReduceOf_merge_action__AtLine_11800_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1952__ReduceOf_clone_data_source_list__AtLine_11923_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1947__ReduceOf_merge_when_clause__AtLine_11809_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1953__ReduceOf_clone_data_source_list__AtLine_11927_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1948__ReduceOf_merge_when_clause__AtLine_11816_Column_9([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1954__ReduceOf_clone_data_statement__AtLine_11935_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1949__ReduceOf_merge_when_clause__AtLine_11824_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1956__ReduceOf_expression_or_default__AtLine_11943_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1950__ReduceOf_merge_when_clause_list__AtLine_11834_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1957__ReduceOf_insert_values_row_prefix__AtLine_11950_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1951__ReduceOf_merge_when_clause_list__AtLine_11838_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1958__ReduceOf_insert_values_row_prefix__AtLine_11954_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1954__ReduceOf_merge_statement_prefix__AtLine_11853_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1959__ReduceOf_insert_values_row__AtLine_11961_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1955__ReduceOf_merge_statement__AtLine_11860_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1960__ReduceOf_insert_values_list_or_table_clause__AtLine_11967_Column_24([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1956__ReduceOf_call_statement_with_args_prefix__AtLine_11867_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1961__ReduceOf_insert_values_list_or_table_clause__AtLine_11968_Column_31([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1957__ReduceOf_call_statement_with_args_prefix__AtLine_11871_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1962__ReduceOf_insert_values_or_query__AtLine_11972_Column_38([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1958__ReduceOf_call_statement__AtLine_11878_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1963__ReduceOf_insert_values_or_query__AtLine_11973_Column_11([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1959__ReduceOf_call_statement__AtLine_11882_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1964__ReduceOf_insert_values_list__AtLine_11978_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1961__ReduceOf_opt_function_parameters__AtLine_11890_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1965__ReduceOf_insert_values_list__AtLine_11982_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1962__ReduceOf_opt_if_exists__AtLine_11898_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1966__ReduceOf_delete_statement__AtLine_11991_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1963__ReduceOf_opt_if_exists__AtLine_11902_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1967__ReduceOf_opt_with_offset_and_alias__AtLine_11998_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1964__ReduceOf_opt_access__AtLine_11910_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1968__ReduceOf_opt_with_offset_and_alias__AtLine_12001_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1965__ReduceOf_opt_access__AtLine_11914_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1969__ReduceOf_update_statement__AtLine_12008_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1966__ReduceOf_drop_all_row_access_policies_statement__AtLine_11922_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1970__ReduceOf_truncate_statement__AtLine_12015_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1967__ReduceOf_on_path_expression__AtLine_11932_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1971__ReduceOf_nested_dml_statement__AtLine_12023_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1968__ReduceOf_opt_on_path_expression__AtLine_11939_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1972__ReduceOf_generalized_path_expression__AtLine_12035_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1969__ReduceOf_opt_on_path_expression__AtLine_11943_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1973__ReduceOf_generalized_path_expression__AtLine_12039_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1970__ReduceOf_opt_drop_mode__AtLine_11949_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1974__ReduceOf_generalized_path_expression__AtLine_12049_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1971__ReduceOf_opt_drop_mode__AtLine_11950_Column_17([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1975__ReduceOf_generalized_path_expression__AtLine_12057_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1972__ReduceOf_opt_drop_mode__AtLine_11952_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1976__ReduceOf_maybe_dashed_generalized_path_expression__AtLine_12064_Column_31([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1973__ReduceOf_drop_statement__AtLine_11958_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1977__ReduceOf_maybe_dashed_generalized_path_expression__AtLine_12070_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1974__ReduceOf_drop_statement__AtLine_11966_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1978__ReduceOf_generalized_extension_path__AtLine_12102_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1975__ReduceOf_drop_statement__AtLine_11977_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1979__ReduceOf_generalized_extension_path__AtLine_12107_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1976__ReduceOf_drop_statement__AtLine_11993_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1980__ReduceOf_generalized_extension_path__AtLine_12111_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1977__ReduceOf_drop_statement__AtLine_12022_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1981__ReduceOf_update_set_value__AtLine_12118_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1978__ReduceOf_drop_statement__AtLine_12028_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1982__ReduceOf_update_item__AtLine_12125_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1979__ReduceOf_drop_statement__AtLine_12035_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1983__ReduceOf_update_item__AtLine_12129_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1980__ReduceOf_index_type__AtLine_12088_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1984__ReduceOf_update_item_list__AtLine_12136_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1981__ReduceOf_index_type__AtLine_12090_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1985__ReduceOf_update_item_list__AtLine_12140_Column_6([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1983__ReduceOf_opt_index_type__AtLine_12094_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1990__ReduceOf_opt_and_expression__AtLine_12157_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1984__ReduceOf_unterminated_non_empty_statement_list__AtLine_12098_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1991__ReduceOf_opt_and_expression__AtLine_12161_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1985__ReduceOf_unterminated_non_empty_statement_list__AtLine_12109_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1992__ReduceOf_merge_insert_value_list_or_source_row__AtLine_12168_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1986__ReduceOf_unterminated_non_empty_top_level_statement_list__AtLine_12122_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1993__ReduceOf_merge_insert_value_list_or_source_row__AtLine_12172_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1987__ReduceOf_unterminated_non_empty_top_level_statement_list__AtLine_12127_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1994__ReduceOf_merge_action__AtLine_12179_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1988__ReduceOf_opt_execute_into_clause__AtLine_12134_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1995__ReduceOf_merge_action__AtLine_12185_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1989__ReduceOf_opt_execute_into_clause__AtLine_12138_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1996__ReduceOf_merge_action__AtLine_12191_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1990__ReduceOf_execute_using_argument__AtLine_12145_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1997__ReduceOf_merge_when_clause__AtLine_12200_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1991__ReduceOf_execute_using_argument__AtLine_12150_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1998__ReduceOf_merge_when_clause__AtLine_12207_Column_9([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1992__ReduceOf_execute_using_argument_list__AtLine_12159_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action1999__ReduceOf_merge_when_clause__AtLine_12215_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1993__ReduceOf_execute_using_argument_list__AtLine_12163_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2000__ReduceOf_merge_when_clause_list__AtLine_12225_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1994__ReduceOf_opt_execute_using_clause__AtLine_12170_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2001__ReduceOf_merge_when_clause_list__AtLine_12229_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1995__ReduceOf_opt_execute_using_clause__AtLine_12174_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2004__ReduceOf_merge_statement_prefix__AtLine_12244_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1996__ReduceOf_execute_immediate__AtLine_12182_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2005__ReduceOf_merge_statement__AtLine_12251_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1997__ReduceOf_script__AtLine_12189_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2006__ReduceOf_call_statement_with_args_prefix__AtLine_12258_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1998__ReduceOf_script__AtLine_12194_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2007__ReduceOf_call_statement_with_args_prefix__AtLine_12262_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action1999__ReduceOf_script__AtLine_12199_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2008__ReduceOf_call_statement__AtLine_12269_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2000__ReduceOf_statement_list__AtLine_12209_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2009__ReduceOf_call_statement__AtLine_12273_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2001__ReduceOf_statement_list__AtLine_12213_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2011__ReduceOf_opt_function_parameters__AtLine_12281_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2002__ReduceOf_opt_else__AtLine_12221_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2012__ReduceOf_opt_if_exists__AtLine_12289_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2003__ReduceOf_opt_else__AtLine_12225_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2013__ReduceOf_opt_if_exists__AtLine_12293_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2004__ReduceOf_elseif_clauses__AtLine_12232_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2014__ReduceOf_opt_access__AtLine_12301_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2005__ReduceOf_elseif_clauses__AtLine_12238_Column_3([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2015__ReduceOf_opt_access__AtLine_12305_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2006__ReduceOf_opt_elseif_clauses__AtLine_12247_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2016__ReduceOf_drop_all_row_access_policies_statement__AtLine_12313_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2007__ReduceOf_opt_elseif_clauses__AtLine_12251_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2017__ReduceOf_on_path_expression__AtLine_12323_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2008__ReduceOf_if_statement_unclosed__AtLine_12258_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2018__ReduceOf_opt_on_path_expression__AtLine_12330_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2009__ReduceOf_if_statement__AtLine_12266_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2019__ReduceOf_opt_on_path_expression__AtLine_12334_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2010__ReduceOf_when_then_clauses__AtLine_12273_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2020__ReduceOf_opt_drop_mode__AtLine_12340_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2011__ReduceOf_when_then_clauses__AtLine_12279_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2021__ReduceOf_opt_drop_mode__AtLine_12341_Column_17([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2012__ReduceOf_opt_expression__AtLine_12288_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2022__ReduceOf_opt_drop_mode__AtLine_12343_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2013__ReduceOf_opt_expression__AtLine_12292_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2023__ReduceOf_drop_statement__AtLine_12349_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2014__ReduceOf_case_statement__AtLine_12299_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2024__ReduceOf_drop_statement__AtLine_12357_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2015__ReduceOf_begin_end_block__AtLine_12310_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2025__ReduceOf_drop_statement__AtLine_12368_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2016__ReduceOf_opt_exception_handler__AtLine_12317_Column_54([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2026__ReduceOf_drop_statement__AtLine_12384_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2017__ReduceOf_opt_exception_handler__AtLine_12323_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2027__ReduceOf_drop_statement__AtLine_12413_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2018__ReduceOf_opt_default_expression__AtLine_12330_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2028__ReduceOf_drop_statement__AtLine_12419_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2019__ReduceOf_opt_default_expression__AtLine_12334_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2029__ReduceOf_drop_statement__AtLine_12426_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2020__ReduceOf_identifier_list__AtLine_12341_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2030__ReduceOf_alter_index_type__AtLine_12478_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2021__ReduceOf_identifier_list__AtLine_12345_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2031__ReduceOf_alter_index_type__AtLine_12481_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2022__ReduceOf_variable_declaration__AtLine_12352_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2032__ReduceOf_index_type__AtLine_12488_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2023__ReduceOf_variable_declaration__AtLine_12357_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2033__ReduceOf_index_type__AtLine_12490_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2024__ReduceOf_loop_statement__AtLine_12365_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2035__ReduceOf_opt_index_type__AtLine_12494_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2025__ReduceOf_while_statement__AtLine_12372_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2036__ReduceOf_unterminated_non_empty_statement_list__AtLine_12498_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2026__ReduceOf_until_clause__AtLine_12379_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2037__ReduceOf_unterminated_non_empty_statement_list__AtLine_12509_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2027__ReduceOf_repeat_statement__AtLine_12387_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2038__ReduceOf_unterminated_non_empty_top_level_statement_list__AtLine_12522_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2028__ReduceOf_for_in_statement__AtLine_12399_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2039__ReduceOf_unterminated_non_empty_top_level_statement_list__AtLine_12527_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2029__ReduceOf_break_statement__AtLine_12411_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2040__ReduceOf_opt_execute_into_clause__AtLine_12534_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2030__ReduceOf_break_statement__AtLine_12424_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2041__ReduceOf_opt_execute_into_clause__AtLine_12538_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2031__ReduceOf_continue_statement__AtLine_12440_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2042__ReduceOf_execute_using_argument__AtLine_12545_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2032__ReduceOf_continue_statement__AtLine_12453_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2043__ReduceOf_execute_using_argument__AtLine_12550_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2033__ReduceOf_return_statement__AtLine_12471_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2044__ReduceOf_execute_using_argument_list__AtLine_12559_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2034__ReduceOf_raise_statement__AtLine_12478_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2045__ReduceOf_execute_using_argument_list__AtLine_12563_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2035__ReduceOf_raise_statement__AtLine_12482_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2046__ReduceOf_opt_execute_using_clause__AtLine_12570_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2036__ReduceOf_next_statement_kind__AtLine_12488_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2047__ReduceOf_opt_execute_using_clause__AtLine_12574_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2037__ReduceOf_next_statement_kind__AtLine_12498_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2048__ReduceOf_execute_immediate__AtLine_12582_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2038__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12513_Column_50([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2049__ReduceOf_script__AtLine_12589_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2039__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12514_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2050__ReduceOf_script__AtLine_12594_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2040__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12515_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2051__ReduceOf_script__AtLine_12599_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2041__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12520_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2052__ReduceOf_statement_list__AtLine_12609_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2042__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12521_Column_33([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2053__ReduceOf_statement_list__AtLine_12613_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2043__ReduceOf_next_statement_kind_table__AtLine_12526_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2054__ReduceOf_opt_else__AtLine_12621_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2044__ReduceOf_next_statement_kind_create_table_opt_as_or_semicolon__AtLine_12536_Column_10([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2055__ReduceOf_opt_else__AtLine_12625_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2047__ReduceOf_next_statement_kind_create_modifiers__AtLine_12543_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2056__ReduceOf_elseif_clauses__AtLine_12632_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2048__ReduceOf_next_statement_kind_without_hint__AtLine_12549_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2057__ReduceOf_elseif_clauses__AtLine_12638_Column_3([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2050__ReduceOf_next_statement_kind_without_hint__AtLine_12552_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2058__ReduceOf_opt_elseif_clauses__AtLine_12647_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2051__ReduceOf_next_statement_kind_without_hint__AtLine_12554_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2059__ReduceOf_opt_elseif_clauses__AtLine_12651_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2052__ReduceOf_next_statement_kind_without_hint__AtLine_12556_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2060__ReduceOf_if_statement_unclosed__AtLine_12658_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2053__ReduceOf_next_statement_kind_without_hint__AtLine_12558_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2061__ReduceOf_if_statement__AtLine_12666_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2054__ReduceOf_next_statement_kind_without_hint__AtLine_12560_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2062__ReduceOf_when_then_clauses__AtLine_12673_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2055__ReduceOf_next_statement_kind_without_hint__AtLine_12562_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2063__ReduceOf_when_then_clauses__AtLine_12679_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2056__ReduceOf_next_statement_kind_without_hint__AtLine_12563_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2064__ReduceOf_opt_expression__AtLine_12688_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2057__ReduceOf_next_statement_kind_without_hint__AtLine_12564_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2065__ReduceOf_opt_expression__AtLine_12692_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2058__ReduceOf_next_statement_kind_without_hint__AtLine_12565_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2066__ReduceOf_case_statement__AtLine_12699_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2059__ReduceOf_next_statement_kind_without_hint__AtLine_12566_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2067__ReduceOf_begin_end_block__AtLine_12710_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2060__ReduceOf_next_statement_kind_without_hint__AtLine_12568_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2068__ReduceOf_opt_exception_handler__AtLine_12717_Column_54([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2061__ReduceOf_next_statement_kind_without_hint__AtLine_12570_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2069__ReduceOf_opt_exception_handler__AtLine_12723_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2062__ReduceOf_next_statement_kind_without_hint__AtLine_12572_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2070__ReduceOf_opt_default_expression__AtLine_12730_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2063__ReduceOf_next_statement_kind_without_hint__AtLine_12573_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2071__ReduceOf_opt_default_expression__AtLine_12734_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2064__ReduceOf_next_statement_kind_without_hint__AtLine_12575_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2072__ReduceOf_identifier_list__AtLine_12741_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2065__ReduceOf_next_statement_kind_without_hint__AtLine_12579_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2073__ReduceOf_identifier_list__AtLine_12745_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2066__ReduceOf_next_statement_kind_without_hint__AtLine_12583_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2074__ReduceOf_variable_declaration__AtLine_12752_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2067__ReduceOf_next_statement_kind_without_hint__AtLine_12585_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2075__ReduceOf_variable_declaration__AtLine_12757_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2068__ReduceOf_next_statement_kind_without_hint__AtLine_12587_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2076__ReduceOf_loop_statement__AtLine_12765_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2069__ReduceOf_next_statement_kind_without_hint__AtLine_12589_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2077__ReduceOf_while_statement__AtLine_12772_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2070__ReduceOf_next_statement_kind_without_hint__AtLine_12597_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2078__ReduceOf_until_clause__AtLine_12779_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2071__ReduceOf_next_statement_kind_without_hint__AtLine_12599_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2079__ReduceOf_repeat_statement__AtLine_12787_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2072__ReduceOf_next_statement_kind_without_hint__AtLine_12601_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2080__ReduceOf_for_in_statement__AtLine_12799_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2073__ReduceOf_next_statement_kind_without_hint__AtLine_12614_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2081__ReduceOf_break_statement__AtLine_12811_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2074__ReduceOf_next_statement_kind_without_hint__AtLine_12615_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2082__ReduceOf_break_statement__AtLine_12824_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2075__ReduceOf_next_statement_kind_without_hint__AtLine_12616_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2083__ReduceOf_continue_statement__AtLine_12840_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2076__ReduceOf_next_statement_kind_without_hint__AtLine_12617_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2084__ReduceOf_continue_statement__AtLine_12853_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2077__ReduceOf_next_statement_kind_without_hint__AtLine_12618_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2085__ReduceOf_return_statement__AtLine_12871_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2078__ReduceOf_next_statement_kind_without_hint__AtLine_12619_Column_15([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2086__ReduceOf_raise_statement__AtLine_12878_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2079__ReduceOf_next_statement_kind_without_hint__AtLine_12621_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2087__ReduceOf_raise_statement__AtLine_12882_Column_5([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2080__ReduceOf_next_statement_kind_without_hint__AtLine_12623_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2088__ReduceOf_next_statement_kind__AtLine_12888_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2081__ReduceOf_next_statement_kind_without_hint__AtLine_12625_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2089__ReduceOf_next_statement_kind__AtLine_12898_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2082__ReduceOf_next_statement_kind_without_hint__AtLine_12627_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2090__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12913_Column_50([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2083__ReduceOf_next_statement_kind_without_hint__AtLine_12629_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2091__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12914_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2084__ReduceOf_next_statement_kind_without_hint__AtLine_12630_Column_16([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2092__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12915_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2085__ReduceOf_next_statement_kind_without_hint__AtLine_12631_Column_18([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2093__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12920_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2086__ReduceOf_next_statement_kind_without_hint__AtLine_12633_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2094__ReduceOf_next_statement_kind_parenthesized_select__AtLine_12921_Column_33([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2087__ReduceOf_next_statement_kind_without_hint__AtLine_12634_Column_21([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2095__ReduceOf_next_statement_kind_table__AtLine_12926_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2088__ReduceOf_next_statement_kind_without_hint__AtLine_12636_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2096__ReduceOf_next_statement_kind_create_table_opt_as_or_semicolon__AtLine_12936_Column_10([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2089__ReduceOf_next_statement_kind_without_hint__AtLine_12638_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2099__ReduceOf_next_statement_kind_create_modifiers__AtLine_12943_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2090__ReduceOf_next_statement_kind_without_hint__AtLine_12640_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2100__ReduceOf_next_statement_kind_without_hint__AtLine_12949_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2091__ReduceOf_next_statement_kind_without_hint__AtLine_12642_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2102__ReduceOf_next_statement_kind_without_hint__AtLine_12952_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2092__ReduceOf_next_statement_kind_without_hint__AtLine_12644_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2103__ReduceOf_next_statement_kind_without_hint__AtLine_12954_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2093__ReduceOf_next_statement_kind_without_hint__AtLine_12646_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2104__ReduceOf_next_statement_kind_without_hint__AtLine_12956_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2094__ReduceOf_next_statement_kind_without_hint__AtLine_12648_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2105__ReduceOf_next_statement_kind_without_hint__AtLine_12958_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2095__ReduceOf_next_statement_kind_without_hint__AtLine_12650_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2106__ReduceOf_next_statement_kind_without_hint__AtLine_12960_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2096__ReduceOf_next_statement_kind_without_hint__AtLine_12654_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2107__ReduceOf_next_statement_kind_without_hint__AtLine_12962_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2097__ReduceOf_next_statement_kind_without_hint__AtLine_12656_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2108__ReduceOf_next_statement_kind_without_hint__AtLine_12963_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2098__ReduceOf_next_statement_kind_without_hint__AtLine_12659_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2109__ReduceOf_next_statement_kind_without_hint__AtLine_12964_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2099__ReduceOf_next_statement_kind_without_hint__AtLine_12661_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2110__ReduceOf_next_statement_kind_without_hint__AtLine_12965_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2100__ReduceOf_next_statement_kind_without_hint__AtLine_12663_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2111__ReduceOf_next_statement_kind_without_hint__AtLine_12966_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2101__ReduceOf_next_statement_kind_without_hint__AtLine_12665_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2112__ReduceOf_next_statement_kind_without_hint__AtLine_12968_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2102__ReduceOf_next_statement_kind_without_hint__AtLine_12667_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2113__ReduceOf_next_statement_kind_without_hint__AtLine_12970_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2103__ReduceOf_next_statement_kind_without_hint__AtLine_12669_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2114__ReduceOf_next_statement_kind_without_hint__AtLine_12972_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2104__ReduceOf_next_statement_kind_without_hint__AtLine_12672_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2115__ReduceOf_next_statement_kind_without_hint__AtLine_12973_Column_14([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2105__ReduceOf_next_statement_kind_without_hint__AtLine_12677_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2116__ReduceOf_next_statement_kind_without_hint__AtLine_12975_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2106__ReduceOf_next_statement_kind_without_hint__AtLine_12681_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2117__ReduceOf_next_statement_kind_without_hint__AtLine_12979_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2107__ReduceOf_next_statement_kind_without_hint__AtLine_12686_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2118__ReduceOf_next_statement_kind_without_hint__AtLine_12983_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2108__ReduceOf_next_statement_kind_without_hint__AtLine_12688_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2119__ReduceOf_next_statement_kind_without_hint__AtLine_12985_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2109__ReduceOf_next_statement_kind_without_hint__AtLine_12690_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2120__ReduceOf_next_statement_kind_without_hint__AtLine_12987_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2110__ReduceOf_next_statement_kind_without_hint__AtLine_12699_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2121__ReduceOf_next_statement_kind_without_hint__AtLine_12989_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2111__ReduceOf_next_statement_kind_without_hint__AtLine_12703_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2122__ReduceOf_next_statement_kind_without_hint__AtLine_12997_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2112__ReduceOf_next_statement_kind_without_hint__AtLine_12708_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2123__ReduceOf_next_statement_kind_without_hint__AtLine_12999_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2113__ReduceOf_next_statement_kind_without_hint__AtLine_12712_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2124__ReduceOf_next_statement_kind_without_hint__AtLine_13001_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2114__ReduceOf_next_statement_kind_without_hint__AtLine_12716_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2125__ReduceOf_next_statement_kind_without_hint__AtLine_13014_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2115__ReduceOf_next_statement_kind_without_hint__AtLine_12720_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2126__ReduceOf_next_statement_kind_without_hint__AtLine_13015_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2116__ReduceOf_next_statement_kind_without_hint__AtLine_12724_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2127__ReduceOf_next_statement_kind_without_hint__AtLine_13016_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2117__ReduceOf_next_statement_kind_without_hint__AtLine_12726_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2128__ReduceOf_next_statement_kind_without_hint__AtLine_13017_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2118__ReduceOf_next_statement_kind_without_hint__AtLine_12730_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2129__ReduceOf_next_statement_kind_without_hint__AtLine_13018_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2119__ReduceOf_next_statement_kind_without_hint__AtLine_12732_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2130__ReduceOf_next_statement_kind_without_hint__AtLine_13019_Column_15([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2120__ReduceOf_next_statement_kind_without_hint__AtLine_12734_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2131__ReduceOf_next_statement_kind_without_hint__AtLine_13021_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2121__ReduceOf_next_statement_kind_without_hint__AtLine_12736_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2132__ReduceOf_next_statement_kind_without_hint__AtLine_13023_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2122__ReduceOf_next_statement_kind_without_hint__AtLine_12738_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2133__ReduceOf_next_statement_kind_without_hint__AtLine_13025_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2123__ReduceOf_next_statement_kind_without_hint__AtLine_12742_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2134__ReduceOf_next_statement_kind_without_hint__AtLine_13027_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2124__ReduceOf_next_statement_kind_without_hint__AtLine_12744_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2135__ReduceOf_next_statement_kind_without_hint__AtLine_13029_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2125__ReduceOf_next_statement_kind_without_hint__AtLine_12746_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2136__ReduceOf_next_statement_kind_without_hint__AtLine_13030_Column_16([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2126__ReduceOf_next_statement_kind_without_hint__AtLine_12748_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2137__ReduceOf_next_statement_kind_without_hint__AtLine_13031_Column_18([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2127__ReduceOf_next_statement_kind_without_hint__AtLine_12750_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2138__ReduceOf_next_statement_kind_without_hint__AtLine_13033_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2128__ReduceOf_next_statement_kind_without_hint__AtLine_12752_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2139__ReduceOf_next_statement_kind_without_hint__AtLine_13034_Column_21([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2129__ReduceOf_next_statement_kind_without_hint__AtLine_12754_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2140__ReduceOf_next_statement_kind_without_hint__AtLine_13036_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2130__ReduceOf_next_statement_kind_without_hint__AtLine_12756_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2141__ReduceOf_next_statement_kind_without_hint__AtLine_13038_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2131__ReduceOf_next_statement_kind_without_hint__AtLine_12758_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2142__ReduceOf_next_statement_kind_without_hint__AtLine_13040_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2132__ReduceOf_next_statement_kind_without_hint__AtLine_12760_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2143__ReduceOf_next_statement_kind_without_hint__AtLine_13042_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2133__ReduceOf_next_statement_kind_without_hint__AtLine_12762_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2144__ReduceOf_next_statement_kind_without_hint__AtLine_13044_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2134__ReduceOf_next_statement_kind_without_hint__AtLine_12764_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2145__ReduceOf_next_statement_kind_without_hint__AtLine_13046_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2135__ReduceOf_next_statement_kind_without_hint__AtLine_12766_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2146__ReduceOf_next_statement_kind_without_hint__AtLine_13048_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2136__ReduceOf_next_statement_kind_without_hint__AtLine_12768_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2147__ReduceOf_next_statement_kind_without_hint__AtLine_13050_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2137__ReduceOf_next_statement_kind_without_hint__AtLine_12770_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2148__ReduceOf_next_statement_kind_without_hint__AtLine_13052_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2138__ReduceOf_next_statement_kind_without_hint__AtLine_12772_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2149__ReduceOf_next_statement_kind_without_hint__AtLine_13056_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2139__ReduceOf_next_statement_kind_without_hint__AtLine_12774_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2150__ReduceOf_next_statement_kind_without_hint__AtLine_13058_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2140__ReduceOf_next_statement_kind_without_hint__AtLine_12776_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2151__ReduceOf_next_statement_kind_without_hint__AtLine_13061_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2141__ReduceOf_next_statement_kind_without_hint__AtLine_12778_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2152__ReduceOf_next_statement_kind_without_hint__AtLine_13063_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2142__ReduceOf_next_statement_kind_without_hint__AtLine_12780_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2153__ReduceOf_next_statement_kind_without_hint__AtLine_13065_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2143__ReduceOf_next_statement_kind_without_hint__AtLine_12782_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2154__ReduceOf_next_statement_kind_without_hint__AtLine_13067_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2144__ReduceOf_next_statement_kind_without_hint__AtLine_12784_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2155__ReduceOf_next_statement_kind_without_hint__AtLine_13069_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2145__ReduceOf_next_statement_kind_without_hint__AtLine_12786_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2156__ReduceOf_next_statement_kind_without_hint__AtLine_13071_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2146__ReduceOf_next_statement_kind_without_hint__AtLine_12788_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2157__ReduceOf_next_statement_kind_without_hint__AtLine_13074_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2147__ReduceOf_spanner_primary_key__AtLine_12794_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2158__ReduceOf_next_statement_kind_without_hint__AtLine_13079_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2148__ReduceOf_spanner_index_interleave_clause__AtLine_12806_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2159__ReduceOf_next_statement_kind_without_hint__AtLine_13083_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2149__ReduceOf_opt_spanner_interleave_in_parent_clause__AtLine_12821_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2160__ReduceOf_next_statement_kind_without_hint__AtLine_13087_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2150__ReduceOf_opt_spanner_interleave_in_parent_clause__AtLine_12833_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2161__ReduceOf_next_statement_kind_without_hint__AtLine_13090_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2151__ReduceOf_opt_spanner_table_options__AtLine_12838_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2162__ReduceOf_next_statement_kind_without_hint__AtLine_13092_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2152__ReduceOf_opt_spanner_table_options__AtLine_12847_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2163__ReduceOf_next_statement_kind_without_hint__AtLine_13094_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2153__ReduceOf_opt_spanner_null_filtered__AtLine_12852_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2164__ReduceOf_next_statement_kind_without_hint__AtLine_13103_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2154__ReduceOf_opt_spanner_null_filtered__AtLine_12860_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2165__ReduceOf_next_statement_kind_without_hint__AtLine_13107_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2155__ReduceOf_spanner_generated_or_default__AtLine_12867_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2166__ReduceOf_next_statement_kind_without_hint__AtLine_13112_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2158__ReduceOf_opt_spanner_generated_or_default__AtLine_12877_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2167__ReduceOf_next_statement_kind_without_hint__AtLine_13116_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2159__ReduceOf_opt_spanner_not_null_attribute__AtLine_12882_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2168__ReduceOf_next_statement_kind_without_hint__AtLine_13120_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2160__ReduceOf_opt_spanner_not_null_attribute__AtLine_12887_Column_14([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2169__ReduceOf_next_statement_kind_without_hint__AtLine_13124_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2161__ReduceOf_spanner_alter_column_action__AtLine_12894_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2170__ReduceOf_next_statement_kind_without_hint__AtLine_13128_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2162__ReduceOf_spanner_set_on_delete_action__AtLine_12919_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2171__ReduceOf_next_statement_kind_without_hint__AtLine_13130_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2163__ReduceOf_unterminated_script_statement$1__AtLine_1156_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2172__ReduceOf_next_statement_kind_without_hint__AtLine_13134_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2164__ReduceOf_define_macro_statement$1__AtLine_1236_Column_7([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2173__ReduceOf_next_statement_kind_without_hint__AtLine_13136_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2165__ReduceOf_aux_load_data_statement$1__AtLine_3120_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2174__ReduceOf_next_statement_kind_without_hint__AtLine_13138_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2166__ReduceOf_as_before_query$1__AtLine_4114_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2175__ReduceOf_next_statement_kind_without_hint__AtLine_13140_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2167__ReduceOf_column_list$1__AtLine_4458_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2176__ReduceOf_next_statement_kind_without_hint__AtLine_13142_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2168__ReduceOf_set_operation_metadata$1__AtLine_5486_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2177__ReduceOf_next_statement_kind_without_hint__AtLine_13146_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2169__ReduceOf_graph_for_operator$1__AtLine_6978_Column_20([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2178__ReduceOf_next_statement_kind_without_hint__AtLine_13148_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2170__ReduceOf_aliased_query$1__AtLine_8301_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2179__ReduceOf_next_statement_kind_without_hint__AtLine_13150_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2171__ReduceOf_template_type_open$1__AtLine_9758_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2180__ReduceOf_next_statement_kind_without_hint__AtLine_13152_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2172__ReduceOf_template_type_close$1__AtLine_9764_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2181__ReduceOf_next_statement_kind_without_hint__AtLine_13154_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2173__ReduceOf_nested_dml_statement$1__AtLine_11638_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2182__ReduceOf_next_statement_kind_without_hint__AtLine_13156_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2174__ReduceOf_loop_statement$1__AtLine_12363_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2183__ReduceOf_next_statement_kind_without_hint__AtLine_13158_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2175__ReduceOf_while_statement$1__AtLine_12371_Column_24([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2184__ReduceOf_next_statement_kind_without_hint__AtLine_13160_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2176__ReduceOf_repeat_statement$1__AtLine_12385_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2185__ReduceOf_next_statement_kind_without_hint__AtLine_13162_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2177__ReduceOf_for_in_statement$1__AtLine_12398_Column_5([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2186__ReduceOf_next_statement_kind_without_hint__AtLine_13164_Column_7([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
-  absl::Status Action2178__ReduceOf_next_statement_kind$1__AtLine_12496_Column_12([[maybe_unused]] stackEntry& lhs,
+  absl::Status Action2187__ReduceOf_next_statement_kind_without_hint__AtLine_13166_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2188__ReduceOf_next_statement_kind_without_hint__AtLine_13168_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2189__ReduceOf_next_statement_kind_without_hint__AtLine_13170_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2190__ReduceOf_next_statement_kind_without_hint__AtLine_13172_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2191__ReduceOf_next_statement_kind_without_hint__AtLine_13174_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2192__ReduceOf_next_statement_kind_without_hint__AtLine_13176_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2193__ReduceOf_next_statement_kind_without_hint__AtLine_13178_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2194__ReduceOf_next_statement_kind_without_hint__AtLine_13180_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2195__ReduceOf_next_statement_kind_without_hint__AtLine_13182_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2196__ReduceOf_next_statement_kind_without_hint__AtLine_13184_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2197__ReduceOf_next_statement_kind_without_hint__AtLine_13186_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2198__ReduceOf_next_statement_kind_without_hint__AtLine_13188_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2199__ReduceOf_next_statement_kind_without_hint__AtLine_13190_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2200__ReduceOf_next_statement_kind_without_hint__AtLine_13192_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2201__ReduceOf_spanner_primary_key__AtLine_13198_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2202__ReduceOf_spanner_index_interleave_clause__AtLine_13210_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2203__ReduceOf_opt_spanner_interleave_in_parent_clause__AtLine_13225_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2204__ReduceOf_opt_spanner_interleave_in_parent_clause__AtLine_13237_Column_14([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2205__ReduceOf_opt_spanner_table_options__AtLine_13242_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2206__ReduceOf_opt_spanner_table_options__AtLine_13251_Column_14([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2207__ReduceOf_opt_spanner_null_filtered__AtLine_13256_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2208__ReduceOf_opt_spanner_null_filtered__AtLine_13264_Column_14([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2209__ReduceOf_spanner_generated_or_default__AtLine_13271_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2212__ReduceOf_opt_spanner_generated_or_default__AtLine_13281_Column_14([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2213__ReduceOf_opt_spanner_not_null_attribute__AtLine_13286_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2214__ReduceOf_opt_spanner_not_null_attribute__AtLine_13291_Column_14([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2215__ReduceOf_spanner_alter_column_action__AtLine_13298_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2216__ReduceOf_spanner_set_on_delete_action__AtLine_13323_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2217__ReduceOf_unterminated_script_statement$1__AtLine_1191_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2218__ReduceOf_define_macro_statement$1__AtLine_1272_Column_7([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2219__ReduceOf_aux_load_data_statement$1__AtLine_3238_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2220__ReduceOf_as_before_query$1__AtLine_4232_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2221__ReduceOf_column_list$1__AtLine_4576_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2222__ReduceOf_set_operation_metadata$1__AtLine_5667_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2223__ReduceOf_graph_for_operator$1__AtLine_7162_Column_20([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2224__ReduceOf_aliased_query_with_overridden_next_token_lookback$1__AtLine_8558_Column_23([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2225__ReduceOf_template_type_open$1__AtLine_10038_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2226__ReduceOf_template_type_close$1__AtLine_10044_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2227__ReduceOf_nested_dml_statement$1__AtLine_12021_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2228__ReduceOf_loop_statement$1__AtLine_12763_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2229__ReduceOf_while_statement$1__AtLine_12771_Column_24([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2230__ReduceOf_repeat_statement$1__AtLine_12785_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2231__ReduceOf_for_in_statement$1__AtLine_12798_Column_5([[maybe_unused]] stackEntry& lhs,
+                        [[maybe_unused]] const stackEntry* rhs);
+  absl::Status Action2232__ReduceOf_next_statement_kind$1__AtLine_12896_Column_12([[maybe_unused]] stackEntry& lhs,
                         [[maybe_unused]] const stackEntry* rhs);
 
   absl::Status applyRule(int32_t rule, int32_t ruleLen, stackEntry& lhs,
                          [[maybe_unused]] stackEntry* rhs,
-                         TextMapperLexerAdapter& lexer);
+                         Lexer& lexer);
   absl::Status Parse(
-    int16_t start, int16_t end, TextMapperLexerAdapter& lexer);
+    int16_t start, int16_t end, Lexer& lexer);
 
   int16_t state_;
   symbol next_symbol_;
@@ -3476,6 +3691,56 @@ template <typename Location>
   std::string* error_message;
   ParseLocationPoint* error_location;
   int* statement_end_byte_offset;
+
+// Generates a parse error with message `msg` at `location`.
+absl::Status MakeSyntaxError(const Location& location, absl::string_view msg) {
+  // TODO : Attach location and message; return StatusBuilder
+  *error_message = std::move(msg);
+  *error_location = location.start();
+  return absl::AbortedError("YYABORT");
+}
+
+// Generates a parse error of the form "Unexpected X", where X is a description
+// of the current token, at `location`.
+absl::Status MakeSyntaxError(const Location& location) {
+  return MakeSyntaxError(location, /*msg=*/"");
+}
+
+absl::Status ValidateLabelSupport(ASTNode* node, const Location& location) {
+  if (node == nullptr || parser->language_options().LanguageFeatureEnabled(
+                            FEATURE_V_1_3_SCRIPT_LABEL)) {
+    return absl::OkStatus();
+  }
+  return MakeSyntaxError(location, "Script labels are not supported");
+}
+
+// Generate a parse error if macro expansions are disabled (`kNone`). This is
+// used to prevent the parser from silently ignoring macro constructs when the
+// the system isn't configured to use them.
+absl::Status ValidateMacroSupport(const Location& location) {
+  if(parser->macro_expansion_mode() == MacroExpansionMode::kNone) {
+    return MakeSyntaxError(
+        location,
+        "Syntax error: DEFINE MACRO statements are not supported because "
+        "macro expansions are disabled");
+  }
+  return absl::OkStatus();
+}
+
+// Generates a parse error if there are spaces between `left_loc` and
+// `right_loc`. For example, this is used when we composite multiple existing
+// tokens to match a complex symbol without reserving it as a new token.
+absl::Status ValidateNoWhitespace(
+    absl::string_view left, const Location& left_loc, absl::string_view right,
+    const Location& right_loc) {
+  if (!left_loc.IsAdjacentlyFollowedBy(right_loc)) {
+    return MakeSyntaxError(
+        left_loc,
+        absl::StrCat("Syntax error: Unexpected whitespace between \"",
+                     left, "\" and \"", right, "\""));
+  }
+  return absl::OkStatus();
+}
 
 
   friend std::ostream& operator<<(std::ostream& os, const Parser& parser) {

@@ -591,9 +591,35 @@ struct ASTLockModeEnumsDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ASTLockModeEnumsDefaultTypeInternal _ASTLockModeEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ASTBracedConstructorLhsEnums::ASTBracedConstructorLhsEnums(
+    ::_pbi::ConstantInitialized) {}
+struct ASTBracedConstructorLhsEnumsDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ASTBracedConstructorLhsEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ASTBracedConstructorLhsEnumsDefaultTypeInternal() {}
+  union {
+    ASTBracedConstructorLhsEnums _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ASTBracedConstructorLhsEnumsDefaultTypeInternal _ASTBracedConstructorLhsEnums_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR ASTAlterIndexStatementEnums::ASTAlterIndexStatementEnums(
+    ::_pbi::ConstantInitialized) {}
+struct ASTAlterIndexStatementEnumsDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ASTAlterIndexStatementEnumsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ASTAlterIndexStatementEnumsDefaultTypeInternal() {}
+  union {
+    ASTAlterIndexStatementEnums _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ASTAlterIndexStatementEnumsDefaultTypeInternal _ASTAlterIndexStatementEnums_default_instance_;
 }  // namespace zetasql
-static ::_pb::Metadata file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[44];
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[52];
+static ::_pb::Metadata file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[46];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[54];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_zetasql_2fparser_2fast_5fenums_2eproto = nullptr;
 const ::uint32_t TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
@@ -950,6 +976,22 @@ const ::uint32_t TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets[] P
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ASTBracedConstructorLhsEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::zetasql::ASTAlterIndexStatementEnums, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
 };
 
 static const ::_pbi::MigrationSchema
@@ -998,6 +1040,8 @@ static const ::_pbi::MigrationSchema
         { 328, -1, -1, sizeof(::zetasql::ASTGraphPathModeEnums)},
         { 336, -1, -1, sizeof(::zetasql::ASTGraphPathSearchPrefixEnums)},
         { 344, -1, -1, sizeof(::zetasql::ASTLockModeEnums)},
+        { 352, -1, -1, sizeof(::zetasql::ASTBracedConstructorLhsEnums)},
+        { 360, -1, -1, sizeof(::zetasql::ASTAlterIndexStatementEnums)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1045,6 +1089,8 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::zetasql::_ASTGraphPathModeEnums_default_instance_._instance,
     &::zetasql::_ASTGraphPathSearchPrefixEnums_default_instance_._instance,
     &::zetasql::_ASTLockModeEnums_default_instance_._instance,
+    &::zetasql::_ASTBracedConstructorLhsEnums_default_instance_._instance,
+    &::zetasql::_ASTAlterIndexStatementEnums_default_instance_._instance,
 };
 const char descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\036zetasql/parser/ast_enums.proto\022\007zetasq"
@@ -1176,30 +1222,36 @@ const char descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto[] PR
     "ATH_SEARCH_PREFIX_TYPE_UNSPECIFIED\020\000\022\007\n\003"
     "ANY\020\001\022\014\n\010SHORTEST\020\002\022\007\n\003ALL\020\003\022\020\n\014ALL_SHOR"
     "TEST\020\004\"\?\n\020ASTLockModeEnums\"+\n\020LockStreng"
-    "thSpec\022\013\n\007NOT_SET\020\000\022\n\n\006UPDATE\020\001*\236\003\n\020Sche"
-    "maObjectKind\022=\n0__SchemaObjectKind__swit"
-    "ch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001\022\034\n\030k"
-    "InvalidSchemaObjectKind\020\001\022\026\n\022kAggregateF"
-    "unction\020\002\022\017\n\013kApproxView\020\021\022\017\n\013kConnectio"
-    "n\020\023\022\r\n\tkConstant\020\003\022\r\n\tkDatabase\020\004\022\022\n\016kEx"
-    "ternalTable\020\005\022\r\n\tkFunction\020\006\022\n\n\006kIndex\020\007"
-    "\022\025\n\021kMaterializedView\020\010\022\n\n\006kModel\020\t\022\016\n\nk"
-    "Procedure\020\n\022\013\n\007kSchema\020\013\022\n\n\006kTable\020\014\022\022\n\016"
-    "kTableFunction\020\r\022\t\n\005kView\020\016\022\022\n\016kSnapshot"
-    "Table\020\017\022\022\n\016kPropertyGraph\020\020\022\023\n\017kExternal"
-    "Schema\020\022B\035\n\031com.google.zetasql.parserP\001"
+    "thSpec\022\013\n\007NOT_SET\020\000\022\n\n\006UPDATE\020\001\"n\n\034ASTBr"
+    "acedConstructorLhsEnums\"N\n\tOperation\022\021\n\r"
+    "UPDATE_SINGLE\020\000\022\017\n\013UPDATE_MANY\020\001\022\035\n\031UPDA"
+    "TE_SINGLE_NO_CREATION\020\002\"a\n\033ASTAlterIndex"
+    "StatementEnums\"B\n\tIndexType\022\021\n\rINDEX_DEF"
+    "AULT\020\000\022\020\n\014INDEX_SEARCH\020\001\022\020\n\014INDEX_VECTOR"
+    "\020\002*\236\003\n\020SchemaObjectKind\022=\n0__SchemaObjec"
+    "tKind__switch_must_have_a_default__\020\377\377\377\377"
+    "\377\377\377\377\377\001\022\034\n\030kInvalidSchemaObjectKind\020\001\022\026\n\022"
+    "kAggregateFunction\020\002\022\017\n\013kApproxView\020\021\022\017\n"
+    "\013kConnection\020\023\022\r\n\tkConstant\020\003\022\r\n\tkDataba"
+    "se\020\004\022\022\n\016kExternalTable\020\005\022\r\n\tkFunction\020\006\022"
+    "\n\n\006kIndex\020\007\022\025\n\021kMaterializedView\020\010\022\n\n\006kM"
+    "odel\020\t\022\016\n\nkProcedure\020\n\022\013\n\007kSchema\020\013\022\n\n\006k"
+    "Table\020\014\022\022\n\016kTableFunction\020\r\022\t\n\005kView\020\016\022\022"
+    "\n\016kSnapshotTable\020\017\022\022\n\016kPropertyGraph\020\020\022\023"
+    "\n\017kExternalSchema\020\022B\035\n\031com.google.zetasq"
+    "l.parserP\001"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto = {
     false,
     false,
-    5639,
+    5850,
     descriptor_table_protodef_zetasql_2fparser_2fast_5fenums_2eproto,
     "zetasql/parser/ast_enums.proto",
     &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once,
     nullptr,
     0,
-    44,
+    46,
     schemas,
     file_default_instances,
     TableStruct_zetasql_2fparser_2fast_5fenums_2eproto::offsets,
@@ -2666,9 +2718,61 @@ constexpr int ASTLockModeEnums::LockStrengthSpec_ARRAYSIZE;
 
 #endif  // (__cplusplus < 201703) &&
         // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SchemaObjectKind_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ASTBracedConstructorLhsEnums_Operation_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto);
   return file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[51];
+}
+bool ASTBracedConstructorLhsEnums_Operation_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+constexpr ASTBracedConstructorLhsEnums_Operation ASTBracedConstructorLhsEnums::UPDATE_SINGLE;
+constexpr ASTBracedConstructorLhsEnums_Operation ASTBracedConstructorLhsEnums::UPDATE_MANY;
+constexpr ASTBracedConstructorLhsEnums_Operation ASTBracedConstructorLhsEnums::UPDATE_SINGLE_NO_CREATION;
+constexpr ASTBracedConstructorLhsEnums_Operation ASTBracedConstructorLhsEnums::Operation_MIN;
+constexpr ASTBracedConstructorLhsEnums_Operation ASTBracedConstructorLhsEnums::Operation_MAX;
+constexpr int ASTBracedConstructorLhsEnums::Operation_ARRAYSIZE;
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ASTAlterIndexStatementEnums_IndexType_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto);
+  return file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[52];
+}
+bool ASTAlterIndexStatementEnums_IndexType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+constexpr ASTAlterIndexStatementEnums_IndexType ASTAlterIndexStatementEnums::INDEX_DEFAULT;
+constexpr ASTAlterIndexStatementEnums_IndexType ASTAlterIndexStatementEnums::INDEX_SEARCH;
+constexpr ASTAlterIndexStatementEnums_IndexType ASTAlterIndexStatementEnums::INDEX_VECTOR;
+constexpr ASTAlterIndexStatementEnums_IndexType ASTAlterIndexStatementEnums::IndexType_MIN;
+constexpr ASTAlterIndexStatementEnums_IndexType ASTAlterIndexStatementEnums::IndexType_MAX;
+constexpr int ASTAlterIndexStatementEnums::IndexType_ARRAYSIZE;
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SchemaObjectKind_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto);
+  return file_level_enum_descriptors_zetasql_2fparser_2fast_5fenums_2eproto[53];
 }
 bool SchemaObjectKind_IsValid(int value) {
   switch (value) {
@@ -4369,6 +4473,82 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ASTLockModeEnums::GetClassData
       &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once,
       file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[43]);
 }
+// ===================================================================
+
+class ASTBracedConstructorLhsEnums::_Internal {
+ public:
+};
+
+ASTBracedConstructorLhsEnums::ASTBracedConstructorLhsEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  // @@protoc_insertion_point(arena_constructor:zetasql.ASTBracedConstructorLhsEnums)
+}
+ASTBracedConstructorLhsEnums::ASTBracedConstructorLhsEnums(const ASTBracedConstructorLhsEnums& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ASTBracedConstructorLhsEnums* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.ASTBracedConstructorLhsEnums)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ASTBracedConstructorLhsEnums::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ASTBracedConstructorLhsEnums::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata ASTBracedConstructorLhsEnums::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once,
+      file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[44]);
+}
+// ===================================================================
+
+class ASTAlterIndexStatementEnums::_Internal {
+ public:
+};
+
+ASTAlterIndexStatementEnums::ASTAlterIndexStatementEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  // @@protoc_insertion_point(arena_constructor:zetasql.ASTAlterIndexStatementEnums)
+}
+ASTAlterIndexStatementEnums::ASTAlterIndexStatementEnums(const ASTAlterIndexStatementEnums& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ASTAlterIndexStatementEnums* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:zetasql.ASTAlterIndexStatementEnums)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ASTAlterIndexStatementEnums::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ASTAlterIndexStatementEnums::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata ASTAlterIndexStatementEnums::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_getter, &descriptor_table_zetasql_2fparser_2fast_5fenums_2eproto_once,
+      file_level_metadata_zetasql_2fparser_2fast_5fenums_2eproto[45]);
+}
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
@@ -4547,6 +4727,14 @@ Arena::CreateMaybeMessage< ::zetasql::ASTGraphPathSearchPrefixEnums >(Arena* are
 template<> PROTOBUF_NOINLINE ::zetasql::ASTLockModeEnums*
 Arena::CreateMaybeMessage< ::zetasql::ASTLockModeEnums >(Arena* arena) {
   return Arena::CreateMessageInternal< ::zetasql::ASTLockModeEnums >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ASTBracedConstructorLhsEnums*
+Arena::CreateMaybeMessage< ::zetasql::ASTBracedConstructorLhsEnums >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ASTBracedConstructorLhsEnums >(arena);
+}
+template<> PROTOBUF_NOINLINE ::zetasql::ASTAlterIndexStatementEnums*
+Arena::CreateMaybeMessage< ::zetasql::ASTAlterIndexStatementEnums >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::zetasql::ASTAlterIndexStatementEnums >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 // @@protoc_insertion_point(global_scope)

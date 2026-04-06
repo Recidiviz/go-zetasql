@@ -30,10 +30,10 @@ using Tokens = zetasql::parser::TokenKinds;
 
 #undef YY_DECL
 #define YY_DECL                                                        \
-  int zetasql::parser::LegacyFlexTokenizer::GetNextTokenFlexImpl(      \
+  Tokens zetasql::parser::LegacyFlexTokenizer::GetNextTokenFlexImpl( \
       ParseLocationRange* location)
 
-#define yyterminate() return static_cast<int>(Tokens::EOI);
+#define yyterminate() return Tokens::EOI;
 
 // This action is executed for every token that is matched, before the defined
 // actions are executed. We use this to keep location up to date. We abuse the

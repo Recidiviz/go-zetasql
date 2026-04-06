@@ -930,6 +930,28 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedMultiStmt(
+      const ResolvedMultiStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedMultiStmt (
+      std::unique_ptr<const ResolvedMultiStmt> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedCreateWithEntryStmt(
+      const ResolvedCreateWithEntryStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedCreateWithEntryStmt (
+      std::unique_ptr<const ResolvedCreateWithEntryStmt> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedCreateDatabaseStmt(
       const ResolvedCreateDatabaseStmt&) {
     return absl::OkStatus();
@@ -1590,6 +1612,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedAlterIndexStmt(
+      const ResolvedAlterIndexStmt&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedAlterIndexStmt (
+      std::unique_ptr<const ResolvedAlterIndexStmt> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedAlterMaterializedViewStmt(
       const ResolvedAlterMaterializedViewStmt&) {
     return absl::OkStatus();
@@ -1719,6 +1752,28 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedAddColumnAction (
       std::unique_ptr<const ResolvedAddColumnAction> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedAddColumnIdentifierAction(
+      const ResolvedAddColumnIdentifierAction&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedAddColumnIdentifierAction (
+      std::unique_ptr<const ResolvedAddColumnIdentifierAction> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedRebuildAction(
+      const ResolvedRebuildAction&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedRebuildAction (
+      std::unique_ptr<const ResolvedRebuildAction> node) {
     return node;
   }
 
@@ -2866,6 +2921,17 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedPipeTeeScan(
+      const ResolvedPipeTeeScan&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedPipeTeeScan (
+      std::unique_ptr<const ResolvedPipeTeeScan> node) {
+    return node;
+  }
+
   virtual absl::Status PreVisitResolvedPipeExportDataScan(
       const ResolvedPipeExportDataScan&) {
     return absl::OkStatus();
@@ -2874,6 +2940,28 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedPipeExportDataScan (
       std::unique_ptr<const ResolvedPipeExportDataScan> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedPipeCreateTableScan(
+      const ResolvedPipeCreateTableScan&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedPipeCreateTableScan (
+      std::unique_ptr<const ResolvedPipeCreateTableScan> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedPipeInsertScan(
+      const ResolvedPipeInsertScan&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedPipeInsertScan (
+      std::unique_ptr<const ResolvedPipeInsertScan> node) {
     return node;
   }
 
@@ -2954,6 +3042,28 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
+  virtual absl::Status PreVisitResolvedUpdateFieldItem(
+      const ResolvedUpdateFieldItem&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedUpdateFieldItem (
+      std::unique_ptr<const ResolvedUpdateFieldItem> node) {
+    return node;
+  }
+
+  virtual absl::Status PreVisitResolvedUpdateConstructor(
+      const ResolvedUpdateConstructor&) {
+    return absl::OkStatus();
+  }
+
+  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
+  PostVisitResolvedUpdateConstructor (
+      std::unique_ptr<const ResolvedUpdateConstructor> node) {
+    return node;
+  }
+
  private:
   template <typename ExpectedReturnT>
   static absl::StatusOr<std::unique_ptr<const ExpectedReturnT>> VerifyType(
@@ -2975,7 +3085,17 @@ class ResolvedASTRewriteVisitor {
   // Helper function to dispatch a vector of nodes.
   template<typename ResolvedNodeT>
   absl::StatusOr<std::vector<std::unique_ptr<const ResolvedNodeT>>>
-  DispatchNodeList(std::vector<std::unique_ptr<const ResolvedNodeT>> nodes);
+  DispatchNodeList(std::vector<std::unique_ptr<const ResolvedNodeT>> nodes) {
+    for (std::unique_ptr<const ResolvedNodeT>& node : nodes) {
+      absl::StatusOr<std::unique_ptr<const ResolvedNodeT>> result =
+          Dispatch<ResolvedNodeT>(std::move(node));
+      if (!result.ok()) {
+        return std::move(result).status();
+      }
+      node = *std::move(result);
+    }
+    return nodes;
+  }
 
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedLiteral> node);
@@ -3128,6 +3248,10 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedGeneralizedQueryStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedMultiStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedCreateWithEntryStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCreateDatabaseStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedIndexItem> node);
@@ -3248,6 +3372,8 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterDatabaseStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedAlterIndexStmt> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterMaterializedViewStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterApproxViewStmt> node);
@@ -3271,6 +3397,10 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedDropSubEntityAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAddColumnAction> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedAddColumnIdentifierAction> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedRebuildAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAddConstraintAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3480,7 +3610,13 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedPipeForkScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedPipeTeeScan> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedPipeExportDataScan> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedPipeCreateTableScan> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedPipeInsertScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedSubpipeline> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3495,6 +3631,10 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedAlterConnectionStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedLockMode> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedUpdateFieldItem> node);
+  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
+      std::unique_ptr<const ResolvedUpdateConstructor> node);
   absl::StatusOr<ResolvedColumn> DefaultVisit(ResolvedColumn column);
 
   template <typename TypeName>
@@ -4034,6 +4174,20 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedMultiStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedMultiStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedMultiStmt>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedCreateWithEntryStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedCreateWithEntryStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateWithEntryStmt>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedCreateDatabaseStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedCreateDatabaseStmt>) {
@@ -4454,6 +4608,13 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedAlterIndexStmt::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedAlterIndexStmt>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterIndexStmt>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedAlterMaterializedViewStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAlterMaterializedViewStmt>) {
@@ -4535,6 +4696,20 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAddColumnAction>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedAddColumnAction>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedAddColumnIdentifierAction::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedAddColumnIdentifierAction>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedAddColumnIdentifierAction>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedRebuildAction::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedRebuildAction>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedRebuildAction>(std::move(node)));
         }
         break;
       }
@@ -5266,10 +5441,31 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
+      case ResolvedPipeTeeScan::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedPipeTeeScan>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeTeeScan>(std::move(node)));
+        }
+        break;
+      }
       case ResolvedPipeExportDataScan::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedPipeExportDataScan>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeExportDataScan>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedPipeCreateTableScan::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedPipeCreateTableScan>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeCreateTableScan>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedPipeInsertScan::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedPipeInsertScan>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeInsertScan>(std::move(node)));
         }
         break;
       }
@@ -5319,6 +5515,20 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedLockMode>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedLockMode>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedUpdateFieldItem::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedUpdateFieldItem>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedUpdateFieldItem>(std::move(node)));
+        }
+        break;
+      }
+      case ResolvedUpdateConstructor::TYPE: {
+        if constexpr (std::is_base_of_v<ResolvedNode,
+                                        ResolvedUpdateConstructor>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedUpdateConstructor>(std::move(node)));
         }
         break;
       }

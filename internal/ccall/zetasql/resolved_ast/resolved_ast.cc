@@ -302,6 +302,9 @@ static std::string ToStringImpl(
 static std::string ToStringImpl(ResolvedDropIndexStmt::IndexType index_type) {
   return ResolvedDropIndexStmt::IndexTypeToString(index_type);
 }
+static std::string ToStringImpl(ResolvedAlterIndexStmt::AlterIndexType index_type) {
+  return ResolvedAlterIndexStmt::AlterIndexTypeToString(index_type);
+}
 static std::string ToStringVerbose(const absl::optional<FunctionSignature>& signature) {
   return signature->DebugString("" /* function_name */, true /* verbose */);
 }
@@ -1142,9 +1145,8 @@ absl::StatusOr<const PropertyGraph*> RestoreFromImpl(
     const ResolvedNode::RestoreParams& params) {
   const PropertyGraph* propery_graph;
   const std::vector<std::string> path = absl::StrSplit(proto.full_name(), '.');
-  // The first part in full_name() is params.catalog.
   ZETASQL_RETURN_IF_ERROR(params.catalog->FindPropertyGraph(
-      absl::MakeSpan(path).subspan(1), propery_graph));
+      absl::MakeSpan(path), propery_graph));
   return propery_graph;
 }
 
@@ -1294,6 +1296,13 @@ static std::string ToStringImpl(
   return absl::StrCat("INVALID_PATH_SEARCH_PREFIX_TYPE(", prefix_type, ")");
 }
 
+static std::string ToStringImpl(ResolvedUpdateFieldItemEnums::Operation operation) {
+  std::string name = ResolvedUpdateFieldItemEnums::Operation_Name(operation);
+  if (!name.empty()) return name;
+  ABSL_LOG(ERROR) << "Invalid operation: " << operation;
+  return absl::StrCat("INVALID_OPERATION(", operation, ")");
+}
+
 }  // anonymous namespace
 
 // This is defined separately from the rest of the RestoreFrom implementations
@@ -1397,6 +1406,8 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_EXPLAIN_STMT: return "ExplainStmt";
     case RESOLVED_QUERY_STMT: return "QueryStmt";
     case RESOLVED_GENERALIZED_QUERY_STMT: return "GeneralizedQueryStmt";
+    case RESOLVED_MULTI_STMT: return "MultiStmt";
+    case RESOLVED_CREATE_WITH_ENTRY_STMT: return "CreateWithEntryStmt";
     case RESOLVED_CREATE_DATABASE_STMT: return "CreateDatabaseStmt";
     case RESOLVED_INDEX_ITEM: return "IndexItem";
     case RESOLVED_UNNEST_ITEM: return "UnnestItem";
@@ -1457,6 +1468,7 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_GRANT_STMT: return "GrantStmt";
     case RESOLVED_REVOKE_STMT: return "RevokeStmt";
     case RESOLVED_ALTER_DATABASE_STMT: return "AlterDatabaseStmt";
+    case RESOLVED_ALTER_INDEX_STMT: return "AlterIndexStmt";
     case RESOLVED_ALTER_MATERIALIZED_VIEW_STMT: return "AlterMaterializedViewStmt";
     case RESOLVED_ALTER_APPROX_VIEW_STMT: return "AlterApproxViewStmt";
     case RESOLVED_ALTER_SCHEMA_STMT: return "AlterSchemaStmt";
@@ -1469,6 +1481,8 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_ADD_SUB_ENTITY_ACTION: return "AddSubEntityAction";
     case RESOLVED_DROP_SUB_ENTITY_ACTION: return "DropSubEntityAction";
     case RESOLVED_ADD_COLUMN_ACTION: return "AddColumnAction";
+    case RESOLVED_ADD_COLUMN_IDENTIFIER_ACTION: return "AddColumnIdentifierAction";
+    case RESOLVED_REBUILD_ACTION: return "RebuildAction";
     case RESOLVED_ADD_CONSTRAINT_ACTION: return "AddConstraintAction";
     case RESOLVED_DROP_CONSTRAINT_ACTION: return "DropConstraintAction";
     case RESOLVED_DROP_PRIMARY_KEY_ACTION: return "DropPrimaryKeyAction";
@@ -1573,7 +1587,10 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_PIPE_IF_SCAN: return "PipeIfScan";
     case RESOLVED_PIPE_IF_CASE: return "PipeIfCase";
     case RESOLVED_PIPE_FORK_SCAN: return "PipeForkScan";
+    case RESOLVED_PIPE_TEE_SCAN: return "PipeTeeScan";
     case RESOLVED_PIPE_EXPORT_DATA_SCAN: return "PipeExportDataScan";
+    case RESOLVED_PIPE_CREATE_TABLE_SCAN: return "PipeCreateTableScan";
+    case RESOLVED_PIPE_INSERT_SCAN: return "PipeInsertScan";
     case RESOLVED_SUBPIPELINE: return "Subpipeline";
     case RESOLVED_SUBPIPELINE_INPUT_SCAN: return "SubpipelineInputScan";
     case RESOLVED_GENERALIZED_QUERY_SUBPIPELINE: return "GeneralizedQuerySubpipeline";
@@ -1581,6 +1598,8 @@ std::string ResolvedNodeKindToString(ResolvedNodeKind kind) {
     case RESOLVED_CREATE_CONNECTION_STMT: return "CreateConnectionStmt";
     case RESOLVED_ALTER_CONNECTION_STMT: return "AlterConnectionStmt";
     case RESOLVED_LOCK_MODE: return "LockMode";
+    case RESOLVED_UPDATE_FIELD_ITEM: return "UpdateFieldItem";
+    case RESOLVED_UPDATE_CONSTRUCTOR: return "UpdateConstructor";
     default:
       return absl::StrCat("INVALID_RESOLVED_NODE_KIND(", kind, ")");
   }
@@ -1842,6 +1861,9 @@ absl::StatusOr<std::unique_ptr<ResolvedArgument>> ResolvedArgument::RestoreFrom(
     case AnyResolvedArgumentProto::kResolvedGeneralizedQuerySubpipelineNode:
       return ResolvedGeneralizedQuerySubpipeline::RestoreFrom(
           proto.resolved_generalized_query_subpipeline_node(), params);
+    case AnyResolvedArgumentProto::kResolvedUpdateFieldItemNode:
+      return ResolvedUpdateFieldItem::RestoreFrom(
+          proto.resolved_update_field_item_node(), params);
   case AnyResolvedArgumentProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedArgumentProto";
@@ -1969,6 +1991,9 @@ absl::StatusOr<std::unique_ptr<ResolvedExpr>> ResolvedExpr::RestoreFrom(
     case AnyResolvedExprProto::kResolvedGraphIsLabeledPredicateNode:
       return ResolvedGraphIsLabeledPredicate::RestoreFrom(
           proto.resolved_graph_is_labeled_predicate_node(), params);
+    case AnyResolvedExprProto::kResolvedUpdateConstructorNode:
+      return ResolvedUpdateConstructor::RestoreFrom(
+          proto.resolved_update_constructor_node(), params);
   case AnyResolvedExprProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedExprProto";
@@ -2132,15 +2157,19 @@ absl::Status ResolvedLiteral::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedLiteral::value not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedLiteral::value not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -2257,29 +2286,33 @@ absl::Status ResolvedParameter::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedParameter::name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(position_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedParameter::position not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedParameter::name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(position_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedParameter::position not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -2386,15 +2419,19 @@ absl::Status ResolvedExpressionColumn::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExpressionColumn::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExpressionColumn::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -2501,15 +2538,19 @@ absl::Status ResolvedCatalogColumnRef::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCatalogColumnRef::column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCatalogColumnRef::column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -2623,15 +2664,19 @@ absl::Status ResolvedColumnRef::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnRef::column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnRef::column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -2741,15 +2786,19 @@ absl::Status ResolvedGroupingSetMultiColumn::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGroupingSetMultiColumn::column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGroupingSetMultiColumn::column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : column_list_) {
@@ -2860,15 +2909,19 @@ absl::Status ResolvedConstant::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedConstant::constant not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedConstant::constant not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -2967,15 +3020,19 @@ absl::Status ResolvedSystemVariable::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSystemVariable::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSystemVariable::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -3129,35 +3186,39 @@ absl::Status ResolvedInlineLambda::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInlineLambda::argument_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInlineLambda::parameter_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInlineLambda::body not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInlineLambda::argument_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInlineLambda::parameter_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInlineLambda::body not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : parameter_list_) {
@@ -3287,15 +3348,19 @@ absl::Status ResolvedSequence::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSequence::sequence not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSequence::sequence not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -3403,25 +3468,29 @@ absl::Status ResolvedFilterFieldArg::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFilterFieldArg::include not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFilterFieldArg::field_descriptor_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFilterFieldArg::include not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFilterFieldArg::field_descriptor_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -3581,35 +3650,39 @@ absl::Status ResolvedFilterField::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFilterField::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFilterField::filter_field_arg_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFilterField::reset_cleared_required_fields not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFilterField::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFilterField::filter_field_arg_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFilterField::reset_cleared_required_fields not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -3785,63 +3858,70 @@ absl::Status ResolvedFunctionCallBase::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionCallBase::function not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionCallBase::function not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(argument_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionCallBase::argument_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(generic_argument_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionCallBase::generic_argument_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(error_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionCallBase::error_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(collation_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionCallBase::collation_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x5c;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(argument_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionCallBase::argument_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(generic_argument_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionCallBase::generic_argument_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(error_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionCallBase::error_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(collation_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionCallBase::collation_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     for (const auto& it : argument_list_) {
@@ -4094,6 +4174,10 @@ absl::Status ResolvedNonScalarFunctionCallBase::SaveTo(
     ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
       file_descriptor_set_map, proto->add_with_group_rows_parameter_list()));
   }
+  if (where_expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(where_expr_->SaveTo(
+        file_descriptor_set_map, proto->mutable_where_expr()));
+  }
   return absl::OkStatus();
 }
 
@@ -4122,6 +4206,9 @@ void ResolvedNonScalarFunctionCallBase::GetChildNodes(
   for (const auto& elem : with_group_rows_parameter_list_) {
     child_nodes->emplace_back(elem.get());
   }
+  if (where_expr_ != nullptr) {
+    child_nodes->emplace_back(where_expr_.get());
+  }
 }
 
 void ResolvedNonScalarFunctionCallBase::AddMutableChildNodePointers(
@@ -4140,6 +4227,14 @@ void ResolvedNonScalarFunctionCallBase::AddMutableChildNodePointers(
     mutable_child_node_ptrs->emplace_back(
         reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
   }
+  if (where_expr_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &where_expr_));
+    static_assert(sizeof(where_expr_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
 }
 
 absl::Status ResolvedNonScalarFunctionCallBase::Accept(ResolvedASTVisitor* visitor) const {
@@ -4153,6 +4248,9 @@ absl::Status ResolvedNonScalarFunctionCallBase::ChildrenAccept(ResolvedASTVisito
   }
   for (const auto& elem : with_group_rows_parameter_list_) {
     ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  if (where_expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(where_expr_.get()->Accept(visitor));
   }
   return absl::OkStatus();
 }
@@ -4172,59 +4270,78 @@ void ResolvedNonScalarFunctionCallBase::CollectDebugStringFields(
   if (!with_group_rows_parameter_list_.empty()) {
     fields->emplace_back("with_group_rows_parameter_list", with_group_rows_parameter_list_, with_group_rows_parameter_list_accessed());
   }
+  if (where_expr_ != nullptr) {
+    fields->emplace_back("where_expr", where_expr_.get(), where_expr_accessed());
+  }
 }
 
 absl::Status ResolvedNonScalarFunctionCallBase::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(distinct_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedNonScalarFunctionCallBase::distinct not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(null_handling_modifier_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedNonScalarFunctionCallBase::null_handling_modifier not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(with_group_rows_subquery_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedNonScalarFunctionCallBase::with_group_rows_subquery not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(with_group_rows_parameter_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedNonScalarFunctionCallBase::with_group_rows_parameter_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1f;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(distinct_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedNonScalarFunctionCallBase::distinct not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(null_handling_modifier_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedNonScalarFunctionCallBase::null_handling_modifier not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(with_group_rows_subquery_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedNonScalarFunctionCallBase::with_group_rows_subquery not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(with_group_rows_parameter_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedNonScalarFunctionCallBase::with_group_rows_parameter_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(where_expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedNonScalarFunctionCallBase::where_expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (with_group_rows_subquery_ != nullptr) {
@@ -4235,6 +4352,12 @@ absl::Status ResolvedNonScalarFunctionCallBase::CheckFieldsAccessedImpl(
   if ((accessed_ & (1<<3)) != 0) {
     for (const auto& it : with_group_rows_parameter_list_) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<4)) != 0) {
+    if (where_expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          where_expr_.get(), root));
     }
   }
   return absl::OkStatus();
@@ -4259,6 +4382,10 @@ absl::Status ResolvedNonScalarFunctionCallBase::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedNonScalarFunctionCallBase::with_group_rows_parameter_list is accessed, but shouldn't be)";
   }
+  if ((accessed_ & (1<<4)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedNonScalarFunctionCallBase::where_expr is accessed, but shouldn't be)";
+  }
   if ((accessed_ & (1<<2)) != 0) {
     if (with_group_rows_subquery_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(with_group_rows_subquery_->CheckNoFieldsAccessed());
@@ -4267,6 +4394,11 @@ absl::Status ResolvedNonScalarFunctionCallBase::CheckNoFieldsAccessed() const {
   if ((accessed_ & (1<<3)) != 0) {
     for (const auto& it : with_group_rows_parameter_list_) {
       ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  if ((accessed_ & (1<<4)) != 0) {
+    if (where_expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(where_expr_->CheckNoFieldsAccessed());
     }
   }
   return absl::OkStatus();
@@ -4278,6 +4410,7 @@ void ResolvedNonScalarFunctionCallBase::ClearFieldsAccessed() const {
   accessed_ = 0;
   if (with_group_rows_subquery_ != nullptr) with_group_rows_subquery_->ClearFieldsAccessed();
   for (const auto& it : with_group_rows_parameter_list_) it->ClearFieldsAccessed();
+  if (where_expr_ != nullptr) where_expr_->ClearFieldsAccessed();
 }
 
 void ResolvedNonScalarFunctionCallBase::MarkFieldsAccessed() const {
@@ -4285,6 +4418,7 @@ void ResolvedNonScalarFunctionCallBase::MarkFieldsAccessed() const {
   accessed_ = 0xFFFFFFFF;
   if (with_group_rows_subquery_ != nullptr) with_group_rows_subquery_->MarkFieldsAccessed();
   for (const auto& it : with_group_rows_parameter_list_) it->MarkFieldsAccessed();
+  if (where_expr_ != nullptr) where_expr_->MarkFieldsAccessed();
 }
 
 const ResolvedNodeKind ResolvedAggregateFunctionCall::TYPE;
@@ -4330,6 +4464,10 @@ absl::Status ResolvedAggregateFunctionCall::SaveTo(
     ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
       file_descriptor_set_map, proto->add_group_by_aggregate_list()));
   }
+  if (having_expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(having_expr_->SaveTo(
+        file_descriptor_set_map, proto->mutable_having_expr()));
+  }
   return absl::OkStatus();
 }
 
@@ -4371,6 +4509,13 @@ absl::StatusOr<std::unique_ptr<ResolvedAggregateFunctionCall>> ResolvedAggregate
     ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedComputedColumnBase> elem_restored,
                      ResolvedComputedColumnBase::RestoreFrom(elem, params));
     group_by_aggregate_list.push_back(std::move(elem_restored));
+  }
+  std::unique_ptr<const ResolvedExpr> having_expr;
+  if (proto.
+  has_having_expr()) {
+    ZETASQL_ASSIGN_OR_RETURN(having_expr,
+                     ResolvedExpr::RestoreFrom(
+                         proto.having_expr(), params));
   }
   ZETASQL_ASSIGN_OR_RETURN(auto type,
                    RestoreFromImpl<const Type*>(
@@ -4432,6 +4577,13 @@ absl::StatusOr<std::unique_ptr<ResolvedAggregateFunctionCall>> ResolvedAggregate
                      ResolvedColumnRef::RestoreFrom(elem, params));
     with_group_rows_parameter_list.push_back(std::move(elem_restored));
   }
+  std::unique_ptr<const ResolvedExpr> where_expr;
+  if (proto.parent().
+  has_where_expr()) {
+    ZETASQL_ASSIGN_OR_RETURN(where_expr,
+                     ResolvedExpr::RestoreFrom(
+                         proto.parent().where_expr(), params));
+  }
   auto node = MakeResolvedAggregateFunctionCall(
       std::move(type),
       std::move(function),
@@ -4441,12 +4593,14 @@ absl::StatusOr<std::unique_ptr<ResolvedAggregateFunctionCall>> ResolvedAggregate
       std::move(error_mode),
       std::move(distinct),
       std::move(null_handling_modifier),
+      std::move(where_expr),
       std::move(having_modifier),
       std::move(order_by_item_list),
       std::move(limit),
       std::move(function_call_info),
       std::move(group_by_list),
-      std::move(group_by_aggregate_list));
+      std::move(group_by_aggregate_list),
+      std::move(having_expr));
 
   node->set_type_annotation_map(std::move(type_annotation_map));
   node->set_hint_list(std::move(hint_list));
@@ -4473,6 +4627,9 @@ void ResolvedAggregateFunctionCall::GetChildNodes(
   }
   for (const auto& elem : group_by_aggregate_list_) {
     child_nodes->emplace_back(elem.get());
+  }
+  if (having_expr_ != nullptr) {
+    child_nodes->emplace_back(having_expr_.get());
   }
 }
 
@@ -4508,6 +4665,14 @@ void ResolvedAggregateFunctionCall::AddMutableChildNodePointers(
     mutable_child_node_ptrs->emplace_back(
         reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
   }
+  if (having_expr_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &having_expr_));
+    static_assert(sizeof(having_expr_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
 }
 
 absl::Status ResolvedAggregateFunctionCall::Accept(ResolvedASTVisitor* visitor) const {
@@ -4530,6 +4695,9 @@ absl::Status ResolvedAggregateFunctionCall::ChildrenAccept(ResolvedASTVisitor* v
   }
   for (const auto& elem : group_by_aggregate_list_) {
     ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  if (having_expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(having_expr_.get()->Accept(visitor));
   }
   return absl::OkStatus();
 }
@@ -4555,71 +4723,90 @@ void ResolvedAggregateFunctionCall::CollectDebugStringFields(
   if (!group_by_aggregate_list_.empty()) {
     fields->emplace_back("group_by_aggregate_list", group_by_aggregate_list_, group_by_aggregate_list_accessed());
   }
+  if (having_expr_ != nullptr) {
+    fields->emplace_back("having_expr", having_expr_.get(), having_expr_accessed());
+  }
 }
 
 absl::Status ResolvedAggregateFunctionCall::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(having_modifier_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateFunctionCall::having_modifier not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(order_by_item_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateFunctionCall::order_by_item_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(limit_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateFunctionCall::limit not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(group_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateFunctionCall::group_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(group_by_aggregate_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateFunctionCall::group_by_aggregate_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x77;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(having_modifier_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateFunctionCall::having_modifier not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(order_by_item_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateFunctionCall::order_by_item_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(limit_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateFunctionCall::limit not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(group_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateFunctionCall::group_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(group_by_aggregate_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateFunctionCall::group_by_aggregate_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(having_expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateFunctionCall::having_expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (having_modifier_ != nullptr) {
@@ -4648,6 +4835,12 @@ absl::Status ResolvedAggregateFunctionCall::CheckFieldsAccessedImpl(
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
     }
   }
+  if ((accessed_ & (1<<6)) != 0) {
+    if (having_expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          having_expr_.get(), root));
+    }
+  }
   return absl::OkStatus();
 }
 
@@ -4674,6 +4867,10 @@ absl::Status ResolvedAggregateFunctionCall::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedAggregateFunctionCall::group_by_aggregate_list is accessed, but shouldn't be)";
   }
+  if ((accessed_ & (1<<6)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAggregateFunctionCall::having_expr is accessed, but shouldn't be)";
+  }
   if ((accessed_ & (1<<0)) != 0) {
     if (having_modifier_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(having_modifier_->CheckNoFieldsAccessed());
@@ -4699,6 +4896,11 @@ absl::Status ResolvedAggregateFunctionCall::CheckNoFieldsAccessed() const {
       ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
     }
   }
+  if ((accessed_ & (1<<6)) != 0) {
+    if (having_expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(having_expr_->CheckNoFieldsAccessed());
+    }
+  }
   return absl::OkStatus();
 }
 
@@ -4711,6 +4913,7 @@ void ResolvedAggregateFunctionCall::ClearFieldsAccessed() const {
   if (limit_ != nullptr) limit_->ClearFieldsAccessed();
   for (const auto& it : group_by_list_) it->ClearFieldsAccessed();
   for (const auto& it : group_by_aggregate_list_) it->ClearFieldsAccessed();
+  if (having_expr_ != nullptr) having_expr_->ClearFieldsAccessed();
 }
 
 void ResolvedAggregateFunctionCall::MarkFieldsAccessed() const {
@@ -4721,6 +4924,7 @@ void ResolvedAggregateFunctionCall::MarkFieldsAccessed() const {
   if (limit_ != nullptr) limit_->MarkFieldsAccessed();
   for (const auto& it : group_by_list_) it->MarkFieldsAccessed();
   for (const auto& it : group_by_aggregate_list_) it->MarkFieldsAccessed();
+  if (having_expr_ != nullptr) having_expr_->MarkFieldsAccessed();
 }
 
 const ResolvedNodeKind ResolvedAnalyticFunctionCall::TYPE;
@@ -4820,6 +5024,13 @@ absl::StatusOr<std::unique_ptr<ResolvedAnalyticFunctionCall>> ResolvedAnalyticFu
                      ResolvedColumnRef::RestoreFrom(elem, params));
     with_group_rows_parameter_list.push_back(std::move(elem_restored));
   }
+  std::unique_ptr<const ResolvedExpr> where_expr;
+  if (proto.parent().
+  has_where_expr()) {
+    ZETASQL_ASSIGN_OR_RETURN(where_expr,
+                     ResolvedExpr::RestoreFrom(
+                         proto.parent().where_expr(), params));
+  }
   auto node = MakeResolvedAnalyticFunctionCall(
       std::move(type),
       std::move(function),
@@ -4829,6 +5040,7 @@ absl::StatusOr<std::unique_ptr<ResolvedAnalyticFunctionCall>> ResolvedAnalyticFu
       std::move(error_mode),
       std::move(distinct),
       std::move(null_handling_modifier),
+      std::move(where_expr),
       std::move(window_frame));
 
   node->set_type_annotation_map(std::move(type_annotation_map));
@@ -4885,15 +5097,19 @@ absl::Status ResolvedAnalyticFunctionCall::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnalyticFunctionCall::window_frame not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnalyticFunctionCall::window_frame not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (window_frame_ != nullptr) {
@@ -5115,15 +5331,19 @@ absl::Status ResolvedExtendedCast::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExtendedCast::element_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExtendedCast::element_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : element_list_) {
@@ -5342,63 +5562,70 @@ absl::Status ResolvedCast::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCast::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCast::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(return_null_on_error_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCast::return_null_on_error not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(format_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCast::format not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(time_zone_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCast::time_zone not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(type_modifiers_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCast::type_modifiers not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3a;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(return_null_on_error_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCast::return_null_on_error not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(format_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCast::format not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(time_zone_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCast::time_zone not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(type_modifiers_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCast::type_modifiers not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -5586,15 +5813,19 @@ absl::Status ResolvedMakeStruct::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMakeStruct::field_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMakeStruct::field_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : field_list_) {
@@ -5726,15 +5957,19 @@ absl::Status ResolvedMakeProto::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMakeProto::field_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMakeProto::field_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : field_list_) {
@@ -5865,37 +6100,44 @@ absl::Status ResolvedMakeProtoField::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMakeProtoField::field_descriptor not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x5;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMakeProtoField::field_descriptor not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMakeProtoField::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(format_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMakeProtoField::format not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMakeProtoField::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(format_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMakeProtoField::format not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (expr_ != nullptr) {
@@ -6055,25 +6297,29 @@ absl::Status ResolvedGetStructField::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetStructField::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetStructField::field_idx not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetStructField::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetStructField::field_idx not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -6258,61 +6504,68 @@ absl::Status ResolvedGetProtoField::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetProtoField::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetProtoField::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetProtoField::field_descriptor not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetProtoField::field_descriptor not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(get_has_bit_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetProtoField::get_has_bit not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(format_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetProtoField::format not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(return_default_value_when_unset_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetProtoField::return_default_value_when_unset not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x38;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(get_has_bit_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetProtoField::get_has_bit not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(format_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetProtoField::format not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(return_default_value_when_unset_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetProtoField::return_default_value_when_unset not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -6473,25 +6726,29 @@ absl::Status ResolvedGetJsonField::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetJsonField::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetJsonField::field_name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetJsonField::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetJsonField::field_name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -6657,25 +6914,29 @@ absl::Status ResolvedFlatten::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFlatten::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFlatten::get_field_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFlatten::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFlatten::get_field_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -6895,39 +7156,46 @@ absl::Status ResolvedReplaceFieldItem::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedReplaceFieldItem::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedReplaceFieldItem::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(struct_index_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedReplaceFieldItem::struct_index_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(proto_field_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedReplaceFieldItem::proto_field_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x6;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(struct_index_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedReplaceFieldItem::struct_index_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(proto_field_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedReplaceFieldItem::proto_field_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -7097,25 +7365,29 @@ absl::Status ResolvedReplaceField::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedReplaceField::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedReplaceField::replace_field_item_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedReplaceField::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedReplaceField::replace_field_item_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -7280,25 +7552,29 @@ absl::Status ResolvedGetProtoOneof::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetProtoOneof::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGetProtoOneof::oneof_descriptor not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetProtoOneof::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGetProtoOneof::oneof_descriptor not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -7542,61 +7818,68 @@ absl::Status ResolvedSubqueryExpr::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSubqueryExpr::subquery_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x11;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSubqueryExpr::subquery_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSubqueryExpr::subquery not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(parameter_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSubqueryExpr::parameter_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(in_expr_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSubqueryExpr::in_expr not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(in_collation_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSubqueryExpr::in_collation not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSubqueryExpr::subquery not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xe;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(parameter_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSubqueryExpr::parameter_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(in_expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSubqueryExpr::in_expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(in_collation_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSubqueryExpr::in_collation not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : parameter_list_) {
@@ -7811,25 +8094,29 @@ absl::Status ResolvedWithExpr::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWithExpr::assignment_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWithExpr::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWithExpr::assignment_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWithExpr::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : assignment_list_) {
@@ -8024,6 +8311,15 @@ absl::StatusOr<std::unique_ptr<ResolvedScan>> ResolvedScan::RestoreFrom(
     case AnyResolvedScanProto::kResolvedPipeExportDataScanNode:
       return ResolvedPipeExportDataScan::RestoreFrom(
           proto.resolved_pipe_export_data_scan_node(), params);
+    case AnyResolvedScanProto::kResolvedPipeCreateTableScanNode:
+      return ResolvedPipeCreateTableScan::RestoreFrom(
+          proto.resolved_pipe_create_table_scan_node(), params);
+    case AnyResolvedScanProto::kResolvedPipeTeeScanNode:
+      return ResolvedPipeTeeScan::RestoreFrom(
+          proto.resolved_pipe_tee_scan_node(), params);
+    case AnyResolvedScanProto::kResolvedPipeInsertScanNode:
+      return ResolvedPipeInsertScan::RestoreFrom(
+          proto.resolved_pipe_insert_scan_node(), params);
   case AnyResolvedScanProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedScanProto";
@@ -8245,35 +8541,39 @@ absl::Status ResolvedExecuteAsRoleScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExecuteAsRoleScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExecuteAsRoleScan::original_inlined_view not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExecuteAsRoleScan::original_inlined_tvf not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExecuteAsRoleScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExecuteAsRoleScan::original_inlined_view not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExecuteAsRoleScan::original_inlined_tvf not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -8391,15 +8691,19 @@ absl::Status ResolvedModel::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedModel::model not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedModel::model not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -8496,15 +8800,19 @@ absl::Status ResolvedConnection::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedConnection::connection not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedConnection::connection not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -8616,29 +8924,33 @@ absl::Status ResolvedDescriptor::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(descriptor_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDescriptor::descriptor_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(descriptor_column_name_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDescriptor::descriptor_column_name_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(descriptor_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDescriptor::descriptor_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(descriptor_column_name_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDescriptor::descriptor_column_name_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -8897,39 +9209,46 @@ absl::Status ResolvedTableScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTableScan::table not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTableScan::table not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(for_system_time_expr_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTableScan::for_system_time_expr not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(lock_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTableScan::lock_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x12;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(for_system_time_expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTableScan::for_system_time_expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(lock_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTableScan::lock_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (for_system_time_expr_ != nullptr) {
@@ -9176,49 +9495,56 @@ absl::Status ResolvedJoinScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(join_type_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedJoinScan::join_type not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x6;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedJoinScan::left_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedJoinScan::right_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedJoinScan::left_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedJoinScan::right_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(join_expr_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedJoinScan::join_expr not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x9;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(join_type_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedJoinScan::join_type not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(join_expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedJoinScan::join_expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (left_scan_ != nullptr) {
@@ -9538,85 +9864,92 @@ absl::Status ResolvedArrayScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(input_scan_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayScan::input_scan not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x6;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayScan::array_expr_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayScan::element_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayScan::array_expr_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayScan::element_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(array_offset_column_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayScan::array_offset_column not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(join_expr_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayScan::join_expr not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(is_outer_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayScan::is_outer not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(array_zip_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayScan::array_zip_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x79;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(input_scan_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayScan::input_scan not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(array_offset_column_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayScan::array_offset_column not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(join_expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayScan::join_expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(is_outer_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayScan::is_outer not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(array_zip_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayScan::array_zip_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -9801,15 +10134,19 @@ absl::Status ResolvedColumnHolder::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnHolder::column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnHolder::column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -9974,25 +10311,29 @@ absl::Status ResolvedFilterScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFilterScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFilterScan::filter_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFilterScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFilterScan::filter_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -10148,25 +10489,29 @@ absl::Status ResolvedGroupingCall::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGroupingCall::group_by_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGroupingCall::output_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGroupingCall::group_by_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGroupingCall::output_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (group_by_column_ != nullptr) {
@@ -10342,15 +10687,19 @@ absl::Status ResolvedGroupingSet::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGroupingSet::group_by_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGroupingSet::group_by_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : group_by_column_list_) {
@@ -10472,15 +10821,19 @@ absl::Status ResolvedRollup::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRollup::rollup_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRollup::rollup_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : rollup_column_list_) {
@@ -10602,15 +10955,19 @@ absl::Status ResolvedCube::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCube::cube_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCube::cube_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : cube_column_list_) {
@@ -10833,83 +11190,90 @@ absl::Status ResolvedAggregateScanBase::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateScanBase::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xb;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateScanBase::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateScanBase::group_by_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateScanBase::aggregate_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateScanBase::group_by_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(collation_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateScanBase::collation_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateScanBase::aggregate_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(grouping_set_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateScanBase::grouping_set_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(rollup_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateScanBase::rollup_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(grouping_call_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateScanBase::grouping_call_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x74;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(collation_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateScanBase::collation_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(grouping_set_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateScanBase::grouping_set_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(rollup_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateScanBase::rollup_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(grouping_call_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateScanBase::grouping_call_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -11329,27 +11693,34 @@ absl::Status ResolvedAnonymizedAggregateScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnonymizedAggregateScan::k_threshold_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnonymizedAggregateScan::k_threshold_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(anonymization_option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnonymizedAggregateScan::anonymization_option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(anonymization_option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnonymizedAggregateScan::anonymization_option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (k_threshold_expr_ != nullptr) {
@@ -11589,27 +11960,34 @@ absl::Status ResolvedDifferentialPrivacyAggregateScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDifferentialPrivacyAggregateScan::group_selection_threshold_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDifferentialPrivacyAggregateScan::group_selection_threshold_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDifferentialPrivacyAggregateScan::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDifferentialPrivacyAggregateScan::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (group_selection_threshold_expr_ != nullptr) {
@@ -11820,17 +12198,21 @@ absl::Status ResolvedAggregationThresholdAggregateScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregationThresholdAggregateScan::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregationThresholdAggregateScan::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -11972,25 +12354,29 @@ absl::Status ResolvedSetOperationItem::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetOperationItem::scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetOperationItem::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetOperationItem::scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetOperationItem::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (scan_ != nullptr) {
@@ -12173,25 +12559,29 @@ absl::Status ResolvedSetOperationScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetOperationScan::op_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetOperationScan::input_item_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetOperationScan::op_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetOperationScan::input_item_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : input_item_list_) {
@@ -12367,25 +12757,29 @@ absl::Status ResolvedOrderByScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOrderByScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOrderByScan::order_by_item_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOrderByScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOrderByScan::order_by_item_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -12608,35 +13002,39 @@ absl::Status ResolvedLimitOffsetScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedLimitOffsetScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedLimitOffsetScan::limit not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedLimitOffsetScan::offset not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedLimitOffsetScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedLimitOffsetScan::limit not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedLimitOffsetScan::offset not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -12797,15 +13195,19 @@ absl::Status ResolvedWithRefScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWithRefScan::with_query_name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWithRefScan::with_query_name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -12965,25 +13367,29 @@ absl::Status ResolvedAnalyticScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnalyticScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnalyticScan::function_group_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnalyticScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnalyticScan::function_group_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -13276,79 +13682,86 @@ absl::Status ResolvedSampleScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSampleScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1f;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSampleScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSampleScan::method not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSampleScan::size not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSampleScan::unit not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSampleScan::repeatable_argument not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSampleScan::method not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSampleScan::size not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSampleScan::unit not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSampleScan::repeatable_argument not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(weight_column_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSampleScan::weight_column not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(partition_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSampleScan::partition_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x60;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(weight_column_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSampleScan::weight_column not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(partition_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSampleScan::partition_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -13640,15 +14053,19 @@ absl::Status ResolvedComputedColumn::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedComputedColumn::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x2;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedComputedColumn::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (expr_ != nullptr) {
@@ -13784,25 +14201,29 @@ absl::Status ResolvedDeferredComputedColumn::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDeferredComputedColumn::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDeferredComputedColumn::side_effect_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x6;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDeferredComputedColumn::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDeferredComputedColumn::side_effect_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (expr_ != nullptr) {
@@ -13992,63 +14413,70 @@ absl::Status ResolvedOrderByItem::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOrderByItem::column_ref not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOrderByItem::column_ref not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(collation_name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOrderByItem::collation_name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(is_descending_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOrderByItem::is_descending not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(null_order_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOrderByItem::null_order not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(collation_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOrderByItem::collation not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1e;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(collation_name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOrderByItem::collation_name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(is_descending_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOrderByItem::is_descending not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(null_order_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOrderByItem::null_order not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(collation_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOrderByItem::collation not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (column_ref_ != nullptr) {
@@ -14271,65 +14699,69 @@ absl::Status ResolvedColumnAnnotations::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(collation_name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnAnnotations::collation_name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(not_null_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnAnnotations::not_null not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnAnnotations::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(child_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnAnnotations::child_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(type_parameters_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnAnnotations::type_parameters not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1f;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(collation_name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnAnnotations::collation_name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(not_null_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnAnnotations::not_null not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnAnnotations::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(child_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnAnnotations::child_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(type_parameters_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnAnnotations::type_parameters not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (collation_name_ != nullptr) {
@@ -14546,53 +14978,57 @@ absl::Status ResolvedGeneratedColumnInfo::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(expression_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGeneratedColumnInfo::expression not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(stored_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGeneratedColumnInfo::stored_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(generated_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGeneratedColumnInfo::generated_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(identity_column_info_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGeneratedColumnInfo::identity_column_info not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xf;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(expression_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGeneratedColumnInfo::expression not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(stored_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGeneratedColumnInfo::stored_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(generated_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGeneratedColumnInfo::generated_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(identity_column_info_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGeneratedColumnInfo::identity_column_info not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expression_ != nullptr) {
@@ -14752,25 +15188,29 @@ absl::Status ResolvedColumnDefaultValue::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnDefaultValue::expression not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnDefaultValue::sql not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnDefaultValue::expression not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnDefaultValue::sql not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expression_ != nullptr) {
@@ -14996,73 +15436,80 @@ absl::Status ResolvedColumnDefinition::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnDefinition::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnDefinition::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnDefinition::type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnDefinition::type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(annotations_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnDefinition::annotations not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(is_hidden_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnDefinition::is_hidden not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(generated_column_info_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnDefinition::generated_column_info not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(default_value_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedColumnDefinition::default_value not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x6c;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(annotations_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnDefinition::annotations not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(is_hidden_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnDefinition::is_hidden not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(generated_column_info_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnDefinition::generated_column_info not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(default_value_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedColumnDefinition::default_value not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (annotations_ != nullptr) {
@@ -15316,51 +15763,58 @@ absl::Status ResolvedPrimaryKey::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPrimaryKey::column_offset_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPrimaryKey::column_offset_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPrimaryKey::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(unenforced_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPrimaryKey::unenforced not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(constraint_name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPrimaryKey::constraint_name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xe;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPrimaryKey::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(unenforced_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPrimaryKey::unenforced not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(constraint_name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPrimaryKey::constraint_name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : option_list_) {
@@ -15581,95 +16035,99 @@ absl::Status ResolvedForeignKey::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::constraint_name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::referencing_column_offset_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::referenced_table not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::referenced_column_offset_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::match_mode not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::update_action not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::delete_action not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::enforced not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedForeignKey::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1ff;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::constraint_name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::referencing_column_offset_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::referenced_table not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::referenced_column_offset_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::match_mode not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::update_action not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::delete_action not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::enforced not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedForeignKey::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<8)) != 0) {
     for (const auto& it : option_list_) {
@@ -15866,45 +16324,49 @@ absl::Status ResolvedCheckConstraint::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCheckConstraint::constraint_name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCheckConstraint::expression not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCheckConstraint::enforced not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCheckConstraint::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xf;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCheckConstraint::constraint_name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCheckConstraint::expression not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCheckConstraint::enforced not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCheckConstraint::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (expression_ != nullptr) {
@@ -16034,15 +16496,19 @@ absl::Status ResolvedOutputColumn::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOutputColumn::column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x2;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOutputColumn::column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -16159,27 +16625,34 @@ absl::Status ResolvedOutputSchema::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOutputSchema::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOutputSchema::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(is_value_table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOutputSchema::is_value_table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(is_value_table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOutputSchema::is_value_table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : output_column_list_) {
@@ -16355,25 +16828,29 @@ absl::Status ResolvedProjectScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedProjectScan::expr_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedProjectScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedProjectScan::expr_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedProjectScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : expr_list_) {
@@ -16592,47 +17069,54 @@ absl::Status ResolvedTVFScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTVFScan::tvf not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTVFScan::tvf not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTVFScan::signature not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTVFScan::argument_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTVFScan::signature not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTVFScan::argument_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(function_call_signature_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTVFScan::function_call_signature not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x20;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(function_call_signature_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTVFScan::function_call_signature not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     for (const auto& it : argument_list_) {
@@ -16794,15 +17278,19 @@ absl::Status ResolvedGroupRowsScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGroupRowsScan::input_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGroupRowsScan::input_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : input_column_list_) {
@@ -17125,113 +17613,117 @@ absl::Status ResolvedFunctionArgument::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(expr_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::expr not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(scan_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::scan not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(model_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::model not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(descriptor_arg_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::descriptor_arg not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(argument_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::argument_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(inline_lambda_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::inline_lambda not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(sequence_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::sequence not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0 &&
-      !IsDefaultValue(argument_alias_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionArgument::argument_alias not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1ff;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(scan_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::scan not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(model_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::model not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(descriptor_arg_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::descriptor_arg not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(argument_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::argument_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(inline_lambda_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::inline_lambda not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(sequence_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::sequence not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0 &&
+        !IsDefaultValue(argument_alias_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionArgument::argument_alias not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -17552,6 +18044,12 @@ absl::StatusOr<std::unique_ptr<ResolvedStatement>> ResolvedStatement::RestoreFro
     case AnyResolvedStatementProto::kResolvedGeneralizedQueryStmtNode:
       return ResolvedGeneralizedQueryStmt::RestoreFrom(
           proto.resolved_generalized_query_stmt_node(), params);
+    case AnyResolvedStatementProto::kResolvedMultiStmtNode:
+      return ResolvedMultiStmt::RestoreFrom(
+          proto.resolved_multi_stmt_node(), params);
+    case AnyResolvedStatementProto::kResolvedCreateWithEntryStmtNode:
+      return ResolvedCreateWithEntryStmt::RestoreFrom(
+          proto.resolved_create_with_entry_stmt_node(), params);
   case AnyResolvedStatementProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedStatementProto";
@@ -17728,15 +18226,19 @@ absl::Status ResolvedExplainStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExplainStmt::statement not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExplainStmt::statement not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (statement_ != nullptr) {
@@ -17902,37 +18404,44 @@ absl::Status ResolvedQueryStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedQueryStmt::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x5;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedQueryStmt::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedQueryStmt::query not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(is_value_table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedQueryStmt::is_value_table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedQueryStmt::query not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(is_value_table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedQueryStmt::is_value_table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : output_column_list_) {
@@ -18116,25 +18625,29 @@ absl::Status ResolvedGeneralizedQueryStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGeneralizedQueryStmt::output_schema not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGeneralizedQueryStmt::query not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGeneralizedQueryStmt::output_schema not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGeneralizedQueryStmt::query not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (output_schema_ != nullptr) {
@@ -18188,6 +18701,294 @@ void ResolvedGeneralizedQueryStmt::MarkFieldsAccessed() const {
   accessed_ = 0xFFFFFFFF;
   if (output_schema_ != nullptr) output_schema_->MarkFieldsAccessed();
   if (query_ != nullptr) query_->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedMultiStmt::TYPE;
+
+ResolvedMultiStmt::~ResolvedMultiStmt() {
+}
+
+absl::Status ResolvedMultiStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedStatementProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_multi_stmt_node());
+}
+
+absl::Status ResolvedMultiStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedMultiStmtProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  for (const auto& elem : statement_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_statement_list()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedMultiStmt>> ResolvedMultiStmt::RestoreFrom(
+    const ResolvedMultiStmtProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::vector<std::unique_ptr<const ResolvedStatement>> statement_list;
+  for (const auto& elem : proto.statement_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedStatement> elem_restored,
+                     ResolvedStatement::RestoreFrom(elem, params));
+    statement_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  auto node = MakeResolvedMultiStmt(
+      std::move(statement_list));
+
+  node->set_hint_list(std::move(hint_list));
+  return node;
+}
+
+void ResolvedMultiStmt::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  for (const auto& elem : statement_list_) {
+    child_nodes->emplace_back(elem.get());
+  }
+}
+
+void ResolvedMultiStmt::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  for (auto& elem : statement_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
+}
+
+absl::Status ResolvedMultiStmt::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedMultiStmt(this);
+}
+
+absl::Status ResolvedMultiStmt::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  for (const auto& elem : statement_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedMultiStmt::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (!statement_list_.empty()) {
+    fields->emplace_back("statement_list", statement_list_, statement_list_accessed());
+  }
+}
+
+absl::Status ResolvedMultiStmt::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMultiStmt::statement_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    for (const auto& it : statement_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedMultiStmt::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedMultiStmt::statement_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    for (const auto& it : statement_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedMultiStmt::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  for (const auto& it : statement_list_) it->ClearFieldsAccessed();
+}
+
+void ResolvedMultiStmt::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  for (const auto& it : statement_list_) it->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedCreateWithEntryStmt::TYPE;
+
+ResolvedCreateWithEntryStmt::~ResolvedCreateWithEntryStmt() {
+}
+
+absl::Status ResolvedCreateWithEntryStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedStatementProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_create_with_entry_stmt_node());
+}
+
+absl::Status ResolvedCreateWithEntryStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedCreateWithEntryStmtProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (with_entry_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(with_entry_->SaveTo(
+        file_descriptor_set_map, proto->mutable_with_entry()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedCreateWithEntryStmt>> ResolvedCreateWithEntryStmt::RestoreFrom(
+    const ResolvedCreateWithEntryStmtProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedWithEntry> with_entry;
+  if (proto.
+  has_with_entry()) {
+    ZETASQL_ASSIGN_OR_RETURN(with_entry,
+                     ResolvedWithEntry::RestoreFrom(
+                         proto.with_entry(), params));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  auto node = MakeResolvedCreateWithEntryStmt(
+      std::move(with_entry));
+
+  node->set_hint_list(std::move(hint_list));
+  return node;
+}
+
+void ResolvedCreateWithEntryStmt::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (with_entry_ != nullptr) {
+    child_nodes->emplace_back(with_entry_.get());
+  }
+}
+
+void ResolvedCreateWithEntryStmt::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (with_entry_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &with_entry_));
+    static_assert(sizeof(with_entry_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedCreateWithEntryStmt::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedCreateWithEntryStmt(this);
+}
+
+absl::Status ResolvedCreateWithEntryStmt::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (with_entry_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(with_entry_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedCreateWithEntryStmt::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (with_entry_ != nullptr) {
+    fields->emplace_back("with_entry", with_entry_.get(), with_entry_accessed());
+  }
+}
+
+absl::Status ResolvedCreateWithEntryStmt::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateWithEntryStmt::with_entry not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (with_entry_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          with_entry_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedCreateWithEntryStmt::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedCreateWithEntryStmt::with_entry is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (with_entry_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(with_entry_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedCreateWithEntryStmt::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (with_entry_ != nullptr) with_entry_->ClearFieldsAccessed();
+}
+
+void ResolvedCreateWithEntryStmt::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (with_entry_ != nullptr) with_entry_->MarkFieldsAccessed();
 }
 
 const ResolvedNodeKind ResolvedCreateDatabaseStmt::TYPE;
@@ -18292,27 +19093,34 @@ absl::Status ResolvedCreateDatabaseStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateDatabaseStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateDatabaseStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateDatabaseStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateDatabaseStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : option_list_) {
@@ -18487,41 +19295,45 @@ absl::Status ResolvedCreateStatement::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(name_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateStatement::name_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(create_scope_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateStatement::create_scope not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(create_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateStatement::create_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x7;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(name_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateStatement::name_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(create_scope_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateStatement::create_scope not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(create_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateStatement::create_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -18675,37 +19487,44 @@ absl::Status ResolvedIndexItem::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedIndexItem::column_ref not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedIndexItem::column_ref not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedIndexItem::descending not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedIndexItem::descending not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedIndexItem::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedIndexItem::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (column_ref_ != nullptr) {
@@ -18893,37 +19712,44 @@ absl::Status ResolvedUnnestItem::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnnestItem::array_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnnestItem::array_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnnestItem::element_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnnestItem::element_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(array_offset_column_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnnestItem::array_offset_column not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(array_offset_column_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnnestItem::array_offset_column not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (array_expr_ != nullptr) {
@@ -19273,131 +20099,138 @@ absl::Status ResolvedCreateIndexStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::table_name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x45;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::table_name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::is_unique not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::index_item_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::is_unique not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(is_search_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::is_search not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(is_vector_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::is_vector not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(index_all_columns_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::index_all_columns not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::index_item_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(storing_expression_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::storing_expression_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0 &&
-      !IsDefaultValue(partition_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::partition_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<9)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<10)) == 0 &&
-      !IsDefaultValue(computed_columns_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::computed_columns_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<11)) == 0 &&
-      !IsDefaultValue(unnest_expressions_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateIndexStmt::unnest_expressions_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xfb8;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(is_search_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::is_search not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(is_vector_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::is_vector not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(index_all_columns_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::index_all_columns not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(storing_expression_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::storing_expression_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0 &&
+        !IsDefaultValue(partition_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::partition_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<10)) == 0 &&
+        !IsDefaultValue(computed_columns_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::computed_columns_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<11)) == 0 &&
+        !IsDefaultValue(unnest_expressions_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateIndexStmt::unnest_expressions_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (table_scan_ != nullptr) {
@@ -19631,17 +20464,21 @@ absl::Status ResolvedCreateSchemaStmtBase::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateSchemaStmtBase::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateSchemaStmtBase::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -19793,17 +20630,21 @@ absl::Status ResolvedCreateSchemaStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(collation_name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateSchemaStmt::collation_name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(collation_name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateSchemaStmt::collation_name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (collation_name_ != nullptr) {
@@ -19956,17 +20797,21 @@ absl::Status ResolvedCreateExternalSchemaStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateExternalSchemaStmt::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateExternalSchemaStmt::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (connection_ != nullptr) {
@@ -20222,101 +21067,105 @@ absl::Status ResolvedCreateTableStmtBase::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmtBase::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(primary_key_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmtBase::primary_key not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(foreign_key_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmtBase::foreign_key_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(check_constraint_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmtBase::check_constraint_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(is_value_table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmtBase::is_value_table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(like_table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmtBase::like_table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0 &&
-      !IsDefaultValue(collation_name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmtBase::collation_name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<9)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmtBase::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3f9;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmtBase::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(primary_key_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmtBase::primary_key not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(foreign_key_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmtBase::foreign_key_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(check_constraint_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmtBase::check_constraint_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(is_value_table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmtBase::is_value_table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(like_table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmtBase::like_table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0 &&
+        !IsDefaultValue(collation_name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmtBase::collation_name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmtBase::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -20709,53 +21558,57 @@ absl::Status ResolvedCreateTableStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(clone_from_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmt::clone_from not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(copy_from_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmt::copy_from not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(partition_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmt::partition_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(cluster_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableStmt::cluster_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xf;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(clone_from_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmt::clone_from not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(copy_from_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmt::copy_from not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(partition_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmt::partition_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(cluster_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableStmt::cluster_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (clone_from_ != nullptr) {
@@ -21090,49 +21943,56 @@ absl::Status ResolvedCreateTableAsSelectStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(partition_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableAsSelectStmt::partition_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xc;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableAsSelectStmt::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableAsSelectStmt::query not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(cluster_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableAsSelectStmt::cluster_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableAsSelectStmt::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableAsSelectStmt::query not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(partition_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableAsSelectStmt::partition_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(cluster_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableAsSelectStmt::cluster_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : partition_by_list_) {
@@ -21339,35 +22199,39 @@ absl::Status ResolvedCreateModelAliasedQuery::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelAliasedQuery::alias not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelAliasedQuery::query not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelAliasedQuery::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelAliasedQuery::alias not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelAliasedQuery::query not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelAliasedQuery::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (query_ != nullptr) {
@@ -21785,147 +22649,154 @@ absl::Status ResolvedCreateModelStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x4;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::query not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(output_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::output_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::query not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(aliased_query_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::aliased_query_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(transform_input_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::transform_input_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(transform_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::transform_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(transform_output_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::transform_output_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(transform_analytic_function_group_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::transform_analytic_function_group_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0 &&
-      !IsDefaultValue(input_column_definition_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::input_column_definition_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<9)) == 0 &&
-      !IsDefaultValue(output_column_definition_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::output_column_definition_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<10)) == 0 &&
-      !IsDefaultValue(is_remote_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::is_remote not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<11)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateModelStmt::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xffb;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(output_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::output_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(aliased_query_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::aliased_query_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(transform_input_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::transform_input_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(transform_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::transform_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(transform_output_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::transform_output_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(transform_analytic_function_group_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::transform_analytic_function_group_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0 &&
+        !IsDefaultValue(input_column_definition_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::input_column_definition_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0 &&
+        !IsDefaultValue(output_column_definition_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::output_column_definition_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<10)) == 0 &&
+        !IsDefaultValue(is_remote_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::is_remote not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<11)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateModelStmt::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -22290,63 +23161,70 @@ absl::Status ResolvedCreateViewBase::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateViewBase::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x2;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateViewBase::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateViewBase::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(has_explicit_columns_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateViewBase::has_explicit_columns not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(sql_security_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateViewBase::sql_security not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(is_value_table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateViewBase::is_value_table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x65;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateViewBase::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(has_explicit_columns_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateViewBase::has_explicit_columns not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(sql_security_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateViewBase::sql_security not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(is_value_table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateViewBase::is_value_table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -22623,17 +23501,21 @@ absl::Status ResolvedWithPartitionColumns::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(column_definition_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWithPartitionColumns::column_definition_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(column_definition_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWithPartitionColumns::column_definition_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : column_definition_list_) {
@@ -22802,27 +23684,34 @@ absl::Status ResolvedCreateSnapshotTableStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateSnapshotTableStmt::clone_from not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateSnapshotTableStmt::clone_from not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateSnapshotTableStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateSnapshotTableStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (clone_from_ != nullptr) {
@@ -23052,17 +23941,21 @@ absl::Status ResolvedCreateExternalTableStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(with_partition_columns_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateExternalTableStmt::with_partition_columns not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(with_partition_columns_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateExternalTableStmt::with_partition_columns not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (with_partition_columns_ != nullptr) {
@@ -23232,37 +24125,44 @@ absl::Status ResolvedExportModelStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportModelStmt::model_name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x5;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportModelStmt::model_name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportModelStmt::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportModelStmt::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportModelStmt::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportModelStmt::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (connection_ != nullptr) {
@@ -23501,63 +24401,70 @@ absl::Status ResolvedExportDataStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportDataStmt::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x4;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportDataStmt::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportDataStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportDataStmt::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(is_value_table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportDataStmt::is_value_table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(query_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportDataStmt::query not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1b;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportDataStmt::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportDataStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(is_value_table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportDataStmt::is_value_table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(query_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportDataStmt::query not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (connection_ != nullptr) {
@@ -23787,47 +24694,54 @@ absl::Status ResolvedExportMetadataStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportMetadataStmt::schema_object_kind not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xb;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportMetadataStmt::schema_object_kind not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportMetadataStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportMetadataStmt::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportMetadataStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportMetadataStmt::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExportMetadataStmt::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExportMetadataStmt::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (connection_ != nullptr) {
@@ -23992,25 +24906,29 @@ absl::Status ResolvedDefineTableStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDefineTableStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDefineTableStmt::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDefineTableStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDefineTableStmt::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : option_list_) {
@@ -24148,37 +25066,44 @@ absl::Status ResolvedDescribeStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDescribeStmt::object_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDescribeStmt::object_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDescribeStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDescribeStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(from_name_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDescribeStmt::from_name_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(from_name_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDescribeStmt::from_name_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -24326,39 +25251,46 @@ absl::Status ResolvedShowStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedShowStmt::identifier not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedShowStmt::identifier not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(name_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedShowStmt::name_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(like_expr_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedShowStmt::like_expr not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x6;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(name_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedShowStmt::name_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(like_expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedShowStmt::like_expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (like_expr_ != nullptr) {
@@ -24494,29 +25426,33 @@ absl::Status ResolvedBeginStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(read_write_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedBeginStmt::read_write_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(isolation_level_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedBeginStmt::isolation_level_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(read_write_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedBeginStmt::read_write_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(isolation_level_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedBeginStmt::isolation_level_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -24631,29 +25567,33 @@ absl::Status ResolvedSetTransactionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(read_write_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetTransactionStmt::read_write_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(isolation_level_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetTransactionStmt::isolation_level_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(read_write_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetTransactionStmt::read_write_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(isolation_level_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetTransactionStmt::isolation_level_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -24853,17 +25793,21 @@ absl::Status ResolvedStartBatchStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(batch_type_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedStartBatchStmt::batch_type not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(batch_type_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedStartBatchStmt::batch_type not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -25088,47 +26032,54 @@ absl::Status ResolvedDropStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropStmt::object_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropStmt::object_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropStmt::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropStmt::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(drop_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropStmt::drop_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x8;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(drop_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropStmt::drop_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -25251,25 +26202,29 @@ absl::Status ResolvedDropMaterializedViewStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropMaterializedViewStmt::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropMaterializedViewStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropMaterializedViewStmt::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropMaterializedViewStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -25384,25 +26339,29 @@ absl::Status ResolvedDropSnapshotTableStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropSnapshotTableStmt::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropSnapshotTableStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropSnapshotTableStmt::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropSnapshotTableStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -25640,39 +26599,46 @@ absl::Status ResolvedRecursionDepthModifier::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(lower_bound_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRecursionDepthModifier::lower_bound not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x4;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRecursionDepthModifier::recursion_depth_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(upper_bound_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRecursionDepthModifier::upper_bound not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRecursionDepthModifier::recursion_depth_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(lower_bound_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRecursionDepthModifier::lower_bound not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(upper_bound_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRecursionDepthModifier::upper_bound not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (lower_bound_ != nullptr) {
@@ -25923,47 +26889,54 @@ absl::Status ResolvedRecursiveScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRecursiveScan::op_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRecursiveScan::op_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRecursiveScan::non_recursive_term not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRecursiveScan::recursive_term not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRecursiveScan::non_recursive_term not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRecursiveScan::recursive_term not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(recursion_depth_modifier_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRecursiveScan::recursion_depth_modifier not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x8;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(recursion_depth_modifier_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRecursiveScan::recursion_depth_modifier not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (non_recursive_term_ != nullptr) {
@@ -26181,25 +27154,29 @@ absl::Status ResolvedWithScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWithScan::with_entry_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWithScan::query not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWithScan::with_entry_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWithScan::query not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : with_entry_list_) {
@@ -26350,25 +27327,29 @@ absl::Status ResolvedWithEntry::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWithEntry::with_query_name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWithEntry::with_subquery not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWithEntry::with_query_name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWithEntry::with_subquery not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (with_subquery_ != nullptr) {
@@ -26508,29 +27489,33 @@ absl::Status ResolvedOption::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(qualifier_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOption::qualifier not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(assignment_op_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOption::assignment_op not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x9;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(qualifier_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOption::qualifier not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(assignment_op_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOption::assignment_op not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (value_ != nullptr) {
@@ -26696,27 +27681,34 @@ absl::Status ResolvedWindowPartitioning::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWindowPartitioning::partition_by_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWindowPartitioning::partition_by_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(collation_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWindowPartitioning::collation_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(collation_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWindowPartitioning::collation_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : partition_by_list_) {
@@ -26878,15 +27870,19 @@ absl::Status ResolvedWindowOrdering::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWindowOrdering::order_by_item_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWindowOrdering::order_by_item_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : order_by_item_list_) {
@@ -27050,35 +28046,39 @@ absl::Status ResolvedWindowFrame::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWindowFrame::frame_unit not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWindowFrame::start_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWindowFrame::end_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWindowFrame::frame_unit not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWindowFrame::start_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWindowFrame::end_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (start_expr_ != nullptr) {
@@ -27280,35 +28280,39 @@ absl::Status ResolvedAnalyticFunctionGroup::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnalyticFunctionGroup::partition_by not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnalyticFunctionGroup::order_by not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnalyticFunctionGroup::analytic_function_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnalyticFunctionGroup::partition_by not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnalyticFunctionGroup::order_by not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnalyticFunctionGroup::analytic_function_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (partition_by_ != nullptr) {
@@ -27471,25 +28475,29 @@ absl::Status ResolvedWindowFrameExpr::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWindowFrameExpr::boundary_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedWindowFrameExpr::expression not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWindowFrameExpr::boundary_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedWindowFrameExpr::expression not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (expression_ != nullptr) {
@@ -27621,15 +28629,19 @@ absl::Status ResolvedDMLValue::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDMLValue::value not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDMLValue::value not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (value_ != nullptr) {
@@ -27821,27 +28833,34 @@ absl::Status ResolvedAssertStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAssertStmt::expression not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAssertStmt::expression not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(description_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAssertStmt::description not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(description_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAssertStmt::description not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expression_ != nullptr) {
@@ -27973,15 +28992,19 @@ absl::Status ResolvedAssertRowsModified::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAssertRowsModified::rows not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAssertRowsModified::rows not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (rows_ != nullptr) {
@@ -28067,7 +29090,7 @@ absl::Status ResolvedOnConflictClause::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedOnConflictClause>> ResolvedOnConflictClause::RestoreFrom(
     const ResolvedOnConflictClauseProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  ResolvedOnConflictClauseEnums::ConflictAction conflict_action =
+  ResolvedOnConflictClause::ConflictAction conflict_action =
       proto.conflict_action();
   std::vector<ResolvedColumn> conflict_target_column_list;
   for (const auto& elem : proto.conflict_target_column_list()) {
@@ -28194,75 +29217,82 @@ absl::Status ResolvedOnConflictClause::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOnConflictClause::conflict_action not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOnConflictClause::conflict_action not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(conflict_target_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOnConflictClause::conflict_target_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(unique_constraint_name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOnConflictClause::unique_constraint_name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(insert_row_scan_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOnConflictClause::insert_row_scan not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(update_item_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOnConflictClause::update_item_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(update_where_expression_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedOnConflictClause::update_where_expression not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3e;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(conflict_target_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOnConflictClause::conflict_target_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(unique_constraint_name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOnConflictClause::unique_constraint_name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(insert_row_scan_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOnConflictClause::insert_row_scan not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(update_item_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOnConflictClause::update_item_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(update_where_expression_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedOnConflictClause::update_where_expression not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<3)) != 0) {
     if (insert_row_scan_ != nullptr) {
@@ -28430,15 +29460,19 @@ absl::Status ResolvedInsertRow::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertRow::value_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertRow::value_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : value_list_) {
@@ -28826,149 +29860,153 @@ absl::Status ResolvedInsertStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(table_scan_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::table_scan not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(insert_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::insert_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(assert_rows_modified_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::assert_rows_modified not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(returning_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::returning not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(insert_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::insert_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(query_parameter_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::query_parameter_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(query_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::query not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(query_output_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::query_output_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0 &&
-      !IsDefaultValue(row_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::row_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<10)) == 0 &&
-      !IsDefaultValue(on_conflict_clause_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::on_conflict_clause not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<11)) == 0 &&
-      !IsDefaultValue(topologically_sorted_generated_column_id_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::topologically_sorted_generated_column_id_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<12)) == 0 &&
-      !IsDefaultValue(generated_column_expr_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedInsertStmt::generated_column_expr_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1dff;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(table_scan_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::table_scan not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(insert_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::insert_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(assert_rows_modified_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::assert_rows_modified not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(returning_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::returning not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(insert_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::insert_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(query_parameter_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::query_parameter_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(query_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::query not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(query_output_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::query_output_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0 &&
+        !IsDefaultValue(row_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::row_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<10)) == 0 &&
+        !IsDefaultValue(on_conflict_clause_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::on_conflict_clause not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<11)) == 0 &&
+        !IsDefaultValue(topologically_sorted_generated_column_id_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::topologically_sorted_generated_column_id_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<12)) == 0 &&
+        !IsDefaultValue(generated_column_expr_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedInsertStmt::generated_column_expr_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (table_scan_ != nullptr) {
@@ -29364,63 +30402,70 @@ absl::Status ResolvedDeleteStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(table_scan_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDeleteStmt::table_scan not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x20;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<5)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDeleteStmt::where_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(assert_rows_modified_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDeleteStmt::assert_rows_modified not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(returning_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDeleteStmt::returning not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(array_offset_column_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDeleteStmt::array_offset_column not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDeleteStmt::where_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x17;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(table_scan_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDeleteStmt::table_scan not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(assert_rows_modified_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDeleteStmt::assert_rows_modified not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(returning_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDeleteStmt::returning not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(array_offset_column_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDeleteStmt::array_offset_column not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (table_scan_ != nullptr) {
@@ -29770,85 +30815,92 @@ absl::Status ResolvedUpdateItem::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateItem::target not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x5;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateItem::target not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateItem::element_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(set_value_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateItem::set_value not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateItem::element_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(array_update_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateItem::array_update_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(delete_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateItem::delete_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(update_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateItem::update_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(insert_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateItem::insert_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x7a;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(set_value_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateItem::set_value not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(array_update_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateItem::array_update_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(delete_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateItem::delete_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(update_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateItem::update_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(insert_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateItem::insert_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (target_ != nullptr) {
@@ -30103,25 +31155,29 @@ absl::Status ResolvedUpdateArrayItem::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateArrayItem::offset not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateArrayItem::update_item not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateArrayItem::offset not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateArrayItem::update_item not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (offset_ != nullptr) {
@@ -30490,109 +31546,116 @@ absl::Status ResolvedUpdateStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(table_scan_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::table_scan not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x60;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<5)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::where_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::update_item_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(assert_rows_modified_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::assert_rows_modified not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(returning_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::returning not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(array_offset_column_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::array_offset_column not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::where_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::update_item_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(from_scan_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::from_scan not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0 &&
-      !IsDefaultValue(topologically_sorted_generated_column_id_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::topologically_sorted_generated_column_id_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<9)) == 0 &&
-      !IsDefaultValue(generated_column_expr_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUpdateStmt::generated_column_expr_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x39d;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(table_scan_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::table_scan not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(assert_rows_modified_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::assert_rows_modified not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(returning_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::returning not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(array_offset_column_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::array_offset_column not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(from_scan_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::from_scan not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0 &&
+        !IsDefaultValue(topologically_sorted_generated_column_id_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::topologically_sorted_generated_column_id_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0 &&
+        !IsDefaultValue(generated_column_expr_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateStmt::generated_column_expr_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (table_scan_ != nullptr) {
@@ -30930,71 +31993,78 @@ absl::Status ResolvedMergeWhen::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeWhen::match_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeWhen::match_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeWhen::match_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeWhen::action_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeWhen::match_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeWhen::action_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(insert_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeWhen::insert_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(insert_row_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeWhen::insert_row not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(update_item_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeWhen::update_item_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x38;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(insert_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeWhen::insert_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(insert_row_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeWhen::insert_row not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(update_item_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeWhen::update_item_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (match_expr_ != nullptr) {
@@ -31269,45 +32339,49 @@ absl::Status ResolvedMergeStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeStmt::table_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeStmt::from_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeStmt::merge_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMergeStmt::when_clause_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1d;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeStmt::table_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeStmt::from_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeStmt::merge_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMergeStmt::when_clause_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (table_scan_ != nullptr) {
@@ -31521,25 +32595,29 @@ absl::Status ResolvedTruncateStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTruncateStmt::table_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTruncateStmt::where_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTruncateStmt::table_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTruncateStmt::where_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (table_scan_ != nullptr) {
@@ -31666,15 +32744,19 @@ absl::Status ResolvedObjectUnit::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedObjectUnit::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedObjectUnit::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -31791,25 +32873,29 @@ absl::Status ResolvedPrivilege::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPrivilege::action_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPrivilege::unit_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPrivilege::action_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPrivilege::unit_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : unit_list_) {
@@ -31969,59 +33055,66 @@ absl::Status ResolvedGrantOrRevokeStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGrantOrRevokeStmt::privilege_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGrantOrRevokeStmt::privilege_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGrantOrRevokeStmt::object_type_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGrantOrRevokeStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGrantOrRevokeStmt::object_type_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGrantOrRevokeStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(grantee_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGrantOrRevokeStmt::grantee_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(grantee_expr_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGrantOrRevokeStmt::grantee_expr_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x18;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(grantee_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGrantOrRevokeStmt::grantee_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(grantee_expr_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGrantOrRevokeStmt::grantee_expr_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : privilege_list_) {
@@ -32311,6 +33404,9 @@ absl::StatusOr<std::unique_ptr<ResolvedAlterObjectStmt>> ResolvedAlterObjectStmt
     case AnyResolvedAlterObjectStmtProto::kResolvedAlterConnectionStmtNode:
       return ResolvedAlterConnectionStmt::RestoreFrom(
           proto.resolved_alter_connection_stmt_node(), params);
+    case AnyResolvedAlterObjectStmtProto::kResolvedAlterIndexStmtNode:
+      return ResolvedAlterIndexStmt::RestoreFrom(
+          proto.resolved_alter_index_stmt_node(), params);
   case AnyResolvedAlterObjectStmtProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedAlterObjectStmtProto";
@@ -32365,39 +33461,46 @@ absl::Status ResolvedAlterObjectStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(name_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterObjectStmt::name_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x2;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterObjectStmt::alter_action_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterObjectStmt::alter_action_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterObjectStmt::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x5;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(name_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterObjectStmt::name_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterObjectStmt::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : alter_action_list_) {
@@ -32503,6 +33606,209 @@ absl::Status ResolvedAlterDatabaseStmt::Accept(ResolvedASTVisitor* visitor) cons
 absl::Status ResolvedAlterDatabaseStmt::ChildrenAccept(ResolvedASTVisitor* visitor) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
   return absl::OkStatus();
+}
+
+const ResolvedNodeKind ResolvedAlterIndexStmt::TYPE;
+
+const ResolvedAlterIndexStmt::AlterIndexType ResolvedAlterIndexStmt::INDEX_DEFAULT;
+const ResolvedAlterIndexStmt::AlterIndexType ResolvedAlterIndexStmt::INDEX_SEARCH;
+const ResolvedAlterIndexStmt::AlterIndexType ResolvedAlterIndexStmt::INDEX_VECTOR;
+
+ResolvedAlterIndexStmt::~ResolvedAlterIndexStmt() {
+}
+
+absl::Status ResolvedAlterIndexStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedAlterObjectStmtProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_alter_index_stmt_node());
+}
+
+absl::Status ResolvedAlterIndexStmt::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedAlterIndexStmtProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  for (const auto& elem : table_name_path_) {
+    proto->add_table_name_path(elem);
+  }
+  proto->set_index_type(index_type_);
+  if (table_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(table_scan_->SaveTo(
+        file_descriptor_set_map, proto->mutable_table_scan()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedAlterIndexStmt>> ResolvedAlterIndexStmt::RestoreFrom(
+    const ResolvedAlterIndexStmtProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::vector<std::string> table_name_path;
+  for (const auto& elem : proto.table_name_path()) {
+    table_name_path.push_back(elem);
+  }
+  ResolvedAlterIndexStmt::AlterIndexType index_type =
+      proto.index_type();
+  std::unique_ptr<const ResolvedTableScan> table_scan;
+  if (proto.
+  has_table_scan()) {
+    ZETASQL_ASSIGN_OR_RETURN(table_scan,
+                     ResolvedTableScan::RestoreFrom(
+                         proto.table_scan(), params));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::string> name_path;
+  for (const auto& elem : proto.parent().name_path()) {
+    name_path.push_back(elem);
+  }
+  std::vector<std::unique_ptr<const ResolvedAlterAction>> alter_action_list;
+  for (const auto& elem : proto.parent().alter_action_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedAlterAction> elem_restored,
+                     ResolvedAlterAction::RestoreFrom(elem, params));
+    alter_action_list.push_back(std::move(elem_restored));
+  }
+  bool is_if_exists =
+      proto.parent().is_if_exists();
+  auto node = MakeResolvedAlterIndexStmt(
+      std::move(name_path),
+      std::move(alter_action_list),
+      std::move(is_if_exists),
+      std::move(table_name_path),
+      std::move(index_type),
+      std::move(table_scan));
+
+  node->set_hint_list(std::move(hint_list));
+  return node;
+}
+
+void ResolvedAlterIndexStmt::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (table_scan_ != nullptr) {
+    child_nodes->emplace_back(table_scan_.get());
+  }
+}
+
+void ResolvedAlterIndexStmt::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (table_scan_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &table_scan_));
+    static_assert(sizeof(table_scan_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedAlterIndexStmt::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedAlterIndexStmt(this);
+}
+
+absl::Status ResolvedAlterIndexStmt::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (table_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(table_scan_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAlterIndexStmt::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  {
+    fields->emplace_back("table_name_path", ToStringImpl(table_name_path_), table_name_path_accessed());
+  }
+  if (!IsDefaultValue(index_type_)) {
+    fields->emplace_back("index_type", ToStringImpl(index_type_), index_type_accessed());
+  }
+  if (table_scan_ != nullptr) {
+    fields->emplace_back("table_scan", table_scan_.get(), table_scan_accessed());
+  }
+}
+
+absl::Status ResolvedAlterIndexStmt::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterIndexStmt::table_name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(index_type_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterIndexStmt::index_type not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    if (table_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          table_scan_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedAlterIndexStmt::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAlterIndexStmt::table_name_path is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAlterIndexStmt::index_type is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    if (table_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(table_scan_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAlterIndexStmt::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (table_scan_ != nullptr) table_scan_->ClearFieldsAccessed();
+}
+
+void ResolvedAlterIndexStmt::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (table_scan_ != nullptr) table_scan_->MarkFieldsAccessed();
 }
 
 const ResolvedNodeKind ResolvedAlterMaterializedViewStmt::TYPE;
@@ -33024,6 +34330,12 @@ absl::StatusOr<std::unique_ptr<ResolvedAlterAction>> ResolvedAlterAction::Restor
     case AnyResolvedAlterActionProto::kResolvedDropSubEntityActionNode:
       return ResolvedDropSubEntityAction::RestoreFrom(
           proto.resolved_drop_sub_entity_action_node(), params);
+    case AnyResolvedAlterActionProto::kResolvedAddColumnIdentifierActionNode:
+      return ResolvedAddColumnIdentifierAction::RestoreFrom(
+          proto.resolved_add_column_identifier_action_node(), params);
+    case AnyResolvedAlterActionProto::kResolvedRebuildActionNode:
+      return ResolvedRebuildAction::RestoreFrom(
+          proto.resolved_rebuild_action_node(), params);
   case AnyResolvedAlterActionProto::NODE_NOT_SET:
     return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
         << "No subnode types set in ResolvedAlterActionProto";
@@ -33125,27 +34437,34 @@ absl::Status ResolvedAlterColumnAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterColumnAction::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x2;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterColumnAction::column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterColumnAction::column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterColumnAction::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -33259,15 +34578,19 @@ absl::Status ResolvedSetOptionsAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetOptionsAction::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetOptionsAction::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -33415,47 +34738,54 @@ absl::Status ResolvedAlterSubEntityAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterSubEntityAction::entity_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterSubEntityAction::entity_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterSubEntityAction::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterSubEntityAction::alter_action not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterSubEntityAction::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterSubEntityAction::alter_action not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterSubEntityAction::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x8;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterSubEntityAction::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (alter_action_ != nullptr) {
@@ -33611,47 +34941,54 @@ absl::Status ResolvedAddSubEntityAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddSubEntityAction::entity_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddSubEntityAction::entity_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddSubEntityAction::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddSubEntityAction::options_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddSubEntityAction::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddSubEntityAction::options_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(is_if_not_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddSubEntityAction::is_if_not_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x8;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(is_if_not_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddSubEntityAction::is_if_not_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     for (const auto& it : options_list_) {
@@ -33782,37 +35119,44 @@ absl::Status ResolvedDropSubEntityAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropSubEntityAction::entity_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropSubEntityAction::entity_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropSubEntityAction::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropSubEntityAction::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropSubEntityAction::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropSubEntityAction::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -33942,25 +35286,29 @@ absl::Status ResolvedAddColumnAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddColumnAction::is_if_not_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddColumnAction::column_definition not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddColumnAction::is_if_not_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddColumnAction::column_definition not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (column_definition_ != nullptr) {
@@ -34001,6 +35349,223 @@ void ResolvedAddColumnAction::MarkFieldsAccessed() const {
   SUPER::MarkFieldsAccessed();
   accessed_ = 0xFFFFFFFF;
   if (column_definition_ != nullptr) column_definition_->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedAddColumnIdentifierAction::TYPE;
+
+ResolvedAddColumnIdentifierAction::~ResolvedAddColumnIdentifierAction() {
+}
+
+absl::Status ResolvedAddColumnIdentifierAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedAlterActionProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_add_column_identifier_action_node());
+}
+
+absl::Status ResolvedAddColumnIdentifierAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedAddColumnIdentifierActionProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  proto->set_name(name_);
+  for (const auto& elem : options_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_options_list()));
+  }
+  proto->set_is_if_not_exists(is_if_not_exists_);
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedAddColumnIdentifierAction>> ResolvedAddColumnIdentifierAction::RestoreFrom(
+    const ResolvedAddColumnIdentifierActionProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::string name =
+      proto.name();
+  std::vector<std::unique_ptr<const ResolvedOption>> options_list;
+  for (const auto& elem : proto.options_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    options_list.push_back(std::move(elem_restored));
+  }
+  bool is_if_not_exists =
+      proto.is_if_not_exists();
+  auto node = MakeResolvedAddColumnIdentifierAction(
+      std::move(name),
+      std::move(options_list),
+      std::move(is_if_not_exists));
+
+  return node;
+}
+
+void ResolvedAddColumnIdentifierAction::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  for (const auto& elem : options_list_) {
+    child_nodes->emplace_back(elem.get());
+  }
+}
+
+void ResolvedAddColumnIdentifierAction::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  for (auto& elem : options_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
+}
+
+absl::Status ResolvedAddColumnIdentifierAction::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedAddColumnIdentifierAction(this);
+}
+
+absl::Status ResolvedAddColumnIdentifierAction::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  for (const auto& elem : options_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAddColumnIdentifierAction::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  {
+    fields->emplace_back("name", ToStringImpl(name_), name_accessed());
+  }
+  if (!options_list_.empty()) {
+    fields->emplace_back("options_list", options_list_, options_list_accessed());
+  }
+  {
+    fields->emplace_back("is_if_not_exists", ToStringImpl(is_if_not_exists_), is_if_not_exists_accessed());
+  }
+}
+
+absl::Status ResolvedAddColumnIdentifierAction::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddColumnIdentifierAction::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddColumnIdentifierAction::options_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddColumnIdentifierAction::is_if_not_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    for (const auto& it : options_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedAddColumnIdentifierAction::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAddColumnIdentifierAction::name is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAddColumnIdentifierAction::options_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedAddColumnIdentifierAction::is_if_not_exists is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    for (const auto& it : options_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedAddColumnIdentifierAction::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  for (const auto& it : options_list_) it->ClearFieldsAccessed();
+}
+
+void ResolvedAddColumnIdentifierAction::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  for (const auto& it : options_list_) it->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedRebuildAction::TYPE;
+
+ResolvedRebuildAction::~ResolvedRebuildAction() {
+}
+
+absl::Status ResolvedRebuildAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedAlterActionProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_rebuild_action_node());
+}
+
+absl::Status ResolvedRebuildAction::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedRebuildActionProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedRebuildAction>> ResolvedRebuildAction::RestoreFrom(
+    const ResolvedRebuildActionProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  auto node = MakeResolvedRebuildAction(
+);
+
+  return node;
+}
+
+absl::Status ResolvedRebuildAction::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedRebuildAction(this);
+}
+
+absl::Status ResolvedRebuildAction::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  return absl::OkStatus();
 }
 
 const ResolvedNodeKind ResolvedAddConstraintAction::TYPE;
@@ -34110,37 +35675,44 @@ absl::Status ResolvedAddConstraintAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddConstraintAction::is_if_not_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddConstraintAction::is_if_not_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddConstraintAction::constraint not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddConstraintAction::constraint not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddConstraintAction::table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddConstraintAction::table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (constraint_ != nullptr) {
@@ -34261,25 +35833,29 @@ absl::Status ResolvedDropConstraintAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropConstraintAction::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropConstraintAction::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropConstraintAction::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropConstraintAction::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -34376,15 +35952,19 @@ absl::Status ResolvedDropPrimaryKeyAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropPrimaryKeyAction::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropPrimaryKeyAction::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -34500,15 +36080,19 @@ absl::Status ResolvedAlterColumnOptionsAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterColumnOptionsAction::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterColumnOptionsAction::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -34755,27 +36339,34 @@ absl::Status ResolvedAlterColumnSetDataTypeAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterColumnSetDataTypeAction::updated_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterColumnSetDataTypeAction::updated_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(updated_type_parameters_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterColumnSetDataTypeAction::updated_type_parameters not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(updated_type_parameters_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterColumnSetDataTypeAction::updated_type_parameters not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (updated_annotations_ != nullptr) {
@@ -34913,15 +36504,19 @@ absl::Status ResolvedAlterColumnSetDefaultAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterColumnSetDefaultAction::default_value not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterColumnSetDefaultAction::default_value not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (default_value_ != nullptr) {
@@ -35080,25 +36675,29 @@ absl::Status ResolvedDropColumnAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropColumnAction::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropColumnAction::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropColumnAction::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropColumnAction::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -35209,37 +36808,44 @@ absl::Status ResolvedRenameColumnAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRenameColumnAction::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x6;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRenameColumnAction::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRenameColumnAction::new_name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRenameColumnAction::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRenameColumnAction::new_name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRenameColumnAction::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -35347,29 +36953,33 @@ absl::Status ResolvedSetAsAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(entity_body_json_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetAsAction::entity_body_json not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(entity_body_text_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetAsAction::entity_body_text not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(entity_body_json_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetAsAction::entity_body_json not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(entity_body_text_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetAsAction::entity_body_text not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -35488,15 +37098,19 @@ absl::Status ResolvedSetCollateClause::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSetCollateClause::collation_name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSetCollateClause::collation_name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (collation_name_ != nullptr) {
@@ -35644,37 +37258,44 @@ absl::Status ResolvedAlterTableSetOptionsStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterTableSetOptionsStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterTableSetOptionsStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterTableSetOptionsStmt::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterTableSetOptionsStmt::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterTableSetOptionsStmt::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterTableSetOptionsStmt::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : option_list_) {
@@ -35816,35 +37437,39 @@ absl::Status ResolvedRenameStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRenameStmt::object_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRenameStmt::old_name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRenameStmt::new_name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRenameStmt::object_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRenameStmt::old_name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRenameStmt::new_name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -36011,37 +37636,44 @@ absl::Status ResolvedCreatePrivilegeRestrictionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreatePrivilegeRestrictionStmt::column_privilege_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreatePrivilegeRestrictionStmt::column_privilege_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreatePrivilegeRestrictionStmt::object_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreatePrivilegeRestrictionStmt::object_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(restrictee_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreatePrivilegeRestrictionStmt::restrictee_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(restrictee_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreatePrivilegeRestrictionStmt::restrictee_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : column_privilege_list_) {
@@ -36291,63 +37923,70 @@ absl::Status ResolvedCreateRowAccessPolicyStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(create_mode_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateRowAccessPolicyStmt::create_mode not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x4;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateRowAccessPolicyStmt::target_name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateRowAccessPolicyStmt::name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateRowAccessPolicyStmt::target_name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(grantee_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateRowAccessPolicyStmt::grantee_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(grantee_expr_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateRowAccessPolicyStmt::grantee_expr_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1b;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(create_mode_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateRowAccessPolicyStmt::create_mode not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateRowAccessPolicyStmt::name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(grantee_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateRowAccessPolicyStmt::grantee_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(grantee_expr_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateRowAccessPolicyStmt::grantee_expr_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<4)) != 0) {
     for (const auto& it : grantee_expr_list_) {
@@ -36543,47 +38182,54 @@ absl::Status ResolvedDropPrivilegeRestrictionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropPrivilegeRestrictionStmt::object_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xd;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropPrivilegeRestrictionStmt::object_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropPrivilegeRestrictionStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropPrivilegeRestrictionStmt::column_privilege_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropPrivilegeRestrictionStmt::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropPrivilegeRestrictionStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropPrivilegeRestrictionStmt::column_privilege_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropPrivilegeRestrictionStmt::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<3)) != 0) {
     for (const auto& it : column_privilege_list_) {
@@ -36732,51 +38378,58 @@ absl::Status ResolvedDropRowAccessPolicyStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(is_drop_all_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropRowAccessPolicyStmt::is_drop_all not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x8;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropRowAccessPolicyStmt::target_name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropRowAccessPolicyStmt::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(name_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropRowAccessPolicyStmt::name not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropRowAccessPolicyStmt::target_name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x7;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(is_drop_all_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropRowAccessPolicyStmt::is_drop_all not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropRowAccessPolicyStmt::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(name_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropRowAccessPolicyStmt::name not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -36917,47 +38570,54 @@ absl::Status ResolvedDropIndexStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropIndexStmt::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropIndexStmt::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropIndexStmt::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropIndexStmt::table_name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropIndexStmt::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropIndexStmt::table_name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(index_type_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropIndexStmt::index_type not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x8;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(index_type_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropIndexStmt::index_type not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -37079,15 +38739,19 @@ absl::Status ResolvedGrantToAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGrantToAction::grantee_expr_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGrantToAction::grantee_expr_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : grantee_expr_list_) {
@@ -37209,17 +38873,21 @@ absl::Status ResolvedRestrictToAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(restrictee_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRestrictToAction::restrictee_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(restrictee_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRestrictToAction::restrictee_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : restrictee_list_) {
@@ -37348,29 +39016,33 @@ absl::Status ResolvedAddToRestricteeListAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(is_if_not_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddToRestricteeListAction::is_if_not_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(restrictee_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAddToRestricteeListAction::restrictee_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(is_if_not_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddToRestricteeListAction::is_if_not_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(restrictee_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAddToRestricteeListAction::restrictee_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : restrictee_list_) {
@@ -37503,29 +39175,33 @@ absl::Status ResolvedRemoveFromRestricteeListAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(is_if_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRemoveFromRestricteeListAction::is_if_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(restrictee_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRemoveFromRestricteeListAction::restrictee_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(is_if_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRemoveFromRestricteeListAction::is_if_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(restrictee_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRemoveFromRestricteeListAction::restrictee_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : restrictee_list_) {
@@ -37663,15 +39339,19 @@ absl::Status ResolvedFilterUsingAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFilterUsingAction::predicate_str not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x2;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFilterUsingAction::predicate_str not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (predicate_ != nullptr) {
@@ -37801,29 +39481,33 @@ absl::Status ResolvedRevokeFromAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(revokee_expr_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRevokeFromAction::revokee_expr_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(is_revoke_from_all_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRevokeFromAction::is_revoke_from_all not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(revokee_expr_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRevokeFromAction::revokee_expr_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(is_revoke_from_all_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRevokeFromAction::is_revoke_from_all not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : revokee_expr_list_) {
@@ -37936,15 +39620,19 @@ absl::Status ResolvedRenameToAction::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRenameToAction::new_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRenameToAction::new_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -38083,25 +39771,29 @@ absl::Status ResolvedAlterPrivilegeRestrictionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterPrivilegeRestrictionStmt::column_privilege_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterPrivilegeRestrictionStmt::object_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterPrivilegeRestrictionStmt::column_privilege_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterPrivilegeRestrictionStmt::object_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : column_privilege_list_) {
@@ -38261,15 +39953,19 @@ absl::Status ResolvedAlterRowAccessPolicyStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterRowAccessPolicyStmt::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterRowAccessPolicyStmt::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (table_scan_ != nullptr) {
@@ -38559,15 +40255,19 @@ absl::Status ResolvedCreateConstantStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateConstantStmt::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateConstantStmt::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -38872,89 +40572,93 @@ absl::Status ResolvedCreateFunctionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(is_aggregate_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateFunctionStmt::is_aggregate not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(language_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateFunctionStmt::language not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(aggregate_expression_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateFunctionStmt::aggregate_expression_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<9)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateFunctionStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<10)) == 0 &&
-      !IsDefaultValue(sql_security_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateFunctionStmt::sql_security not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<11)) == 0 &&
-      !IsDefaultValue(determinism_level_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateFunctionStmt::determinism_level not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<13)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateFunctionStmt::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2eb0;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(is_aggregate_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateFunctionStmt::is_aggregate not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(language_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateFunctionStmt::language not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(aggregate_expression_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateFunctionStmt::aggregate_expression_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateFunctionStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<10)) == 0 &&
+        !IsDefaultValue(sql_security_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateFunctionStmt::sql_security not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<11)) == 0 &&
+        !IsDefaultValue(determinism_level_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateFunctionStmt::determinism_level not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<13)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateFunctionStmt::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<7)) != 0) {
     for (const auto& it : aggregate_expression_list_) {
@@ -39143,27 +40847,34 @@ absl::Status ResolvedArgumentDef::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArgumentDef::type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x2;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArgumentDef::type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(argument_kind_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArgumentDef::argument_kind not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(argument_kind_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArgumentDef::argument_kind not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -39281,15 +40992,19 @@ absl::Status ResolvedArgumentRef::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArgumentRef::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArgumentRef::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -39527,75 +41242,82 @@ absl::Status ResolvedCreateTableFunctionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableFunctionStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x80;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<7)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableFunctionStmt::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(language_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableFunctionStmt::language not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(query_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableFunctionStmt::query not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableFunctionStmt::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0 &&
-      !IsDefaultValue(is_value_table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableFunctionStmt::is_value_table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<9)) == 0 &&
-      !IsDefaultValue(sql_security_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateTableFunctionStmt::sql_security not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x358;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableFunctionStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(language_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableFunctionStmt::language not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(query_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableFunctionStmt::query not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0 &&
+        !IsDefaultValue(is_value_table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableFunctionStmt::is_value_table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0 &&
+        !IsDefaultValue(sql_security_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateTableFunctionStmt::sql_security not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<3)) != 0) {
     for (const auto& it : option_list_) {
@@ -39773,27 +41495,34 @@ absl::Status ResolvedRelationArgumentScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRelationArgumentScan::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRelationArgumentScan::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(is_value_table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedRelationArgumentScan::is_value_table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(is_value_table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedRelationArgumentScan::is_value_table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -40010,15 +41739,19 @@ absl::Status ResolvedFunctionSignatureHolder::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedFunctionSignatureHolder::signature not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedFunctionSignatureHolder::signature not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -40187,25 +41920,29 @@ absl::Status ResolvedDropFunctionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropFunctionStmt::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropFunctionStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropFunctionStmt::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropFunctionStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     if (arguments_ != nullptr) {
@@ -40346,25 +42083,29 @@ absl::Status ResolvedDropTableFunctionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropTableFunctionStmt::is_if_exists not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedDropTableFunctionStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropTableFunctionStmt::is_if_exists not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedDropTableFunctionStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -40507,25 +42248,29 @@ absl::Status ResolvedCallStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCallStmt::procedure not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCallStmt::argument_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x5;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCallStmt::procedure not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCallStmt::argument_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     for (const auto& it : argument_list_) {
@@ -40709,75 +42454,82 @@ absl::Status ResolvedImportStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedImportStmt::import_kind not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedImportStmt::import_kind not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(name_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedImportStmt::name_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(file_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedImportStmt::file_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(alias_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedImportStmt::alias_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(into_alias_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedImportStmt::into_alias_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedImportStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3e;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(name_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedImportStmt::name_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(file_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedImportStmt::file_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(alias_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedImportStmt::alias_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(into_alias_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedImportStmt::into_alias_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedImportStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<5)) != 0) {
     for (const auto& it : option_list_) {
@@ -40937,27 +42689,34 @@ absl::Status ResolvedModuleStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedModuleStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedModuleStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedModuleStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedModuleStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : option_list_) {
@@ -41099,25 +42858,29 @@ absl::Status ResolvedAggregateHavingModifier::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateHavingModifier::kind not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAggregateHavingModifier::having_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateHavingModifier::kind not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAggregateHavingModifier::having_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (having_expr_ != nullptr) {
@@ -41359,41 +43122,45 @@ absl::Status ResolvedCreateMaterializedViewStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(partition_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateMaterializedViewStmt::partition_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(cluster_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateMaterializedViewStmt::cluster_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(replica_source_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateMaterializedViewStmt::replica_source not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x7;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(partition_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateMaterializedViewStmt::partition_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(cluster_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateMaterializedViewStmt::cluster_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(replica_source_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateMaterializedViewStmt::replica_source not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : partition_by_list_) {
@@ -41747,97 +43514,104 @@ absl::Status ResolvedCreateProcedureStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::argument_name_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateProcedureStmt::argument_name_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateProcedureStmt::signature not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::signature not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(procedure_body_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::procedure_body not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(language_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::language not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(code_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::code not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(external_security_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateProcedureStmt::external_security not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xfc;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateProcedureStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(procedure_body_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateProcedureStmt::procedure_body not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateProcedureStmt::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(language_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateProcedureStmt::language not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(code_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateProcedureStmt::code not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(external_security_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateProcedureStmt::external_security not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<2)) != 0) {
     for (const auto& it : option_list_) {
@@ -42012,25 +43786,29 @@ absl::Status ResolvedExecuteImmediateArgument::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExecuteImmediateArgument::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExecuteImmediateArgument::expression not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExecuteImmediateArgument::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExecuteImmediateArgument::expression not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (expression_ != nullptr) {
@@ -42204,35 +43982,39 @@ absl::Status ResolvedExecuteImmediateStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExecuteImmediateStmt::sql not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExecuteImmediateStmt::into_identifier_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedExecuteImmediateStmt::using_argument_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExecuteImmediateStmt::sql not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExecuteImmediateStmt::into_identifier_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedExecuteImmediateStmt::using_argument_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (sql_ != nullptr) {
@@ -42416,25 +44198,29 @@ absl::Status ResolvedAssignmentStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAssignmentStmt::target not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAssignmentStmt::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAssignmentStmt::target not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAssignmentStmt::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (target_ != nullptr) {
@@ -42613,51 +44399,58 @@ absl::Status ResolvedCreateEntityStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateEntityStmt::entity_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateEntityStmt::entity_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(entity_body_json_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateEntityStmt::entity_body_json not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(entity_body_text_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateEntityStmt::entity_body_text not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateEntityStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xe;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(entity_body_json_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateEntityStmt::entity_body_json not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(entity_body_text_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateEntityStmt::entity_body_text not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateEntityStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<3)) != 0) {
     for (const auto& it : option_list_) {
@@ -42796,15 +44589,19 @@ absl::Status ResolvedAlterEntityStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAlterEntityStmt::entity_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAlterEntityStmt::entity_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -42915,35 +44712,39 @@ absl::Status ResolvedPivotColumn::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotColumn::column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotColumn::pivot_expr_index not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotColumn::pivot_value_index not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotColumn::column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotColumn::pivot_expr_index not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotColumn::pivot_value_index not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -43212,65 +45013,69 @@ absl::Status ResolvedPivotScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotScan::group_by_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotScan::pivot_expr_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotScan::for_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotScan::pivot_value_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPivotScan::pivot_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3f;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotScan::group_by_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotScan::pivot_expr_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotScan::for_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotScan::pivot_value_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPivotScan::pivot_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -43527,35 +45332,39 @@ absl::Status ResolvedReturningClause::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedReturningClause::output_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedReturningClause::action_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedReturningClause::expr_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedReturningClause::output_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedReturningClause::action_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedReturningClause::expr_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : output_column_list_) {
@@ -43710,15 +45519,19 @@ absl::Status ResolvedUnpivotArg::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnpivotArg::column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnpivotArg::column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : column_list_) {
@@ -43971,65 +45784,69 @@ absl::Status ResolvedUnpivotScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnpivotScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnpivotScan::value_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnpivotScan::label_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnpivotScan::label_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnpivotScan::unpivot_arg_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUnpivotScan::include_nulls not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x5f;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnpivotScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnpivotScan::value_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnpivotScan::label_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnpivotScan::label_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnpivotScan::unpivot_arg_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUnpivotScan::include_nulls not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -44177,6 +45994,15 @@ absl::Status ResolvedMatchRecognizeScan::SaveTo(
     ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
       file_descriptor_set_map, proto->add_measure_group_list()));
   }
+  ZETASQL_RETURN_IF_ERROR(SaveToImpl(
+      match_number_column_, file_descriptor_set_map,
+      proto->mutable_match_number_column()));
+  ZETASQL_RETURN_IF_ERROR(SaveToImpl(
+      match_row_number_column_, file_descriptor_set_map,
+      proto->mutable_match_row_number_column()));
+  ZETASQL_RETURN_IF_ERROR(SaveToImpl(
+      classifier_column_, file_descriptor_set_map,
+      proto->mutable_classifier_column()));
   return absl::OkStatus();
 }
 
@@ -44223,7 +46049,7 @@ absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizeScan>> ResolvedMatchRecogni
                      ResolvedMatchRecognizePatternExpr::RestoreFrom(
                          proto.pattern(), params));
   }
-  ResolvedMatchRecognizeScanEnums::AfterMatchSkipMode after_match_skip_mode =
+  ResolvedMatchRecognizeScan::AfterMatchSkipMode after_match_skip_mode =
       proto.after_match_skip_mode();
   std::vector<std::unique_ptr<const ResolvedMeasureGroup>> measure_group_list;
   for (const auto& elem : proto.measure_group_list()) {
@@ -44231,6 +46057,18 @@ absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizeScan>> ResolvedMatchRecogni
                      ResolvedMeasureGroup::RestoreFrom(elem, params));
     measure_group_list.push_back(std::move(elem_restored));
   }
+  ZETASQL_ASSIGN_OR_RETURN(auto match_number_column,
+                   RestoreFromImpl<ResolvedColumn>(
+                       proto.match_number_column(),
+                       params));
+  ZETASQL_ASSIGN_OR_RETURN(auto match_row_number_column,
+                   RestoreFromImpl<ResolvedColumn>(
+                       proto.match_row_number_column(),
+                       params));
+  ZETASQL_ASSIGN_OR_RETURN(auto classifier_column,
+                   RestoreFromImpl<ResolvedColumn>(
+                       proto.classifier_column(),
+                       params));
   std::vector<ResolvedColumn> column_list;
   for (const auto& elem : proto.parent().column_list()) {
     ZETASQL_ASSIGN_OR_RETURN(
@@ -44257,7 +46095,10 @@ absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizeScan>> ResolvedMatchRecogni
       std::move(pattern_variable_definition_list),
       std::move(pattern),
       std::move(after_match_skip_mode),
-      std::move(measure_group_list));
+      std::move(measure_group_list),
+      std::move(match_number_column),
+      std::move(match_row_number_column),
+      std::move(classifier_column));
 
   node->set_hint_list(std::move(hint_list));
   node->set_is_ordered(std::move(is_ordered));
@@ -44398,91 +46239,134 @@ void ResolvedMatchRecognizeScan::CollectDebugStringFields(
   if (!measure_group_list_.empty()) {
     fields->emplace_back("measure_group_list", measure_group_list_, measure_group_list_accessed());
   }
+  {
+    fields->emplace_back("match_number_column", ToStringImpl(match_number_column_), match_number_column_accessed());
+  }
+  {
+    fields->emplace_back("match_row_number_column", ToStringImpl(match_row_number_column_), match_row_number_column_accessed());
+  }
+  {
+    fields->emplace_back("classifier_column", ToStringImpl(classifier_column_), classifier_column_accessed());
+  }
 }
 
 absl::Status ResolvedMatchRecognizeScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeScan::option_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeScan::partition_by not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeScan::order_by not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeScan::pattern_variable_definition_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeScan::pattern not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeScan::after_match_skip_mode not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeScan::measure_group_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7ff;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::option_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::partition_by not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::order_by not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::pattern_variable_definition_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::pattern not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::after_match_skip_mode not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::measure_group_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::match_number_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::match_row_number_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<10)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeScan::classifier_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -44560,6 +46444,18 @@ absl::Status ResolvedMatchRecognizeScan::CheckNoFieldsAccessed() const {
   if ((accessed_ & (1<<7)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedMatchRecognizeScan::measure_group_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<8)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedMatchRecognizeScan::match_number_column is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<9)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedMatchRecognizeScan::match_row_number_column is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<10)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedMatchRecognizeScan::classifier_column is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -44737,27 +46633,34 @@ absl::Status ResolvedMeasureGroup::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(pattern_variable_ref_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMeasureGroup::pattern_variable_ref not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x2;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMeasureGroup::aggregate_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMeasureGroup::aggregate_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(pattern_variable_ref_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMeasureGroup::pattern_variable_ref not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (pattern_variable_ref_ != nullptr) {
@@ -44908,25 +46811,29 @@ absl::Status ResolvedMatchRecognizeVariableDefinition::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeVariableDefinition::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizeVariableDefinition::predicate not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeVariableDefinition::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizeVariableDefinition::predicate not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (predicate_ != nullptr) {
@@ -45096,7 +47003,7 @@ absl::Status ResolvedMatchRecognizePatternAnchor::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedMatchRecognizePatternAnchor>> ResolvedMatchRecognizePatternAnchor::RestoreFrom(
     const ResolvedMatchRecognizePatternAnchorProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  ResolvedMatchRecognizePatternAnchorEnums::Mode mode =
+  ResolvedMatchRecognizePatternAnchor::Mode mode =
       proto.mode();
   auto node = MakeResolvedMatchRecognizePatternAnchor(
       std::move(mode));
@@ -45136,15 +47043,19 @@ absl::Status ResolvedMatchRecognizePatternAnchor::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizePatternAnchor::mode not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizePatternAnchor::mode not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -45237,15 +47148,19 @@ absl::Status ResolvedMatchRecognizePatternVariableRef::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizePatternVariableRef::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizePatternVariableRef::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -45366,25 +47281,29 @@ absl::Status ResolvedMatchRecognizePatternOperation::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizePatternOperation::op_type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizePatternOperation::operand_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizePatternOperation::op_type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizePatternOperation::operand_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : operand_list_) {
@@ -45580,45 +47499,49 @@ absl::Status ResolvedMatchRecognizePatternQuantification::CheckFieldsAccessedImp
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizePatternQuantification::operand not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizePatternQuantification::lower_bound not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizePatternQuantification::upper_bound not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedMatchRecognizePatternQuantification::is_reluctant not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xf;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizePatternQuantification::operand not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizePatternQuantification::lower_bound not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizePatternQuantification::upper_bound not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedMatchRecognizePatternQuantification::is_reluctant not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (operand_ != nullptr) {
@@ -45820,25 +47743,29 @@ absl::Status ResolvedCloneDataStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCloneDataStmt::target_table not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCloneDataStmt::clone_from not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCloneDataStmt::target_table not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCloneDataStmt::clone_from not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (target_table_ != nullptr) {
@@ -45976,29 +47903,33 @@ absl::Status ResolvedTableAndColumnInfo::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(table_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTableAndColumnInfo::table not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(column_index_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedTableAndColumnInfo::column_index_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(table_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTableAndColumnInfo::table not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(column_index_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedTableAndColumnInfo::column_index_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -46143,29 +48074,33 @@ absl::Status ResolvedAnalyzeStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnalyzeStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(table_and_column_index_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAnalyzeStmt::table_and_column_index_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x3;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnalyzeStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(table_and_column_index_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAnalyzeStmt::table_and_column_index_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -46315,27 +48250,34 @@ absl::Status ResolvedAuxLoadDataPartitionFilter::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataPartitionFilter::filter not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataPartitionFilter::filter not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(is_overwrite_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataPartitionFilter::is_overwrite not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(is_overwrite_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataPartitionFilter::is_overwrite not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (filter_ != nullptr) {
@@ -46797,169 +48739,176 @@ absl::Status ResolvedAuxLoadDataStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::insertion_mode not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::insertion_mode not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::is_temp_table not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::is_temp_table not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(name_path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::name_path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(partition_filter_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::partition_filter not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0 &&
-      !IsDefaultValue(column_definition_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::column_definition_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(primary_key_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::primary_key not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0 &&
-      !IsDefaultValue(foreign_key_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::foreign_key_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<9)) == 0 &&
-      !IsDefaultValue(check_constraint_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::check_constraint_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<10)) == 0 &&
-      !IsDefaultValue(partition_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::partition_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<11)) == 0 &&
-      !IsDefaultValue(cluster_by_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::cluster_by_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<12)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<13)) == 0 &&
-      !IsDefaultValue(with_partition_columns_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::with_partition_columns not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<14)) == 0 &&
-      !IsDefaultValue(connection_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::connection not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<15)) == 0 &&
-      !IsDefaultValue(from_files_option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAuxLoadDataStmt::from_files_option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xffac;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(name_path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::name_path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(partition_filter_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::partition_filter not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0 &&
+        !IsDefaultValue(column_definition_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::column_definition_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(primary_key_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::primary_key not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0 &&
+        !IsDefaultValue(foreign_key_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::foreign_key_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0 &&
+        !IsDefaultValue(check_constraint_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::check_constraint_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<10)) == 0 &&
+        !IsDefaultValue(partition_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::partition_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<11)) == 0 &&
+        !IsDefaultValue(cluster_by_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::cluster_by_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<12)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<13)) == 0 &&
+        !IsDefaultValue(with_partition_columns_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::with_partition_columns not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<14)) == 0 &&
+        !IsDefaultValue(connection_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::connection not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<15)) == 0 &&
+        !IsDefaultValue(from_files_option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAuxLoadDataStmt::from_files_option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<3)) != 0) {
     if (partition_filter_ != nullptr) {
@@ -47383,59 +49332,66 @@ absl::Status ResolvedCreatePropertyGraphStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreatePropertyGraphStmt::node_table_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xd;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreatePropertyGraphStmt::node_table_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreatePropertyGraphStmt::label_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreatePropertyGraphStmt::property_declaration_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(edge_table_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreatePropertyGraphStmt::edge_table_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreatePropertyGraphStmt::label_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreatePropertyGraphStmt::property_declaration_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreatePropertyGraphStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x12;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(edge_table_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreatePropertyGraphStmt::edge_table_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreatePropertyGraphStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : node_table_list_) {
@@ -47750,81 +49706,88 @@ absl::Status ResolvedGraphElementTable::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementTable::alias not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x27;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementTable::alias not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementTable::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementTable::key_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<5)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementTable::label_name_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementTable::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementTable::key_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(source_node_reference_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementTable::source_node_reference not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(dest_node_reference_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementTable::dest_node_reference not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<5)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementTable::label_name_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(property_definition_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementTable::property_definition_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x58;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(source_node_reference_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementTable::source_node_reference not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(dest_node_reference_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementTable::dest_node_reference not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(property_definition_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementTable::property_definition_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (input_scan_ != nullptr) {
@@ -48052,37 +50015,44 @@ absl::Status ResolvedGraphNodeTableReference::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphNodeTableReference::node_table_identifier not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphNodeTableReference::node_table_identifier not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphNodeTableReference::edge_table_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphNodeTableReference::edge_table_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(node_table_column_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphNodeTableReference::node_table_column_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(node_table_column_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphNodeTableReference::node_table_column_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : edge_table_column_list_) {
@@ -48218,27 +50188,34 @@ absl::Status ResolvedGraphElementLabel::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementLabel::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementLabel::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(property_declaration_name_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementLabel::property_declaration_name_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(property_declaration_name_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementLabel::property_declaration_name_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -48346,25 +50323,29 @@ absl::Status ResolvedGraphPropertyDeclaration::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPropertyDeclaration::name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPropertyDeclaration::type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPropertyDeclaration::name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPropertyDeclaration::type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -48497,35 +50478,39 @@ absl::Status ResolvedGraphPropertyDefinition::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPropertyDefinition::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPropertyDefinition::sql not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPropertyDefinition::property_declaration_name not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPropertyDefinition::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPropertyDefinition::sql not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPropertyDefinition::property_declaration_name not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -48784,15 +50769,19 @@ absl::Status ResolvedGraphLinearScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphLinearScan::scan_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphLinearScan::scan_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : scan_list_) {
@@ -48975,35 +50964,39 @@ absl::Status ResolvedGraphTableScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphTableScan::property_graph not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphTableScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphTableScan::shape_expr_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphTableScan::property_graph not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphTableScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphTableScan::shape_expr_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (input_scan_ != nullptr) {
@@ -49232,47 +51225,54 @@ absl::Status ResolvedGraphScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphScan::input_scan_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphScan::input_scan_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphScan::filter_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphScan::filter_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(optional_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphScan::optional not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x8;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(optional_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphScan::optional not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : input_scan_list_) {
@@ -49466,25 +51466,29 @@ absl::Status ResolvedGraphPathPatternQuantifier::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathPatternQuantifier::lower_bound not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathPatternQuantifier::upper_bound not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathPatternQuantifier::lower_bound not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathPatternQuantifier::upper_bound not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (lower_bound_ != nullptr) {
@@ -49565,6 +51569,10 @@ absl::Status ResolvedGraphPathSearchPrefix::SaveTo(
     proto->clear_parent();
   }
   proto->set_type(type_);
+  if (path_count_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(path_count_->SaveTo(
+        file_descriptor_set_map, proto->mutable_path_count()));
+  }
   return absl::OkStatus();
 }
 
@@ -49573,8 +51581,16 @@ absl::StatusOr<std::unique_ptr<ResolvedGraphPathSearchPrefix>> ResolvedGraphPath
     const ResolvedNode::RestoreParams& params) {
   ResolvedGraphPathSearchPrefix::PathSearchPrefixType type =
       proto.type();
+  std::unique_ptr<const ResolvedExpr> path_count;
+  if (proto.
+  has_path_count()) {
+    ZETASQL_ASSIGN_OR_RETURN(path_count,
+                     ResolvedExpr::RestoreFrom(
+                         proto.path_count(), params));
+  }
   auto node = MakeResolvedGraphPathSearchPrefix(
-      std::move(type));
+      std::move(type),
+      std::move(path_count));
 
   return node;
 }
@@ -49582,12 +51598,23 @@ absl::StatusOr<std::unique_ptr<ResolvedGraphPathSearchPrefix>> ResolvedGraphPath
 void ResolvedGraphPathSearchPrefix::GetChildNodes(
     std::vector<const ResolvedNode*>* child_nodes) const {
   SUPER::GetChildNodes(child_nodes);
+  if (path_count_ != nullptr) {
+    child_nodes->emplace_back(path_count_.get());
+  }
 }
 
 void ResolvedGraphPathSearchPrefix::AddMutableChildNodePointers(
     std::vector<std::unique_ptr<const ResolvedNode>*>*
         mutable_child_node_ptrs) {
   SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (path_count_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &path_count_));
+    static_assert(sizeof(path_count_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
 }
 
 absl::Status ResolvedGraphPathSearchPrefix::Accept(ResolvedASTVisitor* visitor) const {
@@ -49596,6 +51623,9 @@ absl::Status ResolvedGraphPathSearchPrefix::Accept(ResolvedASTVisitor* visitor) 
 
 absl::Status ResolvedGraphPathSearchPrefix::ChildrenAccept(ResolvedASTVisitor* visitor) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (path_count_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(path_count_.get()->Accept(visitor));
+  }
   return absl::OkStatus();
 }
 
@@ -49605,21 +51635,49 @@ void ResolvedGraphPathSearchPrefix::CollectDebugStringFields(
   {
     fields->emplace_back("type", ToStringImpl(type_), type_accessed());
   }
+  if (path_count_ != nullptr) {
+    fields->emplace_back("path_count", path_count_.get(), path_count_accessed());
+  }
 }
 
 absl::Status ResolvedGraphPathSearchPrefix::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathSearchPrefix::type not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathSearchPrefix::type not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(path_count_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathSearchPrefix::path_count not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    if (path_count_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          path_count_.get(), root));
+    }
   }
   return absl::OkStatus();
 }
@@ -49631,6 +51689,15 @@ absl::Status ResolvedGraphPathSearchPrefix::CheckNoFieldsAccessed() const {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedGraphPathSearchPrefix::type is accessed, but shouldn't be)";
   }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedGraphPathSearchPrefix::path_count is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    if (path_count_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(path_count_->CheckNoFieldsAccessed());
+    }
+  }
   return absl::OkStatus();
 }
 
@@ -49638,11 +51705,13 @@ void ResolvedGraphPathSearchPrefix::ClearFieldsAccessed() const {
   SUPER::ClearFieldsAccessed();
 
   accessed_ = 0;
+  if (path_count_ != nullptr) path_count_->ClearFieldsAccessed();
 }
 
 void ResolvedGraphPathSearchPrefix::MarkFieldsAccessed() const {
   SUPER::MarkFieldsAccessed();
   accessed_ = 0xFFFFFFFF;
+  if (path_count_ != nullptr) path_count_->MarkFieldsAccessed();
 }
 
 ResolvedGraphPathScanBase::~ResolvedGraphPathScanBase() {
@@ -49806,35 +51875,39 @@ absl::Status ResolvedGraphElementScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementScan::filter_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementScan::label_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementScan::target_element_table_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementScan::filter_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementScan::label_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementScan::target_element_table_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (filter_expr_ != nullptr) {
@@ -50143,15 +52216,19 @@ absl::Status ResolvedGraphEdgeScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphEdgeScan::orientation not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphEdgeScan::orientation not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : lhs_hint_list_) {
@@ -50225,9 +52302,11 @@ absl::Status ResolvedGraphGetElementProperty::SaveTo(
     ZETASQL_RETURN_IF_ERROR(expr_->SaveTo(
         file_descriptor_set_map, proto->mutable_expr()));
   }
+    if (!IsDefaultValue(property_)) {
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
       property_, file_descriptor_set_map,
       proto->mutable_property()));
+    }
   return absl::OkStatus();
 }
 
@@ -50241,10 +52320,16 @@ absl::StatusOr<std::unique_ptr<ResolvedGraphGetElementProperty>> ResolvedGraphGe
                      ResolvedExpr::RestoreFrom(
                          proto.expr(), params));
   }
-  ZETASQL_ASSIGN_OR_RETURN(auto property,
-                   RestoreFromImpl<const GraphPropertyDeclaration*>(
-                       proto.property(),
-                       params));
+  const GraphPropertyDeclaration* property;
+  if (!proto.
+  has_property()) {
+    property = nullptr;
+  } else {
+    ZETASQL_ASSIGN_OR_RETURN(property,
+                     RestoreFromImpl<const GraphPropertyDeclaration*>(
+                         proto.property(),
+                         params));
+  }
   ZETASQL_ASSIGN_OR_RETURN(auto type,
                    RestoreFromImpl<const Type*>(
                        proto.parent().type(),
@@ -50302,7 +52387,7 @@ void ResolvedGraphGetElementProperty::CollectDebugStringFields(
   if (expr_ != nullptr) {
     fields->emplace_back("expr", expr_.get(), expr_accessed());
   }
-  {
+  if (!IsDefaultValue(property_)) {
     fields->emplace_back("property", ToStringImpl(property_), property_accessed());
   }
 }
@@ -50311,25 +52396,34 @@ absl::Status ResolvedGraphGetElementProperty::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphGetElementProperty::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphGetElementProperty::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphGetElementProperty::property not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(property_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphGetElementProperty::property not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (expr_ != nullptr) {
@@ -50517,27 +52611,34 @@ absl::Status ResolvedGraphLabelNaryExpr::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphLabelNaryExpr::op not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphLabelNaryExpr::op not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(operand_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphLabelNaryExpr::operand_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x2;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(operand_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphLabelNaryExpr::operand_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : operand_list_) {
@@ -50599,19 +52700,27 @@ absl::Status ResolvedGraphLabel::SaveTo(
   if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
+    if (!IsDefaultValue(label_)) {
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
       label_, file_descriptor_set_map,
       proto->mutable_label()));
+    }
   return absl::OkStatus();
 }
 
 absl::StatusOr<std::unique_ptr<ResolvedGraphLabel>> ResolvedGraphLabel::RestoreFrom(
     const ResolvedGraphLabelProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  ZETASQL_ASSIGN_OR_RETURN(auto label,
-                   RestoreFromImpl<const GraphElementLabel*>(
-                       proto.label(),
-                       params));
+  const GraphElementLabel* label;
+  if (!proto.
+  has_label()) {
+    label = nullptr;
+  } else {
+    ZETASQL_ASSIGN_OR_RETURN(label,
+                     RestoreFromImpl<const GraphElementLabel*>(
+                         proto.label(),
+                         params));
+  }
   auto node = MakeResolvedGraphLabel(
       std::move(label));
 
@@ -50641,7 +52750,7 @@ absl::Status ResolvedGraphLabel::ChildrenAccept(ResolvedASTVisitor* visitor) con
 void ResolvedGraphLabel::CollectDebugStringFields(
     std::vector<DebugStringField>* fields) const {
   SUPER::CollectDebugStringFields(fields);
-  {
+  if (!IsDefaultValue(label_)) {
     fields->emplace_back("label", ToStringImpl(label_), label_accessed());
   }
 }
@@ -50650,15 +52759,21 @@ absl::Status ResolvedGraphLabel::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphLabel::label not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(label_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphLabel::label not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -50878,45 +52993,49 @@ absl::Status ResolvedGraphElementIdentifier::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementIdentifier::element_table not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementIdentifier::key_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementIdentifier::source_node_identifier not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementIdentifier::dest_node_identifier not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xf;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementIdentifier::element_table not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementIdentifier::key_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementIdentifier::source_node_identifier not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementIdentifier::dest_node_identifier not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     for (const auto& it : key_list_) {
@@ -51012,9 +53131,11 @@ absl::Status ResolvedGraphElementProperty::SaveTo(
   if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
+    if (!IsDefaultValue(declaration_)) {
   ZETASQL_RETURN_IF_ERROR(SaveToImpl(
       declaration_, file_descriptor_set_map,
       proto->mutable_declaration()));
+    }
   if (expr_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(expr_->SaveTo(
         file_descriptor_set_map, proto->mutable_expr()));
@@ -51025,10 +53146,16 @@ absl::Status ResolvedGraphElementProperty::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedGraphElementProperty>> ResolvedGraphElementProperty::RestoreFrom(
     const ResolvedGraphElementPropertyProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  ZETASQL_ASSIGN_OR_RETURN(auto declaration,
-                   RestoreFromImpl<const GraphPropertyDeclaration*>(
-                       proto.declaration(),
-                       params));
+  const GraphPropertyDeclaration* declaration;
+  if (!proto.
+  has_declaration()) {
+    declaration = nullptr;
+  } else {
+    ZETASQL_ASSIGN_OR_RETURN(declaration,
+                     RestoreFromImpl<const GraphPropertyDeclaration*>(
+                         proto.declaration(),
+                         params));
+  }
   std::unique_ptr<const ResolvedExpr> expr;
   if (proto.
   has_expr()) {
@@ -51092,25 +53219,29 @@ absl::Status ResolvedGraphElementProperty::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementProperty::declaration not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphElementProperty::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementProperty::declaration not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphElementProperty::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (expr_ != nullptr) {
@@ -51282,7 +53413,7 @@ void ResolvedGraphMakeElement::CollectDebugStringFields(
   if (!property_list_.empty()) {
     fields->emplace_back("property_list", property_list_, property_list_accessed());
   }
-  {
+  if (!IsDefaultValue(label_list_)) {
     fields->emplace_back("label_list", ToStringImpl(label_list_), label_list_accessed());
   }
 }
@@ -51291,35 +53422,46 @@ absl::Status ResolvedGraphMakeElement::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphMakeElement::identifier not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphMakeElement::identifier not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphMakeElement::property_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphMakeElement::label_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x6;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(property_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphMakeElement::property_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(label_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphMakeElement::label_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (identifier_ != nullptr) {
@@ -51541,45 +53683,49 @@ absl::Status ResolvedArrayAggregate::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayAggregate::array not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayAggregate::element_column not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayAggregate::pre_aggregate_computed_column_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedArrayAggregate::aggregate not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0xf;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayAggregate::array not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayAggregate::element_column not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayAggregate::pre_aggregate_computed_column_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedArrayAggregate::aggregate not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (array_ != nullptr) {
@@ -51737,25 +53883,29 @@ absl::Status ResolvedGraphMakeArrayVariable::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphMakeArrayVariable::element not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphMakeArrayVariable::array not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphMakeArrayVariable::element not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphMakeArrayVariable::array not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -51858,15 +54008,19 @@ absl::Status ResolvedGraphPathMode::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathMode::path_mode not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathMode::path_mode not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -52212,101 +54366,108 @@ absl::Status ResolvedGraphPathScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::input_scan_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x31b;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::input_scan_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::filter_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::head not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::tail not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<8)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::path_mode not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<9)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::search_prefix not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::filter_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0 &&
-      !IsDefaultValue(path_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::path not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::head not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::tail not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<6)) == 0 &&
-      !IsDefaultValue(quantifier_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::quantifier not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<7)) == 0 &&
-      !IsDefaultValue(group_variable_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::group_variable_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<8)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::path_mode not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<9)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphPathScan::search_prefix not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0xc4;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<2)) == 0 &&
+        !IsDefaultValue(path_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::path not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<6)) == 0 &&
+        !IsDefaultValue(quantifier_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::quantifier not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<7)) == 0 &&
+        !IsDefaultValue(group_variable_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphPathScan::group_variable_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : input_scan_list_) {
@@ -52600,37 +54761,44 @@ absl::Status ResolvedGraphIsLabeledPredicate::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(is_not_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphIsLabeledPredicate::is_not not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x6;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphIsLabeledPredicate::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphIsLabeledPredicate::label_expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphIsLabeledPredicate::expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGraphIsLabeledPredicate::label_expr not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(is_not_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGraphIsLabeledPredicate::is_not not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<1)) != 0) {
     if (expr_ != nullptr) {
@@ -52835,61 +55003,68 @@ absl::Status ResolvedUndropStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUndropStmt::schema_object_kind not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x5;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUndropStmt::schema_object_kind not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUndropStmt::name_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
-  if ((accessed_ & (1<<1)) == 0 &&
-      !IsDefaultValue(is_if_not_exists_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUndropStmt::is_if_not_exists not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUndropStmt::name_path not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0 &&
-      !IsDefaultValue(for_system_time_expr_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUndropStmt::for_system_time_expr not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedUndropStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1a;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<1)) == 0 &&
+        !IsDefaultValue(is_if_not_exists_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUndropStmt::is_if_not_exists not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0 &&
+        !IsDefaultValue(for_system_time_expr_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUndropStmt::for_system_time_expr not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUndropStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<3)) != 0) {
     if (for_system_time_expr_ != nullptr) {
@@ -53067,55 +55242,59 @@ absl::Status ResolvedIdentityColumnInfo::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedIdentityColumnInfo::start_with_value not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedIdentityColumnInfo::increment_by_value not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedIdentityColumnInfo::max_value not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<3)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedIdentityColumnInfo::min_value not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<4)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedIdentityColumnInfo::cycling_enabled not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1f;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedIdentityColumnInfo::start_with_value not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedIdentityColumnInfo::increment_by_value not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedIdentityColumnInfo::max_value not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<3)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedIdentityColumnInfo::min_value not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<4)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedIdentityColumnInfo::cycling_enabled not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -53263,15 +55442,19 @@ absl::Status ResolvedStaticDescribeScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedStaticDescribeScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedStaticDescribeScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -53478,35 +55661,39 @@ absl::Status ResolvedAssertScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAssertScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAssertScan::condition not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedAssertScan::message not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAssertScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAssertScan::condition not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedAssertScan::message not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -53747,35 +55934,39 @@ absl::Status ResolvedLogScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedLogScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedLogScan::subpipeline not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<2)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedLogScan::output_schema not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedLogScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedLogScan::subpipeline not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedLogScan::output_schema not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -53989,25 +56180,29 @@ absl::Status ResolvedPipeIfScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPipeIfScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPipeIfScan::selected_case not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeIfScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeIfScan::selected_case not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -54367,25 +56562,29 @@ absl::Status ResolvedPipeForkScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPipeForkScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPipeForkScan::subpipeline_list not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeForkScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeForkScan::subpipeline_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -54440,6 +56639,217 @@ void ResolvedPipeForkScan::MarkFieldsAccessed() const {
   for (const auto& it : subpipeline_list_) it->MarkFieldsAccessed();
 }
 
+const ResolvedNodeKind ResolvedPipeTeeScan::TYPE;
+
+ResolvedPipeTeeScan::~ResolvedPipeTeeScan() {
+}
+
+absl::Status ResolvedPipeTeeScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedScanProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_pipe_tee_scan_node());
+}
+
+absl::Status ResolvedPipeTeeScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedPipeTeeScanProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (input_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(input_scan_->SaveTo(
+        file_descriptor_set_map, proto->mutable_input_scan()));
+  }
+  for (const auto& elem : subpipeline_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_subpipeline_list()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedPipeTeeScan>> ResolvedPipeTeeScan::RestoreFrom(
+    const ResolvedPipeTeeScanProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedScan> input_scan;
+  if (proto.
+  has_input_scan()) {
+    ZETASQL_ASSIGN_OR_RETURN(input_scan,
+                     ResolvedScan::RestoreFrom(
+                         proto.input_scan(), params));
+  }
+  std::vector<std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline>> subpipeline_list;
+  for (const auto& elem : proto.subpipeline_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline> elem_restored,
+                     ResolvedGeneralizedQuerySubpipeline::RestoreFrom(elem, params));
+    subpipeline_list.push_back(std::move(elem_restored));
+  }
+  std::vector<ResolvedColumn> column_list;
+  for (const auto& elem : proto.parent().column_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(
+        auto elem_restored,
+        RestoreFromImpl<std::vector<ResolvedColumn>::value_type>(elem, params));
+    column_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  bool is_ordered =
+      proto.parent().is_ordered();
+  std::string node_source =
+      proto.parent().node_source();
+  auto node = MakeResolvedPipeTeeScan(
+      std::move(column_list),
+      std::move(input_scan),
+      std::move(subpipeline_list));
+
+  node->set_hint_list(std::move(hint_list));
+  node->set_is_ordered(std::move(is_ordered));
+  node->set_node_source(std::move(node_source));
+  return node;
+}
+
+void ResolvedPipeTeeScan::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (input_scan_ != nullptr) {
+    child_nodes->emplace_back(input_scan_.get());
+  }
+  for (const auto& elem : subpipeline_list_) {
+    child_nodes->emplace_back(elem.get());
+  }
+}
+
+void ResolvedPipeTeeScan::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (input_scan_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &input_scan_));
+    static_assert(sizeof(input_scan_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+  for (auto& elem : subpipeline_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
+}
+
+absl::Status ResolvedPipeTeeScan::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedPipeTeeScan(this);
+}
+
+absl::Status ResolvedPipeTeeScan::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (input_scan_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(input_scan_.get()->Accept(visitor));
+  }
+  for (const auto& elem : subpipeline_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedPipeTeeScan::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (input_scan_ != nullptr) {
+    fields->emplace_back("input_scan", input_scan_.get(), input_scan_accessed());
+  }
+  if (!subpipeline_list_.empty()) {
+    fields->emplace_back("subpipeline_list", subpipeline_list_, subpipeline_list_accessed());
+  }
+}
+
+absl::Status ResolvedPipeTeeScan::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeTeeScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeTeeScan::subpipeline_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (input_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          input_scan_.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    for (const auto& it : subpipeline_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedPipeTeeScan::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedPipeTeeScan::input_scan is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedPipeTeeScan::subpipeline_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (input_scan_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(input_scan_->CheckNoFieldsAccessed());
+    }
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    for (const auto& it : subpipeline_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedPipeTeeScan::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (input_scan_ != nullptr) input_scan_->ClearFieldsAccessed();
+  for (const auto& it : subpipeline_list_) it->ClearFieldsAccessed();
+}
+
+void ResolvedPipeTeeScan::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (input_scan_ != nullptr) input_scan_->MarkFieldsAccessed();
+  for (const auto& it : subpipeline_list_) it->MarkFieldsAccessed();
+}
+
 const ResolvedNodeKind ResolvedPipeExportDataScan::TYPE;
 
 ResolvedPipeExportDataScan::~ResolvedPipeExportDataScan() {
@@ -54460,10 +56870,6 @@ absl::Status ResolvedPipeExportDataScan::SaveTo(
   if (proto->parent().ByteSizeLong() == 0) {
     proto->clear_parent();
   }
-  if (input_scan_ != nullptr) {
-    ZETASQL_RETURN_IF_ERROR(input_scan_->SaveTo(
-        file_descriptor_set_map, proto->mutable_input_scan()));
-  }
   if (export_data_stmt_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(export_data_stmt_->SaveTo(
         file_descriptor_set_map, proto->mutable_export_data_stmt()));
@@ -54474,13 +56880,6 @@ absl::Status ResolvedPipeExportDataScan::SaveTo(
 absl::StatusOr<std::unique_ptr<ResolvedPipeExportDataScan>> ResolvedPipeExportDataScan::RestoreFrom(
     const ResolvedPipeExportDataScanProto& proto,
     const ResolvedNode::RestoreParams& params) {
-  std::unique_ptr<const ResolvedScan> input_scan;
-  if (proto.
-  has_input_scan()) {
-    ZETASQL_ASSIGN_OR_RETURN(input_scan,
-                     ResolvedScan::RestoreFrom(
-                         proto.input_scan(), params));
-  }
   std::unique_ptr<const ResolvedExportDataStmt> export_data_stmt;
   if (proto.
   has_export_data_stmt()) {
@@ -54507,7 +56906,6 @@ absl::StatusOr<std::unique_ptr<ResolvedPipeExportDataScan>> ResolvedPipeExportDa
       proto.parent().node_source();
   auto node = MakeResolvedPipeExportDataScan(
       std::move(column_list),
-      std::move(input_scan),
       std::move(export_data_stmt));
 
   node->set_hint_list(std::move(hint_list));
@@ -54519,9 +56917,6 @@ absl::StatusOr<std::unique_ptr<ResolvedPipeExportDataScan>> ResolvedPipeExportDa
 void ResolvedPipeExportDataScan::GetChildNodes(
     std::vector<const ResolvedNode*>* child_nodes) const {
   SUPER::GetChildNodes(child_nodes);
-  if (input_scan_ != nullptr) {
-    child_nodes->emplace_back(input_scan_.get());
-  }
   if (export_data_stmt_ != nullptr) {
     child_nodes->emplace_back(export_data_stmt_.get());
   }
@@ -54531,14 +56926,6 @@ void ResolvedPipeExportDataScan::AddMutableChildNodePointers(
     std::vector<std::unique_ptr<const ResolvedNode>*>*
         mutable_child_node_ptrs) {
   SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
-  if (input_scan_ != nullptr) {
-    mutable_child_node_ptrs->emplace_back(
-        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
-            &input_scan_));
-    static_assert(sizeof(input_scan_) ==
-                  sizeof(*(mutable_child_node_ptrs->back())),
-                  "Incorrect casting of mutable child node");
-  }
   if (export_data_stmt_ != nullptr) {
     mutable_child_node_ptrs->emplace_back(
         reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
@@ -54555,9 +56942,6 @@ absl::Status ResolvedPipeExportDataScan::Accept(ResolvedASTVisitor* visitor) con
 
 absl::Status ResolvedPipeExportDataScan::ChildrenAccept(ResolvedASTVisitor* visitor) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
-  if (input_scan_ != nullptr) {
-    ZETASQL_RETURN_IF_ERROR(input_scan_.get()->Accept(visitor));
-  }
   if (export_data_stmt_ != nullptr) {
     ZETASQL_RETURN_IF_ERROR(export_data_stmt_.get()->Accept(visitor));
   }
@@ -54567,9 +56951,6 @@ absl::Status ResolvedPipeExportDataScan::ChildrenAccept(ResolvedASTVisitor* visi
 void ResolvedPipeExportDataScan::CollectDebugStringFields(
     std::vector<DebugStringField>* fields) const {
   SUPER::CollectDebugStringFields(fields);
-  if (input_scan_ != nullptr) {
-    fields->emplace_back("input_scan", input_scan_.get(), input_scan_accessed());
-  }
   if (export_data_stmt_ != nullptr) {
     fields->emplace_back("export_data_stmt", export_data_stmt_.get(), export_data_stmt_accessed());
   }
@@ -54579,33 +56960,21 @@ absl::Status ResolvedPipeExportDataScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPipeExportDataScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedPipeExportDataScan::export_data_stmt not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<0)) != 0) {
-    if (input_scan_ != nullptr) {
-      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
-          input_scan_.get(), root));
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeExportDataScan::export_data_stmt not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
     }
   }
-  if ((accessed_ & (1<<1)) != 0) {
+  if ((accessed_ & (1<<0)) != 0) {
     if (export_data_stmt_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
           export_data_stmt_.get(), root));
@@ -54619,18 +56988,9 @@ absl::Status ResolvedPipeExportDataScan::CheckNoFieldsAccessed() const {
 
   if ((accessed_ & (1<<0)) != 0) {
     return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "(ResolvedPipeExportDataScan::input_scan is accessed, but shouldn't be)";
-  }
-  if ((accessed_ & (1<<1)) != 0) {
-    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
         << "(ResolvedPipeExportDataScan::export_data_stmt is accessed, but shouldn't be)";
   }
   if ((accessed_ & (1<<0)) != 0) {
-    if (input_scan_ != nullptr) {
-      ZETASQL_RETURN_IF_ERROR(input_scan_->CheckNoFieldsAccessed());
-    }
-  }
-  if ((accessed_ & (1<<1)) != 0) {
     if (export_data_stmt_ != nullptr) {
       ZETASQL_RETURN_IF_ERROR(export_data_stmt_->CheckNoFieldsAccessed());
     }
@@ -54642,15 +57002,335 @@ void ResolvedPipeExportDataScan::ClearFieldsAccessed() const {
   SUPER::ClearFieldsAccessed();
 
   accessed_ = 0;
-  if (input_scan_ != nullptr) input_scan_->ClearFieldsAccessed();
   if (export_data_stmt_ != nullptr) export_data_stmt_->ClearFieldsAccessed();
 }
 
 void ResolvedPipeExportDataScan::MarkFieldsAccessed() const {
   SUPER::MarkFieldsAccessed();
   accessed_ = 0xFFFFFFFF;
-  if (input_scan_ != nullptr) input_scan_->MarkFieldsAccessed();
   if (export_data_stmt_ != nullptr) export_data_stmt_->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedPipeCreateTableScan::TYPE;
+
+ResolvedPipeCreateTableScan::~ResolvedPipeCreateTableScan() {
+}
+
+absl::Status ResolvedPipeCreateTableScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedScanProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_pipe_create_table_scan_node());
+}
+
+absl::Status ResolvedPipeCreateTableScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedPipeCreateTableScanProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (create_table_as_select_stmt_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(create_table_as_select_stmt_->SaveTo(
+        file_descriptor_set_map, proto->mutable_create_table_as_select_stmt()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedPipeCreateTableScan>> ResolvedPipeCreateTableScan::RestoreFrom(
+    const ResolvedPipeCreateTableScanProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedCreateTableAsSelectStmt> create_table_as_select_stmt;
+  if (proto.
+  has_create_table_as_select_stmt()) {
+    ZETASQL_ASSIGN_OR_RETURN(create_table_as_select_stmt,
+                     ResolvedCreateTableAsSelectStmt::RestoreFrom(
+                         proto.create_table_as_select_stmt(), params));
+  }
+  std::vector<ResolvedColumn> column_list;
+  for (const auto& elem : proto.parent().column_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(
+        auto elem_restored,
+        RestoreFromImpl<std::vector<ResolvedColumn>::value_type>(elem, params));
+    column_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  bool is_ordered =
+      proto.parent().is_ordered();
+  std::string node_source =
+      proto.parent().node_source();
+  auto node = MakeResolvedPipeCreateTableScan(
+      std::move(column_list),
+      std::move(create_table_as_select_stmt));
+
+  node->set_hint_list(std::move(hint_list));
+  node->set_is_ordered(std::move(is_ordered));
+  node->set_node_source(std::move(node_source));
+  return node;
+}
+
+void ResolvedPipeCreateTableScan::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (create_table_as_select_stmt_ != nullptr) {
+    child_nodes->emplace_back(create_table_as_select_stmt_.get());
+  }
+}
+
+void ResolvedPipeCreateTableScan::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (create_table_as_select_stmt_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &create_table_as_select_stmt_));
+    static_assert(sizeof(create_table_as_select_stmt_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedPipeCreateTableScan::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedPipeCreateTableScan(this);
+}
+
+absl::Status ResolvedPipeCreateTableScan::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (create_table_as_select_stmt_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(create_table_as_select_stmt_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedPipeCreateTableScan::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (create_table_as_select_stmt_ != nullptr) {
+    fields->emplace_back("create_table_as_select_stmt", create_table_as_select_stmt_.get(), create_table_as_select_stmt_accessed());
+  }
+}
+
+absl::Status ResolvedPipeCreateTableScan::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeCreateTableScan::create_table_as_select_stmt not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (create_table_as_select_stmt_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          create_table_as_select_stmt_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedPipeCreateTableScan::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedPipeCreateTableScan::create_table_as_select_stmt is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (create_table_as_select_stmt_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(create_table_as_select_stmt_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedPipeCreateTableScan::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (create_table_as_select_stmt_ != nullptr) create_table_as_select_stmt_->ClearFieldsAccessed();
+}
+
+void ResolvedPipeCreateTableScan::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (create_table_as_select_stmt_ != nullptr) create_table_as_select_stmt_->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedPipeInsertScan::TYPE;
+
+ResolvedPipeInsertScan::~ResolvedPipeInsertScan() {
+}
+
+absl::Status ResolvedPipeInsertScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedScanProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_pipe_insert_scan_node());
+}
+
+absl::Status ResolvedPipeInsertScan::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedPipeInsertScanProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (insert_stmt_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(insert_stmt_->SaveTo(
+        file_descriptor_set_map, proto->mutable_insert_stmt()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedPipeInsertScan>> ResolvedPipeInsertScan::RestoreFrom(
+    const ResolvedPipeInsertScanProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedInsertStmt> insert_stmt;
+  if (proto.
+  has_insert_stmt()) {
+    ZETASQL_ASSIGN_OR_RETURN(insert_stmt,
+                     ResolvedInsertStmt::RestoreFrom(
+                         proto.insert_stmt(), params));
+  }
+  std::vector<ResolvedColumn> column_list;
+  for (const auto& elem : proto.parent().column_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(
+        auto elem_restored,
+        RestoreFromImpl<std::vector<ResolvedColumn>::value_type>(elem, params));
+    column_list.push_back(std::move(elem_restored));
+  }
+  std::vector<std::unique_ptr<const ResolvedOption>> hint_list;
+  for (const auto& elem : proto.parent().hint_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedOption> elem_restored,
+                     ResolvedOption::RestoreFrom(elem, params));
+    hint_list.push_back(std::move(elem_restored));
+  }
+  bool is_ordered =
+      proto.parent().is_ordered();
+  std::string node_source =
+      proto.parent().node_source();
+  auto node = MakeResolvedPipeInsertScan(
+      std::move(column_list),
+      std::move(insert_stmt));
+
+  node->set_hint_list(std::move(hint_list));
+  node->set_is_ordered(std::move(is_ordered));
+  node->set_node_source(std::move(node_source));
+  return node;
+}
+
+void ResolvedPipeInsertScan::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (insert_stmt_ != nullptr) {
+    child_nodes->emplace_back(insert_stmt_.get());
+  }
+}
+
+void ResolvedPipeInsertScan::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (insert_stmt_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &insert_stmt_));
+    static_assert(sizeof(insert_stmt_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedPipeInsertScan::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedPipeInsertScan(this);
+}
+
+absl::Status ResolvedPipeInsertScan::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (insert_stmt_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(insert_stmt_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedPipeInsertScan::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (insert_stmt_ != nullptr) {
+    fields->emplace_back("insert_stmt", insert_stmt_.get(), insert_stmt_accessed());
+  }
+}
+
+absl::Status ResolvedPipeInsertScan::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedPipeInsertScan::insert_stmt not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (insert_stmt_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          insert_stmt_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedPipeInsertScan::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedPipeInsertScan::insert_stmt is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (insert_stmt_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(insert_stmt_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedPipeInsertScan::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (insert_stmt_ != nullptr) insert_stmt_->ClearFieldsAccessed();
+}
+
+void ResolvedPipeInsertScan::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (insert_stmt_ != nullptr) insert_stmt_->MarkFieldsAccessed();
 }
 
 const ResolvedNodeKind ResolvedSubpipeline::TYPE;
@@ -54742,15 +57422,19 @@ absl::Status ResolvedSubpipeline::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedSubpipeline::scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedSubpipeline::scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (scan_ != nullptr) {
@@ -54968,25 +57652,29 @@ absl::Status ResolvedGeneralizedQuerySubpipeline::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGeneralizedQuerySubpipeline::subpipeline not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
-  }
-  if ((accessed_ & (1<<1)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedGeneralizedQuerySubpipeline::output_schema not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x3;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGeneralizedQuerySubpipeline::subpipeline not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedGeneralizedQuerySubpipeline::output_schema not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (subpipeline_ != nullptr) {
@@ -55152,15 +57840,19 @@ absl::Status ResolvedBarrierScan::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedBarrierScan::input_scan not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedBarrierScan::input_scan not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     if (input_scan_ != nullptr) {
@@ -55301,17 +57993,21 @@ absl::Status ResolvedCreateConnectionStmt::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0 &&
-      !IsDefaultValue(option_list_)) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedCreateConnectionStmt::option_list not accessed "
-           "and has non-default value)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsIgnorableDefaultBitmap = 0x1;
+  if ((accessed_local & kIsIgnorableDefaultBitmap) != kIsIgnorableDefaultBitmap) {
+    if ((accessed_local & (1<<0)) == 0 &&
+        !IsDefaultValue(option_list_)) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedCreateConnectionStmt::option_list not accessed "
+            "and has non-default value)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   if ((accessed_ & (1<<0)) != 0) {
     for (const auto& it : option_list_) {
@@ -55480,15 +58176,19 @@ absl::Status ResolvedLockMode::CheckFieldsAccessedImpl(
     const ResolvedNode* root) const {
   ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
 
-  if ((accessed_ & (1<<0)) == 0) {
-    NodeAnnotation annotation = {
-      .node = this,
-      .annotation = "(*** This node has unaccessed field ***)"
-    };
-    return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
-        << "Unimplemented feature "
-           "(ResolvedLockMode::strength not accessed)\n"
-        << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x1;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedLockMode::strength not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
   }
   return absl::OkStatus();
 }
@@ -55512,6 +58212,407 @@ void ResolvedLockMode::ClearFieldsAccessed() const {
 void ResolvedLockMode::MarkFieldsAccessed() const {
   SUPER::MarkFieldsAccessed();
   accessed_ = 0xFFFFFFFF;
+}
+
+const ResolvedNodeKind ResolvedUpdateFieldItem::TYPE;
+
+const ResolvedUpdateFieldItem::Operation ResolvedUpdateFieldItem::UPDATE_SINGLE;
+const ResolvedUpdateFieldItem::Operation ResolvedUpdateFieldItem::UPDATE_MANY;
+const ResolvedUpdateFieldItem::Operation ResolvedUpdateFieldItem::UPDATE_SINGLE_NO_CREATION;
+
+ResolvedUpdateFieldItem::~ResolvedUpdateFieldItem() {
+}
+
+absl::Status ResolvedUpdateFieldItem::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedArgumentProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_update_field_item_node());
+}
+
+absl::Status ResolvedUpdateFieldItem::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedUpdateFieldItemProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(expr_->SaveTo(
+        file_descriptor_set_map, proto->mutable_expr()));
+  }
+  for (const auto& elem : proto_field_path_) {
+    ZETASQL_RETURN_IF_ERROR(SaveToImpl(
+        elem, file_descriptor_set_map, proto->add_proto_field_path()));
+  }
+  proto->set_operation(operation_);
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedUpdateFieldItem>> ResolvedUpdateFieldItem::RestoreFrom(
+    const ResolvedUpdateFieldItemProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedExpr> expr;
+  if (proto.
+  has_expr()) {
+    ZETASQL_ASSIGN_OR_RETURN(expr,
+                     ResolvedExpr::RestoreFrom(
+                         proto.expr(), params));
+  }
+  std::vector<const google::protobuf::FieldDescriptor*> proto_field_path;
+  for (const auto& elem : proto.proto_field_path()) {
+    ZETASQL_ASSIGN_OR_RETURN(
+        auto elem_restored,
+        RestoreFromImpl<std::vector<const google::protobuf::FieldDescriptor*>::value_type>(elem, params));
+    proto_field_path.push_back(std::move(elem_restored));
+  }
+  ResolvedUpdateFieldItem::Operation operation =
+      proto.operation();
+  auto node = MakeResolvedUpdateFieldItem(
+      std::move(expr),
+      std::move(proto_field_path),
+      std::move(operation));
+
+  return node;
+}
+
+void ResolvedUpdateFieldItem::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (expr_ != nullptr) {
+    child_nodes->emplace_back(expr_.get());
+  }
+}
+
+void ResolvedUpdateFieldItem::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (expr_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &expr_));
+    static_assert(sizeof(expr_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+}
+
+absl::Status ResolvedUpdateFieldItem::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedUpdateFieldItem(this);
+}
+
+absl::Status ResolvedUpdateFieldItem::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(expr_.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedUpdateFieldItem::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (expr_ != nullptr) {
+    fields->emplace_back("expr", expr_.get(), expr_accessed());
+  }
+  {
+    fields->emplace_back("proto_field_path", ToStringVectorFieldDescriptor(proto_field_path_), proto_field_path_accessed());
+  }
+  {
+    fields->emplace_back("operation", ToStringImpl(operation_), operation_accessed());
+  }
+}
+
+absl::Status ResolvedUpdateFieldItem::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x7;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateFieldItem::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<1)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateFieldItem::proto_field_path not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateFieldItem::operation not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          expr_.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedUpdateFieldItem::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedUpdateFieldItem::expr is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<1)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedUpdateFieldItem::proto_field_path is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedUpdateFieldItem::operation is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(expr_->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedUpdateFieldItem::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (expr_ != nullptr) expr_->ClearFieldsAccessed();
+}
+
+void ResolvedUpdateFieldItem::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (expr_ != nullptr) expr_->MarkFieldsAccessed();
+}
+
+const ResolvedNodeKind ResolvedUpdateConstructor::TYPE;
+
+ResolvedUpdateConstructor::~ResolvedUpdateConstructor() {
+}
+
+absl::Status ResolvedUpdateConstructor::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    AnyResolvedExprProto* proto) const {
+  return SaveTo(
+      file_descriptor_set_map, proto->mutable_resolved_update_constructor_node());
+}
+
+absl::Status ResolvedUpdateConstructor::SaveTo(
+    Type::FileDescriptorSetMap* file_descriptor_set_map,
+    ResolvedUpdateConstructorProto* proto) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::SaveTo(
+      file_descriptor_set_map, proto->mutable_parent()));
+  if (proto->parent().ByteSizeLong() == 0) {
+    proto->clear_parent();
+  }
+  if (expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(expr_->SaveTo(
+        file_descriptor_set_map, proto->mutable_expr()));
+  }
+  proto->set_alias(alias_);
+  for (const auto& elem : update_field_item_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem->SaveTo(
+      file_descriptor_set_map, proto->add_update_field_item_list()));
+  }
+  return absl::OkStatus();
+}
+
+absl::StatusOr<std::unique_ptr<ResolvedUpdateConstructor>> ResolvedUpdateConstructor::RestoreFrom(
+    const ResolvedUpdateConstructorProto& proto,
+    const ResolvedNode::RestoreParams& params) {
+  std::unique_ptr<const ResolvedExpr> expr;
+  if (proto.
+  has_expr()) {
+    ZETASQL_ASSIGN_OR_RETURN(expr,
+                     ResolvedExpr::RestoreFrom(
+                         proto.expr(), params));
+  }
+  std::string alias =
+      proto.alias();
+  std::vector<std::unique_ptr<const ResolvedUpdateFieldItem>> update_field_item_list;
+  for (const auto& elem : proto.update_field_item_list()) {
+    ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<const ResolvedUpdateFieldItem> elem_restored,
+                     ResolvedUpdateFieldItem::RestoreFrom(elem, params));
+    update_field_item_list.push_back(std::move(elem_restored));
+  }
+  ZETASQL_ASSIGN_OR_RETURN(auto type,
+                   RestoreFromImpl<const Type*>(
+                       proto.parent().type(),
+                       params));
+  ZETASQL_ASSIGN_OR_RETURN(auto type_annotation_map,
+                   RestoreFromImpl<const AnnotationMap*>(
+                       proto.parent().type_annotation_map(),
+                       params));
+  auto node = MakeResolvedUpdateConstructor(
+      std::move(type),
+      std::move(expr),
+      std::move(alias),
+      std::move(update_field_item_list));
+
+  node->set_type_annotation_map(std::move(type_annotation_map));
+  return node;
+}
+
+void ResolvedUpdateConstructor::GetChildNodes(
+    std::vector<const ResolvedNode*>* child_nodes) const {
+  SUPER::GetChildNodes(child_nodes);
+  if (expr_ != nullptr) {
+    child_nodes->emplace_back(expr_.get());
+  }
+  for (const auto& elem : update_field_item_list_) {
+    child_nodes->emplace_back(elem.get());
+  }
+}
+
+void ResolvedUpdateConstructor::AddMutableChildNodePointers(
+    std::vector<std::unique_ptr<const ResolvedNode>*>*
+        mutable_child_node_ptrs) {
+  SUPER::AddMutableChildNodePointers(mutable_child_node_ptrs);
+  if (expr_ != nullptr) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(
+            &expr_));
+    static_assert(sizeof(expr_) ==
+                  sizeof(*(mutable_child_node_ptrs->back())),
+                  "Incorrect casting of mutable child node");
+  }
+  for (auto& elem : update_field_item_list_) {
+    mutable_child_node_ptrs->emplace_back(
+        reinterpret_cast<std::unique_ptr<const ResolvedNode>*>(&elem));
+  }
+}
+
+absl::Status ResolvedUpdateConstructor::Accept(ResolvedASTVisitor* visitor) const {
+  return visitor->VisitResolvedUpdateConstructor(this);
+}
+
+absl::Status ResolvedUpdateConstructor::ChildrenAccept(ResolvedASTVisitor* visitor) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::ChildrenAccept(visitor));
+  if (expr_ != nullptr) {
+    ZETASQL_RETURN_IF_ERROR(expr_.get()->Accept(visitor));
+  }
+  for (const auto& elem : update_field_item_list_) {
+    ZETASQL_RETURN_IF_ERROR(elem.get()->Accept(visitor));
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedUpdateConstructor::CollectDebugStringFields(
+    std::vector<DebugStringField>* fields) const {
+  SUPER::CollectDebugStringFields(fields);
+  if (expr_ != nullptr) {
+    fields->emplace_back("expr", expr_.get(), expr_accessed());
+  }
+  if (!IsDefaultValue(alias_)) {
+    fields->emplace_back("alias", ToStringImpl(alias_), alias_accessed());
+  }
+  if (!update_field_item_list_.empty()) {
+    fields->emplace_back("update_field_item_list", update_field_item_list_, update_field_item_list_accessed());
+  }
+}
+
+absl::Status ResolvedUpdateConstructor::CheckFieldsAccessedImpl(
+    const ResolvedNode* root) const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckFieldsAccessedImpl(root));
+
+  uint32_t accessed_local = accessed_.load();
+  constexpr static uint32_t kIsNotIgnorableBitmap = 0x5;
+  if ((accessed_local & kIsNotIgnorableBitmap) != kIsNotIgnorableBitmap) {
+    if ((accessed_local & (1<<0)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateConstructor::expr not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+    if ((accessed_local & (1<<2)) == 0) {
+      NodeAnnotation annotation = {
+        .node = this,
+        .annotation = "(*** This node has unaccessed field ***)"
+      };
+      return ::zetasql_base::UnimplementedErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+          << "Unimplemented feature "
+            "(ResolvedUpdateConstructor::update_field_item_list not accessed)\n"
+          << root->DebugString(DebugStringConfig{ {annotation}, /*print_accessed=*/true});
+    }
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(
+          expr_.get(), root));
+    }
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    for (const auto& it : update_field_item_list_) {
+      ZETASQL_RETURN_IF_ERROR(CheckFieldsAccessedInternal(it.get(), root));
+    }
+  }
+  return absl::OkStatus();
+}
+
+absl::Status ResolvedUpdateConstructor::CheckNoFieldsAccessed() const {
+  ZETASQL_RETURN_IF_ERROR(SUPER::CheckNoFieldsAccessed());
+
+  if ((accessed_ & (1<<0)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedUpdateConstructor::expr is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    return ::zetasql_base::InternalErrorBuilder(zetasql_base::SourceLocation::current()).LogError()
+        << "(ResolvedUpdateConstructor::update_field_item_list is accessed, but shouldn't be)";
+  }
+  if ((accessed_ & (1<<0)) != 0) {
+    if (expr_ != nullptr) {
+      ZETASQL_RETURN_IF_ERROR(expr_->CheckNoFieldsAccessed());
+    }
+  }
+  if ((accessed_ & (1<<2)) != 0) {
+    for (const auto& it : update_field_item_list_) {
+      ZETASQL_RETURN_IF_ERROR(it->CheckNoFieldsAccessed());
+    }
+  }
+  return absl::OkStatus();
+}
+
+void ResolvedUpdateConstructor::ClearFieldsAccessed() const {
+  SUPER::ClearFieldsAccessed();
+
+  accessed_ = 0;
+  if (expr_ != nullptr) expr_->ClearFieldsAccessed();
+  for (const auto& it : update_field_item_list_) it->ClearFieldsAccessed();
+}
+
+void ResolvedUpdateConstructor::MarkFieldsAccessed() const {
+  SUPER::MarkFieldsAccessed();
+  accessed_ = 0xFFFFFFFF;
+  if (expr_ != nullptr) expr_->MarkFieldsAccessed();
+  for (const auto& it : update_field_item_list_) it->MarkFieldsAccessed();
 }
 
 }  // namespace zetasql

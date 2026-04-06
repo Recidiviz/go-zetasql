@@ -129,6 +129,8 @@ enum ResolvedNodeKind : int {
   RESOLVED_EXPLAIN_STMT = 37,
   RESOLVED_QUERY_STMT = 38,
   RESOLVED_GENERALIZED_QUERY_STMT = 282,
+  RESOLVED_MULTI_STMT = 287,
+  RESOLVED_CREATE_WITH_ENTRY_STMT = 288,
   RESOLVED_CREATE_DATABASE_STMT = 95,
   RESOLVED_INDEX_ITEM = 96,
   RESOLVED_UNNEST_ITEM = 126,
@@ -189,6 +191,7 @@ enum ResolvedNodeKind : int {
   RESOLVED_GRANT_STMT = 69,
   RESOLVED_REVOKE_STMT = 70,
   RESOLVED_ALTER_DATABASE_STMT = 134,
+  RESOLVED_ALTER_INDEX_STMT = 292,
   RESOLVED_ALTER_MATERIALIZED_VIEW_STMT = 127,
   RESOLVED_ALTER_APPROX_VIEW_STMT = 236,
   RESOLVED_ALTER_SCHEMA_STMT = 160,
@@ -201,6 +204,8 @@ enum ResolvedNodeKind : int {
   RESOLVED_ADD_SUB_ENTITY_ACTION = 203,
   RESOLVED_DROP_SUB_ENTITY_ACTION = 204,
   RESOLVED_ADD_COLUMN_ACTION = 131,
+  RESOLVED_ADD_COLUMN_IDENTIFIER_ACTION = 293,
+  RESOLVED_REBUILD_ACTION = 294,
   RESOLVED_ADD_CONSTRAINT_ACTION = 163,
   RESOLVED_DROP_CONSTRAINT_ACTION = 164,
   RESOLVED_DROP_PRIMARY_KEY_ACTION = 184,
@@ -305,7 +310,10 @@ enum ResolvedNodeKind : int {
   RESOLVED_PIPE_IF_SCAN = 277,
   RESOLVED_PIPE_IF_CASE = 278,
   RESOLVED_PIPE_FORK_SCAN = 283,
+  RESOLVED_PIPE_TEE_SCAN = 289,
   RESOLVED_PIPE_EXPORT_DATA_SCAN = 285,
+  RESOLVED_PIPE_CREATE_TABLE_SCAN = 286,
+  RESOLVED_PIPE_INSERT_SCAN = 297,
   RESOLVED_SUBPIPELINE = 273,
   RESOLVED_SUBPIPELINE_INPUT_SCAN = 274,
   RESOLVED_GENERALIZED_QUERY_SUBPIPELINE = 284,
@@ -313,13 +321,15 @@ enum ResolvedNodeKind : int {
   RESOLVED_CREATE_CONNECTION_STMT = 263,
   RESOLVED_ALTER_CONNECTION_STMT = 264,
   RESOLVED_LOCK_MODE = 275,
+  RESOLVED_UPDATE_FIELD_ITEM = 295,
+  RESOLVED_UPDATE_CONSTRUCTOR = 296,
   __ResolvedNodeKind__switch_must_have_default__ = -1,
 };
 
 bool ResolvedNodeKind_IsValid(int value);
 constexpr ResolvedNodeKind ResolvedNodeKind_MIN = static_cast<ResolvedNodeKind>(-1);
-constexpr ResolvedNodeKind ResolvedNodeKind_MAX = static_cast<ResolvedNodeKind>(285);
-constexpr int ResolvedNodeKind_ARRAYSIZE = 285 + 1;
+constexpr ResolvedNodeKind ResolvedNodeKind_MAX = static_cast<ResolvedNodeKind>(297);
+constexpr int ResolvedNodeKind_ARRAYSIZE = 297 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 ResolvedNodeKind_descriptor();
 template <typename T>
@@ -332,7 +342,7 @@ const std::string& ResolvedNodeKind_Name(T value) {
 template <>
 inline const std::string& ResolvedNodeKind_Name(ResolvedNodeKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedNodeKind_descriptor,
-                                                 -1, 285>(
+                                                 -1, 297>(
       static_cast<int>(value));
 }
 inline bool ResolvedNodeKind_Parse(absl::string_view name, ResolvedNodeKind* value) {

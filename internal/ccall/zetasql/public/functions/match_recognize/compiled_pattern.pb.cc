@@ -68,6 +68,8 @@ PROTOBUF_CONSTEXPR StateMachineProto_CompiledNFAProto::StateMachineProto_Compile
   , /*decltype(_impl_.start_state_)*/ 0
 
   , /*decltype(_impl_.final_state_)*/ 0
+
+  , /*decltype(_impl_.num_pattern_variables_)*/ 0
 } {}
 struct StateMachineProto_CompiledNFAProtoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR StateMachineProto_CompiledNFAProtoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
@@ -161,9 +163,11 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2ffunctions_2fmatch_5frecognize_2f
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto, _impl_.states_),
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto, _impl_.start_state_),
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto, _impl_.final_state_),
+    PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto, _impl_.num_pattern_variables_),
     ~0u,
     0,
     1,
+    2,
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::StateMachineProto, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::zetasql::functions::match_recognize::StateMachineProto, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -194,9 +198,9 @@ static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         { 0, 12, -1, sizeof(::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto_EdgeProto)},
         { 16, -1, -1, sizeof(::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto_StateProto)},
-        { 25, 36, -1, sizeof(::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto)},
-        { 39, 50, -1, sizeof(::zetasql::functions::match_recognize::StateMachineProto)},
-        { 53, -1, -1, sizeof(::zetasql::functions::match_recognize::CompiledPatternProto)},
+        { 25, 37, -1, sizeof(::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto)},
+        { 41, 52, -1, sizeof(::zetasql::functions::match_recognize::StateMachineProto)},
+        { 55, -1, -1, sizeof(::zetasql::functions::match_recognize::CompiledPatternProto)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -210,25 +214,26 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fmatch_5freco
     "\n\?zetasql/public/functions/match_recogni"
     "ze/compiled_pattern.proto\022!zetasql.funct"
     "ions.match_recognize\032-zetasql/resolved_a"
-    "st/resolved_ast_enums.proto\"\333\004\n\021StateMac"
+    "st/resolved_ast_enums.proto\"\372\004\n\021StateMac"
     "hineProto\022R\n\003nfa\030\001 \001(\0132E.zetasql.functio"
     "ns.match_recognize.StateMachineProto.Com"
     "piledNFAProto\022Z\n\025after_match_skip_mode\030\002"
     " \001(\0162;.zetasql.ResolvedMatchRecognizeSca"
     "nEnums.AfterMatchSkipMode\022\032\n\022longest_mat"
-    "ch_mode\030\003 \001(\010\032\371\002\n\020CompiledNFAProto\022`\n\006st"
+    "ch_mode\030\003 \001(\010\032\230\003\n\020CompiledNFAProto\022`\n\006st"
     "ates\030\001 \003(\0132P.zetasql.functions.match_rec"
     "ognize.StateMachineProto.CompiledNFAProt"
     "o.StateProto\022\023\n\013start_state\030\002 \001(\005\022\023\n\013fin"
-    "al_state\030\003 \001(\005\032k\n\tEdgeProto\022\020\n\010to_state\030"
-    "\003 \001(\005\022\030\n\020pattern_variable\030\004 \001(\005\022\030\n\020is_he"
-    "ad_anchored\030\005 \001(\010\022\030\n\020is_tail_anchored\030\006 "
-    "\001(\010\032l\n\nStateProto\022^\n\005edges\030\001 \003(\0132O.zetas"
-    "ql.functions.match_recognize.StateMachin"
-    "eProto.CompiledNFAProto.EdgeProto\"p\n\024Com"
-    "piledPatternProto\022M\n\rstate_machine\030\001 \001(\013"
-    "24.zetasql.functions.match_recognize.Sta"
-    "teMachineProtoH\000B\t\n\007variant"
+    "al_state\030\003 \001(\005\022\035\n\025num_pattern_variables\030"
+    "\004 \001(\005\032k\n\tEdgeProto\022\020\n\010to_state\030\003 \001(\005\022\030\n\020"
+    "pattern_variable\030\004 \001(\005\022\030\n\020is_head_anchor"
+    "ed\030\005 \001(\010\022\030\n\020is_tail_anchored\030\006 \001(\010\032l\n\nSt"
+    "ateProto\022^\n\005edges\030\001 \003(\0132O.zetasql.functi"
+    "ons.match_recognize.StateMachineProto.Co"
+    "mpiledNFAProto.EdgeProto\"p\n\024CompiledPatt"
+    "ernProto\022M\n\rstate_machine\030\001 \001(\01324.zetasq"
+    "l.functions.match_recognize.StateMachine"
+    "ProtoH\000B\t\n\007variant"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2ffunctions_2fmatch_5frecognize_2fcompiled_5fpattern_2eproto_deps[1] =
     {
@@ -238,7 +243,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ffunctions_2fmatch_5
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunctions_2fmatch_5frecognize_2fcompiled_5fpattern_2eproto = {
     false,
     false,
-    867,
+    898,
     descriptor_table_protodef_zetasql_2fpublic_2ffunctions_2fmatch_5frecognize_2fcompiled_5fpattern_2eproto,
     "zetasql/public/functions/match_recognize/compiled_pattern.proto",
     &descriptor_table_zetasql_2fpublic_2ffunctions_2fmatch_5frecognize_2fcompiled_5fpattern_2eproto_once,
@@ -762,6 +767,9 @@ class StateMachineProto_CompiledNFAProto::_Internal {
   static void set_has_final_state(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
   }
+  static void set_has_num_pattern_variables(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
 };
 
 StateMachineProto_CompiledNFAProto::StateMachineProto_CompiledNFAProto(::PROTOBUF_NAMESPACE_ID::Arena* arena)
@@ -779,12 +787,14 @@ StateMachineProto_CompiledNFAProto::StateMachineProto_CompiledNFAProto(const Sta
     , decltype(_impl_.start_state_) {}
 
     , decltype(_impl_.final_state_) {}
+
+    , decltype(_impl_.num_pattern_variables_) {}
   };
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.start_state_, &from._impl_.start_state_,
-    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.final_state_) -
-    reinterpret_cast<char*>(&_impl_.start_state_)) + sizeof(_impl_.final_state_));
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.num_pattern_variables_) -
+    reinterpret_cast<char*>(&_impl_.start_state_)) + sizeof(_impl_.num_pattern_variables_));
   // @@protoc_insertion_point(copy_constructor:zetasql.functions.match_recognize.StateMachineProto.CompiledNFAProto)
 }
 
@@ -797,6 +807,8 @@ inline void StateMachineProto_CompiledNFAProto::SharedCtor(::_pb::Arena* arena) 
     , decltype(_impl_.start_state_) { 0 }
 
     , decltype(_impl_.final_state_) { 0 }
+
+    , decltype(_impl_.num_pattern_variables_) { 0 }
 
   };
 }
@@ -827,10 +839,10 @@ void StateMachineProto_CompiledNFAProto::Clear() {
 
   _internal_mutable_states()->Clear();
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000007u) {
     ::memset(&_impl_.start_state_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.final_state_) -
-        reinterpret_cast<char*>(&_impl_.start_state_)) + sizeof(_impl_.final_state_));
+        reinterpret_cast<char*>(&_impl_.num_pattern_variables_) -
+        reinterpret_cast<char*>(&_impl_.start_state_)) + sizeof(_impl_.num_pattern_variables_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -872,6 +884,16 @@ const char* StateMachineProto_CompiledNFAProto::_InternalParse(const char* ptr, 
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
           _Internal::set_has_final_state(&has_bits);
           _impl_.final_state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // optional int32 num_pattern_variables = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
+          _Internal::set_has_num_pattern_variables(&has_bits);
+          _impl_.num_pattern_variables_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else {
           goto handle_unusual;
@@ -930,6 +952,13 @@ failure:
         3, this->_internal_final_state(), target);
   }
 
+  // optional int32 num_pattern_variables = 4;
+  if (cached_has_bits & 0x00000004u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        4, this->_internal_num_pattern_variables(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -954,7 +983,7 @@ failure:
   }
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000007u) {
     // optional int32 start_state = 2;
     if (cached_has_bits & 0x00000001u) {
       total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
@@ -965,6 +994,12 @@ failure:
     if (cached_has_bits & 0x00000002u) {
       total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
           this->_internal_final_state());
+    }
+
+    // optional int32 num_pattern_variables = 4;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+          this->_internal_num_pattern_variables());
     }
 
   }
@@ -988,12 +1023,15 @@ void StateMachineProto_CompiledNFAProto::MergeImpl(::PROTOBUF_NAMESPACE_ID::Mess
 
   _this->_internal_mutable_states()->MergeFrom(from._internal_states());
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
       _this->_impl_.start_state_ = from._impl_.start_state_;
     }
     if (cached_has_bits & 0x00000002u) {
       _this->_impl_.final_state_ = from._impl_.final_state_;
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _this->_impl_.num_pattern_variables_ = from._impl_.num_pattern_variables_;
     }
     _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
@@ -1017,8 +1055,8 @@ void StateMachineProto_CompiledNFAProto::InternalSwap(StateMachineProto_Compiled
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   _internal_mutable_states()->InternalSwap(other->_internal_mutable_states());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(StateMachineProto_CompiledNFAProto, _impl_.final_state_)
-      + sizeof(StateMachineProto_CompiledNFAProto::_impl_.final_state_)
+      PROTOBUF_FIELD_OFFSET(StateMachineProto_CompiledNFAProto, _impl_.num_pattern_variables_)
+      + sizeof(StateMachineProto_CompiledNFAProto::_impl_.num_pattern_variables_)
       - PROTOBUF_FIELD_OFFSET(StateMachineProto_CompiledNFAProto, _impl_.start_state_)>(
           reinterpret_cast<char*>(&_impl_.start_state_),
           reinterpret_cast<char*>(&other->_impl_.start_state_));

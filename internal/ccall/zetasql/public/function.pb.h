@@ -329,6 +329,35 @@ inline bool FunctionEnums_ArgumentAliasKind_Parse(absl::string_view name, Functi
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<FunctionEnums_ArgumentAliasKind>(
       FunctionEnums_ArgumentAliasKind_descriptor(), name, value);
 }
+enum FunctionEnums_DefaultNullHandling : int {
+  FunctionEnums_DefaultNullHandling_DEFAULT_NULL_HANDLING_UNSPECIFIED = 0,
+  FunctionEnums_DefaultNullHandling_DEFAULT_NULL_HANDLING_IGNORE_NULLS = 1,
+  FunctionEnums_DefaultNullHandling_DEFAULT_NULL_HANDLING_RESPECT_NULLS = 2,
+};
+
+bool FunctionEnums_DefaultNullHandling_IsValid(int value);
+constexpr FunctionEnums_DefaultNullHandling FunctionEnums_DefaultNullHandling_DefaultNullHandling_MIN = static_cast<FunctionEnums_DefaultNullHandling>(0);
+constexpr FunctionEnums_DefaultNullHandling FunctionEnums_DefaultNullHandling_DefaultNullHandling_MAX = static_cast<FunctionEnums_DefaultNullHandling>(2);
+constexpr int FunctionEnums_DefaultNullHandling_DefaultNullHandling_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+FunctionEnums_DefaultNullHandling_descriptor();
+template <typename T>
+const std::string& FunctionEnums_DefaultNullHandling_Name(T value) {
+  static_assert(std::is_same<T, FunctionEnums_DefaultNullHandling>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to DefaultNullHandling_Name().");
+  return FunctionEnums_DefaultNullHandling_Name(static_cast<FunctionEnums_DefaultNullHandling>(value));
+}
+template <>
+inline const std::string& FunctionEnums_DefaultNullHandling_Name(FunctionEnums_DefaultNullHandling value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<FunctionEnums_DefaultNullHandling_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool FunctionEnums_DefaultNullHandling_Parse(absl::string_view name, FunctionEnums_DefaultNullHandling* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<FunctionEnums_DefaultNullHandling>(
+      FunctionEnums_DefaultNullHandling_descriptor(), name, value);
+}
 enum SignatureArgumentKind : int {
   ARG_TYPE_FIXED = 0,
   ARG_TYPE_ANY_1 = 1,
@@ -360,14 +389,15 @@ enum SignatureArgumentKind : int {
   ARG_TYPE_GRAPH_ELEMENT = 21,
   ARG_TYPE_GRAPH_PATH = 30,
   ARG_TYPE_SEQUENCE = 22,
+  ARG_MEASURE_TYPE_ANY_1 = 31,
   ARG_MAP_TYPE_ANY_1_2 = 29,
   __SignatureArgumentKind__switch_must_have_a_default__ = -1,
 };
 
 bool SignatureArgumentKind_IsValid(int value);
 constexpr SignatureArgumentKind SignatureArgumentKind_MIN = static_cast<SignatureArgumentKind>(-1);
-constexpr SignatureArgumentKind SignatureArgumentKind_MAX = static_cast<SignatureArgumentKind>(30);
-constexpr int SignatureArgumentKind_ARRAYSIZE = 30 + 1;
+constexpr SignatureArgumentKind SignatureArgumentKind_MAX = static_cast<SignatureArgumentKind>(31);
+constexpr int SignatureArgumentKind_ARRAYSIZE = 31 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 SignatureArgumentKind_descriptor();
 template <typename T>
@@ -380,7 +410,7 @@ const std::string& SignatureArgumentKind_Name(T value) {
 template <>
 inline const std::string& SignatureArgumentKind_Name(SignatureArgumentKind value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<SignatureArgumentKind_descriptor,
-                                                 -1, 30>(
+                                                 -1, 31>(
       static_cast<int>(value));
 }
 inline bool SignatureArgumentKind_Parse(absl::string_view name, SignatureArgumentKind* value) {
@@ -697,6 +727,27 @@ class FunctionEnums final :
     return FunctionEnums_ArgumentAliasKind_Parse(name, value);
   }
 
+  using DefaultNullHandling = FunctionEnums_DefaultNullHandling;
+  static constexpr DefaultNullHandling DEFAULT_NULL_HANDLING_UNSPECIFIED = FunctionEnums_DefaultNullHandling_DEFAULT_NULL_HANDLING_UNSPECIFIED;
+  static constexpr DefaultNullHandling DEFAULT_NULL_HANDLING_IGNORE_NULLS = FunctionEnums_DefaultNullHandling_DEFAULT_NULL_HANDLING_IGNORE_NULLS;
+  static constexpr DefaultNullHandling DEFAULT_NULL_HANDLING_RESPECT_NULLS = FunctionEnums_DefaultNullHandling_DEFAULT_NULL_HANDLING_RESPECT_NULLS;
+  static inline bool DefaultNullHandling_IsValid(int value) {
+    return FunctionEnums_DefaultNullHandling_IsValid(value);
+  }
+  static constexpr DefaultNullHandling DefaultNullHandling_MIN = FunctionEnums_DefaultNullHandling_DefaultNullHandling_MIN;
+  static constexpr DefaultNullHandling DefaultNullHandling_MAX = FunctionEnums_DefaultNullHandling_DefaultNullHandling_MAX;
+  static constexpr int DefaultNullHandling_ARRAYSIZE = FunctionEnums_DefaultNullHandling_DefaultNullHandling_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* DefaultNullHandling_descriptor() {
+    return FunctionEnums_DefaultNullHandling_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& DefaultNullHandling_Name(T value) {
+    return FunctionEnums_DefaultNullHandling_Name(value);
+  }
+  static inline bool DefaultNullHandling_Parse(absl::string_view name, DefaultNullHandling* value) {
+    return FunctionEnums_DefaultNullHandling_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   // @@protoc_insertion_point(class_scope:zetasql.FunctionEnums)
@@ -790,6 +841,12 @@ struct is_proto_enum<::zetasql::FunctionEnums_ArgumentAliasKind> : std::true_typ
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::FunctionEnums_ArgumentAliasKind>() {
   return ::zetasql::FunctionEnums_ArgumentAliasKind_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::FunctionEnums_DefaultNullHandling> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::FunctionEnums_DefaultNullHandling>() {
+  return ::zetasql::FunctionEnums_DefaultNullHandling_descriptor();
 }
 template <>
 struct is_proto_enum<::zetasql::SignatureArgumentKind> : std::true_type {};

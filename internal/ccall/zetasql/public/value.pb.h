@@ -24,6 +24,7 @@
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/arena.h"
 #include "google/protobuf/arenastring.h"
+#include "google/protobuf/generated_message_bases.h"
 #include "google/protobuf/generated_message_util.h"
 #include "google/protobuf/metadata_lite.h"
 #include "google/protobuf/generated_message_reflection.h"
@@ -74,6 +75,9 @@ extern ValueProto_RangeDefaultTypeInternal _ValueProto_Range_default_instance_;
 class ValueProto_Struct;
 struct ValueProto_StructDefaultTypeInternal;
 extern ValueProto_StructDefaultTypeInternal _ValueProto_Struct_default_instance_;
+class ValueProto_TimestampPicos;
+struct ValueProto_TimestampPicosDefaultTypeInternal;
+extern ValueProto_TimestampPicosDefaultTypeInternal _ValueProto_TimestampPicos_default_instance_;
 }  // namespace zetasql
 PROTOBUF_NAMESPACE_OPEN
 template <>
@@ -90,6 +94,8 @@ template <>
 ::zetasql::ValueProto_Range* Arena::CreateMaybeMessage<::zetasql::ValueProto_Range>(Arena*);
 template <>
 ::zetasql::ValueProto_Struct* Arena::CreateMaybeMessage<::zetasql::ValueProto_Struct>(Arena*);
+template <>
+::zetasql::ValueProto_TimestampPicos* Arena::CreateMaybeMessage<::zetasql::ValueProto_TimestampPicos>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace zetasql {
@@ -1116,6 +1122,130 @@ class ValueProto_Map final :
   friend struct ::TableStruct_zetasql_2fpublic_2fvalue_2eproto;
 };// -------------------------------------------------------------------
 
+class ValueProto_TimestampPicos final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ValueProto.TimestampPicos) */ {
+ public:
+  inline ValueProto_TimestampPicos() : ValueProto_TimestampPicos(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ValueProto_TimestampPicos(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ValueProto_TimestampPicos(const ValueProto_TimestampPicos& from);
+  ValueProto_TimestampPicos(ValueProto_TimestampPicos&& from) noexcept
+    : ValueProto_TimestampPicos() {
+    *this = ::std::move(from);
+  }
+
+  inline ValueProto_TimestampPicos& operator=(const ValueProto_TimestampPicos& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ValueProto_TimestampPicos& operator=(ValueProto_TimestampPicos&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ValueProto_TimestampPicos& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ValueProto_TimestampPicos* internal_default_instance() {
+    return reinterpret_cast<const ValueProto_TimestampPicos*>(
+               &_ValueProto_TimestampPicos_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(ValueProto_TimestampPicos& a, ValueProto_TimestampPicos& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ValueProto_TimestampPicos* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ValueProto_TimestampPicos* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ValueProto_TimestampPicos* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ValueProto_TimestampPicos>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ValueProto_TimestampPicos& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ValueProto_TimestampPicos& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ValueProto.TimestampPicos";
+  }
+  protected:
+  explicit ValueProto_TimestampPicos(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ValueProto.TimestampPicos)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fpublic_2fvalue_2eproto;
+};// -------------------------------------------------------------------
+
 class ValueProto final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:zetasql.ValueProto) */ {
  public:
@@ -1204,7 +1334,7 @@ class ValueProto final :
                &_ValueProto_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(ValueProto& a, ValueProto& b) {
     a.Swap(&b);
@@ -1279,6 +1409,7 @@ class ValueProto final :
   typedef ValueProto_Range Range;
   typedef ValueProto_MapEntry MapEntry;
   typedef ValueProto_Map Map;
+  typedef ValueProto_TimestampPicos TimestampPicos;
 
   // accessors -------------------------------------------------------
 
@@ -2420,6 +2551,10 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::zetasql::ValueProto_MapEntry>
 ValueProto_Map::_internal_mutable_entry() {
   return &_impl_.entry_;
 }
+
+// -------------------------------------------------------------------
+
+// ValueProto_TimestampPicos
 
 // -------------------------------------------------------------------
 

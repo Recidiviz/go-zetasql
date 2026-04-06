@@ -56,6 +56,9 @@ namespace zetasql {
 class ResolvedAggregateHavingModifierEnums;
 struct ResolvedAggregateHavingModifierEnumsDefaultTypeInternal;
 extern ResolvedAggregateHavingModifierEnumsDefaultTypeInternal _ResolvedAggregateHavingModifierEnums_default_instance_;
+class ResolvedAlterIndexStmtEnums;
+struct ResolvedAlterIndexStmtEnumsDefaultTypeInternal;
+extern ResolvedAlterIndexStmtEnumsDefaultTypeInternal _ResolvedAlterIndexStmtEnums_default_instance_;
 class ResolvedArgumentDefEnums;
 struct ResolvedArgumentDefEnumsDefaultTypeInternal;
 extern ResolvedArgumentDefEnumsDefaultTypeInternal _ResolvedArgumentDefEnums_default_instance_;
@@ -146,6 +149,9 @@ extern ResolvedStatementEnumsDefaultTypeInternal _ResolvedStatementEnums_default
 class ResolvedSubqueryExprEnums;
 struct ResolvedSubqueryExprEnumsDefaultTypeInternal;
 extern ResolvedSubqueryExprEnumsDefaultTypeInternal _ResolvedSubqueryExprEnums_default_instance_;
+class ResolvedUpdateFieldItemEnums;
+struct ResolvedUpdateFieldItemEnumsDefaultTypeInternal;
+extern ResolvedUpdateFieldItemEnumsDefaultTypeInternal _ResolvedUpdateFieldItemEnums_default_instance_;
 class ResolvedWindowFrameEnums;
 struct ResolvedWindowFrameEnumsDefaultTypeInternal;
 extern ResolvedWindowFrameEnumsDefaultTypeInternal _ResolvedWindowFrameEnums_default_instance_;
@@ -156,6 +162,8 @@ extern ResolvedWindowFrameExprEnumsDefaultTypeInternal _ResolvedWindowFrameExprE
 PROTOBUF_NAMESPACE_OPEN
 template <>
 ::zetasql::ResolvedAggregateHavingModifierEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedAggregateHavingModifierEnums>(Arena*);
+template <>
+::zetasql::ResolvedAlterIndexStmtEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedAlterIndexStmtEnums>(Arena*);
 template <>
 ::zetasql::ResolvedArgumentDefEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedArgumentDefEnums>(Arena*);
 template <>
@@ -216,6 +224,8 @@ template <>
 ::zetasql::ResolvedStatementEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedStatementEnums>(Arena*);
 template <>
 ::zetasql::ResolvedSubqueryExprEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedSubqueryExprEnums>(Arena*);
+template <>
+::zetasql::ResolvedUpdateFieldItemEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedUpdateFieldItemEnums>(Arena*);
 template <>
 ::zetasql::ResolvedWindowFrameEnums* Arena::CreateMaybeMessage<::zetasql::ResolvedWindowFrameEnums>(Arena*);
 template <>
@@ -1423,6 +1433,64 @@ inline const std::string& ResolvedLockModeEnums_LockStrengthType_Name(ResolvedLo
 inline bool ResolvedLockModeEnums_LockStrengthType_Parse(absl::string_view name, ResolvedLockModeEnums_LockStrengthType* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedLockModeEnums_LockStrengthType>(
       ResolvedLockModeEnums_LockStrengthType_descriptor(), name, value);
+}
+enum ResolvedAlterIndexStmtEnums_AlterIndexType : int {
+  ResolvedAlterIndexStmtEnums_AlterIndexType_INDEX_DEFAULT = 0,
+  ResolvedAlterIndexStmtEnums_AlterIndexType_INDEX_SEARCH = 1,
+  ResolvedAlterIndexStmtEnums_AlterIndexType_INDEX_VECTOR = 2,
+};
+
+bool ResolvedAlterIndexStmtEnums_AlterIndexType_IsValid(int value);
+constexpr ResolvedAlterIndexStmtEnums_AlterIndexType ResolvedAlterIndexStmtEnums_AlterIndexType_AlterIndexType_MIN = static_cast<ResolvedAlterIndexStmtEnums_AlterIndexType>(0);
+constexpr ResolvedAlterIndexStmtEnums_AlterIndexType ResolvedAlterIndexStmtEnums_AlterIndexType_AlterIndexType_MAX = static_cast<ResolvedAlterIndexStmtEnums_AlterIndexType>(2);
+constexpr int ResolvedAlterIndexStmtEnums_AlterIndexType_AlterIndexType_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedAlterIndexStmtEnums_AlterIndexType_descriptor();
+template <typename T>
+const std::string& ResolvedAlterIndexStmtEnums_AlterIndexType_Name(T value) {
+  static_assert(std::is_same<T, ResolvedAlterIndexStmtEnums_AlterIndexType>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to AlterIndexType_Name().");
+  return ResolvedAlterIndexStmtEnums_AlterIndexType_Name(static_cast<ResolvedAlterIndexStmtEnums_AlterIndexType>(value));
+}
+template <>
+inline const std::string& ResolvedAlterIndexStmtEnums_AlterIndexType_Name(ResolvedAlterIndexStmtEnums_AlterIndexType value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedAlterIndexStmtEnums_AlterIndexType_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ResolvedAlterIndexStmtEnums_AlterIndexType_Parse(absl::string_view name, ResolvedAlterIndexStmtEnums_AlterIndexType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedAlterIndexStmtEnums_AlterIndexType>(
+      ResolvedAlterIndexStmtEnums_AlterIndexType_descriptor(), name, value);
+}
+enum ResolvedUpdateFieldItemEnums_Operation : int {
+  ResolvedUpdateFieldItemEnums_Operation_UPDATE_SINGLE = 0,
+  ResolvedUpdateFieldItemEnums_Operation_UPDATE_MANY = 1,
+  ResolvedUpdateFieldItemEnums_Operation_UPDATE_SINGLE_NO_CREATION = 2,
+};
+
+bool ResolvedUpdateFieldItemEnums_Operation_IsValid(int value);
+constexpr ResolvedUpdateFieldItemEnums_Operation ResolvedUpdateFieldItemEnums_Operation_Operation_MIN = static_cast<ResolvedUpdateFieldItemEnums_Operation>(0);
+constexpr ResolvedUpdateFieldItemEnums_Operation ResolvedUpdateFieldItemEnums_Operation_Operation_MAX = static_cast<ResolvedUpdateFieldItemEnums_Operation>(2);
+constexpr int ResolvedUpdateFieldItemEnums_Operation_Operation_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ResolvedUpdateFieldItemEnums_Operation_descriptor();
+template <typename T>
+const std::string& ResolvedUpdateFieldItemEnums_Operation_Name(T value) {
+  static_assert(std::is_same<T, ResolvedUpdateFieldItemEnums_Operation>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to Operation_Name().");
+  return ResolvedUpdateFieldItemEnums_Operation_Name(static_cast<ResolvedUpdateFieldItemEnums_Operation>(value));
+}
+template <>
+inline const std::string& ResolvedUpdateFieldItemEnums_Operation_Name(ResolvedUpdateFieldItemEnums_Operation value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ResolvedUpdateFieldItemEnums_Operation_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ResolvedUpdateFieldItemEnums_Operation_Parse(absl::string_view name, ResolvedUpdateFieldItemEnums_Operation* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResolvedUpdateFieldItemEnums_Operation>(
+      ResolvedUpdateFieldItemEnums_Operation_descriptor(), name, value);
 }
 
 // ===================================================================
@@ -6393,6 +6461,296 @@ class ResolvedLockModeEnums final :
   struct Impl_ {
   };
   friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedAlterIndexStmtEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedAlterIndexStmtEnums) */ {
+ public:
+  inline ResolvedAlterIndexStmtEnums() : ResolvedAlterIndexStmtEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedAlterIndexStmtEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedAlterIndexStmtEnums(const ResolvedAlterIndexStmtEnums& from);
+  ResolvedAlterIndexStmtEnums(ResolvedAlterIndexStmtEnums&& from) noexcept
+    : ResolvedAlterIndexStmtEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedAlterIndexStmtEnums& operator=(const ResolvedAlterIndexStmtEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedAlterIndexStmtEnums& operator=(ResolvedAlterIndexStmtEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedAlterIndexStmtEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedAlterIndexStmtEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedAlterIndexStmtEnums*>(
+               &_ResolvedAlterIndexStmtEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    33;
+
+  friend void swap(ResolvedAlterIndexStmtEnums& a, ResolvedAlterIndexStmtEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedAlterIndexStmtEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedAlterIndexStmtEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedAlterIndexStmtEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedAlterIndexStmtEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedAlterIndexStmtEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedAlterIndexStmtEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedAlterIndexStmtEnums";
+  }
+  protected:
+  explicit ResolvedAlterIndexStmtEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using AlterIndexType = ResolvedAlterIndexStmtEnums_AlterIndexType;
+  static constexpr AlterIndexType INDEX_DEFAULT = ResolvedAlterIndexStmtEnums_AlterIndexType_INDEX_DEFAULT;
+  static constexpr AlterIndexType INDEX_SEARCH = ResolvedAlterIndexStmtEnums_AlterIndexType_INDEX_SEARCH;
+  static constexpr AlterIndexType INDEX_VECTOR = ResolvedAlterIndexStmtEnums_AlterIndexType_INDEX_VECTOR;
+  static inline bool AlterIndexType_IsValid(int value) {
+    return ResolvedAlterIndexStmtEnums_AlterIndexType_IsValid(value);
+  }
+  static constexpr AlterIndexType AlterIndexType_MIN = ResolvedAlterIndexStmtEnums_AlterIndexType_AlterIndexType_MIN;
+  static constexpr AlterIndexType AlterIndexType_MAX = ResolvedAlterIndexStmtEnums_AlterIndexType_AlterIndexType_MAX;
+  static constexpr int AlterIndexType_ARRAYSIZE = ResolvedAlterIndexStmtEnums_AlterIndexType_AlterIndexType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* AlterIndexType_descriptor() {
+    return ResolvedAlterIndexStmtEnums_AlterIndexType_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& AlterIndexType_Name(T value) {
+    return ResolvedAlterIndexStmtEnums_AlterIndexType_Name(value);
+  }
+  static inline bool AlterIndexType_Parse(absl::string_view name, AlterIndexType* value) {
+    return ResolvedAlterIndexStmtEnums_AlterIndexType_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedAlterIndexStmtEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ResolvedUpdateFieldItemEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ResolvedUpdateFieldItemEnums) */ {
+ public:
+  inline ResolvedUpdateFieldItemEnums() : ResolvedUpdateFieldItemEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ResolvedUpdateFieldItemEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ResolvedUpdateFieldItemEnums(const ResolvedUpdateFieldItemEnums& from);
+  ResolvedUpdateFieldItemEnums(ResolvedUpdateFieldItemEnums&& from) noexcept
+    : ResolvedUpdateFieldItemEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ResolvedUpdateFieldItemEnums& operator=(const ResolvedUpdateFieldItemEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ResolvedUpdateFieldItemEnums& operator=(ResolvedUpdateFieldItemEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ResolvedUpdateFieldItemEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ResolvedUpdateFieldItemEnums* internal_default_instance() {
+    return reinterpret_cast<const ResolvedUpdateFieldItemEnums*>(
+               &_ResolvedUpdateFieldItemEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    34;
+
+  friend void swap(ResolvedUpdateFieldItemEnums& a, ResolvedUpdateFieldItemEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ResolvedUpdateFieldItemEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ResolvedUpdateFieldItemEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ResolvedUpdateFieldItemEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ResolvedUpdateFieldItemEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ResolvedUpdateFieldItemEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ResolvedUpdateFieldItemEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ResolvedUpdateFieldItemEnums";
+  }
+  protected:
+  explicit ResolvedUpdateFieldItemEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using Operation = ResolvedUpdateFieldItemEnums_Operation;
+  static constexpr Operation UPDATE_SINGLE = ResolvedUpdateFieldItemEnums_Operation_UPDATE_SINGLE;
+  static constexpr Operation UPDATE_MANY = ResolvedUpdateFieldItemEnums_Operation_UPDATE_MANY;
+  static constexpr Operation UPDATE_SINGLE_NO_CREATION = ResolvedUpdateFieldItemEnums_Operation_UPDATE_SINGLE_NO_CREATION;
+  static inline bool Operation_IsValid(int value) {
+    return ResolvedUpdateFieldItemEnums_Operation_IsValid(value);
+  }
+  static constexpr Operation Operation_MIN = ResolvedUpdateFieldItemEnums_Operation_Operation_MIN;
+  static constexpr Operation Operation_MAX = ResolvedUpdateFieldItemEnums_Operation_Operation_MAX;
+  static constexpr int Operation_ARRAYSIZE = ResolvedUpdateFieldItemEnums_Operation_Operation_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Operation_descriptor() {
+    return ResolvedUpdateFieldItemEnums_Operation_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& Operation_Name(T value) {
+    return ResolvedUpdateFieldItemEnums_Operation_Name(value);
+  }
+  static inline bool Operation_Parse(absl::string_view name, Operation* value) {
+    return ResolvedUpdateFieldItemEnums_Operation_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ResolvedUpdateFieldItemEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fresolved_5fast_2fresolved_5fast_5fenums_2eproto;
 };
 
 // ===================================================================
@@ -6538,6 +6896,14 @@ class ResolvedLockModeEnums final :
 // -------------------------------------------------------------------
 
 // ResolvedLockModeEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedAlterIndexStmtEnums
+
+// -------------------------------------------------------------------
+
+// ResolvedUpdateFieldItemEnums
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -6794,6 +7160,18 @@ struct is_proto_enum<::zetasql::ResolvedLockModeEnums_LockStrengthType> : std::t
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedLockModeEnums_LockStrengthType>() {
   return ::zetasql::ResolvedLockModeEnums_LockStrengthType_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedAlterIndexStmtEnums_AlterIndexType> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedAlterIndexStmtEnums_AlterIndexType>() {
+  return ::zetasql::ResolvedAlterIndexStmtEnums_AlterIndexType_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ResolvedUpdateFieldItemEnums_Operation> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ResolvedUpdateFieldItemEnums_Operation>() {
+  return ::zetasql::ResolvedUpdateFieldItemEnums_Operation_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

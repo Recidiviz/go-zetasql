@@ -2200,10 +2200,42 @@ class FunctionSignatureRewriteOptionsProto final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kAllowedFunctionGroupsFieldNumber = 5,
     kSqlFieldNumber = 3,
-    kEnabledFieldNumber = 1,
     kRewriterFieldNumber = 2,
+    kEnabledFieldNumber = 1,
+    kAllowTableReferencesFieldNumber = 4,
   };
+  // repeated string allowed_function_groups = 5;
+  int allowed_function_groups_size() const;
+  private:
+  int _internal_allowed_function_groups_size() const;
+
+  public:
+  void clear_allowed_function_groups() ;
+  const std::string& allowed_function_groups(int index) const;
+  std::string* mutable_allowed_function_groups(int index);
+  void set_allowed_function_groups(int index, const std::string& value);
+  void set_allowed_function_groups(int index, std::string&& value);
+  void set_allowed_function_groups(int index, const char* value);
+  void set_allowed_function_groups(int index, const char* value, std::size_t size);
+  void set_allowed_function_groups(int index, absl::string_view value);
+  std::string* add_allowed_function_groups();
+  void add_allowed_function_groups(const std::string& value);
+  void add_allowed_function_groups(std::string&& value);
+  void add_allowed_function_groups(const char* value);
+  void add_allowed_function_groups(const char* value, std::size_t size);
+  void add_allowed_function_groups(absl::string_view value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& allowed_function_groups() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_allowed_function_groups();
+
+  private:
+  const std::string& _internal_allowed_function_groups(int index) const;
+  std::string* _internal_add_allowed_function_groups();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& _internal_allowed_function_groups() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* _internal_mutable_allowed_function_groups();
+
+  public:
   // optional string sql = 3;
   bool has_sql() const;
   void clear_sql() ;
@@ -2225,6 +2257,17 @@ class FunctionSignatureRewriteOptionsProto final :
   std::string* _internal_mutable_sql();
 
   public:
+  // optional .zetasql.ResolvedASTRewrite rewriter = 2;
+  bool has_rewriter() const;
+  void clear_rewriter() ;
+  ::zetasql::ResolvedASTRewrite rewriter() const;
+  void set_rewriter(::zetasql::ResolvedASTRewrite value);
+
+  private:
+  ::zetasql::ResolvedASTRewrite _internal_rewriter() const;
+  void _internal_set_rewriter(::zetasql::ResolvedASTRewrite value);
+
+  public:
   // optional bool enabled = 1;
   bool has_enabled() const;
   void clear_enabled() ;
@@ -2236,15 +2279,15 @@ class FunctionSignatureRewriteOptionsProto final :
   void _internal_set_enabled(bool value);
 
   public:
-  // optional .zetasql.ResolvedASTRewrite rewriter = 2;
-  bool has_rewriter() const;
-  void clear_rewriter() ;
-  ::zetasql::ResolvedASTRewrite rewriter() const;
-  void set_rewriter(::zetasql::ResolvedASTRewrite value);
+  // optional bool allow_table_references = 4;
+  bool has_allow_table_references() const;
+  void clear_allow_table_references() ;
+  bool allow_table_references() const;
+  void set_allow_table_references(bool value);
 
   private:
-  ::zetasql::ResolvedASTRewrite _internal_rewriter() const;
-  void _internal_set_rewriter(::zetasql::ResolvedASTRewrite value);
+  bool _internal_allow_table_references() const;
+  void _internal_set_allow_table_references(bool value);
 
   public:
   // @@protoc_insertion_point(class_scope:zetasql.FunctionSignatureRewriteOptionsProto)
@@ -2257,9 +2300,11 @@ class FunctionSignatureRewriteOptionsProto final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> allowed_function_groups_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sql_;
-    bool enabled_;
     int rewriter_;
+    bool enabled_;
+    bool allow_table_references_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fproto_2ffunction_2eproto;
@@ -3289,6 +3334,7 @@ class FunctionProto final :
     kOptionsFieldNumber = 5,
     kParseResumeLocationFieldNumber = 8,
     kSqlSecurityFieldNumber = 9,
+    kStatementContextFieldNumber = 10,
     kModeFieldNumber = 3,
   };
   // repeated string name_path = 1;
@@ -3431,6 +3477,17 @@ class FunctionProto final :
   void _internal_set_sql_security(::zetasql::ResolvedCreateStatementEnums_SqlSecurity value);
 
   public:
+  // optional .zetasql.StatementContext statement_context = 10 [default = CONTEXT_DEFAULT];
+  bool has_statement_context() const;
+  void clear_statement_context() ;
+  ::zetasql::StatementContext statement_context() const;
+  void set_statement_context(::zetasql::StatementContext value);
+
+  private:
+  ::zetasql::StatementContext _internal_statement_context() const;
+  void _internal_set_statement_context(::zetasql::StatementContext value);
+
+  public:
   // optional .zetasql.FunctionEnums.Mode mode = 3;
   bool has_mode() const;
   void clear_mode() ;
@@ -3459,6 +3516,7 @@ class FunctionProto final :
     ::zetasql::FunctionOptionsProto* options_;
     ::zetasql::ParseResumeLocationProto* parse_resume_location_;
     int sql_security_;
+    int statement_context_;
     int mode_;
   };
   union { Impl_ _impl_; };
@@ -3883,6 +3941,7 @@ class TableValuedFunctionProto final :
     kAnonymizationInfoFieldNumber = 10,
     kTypeFieldNumber = 3,
     kVolatilityFieldNumber = 8,
+    kStatementContextFieldNumber = 11,
   };
   // repeated string name_path = 1;
   int name_path_size() const;
@@ -4043,6 +4102,17 @@ class TableValuedFunctionProto final :
   void _internal_set_volatility(::zetasql::FunctionEnums_Volatility value);
 
   public:
+  // optional .zetasql.StatementContext statement_context = 11 [default = CONTEXT_DEFAULT];
+  bool has_statement_context() const;
+  void clear_statement_context() ;
+  ::zetasql::StatementContext statement_context() const;
+  void set_statement_context(::zetasql::StatementContext value);
+
+  private:
+  ::zetasql::StatementContext _internal_statement_context() const;
+  void _internal_set_statement_context(::zetasql::StatementContext value);
+
+  public:
   // @@protoc_insertion_point(class_scope:zetasql.TableValuedFunctionProto)
  private:
   class _Internal;
@@ -4062,6 +4132,7 @@ class TableValuedFunctionProto final :
     ::zetasql::SimpleAnonymizationInfoProto* anonymization_info_;
     int type_;
     int volatility_;
+    int statement_context_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fproto_2ffunction_2eproto;
@@ -7210,12 +7281,12 @@ inline void FunctionArgumentTypeProto::set_allocated_lambda(::zetasql::ArgumentT
 
 // optional bool enabled = 1;
 inline bool FunctionSignatureRewriteOptionsProto::has_enabled() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
 inline void FunctionSignatureRewriteOptionsProto::clear_enabled() {
   _impl_.enabled_ = false;
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
 inline bool FunctionSignatureRewriteOptionsProto::enabled() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionSignatureRewriteOptionsProto.enabled)
@@ -7229,18 +7300,18 @@ inline bool FunctionSignatureRewriteOptionsProto::_internal_enabled() const {
   return _impl_.enabled_;
 }
 inline void FunctionSignatureRewriteOptionsProto::_internal_set_enabled(bool value) {
-  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_._has_bits_[0] |= 0x00000004u;
   _impl_.enabled_ = value;
 }
 
 // optional .zetasql.ResolvedASTRewrite rewriter = 2;
 inline bool FunctionSignatureRewriteOptionsProto::has_rewriter() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
 inline void FunctionSignatureRewriteOptionsProto::clear_rewriter() {
   _impl_.rewriter_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000004u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 inline ::zetasql::ResolvedASTRewrite FunctionSignatureRewriteOptionsProto::rewriter() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionSignatureRewriteOptionsProto.rewriter)
@@ -7255,7 +7326,7 @@ inline ::zetasql::ResolvedASTRewrite FunctionSignatureRewriteOptionsProto::_inte
 }
 inline void FunctionSignatureRewriteOptionsProto::_internal_set_rewriter(::zetasql::ResolvedASTRewrite value) {
   assert(::zetasql::ResolvedASTRewrite_IsValid(value));
-  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_._has_bits_[0] |= 0x00000002u;
   _impl_.rewriter_ = value;
 }
 
@@ -7322,6 +7393,124 @@ inline void FunctionSignatureRewriteOptionsProto::set_allocated_sql(std::string*
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:zetasql.FunctionSignatureRewriteOptionsProto.sql)
+}
+
+// optional bool allow_table_references = 4;
+inline bool FunctionSignatureRewriteOptionsProto::has_allow_table_references() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline void FunctionSignatureRewriteOptionsProto::clear_allow_table_references() {
+  _impl_.allow_table_references_ = false;
+  _impl_._has_bits_[0] &= ~0x00000008u;
+}
+inline bool FunctionSignatureRewriteOptionsProto::allow_table_references() const {
+  // @@protoc_insertion_point(field_get:zetasql.FunctionSignatureRewriteOptionsProto.allow_table_references)
+  return _internal_allow_table_references();
+}
+inline void FunctionSignatureRewriteOptionsProto::set_allow_table_references(bool value) {
+  _internal_set_allow_table_references(value);
+  // @@protoc_insertion_point(field_set:zetasql.FunctionSignatureRewriteOptionsProto.allow_table_references)
+}
+inline bool FunctionSignatureRewriteOptionsProto::_internal_allow_table_references() const {
+  return _impl_.allow_table_references_;
+}
+inline void FunctionSignatureRewriteOptionsProto::_internal_set_allow_table_references(bool value) {
+  _impl_._has_bits_[0] |= 0x00000008u;
+  _impl_.allow_table_references_ = value;
+}
+
+// repeated string allowed_function_groups = 5;
+inline int FunctionSignatureRewriteOptionsProto::_internal_allowed_function_groups_size() const {
+  return _impl_.allowed_function_groups_.size();
+}
+inline int FunctionSignatureRewriteOptionsProto::allowed_function_groups_size() const {
+  return _internal_allowed_function_groups_size();
+}
+inline void FunctionSignatureRewriteOptionsProto::clear_allowed_function_groups() {
+  _internal_mutable_allowed_function_groups()->Clear();
+}
+inline std::string* FunctionSignatureRewriteOptionsProto::add_allowed_function_groups() {
+  std::string* _s = _internal_add_allowed_function_groups();
+  // @@protoc_insertion_point(field_add_mutable:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+  return _s;
+}
+inline const std::string& FunctionSignatureRewriteOptionsProto::allowed_function_groups(int index) const {
+  // @@protoc_insertion_point(field_get:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+  return _internal_allowed_function_groups(index);
+}
+inline std::string* FunctionSignatureRewriteOptionsProto::mutable_allowed_function_groups(int index) {
+  // @@protoc_insertion_point(field_mutable:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+  return _internal_mutable_allowed_function_groups()->Mutable(index);
+}
+inline void FunctionSignatureRewriteOptionsProto::set_allowed_function_groups(int index, const std::string& value) {
+  _internal_mutable_allowed_function_groups()->Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::set_allowed_function_groups(int index, std::string&& value) {
+  _internal_mutable_allowed_function_groups()->Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::set_allowed_function_groups(int index, const char* value) {
+  ABSL_DCHECK(value != nullptr);
+  _internal_mutable_allowed_function_groups()->Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::set_allowed_function_groups(int index, const char* value,
+                              std::size_t size) {
+  _internal_mutable_allowed_function_groups()->Mutable(index)->assign(
+      reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::set_allowed_function_groups(int index, absl::string_view value) {
+  _internal_mutable_allowed_function_groups()->Mutable(index)->assign(value.data(),
+                                                     value.size());
+  // @@protoc_insertion_point(field_set_string_piece:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::add_allowed_function_groups(const std::string& value) {
+  _internal_mutable_allowed_function_groups()->Add()->assign(value);
+  // @@protoc_insertion_point(field_add:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::add_allowed_function_groups(std::string&& value) {
+  _internal_mutable_allowed_function_groups()->Add(std::move(value));
+  // @@protoc_insertion_point(field_add:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::add_allowed_function_groups(const char* value) {
+  ABSL_DCHECK(value != nullptr);
+  _internal_mutable_allowed_function_groups()->Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::add_allowed_function_groups(const char* value, std::size_t size) {
+  _internal_mutable_allowed_function_groups()->Add()->assign(
+      reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline void FunctionSignatureRewriteOptionsProto::add_allowed_function_groups(absl::string_view value) {
+  _internal_mutable_allowed_function_groups()->Add()->assign(value.data(), value.size());
+  // @@protoc_insertion_point(field_add_string_piece:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+FunctionSignatureRewriteOptionsProto::allowed_function_groups() const {
+  // @@protoc_insertion_point(field_list:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+  return _internal_allowed_function_groups();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* FunctionSignatureRewriteOptionsProto::mutable_allowed_function_groups() {
+  // @@protoc_insertion_point(field_mutable_list:zetasql.FunctionSignatureRewriteOptionsProto.allowed_function_groups)
+  return _internal_mutable_allowed_function_groups();
+}
+inline const std::string& FunctionSignatureRewriteOptionsProto::_internal_allowed_function_groups(int index) const {
+  return _internal_allowed_function_groups().Get(index);
+}
+inline std::string* FunctionSignatureRewriteOptionsProto::_internal_add_allowed_function_groups() {
+  return _internal_mutable_allowed_function_groups()->Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+FunctionSignatureRewriteOptionsProto::_internal_allowed_function_groups() const {
+  return _impl_.allowed_function_groups_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+FunctionSignatureRewriteOptionsProto::_internal_mutable_allowed_function_groups() {
+  return &_impl_.allowed_function_groups_;
 }
 
 // -------------------------------------------------------------------
@@ -8601,12 +8790,12 @@ inline void FunctionProto::set_allocated_group(std::string* value) {
 
 // optional .zetasql.FunctionEnums.Mode mode = 3;
 inline bool FunctionProto::has_mode() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
 inline void FunctionProto::clear_mode() {
   _impl_.mode_ = 1;
-  _impl_._has_bits_[0] &= ~0x00000010u;
+  _impl_._has_bits_[0] &= ~0x00000020u;
 }
 inline ::zetasql::FunctionEnums_Mode FunctionProto::mode() const {
   // @@protoc_insertion_point(field_get:zetasql.FunctionProto.mode)
@@ -8621,7 +8810,7 @@ inline ::zetasql::FunctionEnums_Mode FunctionProto::_internal_mode() const {
 }
 inline void FunctionProto::_internal_set_mode(::zetasql::FunctionEnums_Mode value) {
   assert(::zetasql::FunctionEnums_Mode_IsValid(value));
-  _impl_._has_bits_[0] |= 0x00000010u;
+  _impl_._has_bits_[0] |= 0x00000020u;
   _impl_.mode_ = value;
 }
 
@@ -8961,6 +9150,32 @@ inline void FunctionProto::_internal_set_sql_security(::zetasql::ResolvedCreateS
   assert(::zetasql::ResolvedCreateStatementEnums_SqlSecurity_IsValid(value));
   _impl_._has_bits_[0] |= 0x00000008u;
   _impl_.sql_security_ = value;
+}
+
+// optional .zetasql.StatementContext statement_context = 10 [default = CONTEXT_DEFAULT];
+inline bool FunctionProto::has_statement_context() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  return value;
+}
+inline void FunctionProto::clear_statement_context() {
+  _impl_.statement_context_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000010u;
+}
+inline ::zetasql::StatementContext FunctionProto::statement_context() const {
+  // @@protoc_insertion_point(field_get:zetasql.FunctionProto.statement_context)
+  return _internal_statement_context();
+}
+inline void FunctionProto::set_statement_context(::zetasql::StatementContext value) {
+   _internal_set_statement_context(value);
+  // @@protoc_insertion_point(field_set:zetasql.FunctionProto.statement_context)
+}
+inline ::zetasql::StatementContext FunctionProto::_internal_statement_context() const {
+  return static_cast<::zetasql::StatementContext>(_impl_.statement_context_);
+}
+inline void FunctionProto::_internal_set_statement_context(::zetasql::StatementContext value) {
+  assert(::zetasql::StatementContext_IsValid(value));
+  _impl_._has_bits_[0] |= 0x00000010u;
+  _impl_.statement_context_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -9643,6 +9858,32 @@ inline void TableValuedFunctionProto::set_allocated_anonymization_info(::zetasql
   }
   _impl_.anonymization_info_ = anonymization_info;
   // @@protoc_insertion_point(field_set_allocated:zetasql.TableValuedFunctionProto.anonymization_info)
+}
+
+// optional .zetasql.StatementContext statement_context = 11 [default = CONTEXT_DEFAULT];
+inline bool TableValuedFunctionProto::has_statement_context() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
+  return value;
+}
+inline void TableValuedFunctionProto::clear_statement_context() {
+  _impl_.statement_context_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000080u;
+}
+inline ::zetasql::StatementContext TableValuedFunctionProto::statement_context() const {
+  // @@protoc_insertion_point(field_get:zetasql.TableValuedFunctionProto.statement_context)
+  return _internal_statement_context();
+}
+inline void TableValuedFunctionProto::set_statement_context(::zetasql::StatementContext value) {
+   _internal_set_statement_context(value);
+  // @@protoc_insertion_point(field_set:zetasql.TableValuedFunctionProto.statement_context)
+}
+inline ::zetasql::StatementContext TableValuedFunctionProto::_internal_statement_context() const {
+  return static_cast<::zetasql::StatementContext>(_impl_.statement_context_);
+}
+inline void TableValuedFunctionProto::_internal_set_statement_context(::zetasql::StatementContext value) {
+  assert(::zetasql::StatementContext_IsValid(value));
+  _impl_._has_bits_[0] |= 0x00000080u;
+  _impl_.statement_context_ = value;
 }
 
 // -------------------------------------------------------------------

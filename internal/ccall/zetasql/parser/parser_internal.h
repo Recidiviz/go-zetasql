@@ -239,6 +239,83 @@ enum class IndexTypeKeywords {
   kVector,
 };
 
+struct PivotOrUnpivotClause {
+  ASTPivotClause* pivot_clause;
+  ASTUnpivotClause* unpivot_clause;
+  ASTAlias* alias;
+};
+
+struct ClausesFollowingFrom {
+  ASTNode* where;
+  ASTNode* group_by;
+  ASTNode* having;
+  ASTNode* qualify;
+  ASTNode* window;
+};
+
+struct GeneratedOrDefaultColumnInfo {
+  ASTExpression* default_expression;
+  ASTGeneratedColumnInfo* generated_column_info;
+};
+
+struct ExternalTableWithClauses {
+  ASTWithPartitionColumnsClause* with_partition_columns_clause;
+  ASTWithConnectionClause* with_connection_clause;
+};
+
+struct LanguageOrRemoteWithConnection {
+  ASTIdentifier* language;
+  bool is_remote;
+  ASTWithConnectionClause* with_connection_clause;
+};
+
+struct LanguageOptionsSet {
+  ASTIdentifier* language;
+  ASTNode* options;
+};
+
+struct OptionsBodySet {
+  ASTNode* options;
+  ASTNode* body;
+};
+
+struct BeginEndBlockOrLanguageAsCode {
+  ASTScript* body;
+  ASTIdentifier* language;
+  ASTNode* code;
+};
+
+struct PathExpressionWithScope {
+  ASTExpression* maybe_dashed_path_expression;
+  bool is_temp_table;
+};
+
+struct ColumnMatchSuffix {
+  ASTSetOperationColumnMatchMode* column_match_mode;
+  ASTColumnList* column_list;
+};
+
+struct QueryOrReplicaSourceInfo {
+  ASTQuery* query;
+  ASTPathExpression* replica_source;
+};
+
+struct GroupByPreamble {
+  ASTNode* hint;
+  bool and_order_by;
+};
+
+struct GroupByModifier {
+  ASTNode* group_by;
+  ASTNode* having_expr;
+};
+
+struct CreateIndexStatementSuffix {
+  ASTNode* partition_by;
+  ASTNode* options_list;
+  ASTNode* spanner_index_innerleaving_clause;
+};
+
 // This node is used for temporarily aggregating together components of an
 // identifier that are separated by various characters, such as slash ("/"),
 // dash ("-"), and colon (":") to enable supporting table paths of the form:

@@ -589,6 +589,7 @@ class StateMachineProto_CompiledNFAProto final :
     kStatesFieldNumber = 1,
     kStartStateFieldNumber = 2,
     kFinalStateFieldNumber = 3,
+    kNumPatternVariablesFieldNumber = 4,
   };
   // repeated .zetasql.functions.match_recognize.StateMachineProto.CompiledNFAProto.StateProto states = 1;
   int states_size() const;
@@ -632,6 +633,17 @@ class StateMachineProto_CompiledNFAProto final :
   void _internal_set_final_state(::int32_t value);
 
   public:
+  // optional int32 num_pattern_variables = 4;
+  bool has_num_pattern_variables() const;
+  void clear_num_pattern_variables() ;
+  ::int32_t num_pattern_variables() const;
+  void set_num_pattern_variables(::int32_t value);
+
+  private:
+  ::int32_t _internal_num_pattern_variables() const;
+  void _internal_set_num_pattern_variables(::int32_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:zetasql.functions.match_recognize.StateMachineProto.CompiledNFAProto)
  private:
   class _Internal;
@@ -645,6 +657,7 @@ class StateMachineProto_CompiledNFAProto final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::zetasql::functions::match_recognize::StateMachineProto_CompiledNFAProto_StateProto > states_;
     ::int32_t start_state_;
     ::int32_t final_state_;
+    ::int32_t num_pattern_variables_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_zetasql_2fpublic_2ffunctions_2fmatch_5frecognize_2fcompiled_5fpattern_2eproto;
@@ -1286,6 +1299,31 @@ inline ::int32_t StateMachineProto_CompiledNFAProto::_internal_final_state() con
 inline void StateMachineProto_CompiledNFAProto::_internal_set_final_state(::int32_t value) {
   _impl_._has_bits_[0] |= 0x00000002u;
   _impl_.final_state_ = value;
+}
+
+// optional int32 num_pattern_variables = 4;
+inline bool StateMachineProto_CompiledNFAProto::has_num_pattern_variables() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline void StateMachineProto_CompiledNFAProto::clear_num_pattern_variables() {
+  _impl_.num_pattern_variables_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline ::int32_t StateMachineProto_CompiledNFAProto::num_pattern_variables() const {
+  // @@protoc_insertion_point(field_get:zetasql.functions.match_recognize.StateMachineProto.CompiledNFAProto.num_pattern_variables)
+  return _internal_num_pattern_variables();
+}
+inline void StateMachineProto_CompiledNFAProto::set_num_pattern_variables(::int32_t value) {
+  _internal_set_num_pattern_variables(value);
+  // @@protoc_insertion_point(field_set:zetasql.functions.match_recognize.StateMachineProto.CompiledNFAProto.num_pattern_variables)
+}
+inline ::int32_t StateMachineProto_CompiledNFAProto::_internal_num_pattern_variables() const {
+  return _impl_.num_pattern_variables_;
+}
+inline void StateMachineProto_CompiledNFAProto::_internal_set_num_pattern_variables(::int32_t value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.num_pattern_variables_ = value;
 }
 
 // -------------------------------------------------------------------

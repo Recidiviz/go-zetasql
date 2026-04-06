@@ -27,476 +27,492 @@ namespace zetasql {
 
 // Creates a map of ASTNodeKind to a string representation of the node type's
 // name. Access this map through GetNodeNamesMap().
-static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
-  absl::flat_hash_map<ASTNodeKind, std::string> map;
-  map[AST_FAKE] = "Fake";  // For testing purposes only.
+static absl::flat_hash_map<ASTNodeKind, absl::string_view>
+CreateNodeNamesMap() {
+  static constexpr std::pair<ASTNodeKind, absl::string_view> kMap[] = {
+      {AST_FAKE, "Fake"},  // For testing purposes only.
+      { AST_QUERY_STATEMENT, "QueryStatement" },
+      { AST_ALIASED_QUERY_EXPRESSION, "AliasedQueryExpression" },
+      { AST_QUERY, "Query" },
+      { AST_FROM_QUERY, "FromQuery" },
+      { AST_SUBPIPELINE, "Subpipeline" },
+      { AST_PIPE_EXTEND, "PipeExtend" },
+      { AST_PIPE_RENAME_ITEM, "PipeRenameItem" },
+      { AST_PIPE_RENAME, "PipeRename" },
+      { AST_PIPE_AGGREGATE, "PipeAggregate" },
+      { AST_PIPE_SET_OPERATION, "PipeSetOperation" },
+      { AST_PIPE_JOIN, "PipeJoin" },
+      { AST_PIPE_CALL, "PipeCall" },
+      { AST_PIPE_WINDOW, "PipeWindow" },
+      { AST_PIPE_WHERE, "PipeWhere" },
+      { AST_PIPE_SELECT, "PipeSelect" },
+      { AST_PIPE_LIMIT_OFFSET, "PipeLimitOffset" },
+      { AST_PIPE_ORDER_BY, "PipeOrderBy" },
+      { AST_PIPE_DISTINCT, "PipeDistinct" },
+      { AST_PIPE_TABLESAMPLE, "PipeTablesample" },
+      { AST_PIPE_MATCH_RECOGNIZE, "PipeMatchRecognize" },
+      { AST_PIPE_AS, "PipeAs" },
+      { AST_PIPE_STATIC_DESCRIBE, "PipeStaticDescribe" },
+      { AST_PIPE_ASSERT, "PipeAssert" },
+      { AST_PIPE_LOG, "PipeLog" },
+      { AST_PIPE_DROP, "PipeDrop" },
+      { AST_PIPE_SET_ITEM, "PipeSetItem" },
+      { AST_PIPE_SET, "PipeSet" },
+      { AST_PIPE_PIVOT, "PipePivot" },
+      { AST_PIPE_UNPIVOT, "PipeUnpivot" },
+      { AST_PIPE_IF, "PipeIf" },
+      { AST_PIPE_IF_CASE, "PipeIfCase" },
+      { AST_PIPE_FORK, "PipeFork" },
+      { AST_PIPE_TEE, "PipeTee" },
+      { AST_PIPE_WITH, "PipeWith" },
+      { AST_PIPE_EXPORT_DATA, "PipeExportData" },
+      { AST_PIPE_CREATE_TABLE, "PipeCreateTable" },
+      { AST_PIPE_INSERT, "PipeInsert" },
+      { AST_SELECT, "Select" },
+      { AST_SELECT_LIST, "SelectList" },
+      { AST_SELECT_COLUMN, "SelectColumn" },
+      { AST_INT_LITERAL, "IntLiteral" },
+      { AST_IDENTIFIER, "Identifier" },
+      { AST_ALIAS, "Alias" },
+      { AST_PATH_EXPRESSION, "PathExpression" },
+      { AST_TABLE_PATH_EXPRESSION, "TablePathExpression" },
+      { AST_PIPE_JOIN_LHS_PLACEHOLDER, "PipeJoinLhsPlaceholder" },
+      { AST_FROM_CLAUSE, "FromClause" },
+      { AST_WHERE_CLAUSE, "WhereClause" },
+      { AST_BOOLEAN_LITERAL, "BooleanLiteral" },
+      { AST_AND_EXPR, "AndExpr" },
+      { AST_BINARY_EXPRESSION, "BinaryExpression" },
+      { AST_STRING_LITERAL, "StringLiteral" },
+      { AST_STRING_LITERAL_COMPONENT, "StringLiteralComponent" },
+      { AST_STAR, "Star" },
+      { AST_OR_EXPR, "OrExpr" },
+      { AST_ORDERING_EXPRESSION, "OrderingExpression" },
+      { AST_ORDER_BY, "OrderBy" },
+      { AST_GROUPING_ITEM_ORDER, "GroupingItemOrder" },
+      { AST_GROUPING_ITEM, "GroupingItem" },
+      { AST_GROUP_BY, "GroupBy" },
+      { AST_GROUP_BY_ALL, "GroupByAll" },
+      { AST_LIMIT_OFFSET, "LimitOffset" },
+      { AST_FLOAT_LITERAL, "FloatLiteral" },
+      { AST_NULL_LITERAL, "NullLiteral" },
+      { AST_ON_CLAUSE, "OnClause" },
+      { AST_ALIASED_QUERY, "AliasedQuery" },
+      { AST_JOIN, "Join" },
+      { AST_WITH_CLAUSE, "WithClause" },
+      { AST_HAVING, "Having" },
+      { AST_SIMPLE_TYPE, "SimpleType" },
+      { AST_ARRAY_TYPE, "ArrayType" },
+      { AST_STRUCT_FIELD, "StructField" },
+      { AST_STRUCT_TYPE, "StructType" },
+      { AST_FUNCTION_TYPE_ARG_LIST, "FunctionTypeArgList" },
+      { AST_FUNCTION_TYPE, "FunctionType" },
+      { AST_CAST_EXPRESSION, "CastExpression" },
+      { AST_SELECT_AS, "SelectAs" },
+      { AST_ROLLUP, "Rollup" },
+      { AST_CUBE, "Cube" },
+      { AST_GROUPING_SET, "GroupingSet" },
+      { AST_GROUPING_SET_LIST, "GroupingSetList" },
+      { AST_EXPRESSION_WITH_ALIAS, "ExpressionWithAlias" },
+      { AST_FUNCTION_CALL, "FunctionCall" },
+      { AST_ARRAY_CONSTRUCTOR, "ArrayConstructor" },
+      { AST_STRUCT_CONSTRUCTOR_ARG, "StructConstructorArg" },
+      { AST_STRUCT_CONSTRUCTOR_WITH_PARENS, "StructConstructorWithParens" },
+      { AST_STRUCT_CONSTRUCTOR_WITH_KEYWORD, "StructConstructorWithKeyword" },
+      { AST_IN_EXPRESSION, "InExpression" },
+      { AST_IN_LIST, "InList" },
+      { AST_BETWEEN_EXPRESSION, "BetweenExpression" },
+      { AST_NUMERIC_LITERAL, "NumericLiteral" },
+      { AST_BIGNUMERIC_LITERAL, "BigNumericLiteral" },
+      { AST_BYTES_LITERAL, "BytesLiteral" },
+      { AST_BYTES_LITERAL_COMPONENT, "BytesLiteralComponent" },
+      { AST_DATE_OR_TIME_LITERAL, "DateOrTimeLiteral" },
+      { AST_MAX_LITERAL, "MaxLiteral" },
+      { AST_JSON_LITERAL, "JSONLiteral" },
+      { AST_CASE_VALUE_EXPRESSION, "CaseValueExpression" },
+      { AST_CASE_NO_VALUE_EXPRESSION, "CaseNoValueExpression" },
+      { AST_ARRAY_ELEMENT, "ArrayElement" },
+      { AST_BITWISE_SHIFT_EXPRESSION, "BitwiseShiftExpression" },
+      { AST_COLLATE, "Collate" },
+      { AST_DOT_GENERALIZED_FIELD, "DotGeneralizedField" },
+      { AST_DOT_IDENTIFIER, "DotIdentifier" },
+      { AST_DOT_STAR, "DotStar" },
+      { AST_DOT_STAR_WITH_MODIFIERS, "DotStarWithModifiers" },
+      { AST_EXPRESSION_SUBQUERY, "ExpressionSubquery" },
+      { AST_EXTRACT_EXPRESSION, "ExtractExpression" },
+      { AST_HAVING_MODIFIER, "HavingModifier" },
+      { AST_INTERVAL_EXPR, "IntervalExpr" },
+      { AST_SEQUENCE_ARG, "SequenceArg" },
+      { AST_NAMED_ARGUMENT, "NamedArgument" },
+      { AST_NULL_ORDER, "NullOrder" },
+      { AST_ON_OR_USING_CLAUSE_LIST, "OnOrUsingClauseList" },
+      { AST_PARENTHESIZED_JOIN, "ParenthesizedJoin" },
+      { AST_PARTITION_BY, "PartitionBy" },
+      { AST_SET_OPERATION, "SetOperation" },
+      { AST_SET_OPERATION_METADATA_LIST, "SetOperationMetadataList" },
+      { AST_SET_OPERATION_ALL_OR_DISTINCT, "SetOperationAllOrDistinct" },
+      { AST_SET_OPERATION_TYPE, "SetOperationType" },
+      { AST_SET_OPERATION_COLUMN_MATCH_MODE, "SetOperationColumnMatchMode" },
+      { AST_SET_OPERATION_COLUMN_PROPAGATION_MODE, "SetOperationColumnPropagationMode" },
+      { AST_SET_OPERATION_METADATA, "SetOperationMetadata" },
+      { AST_STAR_EXCEPT_LIST, "StarExceptList" },
+      { AST_STAR_MODIFIERS, "StarModifiers" },
+      { AST_STAR_REPLACE_ITEM, "StarReplaceItem" },
+      { AST_STAR_WITH_MODIFIERS, "StarWithModifiers" },
+      { AST_TABLE_SUBQUERY, "TableSubquery" },
+      { AST_UNARY_EXPRESSION, "UnaryExpression" },
+      { AST_EXPRESSION_WITH_OPT_ALIAS, "ExpressionWithOptAlias" },
+      { AST_UNNEST_EXPRESSION, "UnnestExpression" },
+      { AST_WINDOW_CLAUSE, "WindowClause" },
+      { AST_WINDOW_DEFINITION, "WindowDefinition" },
+      { AST_WINDOW_FRAME, "WindowFrame" },
+      { AST_WINDOW_FRAME_EXPR, "WindowFrameExpr" },
+      { AST_LIKE_EXPRESSION, "LikeExpression" },
+      { AST_WINDOW_SPECIFICATION, "WindowSpecification" },
+      { AST_WITH_OFFSET, "WithOffset" },
+      { AST_ANY_SOME_ALL_OP, "AnySomeAllOp" },
+      { AST_STATEMENT_LIST, "StatementList" },
+      { AST_HINTED_STATEMENT, "HintedStatement" },
+      { AST_EXPLAIN_STATEMENT, "ExplainStatement" },
+      { AST_DESCRIBE_STATEMENT, "DescribeStatement" },
+      { AST_SHOW_STATEMENT, "ShowStatement" },
+      { AST_TRANSACTION_ISOLATION_LEVEL, "TransactionIsolationLevel" },
+      { AST_TRANSACTION_READ_WRITE_MODE, "TransactionReadWriteMode" },
+      { AST_TRANSACTION_MODE_LIST, "TransactionModeList" },
+      { AST_BEGIN_STATEMENT, "BeginStatement" },
+      { AST_SET_TRANSACTION_STATEMENT, "SetTransactionStatement" },
+      { AST_COMMIT_STATEMENT, "CommitStatement" },
+      { AST_ROLLBACK_STATEMENT, "RollbackStatement" },
+      { AST_START_BATCH_STATEMENT, "StartBatchStatement" },
+      { AST_RUN_BATCH_STATEMENT, "RunBatchStatement" },
+      { AST_ABORT_BATCH_STATEMENT, "AbortBatchStatement" },
+      { AST_DROP_ENTITY_STATEMENT, "DropEntityStatement" },
+      { AST_DROP_FUNCTION_STATEMENT, "DropFunctionStatement" },
+      { AST_DROP_TABLE_FUNCTION_STATEMENT, "DropTableFunctionStatement" },
+      { AST_DROP_ALL_ROW_ACCESS_POLICIES_STATEMENT, "DropAllRowAccessPoliciesStatement" },
+      { AST_DROP_MATERIALIZED_VIEW_STATEMENT, "DropMaterializedViewStatement" },
+      { AST_DROP_SNAPSHOT_TABLE_STATEMENT, "DropSnapshotTableStatement" },
+      { AST_DROP_SEARCH_INDEX_STATEMENT, "DropSearchIndexStatement" },
+      { AST_DROP_VECTOR_INDEX_STATEMENT, "DropVectorIndexStatement" },
+      { AST_RENAME_STATEMENT, "RenameStatement" },
+      { AST_IMPORT_STATEMENT, "ImportStatement" },
+      { AST_MODULE_STATEMENT, "ModuleStatement" },
+      { AST_WITH_CONNECTION_CLAUSE, "WithConnectionClause" },
+      { AST_INTO_ALIAS, "IntoAlias" },
+      { AST_UNNEST_EXPRESSION_WITH_OPT_ALIAS_AND_OFFSET, "UnnestExpressionWithOptAliasAndOffset" },
+      { AST_PIVOT_EXPRESSION, "PivotExpression" },
+      { AST_PIVOT_VALUE, "PivotValue" },
+      { AST_PIVOT_EXPRESSION_LIST, "PivotExpressionList" },
+      { AST_PIVOT_VALUE_LIST, "PivotValueList" },
+      { AST_PIVOT_CLAUSE, "PivotClause" },
+      { AST_UNPIVOT_IN_ITEM, "UnpivotInItem" },
+      { AST_UNPIVOT_IN_ITEM_LIST, "UnpivotInItemList" },
+      { AST_UNPIVOT_CLAUSE, "UnpivotClause" },
+      { AST_USING_CLAUSE, "UsingClause" },
+      { AST_FOR_SYSTEM_TIME, "ForSystemTime" },
+      { AST_MATCH_RECOGNIZE_CLAUSE, "MatchRecognizeClause" },
+      { AST_AFTER_MATCH_SKIP_CLAUSE, "AfterMatchSkipClause" },
+      { AST_ROW_PATTERN_VARIABLE, "RowPatternVariable" },
+      { AST_ROW_PATTERN_OPERATION, "RowPatternOperation" },
+      { AST_EMPTY_ROW_PATTERN, "EmptyRowPattern" },
+      { AST_ROW_PATTERN_ANCHOR, "RowPatternAnchor" },
+      { AST_BOUNDED_QUANTIFIER, "BoundedQuantifier" },
+      { AST_QUANTIFIER_BOUND, "QuantifierBound" },
+      { AST_FIXED_QUANTIFIER, "FixedQuantifier" },
+      { AST_SYMBOL_QUANTIFIER, "SymbolQuantifier" },
+      { AST_ROW_PATTERN_QUANTIFICATION, "RowPatternQuantification" },
+      { AST_QUALIFY, "Qualify" },
+      { AST_CLAMPED_BETWEEN_MODIFIER, "ClampedBetweenModifier" },
+      { AST_WITH_REPORT_MODIFIER, "WithReportModifier" },
+      { AST_FORMAT_CLAUSE, "FormatClause" },
+      { AST_PATH_EXPRESSION_LIST, "PathExpressionList" },
+      { AST_PARAMETER_EXPR, "ParameterExpr" },
+      { AST_SYSTEM_VARIABLE_EXPR, "SystemVariableExpr" },
+      { AST_WITH_GROUP_ROWS, "WithGroupRows" },
+      { AST_LAMBDA, "Lambda" },
+      { AST_ANALYTIC_FUNCTION_CALL, "AnalyticFunctionCall" },
+      { AST_FUNCTION_CALL_WITH_GROUP_ROWS, "FunctionCallWithGroupRows" },
+      { AST_CLUSTER_BY, "ClusterBy" },
+      { AST_NEW_CONSTRUCTOR_ARG, "NewConstructorArg" },
+      { AST_NEW_CONSTRUCTOR, "NewConstructor" },
+      { AST_BRACED_CONSTRUCTOR_LHS, "BracedConstructorLhs" },
+      { AST_BRACED_CONSTRUCTOR_FIELD_VALUE, "BracedConstructorFieldValue" },
+      { AST_BRACED_CONSTRUCTOR_FIELD, "BracedConstructorField" },
+      { AST_BRACED_CONSTRUCTOR, "BracedConstructor" },
+      { AST_BRACED_NEW_CONSTRUCTOR, "BracedNewConstructor" },
+      { AST_EXTENDED_PATH_EXPRESSION, "ExtendedPathExpression" },
+      { AST_UPDATE_CONSTRUCTOR, "UpdateConstructor" },
+      { AST_STRUCT_BRACED_CONSTRUCTOR, "StructBracedConstructor" },
+      { AST_OPTIONS_LIST, "OptionsList" },
+      { AST_OPTIONS_ENTRY, "OptionsEntry" },
+      { AST_FUNCTION_PARAMETER, "FunctionParameter" },
+      { AST_FUNCTION_PARAMETERS, "FunctionParameters" },
+      { AST_FUNCTION_DECLARATION, "FunctionDeclaration" },
+      { AST_SQL_FUNCTION_BODY, "SqlFunctionBody" },
+      { AST_TVF_ARGUMENT, "TVFArgument" },
+      { AST_TVF, "TVF" },
+      { AST_TABLE_CLAUSE, "TableClause" },
+      { AST_MODEL_CLAUSE, "ModelClause" },
+      { AST_CONNECTION_CLAUSE, "ConnectionClause" },
+      { AST_CLONE_DATA_SOURCE, "CloneDataSource" },
+      { AST_COPY_DATA_SOURCE, "CopyDataSource" },
+      { AST_CLONE_DATA_SOURCE_LIST, "CloneDataSourceList" },
+      { AST_CLONE_DATA_STATEMENT, "CloneDataStatement" },
+      { AST_CREATE_CONNECTION_STATEMENT, "CreateConnectionStatement" },
+      { AST_CREATE_CONSTANT_STATEMENT, "CreateConstantStatement" },
+      { AST_CREATE_DATABASE_STATEMENT, "CreateDatabaseStatement" },
+      { AST_CREATE_PROCEDURE_STATEMENT, "CreateProcedureStatement" },
+      { AST_CREATE_SCHEMA_STATEMENT, "CreateSchemaStatement" },
+      { AST_CREATE_EXTERNAL_SCHEMA_STATEMENT, "CreateExternalSchemaStatement" },
+      { AST_ALIASED_QUERY_LIST, "AliasedQueryList" },
+      { AST_TRANSFORM_CLAUSE, "TransformClause" },
+      { AST_CREATE_MODEL_STATEMENT, "CreateModelStatement" },
+      { AST_INDEX_ALL_COLUMNS, "IndexAllColumns" },
+      { AST_INDEX_ITEM_LIST, "IndexItemList" },
+      { AST_INDEX_STORING_EXPRESSION_LIST, "IndexStoringExpressionList" },
+      { AST_INDEX_UNNEST_EXPRESSION_LIST, "IndexUnnestExpressionList" },
+      { AST_CREATE_INDEX_STATEMENT, "CreateIndexStatement" },
+      { AST_EXPORT_DATA_STATEMENT, "ExportDataStatement" },
+      { AST_EXPORT_MODEL_STATEMENT, "ExportModelStatement" },
+      { AST_EXPORT_METADATA_STATEMENT, "ExportMetadataStatement" },
+      { AST_CALL_STATEMENT, "CallStatement" },
+      { AST_DEFINE_TABLE_STATEMENT, "DefineTableStatement" },
+      { AST_CREATE_LOCALITY_GROUP_STATEMENT, "CreateLocalityGroupStatement" },
+      { AST_WITH_PARTITION_COLUMNS_CLAUSE, "WithPartitionColumnsClause" },
+      { AST_CREATE_SNAPSHOT_STATEMENT, "CreateSnapshotStatement" },
+      { AST_CREATE_SNAPSHOT_TABLE_STATEMENT, "CreateSnapshotTableStatement" },
+      { AST_TYPE_PARAMETER_LIST, "TypeParameterList" },
+      { AST_TVF_SCHEMA, "TVFSchema" },
+      { AST_TVF_SCHEMA_COLUMN, "TVFSchemaColumn" },
+      { AST_TABLE_AND_COLUMN_INFO, "TableAndColumnInfo" },
+      { AST_TABLE_AND_COLUMN_INFO_LIST, "TableAndColumnInfoList" },
+      { AST_TEMPLATED_PARAMETER_TYPE, "TemplatedParameterType" },
+      { AST_DEFAULT_LITERAL, "DefaultLiteral" },
+      { AST_ANALYZE_STATEMENT, "AnalyzeStatement" },
+      { AST_ASSERT_STATEMENT, "AssertStatement" },
+      { AST_ASSERT_ROWS_MODIFIED, "AssertRowsModified" },
+      { AST_RETURNING_CLAUSE, "ReturningClause" },
+      { AST_ON_CONFLICT_CLAUSE, "OnConflictClause" },
+      { AST_DELETE_STATEMENT, "DeleteStatement" },
+      { AST_NOT_NULL_COLUMN_ATTRIBUTE, "NotNullColumnAttribute" },
+      { AST_HIDDEN_COLUMN_ATTRIBUTE, "HiddenColumnAttribute" },
+      { AST_PRIMARY_KEY_COLUMN_ATTRIBUTE, "PrimaryKeyColumnAttribute" },
+      { AST_FOREIGN_KEY_COLUMN_ATTRIBUTE, "ForeignKeyColumnAttribute" },
+      { AST_COLUMN_ATTRIBUTE_LIST, "ColumnAttributeList" },
+      { AST_STRUCT_COLUMN_FIELD, "StructColumnField" },
+      { AST_GENERATED_COLUMN_INFO, "GeneratedColumnInfo" },
+      { AST_COLUMN_DEFINITION, "ColumnDefinition" },
+      { AST_TABLE_ELEMENT_LIST, "TableElementList" },
+      { AST_COLUMN_LIST, "ColumnList" },
+      { AST_COLUMN_POSITION, "ColumnPosition" },
+      { AST_INSERT_VALUES_ROW, "InsertValuesRow" },
+      { AST_INSERT_VALUES_ROW_LIST, "InsertValuesRowList" },
+      { AST_INSERT_STATEMENT, "InsertStatement" },
+      { AST_UPDATE_SET_VALUE, "UpdateSetValue" },
+      { AST_UPDATE_ITEM, "UpdateItem" },
+      { AST_UPDATE_ITEM_LIST, "UpdateItemList" },
+      { AST_UPDATE_STATEMENT, "UpdateStatement" },
+      { AST_TRUNCATE_STATEMENT, "TruncateStatement" },
+      { AST_MERGE_ACTION, "MergeAction" },
+      { AST_MERGE_WHEN_CLAUSE, "MergeWhenClause" },
+      { AST_MERGE_WHEN_CLAUSE_LIST, "MergeWhenClauseList" },
+      { AST_MERGE_STATEMENT, "MergeStatement" },
+      { AST_PRIVILEGE, "Privilege" },
+      { AST_PRIVILEGES, "Privileges" },
+      { AST_GRANTEE_LIST, "GranteeList" },
+      { AST_GRANT_STATEMENT, "GrantStatement" },
+      { AST_REVOKE_STATEMENT, "RevokeStatement" },
+      { AST_REPEATABLE_CLAUSE, "RepeatableClause" },
+      { AST_FILTER_FIELDS_ARG, "FilterFieldsArg" },
+      { AST_REPLACE_FIELDS_ARG, "ReplaceFieldsArg" },
+      { AST_REPLACE_FIELDS_EXPRESSION, "ReplaceFieldsExpression" },
+      { AST_SAMPLE_SIZE, "SampleSize" },
+      { AST_WITH_WEIGHT, "WithWeight" },
+      { AST_SAMPLE_SUFFIX, "SampleSuffix" },
+      { AST_SAMPLE_CLAUSE, "SampleClause" },
+      { AST_SET_OPTIONS_ACTION, "SetOptionsAction" },
+      { AST_SET_AS_ACTION, "SetAsAction" },
+      { AST_ADD_CONSTRAINT_ACTION, "AddConstraintAction" },
+      { AST_DROP_PRIMARY_KEY_ACTION, "DropPrimaryKeyAction" },
+      { AST_DROP_CONSTRAINT_ACTION, "DropConstraintAction" },
+      { AST_ALTER_CONSTRAINT_ENFORCEMENT_ACTION, "AlterConstraintEnforcementAction" },
+      { AST_ALTER_CONSTRAINT_SET_OPTIONS_ACTION, "AlterConstraintSetOptionsAction" },
+      { AST_ADD_COLUMN_IDENTIFIER_ACTION, "AddColumnIdentifierAction" },
+      { AST_ADD_COLUMN_ACTION, "AddColumnAction" },
+      { AST_DROP_COLUMN_ACTION, "DropColumnAction" },
+      { AST_RENAME_COLUMN_ACTION, "RenameColumnAction" },
+      { AST_ALTER_COLUMN_TYPE_ACTION, "AlterColumnTypeAction" },
+      { AST_ALTER_COLUMN_OPTIONS_ACTION, "AlterColumnOptionsAction" },
+      { AST_ALTER_COLUMN_SET_DEFAULT_ACTION, "AlterColumnSetDefaultAction" },
+      { AST_ALTER_COLUMN_DROP_DEFAULT_ACTION, "AlterColumnDropDefaultAction" },
+      { AST_ALTER_COLUMN_DROP_NOT_NULL_ACTION, "AlterColumnDropNotNullAction" },
+      { AST_ALTER_COLUMN_DROP_GENERATED_ACTION, "AlterColumnDropGeneratedAction" },
+      { AST_GRANT_TO_CLAUSE, "GrantToClause" },
+      { AST_RESTRICT_TO_CLAUSE, "RestrictToClause" },
+      { AST_ADD_TO_RESTRICTEE_LIST_CLAUSE, "AddToRestricteeListClause" },
+      { AST_REMOVE_FROM_RESTRICTEE_LIST_CLAUSE, "RemoveFromRestricteeListClause" },
+      { AST_FILTER_USING_CLAUSE, "FilterUsingClause" },
+      { AST_REVOKE_FROM_CLAUSE, "RevokeFromClause" },
+      { AST_RENAME_TO_CLAUSE, "RenameToClause" },
+      { AST_SET_COLLATE_CLAUSE, "SetCollateClause" },
+      { AST_ALTER_SUB_ENTITY_ACTION, "AlterSubEntityAction" },
+      { AST_ADD_SUB_ENTITY_ACTION, "AddSubEntityAction" },
+      { AST_DROP_SUB_ENTITY_ACTION, "DropSubEntityAction" },
+      { AST_ADD_TTL_ACTION, "AddTtlAction" },
+      { AST_REPLACE_TTL_ACTION, "ReplaceTtlAction" },
+      { AST_DROP_TTL_ACTION, "DropTtlAction" },
+      { AST_ALTER_ACTION_LIST, "AlterActionList" },
+      { AST_ALTER_ALL_ROW_ACCESS_POLICIES_STATEMENT, "AlterAllRowAccessPoliciesStatement" },
+      { AST_FOREIGN_KEY_ACTIONS, "ForeignKeyActions" },
+      { AST_FOREIGN_KEY_REFERENCE, "ForeignKeyReference" },
+      { AST_SCRIPT, "Script" },
+      { AST_ELSEIF_CLAUSE, "ElseifClause" },
+      { AST_ELSEIF_CLAUSE_LIST, "ElseifClauseList" },
+      { AST_IF_STATEMENT, "IfStatement" },
+      { AST_WHEN_THEN_CLAUSE, "WhenThenClause" },
+      { AST_WHEN_THEN_CLAUSE_LIST, "WhenThenClauseList" },
+      { AST_CASE_STATEMENT, "CaseStatement" },
+      { AST_HINT, "Hint" },
+      { AST_HINT_ENTRY, "HintEntry" },
+      { AST_UNPIVOT_IN_ITEM_LABEL, "UnpivotInItemLabel" },
+      { AST_DESCRIPTOR, "Descriptor" },
+      { AST_SIMPLE_COLUMN_SCHEMA, "SimpleColumnSchema" },
+      { AST_ARRAY_COLUMN_SCHEMA, "ArrayColumnSchema" },
+      { AST_RANGE_COLUMN_SCHEMA, "RangeColumnSchema" },
+      { AST_PRIMARY_KEY_ELEMENT, "PrimaryKeyElement" },
+      { AST_PRIMARY_KEY_ELEMENT_LIST, "PrimaryKeyElementList" },
+      { AST_PRIMARY_KEY, "PrimaryKey" },
+      { AST_FOREIGN_KEY, "ForeignKey" },
+      { AST_CHECK_CONSTRAINT, "CheckConstraint" },
+      { AST_DESCRIPTOR_COLUMN, "DescriptorColumn" },
+      { AST_DESCRIPTOR_COLUMN_LIST, "DescriptorColumnList" },
+      { AST_CREATE_ENTITY_STATEMENT, "CreateEntityStatement" },
+      { AST_RAISE_STATEMENT, "RaiseStatement" },
+      { AST_EXCEPTION_HANDLER, "ExceptionHandler" },
+      { AST_EXCEPTION_HANDLER_LIST, "ExceptionHandlerList" },
+      { AST_BEGIN_END_BLOCK, "BeginEndBlock" },
+      { AST_IDENTIFIER_LIST, "IdentifierList" },
+      { AST_VARIABLE_DECLARATION, "VariableDeclaration" },
+      { AST_UNTIL_CLAUSE, "UntilClause" },
+      { AST_BREAK_STATEMENT, "BreakStatement" },
+      { AST_CONTINUE_STATEMENT, "ContinueStatement" },
+      { AST_DROP_PRIVILEGE_RESTRICTION_STATEMENT, "DropPrivilegeRestrictionStatement" },
+      { AST_DROP_ROW_ACCESS_POLICY_STATEMENT, "DropRowAccessPolicyStatement" },
+      { AST_CREATE_PRIVILEGE_RESTRICTION_STATEMENT, "CreatePrivilegeRestrictionStatement" },
+      { AST_CREATE_ROW_ACCESS_POLICY_STATEMENT, "CreateRowAccessPolicyStatement" },
+      { AST_DROP_STATEMENT, "DropStatement" },
+      { AST_RETURN_STATEMENT, "ReturnStatement" },
+      { AST_SINGLE_ASSIGNMENT, "SingleAssignment" },
+      { AST_PARAMETER_ASSIGNMENT, "ParameterAssignment" },
+      { AST_SYSTEM_VARIABLE_ASSIGNMENT, "SystemVariableAssignment" },
+      { AST_ASSIGNMENT_FROM_STRUCT, "AssignmentFromStruct" },
+      { AST_CREATE_TABLE_STATEMENT, "CreateTableStatement" },
+      { AST_CREATE_EXTERNAL_TABLE_STATEMENT, "CreateExternalTableStatement" },
+      { AST_CREATE_VIEW_STATEMENT, "CreateViewStatement" },
+      { AST_CREATE_MATERIALIZED_VIEW_STATEMENT, "CreateMaterializedViewStatement" },
+      { AST_CREATE_APPROX_VIEW_STATEMENT, "CreateApproxViewStatement" },
+      { AST_WHILE_STATEMENT, "WhileStatement" },
+      { AST_REPEAT_STATEMENT, "RepeatStatement" },
+      { AST_FOR_IN_STATEMENT, "ForInStatement" },
+      { AST_ALTER_CONNECTION_STATEMENT, "AlterConnectionStatement" },
+      { AST_ALTER_DATABASE_STATEMENT, "AlterDatabaseStatement" },
+      { AST_ALTER_SCHEMA_STATEMENT, "AlterSchemaStatement" },
+      { AST_ALTER_EXTERNAL_SCHEMA_STATEMENT, "AlterExternalSchemaStatement" },
+      { AST_ALTER_TABLE_STATEMENT, "AlterTableStatement" },
+      { AST_ALTER_VIEW_STATEMENT, "AlterViewStatement" },
+      { AST_ALTER_MATERIALIZED_VIEW_STATEMENT, "AlterMaterializedViewStatement" },
+      { AST_ALTER_APPROX_VIEW_STATEMENT, "AlterApproxViewStatement" },
+      { AST_ALTER_MODEL_STATEMENT, "AlterModelStatement" },
+      { AST_ALTER_PRIVILEGE_RESTRICTION_STATEMENT, "AlterPrivilegeRestrictionStatement" },
+      { AST_ALTER_ROW_ACCESS_POLICY_STATEMENT, "AlterRowAccessPolicyStatement" },
+      { AST_ALTER_ENTITY_STATEMENT, "AlterEntityStatement" },
+      { AST_REBUILD_ACTION, "RebuildAction" },
+      { AST_ALTER_INDEX_STATEMENT, "AlterIndexStatement" },
+      { AST_CREATE_FUNCTION_STATEMENT, "CreateFunctionStatement" },
+      { AST_CREATE_TABLE_FUNCTION_STATEMENT, "CreateTableFunctionStatement" },
+      { AST_STRUCT_COLUMN_SCHEMA, "StructColumnSchema" },
+      { AST_INFERRED_TYPE_COLUMN_SCHEMA, "InferredTypeColumnSchema" },
+      { AST_EXECUTE_INTO_CLAUSE, "ExecuteIntoClause" },
+      { AST_EXECUTE_USING_ARGUMENT, "ExecuteUsingArgument" },
+      { AST_EXECUTE_USING_CLAUSE, "ExecuteUsingClause" },
+      { AST_EXECUTE_IMMEDIATE_STATEMENT, "ExecuteImmediateStatement" },
+      { AST_AUX_LOAD_DATA_FROM_FILES_OPTIONS_LIST, "AuxLoadDataFromFilesOptionsList" },
+      { AST_AUX_LOAD_DATA_PARTITIONS_CLAUSE, "AuxLoadDataPartitionsClause" },
+      { AST_AUX_LOAD_DATA_STATEMENT, "AuxLoadDataStatement" },
+      { AST_LABEL, "Label" },
+      { AST_WITH_EXPRESSION, "WithExpression" },
+      { AST_TTL_CLAUSE, "TtlClause" },
+      { AST_LOCATION, "Location" },
+      { AST_INPUT_OUTPUT_CLAUSE, "InputOutputClause" },
+      { AST_SPANNER_TABLE_OPTIONS, "SpannerTableOptions" },
+      { AST_SPANNER_INTERLEAVE_CLAUSE, "SpannerInterleaveClause" },
+      { AST_SPANNER_ALTER_COLUMN_ACTION, "SpannerAlterColumnAction" },
+      { AST_SPANNER_SET_ON_DELETE_ACTION, "SpannerSetOnDeleteAction" },
+      { AST_RANGE_LITERAL, "RangeLiteral" },
+      { AST_RANGE_TYPE, "RangeType" },
+      { AST_CREATE_PROPERTY_GRAPH_STATEMENT, "CreatePropertyGraphStatement" },
+      { AST_GRAPH_ELEMENT_TABLE_LIST, "GraphElementTableList" },
+      { AST_GRAPH_ELEMENT_TABLE, "GraphElementTable" },
+      { AST_GRAPH_NODE_TABLE_REFERENCE, "GraphNodeTableReference" },
+      { AST_GRAPH_ELEMENT_LABEL_AND_PROPERTIES_LIST, "GraphElementLabelAndPropertiesList" },
+      { AST_GRAPH_ELEMENT_LABEL_AND_PROPERTIES, "GraphElementLabelAndProperties" },
+      { AST_GRAPH_PROPERTIES, "GraphProperties" },
+      { AST_GRAPH_PATTERN, "GraphPattern" },
+      { AST_GQL_QUERY, "GqlQuery" },
+      { AST_GQL_GRAPH_PATTERN_QUERY, "GqlGraphPatternQuery" },
+      { AST_GQL_LINEAR_OPS_QUERY, "GqlLinearOpsQuery" },
+      { AST_GRAPH_TABLE_QUERY, "GraphTableQuery" },
+      { AST_GRAPH_ELEMENT_LABEL, "GraphElementLabel" },
+      { AST_GRAPH_WILDCARD_LABEL, "GraphWildcardLabel" },
+      { AST_GRAPH_LABEL_OPERATION, "GraphLabelOperation" },
+      { AST_GRAPH_LABEL_FILTER, "GraphLabelFilter" },
+      { AST_GRAPH_IS_LABELED_PREDICATE, "GraphIsLabeledPredicate" },
+      { AST_GRAPH_ELEMENT_PATTERN_FILLER, "GraphElementPatternFiller" },
+      { AST_GRAPH_PROPERTY_SPECIFICATION, "GraphPropertySpecification" },
+      { AST_GRAPH_PROPERTY_NAME_AND_VALUE, "GraphPropertyNameAndValue" },
+      { AST_GRAPH_NODE_PATTERN, "GraphNodePattern" },
+      { AST_GRAPH_LHS_HINT, "GraphLhsHint" },
+      { AST_GRAPH_RHS_HINT, "GraphRhsHint" },
+      { AST_GRAPH_PATH_SEARCH_PREFIX, "GraphPathSearchPrefix" },
+      { AST_GRAPH_PATH_SEARCH_PREFIX_COUNT, "GraphPathSearchPrefixCount" },
+      { AST_GRAPH_EDGE_PATTERN, "GraphEdgePattern" },
+      { AST_GRAPH_PATH_MODE, "GraphPathMode" },
+      { AST_GRAPH_PATH_PATTERN, "GraphPathPattern" },
+      { AST_GQL_MATCH, "GqlMatch" },
+      { AST_GQL_RETURN, "GqlReturn" },
+      { AST_GQL_WITH, "GqlWith" },
+      { AST_GQL_FOR, "GqlFor" },
+      { AST_GQL_LET, "GqlLet" },
+      { AST_GQL_LET_VARIABLE_DEFINITION_LIST, "GqlLetVariableDefinitionList" },
+      { AST_GQL_LET_VARIABLE_DEFINITION, "GqlLetVariableDefinition" },
+      { AST_GQL_FILTER, "GqlFilter" },
+      { AST_GQL_OPERATOR_LIST, "GqlOperatorList" },
+      { AST_GQL_SET_OPERATION, "GqlSetOperation" },
+      { AST_GQL_PAGE_LIMIT, "GqlPageLimit" },
+      { AST_GQL_PAGE_OFFSET, "GqlPageOffset" },
+      { AST_GQL_PAGE, "GqlPage" },
+      { AST_GQL_ORDER_BY_AND_PAGE, "GqlOrderByAndPage" },
+      { AST_GQL_SAMPLE, "GqlSample" },
+      { AST_SELECT_WITH, "SelectWith" },
+      { AST_COLUMN_WITH_OPTIONS, "ColumnWithOptions" },
+      { AST_COLUMN_WITH_OPTIONS_LIST, "ColumnWithOptionsList" },
+      { AST_MACRO_BODY, "MacroBody" },
+      { AST_DEFINE_MACRO_STATEMENT, "DefineMacroStatement" },
+      { AST_UNDROP_STATEMENT, "UndropStatement" },
+      { AST_IDENTITY_COLUMN_INFO, "IdentityColumnInfo" },
+      { AST_IDENTITY_COLUMN_START_WITH, "IdentityColumnStartWith" },
+      { AST_IDENTITY_COLUMN_INCREMENT_BY, "IdentityColumnIncrementBy" },
+      { AST_IDENTITY_COLUMN_MAX_VALUE, "IdentityColumnMaxValue" },
+      { AST_IDENTITY_COLUMN_MIN_VALUE, "IdentityColumnMinValue" },
+      { AST_ALIASED_QUERY_MODIFIERS, "AliasedQueryModifiers" },
+      { AST_INT_OR_UNBOUNDED, "IntOrUnbounded" },
+      { AST_RECURSION_DEPTH_MODIFIER, "RecursionDepthModifier" },
+      { AST_MAP_TYPE, "MapType" },
+      { AST_LOCK_MODE, "LockMode" },
+      { AST_PIPE_RECURSIVE_UNION, "PipeRecursiveUnion" },
+  };
 
-  map[AST_QUERY_STATEMENT] = "QueryStatement";
-  map[AST_ALIASED_QUERY_EXPRESSION] = "AliasedQueryExpression";
-  map[AST_QUERY] = "Query";
-  map[AST_FROM_QUERY] = "FromQuery";
-  map[AST_SUBPIPELINE] = "Subpipeline";
-  map[AST_PIPE_EXTEND] = "PipeExtend";
-  map[AST_PIPE_RENAME_ITEM] = "PipeRenameItem";
-  map[AST_PIPE_RENAME] = "PipeRename";
-  map[AST_PIPE_AGGREGATE] = "PipeAggregate";
-  map[AST_PIPE_SET_OPERATION] = "PipeSetOperation";
-  map[AST_PIPE_JOIN] = "PipeJoin";
-  map[AST_PIPE_CALL] = "PipeCall";
-  map[AST_PIPE_WINDOW] = "PipeWindow";
-  map[AST_PIPE_WHERE] = "PipeWhere";
-  map[AST_PIPE_SELECT] = "PipeSelect";
-  map[AST_PIPE_LIMIT_OFFSET] = "PipeLimitOffset";
-  map[AST_PIPE_ORDER_BY] = "PipeOrderBy";
-  map[AST_PIPE_DISTINCT] = "PipeDistinct";
-  map[AST_PIPE_TABLESAMPLE] = "PipeTablesample";
-  map[AST_PIPE_AS] = "PipeAs";
-  map[AST_PIPE_STATIC_DESCRIBE] = "PipeStaticDescribe";
-  map[AST_PIPE_ASSERT] = "PipeAssert";
-  map[AST_PIPE_LOG] = "PipeLog";
-  map[AST_PIPE_DROP] = "PipeDrop";
-  map[AST_PIPE_SET_ITEM] = "PipeSetItem";
-  map[AST_PIPE_SET] = "PipeSet";
-  map[AST_PIPE_PIVOT] = "PipePivot";
-  map[AST_PIPE_UNPIVOT] = "PipeUnpivot";
-  map[AST_PIPE_IF] = "PipeIf";
-  map[AST_PIPE_IF_CASE] = "PipeIfCase";
-  map[AST_PIPE_FORK] = "PipeFork";
-  map[AST_PIPE_EXPORT_DATA] = "PipeExportData";
-  map[AST_SELECT] = "Select";
-  map[AST_SELECT_LIST] = "SelectList";
-  map[AST_SELECT_COLUMN] = "SelectColumn";
-  map[AST_INT_LITERAL] = "IntLiteral";
-  map[AST_IDENTIFIER] = "Identifier";
-  map[AST_ALIAS] = "Alias";
-  map[AST_PATH_EXPRESSION] = "PathExpression";
-  map[AST_TABLE_PATH_EXPRESSION] = "TablePathExpression";
-  map[AST_PIPE_JOIN_LHS_PLACEHOLDER] = "PipeJoinLhsPlaceholder";
-  map[AST_FROM_CLAUSE] = "FromClause";
-  map[AST_WHERE_CLAUSE] = "WhereClause";
-  map[AST_BOOLEAN_LITERAL] = "BooleanLiteral";
-  map[AST_AND_EXPR] = "AndExpr";
-  map[AST_BINARY_EXPRESSION] = "BinaryExpression";
-  map[AST_STRING_LITERAL] = "StringLiteral";
-  map[AST_STRING_LITERAL_COMPONENT] = "StringLiteralComponent";
-  map[AST_STAR] = "Star";
-  map[AST_OR_EXPR] = "OrExpr";
-  map[AST_ORDERING_EXPRESSION] = "OrderingExpression";
-  map[AST_ORDER_BY] = "OrderBy";
-  map[AST_GROUPING_ITEM_ORDER] = "GroupingItemOrder";
-  map[AST_GROUPING_ITEM] = "GroupingItem";
-  map[AST_GROUP_BY] = "GroupBy";
-  map[AST_GROUP_BY_ALL] = "GroupByAll";
-  map[AST_LIMIT_OFFSET] = "LimitOffset";
-  map[AST_FLOAT_LITERAL] = "FloatLiteral";
-  map[AST_NULL_LITERAL] = "NullLiteral";
-  map[AST_ON_CLAUSE] = "OnClause";
-  map[AST_ALIASED_QUERY] = "AliasedQuery";
-  map[AST_JOIN] = "Join";
-  map[AST_WITH_CLAUSE] = "WithClause";
-  map[AST_HAVING] = "Having";
-  map[AST_SIMPLE_TYPE] = "SimpleType";
-  map[AST_ARRAY_TYPE] = "ArrayType";
-  map[AST_STRUCT_FIELD] = "StructField";
-  map[AST_STRUCT_TYPE] = "StructType";
-  map[AST_FUNCTION_TYPE_ARG_LIST] = "FunctionTypeArgList";
-  map[AST_FUNCTION_TYPE] = "FunctionType";
-  map[AST_CAST_EXPRESSION] = "CastExpression";
-  map[AST_SELECT_AS] = "SelectAs";
-  map[AST_ROLLUP] = "Rollup";
-  map[AST_CUBE] = "Cube";
-  map[AST_GROUPING_SET] = "GroupingSet";
-  map[AST_GROUPING_SET_LIST] = "GroupingSetList";
-  map[AST_EXPRESSION_WITH_ALIAS] = "ExpressionWithAlias";
-  map[AST_FUNCTION_CALL] = "FunctionCall";
-  map[AST_ARRAY_CONSTRUCTOR] = "ArrayConstructor";
-  map[AST_STRUCT_CONSTRUCTOR_ARG] = "StructConstructorArg";
-  map[AST_STRUCT_CONSTRUCTOR_WITH_PARENS] = "StructConstructorWithParens";
-  map[AST_STRUCT_CONSTRUCTOR_WITH_KEYWORD] = "StructConstructorWithKeyword";
-  map[AST_IN_EXPRESSION] = "InExpression";
-  map[AST_IN_LIST] = "InList";
-  map[AST_BETWEEN_EXPRESSION] = "BetweenExpression";
-  map[AST_NUMERIC_LITERAL] = "NumericLiteral";
-  map[AST_BIGNUMERIC_LITERAL] = "BigNumericLiteral";
-  map[AST_BYTES_LITERAL] = "BytesLiteral";
-  map[AST_BYTES_LITERAL_COMPONENT] = "BytesLiteralComponent";
-  map[AST_DATE_OR_TIME_LITERAL] = "DateOrTimeLiteral";
-  map[AST_MAX_LITERAL] = "MaxLiteral";
-  map[AST_JSON_LITERAL] = "JSONLiteral";
-  map[AST_CASE_VALUE_EXPRESSION] = "CaseValueExpression";
-  map[AST_CASE_NO_VALUE_EXPRESSION] = "CaseNoValueExpression";
-  map[AST_ARRAY_ELEMENT] = "ArrayElement";
-  map[AST_BITWISE_SHIFT_EXPRESSION] = "BitwiseShiftExpression";
-  map[AST_COLLATE] = "Collate";
-  map[AST_DOT_GENERALIZED_FIELD] = "DotGeneralizedField";
-  map[AST_DOT_IDENTIFIER] = "DotIdentifier";
-  map[AST_DOT_STAR] = "DotStar";
-  map[AST_DOT_STAR_WITH_MODIFIERS] = "DotStarWithModifiers";
-  map[AST_EXPRESSION_SUBQUERY] = "ExpressionSubquery";
-  map[AST_EXTRACT_EXPRESSION] = "ExtractExpression";
-  map[AST_HAVING_MODIFIER] = "HavingModifier";
-  map[AST_INTERVAL_EXPR] = "IntervalExpr";
-  map[AST_SEQUENCE_ARG] = "SequenceArg";
-  map[AST_NAMED_ARGUMENT] = "NamedArgument";
-  map[AST_NULL_ORDER] = "NullOrder";
-  map[AST_ON_OR_USING_CLAUSE_LIST] = "OnOrUsingClauseList";
-  map[AST_PARENTHESIZED_JOIN] = "ParenthesizedJoin";
-  map[AST_PARTITION_BY] = "PartitionBy";
-  map[AST_SET_OPERATION] = "SetOperation";
-  map[AST_SET_OPERATION_METADATA_LIST] = "SetOperationMetadataList";
-  map[AST_SET_OPERATION_ALL_OR_DISTINCT] = "SetOperationAllOrDistinct";
-  map[AST_SET_OPERATION_TYPE] = "SetOperationType";
-  map[AST_SET_OPERATION_COLUMN_MATCH_MODE] = "SetOperationColumnMatchMode";
-  map[AST_SET_OPERATION_COLUMN_PROPAGATION_MODE] = "SetOperationColumnPropagationMode";
-  map[AST_SET_OPERATION_METADATA] = "SetOperationMetadata";
-  map[AST_STAR_EXCEPT_LIST] = "StarExceptList";
-  map[AST_STAR_MODIFIERS] = "StarModifiers";
-  map[AST_STAR_REPLACE_ITEM] = "StarReplaceItem";
-  map[AST_STAR_WITH_MODIFIERS] = "StarWithModifiers";
-  map[AST_TABLE_SUBQUERY] = "TableSubquery";
-  map[AST_UNARY_EXPRESSION] = "UnaryExpression";
-  map[AST_EXPRESSION_WITH_OPT_ALIAS] = "ExpressionWithOptAlias";
-  map[AST_UNNEST_EXPRESSION] = "UnnestExpression";
-  map[AST_WINDOW_CLAUSE] = "WindowClause";
-  map[AST_WINDOW_DEFINITION] = "WindowDefinition";
-  map[AST_WINDOW_FRAME] = "WindowFrame";
-  map[AST_WINDOW_FRAME_EXPR] = "WindowFrameExpr";
-  map[AST_LIKE_EXPRESSION] = "LikeExpression";
-  map[AST_WINDOW_SPECIFICATION] = "WindowSpecification";
-  map[AST_WITH_OFFSET] = "WithOffset";
-  map[AST_ANY_SOME_ALL_OP] = "AnySomeAllOp";
-  map[AST_STATEMENT_LIST] = "StatementList";
-  map[AST_HINTED_STATEMENT] = "HintedStatement";
-  map[AST_EXPLAIN_STATEMENT] = "ExplainStatement";
-  map[AST_DESCRIBE_STATEMENT] = "DescribeStatement";
-  map[AST_SHOW_STATEMENT] = "ShowStatement";
-  map[AST_TRANSACTION_ISOLATION_LEVEL] = "TransactionIsolationLevel";
-  map[AST_TRANSACTION_READ_WRITE_MODE] = "TransactionReadWriteMode";
-  map[AST_TRANSACTION_MODE_LIST] = "TransactionModeList";
-  map[AST_BEGIN_STATEMENT] = "BeginStatement";
-  map[AST_SET_TRANSACTION_STATEMENT] = "SetTransactionStatement";
-  map[AST_COMMIT_STATEMENT] = "CommitStatement";
-  map[AST_ROLLBACK_STATEMENT] = "RollbackStatement";
-  map[AST_START_BATCH_STATEMENT] = "StartBatchStatement";
-  map[AST_RUN_BATCH_STATEMENT] = "RunBatchStatement";
-  map[AST_ABORT_BATCH_STATEMENT] = "AbortBatchStatement";
-  map[AST_DROP_ENTITY_STATEMENT] = "DropEntityStatement";
-  map[AST_DROP_FUNCTION_STATEMENT] = "DropFunctionStatement";
-  map[AST_DROP_TABLE_FUNCTION_STATEMENT] = "DropTableFunctionStatement";
-  map[AST_DROP_ALL_ROW_ACCESS_POLICIES_STATEMENT] = "DropAllRowAccessPoliciesStatement";
-  map[AST_DROP_MATERIALIZED_VIEW_STATEMENT] = "DropMaterializedViewStatement";
-  map[AST_DROP_SNAPSHOT_TABLE_STATEMENT] = "DropSnapshotTableStatement";
-  map[AST_DROP_SEARCH_INDEX_STATEMENT] = "DropSearchIndexStatement";
-  map[AST_DROP_VECTOR_INDEX_STATEMENT] = "DropVectorIndexStatement";
-  map[AST_RENAME_STATEMENT] = "RenameStatement";
-  map[AST_IMPORT_STATEMENT] = "ImportStatement";
-  map[AST_MODULE_STATEMENT] = "ModuleStatement";
-  map[AST_WITH_CONNECTION_CLAUSE] = "WithConnectionClause";
-  map[AST_INTO_ALIAS] = "IntoAlias";
-  map[AST_UNNEST_EXPRESSION_WITH_OPT_ALIAS_AND_OFFSET] = "UnnestExpressionWithOptAliasAndOffset";
-  map[AST_PIVOT_EXPRESSION] = "PivotExpression";
-  map[AST_PIVOT_VALUE] = "PivotValue";
-  map[AST_PIVOT_EXPRESSION_LIST] = "PivotExpressionList";
-  map[AST_PIVOT_VALUE_LIST] = "PivotValueList";
-  map[AST_PIVOT_CLAUSE] = "PivotClause";
-  map[AST_UNPIVOT_IN_ITEM] = "UnpivotInItem";
-  map[AST_UNPIVOT_IN_ITEM_LIST] = "UnpivotInItemList";
-  map[AST_UNPIVOT_CLAUSE] = "UnpivotClause";
-  map[AST_USING_CLAUSE] = "UsingClause";
-  map[AST_FOR_SYSTEM_TIME] = "ForSystemTime";
-  map[AST_MATCH_RECOGNIZE_CLAUSE] = "MatchRecognizeClause";
-  map[AST_AFTER_MATCH_SKIP_CLAUSE] = "AfterMatchSkipClause";
-  map[AST_ROW_PATTERN_VARIABLE] = "RowPatternVariable";
-  map[AST_ROW_PATTERN_OPERATION] = "RowPatternOperation";
-  map[AST_EMPTY_ROW_PATTERN] = "EmptyRowPattern";
-  map[AST_ROW_PATTERN_ANCHOR] = "RowPatternAnchor";
-  map[AST_BOUNDED_QUANTIFIER] = "BoundedQuantifier";
-  map[AST_QUANTIFIER_BOUND] = "QuantifierBound";
-  map[AST_FIXED_QUANTIFIER] = "FixedQuantifier";
-  map[AST_SYMBOL_QUANTIFIER] = "SymbolQuantifier";
-  map[AST_ROW_PATTERN_QUANTIFICATION] = "RowPatternQuantification";
-  map[AST_QUALIFY] = "Qualify";
-  map[AST_CLAMPED_BETWEEN_MODIFIER] = "ClampedBetweenModifier";
-  map[AST_WITH_REPORT_MODIFIER] = "WithReportModifier";
-  map[AST_FORMAT_CLAUSE] = "FormatClause";
-  map[AST_PATH_EXPRESSION_LIST] = "PathExpressionList";
-  map[AST_PARAMETER_EXPR] = "ParameterExpr";
-  map[AST_SYSTEM_VARIABLE_EXPR] = "SystemVariableExpr";
-  map[AST_WITH_GROUP_ROWS] = "WithGroupRows";
-  map[AST_LAMBDA] = "Lambda";
-  map[AST_ANALYTIC_FUNCTION_CALL] = "AnalyticFunctionCall";
-  map[AST_FUNCTION_CALL_WITH_GROUP_ROWS] = "FunctionCallWithGroupRows";
-  map[AST_CLUSTER_BY] = "ClusterBy";
-  map[AST_NEW_CONSTRUCTOR_ARG] = "NewConstructorArg";
-  map[AST_NEW_CONSTRUCTOR] = "NewConstructor";
-  map[AST_BRACED_CONSTRUCTOR_LHS] = "BracedConstructorLhs";
-  map[AST_BRACED_CONSTRUCTOR_FIELD_VALUE] = "BracedConstructorFieldValue";
-  map[AST_BRACED_CONSTRUCTOR_FIELD] = "BracedConstructorField";
-  map[AST_BRACED_CONSTRUCTOR] = "BracedConstructor";
-  map[AST_BRACED_NEW_CONSTRUCTOR] = "BracedNewConstructor";
-  map[AST_STRUCT_BRACED_CONSTRUCTOR] = "StructBracedConstructor";
-  map[AST_OPTIONS_LIST] = "OptionsList";
-  map[AST_OPTIONS_ENTRY] = "OptionsEntry";
-  map[AST_FUNCTION_PARAMETER] = "FunctionParameter";
-  map[AST_FUNCTION_PARAMETERS] = "FunctionParameters";
-  map[AST_FUNCTION_DECLARATION] = "FunctionDeclaration";
-  map[AST_SQL_FUNCTION_BODY] = "SqlFunctionBody";
-  map[AST_TVF_ARGUMENT] = "TVFArgument";
-  map[AST_TVF] = "TVF";
-  map[AST_TABLE_CLAUSE] = "TableClause";
-  map[AST_MODEL_CLAUSE] = "ModelClause";
-  map[AST_CONNECTION_CLAUSE] = "ConnectionClause";
-  map[AST_CLONE_DATA_SOURCE] = "CloneDataSource";
-  map[AST_COPY_DATA_SOURCE] = "CopyDataSource";
-  map[AST_CLONE_DATA_SOURCE_LIST] = "CloneDataSourceList";
-  map[AST_CLONE_DATA_STATEMENT] = "CloneDataStatement";
-  map[AST_CREATE_CONNECTION_STATEMENT] = "CreateConnectionStatement";
-  map[AST_CREATE_CONSTANT_STATEMENT] = "CreateConstantStatement";
-  map[AST_CREATE_DATABASE_STATEMENT] = "CreateDatabaseStatement";
-  map[AST_CREATE_PROCEDURE_STATEMENT] = "CreateProcedureStatement";
-  map[AST_CREATE_SCHEMA_STATEMENT] = "CreateSchemaStatement";
-  map[AST_CREATE_EXTERNAL_SCHEMA_STATEMENT] = "CreateExternalSchemaStatement";
-  map[AST_ALIASED_QUERY_LIST] = "AliasedQueryList";
-  map[AST_TRANSFORM_CLAUSE] = "TransformClause";
-  map[AST_CREATE_MODEL_STATEMENT] = "CreateModelStatement";
-  map[AST_INDEX_ALL_COLUMNS] = "IndexAllColumns";
-  map[AST_INDEX_ITEM_LIST] = "IndexItemList";
-  map[AST_INDEX_STORING_EXPRESSION_LIST] = "IndexStoringExpressionList";
-  map[AST_INDEX_UNNEST_EXPRESSION_LIST] = "IndexUnnestExpressionList";
-  map[AST_CREATE_INDEX_STATEMENT] = "CreateIndexStatement";
-  map[AST_EXPORT_DATA_STATEMENT] = "ExportDataStatement";
-  map[AST_EXPORT_MODEL_STATEMENT] = "ExportModelStatement";
-  map[AST_EXPORT_METADATA_STATEMENT] = "ExportMetadataStatement";
-  map[AST_CALL_STATEMENT] = "CallStatement";
-  map[AST_DEFINE_TABLE_STATEMENT] = "DefineTableStatement";
-  map[AST_WITH_PARTITION_COLUMNS_CLAUSE] = "WithPartitionColumnsClause";
-  map[AST_CREATE_SNAPSHOT_STATEMENT] = "CreateSnapshotStatement";
-  map[AST_CREATE_SNAPSHOT_TABLE_STATEMENT] = "CreateSnapshotTableStatement";
-  map[AST_TYPE_PARAMETER_LIST] = "TypeParameterList";
-  map[AST_TVF_SCHEMA] = "TVFSchema";
-  map[AST_TVF_SCHEMA_COLUMN] = "TVFSchemaColumn";
-  map[AST_TABLE_AND_COLUMN_INFO] = "TableAndColumnInfo";
-  map[AST_TABLE_AND_COLUMN_INFO_LIST] = "TableAndColumnInfoList";
-  map[AST_TEMPLATED_PARAMETER_TYPE] = "TemplatedParameterType";
-  map[AST_DEFAULT_LITERAL] = "DefaultLiteral";
-  map[AST_ANALYZE_STATEMENT] = "AnalyzeStatement";
-  map[AST_ASSERT_STATEMENT] = "AssertStatement";
-  map[AST_ASSERT_ROWS_MODIFIED] = "AssertRowsModified";
-  map[AST_RETURNING_CLAUSE] = "ReturningClause";
-  map[AST_ON_CONFLICT_CLAUSE] = "OnConflictClause";
-  map[AST_DELETE_STATEMENT] = "DeleteStatement";
-  map[AST_NOT_NULL_COLUMN_ATTRIBUTE] = "NotNullColumnAttribute";
-  map[AST_HIDDEN_COLUMN_ATTRIBUTE] = "HiddenColumnAttribute";
-  map[AST_PRIMARY_KEY_COLUMN_ATTRIBUTE] = "PrimaryKeyColumnAttribute";
-  map[AST_FOREIGN_KEY_COLUMN_ATTRIBUTE] = "ForeignKeyColumnAttribute";
-  map[AST_COLUMN_ATTRIBUTE_LIST] = "ColumnAttributeList";
-  map[AST_STRUCT_COLUMN_FIELD] = "StructColumnField";
-  map[AST_GENERATED_COLUMN_INFO] = "GeneratedColumnInfo";
-  map[AST_COLUMN_DEFINITION] = "ColumnDefinition";
-  map[AST_TABLE_ELEMENT_LIST] = "TableElementList";
-  map[AST_COLUMN_LIST] = "ColumnList";
-  map[AST_COLUMN_POSITION] = "ColumnPosition";
-  map[AST_INSERT_VALUES_ROW] = "InsertValuesRow";
-  map[AST_INSERT_VALUES_ROW_LIST] = "InsertValuesRowList";
-  map[AST_INSERT_STATEMENT] = "InsertStatement";
-  map[AST_UPDATE_SET_VALUE] = "UpdateSetValue";
-  map[AST_UPDATE_ITEM] = "UpdateItem";
-  map[AST_UPDATE_ITEM_LIST] = "UpdateItemList";
-  map[AST_UPDATE_STATEMENT] = "UpdateStatement";
-  map[AST_TRUNCATE_STATEMENT] = "TruncateStatement";
-  map[AST_MERGE_ACTION] = "MergeAction";
-  map[AST_MERGE_WHEN_CLAUSE] = "MergeWhenClause";
-  map[AST_MERGE_WHEN_CLAUSE_LIST] = "MergeWhenClauseList";
-  map[AST_MERGE_STATEMENT] = "MergeStatement";
-  map[AST_PRIVILEGE] = "Privilege";
-  map[AST_PRIVILEGES] = "Privileges";
-  map[AST_GRANTEE_LIST] = "GranteeList";
-  map[AST_GRANT_STATEMENT] = "GrantStatement";
-  map[AST_REVOKE_STATEMENT] = "RevokeStatement";
-  map[AST_REPEATABLE_CLAUSE] = "RepeatableClause";
-  map[AST_FILTER_FIELDS_ARG] = "FilterFieldsArg";
-  map[AST_REPLACE_FIELDS_ARG] = "ReplaceFieldsArg";
-  map[AST_REPLACE_FIELDS_EXPRESSION] = "ReplaceFieldsExpression";
-  map[AST_SAMPLE_SIZE] = "SampleSize";
-  map[AST_WITH_WEIGHT] = "WithWeight";
-  map[AST_SAMPLE_SUFFIX] = "SampleSuffix";
-  map[AST_SAMPLE_CLAUSE] = "SampleClause";
-  map[AST_SET_OPTIONS_ACTION] = "SetOptionsAction";
-  map[AST_SET_AS_ACTION] = "SetAsAction";
-  map[AST_ADD_CONSTRAINT_ACTION] = "AddConstraintAction";
-  map[AST_DROP_PRIMARY_KEY_ACTION] = "DropPrimaryKeyAction";
-  map[AST_DROP_CONSTRAINT_ACTION] = "DropConstraintAction";
-  map[AST_ALTER_CONSTRAINT_ENFORCEMENT_ACTION] = "AlterConstraintEnforcementAction";
-  map[AST_ALTER_CONSTRAINT_SET_OPTIONS_ACTION] = "AlterConstraintSetOptionsAction";
-  map[AST_ADD_COLUMN_ACTION] = "AddColumnAction";
-  map[AST_DROP_COLUMN_ACTION] = "DropColumnAction";
-  map[AST_RENAME_COLUMN_ACTION] = "RenameColumnAction";
-  map[AST_ALTER_COLUMN_TYPE_ACTION] = "AlterColumnTypeAction";
-  map[AST_ALTER_COLUMN_OPTIONS_ACTION] = "AlterColumnOptionsAction";
-  map[AST_ALTER_COLUMN_SET_DEFAULT_ACTION] = "AlterColumnSetDefaultAction";
-  map[AST_ALTER_COLUMN_DROP_DEFAULT_ACTION] = "AlterColumnDropDefaultAction";
-  map[AST_ALTER_COLUMN_DROP_NOT_NULL_ACTION] = "AlterColumnDropNotNullAction";
-  map[AST_ALTER_COLUMN_DROP_GENERATED_ACTION] = "AlterColumnDropGeneratedAction";
-  map[AST_GRANT_TO_CLAUSE] = "GrantToClause";
-  map[AST_RESTRICT_TO_CLAUSE] = "RestrictToClause";
-  map[AST_ADD_TO_RESTRICTEE_LIST_CLAUSE] = "AddToRestricteeListClause";
-  map[AST_REMOVE_FROM_RESTRICTEE_LIST_CLAUSE] = "RemoveFromRestricteeListClause";
-  map[AST_FILTER_USING_CLAUSE] = "FilterUsingClause";
-  map[AST_REVOKE_FROM_CLAUSE] = "RevokeFromClause";
-  map[AST_RENAME_TO_CLAUSE] = "RenameToClause";
-  map[AST_SET_COLLATE_CLAUSE] = "SetCollateClause";
-  map[AST_ALTER_SUB_ENTITY_ACTION] = "AlterSubEntityAction";
-  map[AST_ADD_SUB_ENTITY_ACTION] = "AddSubEntityAction";
-  map[AST_DROP_SUB_ENTITY_ACTION] = "DropSubEntityAction";
-  map[AST_ADD_TTL_ACTION] = "AddTtlAction";
-  map[AST_REPLACE_TTL_ACTION] = "ReplaceTtlAction";
-  map[AST_DROP_TTL_ACTION] = "DropTtlAction";
-  map[AST_ALTER_ACTION_LIST] = "AlterActionList";
-  map[AST_ALTER_ALL_ROW_ACCESS_POLICIES_STATEMENT] = "AlterAllRowAccessPoliciesStatement";
-  map[AST_FOREIGN_KEY_ACTIONS] = "ForeignKeyActions";
-  map[AST_FOREIGN_KEY_REFERENCE] = "ForeignKeyReference";
-  map[AST_SCRIPT] = "Script";
-  map[AST_ELSEIF_CLAUSE] = "ElseifClause";
-  map[AST_ELSEIF_CLAUSE_LIST] = "ElseifClauseList";
-  map[AST_IF_STATEMENT] = "IfStatement";
-  map[AST_WHEN_THEN_CLAUSE] = "WhenThenClause";
-  map[AST_WHEN_THEN_CLAUSE_LIST] = "WhenThenClauseList";
-  map[AST_CASE_STATEMENT] = "CaseStatement";
-  map[AST_HINT] = "Hint";
-  map[AST_HINT_ENTRY] = "HintEntry";
-  map[AST_UNPIVOT_IN_ITEM_LABEL] = "UnpivotInItemLabel";
-  map[AST_DESCRIPTOR] = "Descriptor";
-  map[AST_SIMPLE_COLUMN_SCHEMA] = "SimpleColumnSchema";
-  map[AST_ARRAY_COLUMN_SCHEMA] = "ArrayColumnSchema";
-  map[AST_RANGE_COLUMN_SCHEMA] = "RangeColumnSchema";
-  map[AST_PRIMARY_KEY_ELEMENT] = "PrimaryKeyElement";
-  map[AST_PRIMARY_KEY_ELEMENT_LIST] = "PrimaryKeyElementList";
-  map[AST_PRIMARY_KEY] = "PrimaryKey";
-  map[AST_FOREIGN_KEY] = "ForeignKey";
-  map[AST_CHECK_CONSTRAINT] = "CheckConstraint";
-  map[AST_DESCRIPTOR_COLUMN] = "DescriptorColumn";
-  map[AST_DESCRIPTOR_COLUMN_LIST] = "DescriptorColumnList";
-  map[AST_CREATE_ENTITY_STATEMENT] = "CreateEntityStatement";
-  map[AST_RAISE_STATEMENT] = "RaiseStatement";
-  map[AST_EXCEPTION_HANDLER] = "ExceptionHandler";
-  map[AST_EXCEPTION_HANDLER_LIST] = "ExceptionHandlerList";
-  map[AST_BEGIN_END_BLOCK] = "BeginEndBlock";
-  map[AST_IDENTIFIER_LIST] = "IdentifierList";
-  map[AST_VARIABLE_DECLARATION] = "VariableDeclaration";
-  map[AST_UNTIL_CLAUSE] = "UntilClause";
-  map[AST_BREAK_STATEMENT] = "BreakStatement";
-  map[AST_CONTINUE_STATEMENT] = "ContinueStatement";
-  map[AST_DROP_PRIVILEGE_RESTRICTION_STATEMENT] = "DropPrivilegeRestrictionStatement";
-  map[AST_DROP_ROW_ACCESS_POLICY_STATEMENT] = "DropRowAccessPolicyStatement";
-  map[AST_CREATE_PRIVILEGE_RESTRICTION_STATEMENT] = "CreatePrivilegeRestrictionStatement";
-  map[AST_CREATE_ROW_ACCESS_POLICY_STATEMENT] = "CreateRowAccessPolicyStatement";
-  map[AST_DROP_STATEMENT] = "DropStatement";
-  map[AST_RETURN_STATEMENT] = "ReturnStatement";
-  map[AST_SINGLE_ASSIGNMENT] = "SingleAssignment";
-  map[AST_PARAMETER_ASSIGNMENT] = "ParameterAssignment";
-  map[AST_SYSTEM_VARIABLE_ASSIGNMENT] = "SystemVariableAssignment";
-  map[AST_ASSIGNMENT_FROM_STRUCT] = "AssignmentFromStruct";
-  map[AST_CREATE_TABLE_STATEMENT] = "CreateTableStatement";
-  map[AST_CREATE_EXTERNAL_TABLE_STATEMENT] = "CreateExternalTableStatement";
-  map[AST_CREATE_VIEW_STATEMENT] = "CreateViewStatement";
-  map[AST_CREATE_MATERIALIZED_VIEW_STATEMENT] = "CreateMaterializedViewStatement";
-  map[AST_CREATE_APPROX_VIEW_STATEMENT] = "CreateApproxViewStatement";
-  map[AST_WHILE_STATEMENT] = "WhileStatement";
-  map[AST_REPEAT_STATEMENT] = "RepeatStatement";
-  map[AST_FOR_IN_STATEMENT] = "ForInStatement";
-  map[AST_ALTER_CONNECTION_STATEMENT] = "AlterConnectionStatement";
-  map[AST_ALTER_DATABASE_STATEMENT] = "AlterDatabaseStatement";
-  map[AST_ALTER_SCHEMA_STATEMENT] = "AlterSchemaStatement";
-  map[AST_ALTER_EXTERNAL_SCHEMA_STATEMENT] = "AlterExternalSchemaStatement";
-  map[AST_ALTER_TABLE_STATEMENT] = "AlterTableStatement";
-  map[AST_ALTER_VIEW_STATEMENT] = "AlterViewStatement";
-  map[AST_ALTER_MATERIALIZED_VIEW_STATEMENT] = "AlterMaterializedViewStatement";
-  map[AST_ALTER_APPROX_VIEW_STATEMENT] = "AlterApproxViewStatement";
-  map[AST_ALTER_MODEL_STATEMENT] = "AlterModelStatement";
-  map[AST_ALTER_PRIVILEGE_RESTRICTION_STATEMENT] = "AlterPrivilegeRestrictionStatement";
-  map[AST_ALTER_ROW_ACCESS_POLICY_STATEMENT] = "AlterRowAccessPolicyStatement";
-  map[AST_ALTER_ENTITY_STATEMENT] = "AlterEntityStatement";
-  map[AST_CREATE_FUNCTION_STATEMENT] = "CreateFunctionStatement";
-  map[AST_CREATE_TABLE_FUNCTION_STATEMENT] = "CreateTableFunctionStatement";
-  map[AST_STRUCT_COLUMN_SCHEMA] = "StructColumnSchema";
-  map[AST_INFERRED_TYPE_COLUMN_SCHEMA] = "InferredTypeColumnSchema";
-  map[AST_EXECUTE_INTO_CLAUSE] = "ExecuteIntoClause";
-  map[AST_EXECUTE_USING_ARGUMENT] = "ExecuteUsingArgument";
-  map[AST_EXECUTE_USING_CLAUSE] = "ExecuteUsingClause";
-  map[AST_EXECUTE_IMMEDIATE_STATEMENT] = "ExecuteImmediateStatement";
-  map[AST_AUX_LOAD_DATA_FROM_FILES_OPTIONS_LIST] = "AuxLoadDataFromFilesOptionsList";
-  map[AST_AUX_LOAD_DATA_PARTITIONS_CLAUSE] = "AuxLoadDataPartitionsClause";
-  map[AST_AUX_LOAD_DATA_STATEMENT] = "AuxLoadDataStatement";
-  map[AST_LABEL] = "Label";
-  map[AST_WITH_EXPRESSION] = "WithExpression";
-  map[AST_TTL_CLAUSE] = "TtlClause";
-  map[AST_LOCATION] = "Location";
-  map[AST_INPUT_OUTPUT_CLAUSE] = "InputOutputClause";
-  map[AST_SPANNER_TABLE_OPTIONS] = "SpannerTableOptions";
-  map[AST_SPANNER_INTERLEAVE_CLAUSE] = "SpannerInterleaveClause";
-  map[AST_SPANNER_ALTER_COLUMN_ACTION] = "SpannerAlterColumnAction";
-  map[AST_SPANNER_SET_ON_DELETE_ACTION] = "SpannerSetOnDeleteAction";
-  map[AST_RANGE_LITERAL] = "RangeLiteral";
-  map[AST_RANGE_TYPE] = "RangeType";
-  map[AST_CREATE_PROPERTY_GRAPH_STATEMENT] = "CreatePropertyGraphStatement";
-  map[AST_GRAPH_ELEMENT_TABLE_LIST] = "GraphElementTableList";
-  map[AST_GRAPH_ELEMENT_TABLE] = "GraphElementTable";
-  map[AST_GRAPH_NODE_TABLE_REFERENCE] = "GraphNodeTableReference";
-  map[AST_GRAPH_ELEMENT_LABEL_AND_PROPERTIES_LIST] = "GraphElementLabelAndPropertiesList";
-  map[AST_GRAPH_ELEMENT_LABEL_AND_PROPERTIES] = "GraphElementLabelAndProperties";
-  map[AST_GRAPH_PROPERTIES] = "GraphProperties";
-  map[AST_GRAPH_PATTERN] = "GraphPattern";
-  map[AST_GQL_QUERY] = "GqlQuery";
-  map[AST_GQL_GRAPH_PATTERN_QUERY] = "GqlGraphPatternQuery";
-  map[AST_GQL_LINEAR_OPS_QUERY] = "GqlLinearOpsQuery";
-  map[AST_GRAPH_TABLE_QUERY] = "GraphTableQuery";
-  map[AST_GRAPH_ELEMENT_LABEL] = "GraphElementLabel";
-  map[AST_GRAPH_WILDCARD_LABEL] = "GraphWildcardLabel";
-  map[AST_GRAPH_LABEL_OPERATION] = "GraphLabelOperation";
-  map[AST_GRAPH_LABEL_FILTER] = "GraphLabelFilter";
-  map[AST_GRAPH_IS_LABELED_PREDICATE] = "GraphIsLabeledPredicate";
-  map[AST_GRAPH_ELEMENT_PATTERN_FILLER] = "GraphElementPatternFiller";
-  map[AST_GRAPH_PROPERTY_SPECIFICATION] = "GraphPropertySpecification";
-  map[AST_GRAPH_PROPERTY_NAME_AND_VALUE] = "GraphPropertyNameAndValue";
-  map[AST_GRAPH_NODE_PATTERN] = "GraphNodePattern";
-  map[AST_GRAPH_LHS_HINT] = "GraphLhsHint";
-  map[AST_GRAPH_RHS_HINT] = "GraphRhsHint";
-  map[AST_GRAPH_PATH_SEARCH_PREFIX] = "GraphPathSearchPrefix";
-  map[AST_GRAPH_EDGE_PATTERN] = "GraphEdgePattern";
-  map[AST_GRAPH_PATH_MODE] = "GraphPathMode";
-  map[AST_GRAPH_PATH_PATTERN] = "GraphPathPattern";
-  map[AST_GQL_MATCH] = "GqlMatch";
-  map[AST_GQL_RETURN] = "GqlReturn";
-  map[AST_GQL_WITH] = "GqlWith";
-  map[AST_GQL_FOR] = "GqlFor";
-  map[AST_GQL_LET] = "GqlLet";
-  map[AST_GQL_LET_VARIABLE_DEFINITION_LIST] = "GqlLetVariableDefinitionList";
-  map[AST_GQL_LET_VARIABLE_DEFINITION] = "GqlLetVariableDefinition";
-  map[AST_GQL_FILTER] = "GqlFilter";
-  map[AST_GQL_OPERATOR_LIST] = "GqlOperatorList";
-  map[AST_GQL_SET_OPERATION] = "GqlSetOperation";
-  map[AST_GQL_PAGE_LIMIT] = "GqlPageLimit";
-  map[AST_GQL_PAGE_OFFSET] = "GqlPageOffset";
-  map[AST_GQL_PAGE] = "GqlPage";
-  map[AST_GQL_ORDER_BY_AND_PAGE] = "GqlOrderByAndPage";
-  map[AST_GQL_SAMPLE] = "GqlSample";
-  map[AST_SELECT_WITH] = "SelectWith";
-  map[AST_COLUMN_WITH_OPTIONS] = "ColumnWithOptions";
-  map[AST_COLUMN_WITH_OPTIONS_LIST] = "ColumnWithOptionsList";
-  map[AST_MACRO_BODY] = "MacroBody";
-  map[AST_DEFINE_MACRO_STATEMENT] = "DefineMacroStatement";
-  map[AST_UNDROP_STATEMENT] = "UndropStatement";
-  map[AST_IDENTITY_COLUMN_INFO] = "IdentityColumnInfo";
-  map[AST_IDENTITY_COLUMN_START_WITH] = "IdentityColumnStartWith";
-  map[AST_IDENTITY_COLUMN_INCREMENT_BY] = "IdentityColumnIncrementBy";
-  map[AST_IDENTITY_COLUMN_MAX_VALUE] = "IdentityColumnMaxValue";
-  map[AST_IDENTITY_COLUMN_MIN_VALUE] = "IdentityColumnMinValue";
-  map[AST_ALIASED_QUERY_MODIFIERS] = "AliasedQueryModifiers";
-  map[AST_INT_OR_UNBOUNDED] = "IntOrUnbounded";
-  map[AST_RECURSION_DEPTH_MODIFIER] = "RecursionDepthModifier";
-  map[AST_MAP_TYPE] = "MapType";
-  map[AST_LOCK_MODE] = "LockMode";
-  map[AST_PIPE_RECURSIVE_UNION] = "PipeRecursiveUnion";
+  auto map = absl::flat_hash_map<ASTNodeKind, absl::string_view>(
+                std::begin(kMap), std::end(kMap));
 
   for (int kind = kFirstASTNodeKind; kind <= kLastASTNodeKind;
        ++kind) {
@@ -507,8 +523,9 @@ static absl::flat_hash_map<ASTNodeKind, std::string> CreateNodeNamesMap() {
 
 // Returns a map of ASTNodeKind to a string representation of the node type's
 // name.
-static const absl::flat_hash_map<ASTNodeKind, std::string>& GetNodeNamesMap() {
-  static const absl::flat_hash_map<ASTNodeKind, std::string>& map =
+static const absl::flat_hash_map<ASTNodeKind, absl::string_view>&
+GetNodeNamesMap() {
+  static const absl::flat_hash_map<ASTNodeKind, absl::string_view>& map =
       *new auto(CreateNodeNamesMap());
   return map;
 }
@@ -516,11 +533,11 @@ static const absl::flat_hash_map<ASTNodeKind, std::string>& GetNodeNamesMap() {
 std::string ASTNode::NodeKindToString(ASTNodeKind node_kind) {
   // Subtle: we must ensure that default_value outlives the FindWithDefault
   // call.
-  const std::string default_value = "<UNKNOWN NODE KIND>";
+  absl::string_view default_value = "<UNKNOWN NODE KIND>";
 
-  return
+  return std::string(
 zetasql_base::FindWithDefault(
-      GetNodeNamesMap(), node_kind, default_value);
+      GetNodeNamesMap(), node_kind, default_value));
 }
 
 }  // namespace zetasql

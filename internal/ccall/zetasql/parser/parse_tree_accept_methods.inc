@@ -76,6 +76,10 @@ void ASTPipeTablesample::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTPipeTablesample(this, data);
 }
 
+void ASTPipeMatchRecognize::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeMatchRecognize(this, data);
+}
+
 void ASTPipeAs::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTPipeAs(this, data);
 }
@@ -124,8 +128,24 @@ void ASTPipeFork::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTPipeFork(this, data);
 }
 
+void ASTPipeTee::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeTee(this, data);
+}
+
+void ASTPipeWith::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeWith(this, data);
+}
+
 void ASTPipeExportData::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTPipeExportData(this, data);
+}
+
+void ASTPipeCreateTable::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeCreateTable(this, data);
+}
+
+void ASTPipeInsert::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTPipeInsert(this, data);
 }
 
 void ASTSelect::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -812,6 +832,14 @@ void ASTBracedNewConstructor::Accept(ParseTreeVisitor* visitor, void* data) cons
   visitor->visitASTBracedNewConstructor(this, data);
 }
 
+void ASTExtendedPathExpression::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTExtendedPathExpression(this, data);
+}
+
+void ASTUpdateConstructor::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTUpdateConstructor(this, data);
+}
+
 void ASTStructBracedConstructor::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTStructBracedConstructor(this, data);
 }
@@ -950,6 +978,10 @@ void ASTCallStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
 
 void ASTDefineTableStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTDefineTableStatement(this, data);
+}
+
+void ASTCreateLocalityGroupStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTCreateLocalityGroupStatement(this, data);
 }
 
 void ASTWithPartitionColumnsClause::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1186,6 +1218,10 @@ void ASTAlterConstraintEnforcementAction::Accept(ParseTreeVisitor* visitor, void
 
 void ASTAlterConstraintSetOptionsAction::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTAlterConstraintSetOptionsAction(this, data);
+}
+
+void ASTAddColumnIdentifierAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAddColumnIdentifierAction(this, data);
 }
 
 void ASTAddColumnAction::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1540,6 +1576,14 @@ void ASTAlterEntityStatement::Accept(ParseTreeVisitor* visitor, void* data) cons
   visitor->visitASTAlterEntityStatement(this, data);
 }
 
+void ASTRebuildAction::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTRebuildAction(this, data);
+}
+
+void ASTAlterIndexStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTAlterIndexStatement(this, data);
+}
+
 void ASTCreateFunctionStatement::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTCreateFunctionStatement(this, data);
 }
@@ -1722,6 +1766,10 @@ void ASTGraphRhsHint::Accept(ParseTreeVisitor* visitor, void* data) const {
 
 void ASTGraphPathSearchPrefix::Accept(ParseTreeVisitor* visitor, void* data) const {
   visitor->visitASTGraphPathSearchPrefix(this, data);
+}
+
+void ASTGraphPathSearchPrefixCount::Accept(ParseTreeVisitor* visitor, void* data) const {
+  visitor->visitASTGraphPathSearchPrefixCount(this, data);
 }
 
 void ASTGraphEdgePattern::Accept(ParseTreeVisitor* visitor, void* data) const {
@@ -1940,6 +1988,10 @@ absl::StatusOr<VisitResult> ASTPipeTablesample::Accept(NonRecursiveParseTreeVisi
   return visitor->visitASTPipeTablesample(this);
 }
 
+absl::StatusOr<VisitResult> ASTPipeMatchRecognize::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeMatchRecognize(this);
+}
+
 absl::StatusOr<VisitResult> ASTPipeAs::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTPipeAs(this);
 }
@@ -1988,8 +2040,24 @@ absl::StatusOr<VisitResult> ASTPipeFork::Accept(NonRecursiveParseTreeVisitor* vi
   return visitor->visitASTPipeFork(this);
 }
 
+absl::StatusOr<VisitResult> ASTPipeTee::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeTee(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeWith::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeWith(this);
+}
+
 absl::StatusOr<VisitResult> ASTPipeExportData::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTPipeExportData(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeCreateTable::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeCreateTable(this);
+}
+
+absl::StatusOr<VisitResult> ASTPipeInsert::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTPipeInsert(this);
 }
 
 absl::StatusOr<VisitResult> ASTSelect::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -2676,6 +2744,14 @@ absl::StatusOr<VisitResult> ASTBracedNewConstructor::Accept(NonRecursiveParseTre
   return visitor->visitASTBracedNewConstructor(this);
 }
 
+absl::StatusOr<VisitResult> ASTExtendedPathExpression::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTExtendedPathExpression(this);
+}
+
+absl::StatusOr<VisitResult> ASTUpdateConstructor::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTUpdateConstructor(this);
+}
+
 absl::StatusOr<VisitResult> ASTStructBracedConstructor::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTStructBracedConstructor(this);
 }
@@ -2814,6 +2890,10 @@ absl::StatusOr<VisitResult> ASTCallStatement::Accept(NonRecursiveParseTreeVisito
 
 absl::StatusOr<VisitResult> ASTDefineTableStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTDefineTableStatement(this);
+}
+
+absl::StatusOr<VisitResult> ASTCreateLocalityGroupStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTCreateLocalityGroupStatement(this);
 }
 
 absl::StatusOr<VisitResult> ASTWithPartitionColumnsClause::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -3050,6 +3130,10 @@ absl::StatusOr<VisitResult> ASTAlterConstraintEnforcementAction::Accept(NonRecur
 
 absl::StatusOr<VisitResult> ASTAlterConstraintSetOptionsAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTAlterConstraintSetOptionsAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTAddColumnIdentifierAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAddColumnIdentifierAction(this);
 }
 
 absl::StatusOr<VisitResult> ASTAddColumnAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
@@ -3404,6 +3488,14 @@ absl::StatusOr<VisitResult> ASTAlterEntityStatement::Accept(NonRecursiveParseTre
   return visitor->visitASTAlterEntityStatement(this);
 }
 
+absl::StatusOr<VisitResult> ASTRebuildAction::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTRebuildAction(this);
+}
+
+absl::StatusOr<VisitResult> ASTAlterIndexStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTAlterIndexStatement(this);
+}
+
 absl::StatusOr<VisitResult> ASTCreateFunctionStatement::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTCreateFunctionStatement(this);
 }
@@ -3586,6 +3678,10 @@ absl::StatusOr<VisitResult> ASTGraphRhsHint::Accept(NonRecursiveParseTreeVisitor
 
 absl::StatusOr<VisitResult> ASTGraphPathSearchPrefix::Accept(NonRecursiveParseTreeVisitor* visitor) const {
   return visitor->visitASTGraphPathSearchPrefix(this);
+}
+
+absl::StatusOr<VisitResult> ASTGraphPathSearchPrefixCount::Accept(NonRecursiveParseTreeVisitor* visitor) const {
+  return visitor->visitASTGraphPathSearchPrefixCount(this);
 }
 
 absl::StatusOr<VisitResult> ASTGraphEdgePattern::Accept(NonRecursiveParseTreeVisitor* visitor) const {

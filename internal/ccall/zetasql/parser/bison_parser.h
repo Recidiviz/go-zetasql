@@ -18,6 +18,7 @@
 #define ZETASQL_PARSER_BISON_PARSER_H_
 
 #include <memory>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -32,6 +33,8 @@
 #include "zetasql/public/id_string.h"
 #include "zetasql/public/language_options.h"
 #include "zetasql/public/parse_location.h"
+#include "zetasql/public/proto/logging.pb.h"
+#include "absl/base/attributes.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/string_view.h"
@@ -67,8 +70,7 @@ class BisonParser {
         language_options_(&language_options),
         allocated_ast_nodes_(std::move(allocated_ast_nodes)),
         input_(input),
-        parser_runtime_info_(
-            std::make_unique<ParserRuntimeInfo>(language_options)) {}
+        parser_runtime_info_(std::make_unique<ParserRuntimeInfo>()) {}
 
   ~BisonParser() = default;
 
@@ -101,6 +103,7 @@ class BisonParser {
       BisonParserMode mode, absl::string_view filename, absl::string_view input,
       int start_byte_offset, IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
       const LanguageOptions& language_options,
+      MacroExpansionMode macro_expansion_mode,
       const macros::MacroCatalog* macro_catalog,
       std::unique_ptr<zetasql::ASTNode>* output,
       std::vector<std::unique_ptr<ASTNode>>* other_allocated_ast_nodes,
@@ -110,8 +113,50 @@ class BisonParser {
   // Returns the characters in the input range given by 'bison_location'. The
   // returned characters will remain valid throughout Parse().
   template <typename Location>
+  ABSL_DEPRECATED(
+      "This method is dangerous because with macro expansion, locations may "
+      "refer to different inputs (e.g. the definition of a macro in the "
+      "catalog). Use the text attached to tokens directly.")
   absl::string_view GetInputText(const Location& bison_location) const {
     return bison_location.GetTextFrom(input_);
+  }
+
+  // Returns the first whitespace-delimited token in the source text covered by
+  // `loc` (used in parser error messages).
+  template <typename Location>
+  std::string GetFirstTokenOfNode(const Location& loc) {
+    absl::string_view text = loc.GetTextFrom(input_);
+    size_t start = 0;
+    while (start < text.size() && absl::ascii_isspace(static_cast<unsigned char>(text[start]))) {
+      ++start;
+    }
+    size_t end = start;
+    while (end < text.size() &&
+           !absl::ascii_isspace(static_cast<unsigned char>(text[end]))) {
+      ++end;
+    }
+    return std::string(text.substr(start, end - start));
+  }
+
+  // True if there is whitespace (or comments, which appear as bytes in the
+  // gap) between the end of `left` and the start of `right` in the parser
+  // input.
+  template <typename Location>
+  bool HasWhitespace(const Location& left, const Location& right) {
+    const int gap_start = left.end().GetByteOffset();
+    const int gap_end = right.start().GetByteOffset();
+    if (gap_start >= gap_end) {
+      return false;
+    }
+    const absl::string_view gap = input_.substr(
+        static_cast<size_t>(gap_start),
+        static_cast<size_t>(gap_end - gap_start));
+    for (unsigned char c : gap) {
+      if (absl::ascii_isspace(c)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Creates an ASTNode of type T with a unique id. Sets its location to
@@ -152,13 +197,22 @@ class BisonParser {
     return result;
   }
 
+  // Creates an ASTIdentifier with text 'name' and location 'location', and
+  // whether it `is_quoted`.
+  template <typename Location>
+  ASTIdentifier* MakeIdentifier(const Location& location,
+                                absl::string_view name, bool is_quoted) {
+    auto* identifier = CreateASTNode<ASTIdentifier>(location);
+    identifier->SetIdentifier(id_string_pool()->Make(name));
+    identifier->set_is_quoted(is_quoted);
+    return identifier;
+  }
+
   // Creates an ASTIdentifier with text 'name' and location 'location'.
   template <typename Location>
   ASTIdentifier* MakeIdentifier(const Location& location,
                                 absl::string_view name) {
-    auto* identifier = CreateASTNode<ASTIdentifier>(location);
-    identifier->SetIdentifier(id_string_pool()->Make(name));
-    return identifier;
+    return MakeIdentifier(location, name, /*is_quoted=*/false);
   }
 
   // Creates an ASTIdentifier with text 'name' and location 'location'.
@@ -214,6 +268,10 @@ class BisonParser {
 
   const LanguageOptions& language_options() { return *language_options_; }
 
+  MacroExpansionMode macro_expansion_mode() const {
+    return macro_expansion_mode_;
+  }
+
   // Returns the next 1-based parameter position.
   int GetNextPositionalParameterPosition() {
     return ++previous_positional_parameter_position_;
@@ -228,23 +286,6 @@ class BisonParser {
   void ReleaseAllocatedASTNodes(
       std::vector<std::unique_ptr<ASTNode>>* ast_nodes) {
     *ast_nodes = std::move(*allocated_ast_nodes_);
-  }
-
-  // Returns true if there is whitespace between `left` and `right`.
-  template <typename Location>
-  bool HasWhitespace(const Location& left, const Location& right) {
-    return left.end().GetByteOffset() != right.start().GetByteOffset();
-  }
-
-  template <typename Location>
-  absl::string_view GetFirstTokenOfNode(const Location& bison_location) const {
-    absl::string_view text = GetInputText(bison_location);
-    for (int i = 0; i < text.size(); i++) {
-      if (absl::ascii_isblank(text[i])) {
-        return text.substr(0, i);
-      }
-    }
-    return text;
   }
 
   absl::Status GenerateWarning(const absl::string_view text,
@@ -280,6 +321,7 @@ class BisonParser {
       BisonParserMode mode, absl::string_view filename, absl::string_view input,
       int start_byte_offset, IdStringPool* id_string_pool, zetasql_base::UnsafeArena* arena,
       const LanguageOptions& language_options,
+      MacroExpansionMode macro_expansion_mode,
       const macros::MacroCatalog* macro_catalog,
       std::unique_ptr<zetasql::ASTNode>* output,
       std::vector<std::unique_ptr<ASTNode>>* other_allocated_ast_nodes,
@@ -320,6 +362,8 @@ class BisonParser {
       std::make_unique<std::vector<absl::Status>>();
 
   std::unique_ptr<ParserRuntimeInfo> parser_runtime_info_;
+
+  MacroExpansionMode macro_expansion_mode_ = MacroExpansionMode::kNone;
 };
 
 // These are defined here because some of our tests rely on grabbing quoted

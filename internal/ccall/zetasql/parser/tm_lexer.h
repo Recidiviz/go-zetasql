@@ -17,11 +17,11 @@
 namespace zetasql::parser {
 inline constexpr absl::string_view bomSeq = "\xef\xbb\xbf";
 
-class Lexer {
+class TmGeneratedLexer {
  public:
 
 using Location = ::zetasql::ParseLocationRange;
-  explicit Lexer(absl::string_view input_source ABSL_ATTRIBUTE_LIFETIME_BOUND);
+  explicit TmGeneratedLexer(absl::string_view input_source ABSL_ATTRIBUTE_LIFETIME_BOUND);
 
   // Next finds and returns the next token in source. The stream end is
   // indicated by Token.EOI.
@@ -120,8 +120,8 @@ using Location = ::zetasql::ParseLocationRange;
   friend class TextMapperTokenizer;
 };
 
-inline std::ostream& operator<<(std::ostream& os, const Lexer& lexer) {
-  return os << "zetasql::parser::Lexer at line " << lexer.LastTokenLine() << " location "
+inline std::ostream& operator<<(std::ostream& os, const TmGeneratedLexer& lexer) {
+  return os << "zetasql::parser::TmGeneratedLexer at line " << lexer.LastTokenLine() << " location "
             << lexer.LastTokenLocation() << " last token was \""
             << lexer.Text() << "\"";
 }

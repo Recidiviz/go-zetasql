@@ -34,7 +34,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FunctionEnumsDefaultTypeInternal _FunctionEnums_default_instance_;
 }  // namespace zetasql
 static ::_pb::Metadata file_level_metadata_zetasql_2fpublic_2ffunction_2eproto[1];
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[10];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[11];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_zetasql_2fpublic_2ffunction_2eproto = nullptr;
 const ::uint32_t TableStruct_zetasql_2fpublic_2ffunction_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
@@ -59,7 +59,7 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\035zetasql/public/function.proto\022\007zetasql"
-    "\"\201\007\n\rFunctionEnums\"\?\n\023ArgumentCardinalit"
+    "\"\221\010\n\rFunctionEnums\"\?\n\023ArgumentCardinalit"
     "y\022\014\n\010REQUIRED\020\000\022\014\n\010REPEATED\020\001\022\014\n\010OPTIONA"
     "L\020\002\"@\n\025ProcedureArgumentMode\022\013\n\007NOT_SET\020"
     "\000\022\006\n\002IN\020\001\022\007\n\003OUT\020\002\022\t\n\005INOUT\020\003\"S\n\022WindowO"
@@ -81,34 +81,39 @@ const char descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto[] PROTO
     "ITIONAL_OR_NAMED\020\002\022\016\n\nNAMED_ONLY\020\003\"h\n\021Ar"
     "gumentAliasKind\022#\n\037ARGUMENT_ALIAS_KIND_U"
     "NSPECIFIED\020\000\022\030\n\024ARGUMENT_NON_ALIASED\020\001\022\024"
-    "\n\020ARGUMENT_ALIASED\020\002*\254\006\n\025SignatureArgume"
-    "ntKind\022\022\n\016ARG_TYPE_FIXED\020\000\022\022\n\016ARG_TYPE_A"
-    "NY_1\020\001\022\022\n\016ARG_TYPE_ANY_2\020\002\022\022\n\016ARG_TYPE_A"
-    "NY_3\020\027\022\022\n\016ARG_TYPE_ANY_4\020\031\022\022\n\016ARG_TYPE_A"
-    "NY_5\020\033\022\030\n\024ARG_ARRAY_TYPE_ANY_1\020\003\022\030\n\024ARG_"
-    "ARRAY_TYPE_ANY_2\020\004\022\030\n\024ARG_ARRAY_TYPE_ANY"
-    "_3\020\030\022\030\n\024ARG_ARRAY_TYPE_ANY_4\020\032\022\030\n\024ARG_AR"
-    "RAY_TYPE_ANY_5\020\034\022\025\n\021ARG_PROTO_MAP_ANY\020\016\022"
-    "\031\n\025ARG_PROTO_MAP_KEY_ANY\020\017\022\033\n\027ARG_PROTO_"
-    "MAP_VALUE_ANY\020\020\022\021\n\rARG_PROTO_ANY\020\005\022\022\n\016AR"
-    "G_STRUCT_ANY\020\006\022\020\n\014ARG_ENUM_ANY\020\007\022\026\n\022ARG_"
-    "TYPE_ARBITRARY\020\010\022\025\n\021ARG_TYPE_RELATION\020\t\022"
-    "\021\n\rARG_TYPE_VOID\020\n\022\022\n\016ARG_TYPE_MODEL\020\013\022\027"
-    "\n\023ARG_TYPE_CONNECTION\020\014\022\027\n\023ARG_TYPE_DESC"
-    "RIPTOR\020\r\022\023\n\017ARG_TYPE_LAMBDA\020\021\022\030\n\024ARG_RAN"
-    "GE_TYPE_ANY_1\020\022\022\027\n\023ARG_TYPE_GRAPH_NODE\020\023"
-    "\022\027\n\023ARG_TYPE_GRAPH_EDGE\020\024\022\032\n\026ARG_TYPE_GR"
-    "APH_ELEMENT\020\025\022\027\n\023ARG_TYPE_GRAPH_PATH\020\036\022\025"
-    "\n\021ARG_TYPE_SEQUENCE\020\026\022\030\n\024ARG_MAP_TYPE_AN"
-    "Y_1_2\020\035\022B\n5__SignatureArgumentKind__swit"
-    "ch_must_have_a_default__\020\377\377\377\377\377\377\377\377\377\001B&\n\022c"
-    "om.google.zetasqlB\020ZetaSQLFunctions"
+    "\n\020ARGUMENT_ALIASED\020\002\"\215\001\n\023DefaultNullHand"
+    "ling\022%\n!DEFAULT_NULL_HANDLING_UNSPECIFIE"
+    "D\020\000\022&\n\"DEFAULT_NULL_HANDLING_IGNORE_NULL"
+    "S\020\001\022\'\n#DEFAULT_NULL_HANDLING_RESPECT_NUL"
+    "LS\020\002*\310\006\n\025SignatureArgumentKind\022\022\n\016ARG_TY"
+    "PE_FIXED\020\000\022\022\n\016ARG_TYPE_ANY_1\020\001\022\022\n\016ARG_TY"
+    "PE_ANY_2\020\002\022\022\n\016ARG_TYPE_ANY_3\020\027\022\022\n\016ARG_TY"
+    "PE_ANY_4\020\031\022\022\n\016ARG_TYPE_ANY_5\020\033\022\030\n\024ARG_AR"
+    "RAY_TYPE_ANY_1\020\003\022\030\n\024ARG_ARRAY_TYPE_ANY_2"
+    "\020\004\022\030\n\024ARG_ARRAY_TYPE_ANY_3\020\030\022\030\n\024ARG_ARRA"
+    "Y_TYPE_ANY_4\020\032\022\030\n\024ARG_ARRAY_TYPE_ANY_5\020\034"
+    "\022\025\n\021ARG_PROTO_MAP_ANY\020\016\022\031\n\025ARG_PROTO_MAP"
+    "_KEY_ANY\020\017\022\033\n\027ARG_PROTO_MAP_VALUE_ANY\020\020\022"
+    "\021\n\rARG_PROTO_ANY\020\005\022\022\n\016ARG_STRUCT_ANY\020\006\022\020"
+    "\n\014ARG_ENUM_ANY\020\007\022\026\n\022ARG_TYPE_ARBITRARY\020\010"
+    "\022\025\n\021ARG_TYPE_RELATION\020\t\022\021\n\rARG_TYPE_VOID"
+    "\020\n\022\022\n\016ARG_TYPE_MODEL\020\013\022\027\n\023ARG_TYPE_CONNE"
+    "CTION\020\014\022\027\n\023ARG_TYPE_DESCRIPTOR\020\r\022\023\n\017ARG_"
+    "TYPE_LAMBDA\020\021\022\030\n\024ARG_RANGE_TYPE_ANY_1\020\022\022"
+    "\027\n\023ARG_TYPE_GRAPH_NODE\020\023\022\027\n\023ARG_TYPE_GRA"
+    "PH_EDGE\020\024\022\032\n\026ARG_TYPE_GRAPH_ELEMENT\020\025\022\027\n"
+    "\023ARG_TYPE_GRAPH_PATH\020\036\022\025\n\021ARG_TYPE_SEQUE"
+    "NCE\020\026\022\032\n\026ARG_MEASURE_TYPE_ANY_1\020\037\022\030\n\024ARG"
+    "_MAP_TYPE_ANY_1_2\020\035\022B\n5__SignatureArgume"
+    "ntKind__switch_must_have_a_default__\020\377\377\377"
+    "\377\377\377\377\377\377\001B&\n\022com.google.zetasqlB\020ZetaSQLFu"
+    "nctions"
 };
 static ::absl::once_flag descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2ffunction_2eproto = {
     false,
     false,
-    1795,
+    1967,
     descriptor_table_protodef_zetasql_2fpublic_2ffunction_2eproto,
     "zetasql/public/function.proto",
     &descriptor_table_zetasql_2fpublic_2ffunction_2eproto_once,
@@ -385,9 +390,35 @@ constexpr int FunctionEnums::ArgumentAliasKind_ARRAYSIZE;
 
 #endif  // (__cplusplus < 201703) &&
         // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SignatureArgumentKind_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FunctionEnums_DefaultNullHandling_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
   return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[9];
+}
+bool FunctionEnums_DefaultNullHandling_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+
+constexpr FunctionEnums_DefaultNullHandling FunctionEnums::DEFAULT_NULL_HANDLING_UNSPECIFIED;
+constexpr FunctionEnums_DefaultNullHandling FunctionEnums::DEFAULT_NULL_HANDLING_IGNORE_NULLS;
+constexpr FunctionEnums_DefaultNullHandling FunctionEnums::DEFAULT_NULL_HANDLING_RESPECT_NULLS;
+constexpr FunctionEnums_DefaultNullHandling FunctionEnums::DefaultNullHandling_MIN;
+constexpr FunctionEnums_DefaultNullHandling FunctionEnums::DefaultNullHandling_MAX;
+constexpr int FunctionEnums::DefaultNullHandling_ARRAYSIZE;
+
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SignatureArgumentKind_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_zetasql_2fpublic_2ffunction_2eproto);
+  return file_level_enum_descriptors_zetasql_2fpublic_2ffunction_2eproto[10];
 }
 bool SignatureArgumentKind_IsValid(int value) {
   switch (value) {
@@ -423,6 +454,7 @@ bool SignatureArgumentKind_IsValid(int value) {
     case 28:
     case 29:
     case 30:
+    case 31:
       return true;
     default:
       return false;

@@ -149,7 +149,7 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2flogging_2eproto[
     "ilable_bytes\030\004 \001(\004\022\035\n\025stack_peak_used_by"
     "tes\030\005 \001(\004\"P\n\rParserVariant\022\026\n\022PARSER_UNS"
     "PECIFIED\020\000\022\020\n\014PARSER_BISON\020\001\022\025\n\021PARSER_T"
-    "EXTMAPPER\020\002\"\316\003\n\020AnalyzerLogEntry\022\032\n\022num_"
+    "EXTMAPPER\020\002\"\324\003\n\020AnalyzerLogEntry\022\032\n\022num_"
     "lexical_tokens\030\001 \001(\003\0228\n\027overall_executio"
     "n_stats\030\002 \001(\0132\027.zetasql.ExecutionStats\022P"
     "\n\025execution_stats_by_op\030\003 \003(\01321.zetasql."
@@ -157,10 +157,11 @@ const char descriptor_table_protodef_zetasql_2fpublic_2fproto_2flogging_2eproto[
     "\032\201\001\n\027ExecutionStatsByOpEntry\022>\n\003key\030\001 \001("
     "\01621.zetasql.AnalyzerLogEntry.LoggedOpera"
     "tionCategory\022&\n\005value\030\002 \001(\0132\027.zetasql.Ex"
-    "ecutionStats\"\215\001\n\027LoggedOperationCategory"
+    "ecutionStats\"\223\001\n\027LoggedOperationCategory"
     "\022%\n!UNKNOWN_LOGGED_OPERATION_CATEGORY\020\000\022"
     "\n\n\006PARSER\020\001\022\014\n\010RESOLVER\020\002\022\014\n\010REWRITER\020\003\022"
-    "\024\n\020CATALOG_RESOLVER\020\004\022\r\n\tVALIDATOR\020\005B\002P\001"
+    "\024\n\020CATALOG_RESOLVER\020\004\022\r\n\tVALIDATOR\020\005\"\004\010\006"
+    "\020\006B\002P\001"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_zetasql_2fpublic_2fproto_2flogging_2eproto_deps[1] =
     {
@@ -170,7 +171,7 @@ static ::absl::once_flag descriptor_table_zetasql_2fpublic_2fproto_2flogging_2ep
 const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fproto_2flogging_2eproto = {
     false,
     false,
-    800,
+    806,
     descriptor_table_protodef_zetasql_2fpublic_2fproto_2flogging_2eproto,
     "zetasql/public/proto/logging.proto",
     &descriptor_table_zetasql_2fpublic_2fproto_2flogging_2eproto_once,

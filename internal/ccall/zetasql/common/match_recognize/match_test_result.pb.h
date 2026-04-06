@@ -207,7 +207,6 @@ class MatchResultProto final :
 
   enum : int {
     kMatchFieldNumber = 1,
-    kTotalRowsFullyProcessedFieldNumber = 2,
     kRepCountFieldNumber = 3,
   };
   // repeated string match = 1;
@@ -240,17 +239,6 @@ class MatchResultProto final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* _internal_mutable_match();
 
   public:
-  // optional int32 total_rows_fully_processed = 2;
-  bool has_total_rows_fully_processed() const;
-  void clear_total_rows_fully_processed() ;
-  ::int32_t total_rows_fully_processed() const;
-  void set_total_rows_fully_processed(::int32_t value);
-
-  private:
-  ::int32_t _internal_total_rows_fully_processed() const;
-  void _internal_set_total_rows_fully_processed(::int32_t value);
-
-  public:
   // optional int32 rep_count = 3;
   bool has_rep_count() const;
   void clear_rep_count() ;
@@ -273,7 +261,6 @@ class MatchResultProto final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> match_;
-    ::int32_t total_rows_fully_processed_;
     ::int32_t rep_count_;
   };
   union { Impl_ _impl_; };
@@ -571,39 +558,14 @@ MatchResultProto::_internal_mutable_match() {
   return &_impl_.match_;
 }
 
-// optional int32 total_rows_fully_processed = 2;
-inline bool MatchResultProto::has_total_rows_fully_processed() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  return value;
-}
-inline void MatchResultProto::clear_total_rows_fully_processed() {
-  _impl_.total_rows_fully_processed_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000001u;
-}
-inline ::int32_t MatchResultProto::total_rows_fully_processed() const {
-  // @@protoc_insertion_point(field_get:zetasql.functions.match_recognize.MatchResultProto.total_rows_fully_processed)
-  return _internal_total_rows_fully_processed();
-}
-inline void MatchResultProto::set_total_rows_fully_processed(::int32_t value) {
-  _internal_set_total_rows_fully_processed(value);
-  // @@protoc_insertion_point(field_set:zetasql.functions.match_recognize.MatchResultProto.total_rows_fully_processed)
-}
-inline ::int32_t MatchResultProto::_internal_total_rows_fully_processed() const {
-  return _impl_.total_rows_fully_processed_;
-}
-inline void MatchResultProto::_internal_set_total_rows_fully_processed(::int32_t value) {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  _impl_.total_rows_fully_processed_ = value;
-}
-
 // optional int32 rep_count = 3;
 inline bool MatchResultProto::has_rep_count() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
 inline void MatchResultProto::clear_rep_count() {
   _impl_.rep_count_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000001u;
 }
 inline ::int32_t MatchResultProto::rep_count() const {
   // @@protoc_insertion_point(field_get:zetasql.functions.match_recognize.MatchResultProto.rep_count)
@@ -617,7 +579,7 @@ inline ::int32_t MatchResultProto::_internal_rep_count() const {
   return _impl_.rep_count_;
 }
 inline void MatchResultProto::_internal_set_rep_count(::int32_t value) {
-  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.rep_count_ = value;
 }
 

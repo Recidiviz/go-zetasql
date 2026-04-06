@@ -301,6 +301,12 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedGeneralizedQueryStmt(const ResolvedGeneralizedQueryStmt* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedMultiStmt(const ResolvedMultiStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateWithEntryStmt(const ResolvedCreateWithEntryStmt* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedCreateDatabaseStmt(const ResolvedCreateDatabaseStmt* node) {
     return DefaultVisit(node);
   }
@@ -499,6 +505,9 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedAlterDatabaseStmt(const ResolvedAlterDatabaseStmt* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedAlterIndexStmt(const ResolvedAlterIndexStmt* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedAlterMaterializedViewStmt(const ResolvedAlterMaterializedViewStmt* node) {
     return DefaultVisit(node);
   }
@@ -539,6 +548,12 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAddColumnAction(const ResolvedAddColumnAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAddColumnIdentifierAction(const ResolvedAddColumnIdentifierAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRebuildAction(const ResolvedRebuildAction* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedAddConstraintAction(const ResolvedAddConstraintAction* node) {
@@ -868,7 +883,16 @@ class ResolvedASTVisitor {
   virtual absl::Status VisitResolvedPipeForkScan(const ResolvedPipeForkScan* node) {
     return DefaultVisit(node);
   }
+  virtual absl::Status VisitResolvedPipeTeeScan(const ResolvedPipeTeeScan* node) {
+    return DefaultVisit(node);
+  }
   virtual absl::Status VisitResolvedPipeExportDataScan(const ResolvedPipeExportDataScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeCreateTableScan(const ResolvedPipeCreateTableScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeInsertScan(const ResolvedPipeInsertScan* node) {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedSubpipeline(const ResolvedSubpipeline* node) {
@@ -890,6 +914,12 @@ class ResolvedASTVisitor {
     return DefaultVisit(node);
   }
   virtual absl::Status VisitResolvedLockMode(const ResolvedLockMode* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUpdateFieldItem(const ResolvedUpdateFieldItem* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUpdateConstructor(const ResolvedUpdateConstructor* node) {
     return DefaultVisit(node);
   }
 };

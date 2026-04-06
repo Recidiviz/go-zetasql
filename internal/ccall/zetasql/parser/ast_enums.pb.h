@@ -56,6 +56,9 @@ namespace zetasql {
 class ASTAfterMatchSkipClauseEnums;
 struct ASTAfterMatchSkipClauseEnumsDefaultTypeInternal;
 extern ASTAfterMatchSkipClauseEnumsDefaultTypeInternal _ASTAfterMatchSkipClauseEnums_default_instance_;
+class ASTAlterIndexStatementEnums;
+struct ASTAlterIndexStatementEnumsDefaultTypeInternal;
+extern ASTAlterIndexStatementEnumsDefaultTypeInternal _ASTAlterIndexStatementEnums_default_instance_;
 class ASTAnySomeAllOpEnums;
 struct ASTAnySomeAllOpEnumsDefaultTypeInternal;
 extern ASTAnySomeAllOpEnumsDefaultTypeInternal _ASTAnySomeAllOpEnums_default_instance_;
@@ -65,6 +68,9 @@ extern ASTAuxLoadDataStatementEnumsDefaultTypeInternal _ASTAuxLoadDataStatementE
 class ASTBinaryExpressionEnums;
 struct ASTBinaryExpressionEnumsDefaultTypeInternal;
 extern ASTBinaryExpressionEnumsDefaultTypeInternal _ASTBinaryExpressionEnums_default_instance_;
+class ASTBracedConstructorLhsEnums;
+struct ASTBracedConstructorLhsEnumsDefaultTypeInternal;
+extern ASTBracedConstructorLhsEnumsDefaultTypeInternal _ASTBracedConstructorLhsEnums_default_instance_;
 class ASTBreakContinueStatementEnums;
 struct ASTBreakContinueStatementEnumsDefaultTypeInternal;
 extern ASTBreakContinueStatementEnumsDefaultTypeInternal _ASTBreakContinueStatementEnums_default_instance_;
@@ -190,11 +196,15 @@ PROTOBUF_NAMESPACE_OPEN
 template <>
 ::zetasql::ASTAfterMatchSkipClauseEnums* Arena::CreateMaybeMessage<::zetasql::ASTAfterMatchSkipClauseEnums>(Arena*);
 template <>
+::zetasql::ASTAlterIndexStatementEnums* Arena::CreateMaybeMessage<::zetasql::ASTAlterIndexStatementEnums>(Arena*);
+template <>
 ::zetasql::ASTAnySomeAllOpEnums* Arena::CreateMaybeMessage<::zetasql::ASTAnySomeAllOpEnums>(Arena*);
 template <>
 ::zetasql::ASTAuxLoadDataStatementEnums* Arena::CreateMaybeMessage<::zetasql::ASTAuxLoadDataStatementEnums>(Arena*);
 template <>
 ::zetasql::ASTBinaryExpressionEnums* Arena::CreateMaybeMessage<::zetasql::ASTBinaryExpressionEnums>(Arena*);
+template <>
+::zetasql::ASTBracedConstructorLhsEnums* Arena::CreateMaybeMessage<::zetasql::ASTBracedConstructorLhsEnums>(Arena*);
 template <>
 ::zetasql::ASTBreakContinueStatementEnums* Arena::CreateMaybeMessage<::zetasql::ASTBreakContinueStatementEnums>(Arena*);
 template <>
@@ -1813,6 +1823,64 @@ inline const std::string& ASTLockModeEnums_LockStrengthSpec_Name(ASTLockModeEnum
 inline bool ASTLockModeEnums_LockStrengthSpec_Parse(absl::string_view name, ASTLockModeEnums_LockStrengthSpec* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTLockModeEnums_LockStrengthSpec>(
       ASTLockModeEnums_LockStrengthSpec_descriptor(), name, value);
+}
+enum ASTBracedConstructorLhsEnums_Operation : int {
+  ASTBracedConstructorLhsEnums_Operation_UPDATE_SINGLE = 0,
+  ASTBracedConstructorLhsEnums_Operation_UPDATE_MANY = 1,
+  ASTBracedConstructorLhsEnums_Operation_UPDATE_SINGLE_NO_CREATION = 2,
+};
+
+bool ASTBracedConstructorLhsEnums_Operation_IsValid(int value);
+constexpr ASTBracedConstructorLhsEnums_Operation ASTBracedConstructorLhsEnums_Operation_Operation_MIN = static_cast<ASTBracedConstructorLhsEnums_Operation>(0);
+constexpr ASTBracedConstructorLhsEnums_Operation ASTBracedConstructorLhsEnums_Operation_Operation_MAX = static_cast<ASTBracedConstructorLhsEnums_Operation>(2);
+constexpr int ASTBracedConstructorLhsEnums_Operation_Operation_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ASTBracedConstructorLhsEnums_Operation_descriptor();
+template <typename T>
+const std::string& ASTBracedConstructorLhsEnums_Operation_Name(T value) {
+  static_assert(std::is_same<T, ASTBracedConstructorLhsEnums_Operation>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to Operation_Name().");
+  return ASTBracedConstructorLhsEnums_Operation_Name(static_cast<ASTBracedConstructorLhsEnums_Operation>(value));
+}
+template <>
+inline const std::string& ASTBracedConstructorLhsEnums_Operation_Name(ASTBracedConstructorLhsEnums_Operation value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ASTBracedConstructorLhsEnums_Operation_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ASTBracedConstructorLhsEnums_Operation_Parse(absl::string_view name, ASTBracedConstructorLhsEnums_Operation* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTBracedConstructorLhsEnums_Operation>(
+      ASTBracedConstructorLhsEnums_Operation_descriptor(), name, value);
+}
+enum ASTAlterIndexStatementEnums_IndexType : int {
+  ASTAlterIndexStatementEnums_IndexType_INDEX_DEFAULT = 0,
+  ASTAlterIndexStatementEnums_IndexType_INDEX_SEARCH = 1,
+  ASTAlterIndexStatementEnums_IndexType_INDEX_VECTOR = 2,
+};
+
+bool ASTAlterIndexStatementEnums_IndexType_IsValid(int value);
+constexpr ASTAlterIndexStatementEnums_IndexType ASTAlterIndexStatementEnums_IndexType_IndexType_MIN = static_cast<ASTAlterIndexStatementEnums_IndexType>(0);
+constexpr ASTAlterIndexStatementEnums_IndexType ASTAlterIndexStatementEnums_IndexType_IndexType_MAX = static_cast<ASTAlterIndexStatementEnums_IndexType>(2);
+constexpr int ASTAlterIndexStatementEnums_IndexType_IndexType_ARRAYSIZE = 2 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+ASTAlterIndexStatementEnums_IndexType_descriptor();
+template <typename T>
+const std::string& ASTAlterIndexStatementEnums_IndexType_Name(T value) {
+  static_assert(std::is_same<T, ASTAlterIndexStatementEnums_IndexType>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to IndexType_Name().");
+  return ASTAlterIndexStatementEnums_IndexType_Name(static_cast<ASTAlterIndexStatementEnums_IndexType>(value));
+}
+template <>
+inline const std::string& ASTAlterIndexStatementEnums_IndexType_Name(ASTAlterIndexStatementEnums_IndexType value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<ASTAlterIndexStatementEnums_IndexType_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool ASTAlterIndexStatementEnums_IndexType_Parse(absl::string_view name, ASTAlterIndexStatementEnums_IndexType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ASTAlterIndexStatementEnums_IndexType>(
+      ASTAlterIndexStatementEnums_IndexType_descriptor(), name, value);
 }
 enum SchemaObjectKind : int {
   __SchemaObjectKind__switch_must_have_a_default__ = -1,
@@ -8448,6 +8516,296 @@ class ASTLockModeEnums final :
   struct Impl_ {
   };
   friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ASTBracedConstructorLhsEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ASTBracedConstructorLhsEnums) */ {
+ public:
+  inline ASTBracedConstructorLhsEnums() : ASTBracedConstructorLhsEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ASTBracedConstructorLhsEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ASTBracedConstructorLhsEnums(const ASTBracedConstructorLhsEnums& from);
+  ASTBracedConstructorLhsEnums(ASTBracedConstructorLhsEnums&& from) noexcept
+    : ASTBracedConstructorLhsEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ASTBracedConstructorLhsEnums& operator=(const ASTBracedConstructorLhsEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ASTBracedConstructorLhsEnums& operator=(ASTBracedConstructorLhsEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ASTBracedConstructorLhsEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ASTBracedConstructorLhsEnums* internal_default_instance() {
+    return reinterpret_cast<const ASTBracedConstructorLhsEnums*>(
+               &_ASTBracedConstructorLhsEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    44;
+
+  friend void swap(ASTBracedConstructorLhsEnums& a, ASTBracedConstructorLhsEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ASTBracedConstructorLhsEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ASTBracedConstructorLhsEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ASTBracedConstructorLhsEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ASTBracedConstructorLhsEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ASTBracedConstructorLhsEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ASTBracedConstructorLhsEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ASTBracedConstructorLhsEnums";
+  }
+  protected:
+  explicit ASTBracedConstructorLhsEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using Operation = ASTBracedConstructorLhsEnums_Operation;
+  static constexpr Operation UPDATE_SINGLE = ASTBracedConstructorLhsEnums_Operation_UPDATE_SINGLE;
+  static constexpr Operation UPDATE_MANY = ASTBracedConstructorLhsEnums_Operation_UPDATE_MANY;
+  static constexpr Operation UPDATE_SINGLE_NO_CREATION = ASTBracedConstructorLhsEnums_Operation_UPDATE_SINGLE_NO_CREATION;
+  static inline bool Operation_IsValid(int value) {
+    return ASTBracedConstructorLhsEnums_Operation_IsValid(value);
+  }
+  static constexpr Operation Operation_MIN = ASTBracedConstructorLhsEnums_Operation_Operation_MIN;
+  static constexpr Operation Operation_MAX = ASTBracedConstructorLhsEnums_Operation_Operation_MAX;
+  static constexpr int Operation_ARRAYSIZE = ASTBracedConstructorLhsEnums_Operation_Operation_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Operation_descriptor() {
+    return ASTBracedConstructorLhsEnums_Operation_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& Operation_Name(T value) {
+    return ASTBracedConstructorLhsEnums_Operation_Name(value);
+  }
+  static inline bool Operation_Parse(absl::string_view name, Operation* value) {
+    return ASTBracedConstructorLhsEnums_Operation_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ASTBracedConstructorLhsEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
+};// -------------------------------------------------------------------
+
+class ASTAlterIndexStatementEnums final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:zetasql.ASTAlterIndexStatementEnums) */ {
+ public:
+  inline ASTAlterIndexStatementEnums() : ASTAlterIndexStatementEnums(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ASTAlterIndexStatementEnums(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ASTAlterIndexStatementEnums(const ASTAlterIndexStatementEnums& from);
+  ASTAlterIndexStatementEnums(ASTAlterIndexStatementEnums&& from) noexcept
+    : ASTAlterIndexStatementEnums() {
+    *this = ::std::move(from);
+  }
+
+  inline ASTAlterIndexStatementEnums& operator=(const ASTAlterIndexStatementEnums& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ASTAlterIndexStatementEnums& operator=(ASTAlterIndexStatementEnums&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ASTAlterIndexStatementEnums& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ASTAlterIndexStatementEnums* internal_default_instance() {
+    return reinterpret_cast<const ASTAlterIndexStatementEnums*>(
+               &_ASTAlterIndexStatementEnums_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    45;
+
+  friend void swap(ASTAlterIndexStatementEnums& a, ASTAlterIndexStatementEnums& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ASTAlterIndexStatementEnums* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ASTAlterIndexStatementEnums* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ASTAlterIndexStatementEnums* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ASTAlterIndexStatementEnums>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ASTAlterIndexStatementEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ASTAlterIndexStatementEnums& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "zetasql.ASTAlterIndexStatementEnums";
+  }
+  protected:
+  explicit ASTAlterIndexStatementEnums(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  using IndexType = ASTAlterIndexStatementEnums_IndexType;
+  static constexpr IndexType INDEX_DEFAULT = ASTAlterIndexStatementEnums_IndexType_INDEX_DEFAULT;
+  static constexpr IndexType INDEX_SEARCH = ASTAlterIndexStatementEnums_IndexType_INDEX_SEARCH;
+  static constexpr IndexType INDEX_VECTOR = ASTAlterIndexStatementEnums_IndexType_INDEX_VECTOR;
+  static inline bool IndexType_IsValid(int value) {
+    return ASTAlterIndexStatementEnums_IndexType_IsValid(value);
+  }
+  static constexpr IndexType IndexType_MIN = ASTAlterIndexStatementEnums_IndexType_IndexType_MIN;
+  static constexpr IndexType IndexType_MAX = ASTAlterIndexStatementEnums_IndexType_IndexType_MAX;
+  static constexpr int IndexType_ARRAYSIZE = ASTAlterIndexStatementEnums_IndexType_IndexType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* IndexType_descriptor() {
+    return ASTAlterIndexStatementEnums_IndexType_descriptor();
+  }
+  template <typename T>
+  static inline const std::string& IndexType_Name(T value) {
+    return ASTAlterIndexStatementEnums_IndexType_Name(value);
+  }
+  static inline bool IndexType_Parse(absl::string_view name, IndexType* value) {
+    return ASTAlterIndexStatementEnums_IndexType_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:zetasql.ASTAlterIndexStatementEnums)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_zetasql_2fparser_2fast_5fenums_2eproto;
 };
 
 // ===================================================================
@@ -8637,6 +8995,14 @@ class ASTLockModeEnums final :
 // -------------------------------------------------------------------
 
 // ASTLockModeEnums
+
+// -------------------------------------------------------------------
+
+// ASTBracedConstructorLhsEnums
+
+// -------------------------------------------------------------------
+
+// ASTAlterIndexStatementEnums
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -8953,6 +9319,18 @@ struct is_proto_enum<::zetasql::ASTLockModeEnums_LockStrengthSpec> : std::true_t
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTLockModeEnums_LockStrengthSpec>() {
   return ::zetasql::ASTLockModeEnums_LockStrengthSpec_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ASTBracedConstructorLhsEnums_Operation> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTBracedConstructorLhsEnums_Operation>() {
+  return ::zetasql::ASTBracedConstructorLhsEnums_Operation_descriptor();
+}
+template <>
+struct is_proto_enum<::zetasql::ASTAlterIndexStatementEnums_IndexType> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::zetasql::ASTAlterIndexStatementEnums_IndexType>() {
+  return ::zetasql::ASTAlterIndexStatementEnums_IndexType_descriptor();
 }
 template <>
 struct is_proto_enum<::zetasql::SchemaObjectKind> : std::true_type {};
