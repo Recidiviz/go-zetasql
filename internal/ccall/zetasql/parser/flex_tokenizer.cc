@@ -23,8 +23,8 @@
 #include "zetasql/parser/flex_istream.h"
 #include "zetasql/parser/tm_lexer.h"
 #include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_codes.h"
 #include "zetasql/public/parse_location.h"
+#include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
 #include "zetasql/base/check.h"
 #include "absl/status/status.h"
@@ -33,6 +33,10 @@
 #include "zetasql/base/status_macros.h"
 
 // TODO: Remove flag when references are gone.
+// Parser CGO also amalgamates this file; define flags only once (root analyzer
+// TU) and use ABSL_DECLARE_FLAG in secondary packages to avoid duplicate
+// absl::Flag symbols at link time (e.g. go-zetasql + parser/parser).
+#if !defined(ZETASQL_FLEX_TOKENIZER_FLAGS_SKIP_DEFINITION)
 ABSL_FLAG(bool, zetasql_use_customized_flex_istream, true, "Unused");
 ABSL_FLAG(bool, use_textmapper_lexer, false,
           "If true, uses TextMapper lexer rather than flex.");
@@ -42,6 +46,12 @@ ABSL_FLAG(bool, verify_textmapper_lexer, false,
           "`use_textmapper_lexer` is false.");
 ABSL_FLAG(bool, skip_textmapper_lexer_verification_under_debug_mode, false,
           "If true, skip the TextMapper lexer verification under DEBUG mode.");
+#else
+ABSL_DECLARE_FLAG(bool, zetasql_use_customized_flex_istream);
+ABSL_DECLARE_FLAG(bool, use_textmapper_lexer);
+ABSL_DECLARE_FLAG(bool, verify_textmapper_lexer);
+ABSL_DECLARE_FLAG(bool, skip_textmapper_lexer_verification_under_debug_mode);
+#endif  // !ZETASQL_FLEX_TOKENIZER_FLAGS_SKIP_DEFINITION
 
 namespace zetasql {
 namespace parser {
@@ -50,7 +60,7 @@ namespace parser {
 // functions.
 absl::StatusOr<Token> LegacyFlexTokenizer::GetNextToken(
     ParseLocationRange* location) {
-  Token token = static_cast<Token>(GetNextTokenFlexImpl(location));
+  Token token = GetNextTokenFlexImpl(location);
   if (!override_error_.ok()) {
     return override_error_;
   }
@@ -86,19 +96,22 @@ absl::StatusOr<Token> TextMapperTokenizer::GetNextToken(
 TextMapperTokenizer::TextMapperTokenizer(absl::string_view filename,
                                          absl::string_view input,
                                          int start_offset)
-    // We do not use Lexer::Rewind() because its time complexity is
-    // O(start_offset). See the comment for `Lexer::start_offset_` in
+    // We do not use TmGeneratedLexer::Rewind() because its time complexity is
+    // O(start_offset). See the comment for `TmGeneratedLexer::start_offset_` in
     // zetasql.tm for more information.
-    : Lexer(absl::ClippedSubstr(input, start_offset)) {
+    : TmGeneratedLexer(absl::ClippedSubstr(input, start_offset)) {
   filename_ = filename;
   start_offset_ = start_offset;
 }
 
 ZetaSqlTokenizer::ZetaSqlTokenizer(absl::string_view filename,
                                        absl::string_view input,
-                                       int start_offset)
-    : filename_(filename), input_(input), start_offset_(start_offset) {
-  if (absl::GetFlag(FLAGS_use_textmapper_lexer)) {
+                                       int start_offset, bool force_flex)
+    : filename_(filename),
+      input_(input),
+      start_offset_(start_offset),
+      force_flex_(force_flex) {
+  if (!force_flex_ && absl::GetFlag(FLAGS_use_textmapper_lexer)) {
     text_mapper_tokenizer_ =
         std::make_unique<TextMapperTokenizer>(filename, input, start_offset);
   } else {
@@ -123,7 +136,7 @@ absl::Status ZetaSqlTokenizer::ValidateTextMapperToken(
       text_mapper_tokenizer_->GetNextToken(&text_mapper_location);
   ZETASQL_RET_CHECK(text_mapper_token.ok());
   ZETASQL_RET_CHECK(flex_token.ok());
-  ZETASQL_RET_CHECK_EQ(text_mapper_token.value(), flex_token.value());
+  ZETASQL_RET_CHECK_EQ(*text_mapper_token, *flex_token);
   ZETASQL_RET_CHECK_EQ(text_mapper_location, flex_token_location);
   return absl::OkStatus();
 }
@@ -134,7 +147,7 @@ constexpr absl::string_view kTokenOutOfSyncError =
 
 absl::StatusOr<Token> ZetaSqlTokenizer::GetNextToken(
     ParseLocationRange* location) {
-  if (absl::GetFlag(FLAGS_use_textmapper_lexer)) {
+  if (!force_flex_ && absl::GetFlag(FLAGS_use_textmapper_lexer)) {
     return text_mapper_tokenizer_->GetNextToken(location);
   }
   absl::StatusOr<Token> flex_token = flex_tokenizer_->GetNextToken(location);

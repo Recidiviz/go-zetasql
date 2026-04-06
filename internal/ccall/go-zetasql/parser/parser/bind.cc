@@ -351,7 +351,9 @@
 
 
 #include "zetasql/parser/bison_parser.cc"
+#define ZETASQL_FLEX_TOKENIZER_FLAGS_SKIP_DEFINITION
 #include "zetasql/parser/flex_tokenizer.cc"
+#undef ZETASQL_FLEX_TOKENIZER_FLAGS_SKIP_DEFINITION
 
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/parser.cc"
