@@ -123,13 +123,13 @@ const ::uint32_t TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto::o
 };
 
 static const ::_pbi::MigrationSchema
-    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    schemas_simple_token_list[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         { 0, -1, -1, sizeof(::zetasql::SimpleTokenListProto)},
         { 9, 20, -1, sizeof(::zetasql::TextTokenProto)},
         { 23, 33, -1, sizeof(::zetasql::TokenProto)},
 };
 
-static const ::_pb::Message* const file_default_instances[] = {
+static const ::_pb::Message* const file_default_instances_simple_token_list[] = {
     &::zetasql::_SimpleTokenListProto_default_instance_._instance,
     &::zetasql::_TextTokenProto_default_instance_._instance,
     &::zetasql::_TokenProto_default_instance_._instance,
@@ -155,8 +155,8 @@ const ::_pbi::DescriptorTable descriptor_table_zetasql_2fpublic_2fsimple_5ftoken
     nullptr,
     0,
     3,
-    schemas,
-    file_default_instances,
+    schemas_simple_token_list,
+    file_default_instances_simple_token_list,
     TableStruct_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto::offsets,
     file_level_metadata_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto,
     file_level_enum_descriptors_zetasql_2fpublic_2fsimple_5ftoken_5flist_2eproto,

@@ -524,7 +524,7 @@ absl::Status UpdateErrorLocationPayloadWithFilenameIfNotPresent(
 
 absl::Status ConvertInternalErrorLocationToExternal(
     absl::Status status, absl::string_view query, int input_start_line_offset,
-    int input_start_column_offset) {
+    int input_start_column_offset, int input_start_byte_offset) {
   // Use fixed type URLs instead of zetasql_base::GetTypeUrl<T>() so we never
   // call protobuf reflection (T::descriptor()) — in some CGO amalgamation
   // shards reflection is not initialized when error statuses are converted.
@@ -542,8 +542,12 @@ absl::Status ConvertInternalErrorLocationToExternal(
     return status;
   }
 
-  const ParseLocationPoint error_point =
+  ParseLocationPoint error_point =
       ParseLocationPoint::FromInternalErrorLocation(internal_error_location);
+  if (input_start_byte_offset != 0) {
+    error_point.SetByteOffset(error_point.GetByteOffset() -
+                              input_start_byte_offset);
+  }
 
   ParseLocationTranslator location_translator(query);
 

@@ -10,7 +10,11 @@
 // include dependencies
 #include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
+// parse_tree_errors.cc calls ConvertInternalErrorLocationToExternal; pull
+// error_helpers.cc (via common/errors) before parse_tree sources.
+#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
+#include "go-zetasql/parser/token/export.inc"
 #include "go-zetasql/parser/token_codes/export.inc"
 #include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-zetasql/base/base/export.inc"
@@ -20,7 +24,6 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
-#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/timer_util/export.inc"
 #include "go-zetasql/parser/macros/macro_catalog/export.inc"
 #include "go-zetasql/public/id_string/export.inc"

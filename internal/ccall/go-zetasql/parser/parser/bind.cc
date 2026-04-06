@@ -207,6 +207,9 @@
 #define zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_parser_parser_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_parser_parser_descriptor_table_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto zetasql_parser_parser_TableStruct_zetasql_2fpublic_2ffunctions_2farray_5ffind_5fmode_2eproto
+#define zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_parser_parser_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_parser_parser_descriptor_table_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
+#define TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto zetasql_parser_parser_TableStruct_zetasql_2fpublic_2ffunctions_2fbitwise_5fagg_5fmode_2eproto
 #define zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_parser_parser_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_parser_parser_descriptor_table_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
 #define TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto zetasql_parser_parser_TableStruct_zetasql_2fpublic_2ffunctions_2funsupported_5ffields_2eproto
@@ -268,8 +271,8 @@
 #define GO_EXPORT(def) export_zetasql_parser_parser_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// flex_tokenizer.flex.cc defines yyFlexLexer::{yylex,yywrap}; suppress flex_tokenizer.h inline stubs.
-#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+// YY_DECL in flex_tokenizer.cc.inc implements LegacyFlexTokenizer::GetNextTokenFlexImpl, not
+// ZetaSqlFlexTokenizerBase::yylex; keep FlexLexer.h inline stubs for the base vtable.
 // flex_prelude uses distinct Legacyalloc symbols from root analyzer (see flex_prelude in add_sources).
 #define ZETASQL_GO_FLEX_LEGACY_IN_PARSER_PKG 1
 
@@ -290,6 +293,7 @@
 
 // include sources
 #include "zetasql/parser/ast_node_internal.h"
+#include "zetasql/parser/flex_tokenizer.h"
 #include "zetasql/parser/bison_parser.bison.cc"
 
 // bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
@@ -297,6 +301,37 @@
 #include "zetasql/parser/join_processor.cc"
 // TextMapper (Bazel :tm_parser). tm_lexer.cc is compiled via flex_tokenizer/export.inc → tm_lexer/export.inc.
 #include "zetasql/parser/textmapper_lexer_adapter.cc"
+// parser_internal.h is include-guarded; the first include came from bison_parser.bison.cc with
+// PARSER_LA_IS_EMPTY() => yyla.empty(). tm_parser.cc uses Textmapper lookahead (`next_symbol_`).
+#undef PARSER_LA_IS_EMPTY
+#undef TM_PARSER_LA_IS_EMPTY
+#define PARSER_LA_IS_EMPTY() (next_symbol_.symbol == noToken)
+#define TM_PARSER_LA_IS_EMPTY() (next_symbol_.symbol == noToken)
+#undef ABORT_CHECK
+#define ABORT_CHECK(location, condition, msg)                   \
+  do {                                                          \
+    if (ABSL_PREDICT_FALSE(!(condition))) {                     \
+      (void)MakeSyntaxError(                                    \
+          location, absl::StrCat("Internal Error: ", (msg)));     \
+      YYABORT;                                                  \
+    }                                                           \
+  } while (0)
+#undef OVERRIDE_CURRENT_TOKEN_LOOKBACK
+#define OVERRIDE_CURRENT_TOKEN_LOOKBACK(location, new_token_kind)          \
+  ABORT_CHECK(location, PARSER_LA_IS_EMPTY(),                              \
+              "The parser lookahead buffer must be empty to override the " \
+              "current token");                                            \
+  absl::Status s = OverrideCurrentTokenLookback(                           \
+      tokenizer, zetasql::TokenKinds::new_token_kind);                   \
+  ABORT_CHECK(location, s.ok(), s.ToString());
+#undef TM_OVERRIDE_CURRENT_TOKEN_LOOKBACK
+#define TM_OVERRIDE_CURRENT_TOKEN_LOOKBACK(location, new_token_kind)       \
+  ABORT_CHECK(location, TM_PARSER_LA_IS_EMPTY(),                           \
+              "The parser lookahead buffer must be empty to override the " \
+              "current token");                                            \
+  absl::Status s_tm_override = OverrideCurrentTokenLookback(               \
+      tokenizer, zetasql::TokenKinds::new_token_kind);                     \
+  ABORT_CHECK(location, s_tm_override.ok(), s_tm_override.ToString());
 #include "zetasql/parser/tm_parser.cc"
 // utf8_validity.cc: single copy via blank-import utf8_range_link (see go-protobuf/protobuf/export.inc).
 // Flex-generated yyalloc helpers use global Legacyalloc names; root analyzer and parser/ CGO packages
@@ -310,7 +345,7 @@
 #define Legacyrealloc zetasql_go_root_Legacyrealloc
 #define Legacyfree zetasql_go_root_Legacyfree
 #endif
-#include "zetasql/parser/flex_tokenizer.h"
+#undef COLON
 #include "zetasql/parser/flex_tokenizer.flex.cc"
 
 
@@ -332,6 +367,7 @@
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/parser/token/export.inc"
 #include "go-zetasql/parser/token_codes/export.inc"
+#include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"

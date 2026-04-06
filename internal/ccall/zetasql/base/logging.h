@@ -72,6 +72,18 @@ void ZetaSqlMakeCheckOpValueString(std::ostream *os, const unsigned char &v);
 template <>
 void ZetaSqlMakeCheckOpValueString(std::ostream *os, const std::nullptr_t &v);
 
+// unique_ptr does not stream by default; avoid CHECK/DCHECK build failures when
+// comparing nodes (e.g. ResolvedExpr) in amalgamation TUs.
+template <typename T>
+inline void ZetaSqlMakeCheckOpValueString(std::ostream *os,
+                                          const std::unique_ptr<T> &v) {
+  if (v == nullptr) {
+    (*os) << "nullptr";
+  } else {
+    (*os) << static_cast<const void *>(v.get());
+  }
+}
+
 // A helper class for formatting "expr (V1 vs. V2)" in a CHECK_XX
 // statement.  See ZetaSqlMakeCheckOpString for sample usage.
 class CheckOpMessageBuilder {

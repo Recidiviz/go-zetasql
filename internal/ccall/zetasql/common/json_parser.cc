@@ -132,7 +132,7 @@ bool JSONParser::ParseString() {
   return true;
 }
 
-constexpr absl::string_view kReplacementCharacter = "\uFFFD";
+constexpr absl::string_view kJsonParserReplacementCharacter = "\uFFFD";
 
 // Converts a unicode escaped or Latin-1 escaped character to a decimal value
 // stored in a char32_t for use in UTF8 encoding utility.  We assume that str
@@ -162,7 +162,8 @@ bool JSONParser::ParseHexDigits(const int size, std::string* str) {
   U8_APPEND(buf, len, U8_MAX_LENGTH, code, is_error);
   if (is_error) {
     // If the codepoint is bogus, just replace with replacement character.
-    str->append(kReplacementCharacter.data(), kReplacementCharacter.size());
+    str->append(kJsonParserReplacementCharacter.data(),
+                kJsonParserReplacementCharacter.size());
   } else {
     str->append(buf, len);
   }
@@ -196,7 +197,8 @@ void JSONParser::ParseOctalDigits(const int max_size, std::string* str) {
   U8_APPEND(buf, len, sizeof(buf), sum, is_error);
   if (is_error) {
     // If the codepoint is bogus, just replace with replacement character.
-    str->append(kReplacementCharacter.data(), kReplacementCharacter.size());
+    str->append(kJsonParserReplacementCharacter.data(),
+                kJsonParserReplacementCharacter.size());
   } else {
     str->append(buf, len);
   }
