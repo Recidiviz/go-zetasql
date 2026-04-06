@@ -61,15 +61,22 @@ docker/build:
 docker/build-dev: cache-dirs
 	docker build -t $(DOCKER_DEV_IMAGE) --target dev .
 
-# --- Local host (no Docker): ccache + clang + same GO_CACHE_ROOT as Docker ----------
-# Requires: clang, clang++, ccache on PATH.
+# --- Local host (no Docker): clang + same GO_CACHE_ROOT as Docker ----------
+# Requires: clang, clang++ on PATH. Optional: ccache (see CGO_CC / CGO_CXX).
+#
+# Default compilers are plain clang: wrapping with `ccache clang` has produced incorrect
+# CGO-linked parser code for this tree (MERGE/TextMapper); override if you accept that risk:
+#   make local/test CGO_CC='ccache clang' CGO_CXX='ccache clang++'
+CGO_CC ?= clang
+CGO_CXX ?= clang++
 
 # Example: make local/build BUILDPKG=./internal/ccall/go-zetasql
 local/build: cache-dirs
 	CGO_ENABLED=1 \
-	$(if $(MOLD_LD),CGO_LDFLAGS=$(MOLD_LD)) \
-	CC="ccache clang" \
-	CXX="ccache clang++" \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
@@ -79,9 +86,10 @@ local/build: cache-dirs
 # Same toolchain as local/build; mirrors test/linux but runs on the host (no -race unless you add it).
 local/test: cache-dirs
 	CGO_ENABLED=1 \
-	$(if $(MOLD_LD),CGO_LDFLAGS=$(MOLD_LD)) \
-	CC="ccache clang" \
-	CXX="ccache clang++" \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
