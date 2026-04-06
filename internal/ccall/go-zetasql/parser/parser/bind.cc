@@ -295,9 +295,6 @@
 #include "zetasql/parser/parser.cc"
 #include "zetasql/parser/unparser.cc"
 
-// Same as root bind.cc: YY_DECL is GetNextTokenFlexImpl, not yylex().
-int ZetaSqlFlexTokenizerBase::yylex() { return 0; }
-
 // include dependencies
 #include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
 #include "go-zetasql/parser/bison_parser_generated_lib/export.inc"

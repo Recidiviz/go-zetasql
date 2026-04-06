@@ -13,6 +13,7 @@
 #include "zetasql/parser/unparser.h"
 #include "zetasql/parser/visit_result.h"
 // include sources
+// flex_tokenizer.cc / flex_tokenizer.flex.cc are amalgamated in parser/bind.cc (parser prelude).
 #include "zetasql/parser/ast_node_internal.h"
 #include "zetasql/parser/bison_parser.bison.cc"
 // bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
@@ -20,9 +21,7 @@
 #include "zetasql/parser/join_processor.cc"
 // utf8_validity.cc: single copy via blank-import utf8_range_link (see go-protobuf/protobuf/export.inc).
 #include "zetasql/parser/flex_tokenizer.h"
-#include "zetasql/parser/flex_tokenizer.flex.cc"
 #include "zetasql/parser/bison_parser.cc"
-#include "zetasql/parser/flex_tokenizer.cc"
 #include "zetasql/parser/bison_parser.h"
 #include "zetasql/parser/parser.cc"
 #include "zetasql/parser/unparser.cc"
