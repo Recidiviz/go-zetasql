@@ -12,7 +12,7 @@ This workflow upgrades **go-zetasql**, **go-zetasqlite**, and **bigquery-emulato
 ## Methodology (avoid brute-force loops)
 
 1. **Delta before mechanics** — Complete Phase 1 (upstream diff) and draft or update `docs/googlesql-upgrade-delta-<from>-to-<to>.md` *before* chasing unrelated test failures. Prior edits should follow known proto/builtin/`resolved_ast` themes.
-2. **Regeneration pipeline** — Submodule → updater (incremental; document flags like `GO_ZETASQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **sync `*.proto` into `internal/ccall` if needed** (updater `Skip` rules may **omit `.proto`** — stale `options.proto` / enums cause confusing failures) → **protoc** / `gen_parse_tree` / `gen_resolved_ast` (order per [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md) and your delta doc) → **`go run` generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
+2. **Regeneration pipeline** — **Upstream submodule tag only** ([`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md)) → updater (incremental; document flags like `GO_ZETASQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **sync `*.proto` into `internal/ccall` if needed** (updater `Skip` rules may **omit `.proto`** — stale `options.proto` / enums cause confusing failures) → **protoc** / `gen_parse_tree` / `gen_resolved_ast` (order per [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md) and your delta doc) → **`go run` generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
 3. **Canonical green definition** — **go-zetasql:** `make local/test` (`TESTPKG` defaults to `./`, root package — matches CI). Do not treat failures from `go test ./...` across every `internal/ccall/...` shard as blocking unless that scope is explicitly in scope (see skill).
 4. **Classify the failure** — Sync drift, linker/amalgamation, protobuf vendoring, or runtime/semantic (parser, language features, emulator path). Fix the matching layer; avoid alternating random edits with full tree rebuilds.
 5. **Generator and exportinc** — Manual edits to `bind.cc` templates, `export.inc`, or [`internal/cmd/generator`](../../internal/cmd/generator) / `exportinc` can be **overwritten** on the next generate pass. If a fix “comes back” after regeneration, change the **generator or policy** (e.g. flex suppress flags), not only the generated file.
@@ -28,7 +28,7 @@ End-to-end workflow for bumping **google/zetasql** (submodule in go-zetasql) and
 - **Phrases:** `zetasql-upgrade to <tag>`, `upgrade zetasql to <tag>`, `bump googlesql to <tag>`.
 - **Required:** Target **tag** (canonical form `YYYY.MM.P`, e.g. `2023.09.1`). Normalize user input (strip `v`, collapse spaces) to that form.
 - **Optional `from` tag:** If omitted, derive from the current submodule commit in [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) (`git describe --tags`) or from the latest [docs/googlesql-upgrade-delta-*.md](../../docs/) baseline.
-- **Submodule not exactly on a tag:** Run `git -C internal/cmd/updater/zetasql describe --tags --always`. If you see `<tag>-<N>-g<hash>` with **N ≥ 1**, there are **local commits on top of the upstream tag** (e.g. vendor patches). Plan to **cherry-pick or rebase** those commits onto `<to>` after bumping the submodule, and record the new submodule SHA in the delta doc.
+- **Submodule must match an upstream tag:** After `git fetch --tags` and `git checkout <to>` inside the submodule, `git -C internal/cmd/updater/zetasql describe --tags --exact-match` should succeed. **Do not** add commits inside the submodule—embedding-only fixes belong in **`internal/ccall/`** after the updater (or via vendorpatch / documented overlays). Policy: [`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md). If you see `<tag>-<N>-g<hash>` with **N ≥ 1**, reset to the tag: `git -C internal/cmd/updater/zetasql checkout <to>`.
 
 ## Phase 0 — Workspace prep (all three repos)
 
@@ -65,8 +65,7 @@ Before large mechanical edits, understand what changed between **`from`** and **
 
 ## Phase 2 — go-zetasql
 
-1. **Submodule:** In `GO_ZETASQL_ROOT`, update [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) to tag `<to>` (`git checkout <to>` inside submodule), commit the submodule pointer when ready.
-   - **Vendor patches on top of the tag:** If you add commits in the submodule (patches above the upstream tag), the parent repo will point at a **specific submodule SHA**, not the tag tip. **Push that submodule commit** to whatever remote CI and teammates use *before* (or with) pushing `go-zetasql`, so clones resolve the submodule. Split commits logically: submodule pointer vs generator/ccall mirror in the parent.
+1. **Submodule:** In `GO_ZETASQL_ROOT`, update [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) to tag `<to>` (`git fetch --tags` and `git checkout <to>` inside submodule—**tag tip only**; see [`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md)), then commit the submodule pointer in the parent when ready. Any CGO-specific ZetaSQL edits go in **`internal/ccall`** / updater overlays / `vendorpatch`, not as extra submodule commits.
 2. **Regeneration / vendoring:**
    - A **full** run of `internal/cmd/updater` can **break the CGO link** (duplicate symbols, protobuf/flex skew). Prefer **incremental** steps and document what you ran.
    - Use `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when refreshing ZetaSQL sources while **preserving** the existing protobuf vendoring story (see [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md)).
@@ -252,5 +251,6 @@ Browse [docs/](../../docs/) for files matching `googlesql-upgrade-*.md` — use 
 
 ## Additional resources
 
+- Submodule policy (read-only upstream): [docs/zetasql-submodule-policy.md](../../docs/zetasql-submodule-policy.md)
 - Vendoring playbook: [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md)
 - Example delta write-ups: [docs/googlesql-upgrade-delta-2023.04-to-2023.08.md](../../docs/googlesql-upgrade-delta-2023.04-to-2023.08.md)

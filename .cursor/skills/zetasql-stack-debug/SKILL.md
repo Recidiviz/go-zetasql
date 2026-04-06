@@ -15,8 +15,9 @@ description: >-
 
 1. **Classify before fixing** — Decide whether the failure is *sync drift* (updater/generator/vendorpatch not run), *link/amalgamation* (duplicate or missing symbols), *codegen* (missing `resolved_ast` / protos), or *runtime/semantic* (parser, status payloads, language features). Do not treat every red build as a random code bug.
 2. **Delta-first** — Read or write `docs/googlesql-upgrade-delta-<from>-to-<to>.md` and skim upstream `git log`/`diff` between tags for protos, builtins, and `resolved_ast` churn before deep edits.
-3. **Pipeline order** — Submodule tag → `internal/cmd/updater` (incremental; know what ran) → `go run ./internal/cmd/vendorpatch` or `scripts/apply-vendor-patches.sh` as needed → `go run ./internal/cmd/generator` → **then** tests. If C++ or Go bindings look impossible, suspect skipped steps.
-4. **One heavy repo at a time** — Do not run full test suites for go-zetasql, go-zetasqlite, and bigquery-emulator in parallel (OOM).
+3. **Submodule is read-only upstream** — The checkout under `internal/cmd/updater/zetasql` must be an **upstream release tag only**; do not add commits inside the submodule. CGO-specific fixes belong in `internal/ccall/` (after the updater), `vendorpatch`, or documented overlays—see [`docs/zetasql-submodule-policy.md`](../../../docs/zetasql-submodule-policy.md).
+4. **Pipeline order** — Submodule tag checkout → `internal/cmd/updater` (incremental; know what ran) → `go run ./internal/cmd/vendorpatch` or `scripts/apply-vendor-patches.sh` as needed → `go run ./internal/cmd/generator` → **then** tests. If C++ or Go bindings look impossible, suspect skipped steps.
+5. **One heavy repo at a time** — Do not run full test suites for go-zetasql, go-zetasqlite, and bigquery-emulator in parallel (OOM).
 
 ## Canonical verification (go-zetasql)
 
@@ -42,7 +43,7 @@ description: >-
 | Missing types / enums / proto fields | Submodule vs generated Go/C++ out of sync | Updater + generator; check delta doc for proto changes |
 | Duplicate symbols, link errors after updater | Full updater vs incremental; protobuf/amalgamation overlap | `docs/protobuf-vendoring.md`, `vendorpatch`, avoid duplicating same `.cc` in multiple CGO shards |
 | `utf8_validity`, protobuf internal errors | Vendored protobuf path / single provider of `utf8_range` | Trace which TU should own the symbol; do not assume every subpackage build is valid |
-| Crash in parse/analyze with OK error paths | Status payload / descriptor init (historical issue class) | Minimal repro; debugger; fix at source, not blanket retries |
+| Crash in parse/analyze with OK error paths | Status payload / descriptor init in CGO shards (historical issue class) | Minimal repro; apply fixes under `internal/ccall/zetasql/` or vendorpatch—[`docs/zetasql-submodule-policy.md`](../../../docs/zetasql-submodule-policy.md); not in the submodule |
 | Pass root tests, fail obscure subpackages only | Unsupported isolated compile of split packages | Confirm with `make local/test` / CI matrix |
 | OOM | Parallel heavy CGO | One repo at a time; `-p 1`; `cgo-go.sh` |
 

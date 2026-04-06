@@ -68,6 +68,8 @@ assume **mixed revisions or incomplete post-copy patching** first. Re-copy a sin
 
 ## Upgrade playbook
 
+[`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql) must track **upstream release tags only** (no extra submodule commits). Embedding-specific fixes live under `internal/ccall/` and related tooling; see [`zetasql-submodule-policy.md`](zetasql-submodule-policy.md).
+
 1. Update the updater **cache** / pins so `com_google_protobuf` matches the ZetaSQL release you target.
 2. Run the updater with `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when **preserving** local protobuf edits, or unset it when **forcing** a full refresh from cache.
 3. The updater applies **amalgamation** patches to `port_def.inc` and `port_undef.inc` automatically; if you skipped the updater, run `go run ./internal/cmd/vendorpatch` (or `scripts/apply-vendor-patches.sh`).

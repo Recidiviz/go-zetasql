@@ -18,7 +18,11 @@ Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/u
 
 **Flex:** Keep the existing flex/post-copy policy in [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) `applyPostCopyOverlays` and [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) in sync with tokenizer changes.
 
-Carry forward the submodule patch **guard status payloads when protobuf descriptors are absent in CGO shards** (was `b4be268f` on `2023.11.1`) by cherry-picking onto `2024.03.1` unless upstream already subsumes it.
+### Embedding-only fixes (not in the submodule)
+
+Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)). If go-zetasql needs CGO-specific status-payload or related fixes, apply them under **`internal/ccall/zetasql/`** after the updater, or via [`vendorpatch` / `protobuf-vendoring.md`](protobuf-vendoring.md).
+
+*Historical note:* Older text here referenced cherry-picking into the submodule; that workflow is **retired**.
 
 ## Themes relevant to the Go stack
 

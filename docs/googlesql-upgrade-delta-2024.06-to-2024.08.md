@@ -20,9 +20,11 @@ Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/u
 
 **Root `bind.cc` / `root_bind.cc.tmpl`:** Include [`root_analyzer_amalgamation_macros.inc`](../internal/ccall/go-zetasql/root_analyzer_amalgamation_macros.inc) **before** `_cgo_export.h` (same ordering constraints as prior upgrades).
 
-### Submodule vendor patch
+### Embedding-only fixes (not in the submodule)
 
-Carry forward the submodule patch **guard status payloads when protobuf descriptors are absent in CGO shards** (commit `a2fd80e9f3982b2e6f8d46505c508d0ba2d203e3` on top of `2024.06.1`) by **cherry-picking onto `2024.08.1`** unless upstream already subsumes it. Record the resulting submodule SHA in this repo’s submodule pointer; push that submodule commit to the remote CI uses before (or with) pushing `go-zetasql`.
+Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)). If go-zetasql needs CGO-specific status-payload or related fixes, apply them under **`internal/ccall/zetasql/`** after the updater, or via [`vendorpatch` / `protobuf-vendoring.md`](protobuf-vendoring.md).
+
+*Historical note:* Older delta docs described cherry-picking into the submodule; that workflow is **retired**.
 
 ## Themes relevant to the Go stack
 

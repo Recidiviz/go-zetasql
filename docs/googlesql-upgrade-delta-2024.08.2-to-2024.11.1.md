@@ -6,7 +6,7 @@ Upstream ships as a single **“Export of internal ZetaSQL changes”** commit o
 
 ## go-zetasql source snapshot
 
-Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2024.11.1` (plus the status-payload vendor patch below). Prefer `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run ./internal/cmd/vendorpatch` and `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
+Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2024.11.1`. Prefer `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run ./internal/cmd/vendorpatch` and `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
 
 **`.proto` files:** The updater `Skip` callback does not copy `*.proto` from the submodule; sync them explicitly, e.g. `rsync` of `*.proto` from `internal/cmd/updater/zetasql/zetasql/` into `internal/ccall/zetasql/`.
 
@@ -20,9 +20,13 @@ Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/u
 
 **Root `bind.cc` / `root_bind.cc.tmpl`:** Include [`root_analyzer_amalgamation_macros.inc`](../internal/ccall/go-zetasql/root_analyzer_amalgamation_macros.inc) **before** `_cgo_export.h` (same ordering constraints as prior upgrades).
 
-### Submodule vendor patch
+### Embedding-only fixes (not in the submodule)
 
-Carry forward the submodule patch **guard status payloads when protobuf descriptors are absent in CGO shards** (commit `09fdd399af7b2dc3c3da142da506d25ae4558d6d` on top of the prior release) by **cherry-picking onto `2024.11.1`** unless upstream already subsumes it. Upstream **also edits** `zetasql/public/error_helpers.cc` in `2024.08.2..2024.11.1`; expect a **manual merge** if the cherry-pick conflicts—preserve both new upstream behavior and the payload/descriptor guards. `status_payload.h` / `status_payload_utils.h` may apply cleanly. Record the resulting submodule SHA in this repo’s submodule pointer; push that submodule commit to the remote CI uses before (or with) pushing `go-zetasql`.
+Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)).
+
+If go-zetasql needs CGO-specific changes (for example guarding **status payloads** when protobuf descriptors are missing in amalgamation shards), apply them in **`internal/ccall/zetasql/`** after the updater copies sources, or via `go run ./internal/cmd/vendorpatch` / overlays in [`protobuf-vendoring.md`](protobuf-vendoring.md). Upstream **edited** `zetasql/public/error_helpers.cc` in `2024.08.2..2024.11.1`—reconcile any embedding fixes with **`internal/ccall`** copies, not the submodule.
+
+*Historical note:* Older delta docs described cherry-picking into the submodule; that workflow is **retired**.
 
 ## Themes relevant to the Go stack
 

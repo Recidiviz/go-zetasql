@@ -18,7 +18,11 @@ Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/u
 
 **Flex:** Remove the `yyFlexLexer::yylex` / `yywrap` stub block that conflicts with `%option yyclass="FlexTokenizer"` (handled in [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) `applyPostCopyOverlays` and by dropping `ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS` from the parser bind prelude in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml)).
 
-Carry forward the submodule patch **guard status payloads when protobuf descriptors are absent in CGO shards** (was `d2421b28` on `2023.10.1`) by cherry-picking onto `2023.11.1` unless upstream already subsumes it.
+### Embedding-only fixes (not in the submodule)
+
+Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)). If go-zetasql needs CGO-specific status-payload or related fixes, apply them under **`internal/ccall/zetasql/`** after the updater, or via [`vendorpatch` / `protobuf-vendoring.md`](protobuf-vendoring.md).
+
+*Historical note:* Older text here referenced cherry-picking into the submodule; that workflow is **retired**.
 
 ## Themes relevant to the Go stack
 

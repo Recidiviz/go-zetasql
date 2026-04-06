@@ -20,9 +20,11 @@ Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/u
 
 **Root `bind.cc` / `root_bind.cc.tmpl`:** Include [`root_analyzer_amalgamation_macros.inc`](../internal/ccall/go-zetasql/root_analyzer_amalgamation_macros.inc) **before** `_cgo_export.h`. Upstream split `zetasql/common/warning_sink.cc` out of the errors bundle; if `_cgo_export.h` pulls nested includes that reach `go-zetasql/public/analyzer/export.inc` before the `zetasql` → `zetasql_public_analyzer_zetasql` macro is set, `WarningSink` is compiled under the wrong namespace and the linker reports undefined references to `zetasql_public_analyzer_zetasql::WarningSink::*`.
 
-### Submodule vendor patch
+### Embedding-only fixes (not in the submodule)
 
-Carry forward the submodule patch **guard status payloads when protobuf descriptors are absent in CGO shards** (commit `8c3b9c5b2973c99e2024f827d7f4fdd689eecdaa` on top of `2024.03.1`) by **cherry-picking onto `2024.06.1`** unless upstream already subsumes it. Record the resulting submodule SHA in this repo’s submodule pointer; push that submodule commit to the remote CI uses before (or with) pushing `go-zetasql`.
+Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)). If go-zetasql needs CGO-specific status-payload or related fixes, apply them under **`internal/ccall/zetasql/`** after the updater, or via [`vendorpatch` / `protobuf-vendoring.md`](protobuf-vendoring.md).
+
+*Historical note:* Older delta docs described cherry-picking into the submodule; that workflow is **retired**.
 
 ## Themes relevant to the Go stack
 
