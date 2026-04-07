@@ -125,8 +125,8 @@ template <typename Value>
 bool SimpleDescriptorDatabase::DescriptorIndex<Value>::AddFile(
     const FileDescriptorProto& file, Value value) {
   if (!by_name_.emplace(file.name(), value).second) {
-    ABSL_LOG(ERROR) << "File already exists in database: " << file.name();
-    return false;
+    // go-zetasql: duplicate CGO protobuf embedding can register the same file twice.
+    return true;
   }
 
   // We must be careful here -- calling file.package() if file.has_package() is
@@ -653,8 +653,11 @@ bool EncodedDescriptorDatabase::DescriptorIndex::AddFile(const FileProto& file,
            .second ||
       std::binary_search(by_name_flat_.begin(), by_name_flat_.end(),
                          file.name(), by_name_.key_comp())) {
-    ABSL_LOG(ERROR) << "File already exists in database: " << file.name();
-    return false;
+    // go-zetasql: several CGO packages each #include go-protobuf/protobuf/export.inc;
+    // identical generated descriptors are registered more than once. Drop the
+    // duplicate all_values_ entry and succeed (same bytes as the first copy).
+    all_values_.pop_back();
+    return true;
   }
 
   for (const auto& message_type : file.message_type()) {
