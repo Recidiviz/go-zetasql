@@ -129,6 +129,24 @@ func applyPostCopyOverlays() error {
 	); err != nil {
 		return err
 	}
+	// Upstream googlesql/public/BUILD omits :sql_tvf next to public/types in one cc_library; go-zetasql
+	// needs it for TVF-related sources pulled into the amalgamation.
+	if err := replaceIfMissing(
+		filepath.Join(ccallDir(), "googlesql", "public", "BUILD"),
+		`        "//googlesql/proto:simple_property_graph_cc_proto",
+        "//googlesql/public/proto:type_annotation_cc_proto",
+        "//googlesql/public/types",
+        "//googlesql/resolved_ast",
+        "//googlesql/resolved_ast:resolved_ast_cc_proto",`,
+		`        "//googlesql/proto:simple_property_graph_cc_proto",
+        "//googlesql/public/proto:type_annotation_cc_proto",
+        "//googlesql/public/types",
+        ":sql_tvf",
+        "//googlesql/resolved_ast",
+        "//googlesql/resolved_ast:resolved_ast_cc_proto",`,
+	); err != nil {
+		return err
+	}
 	if err := replaceIfMissing(
 		filepath.Join(ccallDir(), "icu", "common", "bytesinkutil.h"),
 		`#include "unicode/utypes.h"
