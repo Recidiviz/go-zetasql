@@ -191,6 +191,51 @@ func (p *BuildFileParser) isExcludedPath(path string) bool {
 	return false
 }
 
+// filegroupsFromTree maps filegroup name -> srcs for the current BUILD file (local :label expansion).
+func (p *BuildFileParser) filegroupsFromTree(tree *build.File) map[string][]string {
+	out := map[string][]string{}
+	for _, stmt := range tree.Stmt {
+		callExpr, ok := stmt.(*build.CallExpr)
+		if !ok || p.getText(callExpr.X) != "filegroup" {
+			continue
+		}
+		var name string
+		var srcs []string
+		for _, item := range callExpr.List {
+			assignExpr, ok := item.(*build.AssignExpr)
+			if !ok {
+				continue
+			}
+			switch p.getText(assignExpr.LHS) {
+			case "name":
+				name = p.getText(assignExpr.RHS)
+			case "srcs":
+				srcs = p.exprTexts(assignExpr.RHS)
+			}
+		}
+		if name != "" {
+			out[name] = srcs
+		}
+	}
+	return out
+}
+
+func expandLocalHdrLabels(hdrs []string, filegroups map[string][]string) []string {
+	var out []string
+	for _, h := range hdrs {
+		if strings.HasPrefix(h, ":") {
+			key := strings.TrimPrefix(h, ":")
+			if files, ok := filegroups[key]; ok {
+				out = append(out, files...)
+				continue
+			}
+			continue
+		}
+		out = append(out, h)
+	}
+	return out
+}
+
 func (p *BuildFileParser) cclibs(path string, tree *build.File) ([]*Lib, error) {
 	if p.isExcludedPath(path) {
 		return nil, nil
@@ -199,6 +244,7 @@ func (p *BuildFileParser) cclibs(path string, tree *build.File) ([]*Lib, error) 
 	if err != nil {
 		return nil, err
 	}
+	filegroups := p.filegroupsFromTree(tree)
 	cclibs := make([]*Lib, 0, len(tree.Stmt))
 	for _, stmt := range tree.Stmt {
 		callExpr, ok := stmt.(*build.CallExpr)
@@ -222,7 +268,7 @@ func (p *BuildFileParser) cclibs(path string, tree *build.File) ([]*Lib, error) 
 			case "name":
 				cclib.Name = p.getText(rhs)
 			case "hdrs":
-				cclib.Headers = p.exprTexts(rhs)
+				cclib.Headers = expandLocalHdrLabels(p.exprTexts(rhs), filegroups)
 			case "srcs":
 				cclib.Sources = p.filterSource(p.exprTexts(rhs))
 			case "deps":
@@ -374,7 +420,8 @@ func (p *BuildFileParser) ccprotos(path string, tree *build.File) ([]*Lib, error
 		c := c
 		protocMap[c.Name] = c
 	}
-	protoSourceMap := map[string]string{}
+	// protoLibraryBases maps proto_library name -> basename of each .proto (order preserved).
+	protoLibraryBases := map[string][]string{}
 	for _, stmt := range tree.Stmt {
 		callExpr, ok := stmt.(*build.CallExpr)
 		if !ok {
@@ -400,7 +447,11 @@ func (p *BuildFileParser) ccprotos(path string, tree *build.File) ([]*Lib, error
 		if name == "" || len(srcs) == 0 {
 			continue
 		}
-		protoSourceMap[name] = strings.TrimSuffix(srcs[0], ".proto")
+		bases := make([]string, 0, len(srcs))
+		for _, s := range srcs {
+			bases = append(bases, strings.TrimSuffix(s, ".proto"))
+		}
+		protoLibraryBases[name] = bases
 	}
 	ccprotos := make([]*Lib, 0, len(tree.Stmt))
 	for _, stmt := range tree.Stmt {
@@ -427,6 +478,7 @@ func (p *BuildFileParser) ccprotos(path string, tree *build.File) ([]*Lib, error
 			}
 		}
 		libName := ccproto.Name[:len(ccproto.Name)-len("_cc_proto")]
+		var protoBases []string
 		for _, item := range callExpr.List {
 			assignExpr, ok := item.(*build.AssignExpr)
 			if !ok || p.getText(assignExpr.LHS) != "deps" {
@@ -436,8 +488,9 @@ func (p *BuildFileParser) ccprotos(path string, tree *build.File) ([]*Lib, error
 				if !strings.HasPrefix(dep, ":") {
 					continue
 				}
-				if protoLibName := dep[1:]; protoSourceMap[protoLibName] != "" {
-					libName = protoSourceMap[protoLibName]
+				if bases := protoLibraryBases[dep[1:]]; len(bases) > 0 {
+					libName = bases[0]
+					protoBases = bases
 					break
 				}
 			}
@@ -446,14 +499,23 @@ func (p *BuildFileParser) ccprotos(path string, tree *build.File) ([]*Lib, error
 			continue
 		}
 		pkgName := fmt.Sprintf("%s/%s", ccproto.BasePkg, ccproto.Name)
-		ccproto.Headers = []string{fmt.Sprintf("%s.pb.h", libName)}
-		ccproto.Sources = []string{fmt.Sprintf("%s.pb.cc", libName)}
+		if len(protoBases) > 0 {
+			ccproto.Headers = make([]string, 0, len(protoBases))
+			ccproto.Sources = make([]string, 0, len(protoBases))
+			for _, b := range protoBases {
+				ccproto.Headers = append(ccproto.Headers, fmt.Sprintf("%s.pb.h", b))
+				ccproto.Sources = append(ccproto.Sources, fmt.Sprintf("%s.pb.cc", b))
+			}
+		} else {
+			ccproto.Headers = []string{fmt.Sprintf("%s.pb.h", libName)}
+			ccproto.Sources = []string{fmt.Sprintf("%s.pb.cc", libName)}
+		}
 		deps := []Dependency{}
 		for _, dep := range protocMap[pkgName].Deps {
 			dep := dep
 			deps = append(deps, Dependency{
 				Value:   dep,
-				Lib:     "zetasql",
+				Lib:     "googlesql",
 				BasePkg: filepath.Dir(dep),
 				Pkg:     filepath.Base(dep),
 			})

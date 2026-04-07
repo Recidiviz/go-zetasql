@@ -1,4 +1,4 @@
-- package: zetasql/public/sql_formatter
+- package: googlesql/public/sql_formatter
   methods:
     - name: FormatSql
       args:
@@ -6,7 +6,7 @@
       ret:
         - string
         - struct
-- package: zetasql/parser/parser
+- package: googlesql/parser/parser
   methods:
     - name: ParseStatement
       args:
@@ -4722,7 +4722,7 @@
       ret:
         - struct
 
-- package: zetasql/public/catalog
+- package: googlesql/public/catalog
   methods:
     - name: GoCatalog_new
       args:
@@ -4735,7 +4735,7 @@
       ret:
         - struct
 
-- package: zetasql/public/simple_catalog
+- package: googlesql/public/simple_catalog
   methods:
     - name: Type_Kind
       args:
@@ -6841,7 +6841,7 @@
       ret:
         - struct
 
-- package: zetasql/public/analyzer
+- package: googlesql/public/analyzer
   methods:
     - name: LanguageOptions_new
       ret:

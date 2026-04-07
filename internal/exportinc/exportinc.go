@@ -109,10 +109,14 @@ func filterBisonExportDuplicateFlexTokenizer(packageDir string, prelude []string
 	if !strings.Contains(packageDir, "/parser/bison_parser_generated_lib") {
 		return prelude
 	}
-	const drop = `#include "zetasql/parser/flex_tokenizer.cc"`
+	const (
+		dropZeta   = `#include "zetasql/parser/flex_tokenizer.cc"`
+		dropGoogle = `#include "googlesql/parser/flex_tokenizer.cc"`
+	)
 	out := make([]string, 0, len(prelude))
 	for _, line := range prelude {
-		if strings.TrimSpace(line) == drop {
+		t := strings.TrimSpace(line)
+		if t == dropZeta || t == dropGoogle {
 			continue
 		}
 		out = append(out, line)
@@ -128,13 +132,15 @@ func filterFlexTokenizerExportDuplicateSources(packageDir string, prelude []stri
 		return prelude
 	}
 	const (
-		dropCC   = `#include "zetasql/parser/flex_tokenizer.cc"`
-		dropFlex = `#include "zetasql/parser/flex_tokenizer.flex.cc"`
+		dropCCZeta   = `#include "zetasql/parser/flex_tokenizer.cc"`
+		dropFlexZeta = `#include "zetasql/parser/flex_tokenizer.flex.cc"`
+		dropCCGoogle = `#include "googlesql/parser/flex_tokenizer.cc"`
+		dropFlexGoogle = `#include "googlesql/parser/flex_tokenizer.flex.cc"`
 	)
 	out := make([]string, 0, len(prelude))
 	for _, line := range prelude {
 		t := strings.TrimSpace(line)
-		if t == dropCC || t == dropFlex {
+		if t == dropCCZeta || t == dropFlexZeta || t == dropCCGoogle || t == dropFlexGoogle {
 			continue
 		}
 		out = append(out, line)
@@ -166,17 +172,21 @@ func slicesInsert(s []string, at int, val string) []string {
 	return s
 }
 
-// wrapUnicodeUtilsCCInclude guards zetasql/common/unicode_utils.cc so the public/analyzer CGO
-// package can define ZETASQL_OMIT_UNICODE_UTILS_CC (see bind_cc_prelude_before_headers) and avoid
-// duplicating FLAGS_zetasql_idstring_* with root bind.cc, while other TUs include the .cc as before.
+// wrapUnicodeUtilsCCInclude guards googlesql/common/unicode_utils.cc (or legacy zetasql path) so
+// the public/analyzer CGO package can define ZETASQL_OMIT_UNICODE_UTILS_CC (see
+// bind_cc_prelude_before_headers) and avoid duplicating FLAGS_* idstring with root bind.cc.
 func wrapUnicodeUtilsCCInclude(prelude []string) []string {
-	const direct = `#include "zetasql/common/unicode_utils.cc"`
+	const (
+		directZeta   = `#include "zetasql/common/unicode_utils.cc"`
+		directGoogle = `#include "googlesql/common/unicode_utils.cc"`
+	)
 	out := make([]string, 0, len(prelude)+2)
 	for _, line := range prelude {
-		if strings.TrimSpace(line) == direct {
+		t := strings.TrimSpace(line)
+		if t == directZeta || t == directGoogle {
 			out = append(out,
 				"#ifndef ZETASQL_OMIT_UNICODE_UTILS_CC",
-				direct,
+				line,
 				"#endif",
 			)
 			continue
