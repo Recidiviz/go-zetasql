@@ -38,6 +38,8 @@ type SourceConfig struct {
 	File           string   `yaml:"file"`
 	Source         string   `yaml:"source"`
 	BeforeIncludes []string `yaml:"before_includes"`
+	// AfterIncludes are #included immediately after #include of File (order preserved).
+	AfterIncludes []string `yaml:"after_includes"`
 	// FlexPrelude is emitted after BeforeIncludes and before #include of File (e.g. flex after grammar).
 	FlexPrelude string `yaml:"flex_prelude,omitempty"`
 }
@@ -85,6 +87,20 @@ type ExtraBindGoImport struct {
 	Imports []string `yaml:"imports"` // full module paths
 }
 
+// ExcludeReplaceNames omits #define lines for given symbols in one package (e.g. skip `google`
+// so protobuf headers keep namespace google::protobuf and link against go-protobuf).
+type ExcludeReplaceNames struct {
+	Pkg   string   `yaml:"pkg"`
+	Names []string `yaml:"names"`
+}
+
+// OmitDependencyExportIncludes drops go-*/export.inc lines for listed deps on one cc_library
+// (e.g. wire_format is amalgamated inside type_annotation_cc_proto; skip duplicate export.inc).
+type OmitDependencyExportIncludes struct {
+	Pkg  string   `yaml:"pkg"` // e.g. googlesql/public/types/type (BasePkg/Name)
+	Deps []string `yaml:"deps"` // dependency package keys, same as libMap keys
+}
+
 type CCLibConfig struct {
 	Excludes                     []string                     `yaml:"excludes"`
 	ExcludeAmalgamationHeaders   []AmalgamationHeaderExclude  `yaml:"exclude_amalgamation_headers"`
@@ -93,6 +109,8 @@ type CCLibConfig struct {
 	SymbolDefineOverrides        []SymbolDefineOverride       `yaml:"symbol_define_overrides"`
 	InjectReplaceNames           []InjectReplaceNames         `yaml:"inject_replace_names"`
 	ExtraBindGoImports           []ExtraBindGoImport          `yaml:"extra_bind_go_imports"`
+	ExcludeReplaceNames          []ExcludeReplaceNames        `yaml:"exclude_replace_names"`
+	OmitDependencyExportIncludes []OmitDependencyExportIncludes `yaml:"omit_dependency_export_includes"`
 }
 
 type ProtocConfig struct {

@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	bazelSupportedLibs = []string{"zetasql", "absl", "algorithms", "base", "proto"}
+	bazelSupportedLibs = []string{"googlesql", "absl", "algorithms", "base", "proto"}
 	includeDirs        = []string{"protobuf", "utf8_range", "gtest", "icu", "re2", "json", "googleapis", "boringssl", "flex/src"}
 )
 
@@ -113,7 +113,7 @@ func (g *Generator) Generate() error {
 	if err != nil {
 		return err
 	}
-	for _, dir := range append(includeDirs, "zetasql", "absl", "algorithms", "base", "proto") {
+	for _, dir := range append(includeDirs, "googlesql", "absl", "algorithms", "base", "proto") {
 		if err := filepath.Walk(filepath.Join(ccallDir(), dir), func(path string, info fs.FileInfo, err error) error {
 			if err != nil {
 				return err
@@ -343,20 +343,20 @@ func (g *Generator) generate(f *ParsedFile) error {
 	return nil
 }
 
-// rootZetaSQLAmalgamationLibs lists zetasql ccall libs linked into root bind.cc / bridge.h.
-// zetasql/parser/parser is omitted: that package has its own bind.cc with namespace-prefix
+// rootZetaSQLAmalgamationLibs lists googlesql ccall libs linked into root bind.cc / bridge.h.
+// googlesql/parser/parser is omitted: that package has its own bind.cc with namespace-prefix
 // macros; re-including parser/export.inc in the parent TU duplicates absl flags and parser .o.
 func (g *Generator) rootZetaSQLAmalgamationLibs() []string {
 	pkgs := g.pkgs()
 	libs := make([]string, 0, len(pkgs))
 	for _, pkg := range pkgs {
-		if !strings.Contains(pkg.Name, "zetasql") {
+		if !strings.Contains(pkg.Name, "googlesql") {
 			continue
 		}
-		if pkg.Name == "zetasql/parser/parser" {
+		if pkg.Name == "googlesql/parser/parser" {
 			continue
 		}
-		libs = append(libs, pkg.Name)
+		libs = append(libs, mapGooglesqlToZetasqlGoImportTree(pkg.Name))
 	}
 	return libs
 }
@@ -394,8 +394,13 @@ func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
 // wrapParserBindTokenDisambiguatorInclude matches exportinc.wrapParserTokenDisambiguatorFlexInclude:
 // parser amalgamation already includes flex_tokenizer.cc; downstream export.inc files must see
 // ZETASQL_PARSER_AMALGAMATION_HAS_FLEX while expanding token_disambiguator.
+// isGooglesqlParserPackage is true for the parser shard under googlesql/parser (not subpackages).
+func isGooglesqlParserPackage(lib *Lib) bool {
+	return lib.Name == "parser" && lib.BasePkg == "googlesql/parser"
+}
+
 func wrapParserBindTokenDisambiguatorInclude(lib *Lib, bindCC []byte) []byte {
-	if lib.BasePkg != "zetasql/parser" || lib.Name != "parser" {
+	if !isGooglesqlParserPackage(lib) {
 		return bindCC
 	}
 	const direct = `#include "go-zetasql/parser/token_disambiguator/export.inc"`
@@ -705,8 +710,20 @@ func (g *Generator) buildReplaceNameEntries(pkgKey string) []ReplaceNameEntry {
 		}
 		overrideBySymbol[o.Symbol] = o
 	}
+	excluded := map[string]struct{}{}
+	for _, e := range g.cfg.CCLib.ExcludeReplaceNames {
+		if e.Pkg != pkgKey {
+			continue
+		}
+		for _, n := range e.Names {
+			excluded[n] = struct{}{}
+		}
+	}
 	out := make([]ReplaceNameEntry, 0, len(names))
 	for _, name := range names {
+		if _, skip := excluded[name]; skip {
+			continue
+		}
 		if o, ok := overrideBySymbol[name]; ok {
 			out = append(out, ReplaceNameEntry{
 				Name:              name,
@@ -753,6 +770,20 @@ func dropCCHeadersDuplicatedInSources(headers []string, lib *Lib) []string {
 	return out
 }
 
+func (g *Generator) omitDependencyExportInclude(pkgKey, depKey string) bool {
+	for _, o := range g.cfg.CCLib.OmitDependencyExportIncludes {
+		if o.Pkg != pkgKey {
+			continue
+		}
+		for _, d := range o.Deps {
+			if d == depKey {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	param := &BindCCParam{}
 
@@ -794,8 +825,13 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 				sourceParam.AfterIncludeHook += fmt.Sprintf("#undef %s\n", symbols[i])
 			}
 		}
-		if addSource, exists := g.containsAddSourceFileMap[src]; exists && addSource.Source != "" {
-			sourceParam.AfterIncludeHook += fmt.Sprintf("\n#include \"%s\"\n", addSource.Source)
+		if addSource, exists := g.containsAddSourceFileMap[src]; exists {
+			for _, inc := range addSource.AfterIncludes {
+				sourceParam.AfterIncludeHook += fmt.Sprintf("\n#include \"%s\"\n", inc)
+			}
+			if addSource.Source != "" {
+				sourceParam.AfterIncludeHook += fmt.Sprintf("\n#include \"%s\"\n", addSource.Source)
+			}
 		}
 		sources = append(sources, sourceParam)
 	}
@@ -804,14 +840,18 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	for _, dep := range lib.Deps {
 		// Parser amalgamation inlines flex_tokenizer.{h,flex.cc,cc}; including
 		// flex_tokenizer/export.inc again duplicates the TU (ABSL_FLAG + methods).
-		if lib.BasePkg == "zetasql/parser" && lib.Name == "parser" &&
-			dep.BasePkg == "zetasql/parser" && dep.Pkg == "flex_tokenizer" {
+		if isGooglesqlParserPackage(lib) &&
+			dep.BasePkg == lib.BasePkg && dep.Pkg == "flex_tokenizer" {
 			continue
 		}
 		// Parser bind.cc flex_prelude amalgamates tm_lexer.cc, textmapper_lexer_adapter.cc,
 		// tm_parser.cc; including tm_parser/export.inc again duplicates those TUs.
-		if lib.BasePkg == "zetasql/parser" && lib.Name == "parser" &&
-			dep.BasePkg == "zetasql/parser" && dep.Pkg == "tm_parser" {
+		if isGooglesqlParserPackage(lib) &&
+			dep.BasePkg == lib.BasePkg && dep.Pkg == "tm_parser" {
+			continue
+		}
+		depKey := fmt.Sprintf("%s/%s", dep.BasePkg, dep.Pkg)
+		if g.omitDependencyExportInclude(pkgKey, depKey) {
 			continue
 		}
 		deps = append(deps, goPkgPath(dep.BasePkg, dep.Pkg))
@@ -961,7 +1001,7 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 	bridgeHeaderMap := map[string]struct{}{}
 	for _, pkg := range g.pkgs() {
 		// Parser methods use export_zetasql_parser_parser_* in parser/parser/bind_linux.go only.
-		if pkg.Name == "zetasql/parser/parser" {
+		if pkg.Name == "googlesql/parser/parser" {
 			continue
 		}
 		pkgName := pkg.Name
