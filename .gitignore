@@ -23,6 +23,7 @@ full_export.inc
 
 # CGO ephemeral output (not checked in)
 internal/ccall/go-zetasql/_obj/
+internal/ccall/go-googlesql/_obj/
 
 # Local Python deps / resolved_ast codegen output (not checked in)
 internal/gen/
