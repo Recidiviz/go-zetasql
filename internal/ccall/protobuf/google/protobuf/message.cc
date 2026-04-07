@@ -307,9 +307,10 @@ GeneratedMessageFactory* GeneratedMessageFactory::singleton() {
 
 void GeneratedMessageFactory::RegisterFile(
     const google::protobuf::internal::DescriptorTable* table) {
-  if (!files_.insert(table).second) {
-    ABSL_LOG(FATAL) << "File is already registered: " << table->filename;
-  }
+  // go-zetasql: CGO can compile the same generated .pb.cc into multiple TUs;
+  // DescriptorByNameEq treats same filename as one slot, so a second insert
+  // is a benign duplicate—do not abort.
+  (void)files_.insert(table);
 }
 
 void GeneratedMessageFactory::RegisterType(const Descriptor* descriptor,

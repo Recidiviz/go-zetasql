@@ -1,5 +1,7 @@
 package protobuf
 
+// cgo-invalidate: 20260407 — bump when editing vendored C++ under internal/ccall/protobuf/
+
 /*
 #cgo CFLAGS: -x c++
 #cgo CFLAGS: -std=c++17
