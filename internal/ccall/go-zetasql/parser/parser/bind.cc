@@ -5,9 +5,9 @@
 // switch namespace
 #define absl googlesql_parser_parser_absl
 #define differential_privacy googlesql_parser_parser_differential_privacy
-#define googlesql googlesql_parser_parser_googlesql
-#define googlesql_base googlesql_parser_parser_googlesql_base
-#define googlesql_bison_parser googlesql_parser_parser_googlesql_bison_parser
+#define googlesql googlesql_public_analyzer_googlesql
+#define googlesql_base googlesql_public_analyzer_googlesql_base
+#define googlesql_bison_parser googlesql_public_analyzer_googlesql_bison_parser
 #define re2 googlesql_parser_parser_re2
 #define AbslInternalSleepFor googlesql_parser_parser_AbslInternalSleepFor
 #define AbslInternalReportFatalUsageError googlesql_parser_parser_AbslInternalReportFatalUsageError
@@ -257,6 +257,9 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_parser_parser_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_parser_parser_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_parser_parser_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
+#define googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_parser_parser_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
+#define descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_parser_parser_descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
+#define TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_parser_parser_TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
 #define googlesql_2freference_5fimpl_2fevaluator_5ftable_5fiterator_2eproto googlesql_parser_parser_googlesql_2freference_5fimpl_2fevaluator_5ftable_5fiterator_2eproto
 #define descriptor_table_googlesql_2freference_5fimpl_2fevaluator_5ftable_5fiterator_2eproto googlesql_parser_parser_descriptor_table_googlesql_2freference_5fimpl_2fevaluator_5ftable_5fiterator_2eproto
 #define TableStruct_googlesql_2freference_5fimpl_2fevaluator_5ftable_5fiterator_2eproto googlesql_parser_parser_TableStruct_googlesql_2freference_5fimpl_2fevaluator_5ftable_5fiterator_2eproto
@@ -340,6 +343,7 @@
 #include "go-zetasql/parser/parser_mode/export.inc"
 #include "go-zetasql/parser/token/export.inc"
 #include "go-zetasql/parser/token_with_location/export.inc"
+#include "go-zetasql/parser/tokenizer/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
 #include "go-zetasql/base/arena_allocator/export.inc"
@@ -384,17 +388,17 @@
 #include "go-absl/types/span/export.inc"
 #include "go-absl/types/variant/export.inc"
 #include "go-re2/re2/export.inc"
-// GoSlice and other cgo types for bridge_cc.inc (and some bridge.inc helpers).
-#include "_cgo_export.h"
 
 #include "bridge.h"
 
 #include "bridge_cc.inc"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 #include "bridge.inc"
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
