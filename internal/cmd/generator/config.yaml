@@ -452,6 +452,10 @@ cclib:
     - pkg: googlesql/public/analyzer
       imports:
         - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
+    # Same as analyzer: renaming `google` breaks protobuf amalgamation; link go-protobuf/protobuf.
+    - pkg: googlesql/public/catalog
+      imports:
+        - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
   omit_extern_c_around_bridge_inc:
     - googlesql/public/catalog
   omit_cgo_export_prolog:
@@ -465,6 +469,9 @@ cclib:
       names:
         - google
     - pkg: googlesql/public/analyzer
+      names:
+        - google
+    - pkg: googlesql/public/catalog
       names:
         - google
 

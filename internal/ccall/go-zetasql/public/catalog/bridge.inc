@@ -1,6 +1,7 @@
 #include "_cgo_export.h"
+#include "catalog_go_callbacks.h"
 
-using namespace zetasql;
+using namespace googlesql;
 
 class GoCatalog : public Catalog {
 public:
@@ -418,12 +419,12 @@ private:
 };
 
 
-void GO_EXPORT(GoCatalog_new)(void * arg0,void ** arg1)
+extern "C" void GO_EXPORT(GoCatalog_new)(void * arg0,void ** arg1)
 {
   *arg1 = (void *)(new GoCatalog(arg0));
 }
 
-void GO_EXPORT(GoTable_new)(void * arg0,void ** arg1)
+extern "C" void GO_EXPORT(GoTable_new)(void * arg0,void ** arg1)
 {
   *arg1 = (void *)(new GoTable(arg0));
 }
