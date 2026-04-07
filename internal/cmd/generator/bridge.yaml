@@ -10597,6 +10597,46 @@
       args:
         - struct
         - struct
+    - name: ResolvedUpdateItem_update_item_element_list
+      args:
+        - struct
+      ret:
+        - struct
+    - name: ResolvedUpdateItem_set_update_item_element_list
+      args:
+        - struct
+        - struct
+    - name: ResolvedUpdateItem_add_update_item_element_list
+      args:
+        - struct
+        - struct
+    - name: ResolvedUpdateItemElement_subscript
+      args:
+        - struct
+      ret:
+        - struct
+    - name: ResolvedUpdateItemElement_set_subscript
+      args:
+        - struct
+        - struct
+    - name: ResolvedUpdateItemElement_update_item
+      args:
+        - struct
+      ret:
+        - struct
+    - name: ResolvedUpdateItemElement_set_update_item
+      args:
+        - struct
+        - struct
+    - name: ResolvedUpdateItemElement_update_item_mode
+      args:
+        - struct
+      ret:
+        - int
+    - name: ResolvedUpdateItemElement_set_update_item_mode
+      args:
+        - struct
+        - int
     - name: ResolvedUpdateArrayItem_offset
       args:
         - struct

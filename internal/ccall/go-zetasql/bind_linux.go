@@ -2031,6 +2031,61 @@ func zetasql_ResolvedNonScalarFunctionCallBase_set_null_handling_modifier(arg0 u
 	C.export_zetasql_ResolvedNonScalarFunctionCallBase_set_null_handling_modifier(arg0, arg1)
 }
 
+func ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	zetasql_ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(arg0, arg1)
+}
+
+func ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(arg0, arg1)
+}
+
+func ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	zetasql_ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(arg0, arg1)
+}
+
+func ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(arg0, arg1)
+}
+
+func ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(arg0, arg1)
+}
+
 func ResolvedAggregateFunctionCall_having_modifier(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	zetasql_ResolvedAggregateFunctionCall_having_modifier(
 		arg0,
@@ -9511,37 +9566,37 @@ func zetasql_ResolvedUpdateItem_set_element_column(arg0 unsafe.Pointer, arg1 uns
 	C.export_zetasql_ResolvedUpdateItem_set_element_column(arg0, arg1)
 }
 
-func ResolvedUpdateItem_update_item_element_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	zetasql_ResolvedUpdateItem_update_item_element_list(
+func ResolvedUpdateItem_array_update_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	zetasql_ResolvedUpdateItem_array_update_list(
 		arg0,
 		arg1,
 	)
 }
 
-func zetasql_ResolvedUpdateItem_update_item_element_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_zetasql_ResolvedUpdateItem_update_item_element_list(arg0, arg1)
+func zetasql_ResolvedUpdateItem_array_update_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateItem_array_update_list(arg0, arg1)
 }
 
-func ResolvedUpdateItem_set_update_item_element_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	zetasql_ResolvedUpdateItem_set_update_item_element_list(
+func ResolvedUpdateItem_set_array_update_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedUpdateItem_set_array_update_list(
 		arg0,
 		arg1,
 	)
 }
 
-func zetasql_ResolvedUpdateItem_set_update_item_element_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_zetasql_ResolvedUpdateItem_set_update_item_element_list(arg0, arg1)
+func zetasql_ResolvedUpdateItem_set_array_update_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateItem_set_array_update_list(arg0, arg1)
 }
 
-func ResolvedUpdateItem_add_update_item_element_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	zetasql_ResolvedUpdateItem_add_update_item_element_list(
+func ResolvedUpdateItem_add_array_update_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedUpdateItem_add_array_update_list(
 		arg0,
 		arg1,
 	)
 }
 
-func zetasql_ResolvedUpdateItem_add_update_item_element_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_zetasql_ResolvedUpdateItem_add_update_item_element_list(arg0, arg1)
+func zetasql_ResolvedUpdateItem_add_array_update_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateItem_add_array_update_list(arg0, arg1)
 }
 
 func ResolvedUpdateItem_delete_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
@@ -9643,6 +9698,39 @@ func zetasql_ResolvedUpdateItem_add_insert_list(arg0 unsafe.Pointer, arg1 unsafe
 	C.export_zetasql_ResolvedUpdateItem_add_insert_list(arg0, arg1)
 }
 
+func ResolvedUpdateItem_update_item_element_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	zetasql_ResolvedUpdateItem_update_item_element_list(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedUpdateItem_update_item_element_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateItem_update_item_element_list(arg0, arg1)
+}
+
+func ResolvedUpdateItem_set_update_item_element_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedUpdateItem_set_update_item_element_list(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedUpdateItem_set_update_item_element_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateItem_set_update_item_element_list(arg0, arg1)
+}
+
+func ResolvedUpdateItem_add_update_item_element_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedUpdateItem_add_update_item_element_list(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedUpdateItem_add_update_item_element_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateItem_add_update_item_element_list(arg0, arg1)
+}
+
 func ResolvedUpdateItemElement_subscript(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	zetasql_ResolvedUpdateItemElement_subscript(
 		arg0,
@@ -9707,6 +9795,50 @@ func ResolvedUpdateItemElement_set_update_item_mode(arg0 unsafe.Pointer, arg1 in
 
 func zetasql_ResolvedUpdateItemElement_set_update_item_mode(arg0 unsafe.Pointer, arg1 C.int) {
 	C.export_zetasql_ResolvedUpdateItemElement_set_update_item_mode(arg0, arg1)
+}
+
+func ResolvedUpdateArrayItem_offset(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	zetasql_ResolvedUpdateArrayItem_offset(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedUpdateArrayItem_offset(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateArrayItem_offset(arg0, arg1)
+}
+
+func ResolvedUpdateArrayItem_set_offset(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedUpdateArrayItem_set_offset(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedUpdateArrayItem_set_offset(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateArrayItem_set_offset(arg0, arg1)
+}
+
+func ResolvedUpdateArrayItem_update_item(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	zetasql_ResolvedUpdateArrayItem_update_item(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedUpdateArrayItem_update_item(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateArrayItem_update_item(arg0, arg1)
+}
+
+func ResolvedUpdateArrayItem_set_update_item(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	zetasql_ResolvedUpdateArrayItem_set_update_item(
+		arg0,
+		arg1,
+	)
+}
+
+func zetasql_ResolvedUpdateArrayItem_set_update_item(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
+	C.export_zetasql_ResolvedUpdateArrayItem_set_update_item(arg0, arg1)
 }
 
 func ResolvedUpdateStmt_table_scan(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
