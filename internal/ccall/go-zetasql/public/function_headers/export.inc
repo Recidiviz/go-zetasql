@@ -1,12 +1,13 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTION_HEADERS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTION_HEADERS_EXPORT_H
 
-#include "zetasql/public/function.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/input_argument_type.h"
+#include "googlesql/public/function.h"
+#include "googlesql/public/function_signature.h"
+#include "googlesql/public/input_argument_type.h"
 // include sources
 // include dependencies
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
+#include "go-zetasql/public/constness_level_cc_proto/export.inc"
 #include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
@@ -27,6 +28,7 @@
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
+#include "go-absl/hash/hash/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"

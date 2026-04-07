@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_PRIVACY_APPROX_COUNT_DISTINCT_UTILITY_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_PRIVACY_APPROX_COUNT_DISTINCT_UTILITY_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/privacy/approx_count_distinct_utility.h"
+#include "googlesql/analyzer/rewriters/privacy/approx_count_distinct_utility.h"
 // include sources
-#include "zetasql/analyzer/rewriters/privacy/approx_count_distinct_utility.cc"
+#include "googlesql/analyzer/rewriters/privacy/approx_count_distinct_utility.cc"
 // include dependencies
 #include "go-zetasql/analyzer/rewriters/privacy/privacy_utility/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_PROTO_UTIL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_PROTO_UTIL_EXPORT_H
 
-#include "zetasql/reference_impl/proto_util.h"
+#include "googlesql/reference_impl/proto_util.h"
 // include sources
-#include "zetasql/reference_impl/proto_util.cc"
+#include "googlesql/reference_impl/proto_util.cc"
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_PROTO_FROM_ITERATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_PROTO_FROM_ITERATOR_EXPORT_H
 
-#include "zetasql/common/proto_from_iterator.h"
+#include "googlesql/common/proto_from_iterator.h"
 // include sources
-#include "zetasql/common/proto_from_iterator.cc"
+#include "googlesql/common/proto_from_iterator.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
@@ -16,7 +16,6 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 
 #endif

@@ -1,6 +1,6 @@
 
-#ifndef zetasql_base_die_if_null_bridge_h
-#define zetasql_base_die_if_null_bridge_h
+#ifndef googlesql_base_die_if_null_bridge_h
+#define googlesql_base_die_if_null_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_base_die_if_null_bridge_h */
+#endif /* googlesql_base_die_if_null_bridge_h */

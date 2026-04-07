@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_INTERVAL_VALUE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_INTERVAL_VALUE_EXPORT_H
 
-#include "zetasql/public/interval_value.h"
+#include "googlesql/public/interval_value.h"
 // include sources
-#include "zetasql/public/interval_value.cc"
+#include "googlesql/public/interval_value.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/endian/export.inc"

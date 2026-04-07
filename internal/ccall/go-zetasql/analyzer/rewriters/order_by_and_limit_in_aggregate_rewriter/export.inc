@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_ORDER_BY_AND_LIMIT_IN_AGGREGATE_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_ORDER_BY_AND_LIMIT_IN_AGGREGATE_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/order_by_and_limit_in_aggregate_rewriter.h"
+#include "googlesql/analyzer/rewriters/order_by_and_limit_in_aggregate_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/order_by_and_limit_in_aggregate_rewriter.cc"
+#include "googlesql/analyzer/rewriters/order_by_and_limit_in_aggregate_rewriter.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

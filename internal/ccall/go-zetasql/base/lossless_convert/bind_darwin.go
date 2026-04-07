@@ -29,7 +29,7 @@ package lossless_convert
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_base_lossless_convert_ ## API
+#define GO_EXPORT(API) export_googlesql_base_lossless_convert_ ## API
 #include "bridge.h"
 */
 import "C"

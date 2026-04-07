@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_VALIDATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_VALIDATOR_EXPORT_H
 
-#include "zetasql/resolved_ast/validator.h"
+#include "googlesql/resolved_ast/validator.h"
 // include sources
-#include "zetasql/resolved_ast/validator.cc"
+#include "googlesql/resolved_ast/validator.cc"
 // include dependencies
 #include "go-zetasql/resolved_ast/node_sources/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
@@ -21,6 +21,7 @@
 #include "go-zetasql/base/strings/export.inc"
 #include "go-zetasql/base/varsetter/export.inc"
 #include "go-zetasql/common/graph_element_utils/export.inc"
+#include "go-zetasql/common/measure_utils/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/public/aggregation_threshold_utils/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
@@ -35,9 +36,11 @@
 #include "go-zetasql/public/sql_view/export.inc"
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/templated_sql_function/export.inc"
+#include "go-zetasql/public/templated_sql_tvf_no_resolver/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value/export.inc"
+#include "go-zetasql/public/with_modifier_mode/export.inc"
 #include "go-zetasql/public/annotation/collation/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-absl/algorithm/container/export.inc"

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_AGGREGATION_THRESHOLD_UTILS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_AGGREGATION_THRESHOLD_UTILS_EXPORT_H
 
-#include "zetasql/public/aggregation_threshold_utils.h"
+#include "googlesql/public/aggregation_threshold_utils.h"
 // include sources
-#include "zetasql/public/aggregation_threshold_utils.cc"
+#include "googlesql/public/aggregation_threshold_utils.cc"
 // include dependencies
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/base/case/export.inc"

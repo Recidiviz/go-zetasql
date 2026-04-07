@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_MACROS_MACRO_EXPANDER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_MACROS_MACRO_EXPANDER_EXPORT_H
 
-#include "zetasql/parser/macros/macro_expander.h"
+#include "googlesql/parser/macros/macro_expander.h"
 // include sources
-#include "zetasql/parser/macros/macro_expander.cc"
+#include "googlesql/parser/macros/macro_expander.cc"
 // include dependencies
 #include "go-zetasql/parser/macros/diagnostic/export.inc"
 #include "go-zetasql/parser/macros/macro_catalog/export.inc"
@@ -17,7 +17,6 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
-#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/parser/token/export.inc"
 #include "go-zetasql/parser/token_with_location/export.inc"
@@ -27,6 +26,7 @@
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-absl/base/nullability/export.inc"
 #include "go-absl/container/btree/export.inc"
+#include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

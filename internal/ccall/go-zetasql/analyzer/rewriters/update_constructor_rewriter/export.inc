@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_UPDATE_CONSTRUCTOR_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_UPDATE_CONSTRUCTOR_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/update_constructor_rewriter.h"
+#include "googlesql/analyzer/rewriters/update_constructor_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/update_constructor_rewriter.cc"
+#include "googlesql/analyzer/rewriters/update_constructor_rewriter.cc"
 // include dependencies
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output_properties/export.inc"

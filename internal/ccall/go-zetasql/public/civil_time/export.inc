@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_CIVIL_TIME_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_CIVIL_TIME_EXPORT_H
 
-#include "zetasql/public/civil_time.h"
+#include "googlesql/public/civil_time.h"
 // include sources
-#include "zetasql/public/civil_time.cc"
+#include "googlesql/public/civil_time.cc"
 // include dependencies
 #include "go-zetasql/base/mathutil/export.inc"
 #include "go-absl/strings/strings/export.inc"

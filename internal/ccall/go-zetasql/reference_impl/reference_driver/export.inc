@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_REFERENCE_DRIVER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_REFERENCE_DRIVER_EXPORT_H
 
-#include "zetasql/reference_impl/reference_driver.h"
+#include "googlesql/reference_impl/reference_driver.h"
 // include sources
-#include "zetasql/reference_impl/reference_driver.cc"
+#include "googlesql/reference_impl/reference_driver.cc"
 // include dependencies
 #include "go-zetasql/reference_impl/algebrizer/export.inc"
 #include "go-zetasql/reference_impl/common/export.inc"
@@ -20,9 +20,11 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/evaluator_registration_utils/export.inc"
+#include "go-zetasql/common/measure_analysis_utils/export.inc"
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-zetasql/compliance/test_database_catalog/export.inc"
 #include "go-zetasql/compliance/test_driver/export.inc"
+#include "go-zetasql/compliance/test_driver_cc_proto/export.inc"
 #include "go-zetasql/proto/script_exception_cc_proto/export.inc"
 #include "go-zetasql/public/analyzer/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"
@@ -36,6 +38,7 @@
 #include "go-zetasql/public/multi_catalog/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
+#include "go-zetasql/public/prepared_expression_constant_evaluator/export.inc"
 #include "go-zetasql/public/simple_catalog/export.inc"
 #include "go-zetasql/public/simple_catalog_util/export.inc"
 #include "go-zetasql/public/type/export.inc"
@@ -50,7 +53,8 @@
 #include "go-zetasql/scripting/script_executor/export.inc"
 #include "go-zetasql/scripting/script_segment/export.inc"
 #include "go-zetasql/scripting/type_aliases/export.inc"
-#include "go-zetasql/testing/test_value/export.inc"
+#include "go-absl/algorithm/container/export.inc"
+#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
@@ -60,5 +64,6 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"
+#include "go-protobuf/protobuf/export.inc"
 
 #endif

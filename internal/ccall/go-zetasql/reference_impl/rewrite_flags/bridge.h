@@ -1,6 +1,6 @@
 
-#ifndef zetasql_reference_impl_rewrite_flags_bridge_h
-#define zetasql_reference_impl_rewrite_flags_bridge_h
+#ifndef googlesql_reference_impl_rewrite_flags_bridge_h
+#define googlesql_reference_impl_rewrite_flags_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_reference_impl_rewrite_flags_bridge_h */
+#endif /* googlesql_reference_impl_rewrite_flags_bridge_h */

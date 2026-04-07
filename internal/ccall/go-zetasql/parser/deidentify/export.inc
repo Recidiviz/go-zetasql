@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_DEIDENTIFY_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_DEIDENTIFY_EXPORT_H
 
-#include "zetasql/parser/deidentify.h"
+#include "googlesql/parser/deidentify.h"
 // include sources
-#include "zetasql/parser/deidentify.cc"
+#include "googlesql/parser/deidentify.cc"
 // include dependencies
 #include "go-zetasql/parser/parser/export.inc"
 #include "go-zetasql/base/status/export.inc"

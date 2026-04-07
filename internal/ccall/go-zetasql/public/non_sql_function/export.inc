@@ -1,12 +1,12 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_NON_SQL_FUNCTION_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_NON_SQL_FUNCTION_EXPORT_H
 
-#include "zetasql/public/non_sql_function.h"
+#include "googlesql/public/non_sql_function.h"
 // include sources
-#include "zetasql/public/non_sql_function.cc"
+#include "googlesql/public/non_sql_function.cc"
 // include dependencies
-#include "go-zetasql/public/error_helpers/export.inc"
 #include "go-zetasql/public/function/export.inc"
+#include "go-zetasql/public/module_details/export.inc"
 #include "go-zetasql/public/parse_resume_location/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

@@ -32,7 +32,7 @@ package requires
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
 
-#define GO_EXPORT(API) export_zetasql_base_requires_ ## API
+#define GO_EXPORT(API) export_googlesql_base_requires_ ## API
 #include "bridge.h"
 */
 import "C"

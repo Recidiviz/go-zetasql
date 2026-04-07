@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_FILTER_FIELDS_PATH_VALIDATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_FILTER_FIELDS_PATH_VALIDATOR_EXPORT_H
 
-#include "zetasql/analyzer/filter_fields_path_validator.h"
+#include "googlesql/analyzer/filter_fields_path_validator.h"
 // include sources
-#include "zetasql/analyzer/filter_fields_path_validator.cc"
+#include "googlesql/analyzer/filter_fields_path_validator.cc"
 // include dependencies
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/map_util/export.inc"

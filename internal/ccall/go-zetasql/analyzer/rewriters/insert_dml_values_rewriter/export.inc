@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_INSERT_DML_VALUES_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_INSERT_DML_VALUES_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/insert_dml_values_rewriter.h"
+#include "googlesql/analyzer/rewriters/insert_dml_values_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/insert_dml_values_rewriter.cc"
+#include "googlesql/analyzer/rewriters/insert_dml_values_rewriter.cc"
 // include dependencies
 #include "go-zetasql/base/no_destructor/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

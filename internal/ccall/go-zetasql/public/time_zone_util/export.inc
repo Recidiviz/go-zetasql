@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TIME_ZONE_UTIL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TIME_ZONE_UTIL_EXPORT_H
 
-#include "zetasql/public/time_zone_util.h"
+#include "googlesql/public/time_zone_util.h"
 // include sources
-#include "zetasql/public/time_zone_util.cc"
+#include "googlesql/public/time_zone_util.cc"
 // include dependencies
 #include "go-zetasql/common/errors/export.inc"
 #include "go-absl/status/status/export.inc"

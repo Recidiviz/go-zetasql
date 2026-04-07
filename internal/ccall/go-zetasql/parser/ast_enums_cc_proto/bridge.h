@@ -1,6 +1,6 @@
 
-#ifndef zetasql_parser_ast_enums_cc_proto_bridge_h
-#define zetasql_parser_ast_enums_cc_proto_bridge_h
+#ifndef googlesql_parser_ast_enums_cc_proto_bridge_h
+#define googlesql_parser_ast_enums_cc_proto_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_parser_ast_enums_cc_proto_bridge_h */
+#endif /* googlesql_parser_ast_enums_cc_proto_bridge_h */

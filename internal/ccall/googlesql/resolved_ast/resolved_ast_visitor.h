@@ -1,0 +1,974 @@
+//
+// Copyright 2019 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+// resolved_ast_visitor.h GENERATED FROM resolved_ast_visitor.h.template
+#ifndef GOOGLESQL_RESOLVED_AST_RESOLVED_AST_VISITOR_H_
+#define GOOGLESQL_RESOLVED_AST_RESOLVED_AST_VISITOR_H_
+
+#include "googlesql/resolved_ast/resolved_ast.h"
+#include "googlesql/resolved_ast/resolved_node.h"
+#include "googlesql/resolved_ast/resolved_column.h"
+#include "googlesql/base/status.h"
+
+namespace googlesql {
+
+class ResolvedASTVisitor {
+ public:
+  ResolvedASTVisitor() {}
+  ResolvedASTVisitor(const ResolvedASTVisitor&) = delete;
+  ResolvedASTVisitor& operator=(const ResolvedASTVisitor&) = delete;
+  virtual ~ResolvedASTVisitor() {}
+
+  // This is the default visit method called for any node that doesn't have an
+  // override for the node specific Visit... method.
+  // Users may want to override this to change traversal order, give errors on
+  // unhandled nodes or stop traversing after errors.
+  //
+  // The default implementation just visits the child nodes recursively.
+  // Children of a node are visited in an undefined order.
+  virtual absl::Status DefaultVisit(const ResolvedNode* node) {
+    return node->ChildrenAccept(this);
+  }
+
+  virtual absl::Status VisitResolvedArgument(const ResolvedArgument* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExpr(const ResolvedExpr* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedLiteral(const ResolvedLiteral* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedParameter(const ResolvedParameter* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExpressionColumn(const ResolvedExpressionColumn* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCatalogColumnRef(const ResolvedCatalogColumnRef* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedColumnRef(const ResolvedColumnRef* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGroupingSetMultiColumn(const ResolvedGroupingSetMultiColumn* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedConstant(const ResolvedConstant* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSystemVariable(const ResolvedSystemVariable* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedInlineLambda(const ResolvedInlineLambda* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSequence(const ResolvedSequence* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFilterFieldArg(const ResolvedFilterFieldArg* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFilterField(const ResolvedFilterField* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFunctionCallBase(const ResolvedFunctionCallBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFunctionCall(const ResolvedFunctionCall* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedNonScalarFunctionCallBase(const ResolvedNonScalarFunctionCallBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAggregateFunctionCall(const ResolvedAggregateFunctionCall* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAnalyticFunctionCall(const ResolvedAnalyticFunctionCall* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExtendedCastElement(const ResolvedExtendedCastElement* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExtendedCast(const ResolvedExtendedCast* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCast(const ResolvedCast* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMakeStruct(const ResolvedMakeStruct* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMakeProto(const ResolvedMakeProto* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMakeProtoField(const ResolvedMakeProtoField* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGetStructField(const ResolvedGetStructField* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGetProtoField(const ResolvedGetProtoField* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGetJsonField(const ResolvedGetJsonField* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGetRowField(const ResolvedGetRowField* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFlatten(const ResolvedFlatten* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFlattenedArg(const ResolvedFlattenedArg* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedReplaceFieldItem(const ResolvedReplaceFieldItem* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedReplaceField(const ResolvedReplaceField* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGetProtoOneof(const ResolvedGetProtoOneof* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSubqueryExpr(const ResolvedSubqueryExpr* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWithExpr(const ResolvedWithExpr* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedScan(const ResolvedScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExecuteAsRoleScan(const ResolvedExecuteAsRoleScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedModel(const ResolvedModel* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedConnection(const ResolvedConnection* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDescriptor(const ResolvedDescriptor* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSingleRowScan(const ResolvedSingleRowScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUnsetArgumentScan(const ResolvedUnsetArgumentScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedTableScan(const ResolvedTableScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedJoinScan(const ResolvedJoinScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedArrayScan(const ResolvedArrayScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedColumnHolder(const ResolvedColumnHolder* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFilterScan(const ResolvedFilterScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGroupingCall(const ResolvedGroupingCall* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGroupingSetBase(const ResolvedGroupingSetBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGroupingSetList(const ResolvedGroupingSetList* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGroupingSetProduct(const ResolvedGroupingSetProduct* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGroupingSet(const ResolvedGroupingSet* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRollup(const ResolvedRollup* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCube(const ResolvedCube* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAggregateScanBase(const ResolvedAggregateScanBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAggregateScan(const ResolvedAggregateScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAnonymizedAggregateScan(const ResolvedAnonymizedAggregateScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDifferentialPrivacyAggregateScan(const ResolvedDifferentialPrivacyAggregateScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAggregationThresholdAggregateScan(const ResolvedAggregationThresholdAggregateScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSetOperationItem(const ResolvedSetOperationItem* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSetOperationScan(const ResolvedSetOperationScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedOrderByScan(const ResolvedOrderByScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedLimitOffsetScan(const ResolvedLimitOffsetScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWithRefScan(const ResolvedWithRefScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAnalyticScan(const ResolvedAnalyticScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSampleScan(const ResolvedSampleScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedComputedColumnBase(const ResolvedComputedColumnBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedComputedColumnImpl(const ResolvedComputedColumnImpl* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedComputedColumn(const ResolvedComputedColumn* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDeferredComputedColumn(const ResolvedDeferredComputedColumn* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedOrderByItem(const ResolvedOrderByItem* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedColumnAnnotations(const ResolvedColumnAnnotations* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGeneratedColumnInfo(const ResolvedGeneratedColumnInfo* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedColumnDefaultValue(const ResolvedColumnDefaultValue* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedColumnDefinition(const ResolvedColumnDefinition* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedConstraint(const ResolvedConstraint* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPrimaryKey(const ResolvedPrimaryKey* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedForeignKey(const ResolvedForeignKey* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCheckConstraint(const ResolvedCheckConstraint* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedOutputColumn(const ResolvedOutputColumn* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedOutputSchema(const ResolvedOutputSchema* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedProjectScan(const ResolvedProjectScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedTVFScan(const ResolvedTVFScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGroupRowsScan(const ResolvedGroupRowsScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFunctionArgument(const ResolvedFunctionArgument* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedStatement(const ResolvedStatement* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExplainStmt(const ResolvedExplainStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedStringWithLocation(const ResolvedStringWithLocation* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedStatementWithPipeOperatorsStmt(const ResolvedStatementWithPipeOperatorsStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedQueryStmt(const ResolvedQueryStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGeneralizedQueryStmt(const ResolvedGeneralizedQueryStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMultiStmt(const ResolvedMultiStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateWithEntryStmt(const ResolvedCreateWithEntryStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateDatabaseStmt(const ResolvedCreateDatabaseStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateStatement(const ResolvedCreateStatement* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedIndexItem(const ResolvedIndexItem* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUnnestItem(const ResolvedUnnestItem* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateIndexStmt(const ResolvedCreateIndexStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateSchemaStmtBase(const ResolvedCreateSchemaStmtBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateSchemaStmt(const ResolvedCreateSchemaStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateExternalSchemaStmt(const ResolvedCreateExternalSchemaStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateTableStmtBase(const ResolvedCreateTableStmtBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateTableStmt(const ResolvedCreateTableStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateTableAsSelectStmt(const ResolvedCreateTableAsSelectStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateModelAliasedQuery(const ResolvedCreateModelAliasedQuery* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateModelStmt(const ResolvedCreateModelStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateViewBase(const ResolvedCreateViewBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateViewStmt(const ResolvedCreateViewStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWithPartitionColumns(const ResolvedWithPartitionColumns* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateSnapshotTableStmt(const ResolvedCreateSnapshotTableStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateExternalTableStmt(const ResolvedCreateExternalTableStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExportModelStmt(const ResolvedExportModelStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExportDataStmt(const ResolvedExportDataStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExportMetadataStmt(const ResolvedExportMetadataStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDefineTableStmt(const ResolvedDefineTableStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDescribeStmt(const ResolvedDescribeStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedShowStmt(const ResolvedShowStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedBeginStmt(const ResolvedBeginStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSetTransactionStmt(const ResolvedSetTransactionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCommitStmt(const ResolvedCommitStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRollbackStmt(const ResolvedRollbackStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedStartBatchStmt(const ResolvedStartBatchStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRunBatchStmt(const ResolvedRunBatchStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAbortBatchStmt(const ResolvedAbortBatchStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropStmt(const ResolvedDropStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropMaterializedViewStmt(const ResolvedDropMaterializedViewStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropSnapshotTableStmt(const ResolvedDropSnapshotTableStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRecursiveRefScan(const ResolvedRecursiveRefScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRecursionDepthModifier(const ResolvedRecursionDepthModifier* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRecursiveScan(const ResolvedRecursiveScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWithScan(const ResolvedWithScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWithEntry(const ResolvedWithEntry* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedOption(const ResolvedOption* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWindowPartitioning(const ResolvedWindowPartitioning* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWindowOrdering(const ResolvedWindowOrdering* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWindowFrame(const ResolvedWindowFrame* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAnalyticFunctionGroup(const ResolvedAnalyticFunctionGroup* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedWindowFrameExpr(const ResolvedWindowFrameExpr* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDMLValue(const ResolvedDMLValue* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDMLDefault(const ResolvedDMLDefault* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAssertStmt(const ResolvedAssertStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAssertRowsModified(const ResolvedAssertRowsModified* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedOnConflictClause(const ResolvedOnConflictClause* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedInsertRow(const ResolvedInsertRow* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedInsertStmt(const ResolvedInsertStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDeleteStmt(const ResolvedDeleteStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUpdateItem(const ResolvedUpdateItem* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUpdateItemElement(const ResolvedUpdateItemElement* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUpdateStmt(const ResolvedUpdateStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMergeWhen(const ResolvedMergeWhen* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMergeStmt(const ResolvedMergeStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedTruncateStmt(const ResolvedTruncateStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedObjectUnit(const ResolvedObjectUnit* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPrivilege(const ResolvedPrivilege* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGrantOrRevokeStmt(const ResolvedGrantOrRevokeStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGrantStmt(const ResolvedGrantStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRevokeStmt(const ResolvedRevokeStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterObjectStmt(const ResolvedAlterObjectStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterDatabaseStmt(const ResolvedAlterDatabaseStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterIndexStmt(const ResolvedAlterIndexStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterMaterializedViewStmt(const ResolvedAlterMaterializedViewStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterApproxViewStmt(const ResolvedAlterApproxViewStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterSchemaStmt(const ResolvedAlterSchemaStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterExternalSchemaStmt(const ResolvedAlterExternalSchemaStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterModelStmt(const ResolvedAlterModelStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterTableStmt(const ResolvedAlterTableStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterViewStmt(const ResolvedAlterViewStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterAction(const ResolvedAlterAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnAction(const ResolvedAlterColumnAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSetOptionsAction(const ResolvedSetOptionsAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterSubEntityAction(const ResolvedAlterSubEntityAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAddSubEntityAction(const ResolvedAddSubEntityAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropSubEntityAction(const ResolvedDropSubEntityAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAddColumnAction(const ResolvedAddColumnAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAddColumnIdentifierAction(const ResolvedAddColumnIdentifierAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRebuildAction(const ResolvedRebuildAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAddConstraintAction(const ResolvedAddConstraintAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropConstraintAction(const ResolvedDropConstraintAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropPrimaryKeyAction(const ResolvedDropPrimaryKeyAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnOptionsAction(const ResolvedAlterColumnOptionsAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnDropNotNullAction(const ResolvedAlterColumnDropNotNullAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnDropGeneratedAction(const ResolvedAlterColumnDropGeneratedAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnSetGeneratedAction(const ResolvedAlterColumnSetGeneratedAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnSetDataTypeAction(const ResolvedAlterColumnSetDataTypeAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnSetDefaultAction(const ResolvedAlterColumnSetDefaultAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterColumnDropDefaultAction(const ResolvedAlterColumnDropDefaultAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropColumnAction(const ResolvedDropColumnAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRenameColumnAction(const ResolvedRenameColumnAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSetAsAction(const ResolvedSetAsAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSetCollateClause(const ResolvedSetCollateClause* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterTableSetOptionsStmt(const ResolvedAlterTableSetOptionsStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRenameStmt(const ResolvedRenameStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreatePrivilegeRestrictionStmt(const ResolvedCreatePrivilegeRestrictionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateRowAccessPolicyStmt(const ResolvedCreateRowAccessPolicyStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropPrivilegeRestrictionStmt(const ResolvedDropPrivilegeRestrictionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropRowAccessPolicyStmt(const ResolvedDropRowAccessPolicyStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropIndexStmt(const ResolvedDropIndexStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGrantToAction(const ResolvedGrantToAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRestrictToAction(const ResolvedRestrictToAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAddToRestricteeListAction(const ResolvedAddToRestricteeListAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRemoveFromRestricteeListAction(const ResolvedRemoveFromRestricteeListAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFilterUsingAction(const ResolvedFilterUsingAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRevokeFromAction(const ResolvedRevokeFromAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRenameToAction(const ResolvedRenameToAction* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterPrivilegeRestrictionStmt(const ResolvedAlterPrivilegeRestrictionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterRowAccessPolicyStmt(const ResolvedAlterRowAccessPolicyStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterAllRowAccessPoliciesStmt(const ResolvedAlterAllRowAccessPoliciesStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateConstantStmt(const ResolvedCreateConstantStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateFunctionStmt(const ResolvedCreateFunctionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedArgumentDef(const ResolvedArgumentDef* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedArgumentRef(const ResolvedArgumentRef* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateTableFunctionStmt(const ResolvedCreateTableFunctionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedRelationArgumentScan(const ResolvedRelationArgumentScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedArgumentList(const ResolvedArgumentList* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedFunctionSignatureHolder(const ResolvedFunctionSignatureHolder* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropFunctionStmt(const ResolvedDropFunctionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDropTableFunctionStmt(const ResolvedDropTableFunctionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCallStmt(const ResolvedCallStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedImportStmt(const ResolvedImportStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedModuleStmt(const ResolvedModuleStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAggregateHavingModifier(const ResolvedAggregateHavingModifier* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateMaterializedViewStmt(const ResolvedCreateMaterializedViewStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateApproxViewStmt(const ResolvedCreateApproxViewStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateProcedureStmt(const ResolvedCreateProcedureStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExecuteImmediateArgument(const ResolvedExecuteImmediateArgument* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedExecuteImmediateStmt(const ResolvedExecuteImmediateStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAssignmentStmt(const ResolvedAssignmentStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateEntityStmt(const ResolvedCreateEntityStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterEntityStmt(const ResolvedAlterEntityStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPivotColumn(const ResolvedPivotColumn* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPivotScan(const ResolvedPivotScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedReturningClause(const ResolvedReturningClause* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUnpivotArg(const ResolvedUnpivotArg* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUnpivotScan(const ResolvedUnpivotScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMatchRecognizeScan(const ResolvedMatchRecognizeScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMeasureGroup(const ResolvedMeasureGroup* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMatchRecognizeVariableDefinition(const ResolvedMatchRecognizeVariableDefinition* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMatchRecognizePatternExpr(const ResolvedMatchRecognizePatternExpr* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMatchRecognizePatternEmpty(const ResolvedMatchRecognizePatternEmpty* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMatchRecognizePatternAnchor(const ResolvedMatchRecognizePatternAnchor* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMatchRecognizePatternVariableRef(const ResolvedMatchRecognizePatternVariableRef* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMatchRecognizePatternOperation(const ResolvedMatchRecognizePatternOperation* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedMatchRecognizePatternQuantification(const ResolvedMatchRecognizePatternQuantification* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCloneDataStmt(const ResolvedCloneDataStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedTableAndColumnInfo(const ResolvedTableAndColumnInfo* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAnalyzeStmt(const ResolvedAnalyzeStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAuxLoadDataPartitionFilter(const ResolvedAuxLoadDataPartitionFilter* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAuxLoadDataStmt(const ResolvedAuxLoadDataStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreatePropertyGraphStmt(const ResolvedCreatePropertyGraphStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphElementTable(const ResolvedGraphElementTable* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphNodeTableReference(const ResolvedGraphNodeTableReference* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphElementLabel(const ResolvedGraphElementLabel* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphPropertyDeclaration(const ResolvedGraphPropertyDeclaration* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphPropertyDefinition(const ResolvedGraphPropertyDefinition* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphDynamicLabelSpecification(const ResolvedGraphDynamicLabelSpecification* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphDynamicPropertiesSpecification(const ResolvedGraphDynamicPropertiesSpecification* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphScanBase(const ResolvedGraphScanBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphRefScan(const ResolvedGraphRefScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphLinearScan(const ResolvedGraphLinearScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphTableScan(const ResolvedGraphTableScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphCallScan(const ResolvedGraphCallScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphScan(const ResolvedGraphScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphPathPatternQuantifier(const ResolvedGraphPathPatternQuantifier* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphPathSearchPrefix(const ResolvedGraphPathSearchPrefix* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphPathScanBase(const ResolvedGraphPathScanBase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphElementScan(const ResolvedGraphElementScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphNodeScan(const ResolvedGraphNodeScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphEdgeScan(const ResolvedGraphEdgeScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphGetElementProperty(const ResolvedGraphGetElementProperty* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphLabelExpr(const ResolvedGraphLabelExpr* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphLabelNaryExpr(const ResolvedGraphLabelNaryExpr* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphLabel(const ResolvedGraphLabel* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphWildCardLabel(const ResolvedGraphWildCardLabel* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphElementIdentifier(const ResolvedGraphElementIdentifier* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphElementProperty(const ResolvedGraphElementProperty* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphMakeElement(const ResolvedGraphMakeElement* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedArrayAggregate(const ResolvedArrayAggregate* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphMakeArrayVariable(const ResolvedGraphMakeArrayVariable* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphPathMode(const ResolvedGraphPathMode* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphPathCost(const ResolvedGraphPathCost* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphPathScan(const ResolvedGraphPathScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGraphIsLabeledPredicate(const ResolvedGraphIsLabeledPredicate* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUndropStmt(const ResolvedUndropStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedIdentityColumnInfo(const ResolvedIdentityColumnInfo* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedDescribeScan(const ResolvedDescribeScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedStaticDescribeScan(const ResolvedStaticDescribeScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAssertScan(const ResolvedAssertScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedLogScan(const ResolvedLogScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeIfScan(const ResolvedPipeIfScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeIfCase(const ResolvedPipeIfCase* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeForkScan(const ResolvedPipeForkScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeTeeScan(const ResolvedPipeTeeScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeExportDataScan(const ResolvedPipeExportDataScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeCreateTableScan(const ResolvedPipeCreateTableScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedPipeInsertScan(const ResolvedPipeInsertScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSubpipeline(const ResolvedSubpipeline* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSubpipelineInputScan(const ResolvedSubpipelineInputScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedSubpipelineStmt(const ResolvedSubpipelineStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedGeneralizedQuerySubpipeline(const ResolvedGeneralizedQuerySubpipeline* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedBarrierScan(const ResolvedBarrierScan* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateConnectionStmt(const ResolvedCreateConnectionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterConnectionStmt(const ResolvedAlterConnectionStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedLockMode(const ResolvedLockMode* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUpdateFieldItem(const ResolvedUpdateFieldItem* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedUpdateConstructor(const ResolvedUpdateConstructor* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedCreateSequenceStmt(const ResolvedCreateSequenceStmt* node) {
+    return DefaultVisit(node);
+  }
+  virtual absl::Status VisitResolvedAlterSequenceStmt(const ResolvedAlterSequenceStmt* node) {
+    return DefaultVisit(node);
+  }
+};
+
+}  // namespace googlesql
+
+#endif  // GOOGLESQL_RESOLVED_AST_RESOLVED_AST_VISITOR_H_

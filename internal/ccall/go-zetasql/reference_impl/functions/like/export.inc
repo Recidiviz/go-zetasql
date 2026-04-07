@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_LIKE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_LIKE_EXPORT_H
 
-#include "zetasql/reference_impl/functions/like.h"
+#include "googlesql/reference_impl/functions/like.h"
 // include sources
-#include "zetasql/reference_impl/functions/like.cc"
+#include "googlesql/reference_impl/functions/like.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

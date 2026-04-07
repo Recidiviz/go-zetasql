@@ -1,6 +1,6 @@
 
-#ifndef zetasql_proto_placeholder_descriptor_cc_proto_bridge_h
-#define zetasql_proto_placeholder_descriptor_cc_proto_bridge_h
+#ifndef googlesql_proto_placeholder_descriptor_cc_proto_bridge_h
+#define googlesql_proto_placeholder_descriptor_cc_proto_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_proto_placeholder_descriptor_cc_proto_bridge_h */
+#endif /* googlesql_proto_placeholder_descriptor_cc_proto_bridge_h */

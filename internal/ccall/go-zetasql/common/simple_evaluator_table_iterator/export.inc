@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_SIMPLE_EVALUATOR_TABLE_ITERATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_SIMPLE_EVALUATOR_TABLE_ITERATOR_EXPORT_H
 
-#include "zetasql/common/simple_evaluator_table_iterator.h"
+#include "googlesql/common/simple_evaluator_table_iterator.h"
 // include sources
-#include "zetasql/common/simple_evaluator_table_iterator.cc"
+#include "googlesql/common/simple_evaluator_table_iterator.cc"
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/clock/export.inc"

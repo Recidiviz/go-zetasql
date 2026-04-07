@@ -29,7 +29,7 @@ package optional_ref_matchers
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_base_optional_ref_matchers_ ## API
+#define GO_EXPORT(API) export_googlesql_base_optional_ref_matchers_ ## API
 #include "bridge.h"
 */
 import "C"

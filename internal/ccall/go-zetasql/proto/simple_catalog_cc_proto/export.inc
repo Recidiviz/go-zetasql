@@ -1,11 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PROTO_SIMPLE_CATALOG_CC_PROTO_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PROTO_SIMPLE_CATALOG_CC_PROTO_EXPORT_H
 
-#include "zetasql/proto/simple_catalog.pb.h"
+#include "googlesql/proto/simple_catalog.pb.h"
 // include sources
-#define schemas zetasql_proto_simple_catalog_cc_proto_schemas
-#define file_default_instances zetasql_proto_simple_catalog_cc_proto_file_default_instances
-#include "zetasql/proto/simple_catalog.pb.cc"
+#define schemas googlesql_proto_simple_catalog_cc_proto_schemas
+#define file_default_instances googlesql_proto_simple_catalog_cc_proto_file_default_instances
+#include "googlesql/proto/simple_catalog.pb.cc"
 #undef file_default_instances
 #undef schemas
 // include dependencies

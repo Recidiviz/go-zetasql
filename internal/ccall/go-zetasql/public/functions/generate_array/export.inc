@@ -1,7 +1,7 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_GENERATE_ARRAY_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_GENERATE_ARRAY_EXPORT_H
 
-#include "zetasql/public/functions/generate_array.h"
+#include "googlesql/public/functions/generate_array.h"
 // include sources
 // include dependencies
 #include "go-zetasql/public/functions/arithmetics/export.inc"
@@ -10,6 +10,8 @@
 #include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
+#include "go-zetasql/public/pico_time/export.inc"
+#include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/time/time/export.inc"
 

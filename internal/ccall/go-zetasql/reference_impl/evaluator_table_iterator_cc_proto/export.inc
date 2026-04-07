@@ -1,11 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_EVALUATOR_TABLE_ITERATOR_CC_PROTO_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_EVALUATOR_TABLE_ITERATOR_CC_PROTO_EXPORT_H
 
-#include "zetasql/reference_impl/evaluator_table_iterator.pb.h"
+#include "googlesql/reference_impl/evaluator_table_iterator.pb.h"
 // include sources
-#define schemas zetasql_reference_impl_evaluator_table_iterator_cc_proto_schemas
-#define file_default_instances zetasql_reference_impl_evaluator_table_iterator_cc_proto_file_default_instances
-#include "zetasql/reference_impl/evaluator_table_iterator.pb.cc"
+#define schemas googlesql_reference_impl_evaluator_table_iterator_cc_proto_schemas
+#define file_default_instances googlesql_reference_impl_evaluator_table_iterator_cc_proto_file_default_instances
+#include "googlesql/reference_impl/evaluator_table_iterator.pb.cc"
 #undef file_default_instances
 #undef schemas
 // include dependencies

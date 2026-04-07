@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_WITH_EXPR_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_WITH_EXPR_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/with_expr_rewriter.h"
+#include "googlesql/analyzer/rewriters/with_expr_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/with_expr_rewriter.cc"
+#include "googlesql/analyzer/rewriters/with_expr_rewriter.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

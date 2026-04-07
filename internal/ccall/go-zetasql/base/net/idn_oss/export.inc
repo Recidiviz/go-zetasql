@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_NET_IDN_OSS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_BASE_NET_IDN_OSS_EXPORT_H
 
-#include "zetasql/base/net/idn_oss.h"
+#include "googlesql/base/net/idn_oss.h"
 // include sources
-#include "zetasql/base/net/idn_oss.cc"
+#include "googlesql/base/net/idn_oss.cc"
 // include dependencies
 #include "go-zetasql/base/logging/export.inc"
 #include "go-absl/strings/strings/export.inc"

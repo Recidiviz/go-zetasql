@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_REGISTRATION_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_REGISTRATION_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/registration.h"
+#include "googlesql/analyzer/rewriters/registration.h"
 // include sources
-#include "zetasql/analyzer/rewriters/registration.cc"
+#include "googlesql/analyzer/rewriters/registration.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/logging/export.inc"

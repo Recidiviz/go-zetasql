@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_BITWISE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_BITWISE_EXPORT_H
 
-#include "zetasql/public/functions/bitwise.h"
+#include "googlesql/public/functions/bitwise.h"
 // include sources
-#include "zetasql/public/functions/bitwise.cc"
+#include "googlesql/public/functions/bitwise.cc"
 // include dependencies
 #include "go-zetasql/public/functions/bitwise_agg_mode_cc_proto/export.inc"
 #include "go-zetasql/public/functions/util/export.inc"

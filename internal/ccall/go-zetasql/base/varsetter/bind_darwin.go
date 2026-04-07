@@ -29,7 +29,7 @@ package varsetter
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_base_varsetter_ ## API
+#define GO_EXPORT(API) export_googlesql_base_varsetter_ ## API
 #include "bridge.h"
 */
 import "C"

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_STRING_WITH_COLLATION_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_STRING_WITH_COLLATION_EXPORT_H
 
-#include "zetasql/public/functions/string_with_collation.h"
+#include "googlesql/public/functions/string_with_collation.h"
 // include sources
-#include "zetasql/public/functions/string_with_collation.cc"
+#include "googlesql/public/functions/string_with_collation.cc"
 // include dependencies
 #include "go-zetasql/public/functions/like/export.inc"
 #include "go-zetasql/public/functions/string/export.inc"

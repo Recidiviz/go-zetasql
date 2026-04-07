@@ -1,17 +1,17 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_EXAMPLES_TPCH_CATALOG_CATALOG_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_EXAMPLES_TPCH_CATALOG_CATALOG_EXPORT_H
 
-#include "zetasql/examples/tpch/catalog/tpch_catalog.h"
+#include "googlesql/examples/tpch/catalog/tpch_catalog.h"
 // include sources
-#include "zetasql/examples/tpch/catalog/customer.tbl.h"
-#include "zetasql/examples/tpch/catalog/lineitem.tbl.h"
-#include "zetasql/examples/tpch/catalog/nation.tbl.h"
-#include "zetasql/examples/tpch/catalog/orders.tbl.h"
-#include "zetasql/examples/tpch/catalog/part.tbl.h"
-#include "zetasql/examples/tpch/catalog/partsupp.tbl.h"
-#include "zetasql/examples/tpch/catalog/region.tbl.h"
-#include "zetasql/examples/tpch/catalog/supplier.tbl.h"
-#include "zetasql/examples/tpch/catalog/tpch_catalog.cc"
+#include "googlesql/examples/tpch/catalog/customer.tbl.h"
+#include "googlesql/examples/tpch/catalog/lineitem.tbl.h"
+#include "googlesql/examples/tpch/catalog/nation.tbl.h"
+#include "googlesql/examples/tpch/catalog/orders.tbl.h"
+#include "googlesql/examples/tpch/catalog/part.tbl.h"
+#include "googlesql/examples/tpch/catalog/partsupp.tbl.h"
+#include "googlesql/examples/tpch/catalog/region.tbl.h"
+#include "googlesql/examples/tpch/catalog/supplier.tbl.h"
+#include "googlesql/examples/tpch/catalog/tpch_catalog.cc"
 // include dependencies
 #include "go-zetasql/base/clock/export.inc"
 #include "go-zetasql/base/map_util/export.inc"

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANON_FUNCTION_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANON_FUNCTION_EXPORT_H
 
-#include "zetasql/public/anon_function.h"
+#include "googlesql/public/anon_function.h"
 // include sources
-#include "zetasql/public/anon_function.cc"
+#include "googlesql/public/anon_function.cc"
 // include dependencies
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"

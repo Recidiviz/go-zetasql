@@ -1,8 +1,30 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TYPES_TYPES_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TYPES_TYPES_EXPORT_H
 
-// Headers and sources come from type/ and type_factory/ export.inc (avoid
-// duplicate .cc amalgamation from listing all headers here).
+#include "googlesql/public/types/enum_type.h"
+#include "googlesql/public/types/graph_element_type.h"
+#include "googlesql/public/types/graph_path_type.h"
+#include "googlesql/public/types/internal_proto_utils.h"
+#include "googlesql/public/types/proto_type.h"
+#include "googlesql/public/types/type_deserializer.h"
+#include "googlesql/public/types/type_factory.h"
+#include "googlesql/public/types/annotation.h"
+#include "googlesql/public/types/array_type.h"
+#include "googlesql/public/types/collation.h"
+#include "googlesql/public/types/container_type.h"
+#include "googlesql/public/types/extended_type.h"
+#include "googlesql/public/types/list_backed_type.h"
+#include "googlesql/public/types/map_type.h"
+#include "googlesql/public/types/measure_type.h"
+#include "googlesql/public/types/range_type.h"
+#include "googlesql/public/types/row_type.h"
+#include "googlesql/public/types/simple_type.h"
+#include "googlesql/public/types/simple_value.h"
+#include "googlesql/public/types/struct_type.h"
+#include "googlesql/public/types/type.h"
+#include "googlesql/public/types/type_modifiers.h"
+#include "googlesql/public/types/type_parameters.h"
+#include "googlesql/public/types/value_equality_check_options.h"
 // include sources
 // include dependencies
 #include "go-zetasql/public/types/timestamp_util/export.inc"
@@ -13,11 +35,9 @@
 #include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/float_margin/export.inc"
-#include "go-zetasql/common/proto_helper/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/public/annotation_cc_proto/export.inc"
 #include "go-zetasql/public/civil_time/export.inc"
@@ -25,7 +45,6 @@
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/simple_value_cc_proto/export.inc"
-#include "go-zetasql/public/token_list/export.inc"
 #include "go-zetasql/public/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/type_modifiers_cc_proto/export.inc"
@@ -39,8 +58,6 @@
 #include "go-absl/container/node_hash_map/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/hash/hash/export.inc"
-#include "go-absl/log/log/export.inc"
-#include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
@@ -49,7 +66,6 @@
 #include "go-absl/types/optional/export.inc"
 #include "go-absl/types/span/export.inc"
 #include "go-absl/types/variant/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 
 #endif

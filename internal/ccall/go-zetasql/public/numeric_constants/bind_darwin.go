@@ -29,7 +29,7 @@ package numeric_constants
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_public_numeric_constants_ ## API
+#define GO_EXPORT(API) export_googlesql_public_numeric_constants_ ## API
 #include "bridge.h"
 */
 import "C"

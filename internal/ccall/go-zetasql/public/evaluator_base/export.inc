@@ -1,11 +1,12 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_EVALUATOR_BASE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_EVALUATOR_BASE_EXPORT_H
 
-#include "zetasql/public/evaluator_base.h"
+#include "googlesql/public/evaluator_base.h"
 // include sources
-#include "zetasql/public/evaluator_base.cc"
+#include "googlesql/public/evaluator_base.cc"
 // include dependencies
 #include "go-zetasql/public/analyzer/export.inc"
+#include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/evaluator_table_iterator/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
@@ -35,6 +36,7 @@
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
+#include "go-absl/strings/string_view/export.inc"
 #include "go-absl/synchronization/synchronization/export.inc"
 #include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"

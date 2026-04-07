@@ -1,10 +1,10 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_NET_PUBLIC_SUFFIX_OSS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_BASE_NET_PUBLIC_SUFFIX_OSS_EXPORT_H
 
-#include "zetasql/base/net/public_suffix_oss.h"
+#include "googlesql/base/net/public_suffix_oss.h"
 // include sources
-#include "zetasql/base/net/public_suffix_list_data.h"
-#include "zetasql/base/net/public_suffix_oss.cc"
+#include "googlesql/base/net/public_suffix_list_data.h"
+#include "googlesql/base/net/public_suffix_oss.cc"
 // include dependencies
 #include "go-zetasql/base/logging/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

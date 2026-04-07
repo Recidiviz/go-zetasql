@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_PARSE_LOCATION_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_PARSE_LOCATION_EXPORT_H
 
-#include "zetasql/public/parse_location.h"
+#include "googlesql/public/parse_location.h"
 // include sources
-#include "zetasql/public/parse_location.cc"
+#include "googlesql/public/parse_location.cc"
 // include dependencies
 #include "go-zetasql/public/parse_location_range_cc_proto/export.inc"
 #include "go-zetasql/base/base/export.inc"

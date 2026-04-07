@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_DISTANCE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_DISTANCE_EXPORT_H
 
-#include "zetasql/public/functions/distance.h"
+#include "googlesql/public/functions/distance.h"
 // include sources
-#include "zetasql/public/functions/distance.cc"
+#include "googlesql/public/functions/distance.cc"
 // include dependencies
 #include "go-zetasql/public/functions/arithmetics/export.inc"
 #include "go-zetasql/public/functions/math/export.inc"

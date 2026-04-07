@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_STATEMENT_EVALUATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_STATEMENT_EVALUATOR_EXPORT_H
 
-#include "zetasql/reference_impl/statement_evaluator.h"
+#include "googlesql/reference_impl/statement_evaluator.h"
 // include sources
-#include "zetasql/reference_impl/statement_evaluator.cc"
+#include "googlesql/reference_impl/statement_evaluator.cc"
 // include dependencies
 #include "go-zetasql/reference_impl/evaluator_table_iterator_cc_proto/export.inc"
 #include "go-zetasql/reference_impl/type_helpers/export.inc"
@@ -28,6 +28,7 @@
 #include "go-zetasql/public/parse_location/export.inc"
 #include "go-zetasql/public/simple_catalog/export.inc"
 #include "go-zetasql/public/simple_catalog_util/export.inc"
+#include "go-zetasql/public/sql_procedure/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/types/types/export.inc"

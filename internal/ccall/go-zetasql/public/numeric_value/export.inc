@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_NUMERIC_VALUE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_NUMERIC_VALUE_EXPORT_H
 
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/public/numeric_value.h"
 // include sources
-#include "zetasql/public/numeric_value.cc"
+#include "googlesql/public/numeric_value.cc"
 // include dependencies
 #include "go-zetasql/public/numeric_constants/export.inc"
 #include "go-zetasql/public/numeric_parser/export.inc"

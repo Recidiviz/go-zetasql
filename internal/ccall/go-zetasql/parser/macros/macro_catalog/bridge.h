@@ -1,6 +1,6 @@
 
-#ifndef zetasql_parser_macros_macro_catalog_bridge_h
-#define zetasql_parser_macros_macro_catalog_bridge_h
+#ifndef googlesql_parser_macros_macro_catalog_bridge_h
+#define googlesql_parser_macros_macro_catalog_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_parser_macros_macro_catalog_bridge_h */
+#endif /* googlesql_parser_macros_macro_catalog_bridge_h */

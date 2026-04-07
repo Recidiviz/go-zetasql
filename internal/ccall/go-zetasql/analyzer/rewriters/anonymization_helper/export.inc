@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_ANONYMIZATION_HELPER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_ANONYMIZATION_HELPER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/anonymization_helper.h"
+#include "googlesql/analyzer/rewriters/anonymization_helper.h"
 // include sources
-#include "zetasql/analyzer/rewriters/anonymization_helper.cc"
+#include "googlesql/analyzer/rewriters/anonymization_helper.cc"
 // include dependencies
 #include "go-zetasql/analyzer/expr_matching_helpers/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"
@@ -33,11 +33,13 @@
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value/export.inc"
+#include "go-zetasql/public/with_modifier_mode/export.inc"
 #include "go-zetasql/public/functions/differential_privacy_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/column_factory/export.inc"
 #include "go-zetasql/resolved_ast/make_node_vector/export.inc"
+#include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/rewrite_utils/export.inc"

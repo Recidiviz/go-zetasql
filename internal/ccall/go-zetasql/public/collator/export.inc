@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_COLLATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_COLLATOR_EXPORT_H
 
-#include "zetasql/public/collator.h"
+#include "googlesql/public/collator.h"
 // include sources
-#include "zetasql/public/collator.cc"
+#include "googlesql/public/collator.cc"
 // include dependencies
 #include "go-zetasql/public/collator_lite/export.inc"
 #include "go-zetasql/base/base/export.inc"

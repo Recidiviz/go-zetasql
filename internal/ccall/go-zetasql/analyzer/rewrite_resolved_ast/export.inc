@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITE_RESOLVED_AST_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITE_RESOLVED_AST_EXPORT_H
 
-#include "zetasql/analyzer/rewrite_resolved_ast.h"
+#include "googlesql/analyzer/rewrite_resolved_ast.h"
 // include sources
-#include "zetasql/analyzer/rewrite_resolved_ast.cc"
+#include "googlesql/analyzer/rewrite_resolved_ast.cc"
 // include dependencies
 #include "go-zetasql/analyzer/analyzer_output_mutator/export.inc"
 #include "go-zetasql/analyzer/builtin_only_catalog/export.inc"

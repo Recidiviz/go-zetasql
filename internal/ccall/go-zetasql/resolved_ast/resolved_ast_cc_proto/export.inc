@@ -1,11 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_RESOLVED_AST_CC_PROTO_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_RESOLVED_AST_CC_PROTO_EXPORT_H
 
-#include "zetasql/resolved_ast/resolved_ast.pb.h"
+#include "googlesql/resolved_ast/resolved_ast.pb.h"
 // include sources
-#define schemas zetasql_resolved_ast_resolved_ast_cc_proto_schemas
-#define file_default_instances zetasql_resolved_ast_resolved_ast_cc_proto_file_default_instances
-#include "zetasql/resolved_ast/resolved_ast.pb.cc"
+#define schemas googlesql_resolved_ast_resolved_ast_cc_proto_schemas
+#define file_default_instances googlesql_resolved_ast_resolved_ast_cc_proto_file_default_instances
+#include "googlesql/resolved_ast/resolved_ast.pb.cc"
 #undef file_default_instances
 #undef schemas
 // include dependencies

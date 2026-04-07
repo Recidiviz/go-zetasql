@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_PATH_EXPRESSION_SPAN_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_PATH_EXPRESSION_SPAN_EXPORT_H
 
-#include "zetasql/analyzer/path_expression_span.h"
+#include "googlesql/analyzer/path_expression_span.h"
 // include sources
-#include "zetasql/analyzer/path_expression_span.cc"
+#include "googlesql/analyzer/path_expression_span.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

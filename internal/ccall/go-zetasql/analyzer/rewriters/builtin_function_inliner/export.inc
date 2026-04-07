@@ -1,10 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_BUILTIN_FUNCTION_INLINER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_BUILTIN_FUNCTION_INLINER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/builtin_function_inliner.h"
+#include "googlesql/analyzer/rewriters/builtin_function_inliner.h"
 // include sources
-#include "zetasql/analyzer/rewriters/builtin_function_inliner.cc"
+#include "googlesql/analyzer/rewriters/builtin_function_inliner.cc"
 // include dependencies
+#include "go-zetasql/analyzer/builtin_only_catalog/export.inc"
 #include "go-zetasql/analyzer/substitute/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

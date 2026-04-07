@@ -1,10 +1,10 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TEMPLATED_SQL_TVF_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TEMPLATED_SQL_TVF_EXPORT_H
 
-#include "zetasql/public/templated_sql_tvf.h"
+#include "googlesql/public/templated_sql_tvf.h"
 // include sources
-#define module_initialization_complete zetasql_public_templated_sql_tvf_module_initialization_complete
-#include "zetasql/public/templated_sql_tvf.cc"
+#define module_initialization_complete googlesql_public_templated_sql_tvf_module_initialization_complete
+#include "googlesql/public/templated_sql_tvf.cc"
 #undef module_initialization_complete
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_MATH_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_MATH_EXPORT_H
 
-#include "zetasql/public/functions/math.h"
+#include "googlesql/public/functions/math.h"
 // include sources
-#include "zetasql/public/functions/math.cc"
+#include "googlesql/public/functions/math.cc"
 // include dependencies
 #include "go-zetasql/public/functions/arithmetics/export.inc"
 #include "go-zetasql/public/functions/rounding_mode_cc_proto/export.inc"

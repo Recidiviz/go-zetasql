@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_JSON_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_JSON_EXPORT_H
 
-#include "zetasql/public/functions/json.h"
+#include "googlesql/public/functions/json.h"
 // include sources
-#include "zetasql/public/functions/json.cc"
+#include "googlesql/public/functions/json.cc"
 // include dependencies
 #include "go-zetasql/public/functions/convert/export.inc"
 #include "go-zetasql/public/functions/convert_string/export.inc"
@@ -23,6 +23,7 @@
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
+#include "go-absl/container/inlined_vector/export.inc"
 #include "go-absl/functional/function_ref/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"

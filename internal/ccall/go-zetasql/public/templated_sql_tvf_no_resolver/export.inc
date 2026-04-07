@@ -1,7 +1,7 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TEMPLATED_SQL_TVF_NO_RESOLVER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TEMPLATED_SQL_TVF_NO_RESOLVER_EXPORT_H
 
-#include "zetasql/public/templated_sql_tvf.h"
+#include "googlesql/public/templated_sql_tvf.h"
 // include sources
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"

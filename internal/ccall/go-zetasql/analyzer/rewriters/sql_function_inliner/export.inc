@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_SQL_FUNCTION_INLINER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_SQL_FUNCTION_INLINER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/sql_function_inliner.h"
+#include "googlesql/analyzer/rewriters/sql_function_inliner.h"
 // include sources
-#include "zetasql/analyzer/rewriters/sql_function_inliner.cc"
+#include "googlesql/analyzer/rewriters/sql_function_inliner.cc"
 // include dependencies
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
@@ -37,7 +37,6 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/optional/export.inc"
 #include "go-absl/types/span/export.inc"
 
 #endif

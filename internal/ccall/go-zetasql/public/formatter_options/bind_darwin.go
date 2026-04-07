@@ -29,7 +29,7 @@ package formatter_options
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_public_formatter_options_ ## API
+#define GO_EXPORT(API) export_googlesql_public_formatter_options_ ## API
 #include "bridge.h"
 */
 import "C"

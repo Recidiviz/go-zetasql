@@ -1,10 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANONYMIZATION_UTILS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANONYMIZATION_UTILS_EXPORT_H
 
-#include "zetasql/public/anonymization_utils.h"
+#include "googlesql/public/anonymization_utils.h"
 // include sources
-#include "zetasql/public/anonymization_utils.cc"
+#include "googlesql/public/anonymization_utils.cc"
 // include dependencies
+#include "go-zetasql/public/constant_evaluator/export.inc"
 #include "go-zetasql/public/function_headers/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/value/export.inc"

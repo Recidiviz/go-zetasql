@@ -9,6 +9,24 @@
 
 #include "absl/strings/string_view.h"
 
+// ICU common/uniset.cpp defines these identifiers as macros when compiled in
+// the same translation unit (CGO amalgamation). They collide with Token members.
+#undef SET_OPEN
+#undef SET_CLOSE
+#undef HYPHEN
+#undef COMPLEMENT
+#undef COLON
+#undef BACKSLASH
+#undef INTERSECTION
+#undef UPPER_U
+#undef LOWER_U
+#undef OPEN_BRACE
+#undef CLOSE_BRACE
+#undef UPPER_P
+#undef LOWER_P
+#undef UPPER_N
+#undef EQUALS
+
 namespace zetasql::parser {
 
 // Token is an enum of all terminal symbols of the sql language.

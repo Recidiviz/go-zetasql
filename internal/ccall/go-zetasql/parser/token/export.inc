@@ -1,7 +1,7 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_TOKEN_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_TOKEN_EXPORT_H
 
-#include "zetasql/parser/tm_token.h"
+#include "googlesql/parser/tm_token.h"
 // include sources
 // include dependencies
 #include "go-absl/strings/string_view/export.inc"

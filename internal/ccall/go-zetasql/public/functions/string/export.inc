@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_STRING_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_STRING_EXPORT_H
 
-#include "zetasql/public/functions/string.h"
+#include "googlesql/public/functions/string.h"
 // include sources
-#include "zetasql/public/functions/string.cc"
+#include "googlesql/public/functions/string.cc"
 // include dependencies
 #include "go-zetasql/public/functions/normalize_mode_cc_proto/export.inc"
 #include "go-zetasql/public/functions/util/export.inc"
@@ -18,7 +18,7 @@
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"
-#include "go-zetasql/base/no_destructor/export.inc"
+#include "go-absl/base/no_destructor/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"

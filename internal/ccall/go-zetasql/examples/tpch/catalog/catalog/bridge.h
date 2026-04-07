@@ -1,6 +1,6 @@
 
-#ifndef zetasql_examples_tpch_catalog_catalog_bridge_h
-#define zetasql_examples_tpch_catalog_catalog_bridge_h
+#ifndef googlesql_examples_tpch_catalog_catalog_bridge_h
+#define googlesql_examples_tpch_catalog_catalog_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_examples_tpch_catalog_catalog_bridge_h */
+#endif /* googlesql_examples_tpch_catalog_catalog_bridge_h */

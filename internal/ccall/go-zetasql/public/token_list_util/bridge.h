@@ -1,6 +1,6 @@
 
-#ifndef zetasql_public_token_list_util_bridge_h
-#define zetasql_public_token_list_util_bridge_h
+#ifndef googlesql_public_token_list_util_bridge_h
+#define googlesql_public_token_list_util_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_public_token_list_util_bridge_h */
+#endif /* googlesql_public_token_list_util_bridge_h */

@@ -1,11 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_COERCER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_COERCER_EXPORT_H
 
-#include "zetasql/public/cast.h"
-#include "zetasql/public/coercer.h"
+#include "googlesql/public/cast.h"
+#include "googlesql/public/coercer.h"
 // include sources
-#include "zetasql/public/cast.cc"
-#include "zetasql/public/coercer.cc"
+#include "googlesql/public/cast.cc"
+#include "googlesql/public/coercer.cc"
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/civil_time/export.inc"
@@ -15,9 +15,11 @@
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
+#include "go-zetasql/public/pico_time/export.inc"
 #include "go-zetasql/public/proto_value_conversion/export.inc"
 #include "go-zetasql/public/signature_match_result/export.inc"
 #include "go-zetasql/public/strings/export.inc"
+#include "go-zetasql/public/timestamp_picos_value/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/uuid_value/export.inc"

@@ -1,6 +1,6 @@
 
-#ifndef zetasql_scripting_script_executor_state_cc_proto_bridge_h
-#define zetasql_scripting_script_executor_state_cc_proto_bridge_h
+#ifndef googlesql_scripting_script_executor_state_cc_proto_bridge_h
+#define googlesql_scripting_script_executor_state_cc_proto_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_scripting_script_executor_state_cc_proto_bridge_h */
+#endif /* googlesql_scripting_script_executor_state_cc_proto_bridge_h */

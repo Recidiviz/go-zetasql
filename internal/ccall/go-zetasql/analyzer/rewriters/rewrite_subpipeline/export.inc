@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_REWRITE_SUBPIPELINE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_REWRITE_SUBPIPELINE_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/rewrite_subpipeline.h"
+#include "googlesql/analyzer/rewriters/rewrite_subpipeline.h"
 // include sources
-#include "zetasql/analyzer/rewriters/rewrite_subpipeline.cc"
+#include "googlesql/analyzer/rewriters/rewrite_subpipeline.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

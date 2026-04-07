@@ -1,6 +1,6 @@
 
-#ifndef zetasql_analyzer_rewriters_is_first_is_last_function_rewriter_bridge_h
-#define zetasql_analyzer_rewriters_is_first_is_last_function_rewriter_bridge_h
+#ifndef googlesql_analyzer_rewriters_is_first_is_last_function_rewriter_bridge_h
+#define googlesql_analyzer_rewriters_is_first_is_last_function_rewriter_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_analyzer_rewriters_is_first_is_last_function_rewriter_bridge_h */
+#endif /* googlesql_analyzer_rewriters_is_first_is_last_function_rewriter_bridge_h */

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ID_STRING_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ID_STRING_EXPORT_H
 
-#include "zetasql/public/id_string.h"
+#include "googlesql/public/id_string.h"
 // include sources
-#include "zetasql/public/id_string.cc"
+#include "googlesql/public/id_string.cc"
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"

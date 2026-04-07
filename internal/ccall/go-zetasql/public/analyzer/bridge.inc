@@ -1754,31 +1754,6 @@ void GO_EXPORT(ResolvedNonScalarFunctionCallBase_set_null_handling_modifier)(voi
   node->set_null_handling_modifier((zetasql::ResolvedNonScalarFunctionCallBase::NullHandlingModifier)arg1);
 }
 
-void GO_EXPORT(ResolvedNonScalarFunctionCallBase_with_group_rows_subquery)(void * arg0,void ** arg1){
-  zetasql::ResolvedNonScalarFunctionCallBase *node = (zetasql::ResolvedNonScalarFunctionCallBase *)arg0;
-  *arg1 = (void *)node->with_group_rows_subquery();
-}
-
-void GO_EXPORT(ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery)(void * arg0,void * arg1){
-  zetasql::ResolvedNonScalarFunctionCallBase *node = (zetasql::ResolvedNonScalarFunctionCallBase *)arg0;
-  node->set_with_group_rows_subquery(make_unique_scan(arg1));
-}
-
-void GO_EXPORT(ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list)(void * arg0,void ** arg1){
-  zetasql::ResolvedNonScalarFunctionCallBase *node = (zetasql::ResolvedNonScalarFunctionCallBase *)arg0;
-  GET_UNIQUE_PTR_LIST(node->with_group_rows_parameter_list, arg1);
-}
-
-void GO_EXPORT(ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list)(void * arg0,void * arg1){
-  zetasql::ResolvedNonScalarFunctionCallBase *node = (zetasql::ResolvedNonScalarFunctionCallBase *)arg0;
-  SET_UNIQUE_PTR_LIST(node->set_with_group_rows_parameter_list, ResolvedColumnRef, arg1);
-}
-
-void GO_EXPORT(ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list)(void * arg0,void * arg1){
-  zetasql::ResolvedNonScalarFunctionCallBase *node = (zetasql::ResolvedNonScalarFunctionCallBase *)arg0;
-  ADD_UNIQUE_PTR_LIST(node->add_with_group_rows_parameter_list, ResolvedColumnRef, arg1);
-}
-
 void GO_EXPORT(ResolvedAggregateFunctionCall_having_modifier)(void * arg0,void ** arg1){
   zetasql::ResolvedAggregateFunctionCall *node = (zetasql::ResolvedAggregateFunctionCall *)arg0;
   *arg1 = (void *)node->having_modifier();
@@ -5189,19 +5164,19 @@ void GO_EXPORT(ResolvedUpdateItem_set_element_column)(void * arg0,void * arg1){
   SET_UNIQUE_PTR(node->set_element_column, ResolvedColumnHolder, arg1);
 }
 
-void GO_EXPORT(ResolvedUpdateItem_array_update_list)(void * arg0,void ** arg1){
+void GO_EXPORT(ResolvedUpdateItem_update_item_element_list)(void * arg0,void ** arg1){
   zetasql::ResolvedUpdateItem *node = (zetasql::ResolvedUpdateItem *)arg0;
-  GET_UNIQUE_PTR_LIST(node->array_update_list, arg1);
+  GET_UNIQUE_PTR_LIST(node->update_item_element_list, arg1);
 }
 
-void GO_EXPORT(ResolvedUpdateItem_set_array_update_list)(void * arg0,void * arg1){
+void GO_EXPORT(ResolvedUpdateItem_set_update_item_element_list)(void * arg0,void * arg1){
   zetasql::ResolvedUpdateItem *node = (zetasql::ResolvedUpdateItem *)arg0;
-  SET_UNIQUE_PTR_LIST(node->set_array_update_list, ResolvedUpdateArrayItem, arg1);
+  SET_UNIQUE_PTR_LIST(node->set_update_item_element_list, ResolvedUpdateItemElement, arg1);
 }
 
-void GO_EXPORT(ResolvedUpdateItem_add_array_update_list)(void * arg0,void * arg1){
+void GO_EXPORT(ResolvedUpdateItem_add_update_item_element_list)(void * arg0,void * arg1){
   zetasql::ResolvedUpdateItem *node = (zetasql::ResolvedUpdateItem *)arg0;
-  ADD_UNIQUE_PTR_LIST(node->add_array_update_list, ResolvedUpdateArrayItem, arg1);
+  ADD_UNIQUE_PTR_LIST(node->add_update_item_element_list, ResolvedUpdateItemElement, arg1);
 }
 
 void GO_EXPORT(ResolvedUpdateItem_delete_list)(void * arg0,void ** arg1){
@@ -5249,24 +5224,34 @@ void GO_EXPORT(ResolvedUpdateItem_add_insert_list)(void * arg0,void * arg1){
   ADD_UNIQUE_PTR_LIST(node->add_insert_list, ResolvedInsertStmt, arg1);
 }
 
-void GO_EXPORT(ResolvedUpdateArrayItem_offset)(void * arg0,void ** arg1){
-  zetasql::ResolvedUpdateArrayItem *node = (zetasql::ResolvedUpdateArrayItem *)arg0;
-  *arg1 = (void *)node->offset();
+void GO_EXPORT(ResolvedUpdateItemElement_subscript)(void * arg0,void ** arg1){
+  zetasql::ResolvedUpdateItemElement *node = (zetasql::ResolvedUpdateItemElement *)arg0;
+  *arg1 = (void *)node->subscript();
 }
 
-void GO_EXPORT(ResolvedUpdateArrayItem_set_offset)(void * arg0,void * arg1){
-  zetasql::ResolvedUpdateArrayItem *node = (zetasql::ResolvedUpdateArrayItem *)arg0;
-  node->set_offset(make_unique_expr(arg1));
+void GO_EXPORT(ResolvedUpdateItemElement_set_subscript)(void * arg0,void * arg1){
+  zetasql::ResolvedUpdateItemElement *node = (zetasql::ResolvedUpdateItemElement *)arg0;
+  node->set_subscript(make_unique_expr(arg1));
 }
 
-void GO_EXPORT(ResolvedUpdateArrayItem_update_item)(void * arg0,void ** arg1){
-  zetasql::ResolvedUpdateArrayItem *node = (zetasql::ResolvedUpdateArrayItem *)arg0;
+void GO_EXPORT(ResolvedUpdateItemElement_update_item)(void * arg0,void ** arg1){
+  zetasql::ResolvedUpdateItemElement *node = (zetasql::ResolvedUpdateItemElement *)arg0;
   *arg1 = (void *)node->update_item();
 }
 
-void GO_EXPORT(ResolvedUpdateArrayItem_set_update_item)(void * arg0,void * arg1){
-  zetasql::ResolvedUpdateArrayItem *node = (zetasql::ResolvedUpdateArrayItem *)arg0;
+void GO_EXPORT(ResolvedUpdateItemElement_set_update_item)(void * arg0,void * arg1){
+  zetasql::ResolvedUpdateItemElement *node = (zetasql::ResolvedUpdateItemElement *)arg0;
   SET_UNIQUE_PTR(node->set_update_item, ResolvedUpdateItem, arg1);
+}
+
+void GO_EXPORT(ResolvedUpdateItemElement_update_item_mode)(void * arg0,int* arg1){
+  zetasql::ResolvedUpdateItemElement *node = (zetasql::ResolvedUpdateItemElement *)arg0;
+  *arg1 = (int)node->update_item_mode();
+}
+
+void GO_EXPORT(ResolvedUpdateItemElement_set_update_item_mode)(void * arg0,int arg1){
+  zetasql::ResolvedUpdateItemElement *node = (zetasql::ResolvedUpdateItemElement *)arg0;
+  node->set_update_item_mode((zetasql::ResolvedUpdateItemElement::UpdateItemMode)arg1);
 }
 
 void GO_EXPORT(ResolvedUpdateStmt_table_scan)(void * arg0,void ** arg1){

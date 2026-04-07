@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_CONVERT_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_CONVERT_EXPORT_H
 
-#include "zetasql/public/functions/convert.h"
+#include "googlesql/public/functions/convert.h"
 // include sources
-#include "zetasql/public/functions/convert.cc"
+#include "googlesql/public/functions/convert.cc"
 // include dependencies
 #include "go-zetasql/public/functions/convert_internal/export.inc"
 #include "go-zetasql/public/functions/util/export.inc"

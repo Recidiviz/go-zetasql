@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_THREAD_STACK_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_THREAD_STACK_EXPORT_H
 
-#include "zetasql/common/thread_stack.h"
+#include "googlesql/common/thread_stack.h"
 // include sources
-#include "zetasql/common/thread_stack.cc"
+#include "googlesql/common/thread_stack.cc"
 // include dependencies
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/status/export.inc"

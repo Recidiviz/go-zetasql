@@ -1,7 +1,7 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_STL_UTIL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_BASE_STL_UTIL_EXPORT_H
 
-#include "zetasql/base/stl_util.h"
+#include "googlesql/base/stl_util.h"
 // include sources
 // include dependencies
 

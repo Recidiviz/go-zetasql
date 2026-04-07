@@ -29,7 +29,7 @@ package flat_set
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_base_flat_set_ ## API
+#define GO_EXPORT(API) export_googlesql_base_flat_set_ ## API
 #include "bridge.h"
 */
 import "C"

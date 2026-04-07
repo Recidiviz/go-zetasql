@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_GROUPING_SET_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_GROUPING_SET_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/grouping_set_rewriter.h"
+#include "googlesql/analyzer/rewriters/grouping_set_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/grouping_set_rewriter.cc"
+#include "googlesql/analyzer/rewriters/grouping_set_rewriter.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
@@ -20,8 +20,10 @@
 #include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
+#include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/str_format/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #endif

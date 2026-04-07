@@ -32,7 +32,7 @@ package node_sources
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
 
-#define GO_EXPORT(API) export_zetasql_resolved_ast_node_sources_ ## API
+#define GO_EXPORT(API) export_googlesql_resolved_ast_node_sources_ ## API
 #include "bridge.h"
 */
 import "C"

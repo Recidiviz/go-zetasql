@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_REWRITE_FLAGS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_REWRITE_FLAGS_EXPORT_H
 
-#include "zetasql/reference_impl/rewrite_flags.h"
+#include "googlesql/reference_impl/rewrite_flags.h"
 // include sources
-#include "zetasql/reference_impl/rewrite_flags.cc"
+#include "googlesql/reference_impl/rewrite_flags.cc"
 // include dependencies
 #include "go-zetasql/common/options_utils/export.inc"
 #include "go-zetasql/public/analyzer_options/export.inc"

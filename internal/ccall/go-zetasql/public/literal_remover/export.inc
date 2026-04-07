@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_LITERAL_REMOVER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_LITERAL_REMOVER_EXPORT_H
 
-#include "zetasql/public/literal_remover.h"
+#include "googlesql/public/literal_remover.h"
 // include sources
-#include "zetasql/public/literal_remover.cc"
+#include "googlesql/public/literal_remover.cc"
 // include dependencies
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/language_options/export.inc"

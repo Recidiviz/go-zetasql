@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_REWRITER_RELEVANCE_CHECKER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_REWRITER_RELEVANCE_CHECKER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/rewriter_relevance_checker.h"
+#include "googlesql/analyzer/rewriters/rewriter_relevance_checker.h"
 // include sources
-#include "zetasql/analyzer/rewriters/rewriter_relevance_checker.cc"
+#include "googlesql/analyzer/rewriters/rewriter_relevance_checker.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

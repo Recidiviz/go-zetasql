@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_GENERALIZED_QUERY_STMT_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_GENERALIZED_QUERY_STMT_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/generalized_query_stmt_rewriter.h"
+#include "googlesql/analyzer/rewriters/generalized_query_stmt_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/generalized_query_stmt_rewriter.cc"
+#include "googlesql/analyzer/rewriters/generalized_query_stmt_rewriter.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

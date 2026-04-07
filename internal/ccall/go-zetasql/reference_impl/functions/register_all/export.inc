@@ -1,10 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_REGISTER_ALL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_REGISTER_ALL_EXPORT_H
 
-#include "zetasql/reference_impl/functions/register_all.h"
+#include "googlesql/reference_impl/functions/register_all.h"
 // include sources
-#include "zetasql/reference_impl/functions/register_all.cc"
+#include "googlesql/reference_impl/functions/register_all.cc"
 // include dependencies
+#include "go-zetasql/reference_impl/functions/compression/export.inc"
 #include "go-zetasql/reference_impl/functions/graph/export.inc"
 #include "go-zetasql/reference_impl/functions/hash/export.inc"
 #include "go-zetasql/reference_impl/functions/json/export.inc"

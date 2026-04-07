@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_ANALYZER_IMPL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_ANALYZER_IMPL_EXPORT_H
 
-#include "zetasql/analyzer/analyzer_impl.h"
+#include "googlesql/analyzer/analyzer_impl.h"
 // include sources
-#include "zetasql/analyzer/analyzer_impl.cc"
+#include "googlesql/analyzer/analyzer_impl.cc"
 // include dependencies
 #include "go-zetasql/analyzer/analyzer_output_mutator/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"

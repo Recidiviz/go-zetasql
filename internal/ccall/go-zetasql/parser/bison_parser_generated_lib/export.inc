@@ -1,21 +1,17 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_BISON_PARSER_GENERATED_LIB_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_BISON_PARSER_GENERATED_LIB_EXPORT_H
 
-#include "zetasql/parser/bison_parser.h"
-#include "zetasql/parser/join_processor.h"
-#include "zetasql/parser/parser_internal.h"
-#include "zetasql/parser/parser_runtime_info.h"
-#include "zetasql/parser/statement_properties.h"
+#include "googlesql/parser/join_processor.h"
+#include "googlesql/parser/parser_internal.h"
+#include "googlesql/parser/parser_runtime_info.h"
+#include "googlesql/parser/statement_properties.h"
 // include sources
 // include dependencies
-#include "go-zetasql/parser/bison_parser_mode/export.inc"
+#include "go-zetasql/parser/ast_node_factory/export.inc"
 #include "go-zetasql/parser/keywords/export.inc"
-// parse_tree_errors.cc calls ConvertInternalErrorLocationToExternal; pull
-// error_helpers.cc (via common/errors) before parse_tree sources.
-#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
+#include "go-zetasql/parser/parser_mode/export.inc"
 #include "go-zetasql/parser/token/export.inc"
-#include "go-zetasql/parser/token_codes/export.inc"
 #include "go-zetasql/parser/token_with_location/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/arena/export.inc"
@@ -24,7 +20,9 @@
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/base/strings/export.inc"
+#include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/timer_util/export.inc"
+#include "go-zetasql/common/warning_sink/export.inc"
 #include "go-zetasql/parser/macros/macro_catalog/export.inc"
 #include "go-zetasql/public/id_string/export.inc"
 #include "go-zetasql/public/language_options/export.inc"
@@ -34,6 +32,9 @@
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/proto/logging_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/base/nullability/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
+#include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/container/inlined_vector/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/log/log/export.inc"

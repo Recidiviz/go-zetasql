@@ -32,7 +32,7 @@ package compact_reference_counted
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
 
-#define GO_EXPORT(API) export_zetasql_base_compact_reference_counted_ ## API
+#define GO_EXPORT(API) export_googlesql_base_compact_reference_counted_ ## API
 #include "bridge.h"
 */
 import "C"

@@ -32,7 +32,7 @@ package stl_util
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
 
-#define GO_EXPORT(API) export_zetasql_base_stl_util_ ## API
+#define GO_EXPORT(API) export_googlesql_base_stl_util_ ## API
 #include "bridge.h"
 */
 import "C"

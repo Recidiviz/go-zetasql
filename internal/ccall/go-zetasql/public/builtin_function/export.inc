@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_BUILTIN_FUNCTION_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_BUILTIN_FUNCTION_EXPORT_H
 
-#include "zetasql/public/builtin_function.h"
+#include "googlesql/public/builtin_function.h"
 // include sources
-#include "zetasql/public/builtin_function.cc"
+#include "googlesql/public/builtin_function.cc"
 // include dependencies
 #include "go-zetasql/public/builtin_function_cc_proto/export.inc"
 #include "go-zetasql/public/builtin_function_options/export.inc"

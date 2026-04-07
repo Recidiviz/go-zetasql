@@ -1,11 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANNOTATION_CC_PROTO_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANNOTATION_CC_PROTO_EXPORT_H
 
-#include "zetasql/public/annotation.pb.h"
+#include "googlesql/public/annotation.pb.h"
 // include sources
-#define schemas zetasql_public_annotation_cc_proto_schemas
-#define file_default_instances zetasql_public_annotation_cc_proto_file_default_instances
-#include "zetasql/public/annotation.pb.cc"
+#define schemas googlesql_public_annotation_cc_proto_schemas
+#define file_default_instances googlesql_public_annotation_cc_proto_file_default_instances
+#include "googlesql/public/annotation.pb.cc"
 #undef file_default_instances
 #undef schemas
 // include dependencies

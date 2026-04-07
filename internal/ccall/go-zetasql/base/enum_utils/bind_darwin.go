@@ -29,7 +29,7 @@ package enum_utils
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_base_enum_utils_ ## API
+#define GO_EXPORT(API) export_googlesql_base_enum_utils_ ## API
 #include "bridge.h"
 */
 import "C"

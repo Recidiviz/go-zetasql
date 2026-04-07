@@ -1,12 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_KEYWORDS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_KEYWORDS_EXPORT_H
 
-#include "zetasql/parser/keywords.h"
+#include "googlesql/parser/keywords.h"
 // include sources
-#include "zetasql/parser/keywords.cc"
+#include "googlesql/parser/keywords.cc"
 // include dependencies
 #include "go-zetasql/parser/token/export.inc"
-#include "go-zetasql/parser/token_codes/export.inc"
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/map_util/export.inc"

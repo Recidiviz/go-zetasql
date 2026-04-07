@@ -32,7 +32,7 @@ package container_hash_equals
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
 
-#define GO_EXPORT(API) export_zetasql_analyzer_container_hash_equals_ ## API
+#define GO_EXPORT(API) export_googlesql_analyzer_container_hash_equals_ ## API
 #include "bridge.h"
 */
 import "C"

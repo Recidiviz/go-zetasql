@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_RANGE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_RANGE_EXPORT_H
 
-#include "zetasql/public/functions/range.h"
+#include "googlesql/public/functions/range.h"
 // include sources
-#include "zetasql/public/functions/range.cc"
+#include "googlesql/public/functions/range.cc"
 // include dependencies
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/functions/datetime_cc_proto/export.inc"

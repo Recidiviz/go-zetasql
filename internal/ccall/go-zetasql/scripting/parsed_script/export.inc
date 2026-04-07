@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_PARSED_SCRIPT_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_PARSED_SCRIPT_EXPORT_H
 
-#include "zetasql/scripting/parsed_script.h"
+#include "googlesql/scripting/parsed_script.h"
 // include sources
-#include "zetasql/scripting/parsed_script.cc"
+#include "googlesql/scripting/parsed_script.cc"
 // include dependencies
 #include "go-zetasql/scripting/control_flow_graph/export.inc"
 #include "go-zetasql/scripting/error_helpers/export.inc"

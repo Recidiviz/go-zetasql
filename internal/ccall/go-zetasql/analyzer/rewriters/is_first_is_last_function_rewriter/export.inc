@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_IS_FIRST_IS_LAST_FUNCTION_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_IS_FIRST_IS_LAST_FUNCTION_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/is_first_is_last_function_rewriter.h"
+#include "googlesql/analyzer/rewriters/is_first_is_last_function_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/is_first_is_last_function_rewriter.cc"
+#include "googlesql/analyzer/rewriters/is_first_is_last_function_rewriter.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

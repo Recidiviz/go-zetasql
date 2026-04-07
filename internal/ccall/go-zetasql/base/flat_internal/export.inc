@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_FLAT_INTERNAL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_BASE_FLAT_INTERNAL_EXPORT_H
 
-#include "zetasql/base/flat_internal.h"
+#include "googlesql/base/flat_internal.h"
 // include sources
-#include "zetasql/base/flat_internal.cc"
+#include "googlesql/base/flat_internal.cc"
 // include dependencies
 #include "go-absl/meta/type_traits/export.inc"
 

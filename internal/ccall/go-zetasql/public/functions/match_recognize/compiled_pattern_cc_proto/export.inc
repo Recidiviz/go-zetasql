@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_MATCH_RECOGNIZE_COMPILED_PATTERN_CC_PROTO_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_MATCH_RECOGNIZE_COMPILED_PATTERN_CC_PROTO_EXPORT_H
 
-#include "zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
+#include "googlesql/public/functions/match_recognize/compiled_pattern.pb.h"
 // include sources
-#include "zetasql/public/functions/match_recognize/compiled_pattern.pb.cc"
+#include "googlesql/public/functions/match_recognize/compiled_pattern.pb.cc"
 // include dependencies
 #include "go-protobuf/protobuf/export.inc"
 

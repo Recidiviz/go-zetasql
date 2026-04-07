@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_OPTIONS_UTILS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_OPTIONS_UTILS_EXPORT_H
 
-#include "zetasql/common/options_utils.h"
+#include "googlesql/common/options_utils.h"
 // include sources
-#include "zetasql/common/options_utils.cc"
+#include "googlesql/common/options_utils.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

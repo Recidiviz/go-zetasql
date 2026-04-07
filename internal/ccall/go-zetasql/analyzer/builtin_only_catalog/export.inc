@@ -1,13 +1,14 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_BUILTIN_ONLY_CATALOG_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_BUILTIN_ONLY_CATALOG_EXPORT_H
 
-#include "zetasql/analyzer/builtin_only_catalog.h"
+#include "googlesql/analyzer/builtin_only_catalog.h"
 // include sources
-#include "zetasql/analyzer/builtin_only_catalog.cc"
+#include "googlesql/analyzer/builtin_only_catalog.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/public/catalog/export.inc"
+#include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/function_headers/export.inc"
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/types/types/export.inc"

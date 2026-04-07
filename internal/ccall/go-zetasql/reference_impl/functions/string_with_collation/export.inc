@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_STRING_WITH_COLLATION_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_STRING_WITH_COLLATION_EXPORT_H
 
-#include "zetasql/reference_impl/functions/string_with_collation.h"
+#include "googlesql/reference_impl/functions/string_with_collation.h"
 // include sources
-#include "zetasql/reference_impl/functions/string_with_collation.cc"
+#include "googlesql/reference_impl/functions/string_with_collation.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

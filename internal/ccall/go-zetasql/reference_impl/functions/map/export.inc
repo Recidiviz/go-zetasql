@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_MAP_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_MAP_EXPORT_H
 
-#include "zetasql/reference_impl/functions/map.h"
+#include "googlesql/reference_impl/functions/map.h"
 // include sources
-#include "zetasql/reference_impl/functions/map.cc"
+#include "googlesql/reference_impl/functions/map.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/optional_ref/export.inc"

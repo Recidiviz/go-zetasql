@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_PIPE_ASSERT_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_PIPE_ASSERT_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/pipe_assert_rewriter.h"
+#include "googlesql/analyzer/rewriters/pipe_assert_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/pipe_assert_rewriter.cc"
+#include "googlesql/analyzer/rewriters/pipe_assert_rewriter.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

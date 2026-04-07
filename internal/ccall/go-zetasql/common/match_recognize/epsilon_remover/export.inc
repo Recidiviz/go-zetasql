@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_MATCH_RECOGNIZE_EPSILON_REMOVER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_MATCH_RECOGNIZE_EPSILON_REMOVER_EXPORT_H
 
-#include "zetasql/common/match_recognize/epsilon_remover.h"
+#include "googlesql/common/match_recognize/epsilon_remover.h"
 // include sources
-#include "zetasql/common/match_recognize/epsilon_remover.cc"
+#include "googlesql/common/match_recognize/epsilon_remover.cc"
 // include dependencies
 #include "go-zetasql/common/match_recognize/nfa/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

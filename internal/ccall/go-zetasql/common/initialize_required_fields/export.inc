@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_INITIALIZE_REQUIRED_FIELDS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_INITIALIZE_REQUIRED_FIELDS_EXPORT_H
 
-#include "zetasql/common/initialize_required_fields.h"
+#include "googlesql/common/initialize_required_fields.h"
 // include sources
-#include "zetasql/common/initialize_required_fields.cc"
+#include "googlesql/common/initialize_required_fields.cc"
 // include dependencies
 #include "go-protobuf/protobuf/export.inc"
 

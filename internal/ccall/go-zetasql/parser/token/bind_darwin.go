@@ -29,7 +29,7 @@ package token
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_parser_token_ ## API
+#define GO_EXPORT(API) export_googlesql_parser_token_ ## API
 #include "bridge.h"
 */
 import "C"

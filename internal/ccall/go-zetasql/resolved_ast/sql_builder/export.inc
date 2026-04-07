@@ -1,11 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_SQL_BUILDER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_SQL_BUILDER_EXPORT_H
 
-#include "zetasql/resolved_ast/query_expression.h"
-#include "zetasql/resolved_ast/sql_builder.h"
+#include "googlesql/resolved_ast/query_expression.h"
+#include "googlesql/resolved_ast/sql_builder.h"
 // include sources
-#include "zetasql/resolved_ast/query_expression.cc"
-#include "zetasql/resolved_ast/sql_builder.cc"
+#include "googlesql/resolved_ast/query_expression.cc"
+#include "googlesql/resolved_ast/sql_builder.cc"
 // include dependencies
 #include "go-zetasql/resolved_ast/node_sources/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
@@ -16,7 +16,6 @@
 #include "go-zetasql/analyzer/expr_matching_helpers/export.inc"
 #include "go-zetasql/analyzer/resolver/export.inc"
 #include "go-zetasql/analyzer/set_operation_resolver_base/export.inc"
-#include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
@@ -26,6 +25,7 @@
 #include "go-zetasql/base/varsetter/export.inc"
 #include "go-zetasql/common/function_utils/export.inc"
 #include "go-zetasql/common/graph_element_utils/export.inc"
+#include "go-zetasql/common/measure_utils/export.inc"
 #include "go-zetasql/common/thread_stack/export.inc"
 #include "go-zetasql/parser/parse_tree/export.inc"
 #include "go-zetasql/public/analyzer/export.inc"
@@ -39,6 +39,7 @@
 #include "go-zetasql/public/strings/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
+#include "go-zetasql/public/type_parameters_cc_proto/export.inc"
 #include "go-zetasql/public/value/export.inc"
 #include "go-zetasql/public/annotation/collation/export.inc"
 #include "go-zetasql/public/functions/date_time_util/export.inc"
@@ -48,6 +49,7 @@
 #include "go-zetasql/public/types/types/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/base/log_severity/export.inc"
 #include "go-absl/cleanup/cleanup/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
@@ -56,7 +58,9 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/strings/str_format/export.inc"
 #include "go-absl/types/span/export.inc"
+#include "go-googletest/googletest/export.inc"
 #include "go-re2/re2/export.inc"
 
 #endif

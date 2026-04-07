@@ -1,11 +1,11 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANALYZER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANALYZER_EXPORT_H
 
-#include "zetasql/public/analyzer.h"
+#include "googlesql/public/analyzer.h"
 // include sources
-#include "zetasql/public/analyzer.cc"
-#include "zetasql/public/table_name_resolver.cc"
-#include "zetasql/public/table_name_resolver.h"
+#include "googlesql/public/analyzer.cc"
+#include "googlesql/public/table_name_resolver.cc"
+#include "googlesql/public/table_name_resolver.h"
 // include dependencies
 #include "go-zetasql/public/analyzer_options/export.inc"
 #include "go-zetasql/public/analyzer_output/export.inc"
@@ -25,6 +25,7 @@
 #include "go-zetasql/analyzer/resolver/export.inc"
 #include "go-zetasql/analyzer/rewrite_resolved_ast/export.inc"
 #include "go-zetasql/base/base/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"

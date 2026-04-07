@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_CONTROL_FLOW_GRAPH_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_CONTROL_FLOW_GRAPH_EXPORT_H
 
-#include "zetasql/scripting/control_flow_graph.h"
+#include "googlesql/scripting/control_flow_graph.h"
 // include sources
-#include "zetasql/scripting/control_flow_graph.cc"
+#include "googlesql/scripting/control_flow_graph.cc"
 // include dependencies
 #include "go-zetasql/scripting/script_segment/export.inc"
 #include "go-zetasql/base/check/export.inc"

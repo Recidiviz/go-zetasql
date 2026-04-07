@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_SQL_VIEW_INLINER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_SQL_VIEW_INLINER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/sql_view_inliner.h"
+#include "googlesql/analyzer/rewriters/sql_view_inliner.h"
 // include sources
-#include "zetasql/analyzer/rewriters/sql_view_inliner.cc"
+#include "googlesql/analyzer/rewriters/sql_view_inliner.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

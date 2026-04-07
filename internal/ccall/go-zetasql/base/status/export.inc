@@ -1,14 +1,14 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_STATUS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_BASE_STATUS_EXPORT_H
 
-#include "zetasql/base/canonical_errors.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
-#include "zetasql/base/status_payload.h"
+#include "googlesql/base/canonical_errors.h"
+#include "googlesql/base/status.h"
+#include "googlesql/base/status_builder.h"
+#include "googlesql/base/status_macros.h"
+#include "googlesql/base/status_payload.h"
 // include sources
-#include "zetasql/base/status_builder.cc"
-#include "zetasql/base/status_payload.cc"
+#include "googlesql/base/status_builder.cc"
+#include "googlesql/base/status_payload.cc"
 // include dependencies
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/source_location/export.inc"

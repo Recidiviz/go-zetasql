@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_PICO_TIME_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_PICO_TIME_EXPORT_H
 
-#include "zetasql/public/pico_time.h"
+#include "googlesql/public/pico_time.h"
 // include sources
-#include "zetasql/public/pico_time.cc"
+#include "googlesql/public/pico_time.cc"
 // include dependencies
 #include "go-absl/numeric/int128/export.inc"
 #include "go-absl/status/status/export.inc"

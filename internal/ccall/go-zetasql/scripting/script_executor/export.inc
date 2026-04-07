@@ -1,13 +1,13 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_SCRIPT_EXECUTOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_SCRIPT_EXECUTOR_EXPORT_H
 
-#include "zetasql/scripting/script_executor.h"
+#include "googlesql/scripting/script_executor.h"
 // include sources
-#include "zetasql/scripting/script_executor.cc"
-#include "zetasql/scripting/script_executor_impl.cc"
-#include "zetasql/scripting/script_executor_impl.h"
-#include "zetasql/scripting/serialization_helpers.cc"
-#include "zetasql/scripting/serialization_helpers.h"
+#include "googlesql/scripting/script_executor.cc"
+#include "googlesql/scripting/script_executor_impl.cc"
+#include "googlesql/scripting/script_executor_impl.h"
+#include "googlesql/scripting/serialization_helpers.cc"
+#include "googlesql/scripting/serialization_helpers.h"
 // include dependencies
 #include "go-zetasql/scripting/control_flow_graph/export.inc"
 #include "go-zetasql/scripting/error_helpers/export.inc"

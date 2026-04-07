@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_GRAPH_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_GRAPH_EXPORT_H
 
-#include "zetasql/reference_impl/functions/graph.h"
+#include "googlesql/reference_impl/functions/graph.h"
 // include sources
-#include "zetasql/reference_impl/functions/graph.cc"
+#include "googlesql/reference_impl/functions/graph.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

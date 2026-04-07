@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_DATE_TIME_UTIL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_DATE_TIME_UTIL_EXPORT_H
 
-#include "zetasql/public/functions/date_time_util.h"
+#include "googlesql/public/functions/date_time_util.h"
 // include sources
-#include "zetasql/public/functions/date_time_util.cc"
+#include "googlesql/public/functions/date_time_util.cc"
 // include dependencies
 #include "go-zetasql/public/functions/arithmetics/export.inc"
 #include "go-zetasql/public/functions/date_time_util_internal/export.inc"
@@ -21,6 +21,8 @@
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/types/timestamp_util/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/base/no_destructor/export.inc"
+#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/numeric/int128/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

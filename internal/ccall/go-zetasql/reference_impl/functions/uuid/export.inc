@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_UUID_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_FUNCTIONS_UUID_EXPORT_H
 
-#include "zetasql/reference_impl/functions/uuid.h"
+#include "googlesql/reference_impl/functions/uuid.h"
 // include sources
-#include "zetasql/reference_impl/functions/uuid.cc"
+#include "googlesql/reference_impl/functions/uuid.cc"
 // include dependencies
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/public/value/export.inc"

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_BASE_NET_IPADDRESS_OSS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_BASE_NET_IPADDRESS_OSS_EXPORT_H
 
-#include "zetasql/base/net/ipaddress_oss.h"
+#include "googlesql/base/net/ipaddress_oss.h"
 // include sources
-#include "zetasql/base/net/ipaddress_oss.cc"
+#include "googlesql/base/net/ipaddress_oss.cc"
 // include dependencies
 #include "go-zetasql/base/endian/export.inc"
 #include "go-zetasql/base/logging/export.inc"

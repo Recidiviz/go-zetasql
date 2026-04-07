@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_PIVOT_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_PIVOT_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/pivot_rewriter.h"
+#include "googlesql/analyzer/rewriters/pivot_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/pivot_rewriter.cc"
+#include "googlesql/analyzer/rewriters/pivot_rewriter.cc"
 // include dependencies
 #include "go-zetasql/analyzer/resolver/export.inc"
 #include "go-zetasql/analyzer/substitute/export.inc"

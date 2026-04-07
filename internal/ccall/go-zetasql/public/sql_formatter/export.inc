@@ -1,11 +1,12 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SQL_FORMATTER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SQL_FORMATTER_EXPORT_H
 
-#include "zetasql/public/sql_formatter.h"
+#include "googlesql/public/sql_formatter.h"
 // include sources
-#include "zetasql/public/sql_formatter.cc"
+#include "googlesql/public/sql_formatter.cc"
 // include dependencies
 #include "go-zetasql/public/error_helpers/export.inc"
+#include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/public/parse_helpers/export.inc"
 #include "go-zetasql/public/parse_location/export.inc"
@@ -15,6 +16,8 @@
 #include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/parser/parser/export.inc"
+#include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/strings/string_view/export.inc"
 
 #endif

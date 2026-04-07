@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_JSON_FORMAT_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_JSON_FORMAT_EXPORT_H
 
-#include "zetasql/public/functions/json_format.h"
+#include "googlesql/public/functions/json_format.h"
 // include sources
-#include "zetasql/public/functions/json_format.cc"
+#include "googlesql/public/functions/json_format.cc"
 // include dependencies
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/base/check/export.inc"
@@ -17,6 +17,7 @@
 #include "go-zetasql/public/json_value/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
+#include "go-zetasql/public/timestamp_picos_value/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/uuid_value/export.inc"

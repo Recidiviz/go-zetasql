@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_REWRITE_UTILS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_REWRITE_UTILS_EXPORT_H
 
-#include "zetasql/resolved_ast/rewrite_utils.h"
+#include "googlesql/resolved_ast/rewrite_utils.h"
 // include sources
-#include "zetasql/resolved_ast/rewrite_utils.cc"
+#include "googlesql/resolved_ast/rewrite_utils.cc"
 // include dependencies
 #include "go-zetasql/resolved_ast/column_factory/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
@@ -11,6 +11,7 @@
 #include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
 #include "go-zetasql/analyzer/annotation_propagator/export.inc"
+#include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/logging/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
 #include "go-zetasql/base/status/export.inc"
@@ -20,7 +21,9 @@
 #include "go-zetasql/public/coercer/export.inc"
 #include "go-zetasql/public/function/export.inc"
 #include "go-zetasql/public/function_cc_proto/export.inc"
+#include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
+#include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/annotation/collation/export.inc"
 #include "go-zetasql/public/functions/differential_privacy_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"

@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_VARIABLE_GENERATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_REFERENCE_IMPL_VARIABLE_GENERATOR_EXPORT_H
 
-#include "zetasql/reference_impl/variable_generator.h"
+#include "googlesql/reference_impl/variable_generator.h"
 // include sources
-#include "zetasql/reference_impl/variable_generator.cc"
+#include "googlesql/reference_impl/variable_generator.cc"
 // include dependencies
 #include "go-zetasql/reference_impl/common/export.inc"
 #include "go-zetasql/reference_impl/parameters/export.inc"

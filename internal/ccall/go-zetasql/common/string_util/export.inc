@@ -1,7 +1,7 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_STRING_UTIL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_STRING_UTIL_EXPORT_H
 
-#include "zetasql/common/string_util.h"
+#include "googlesql/common/string_util.h"
 // include sources
 // include dependencies
 #include "go-zetasql/common/canonicalize_signed_zero_to_string/export.inc"

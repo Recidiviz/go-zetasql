@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_ERRORS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_ERRORS_EXPORT_H
 
-#include "zetasql/common/errors.h"
+#include "googlesql/common/errors.h"
 // include sources
-#include "zetasql/common/errors.cc"
+#include "googlesql/common/errors.cc"
 // include dependencies
 #include "go-zetasql/common/status_payload_utils/export.inc"
 #include "go-zetasql/base/check/export.inc"
@@ -21,7 +21,6 @@
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/optional/export.inc"
 #include "go-absl/types/span/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 

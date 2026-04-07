@@ -32,7 +32,7 @@ package initialize_required_fields
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
 
-#define GO_EXPORT(API) export_zetasql_common_initialize_required_fields_ ## API
+#define GO_EXPORT(API) export_googlesql_common_initialize_required_fields_ ## API
 #include "bridge.h"
 */
 import "C"

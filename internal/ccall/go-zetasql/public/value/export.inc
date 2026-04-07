@@ -1,12 +1,12 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_VALUE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_VALUE_EXPORT_H
 
-#include "zetasql/public/proto_util.h"
-#include "zetasql/public/value.h"
+#include "googlesql/public/proto_util.h"
+#include "googlesql/public/value.h"
 // include sources
-#include "zetasql/public/proto_util.cc"
-#include "zetasql/public/value.cc"
-#include "zetasql/public/value_inl.h"
+#include "googlesql/public/proto_util.cc"
+#include "googlesql/public/value.cc"
+#include "googlesql/public/value_inl.h"
 // include dependencies
 #include "go-zetasql/public/civil_time/export.inc"
 #include "go-zetasql/public/interval_value/export.inc"
@@ -14,8 +14,8 @@
 #include "go-zetasql/public/language_options/export.inc"
 #include "go-zetasql/public/numeric_value/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
+#include "go-zetasql/public/simple_token_list/export.inc"
 #include "go-zetasql/public/timestamp_picos_value/export.inc"
-#include "go-zetasql/public/token_list/export.inc"
 #include "go-zetasql/public/type/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/uuid_value/export.inc"
@@ -38,6 +38,7 @@
 #include "go-zetasql/public/functions/date_time_util/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
+#include "go-zetasql/public/types/timestamp_util/export.inc"
 #include "go-zetasql/public/types/value_representations/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/base/export.inc"
@@ -49,6 +50,7 @@
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/hash/hash/export.inc"
 #include "go-absl/log/log/export.inc"
+#include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
@@ -56,7 +58,7 @@
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-absl/types/variant/export.inc"
+#include "go-googletest/googletest/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 

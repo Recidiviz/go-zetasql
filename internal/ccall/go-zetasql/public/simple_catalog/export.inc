@@ -54,7 +54,5 @@
 #include "go-absl/types/span/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
-// GoSlice and other cgo types for bridge_cc.inc (and some bridge.inc helpers).
-#include "_cgo_export.h"
 
 #endif

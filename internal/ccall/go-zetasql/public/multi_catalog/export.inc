@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_MULTI_CATALOG_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_MULTI_CATALOG_EXPORT_H
 
-#include "zetasql/public/multi_catalog.h"
+#include "googlesql/public/multi_catalog.h"
 // include sources
-#include "zetasql/public/multi_catalog.cc"
+#include "googlesql/public/multi_catalog.cc"
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/constant/export.inc"

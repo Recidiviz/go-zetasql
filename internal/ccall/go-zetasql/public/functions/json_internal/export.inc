@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_JSON_INTERNAL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_JSON_INTERNAL_EXPORT_H
 
-#include "zetasql/public/functions/json_internal.h"
+#include "googlesql/public/functions/json_internal.h"
 // include sources
-#include "zetasql/public/functions/json_internal.cc"
+#include "googlesql/public/functions/json_internal.cc"
 // include dependencies
 #include "go-zetasql/base/case/export.inc"
 #include "go-zetasql/base/check/export.inc"

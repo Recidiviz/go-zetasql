@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANNOTATION_COLLATION_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_ANNOTATION_COLLATION_EXPORT_H
 
-#include "zetasql/public/annotation/collation.h"
+#include "googlesql/public/annotation/collation.h"
 // include sources
-#include "zetasql/public/annotation/collation.cc"
+#include "googlesql/public/annotation/collation.cc"
 // include dependencies
 #include "go-zetasql/public/annotation/default_annotation/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

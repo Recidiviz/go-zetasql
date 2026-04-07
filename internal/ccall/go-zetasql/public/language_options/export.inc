@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_LANGUAGE_OPTIONS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_LANGUAGE_OPTIONS_EXPORT_H
 
-#include "zetasql/public/language_options.h"
+#include "googlesql/public/language_options.h"
 // include sources
-#include "zetasql/public/language_options.cc"
+#include "googlesql/public/language_options.cc"
 // include dependencies
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/base/base/export.inc"

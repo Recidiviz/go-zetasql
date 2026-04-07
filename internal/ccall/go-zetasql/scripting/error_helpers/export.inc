@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_ERROR_HELPERS_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_ERROR_HELPERS_EXPORT_H
 
-#include "zetasql/scripting/error_helpers.h"
+#include "googlesql/scripting/error_helpers.h"
 // include sources
-#include "zetasql/scripting/error_helpers.cc"
+#include "googlesql/scripting/error_helpers.cc"
 // include dependencies
 #include "go-zetasql/scripting/script_segment/export.inc"
 #include "go-zetasql/base/status/export.inc"

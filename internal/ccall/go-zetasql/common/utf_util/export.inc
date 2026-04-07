@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_UTF_UTIL_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_COMMON_UTF_UTIL_EXPORT_H
 
-#include "zetasql/common/utf_util.h"
+#include "googlesql/common/utf_util.h"
 // include sources
-#include "zetasql/common/utf_util.cc"
+#include "googlesql/common/utf_util.cc"
 // include dependencies
 #include "go-zetasql/base/base/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

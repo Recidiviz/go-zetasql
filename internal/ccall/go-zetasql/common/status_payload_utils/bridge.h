@@ -1,6 +1,6 @@
 
-#ifndef zetasql_common_status_payload_utils_bridge_h
-#define zetasql_common_status_payload_utils_bridge_h
+#ifndef googlesql_common_status_payload_utils_bridge_h
+#define googlesql_common_status_payload_utils_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_common_status_payload_utils_bridge_h */
+#endif /* googlesql_common_status_payload_utils_bridge_h */

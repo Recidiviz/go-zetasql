@@ -1,21 +1,21 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TYPES_TYPE_FACTORY_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TYPES_TYPE_FACTORY_EXPORT_H
 
-#include "zetasql/public/types/enum_type.h"
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/public/types/graph_path_type.h"
-#include "zetasql/public/types/internal_proto_utils.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/public/types/type_deserializer.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/public/types/enum_type.h"
+#include "googlesql/public/types/graph_element_type.h"
+#include "googlesql/public/types/graph_path_type.h"
+#include "googlesql/public/types/internal_proto_utils.h"
+#include "googlesql/public/types/proto_type.h"
+#include "googlesql/public/types/type_deserializer.h"
+#include "googlesql/public/types/type_factory.h"
 // include sources
-#include "zetasql/public/types/enum_type.cc"
-#include "zetasql/public/types/graph_element_type.cc"
-#include "zetasql/public/types/graph_path_type.cc"
-#include "zetasql/public/types/internal_utils.h"
-#include "zetasql/public/types/proto_type.cc"
-#include "zetasql/public/types/type_deserializer.cc"
-#include "zetasql/public/types/type_factory.cc"
+#include "googlesql/public/types/enum_type.cc"
+#include "googlesql/public/types/graph_element_type.cc"
+#include "googlesql/public/types/graph_path_type.cc"
+#include "googlesql/public/types/internal_utils.h"
+#include "googlesql/public/types/proto_type.cc"
+#include "googlesql/public/types/type_deserializer.cc"
+#include "googlesql/public/types/type_factory.cc"
 // include dependencies
 #include "go-zetasql/public/types/internal_proto_utils/export.inc"
 #include "go-zetasql/public/types/type/export.inc"
@@ -46,6 +46,7 @@
 #include "go-zetasql/public/functions/differential_privacy_cc_proto/export.inc"
 #include "go-zetasql/public/functions/normalize_mode_cc_proto/export.inc"
 #include "go-zetasql/public/functions/range_sessionize_mode_cc_proto/export.inc"
+#include "go-zetasql/public/functions/rank_type_cc_proto/export.inc"
 #include "go-zetasql/public/functions/rounding_mode_cc_proto/export.inc"
 #include "go-zetasql/public/functions/unsupported_fields_cc_proto/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
@@ -69,7 +70,6 @@
 #include "go-absl/strings/cord/export.inc"
 #include "go-absl/synchronization/synchronization/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 
 #endif
