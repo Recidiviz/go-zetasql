@@ -45,42 +45,42 @@ global_symbols:
   - AbslInternalAnnotateIgnoreReadsBegin
   - AbslInternalAnnotateIgnoreReadsEnd
   - AbslInternalGetFileMappingHint
-  - ZetaSqlalloc
-  - ZetaSqlfree
-  - ZetaSqlrealloc
+  - GoogleSqlalloc
+  - GoogleSqlfree
+  - GoogleSqlrealloc
   - FLAGS_nooutput_asc_explicitly
-  - FLAGS_nozetasql_use_customized_flex_istream
+  - FLAGS_nogooglesql_use_customized_flex_istream
   - FLAGS_output_asc_explicitly
-  - FLAGS_zetasql_use_customized_flex_istream
-  - FLAGS_zetasql_type_factory_nesting_depth_limit
-  - FLAGS_zetasql_read_proto_field_optimized_path
-  - FLAGS_zetasql_format_max_output_width
-  - FLAGS_zetasql_min_length_required_for_edit_distance
-  - FLAGS_zetasql_simple_iterator_call_time_now_rows_period
-  - FLAGS_nozetasql_type_factory_nesting_depth_limit
-  - FLAGS_nozetasql_read_proto_field_optimized_path
-  - FLAGS_nozetasql_format_max_output_width
-  - FLAGS_nozetasql_min_length_required_for_edit_distance
-  - FLAGS_nozetasql_simple_iterator_call_time_now_rows_period
-  - FLAGS_zetasql_enough_stack_bytes
-  - FLAGS_nozetasql_enough_stack_bytes
-  - FLAGS_zetasql_canonicalize_signed_zero_to_string
-  - FLAGS_nozetasql_canonicalize_signed_zero_to_string
-  - FLAGS_zetasql_default_error_message_stability
-  - FLAGS_nozetasql_default_error_message_stability
-  - FLAGS_zetasql_redact_error_messages_for_tests
-  - FLAGS_nozetasql_redact_error_messages_for_tests
-  - ZetaSqlFlexTokenizerBase
-  - ZetaSqlFlexLexer
+  - FLAGS_googlesql_use_customized_flex_istream
+  - FLAGS_googlesql_type_factory_nesting_depth_limit
+  - FLAGS_googlesql_read_proto_field_optimized_path
+  - FLAGS_googlesql_format_max_output_width
+  - FLAGS_googlesql_min_length_required_for_edit_distance
+  - FLAGS_googlesql_simple_iterator_call_time_now_rows_period
+  - FLAGS_nogooglesql_type_factory_nesting_depth_limit
+  - FLAGS_nogooglesql_read_proto_field_optimized_path
+  - FLAGS_nogooglesql_format_max_output_width
+  - FLAGS_nogooglesql_min_length_required_for_edit_distance
+  - FLAGS_nogooglesql_simple_iterator_call_time_now_rows_period
+  - FLAGS_googlesql_enough_stack_bytes
+  - FLAGS_nogooglesql_enough_stack_bytes
+  - FLAGS_googlesql_canonicalize_signed_zero_to_string
+  - FLAGS_nogooglesql_canonicalize_signed_zero_to_string
+  - FLAGS_googlesql_default_error_message_stability
+  - FLAGS_nogooglesql_default_error_message_stability
+  - FLAGS_googlesql_redact_error_messages_for_tests
+  - FLAGS_nogooglesql_redact_error_messages_for_tests
+  - GoogleSqlFlexTokenizerBase
+  - GoogleSqlFlexLexer
   - UCaseMap
 
 top_level_namespaces:
   - absl
   - differential_privacy
   - google
-  - zetasql
-  - zetasql_base
-  - zetasql_bison_parser
+  - googlesql
+  - googlesql_base
+  - googlesql_bison_parser
   - re2
 
 conflict_symbols:
@@ -90,7 +90,7 @@ conflict_symbols:
     symbol: kAsciiToInt
   - file:   absl/time/time.cc
     symbol: unix_epoch
-  - file:   zetasql/public/types/simple_type.cc
+  - file:   googlesql/public/types/simple_type.cc
     symbol: TypeKindInfo
   - file:   re2/nfa.cc
     symbol: ExtraDebug
@@ -100,155 +100,155 @@ conflict_symbols:
     symbol: ExtraDebug
   - file:   re2/prefilter_tree.cc
     symbol: ExtraDebug
-  - file:   zetasql/parser/ast_enums.pb.cc
+  - file:   googlesql/parser/ast_enums.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/proto/internal_error_location.pb.cc
+  - file:   googlesql/proto/internal_error_location.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/proto/options.pb.cc
+  - file:   googlesql/proto/options.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/annotation.pb.cc
+  - file:   googlesql/public/annotation.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/builtin_function.pb.cc
+  - file:   googlesql/public/builtin_function.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/collation.pb.cc
+  - file:   googlesql/public/collation.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/deprecation_warning.pb.cc
+  - file:   googlesql/public/deprecation_warning.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/error_location.pb.cc
+  - file:   googlesql/public/error_location.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/options.pb.cc
+  - file:   googlesql/public/options.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/parse_location_range.pb.cc
+  - file:   googlesql/public/parse_location_range.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/parse_resume_location.pb.cc
+  - file:   googlesql/public/parse_resume_location.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/simple_value.pb.cc
+  - file:   googlesql/public/simple_value.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/type.pb.cc
+  - file:   googlesql/public/type.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/type_annotation.pb.cc
+  - file:   googlesql/public/type_annotation.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/type_parameters.pb.cc
+  - file:   googlesql/public/type_parameters.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/type_modifiers.pb.cc
+  - file:   googlesql/public/type_modifiers.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/value.pb.cc
+  - file:   googlesql/public/value.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/functions/datetime.pb.cc
+  - file:   googlesql/public/functions/datetime.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/functions/array_find_mode.pb.cc
+  - file:   googlesql/public/functions/array_find_mode.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/functions/differential_privacy.pb.cc
+  - file:   googlesql/public/functions/differential_privacy.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/functions/normalize_mode.pb.cc
+  - file:   googlesql/public/functions/normalize_mode.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/functions/rounding_mode.pb.cc
+  - file:   googlesql/public/functions/rounding_mode.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/functions/array_zip_mode.pb.cc
+  - file:   googlesql/public/functions/array_zip_mode.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/functions/range_sessionize_mode.pb.cc
+  - file:   googlesql/public/functions/range_sessionize_mode.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/simple_connection.pb.cc
+  - file:   googlesql/public/simple_connection.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/simple_model.pb.cc
+  - file:   googlesql/public/simple_model.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/formatter_options.pb.cc
+  - file:   googlesql/public/formatter_options.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/parser/parse_tree.pb.cc
+  - file:   googlesql/parser/parse_tree.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/scripting/variable.pb.cc
+  - file:   googlesql/scripting/variable.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/scripting/script_executor_state.pb.cc
+  - file:   googlesql/scripting/script_executor_state.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/scripting/procedure_extension.pb.cc
+  - file:   googlesql/scripting/procedure_extension.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/reference_impl/evaluator_table_iterator.pb.cc
+  - file:   googlesql/reference_impl/evaluator_table_iterator.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/proto/placeholder_descriptor.pb.cc
+  - file:   googlesql/proto/placeholder_descriptor.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/proto/type_annotation.pb.cc
+  - file:   googlesql/public/proto/type_annotation.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/proto/logging.pb.cc
+  - file:   googlesql/public/proto/logging.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/proto/wire_format_annotation.pb.cc
+  - file:   googlesql/public/proto/wire_format_annotation.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/proto/anon_output_with_report.pb.cc
+  - file:   googlesql/proto/anon_output_with_report.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/resolved_ast/resolved_node_kind.pb.cc
+  - file:   googlesql/resolved_ast/resolved_node_kind.pb.cc
     symbols:
       - schemas
       - file_default_instances
@@ -264,41 +264,31 @@ conflict_symbols:
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/numeric_parser.cc
+  - file:   googlesql/public/numeric_parser.cc
     symbol: PowersAsc
-  - file:   zetasql/reference_impl/function.cc
+  - file:   googlesql/reference_impl/function.cc
     symbol: FCT
-  - file:   zetasql/analyzer/resolver_expr.cc
+  - file:   googlesql/analyzer/resolver_expr.cc
     symbols:
       - kOrderById
       - kIsNullFnName
     export_suffixes:
       kOrderById: expr
-  - file:   zetasql/analyzer/resolver_query.cc
+  - file:   googlesql/analyzer/resolver_query.cc
     symbol: kOrderById
     export_suffixes:
       kOrderById: query
-  - file:   zetasql/analyzer/annotation_propagator.cc
+  - file:   googlesql/analyzer/annotation_propagator.cc
     symbols:
       - CheckAndPropagateAnnotationsImpl
     export_suffixes:
       CheckAndPropagateAnnotationsImpl: annot_prop
-  - file:   zetasql/analyzer/resolver.cc
+  - file:   googlesql/analyzer/resolver.cc
     symbols:
       - CheckAndPropagateAnnotationsImpl
     export_suffixes:
       CheckAndPropagateAnnotationsImpl: resolver_cc
-  - file:   zetasql/common/builtin_function_internal_3.cc
-    symbols:
-      - SetDefinitionForInlining
-    export_suffixes:
-      SetDefinitionForInlining: internal3
-  - file:   zetasql/common/builtin_function_array.cc
-    symbols:
-      - SetDefinitionForInlining
-    export_suffixes:
-      SetDefinitionForInlining: array
-  - file:   zetasql/public/functions/cast_date_time.cc
+  - file:   googlesql/public/functions/cast_date_time.cc
     symbols:
       - powers_of_ten
       - kNaiveNumSecondsPerMinute
@@ -321,45 +311,45 @@ conflict_symbols:
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/resolved_ast/resolved_ast.pb.cc
+  - file:   googlesql/resolved_ast/resolved_ast.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/resolved_ast/resolved_ast_enums.pb.cc
+  - file:   googlesql/resolved_ast/resolved_ast_enums.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/resolved_ast/serialization.pb.cc
+  - file:   googlesql/resolved_ast/serialization.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/proto/function.pb.cc
+  - file:   googlesql/proto/function.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/function.pb.cc
+  - file:   googlesql/public/function.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/simple_table.pb.cc
+  - file:   googlesql/public/simple_table.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/simple_constant.pb.cc
+  - file:   googlesql/public/simple_constant.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/proto/simple_catalog.pb.cc
+  - file:   googlesql/proto/simple_catalog.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/proto/script_exception.pb.cc
+  - file:   googlesql/proto/script_exception.pb.cc
     symbols:
       - schemas
       - file_default_instances
-  - file:   zetasql/public/templated_sql_function.cc
+  - file:   googlesql/public/templated_sql_function.cc
     symbol: module_initialization_complete
-  - file:   zetasql/public/templated_sql_tvf.cc
+  - file:   googlesql/public/templated_sql_tvf.cc
     symbol: module_initialization_complete
 
 exclude_zetasql_dirs:
@@ -374,69 +364,14 @@ exclude_zetasql_dirs:
   - proto/accounting
   - proto/testing
 
+# Upstream 2026.01.1+ uses Textmapper only; tm_parser sources are amalgamated after parser_internal.cc
+# (see generator: skip tm_parser export.inc for parser — avoids duplicating bison/export.inc).
 add_sources:
-  # flex_tokenizer.cc must share the parser package FQDN with bison_parser.cc (not bison_parser_generated_lib).
-  # Grammar must be #included before bison_parser.cc (stack-allocated BisonParserImpl needs complete type).
-  - file: zetasql/parser/bison_parser.cc
-    source: zetasql/parser/flex_tokenizer.cc
-    before_includes:
-      # bison_parser.bison.h references zetasql::parser::ZetaSqlFlexTokenizer; include the tokenizer
-      # header before the generated bison TU (upstream relies on %code requires in the .y file).
-      - zetasql/parser/flex_tokenizer.h
-      - zetasql/parser/bison_parser.bison.cc
-    # join_processor.cc includes bison_parser.bison.h → flex_tokenizer.h; it must run after #undef yylex
-    # (see flex_prelude), not immediately after bison_parser.bison.cc.
-    flex_prelude: |
-      // bison_parser.bison.cc defines yylex as a macro; must clear before any flex_tokenizer / FlexLexer.h.
-      #undef yylex
-      #include "zetasql/parser/join_processor.cc"
-      // TextMapper (Bazel :tm_parser). tm_lexer.cc is compiled via flex_tokenizer/export.inc → tm_lexer/export.inc.
-      #include "zetasql/parser/textmapper_lexer_adapter.cc"
-      # parser_internal.h is include-guarded; the first include came from bison_parser.bison.cc with
-      # PARSER_LA_IS_EMPTY() => yyla.empty(). tm_parser.cc uses Textmapper lookahead (`next_symbol_`).
-      #undef PARSER_LA_IS_EMPTY
-      #undef TM_PARSER_LA_IS_EMPTY
-      #define PARSER_LA_IS_EMPTY() (next_symbol_.symbol == noToken)
-      #define TM_PARSER_LA_IS_EMPTY() (next_symbol_.symbol == noToken)
-      #undef ABORT_CHECK
-      #define ABORT_CHECK(location, condition, msg)                   \
-        do {                                                          \
-          if (ABSL_PREDICT_FALSE(!(condition))) {                     \
-            (void)MakeSyntaxError(                                    \
-                location, absl::StrCat("Internal Error: ", (msg)));     \
-            YYABORT;                                                  \
-          }                                                           \
-        } while (0)
-      #undef OVERRIDE_CURRENT_TOKEN_LOOKBACK
-      #define OVERRIDE_CURRENT_TOKEN_LOOKBACK(location, new_token_kind)          \
-        ABORT_CHECK(location, PARSER_LA_IS_EMPTY(),                              \
-                    "The parser lookahead buffer must be empty to override the " \
-                    "current token");                                            \
-        absl::Status s = OverrideCurrentTokenLookback(                           \
-            tokenizer, zetasql::TokenKinds::new_token_kind);                   \
-        ABORT_CHECK(location, s.ok(), s.ToString());
-      #undef TM_OVERRIDE_CURRENT_TOKEN_LOOKBACK
-      #define TM_OVERRIDE_CURRENT_TOKEN_LOOKBACK(location, new_token_kind)       \
-        ABORT_CHECK(location, TM_PARSER_LA_IS_EMPTY(),                           \
-                    "The parser lookahead buffer must be empty to override the " \
-                    "current token");                                            \
-        absl::Status s_tm_override = OverrideCurrentTokenLookback(               \
-            tokenizer, zetasql::TokenKinds::new_token_kind);                     \
-        ABORT_CHECK(location, s_tm_override.ok(), s_tm_override.ToString());
-      #include "zetasql/parser/tm_parser.cc"
-      // utf8_validity.cc: single copy via blank-import utf8_range_link (see go-protobuf/protobuf/export.inc).
-      // Flex-generated yyalloc helpers use global Legacyalloc names; root analyzer and parser/ CGO packages
-      // both amalgamate flex_tokenizer.flex.cc — prefix so the final link does not duplicate symbols.
-      #ifdef ZETASQL_GO_FLEX_LEGACY_IN_PARSER_PKG
-      #define Legacyalloc zetasql_go_parser_pkg_Legacyalloc
-      #define Legacyrealloc zetasql_go_parser_pkg_Legacyrealloc
-      #define Legacyfree zetasql_go_parser_pkg_Legacyfree
-      #else
-      #define Legacyalloc zetasql_go_root_Legacyalloc
-      #define Legacyrealloc zetasql_go_root_Legacyrealloc
-      #define Legacyfree zetasql_go_root_Legacyfree
-      #endif
-      #include "zetasql/parser/flex_tokenizer.flex.cc"
+  - file: googlesql/parser/parser_internal.cc
+    after_includes:
+      - googlesql/parser/textmapper_lexer_adapter.cc
+      - googlesql/parser/tm_parser.cc
+      - googlesql/parser/join_processor.cc
 
 protobuf_internal_export_name_files:
   - protobuf/google/protobuf/descriptor.pb.h
@@ -454,7 +389,7 @@ protobuf_internal_export_name_files:
   - googleapis/google/type/latlng.pb.h
   - googleapis/google/type/timeofday.pb.h
   - googleapis/google/rpc/status.pb.h
-  - zetasql/public/proto/wire_format_annotation.pb.h
+  - googlesql/public/proto/wire_format_annotation.pb.h
 
 cclib:
   excludes:
@@ -471,163 +406,186 @@ cclib:
       headers:
         - absl/types/internal/optional.h
     # flex_tokenizer.flex.cc / flex_tokenizer.cc already pull in the tokenizer interface.
-    - pkg: zetasql/parser/bison_parser_generated_lib
+    - pkg: googlesql/parser/bison_parser_generated_lib
       headers:
-        - zetasql/parser/flex_tokenizer.h
+        - googlesql/parser/flex_tokenizer.h
   # Generated flex is pulled in via parser bind_cc_prelude_before_headers; omit from per-file sources.
   exclude_amalgamation_sources:
-    - pkg: zetasql/parser/bison_parser_generated_lib
+    - pkg: googlesql/parser/bison_parser_generated_lib
       sources:
         # flex_tokenizer.flex.cc is included via parser/bind.cc prelude only.
-        - zetasql/parser/flex_tokenizer.flex.cc
-        # Grammar is amalgamated in zetasql/parser/parser only (parser FQDN matches flex_tokenizer).
-        - zetasql/parser/bison_parser.bison.cc
-        - zetasql/parser/join_processor.cc
-    - pkg: zetasql/parser/parser
+        - googlesql/parser/flex_tokenizer.flex.cc
+        # Grammar is amalgamated in googlesql/parser/parser only (parser FQDN matches flex_tokenizer).
+        - googlesql/parser/bison_parser.bison.cc
+        - googlesql/parser/join_processor.cc
+    - pkg: googlesql/parser/parser
       sources:
-        - zetasql/parser/flex_tokenizer.h
-        - zetasql/parser/flex_tokenizer.cc
+        - googlesql/parser/flex_tokenizer.h
+        - googlesql/parser/flex_tokenizer.cc
   bind_cc_prelude_before_headers:
-    - pkg: zetasql/parser/parser
+    - pkg: googlesql/parser/parser
       lines: |
         // flex_tokenizer.flex.cc defines yyFlexLexer::{yylex,yywrap}; suppress flex_tokenizer.h inline stubs.
         #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
         // flex_prelude uses distinct Legacyalloc symbols from root analyzer (see flex_prelude in add_sources).
         #define ZETASQL_GO_FLEX_LEGACY_IN_PARSER_PKG 1
-    - pkg: zetasql/public/parse_helpers
+    - pkg: googlesql/public/parse_helpers
       lines: |
         // parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.
         #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
   # id_string / unicode_utils flags — only the parser amalgamation needs these defines.
   inject_replace_names:
-    - pkg: zetasql/parser/parser
-      after: FLAGS_nozetasql_canonicalize_signed_zero_to_string
+    - pkg: googlesql/parser/parser
+      after: FLAGS_nogooglesql_canonicalize_signed_zero_to_string
       names:
-        - FLAGS_zetasql_idstring_allow_unicode_characters
-        - FLAGS_nozetasql_idstring_allow_unicode_characters
+        - FLAGS_googlesql_idstring_allow_unicode_characters
+        - FLAGS_nogooglesql_idstring_allow_unicode_characters
   extra_bind_go_imports:
-    - pkg: zetasql/parser/parser
+    - pkg: googlesql/parser/parser
       imports:
         - github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/bison_parser_generated_lib
+        - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
+    # Parser/bison TUs include protobuf headers; link go-protobuf for out-of-line symbols.
+    - pkg: googlesql/parser/bison_parser_generated_lib
+      imports:
+        - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
+    - pkg: googlesql/public/analyzer
+      imports:
+        - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
+  omit_extern_c_around_bridge_inc:
+    - googlesql/public/catalog
+  omit_cgo_export_prolog:
+    - googlesql/public/catalog
+  # Renaming `google` breaks protobuf headers (namespace google::protobuf) vs go-protobuf amalgamation.
+  exclude_replace_names:
+    - pkg: googlesql/parser/bison_parser_generated_lib
+      names:
+        - google
+    - pkg: googlesql/parser/parser
+      names:
+        - google
+    - pkg: googlesql/public/analyzer
+      names:
+        - google
 
 protoc:
-  - name: zetasql/resolved_ast/serialization_cc_proto
+  - name: googlesql/resolved_ast/serialization_cc_proto
     deps:
-      - zetasql/public/type_cc_proto
-      - zetasql/public/value_cc_proto
-      - zetasql/public/annotation_cc_proto
-      - zetasql/public/parse_location_range_cc_proto
-  - name: zetasql/resolved_ast/resolved_ast_enums_cc_proto
-  - name: zetasql/resolved_ast/resolved_node_kind_cc_proto
-  - name: zetasql/resolved_ast/resolved_ast_cc_proto
+      - googlesql/public/type_cc_proto
+      - googlesql/public/value_cc_proto
+      - googlesql/public/annotation_cc_proto
+      - googlesql/public/parse_location_range_cc_proto
+  - name: googlesql/resolved_ast/resolved_ast_enums_cc_proto
+  - name: googlesql/resolved_ast/resolved_node_kind_cc_proto
+  - name: googlesql/resolved_ast/resolved_ast_cc_proto
     deps:
-      - zetasql/resolved_ast/resolved_ast_enums_cc_proto
-      - zetasql/public/type_parameters_cc_proto
-      - zetasql/public/proto/type_annotation_cc_proto
-      - zetasql/proto/function_cc_proto
-  - name: zetasql/scripting/variable_cc_proto
+      - googlesql/resolved_ast/resolved_ast_enums_cc_proto
+      - googlesql/public/type_parameters_cc_proto
+      - googlesql/public/proto/type_annotation_cc_proto
+      - googlesql/proto/function_cc_proto
+  - name: googlesql/scripting/variable_cc_proto
     deps:
-      - zetasql/public/type_cc_proto
-      - zetasql/public/value_cc_proto
-      - zetasql/public/type_parameters_cc_proto
-  - name: zetasql/proto/script_exception_cc_proto
-  - name: zetasql/scripting/script_executor_state_cc_proto
+      - googlesql/public/type_cc_proto
+      - googlesql/public/value_cc_proto
+      - googlesql/public/type_parameters_cc_proto
+  - name: googlesql/proto/script_exception_cc_proto
+  - name: googlesql/scripting/script_executor_state_cc_proto
     deps:
-      - zetasql/proto/function_cc_proto
-      - zetasql/scripting/variable_cc_proto
-      - zetasql/proto/script_exception_cc_proto
-  - name: zetasql/proto/options_cc_proto
+      - googlesql/proto/function_cc_proto
+      - googlesql/scripting/variable_cc_proto
+      - googlesql/proto/script_exception_cc_proto
+  - name: googlesql/proto/options_cc_proto
     deps:
-      - zetasql/public/type_cc_proto
-      - zetasql/public/options_cc_proto
-      - zetasql/public/builtin_function_cc_proto
-      - zetasql/resolved_ast/resolved_node_kind_cc_proto
-  - name: zetasql/proto/function_cc_proto
+      - googlesql/public/type_cc_proto
+      - googlesql/public/options_cc_proto
+      - googlesql/public/builtin_function_cc_proto
+      - googlesql/resolved_ast/resolved_node_kind_cc_proto
+  - name: googlesql/proto/function_cc_proto
     deps:
-      - zetasql/public/type_cc_proto
-      - zetasql/public/value_cc_proto
-      - zetasql/public/options_cc_proto
-      - zetasql/public/simple_table_cc_proto
-      - zetasql/public/simple_value_cc_proto
-      - zetasql/public/function_cc_proto
-      - zetasql/public/builtin_function_cc_proto
-      - zetasql/public/parse_resume_location_cc_proto
-      - zetasql/public/annotation_cc_proto
-      - zetasql/public/deprecation_warning_cc_proto
-      - zetasql/public/error_location_cc_proto
-      - zetasql/public/parse_location_range_cc_proto
-      - zetasql/resolved_ast/serialization_cc_proto
-  - name: zetasql/proto/simple_catalog_cc_proto
+      - googlesql/public/type_cc_proto
+      - googlesql/public/value_cc_proto
+      - googlesql/public/options_cc_proto
+      - googlesql/public/simple_table_cc_proto
+      - googlesql/public/simple_value_cc_proto
+      - googlesql/public/function_cc_proto
+      - googlesql/public/builtin_function_cc_proto
+      - googlesql/public/parse_resume_location_cc_proto
+      - googlesql/public/annotation_cc_proto
+      - googlesql/public/deprecation_warning_cc_proto
+      - googlesql/public/error_location_cc_proto
+      - googlesql/public/parse_location_range_cc_proto
+      - googlesql/resolved_ast/serialization_cc_proto
+  - name: googlesql/proto/simple_catalog_cc_proto
     deps:
-      - zetasql/public/type_cc_proto
-      - zetasql/public/options_cc_proto
-      - zetasql/public/function_cc_proto
-      - zetasql/public/simple_table_cc_proto
-      - zetasql/public/simple_constant_cc_proto
-      - zetasql/public/simple_value_cc_proto
-      - zetasql/public/value_cc_proto
-      - zetasql/public/parse_resume_location_cc_proto
-      - zetasql/public/annotation_cc_proto
-      - zetasql/public/deprecation_warning_cc_proto
-      - zetasql/public/error_location_cc_proto
-      - zetasql/public/parse_location_range_cc_proto
-      - zetasql/public/builtin_function_cc_proto
-      - zetasql/resolved_ast/serialization_cc_proto
-      - zetasql/resolved_ast/resolved_node_kind_cc_proto
-      - zetasql/proto/options_cc_proto
-      - zetasql/proto/function_cc_proto
-  - name: zetasql/proto/internal_error_location_cc_proto
+      - googlesql/public/type_cc_proto
+      - googlesql/public/options_cc_proto
+      - googlesql/public/function_cc_proto
+      - googlesql/public/simple_table_cc_proto
+      - googlesql/public/simple_constant_cc_proto
+      - googlesql/public/simple_value_cc_proto
+      - googlesql/public/value_cc_proto
+      - googlesql/public/parse_resume_location_cc_proto
+      - googlesql/public/annotation_cc_proto
+      - googlesql/public/deprecation_warning_cc_proto
+      - googlesql/public/error_location_cc_proto
+      - googlesql/public/parse_location_range_cc_proto
+      - googlesql/public/builtin_function_cc_proto
+      - googlesql/resolved_ast/serialization_cc_proto
+      - googlesql/resolved_ast/resolved_node_kind_cc_proto
+      - googlesql/proto/options_cc_proto
+      - googlesql/proto/function_cc_proto
+  - name: googlesql/proto/internal_error_location_cc_proto
     deps:
-      - zetasql/public/error_location_cc_proto
-  - name: zetasql/proto/placeholder_descriptor_cc_proto
-  - name: zetasql/reference_impl/evaluator_table_iterator_cc_proto
-  - name: zetasql/parser/ast_enums_cc_proto
-  - name: zetasql/parser/parse_tree_cc_proto
+      - googlesql/public/error_location_cc_proto
+  - name: googlesql/proto/placeholder_descriptor_cc_proto
+  - name: googlesql/reference_impl/evaluator_table_iterator_cc_proto
+  - name: googlesql/parser/ast_enums_cc_proto
+  - name: googlesql/parser/parse_tree_cc_proto
     deps:
-      - zetasql/parser/ast_enums_cc_proto
-      - zetasql/public/parse_location_range_cc_proto
-      - zetasql/public/type_cc_proto
-  - name: zetasql/public/parse_location_range_cc_proto
-  - name: zetasql/public/parse_resume_location_cc_proto
-  - name: zetasql/public/options_cc_proto
-  - name: zetasql/public/simple_value_cc_proto
-  - name: zetasql/public/function_cc_proto
-  - name: zetasql/public/proto/type_annotation_cc_proto
-  - name: zetasql/public/error_location_cc_proto
-  - name: zetasql/public/type_annotation_cc_proto
+      - googlesql/parser/ast_enums_cc_proto
+      - googlesql/public/parse_location_range_cc_proto
+      - googlesql/public/type_cc_proto
+  - name: googlesql/public/parse_location_range_cc_proto
+  - name: googlesql/public/parse_resume_location_cc_proto
+  - name: googlesql/public/options_cc_proto
+  - name: googlesql/public/simple_value_cc_proto
+  - name: googlesql/public/function_cc_proto
+  - name: googlesql/public/proto/type_annotation_cc_proto
+  - name: googlesql/public/error_location_cc_proto
+  - name: googlesql/public/type_annotation_cc_proto
     deps:
-      - zetasql/public/proto/type_annotation_cc_proto
-  - name: zetasql/public/type_parameters_cc_proto
+      - googlesql/public/proto/type_annotation_cc_proto
+  - name: googlesql/public/type_parameters_cc_proto
     deps:
-      - zetasql/public/simple_value_cc_proto
-  - name: zetasql/public/simple_constant_cc_proto
+      - googlesql/public/simple_value_cc_proto
+  - name: googlesql/public/simple_constant_cc_proto
     deps:
-      - zetasql/public/type_cc_proto
-      - zetasql/public/value_cc_proto
-  - name: zetasql/public/simple_table_cc_proto
+      - googlesql/public/type_cc_proto
+      - googlesql/public/value_cc_proto
+  - name: googlesql/public/simple_table_cc_proto
     deps:
-      - zetasql/public/type_cc_proto
-      - zetasql/public/annotation_cc_proto
-      - zetasql/public/simple_value_cc_proto
-  - name: zetasql/public/builtin_function_cc_proto
-  - name: zetasql/public/functions/datetime_cc_proto
-  - name: zetasql/public/functions/normalize_mode_cc_proto
-  - name: zetasql/public/functions/array_find_mode_cc_proto
+      - googlesql/public/type_cc_proto
+      - googlesql/public/annotation_cc_proto
+      - googlesql/public/simple_value_cc_proto
+  - name: googlesql/public/builtin_function_cc_proto
+  - name: googlesql/public/functions/datetime_cc_proto
+  - name: googlesql/public/functions/normalize_mode_cc_proto
+  - name: googlesql/public/functions/array_find_mode_cc_proto
     deps:
-      - zetasql/public/type_cc_proto
-  - name: zetasql/public/functions/differential_privacy_cc_proto
+      - googlesql/public/type_cc_proto
+  - name: googlesql/public/functions/differential_privacy_cc_proto
     deps:
-      - zetasql/proto/anon_output_with_report_cc_proto
-      - zetasql/public/type_cc_proto
-  - name: zetasql/public/value_cc_proto
-  - name: zetasql/public/annotation_cc_proto
+      - googlesql/proto/anon_output_with_report_cc_proto
+      - googlesql/public/type_cc_proto
+  - name: googlesql/public/value_cc_proto
+  - name: googlesql/public/annotation_cc_proto
     deps:
-      - zetasql/public/simple_value_cc_proto
-  - name: zetasql/public/deprecation_warning_cc_proto
+      - googlesql/public/simple_value_cc_proto
+  - name: googlesql/public/deprecation_warning_cc_proto
     deps:
-      - zetasql/public/error_location_cc_proto
-  - name: zetasql/public/type_cc_proto
-  - name: zetasql/public/collation_cc_proto
+      - googlesql/public/error_location_cc_proto
+  - name: googlesql/public/type_cc_proto
+  - name: googlesql/public/collation_cc_proto
   - name: proto/confidence_interval_cc_proto
   - name: proto/data_cc_proto
     deps:

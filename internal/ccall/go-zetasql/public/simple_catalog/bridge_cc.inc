@@ -53,11 +53,11 @@ std::vector<std::string> simple_catalog_slice_to_strs(void *slice)
   return vec;
 }
 
-std::vector<const zetasql::Column *> simple_catalog_columns_to_vec(void *slice)
+std::vector<const googlesql::Column *> simple_catalog_columns_to_vec(void *slice)
 {
   GoSlice *goslice = (GoSlice *)slice;
-  zetasql::Column **data = (zetasql::Column **)goslice->data;
-  std::vector<const zetasql::Column *> vec;
+  googlesql::Column **data = (googlesql::Column **)goslice->data;
+  std::vector<const googlesql::Column *> vec;
   for (int i = 0; i < goslice->len; i++) {
     vec.push_back(data[i]);
   }

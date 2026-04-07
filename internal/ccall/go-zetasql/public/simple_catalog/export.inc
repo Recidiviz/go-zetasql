@@ -1,13 +1,13 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SIMPLE_CATALOG_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SIMPLE_CATALOG_EXPORT_H
 
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/simple_property_graph.h"
-#include "zetasql/public/table_from_proto.h"
+#include "googlesql/public/simple_catalog.h"
+#include "googlesql/public/simple_property_graph.h"
+#include "googlesql/public/table_from_proto.h"
 // include sources
-#include "zetasql/public/simple_catalog.cc"
-#include "zetasql/public/simple_property_graph.cc"
-#include "zetasql/public/table_from_proto.cc"
+#include "googlesql/public/simple_catalog.cc"
+#include "googlesql/public/simple_property_graph.cc"
+#include "googlesql/public/table_from_proto.cc"
 // include dependencies
 #include "go-zetasql/public/builtin_function/export.inc"
 #include "go-zetasql/public/builtin_function_options/export.inc"
@@ -18,6 +18,7 @@
 #include "go-zetasql/public/simple_connection_cc_proto/export.inc"
 #include "go-zetasql/public/simple_constant_cc_proto/export.inc"
 #include "go-zetasql/public/simple_model_cc_proto/export.inc"
+#include "go-zetasql/public/simple_sequence_cc_proto/export.inc"
 #include "go-zetasql/public/simple_table_cc_proto/export.inc"
 #include "go-zetasql/public/sql_view/export.inc"
 #include "go-zetasql/public/strings/export.inc"
@@ -29,7 +30,6 @@
 #include "go-zetasql/base/clock/export.inc"
 #include "go-zetasql/base/map_util/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/source_location/export.inc"
 #include "go-zetasql/base/status/export.inc"
 #include "go-zetasql/common/errors/export.inc"
 #include "go-zetasql/common/simple_evaluator_table_iterator/export.inc"
@@ -37,9 +37,11 @@
 #include "go-zetasql/proto/simple_property_graph_cc_proto/export.inc"
 #include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
 #include "go-zetasql/public/types/types/export.inc"
+#include "go-zetasql/public/sql_tvf/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-zetasql/resolved_ast/resolved_ast_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/base/nullability/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
@@ -52,6 +54,7 @@
 #include "go-absl/types/span/export.inc"
 #include "go-protobuf/protobuf/export.inc"
 #include "go-protobuf/protobuf/export.inc"
-#include "go-protobuf/protobuf/export.inc"
+// GoSlice and other cgo types for bridge_cc.inc (and some bridge.inc helpers).
+#include "_cgo_export.h"
 
 #endif
