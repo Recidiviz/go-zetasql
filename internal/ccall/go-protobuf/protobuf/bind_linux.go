@@ -39,6 +39,7 @@ package protobuf
 #cgo LDFLAGS: -ldl -lz -lstdc++
 
 #include "export.inc"
+#include "absl_plain_link.inc"
 */
 import "C"
 
