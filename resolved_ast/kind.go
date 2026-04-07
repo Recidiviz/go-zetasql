@@ -110,7 +110,7 @@ const (
 	InsertStmt                     Kind = 63
 	DeleteStmt                     Kind = 64
 	UpdateItem                     Kind = 65
-	UpdateArrayItem                Kind = 102
+	UpdateItemElement              Kind = 102
 	UpdateStmt                     Kind = 66
 	MergeWhen                      Kind = 100
 	MergeStmt                      Kind = 101

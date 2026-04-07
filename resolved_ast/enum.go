@@ -245,3 +245,13 @@ const (
 	DeterminismStable           DeterminismLevel = 4
 	DeterminismVolatile         DeterminismLevel = 5
 )
+
+// UpdateItemMode controls behavior when a subscript does not resolve to an
+// existing element (see ResolvedUpdateItemElement in upstream ZetaSQL).
+type UpdateItemMode int
+
+const (
+	ElementPresenceUnspecified UpdateItemMode = 0
+	ElementPresenceRequired    UpdateItemMode = 1
+	ElementPresenceOptional    UpdateItemMode = 2
+)

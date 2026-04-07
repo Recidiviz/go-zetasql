@@ -723,62 +723,6 @@ func (n *BaseNonScalarFunctionCallNode) SetNullHandlingModifier(v NullHandlingMo
 	internal.ResolvedNonScalarFunctionCallBase_set_null_handling_modifier(n.raw, int(v))
 }
 
-// WithGroupRowsSubquery holds a table subquery defined in WITH GROUP_ROWS(...) that is
-// evaluated over the input rows of a AggregateScanNode
-// corresponding to the current group. The function itself is
-// evaluated over the rows returned from the subquery.
-//
-// The subquery should refer to a special TVF GROUP_ROWS(), which
-// resolves as GroupRowsScanNode. The subquery will be run for
-// each group produced by AggregateScanNode.
-//
-// GROUP_ROWS() produces a row for each source row in the
-// AggregateScanNode's input that matches current group.
-//
-// The subquery cannot reference any Columns from the outer
-// query except what comes in via <with_group_rows_parameter_list>,
-// and GROUP_ROWS().
-//
-// The subquery can return more than one column, and these columns
-// can be referenced by the function.
-//
-// The subquery can be correlated. In this case the
-// <with_group_rows_parameter_list> gives the set of Columns
-// from outside the subquery that are used inside. The subuery cannot
-// refer to correlated columns that are used as aggregation input in
-// the immediate outer query. The same rules apply to
-// <with_group_rows_parameter_list> as in SubqueryExprNode.
-func (n *BaseNonScalarFunctionCallNode) WithGroupRowsSubquery() ScanNode {
-	var v unsafe.Pointer
-	internal.ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(n.raw, &v)
-	return newScanNode(v)
-}
-
-func (n *BaseNonScalarFunctionCallNode) SetWithGroupRowsSubquery(v ScanNode) {
-	internal.ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(n.raw, v.getRaw())
-}
-
-// WithGroupRowsParameterList correlated parameters to <with_group_rows_subquery>.
-func (n *BaseNonScalarFunctionCallNode) WithGroupRowsParameterList() []*ColumnRefNode {
-	var v unsafe.Pointer
-	internal.ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(n.raw, &v)
-	var ret []*ColumnRefNode
-	helper.PtrToSlice(v, func(p unsafe.Pointer) {
-		ret = append(ret, newColumnRefNode(p))
-	})
-	return ret
-}
-
-func (n *BaseNonScalarFunctionCallNode) SetWithGroupRowsParameterList(v []*ColumnRefNode) {
-	internal.ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(n.raw, helper.SliceToPtr(v, func(i int) unsafe.Pointer {
-		return v[i].getRaw()
-	}))
-}
-
-func (n *BaseNonScalarFunctionCallNode) AddWithGroupRowsParameter(v *ColumnRefNode) {
-	internal.ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(n.raw, v.getRaw())
-}
-
 // AggregateFunctionCallNode an aggregate function call.
 // The signature always has mode AGGREGATE.
 // This node only ever shows up as the outer function call in a AggregateScanNode.AggregateList.
@@ -6614,72 +6558,18 @@ func (n *DeleteStmtNode) SetWhereExpr(v ExprNode) {
 //
 // The entity being updated is specified by <target>.
 //
-// For a regular
+// For SET {target} = {expression} | DEFAULT (not including a subscripted
+// container update like SET a[OFFSET(0)] = 5), <target> and <set_value> are
+// set and other fields are unset.
 //
-//	SET {target} = {expression} | DEFAULT
+// For SET on a container element via a subscript (e.g. SET a.b[<expr>].c = v),
+// <target> is the container, <element_column> names the element at that
+// subscript, and <update_item_element_list> holds ResolvedUpdateItemElement
+// nodes (subscript + nested ResolvedUpdateItem).
 //
-// clause (not including an array element update like SET a[OFFSET(0)] = 5),
-// <target> and <set_value> will be present, and all other fields will be
-// unset.
-//
-// For an array element update (e.g. SET a.b[<expr>].c = <value>),
-//   - <target> is set to the array,
-//   - <element_column> is a new Column that can be used inside the
-//     update items to refer to the array element.
-//   - <array_update_list> will have a node corresponding to the offset into
-//     that array and the modification to that array element.
-//
-// For example, for SET a.b[<expr>].c = <value>, we have
-//
-//	UpdateItemNode
-//	+-<target> = a.b
-//	+-<element_column> = <x>
-//	+-<array_update_list>
-//	  +-UpdateArrayItemNode
-//	    +-<offset> = <expr>
-//	    +-<update_item> = UpdateItemNode
-//	      +-<target> = <x>.c
-//	      +-<set_value> = <value>
-//
-// The engine is required to fail the update if there are two elements of
-// <array_update_list> corresponding to offset expressions that evaluate to
-// the same value. These are considered to be conflicting updates.
-//
-// Multiple updates to the same array are always represented as multiple
-// elements of <array_update_list> under a single UpdateItemNode
-// corresponding to that array. <array_update_list> will only have one
-// element for modifications to an array-valued subfield of an array element.
-// E.g., for SET a[<expr1>].b[<expr2>] = 5, a[<expr3>].b[<expr4>] = 6, we
-// will have:
-//
-//	UpdateItemNode
-//	+-<target> = a
-//	+-<element_column> = x
-//	+-<array_update_list>
-//	  +-UpdateArrayItemNode
-//	    +-<offset> = <expr1>
-//	    +-UpdateItemNode for <x>.b[<expr2>] = 5
-//	  +-UpdateArrayItemNode
-//	    +-<offset> = <expr3>
-//	    +-UpdateItemNode for <x>.b[<expr4>] = 6
-//
-// The engine must give a runtime error if <expr1> and <expr3> evaluate to
-// the same thing. Notably, it does not have to understand that the
-// two UpdateItemNodes corresponding to "b" refer to the same array iff
-// <expr1> and <expr3> evaluate to the same thing.
-//
-// TODO: Consider allowing the engine to execute an update like
-// SET a[<expr1>].b = 1, a[<expr2>].c = 2 even if <expr1> == <expr2> since
-// "b" and "c" do not overlap. Also consider allowing a more complex example
-// like SET a[<expr1>].b[<expr2>] = ...,
-// a[<expr3>].b[<expr4>].c[<expr5>] = ... even if <expr1> == <expr3>, as long
-// as <expr2> != <expr4> in that case.
-//
-// For nested DML, <target> and <element_column> will both be set, and one or
-// more of the nested statement lists will be non-empty. <target> must have
-// ARRAY type, and <element_column> introduces a Column representing
-// elements of that array. The nested statement lists will always be empty in
-// a UpdateItemNode child of a UpdateArrayItemNode.
+// For nested DML, <target> and <element_column> are set and nested statement
+// lists may be non-empty. Nested DML list nodes are empty on a UpdateItemNode
+// that is a child of UpdateItemElementNode.
 type UpdateItemNode struct {
 	*BaseArgumentNode
 }
@@ -6698,15 +6588,9 @@ type UpdateItemNode struct {
 // ColumnRefNode referencing the element_column from the
 // UpdateItemNode containing this scan.
 //
-// This node is also used to represent a modification of a single
-// array element (when it occurs as a child of a
-// UpdateArrayItemNode).  In that case, the expression
-// starts with a ColumnRefNode referencing the <element_column>
-// from its grandparent UpdateItemNode. (E.g., for "SET a[<expr>]
-// = 5", the grandparent UpdateItemNode has <target> "a", the
-// parent UpdateArrayItemNode has offset <expr>, and this node
-// has <set_value> 5 and target corresponding to the grandparent's
-// <element_column> field.)
+// This node is also used for a modification of a single container element
+// when it is the child of an UpdateItemElementNode: the expression starts
+// with a ColumnRefNode for the grandparent's <element_column>.
 //
 // For either a nested UPDATE or an array modification, there may be
 // a path of field accesses after the initial ColumnRefNode,
@@ -6741,12 +6625,9 @@ func (n *UpdateItemNode) SetSetValue(v *DMLValueNode) {
 	internal.ResolvedUpdateItem_set_set_value(n.raw, v.getRaw())
 }
 
-// ElementColumn the Column introduced to represent the elements of the
-// array being updated.  This works similarly to
-// ArrayScan.ElementColumn().
-//
-// <target> must have array type, and this column has the array's
-// element type.
+// ElementColumn the Column introduced for the element at the subscript used
+// in a container update (similar to ArrayScan.ElementColumn). <target> must
+// be a subscriptable type; this column has the element type.
 //
 // This column can be referenced inside the nested statements below.
 func (n *UpdateItemNode) ElementColumn() *ColumnHolderNode {
@@ -6759,33 +6640,26 @@ func (n *UpdateItemNode) SetElementColumn(v *ColumnHolderNode) {
 	internal.ResolvedUpdateItem_set_element_column(n.raw, v.getRaw())
 }
 
-// ArrayUpdateList array element modifications to apply. Each item runs on the value
-// of <element_column> specified by UpdateArrayItemNode.offset.
-// This field is always empty if the analyzer option
-// FEATURE_V_1_2_ARRAY_ELEMENTS_WITH_SET is disabled.
-//
-// The engine must fail if two elements in this list have offset
-// expressions that evaluate to the same value.
-// TODO: Consider generalizing this to allow
-// SET a[<expr1>].b = ..., a[<expr2>].c = ...
-func (n *UpdateItemNode) ArrayUpdateList() []*UpdateArrayItemNode {
+// UpdateItemElementList subscripted element modifications. Each item applies
+// to <element_column> at the subscript in UpdateItemElementNode.
+func (n *UpdateItemNode) UpdateItemElementList() []*UpdateItemElementNode {
 	var v unsafe.Pointer
-	internal.ResolvedUpdateItem_array_update_list(n.raw, &v)
-	var ret []*UpdateArrayItemNode
+	internal.ResolvedUpdateItem_update_item_element_list(n.raw, &v)
+	var ret []*UpdateItemElementNode
 	helper.PtrToSlice(v, func(p unsafe.Pointer) {
-		ret = append(ret, newUpdateArrayItemNode(p))
+		ret = append(ret, newUpdateItemElementNode(p))
 	})
 	return ret
 }
 
-func (n *UpdateItemNode) SetArrayUpdateList(v []*UpdateArrayItemNode) {
-	internal.ResolvedUpdateItem_set_array_update_list(n.raw, helper.SliceToPtr(v, func(i int) unsafe.Pointer {
+func (n *UpdateItemNode) SetUpdateItemElementList(v []*UpdateItemElementNode) {
+	internal.ResolvedUpdateItem_set_update_item_element_list(n.raw, helper.SliceToPtr(v, func(i int) unsafe.Pointer {
 		return v[i].getRaw()
 	}))
 }
 
-func (n *UpdateItemNode) AddArrayUpdate(v *UpdateArrayItemNode) {
-	internal.ResolvedUpdateItem_add_array_update_list(n.raw, v.getRaw())
+func (n *UpdateItemNode) AddUpdateItemElement(v *UpdateItemElementNode) {
+	internal.ResolvedUpdateItem_add_update_item_element_list(n.raw, v.getRaw())
 }
 
 // DeleteList nested DELETE statements to apply.  Each delete runs on one value
@@ -6866,34 +6740,42 @@ func (n *UpdateItemNode) AddInsert(v *InsertStmtNode) {
 	internal.ResolvedUpdateItem_add_insert_list(n.raw, v.getRaw())
 }
 
-// UpdateArrayItemNode for an array element modification, this node represents the offset
-// expression and the modification, but not the array. E.g., for
-// SET a[<expr>] = 5, this node represents a modification of "= 5" to offset
-// <expr> of the array defined by the parent node.
-type UpdateArrayItemNode struct {
+// UpdateItemElementNode is one subscripted update under an UpdateItemNode for
+// a container-typed <target> (subscript expression plus nested update item).
+type UpdateItemElementNode struct {
 	*BaseArgumentNode
 }
 
-// Offset the array offset to be modified.
-func (n *UpdateArrayItemNode) Offset() ExprNode {
+// Subscript expression selecting the element to update within the container.
+func (n *UpdateItemElementNode) Subscript() ExprNode {
 	var v unsafe.Pointer
-	internal.ResolvedUpdateArrayItem_offset(n.raw, &v)
+	internal.ResolvedUpdateItemElement_subscript(n.raw, &v)
 	return newExprNode(v)
 }
 
-func (n *UpdateArrayItemNode) SetOffset(v ExprNode) {
-	internal.ResolvedUpdateArrayItem_set_offset(n.raw, v.getRaw())
+func (n *UpdateItemElementNode) SetSubscript(v ExprNode) {
+	internal.ResolvedUpdateItemElement_set_subscript(n.raw, v.getRaw())
 }
 
-// UpdateItem the modification to perform to the array element.
-func (n *UpdateArrayItemNode) UpdateItem() *UpdateItemNode {
+// UpdateItem the modification at Subscript (e.g. SET value).
+func (n *UpdateItemElementNode) UpdateItem() *UpdateItemNode {
 	var v unsafe.Pointer
-	internal.ResolvedUpdateArrayItem_update_item(n.raw, &v)
+	internal.ResolvedUpdateItemElement_update_item(n.raw, &v)
 	return newUpdateItemNode(v)
 }
 
-func (n *UpdateArrayItemNode) SetUpdateItem(v *UpdateItemNode) {
-	internal.ResolvedUpdateArrayItem_set_update_item(n.raw, v.getRaw())
+func (n *UpdateItemElementNode) SetUpdateItem(v *UpdateItemNode) {
+	internal.ResolvedUpdateItemElement_set_update_item(n.raw, v.getRaw())
+}
+
+func (n *UpdateItemElementNode) UpdateItemMode() UpdateItemMode {
+	var v int
+	internal.ResolvedUpdateItemElement_update_item_mode(n.raw, &v)
+	return UpdateItemMode(v)
+}
+
+func (n *UpdateItemElementNode) SetUpdateItemMode(v UpdateItemMode) {
+	internal.ResolvedUpdateItemElement_set_update_item_mode(n.raw, int(v))
 }
 
 // UpdateStmtNode represents an UPDATE statement, or a nested UPDATE inside an
@@ -11608,8 +11490,8 @@ func newNode(v unsafe.Pointer) Node {
 		return newDeleteStmtNode(v)
 	case UpdateItem:
 		return newUpdateItemNode(v)
-	case UpdateArrayItem:
-		return newUpdateArrayItemNode(v)
+	case UpdateItemElement:
+		return newUpdateItemElementNode(v)
 	case UpdateStmt:
 		return newUpdateStmtNode(v)
 	case MergeWhen:
@@ -12630,11 +12512,11 @@ func newUpdateItemNode(v unsafe.Pointer) *UpdateItemNode {
 	return &UpdateItemNode{BaseArgumentNode: newBaseArgumentNode(v)}
 }
 
-func newUpdateArrayItemNode(v unsafe.Pointer) *UpdateArrayItemNode {
+func newUpdateItemElementNode(v unsafe.Pointer) *UpdateItemElementNode {
 	if v == nil {
 		return nil
 	}
-	return &UpdateArrayItemNode{BaseArgumentNode: newBaseArgumentNode(v)}
+	return &UpdateItemElementNode{BaseArgumentNode: newBaseArgumentNode(v)}
 }
 
 func newUpdateStmtNode(v unsafe.Pointer) *UpdateStmtNode {
