@@ -711,6 +711,9 @@ func (g *Generator) buildReplaceNameEntries(pkgKey string) []ReplaceNameEntry {
 		overrideBySymbol[o.Symbol] = o
 	}
 	excluded := map[string]struct{}{}
+	for _, n := range g.cfg.CCLib.GlobalExcludeReplaceNames {
+		excluded[n] = struct{}{}
+	}
 	for _, e := range g.cfg.CCLib.ExcludeReplaceNames {
 		if e.Pkg != pkgKey {
 			continue

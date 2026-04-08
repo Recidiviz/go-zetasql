@@ -46,7 +46,7 @@ DOCKER_DEV_VOLUMES := \
 	-v "$(GO_CACHE_ROOT)/ccache":/root/.ccache
 
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache \
-	local/build local/test profile-bottleneck extract-protobuf-lib \
+	local/build local/test local/test-tier-b profile-bottleneck extract-protobuf-lib \
 	test test/linux test-docker
 
 cache-dirs:
@@ -121,6 +121,20 @@ profile-bottleneck: cache-dirs
 # Optional: build libprotobuf_cgo.a via Bazel (Linux/macOS). Not used by default bind_*.go (amalgamation).
 extract-protobuf-lib:
 	bash internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh
+
+# Experimental: go-protobuf links libprotobuf_cgo.a (see bind_tier_b.go, docs/tier-b-absl-protobuf.md).
+# Requires `make extract-protobuf-lib`. Expect failures until global_exclude_replace_names + unified ABI land.
+local/test-tier-b: cache-dirs
+	CGO_ENABLED=1 \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go test -p "$(GO_BUILD_P)" -tags zetasql,zetasql_tier_b -v $(TESTPKG) -count=1
 
 # Compile-only warm-up: same -race toolchain as tests, but -run '^$' matches no tests so this only
 # populates gomodcache/gocache/ccache. Run after toolchain upgrades or cold cache; then test/linux stays incremental.

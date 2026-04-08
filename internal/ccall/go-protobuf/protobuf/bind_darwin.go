@@ -1,6 +1,8 @@
+//go:build !zetasql_tier_b
+
 package protobuf
 
-// cgo-invalidate: 20260408j — bump when editing vendored C++ under internal/ccall/protobuf/
+// cgo-invalidate: 20260408m — bump when editing vendored C++ under internal/ccall/protobuf/
 
 /*
 #cgo CFLAGS: -x c++

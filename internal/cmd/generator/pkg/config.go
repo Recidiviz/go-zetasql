@@ -102,6 +102,10 @@ type OmitDependencyExportIncludes struct {
 }
 
 type CCLibConfig struct {
+	// GlobalExcludeReplaceNames omits #define lines for these symbol names in every
+	// package (unlike exclude_replace_names which is per-pkg). Used for Tier B +
+	// unified absl/google namespaces — see docs/tier-b-absl-protobuf.md.
+	GlobalExcludeReplaceNames    []string                     `yaml:"global_exclude_replace_names"`
 	Excludes                     []string                     `yaml:"excludes"`
 	ExcludeAmalgamationHeaders   []AmalgamationHeaderExclude  `yaml:"exclude_amalgamation_headers"`
 	ExcludeAmalgamationSources   []AmalgamationSourceExclude  `yaml:"exclude_amalgamation_sources"`

@@ -40,3 +40,9 @@ rm -f "$OUT"
 # shellcheck disable=SC2086
 ar crs "$OUT" ${OBJS}
 echo "Wrote $OUT ($(ls -lh "$OUT" | awk '{print $5}'))"
+
+# Stable -L path for bind_tier_b.go: -L ${SRCDIR}/lib -lprotobuf_cgo
+LINK_NAME="$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libprotobuf_cgo.a"
+REL="$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a"
+ln -sfn "$REL" "$LINK_NAME"
+echo "Symlink $LINK_NAME -> $REL"

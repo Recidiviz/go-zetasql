@@ -392,6 +392,10 @@ protobuf_internal_export_name_files:
   - googlesql/public/proto/wire_format_annotation.pb.h
 
 cclib:
+  # Tier B + unified absl/google (experimental). Uncomment and set e.g. [absl, google] so every
+  # bind.cc omits those #defines — requires a single linked absl/protobuf ABI; see docs/tier-b-absl-protobuf.md.
+  # Leaving unset is equivalent to [].
+  global_exclude_replace_names: []
   excludes:
     - bison_keyword_token_codes_inc
     - ^mock_helpers$

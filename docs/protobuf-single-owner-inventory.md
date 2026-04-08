@@ -36,11 +36,12 @@ boundary.
 
 ## Practical follow-ups (in order of structural impact)
 
-1. **Tier B — prebuilt `libprotobuf_cgo.a` (and matching Abseil)** from Bazel
-   ([`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh)),
-   plus a **documented** policy that shards which include protobuf **do not**
-   rename `absl` (or share one rename with the prebuilt stack). See
-   [protobuf-vendoring.md](protobuf-vendoring.md) § *Single-owner protobuf*.
+1. **Tier B + unified namespaces** — phased roadmap in
+   **[`docs/tier-b-absl-protobuf.md`](tier-b-absl-protobuf.md)** (build tag
+   `zetasql_tier_b`, [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go),
+   generator `cclib.global_exclude_replace_names`). Prebuilt archive:
+   [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh).
+   Also [protobuf-vendoring.md](protobuf-vendoring.md) § *Single-owner protobuf*.
 
 2. **Reduce duplicates inside one macro island** — e.g. merge includes so fewer
    TUs repeat the same amalgamation **without** crossing absl rename boundaries.
