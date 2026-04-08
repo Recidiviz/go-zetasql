@@ -1,14 +1,14 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_COMMON_MATCH_RECOGNIZE_COMPILED_NFA_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_COMMON_MATCH_RECOGNIZE_COMPILED_NFA_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_COMMON_MATCH_RECOGNIZE_COMPILED_NFA_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_COMMON_MATCH_RECOGNIZE_COMPILED_NFA_EXPORT_H
 
 #include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
 // include sources
 #include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.cc"
 // include dependencies
-#include "go-zetasql/legacy_zetasql/common/match_recognize/nfa/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/functions/match_recognize/compiled_pattern_cc_proto/export.inc"
+#include "go-googlesql/legacy_zetasql/common/match_recognize/nfa/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/functions/match_recognize/compiled_pattern_cc_proto/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

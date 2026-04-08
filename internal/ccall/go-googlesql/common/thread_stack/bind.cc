@@ -80,8 +80,8 @@
 #include "googlesql/common/thread_stack.cc"
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/logging/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"

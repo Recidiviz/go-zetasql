@@ -80,7 +80,7 @@
 #include "googlesql/public/simple_token_list.cc"
 
 // include dependencies
-#include "go-zetasql/public/simple_token_list_cc_proto/export.inc"
+#include "go-googlesql/public/simple_token_list_cc_proto/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

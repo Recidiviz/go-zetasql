@@ -80,8 +80,8 @@
 #include "googlesql/legacy_zetasql/public/functions/hash.cc"
 
 // include dependencies
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/endian/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/endian/export.inc"
 #include "go-boringssl/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"

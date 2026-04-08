@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 
 #include "bridge.h"
 

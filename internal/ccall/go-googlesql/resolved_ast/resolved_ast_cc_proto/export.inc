@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_RESOLVED_AST_CC_PROTO_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_RESOLVED_AST_RESOLVED_AST_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_RESOLVED_AST_RESOLVED_AST_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_RESOLVED_AST_RESOLVED_AST_CC_PROTO_EXPORT_H
 
 #include "googlesql/resolved_ast/resolved_ast.pb.h"
 // include sources
@@ -9,9 +9,9 @@
 #undef file_default_instances
 #undef schemas
 // include dependencies
-#include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
-#include "go-zetasql/public/type_parameters_cc_proto/export.inc"
-#include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
-#include "go-zetasql/proto/function_cc_proto/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
+#include "go-googlesql/public/type_parameters_cc_proto/export.inc"
+#include "go-googlesql/public/proto/type_annotation_cc_proto/export.inc"
+#include "go-googlesql/proto/function_cc_proto/export.inc"
 
 #endif

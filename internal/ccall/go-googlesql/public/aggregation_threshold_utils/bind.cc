@@ -80,11 +80,11 @@
 #include "googlesql/public/aggregation_threshold_utils.cc"
 
 // include dependencies
-#include "go-zetasql/public/analyzer_options/export.inc"
-#include "go-zetasql/base/case/export.inc"
-#include "go-zetasql/base/no_destructor/export.inc"
-#include "go-zetasql/proto/options_cc_proto/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
+#include "go-googlesql/public/analyzer_options/export.inc"
+#include "go-googlesql/base/case/export.inc"
+#include "go-googlesql/base/no_destructor/export.inc"
+#include "go-googlesql/proto/options_cc_proto/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 
 #include "bridge.h"

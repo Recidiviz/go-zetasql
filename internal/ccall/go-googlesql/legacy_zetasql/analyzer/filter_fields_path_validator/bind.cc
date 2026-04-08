@@ -80,10 +80,10 @@
 #include "googlesql/legacy_zetasql/analyzer/filter_fields_path_validator.cc"
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
-#include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/logging/export.inc"
+#include "go-googlesql/base/map_util/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"

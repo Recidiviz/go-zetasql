@@ -80,7 +80,7 @@
 #include "googlesql/legacy_zetasql/parser/macros/macro_catalog.cc"
 
 // include dependencies
-#include "go-zetasql/public/parse_location/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/container/node_hash_map/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"

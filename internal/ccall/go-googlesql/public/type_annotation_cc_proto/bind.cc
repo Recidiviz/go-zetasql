@@ -85,7 +85,7 @@
 
 
 // include dependencies
-#include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
+#include "go-googlesql/public/proto/type_annotation_cc_proto/export.inc"
 
 #include "bridge.h"
 

@@ -80,9 +80,9 @@
 #include "googlesql/common/match_recognize/nfa.cc"
 
 // include dependencies
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/base/nullability/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/memory/memory/export.inc"

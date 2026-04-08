@@ -82,9 +82,9 @@
 #include "googlesql/common/multiprecision_int_impl.cc"
 
 // include dependencies
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/bits/export.inc"
-#include "go-zetasql/base/endian/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/bits/export.inc"
+#include "go-googlesql/base/endian/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/numeric/bits/export.inc"
 #include "go-absl/strings/strings/export.inc"

@@ -1,20 +1,20 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PUBLIC_FUNCTIONS_STRING_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PUBLIC_FUNCTIONS_STRING_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PUBLIC_FUNCTIONS_STRING_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PUBLIC_FUNCTIONS_STRING_EXPORT_H
 
 #include "googlesql/legacy_zetasql/public/functions/string.h"
 // include sources
 #include "googlesql/legacy_zetasql/public/functions/string.cc"
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/functions/normalize_mode_cc_proto/export.inc"
-#include "go-zetasql/legacy_zetasql/public/functions/util/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/base/stl_util/export.inc"
-#include "go-zetasql/base/strings/export.inc"
-#include "go-zetasql/common/utf_util/export.inc"
-#include "go-zetasql/public/strings/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/normalize_mode_cc_proto/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/util/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/map_util/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/base/stl_util/export.inc"
+#include "go-googlesql/base/strings/export.inc"
+#include "go-googlesql/common/utf_util/export.inc"
+#include "go-googlesql/public/strings/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"

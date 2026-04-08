@@ -80,7 +80,7 @@
 #include "googlesql/base/clock.cc"
 
 // include dependencies
-#include "go-zetasql/base/base/export.inc"
+#include "go-googlesql/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/synchronization/synchronization/export.inc"
 #include "go-absl/time/time/export.inc"

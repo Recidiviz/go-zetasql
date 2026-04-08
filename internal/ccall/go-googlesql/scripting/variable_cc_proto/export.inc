@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_VARIABLE_CC_PROTO_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_SCRIPTING_VARIABLE_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_SCRIPTING_VARIABLE_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_SCRIPTING_VARIABLE_CC_PROTO_EXPORT_H
 
 #include "googlesql/scripting/variable.pb.h"
 // include sources
@@ -9,8 +9,8 @@
 #undef file_default_instances
 #undef schemas
 // include dependencies
-#include "go-zetasql/public/type_cc_proto/export.inc"
-#include "go-zetasql/public/value_cc_proto/export.inc"
-#include "go-zetasql/public/type_parameters_cc_proto/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
+#include "go-googlesql/public/value_cc_proto/export.inc"
+#include "go-googlesql/public/type_parameters_cc_proto/export.inc"
 
 #endif

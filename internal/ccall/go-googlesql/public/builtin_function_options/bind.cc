@@ -80,10 +80,10 @@
 #include "googlesql/public/builtin_function_options.cc"
 
 // include dependencies
-#include "go-zetasql/public/builtin_function_cc_proto/export.inc"
-#include "go-zetasql/public/language_options/export.inc"
-#include "go-zetasql/proto/options_cc_proto/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
+#include "go-googlesql/public/builtin_function_cc_proto/export.inc"
+#include "go-googlesql/public/language_options/export.inc"
+#include "go-googlesql/proto/options_cc_proto/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/functional/bind_front/export.inc"

@@ -80,7 +80,7 @@
 #include "googlesql/legacy_zetasql/public/time_zone_util.cc"
 
 // include dependencies
-#include "go-zetasql/common/errors/export.inc"
+#include "go-googlesql/common/errors/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/time/time/export.inc"

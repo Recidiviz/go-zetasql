@@ -80,10 +80,10 @@
 #include "googlesql/analyzer/lambda_util.cc"
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/parser/parser/export.inc"
-#include "go-zetasql/public/id_string/export.inc"
+#include "go-googlesql/base/logging/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/parser/parser/export.inc"
+#include "go-googlesql/public/id_string/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/types/span/export.inc"

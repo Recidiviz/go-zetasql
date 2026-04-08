@@ -198,7 +198,7 @@
 #define descriptor_table_proto_2fsummary_2eproto zetasql_analyzer_rewriters_set_operation_corresponding_rewriter_descriptor_table_proto_2fsummary_2eproto
 #define TableStruct_proto_2fsummary_2eproto zetasql_analyzer_rewriters_set_operation_corresponding_rewriter_TableStruct_proto_2fsummary_2eproto
 
-#define GO_EXPORT(def) export_zetasql_analyzer_rewriters_set_operation_corresponding_rewriter_ ## def
+#define GO_EXPORT(def) export_googlesql_analyzer_rewriters_set_operation_corresponding_rewriter_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers
@@ -210,11 +210,11 @@
 #include "googlesql/legacy_zetasql/analyzer/rewriters/set_operation_corresponding_rewriter.cc"
 
 // include dependencies
-#include "go-zetasql/public/rewriter_interface/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
-#include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
+#include "go-googlesql/public/rewriter_interface/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_builder/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
+#include "go-googlesql/resolved_ast/rewrite_utils/export.inc"
 
 #include "bridge.h"
 

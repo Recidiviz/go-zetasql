@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/value/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/legacy_zetasql/public/value/export.inc"
+#include "go-googlesql/base/status/export.inc"
 
 #include "bridge.h"
 

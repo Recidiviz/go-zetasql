@@ -80,9 +80,9 @@
 #include "googlesql/scripting/script_segment.cc"
 
 // include dependencies
-#include "go-zetasql/parser/parser/export.inc"
-#include "go-zetasql/public/parse_location/export.inc"
-#include "go-zetasql/public/parse_resume_location/export.inc"
+#include "go-googlesql/parser/parser/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
+#include "go-googlesql/public/parse_resume_location/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

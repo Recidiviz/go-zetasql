@@ -80,8 +80,8 @@
 #include "googlesql/common/utf_util.cc"
 
 // include dependencies
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"

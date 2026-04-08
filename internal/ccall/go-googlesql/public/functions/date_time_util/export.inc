@@ -1,25 +1,25 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_DATE_TIME_UTIL_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_DATE_TIME_UTIL_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_FUNCTIONS_DATE_TIME_UTIL_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_FUNCTIONS_DATE_TIME_UTIL_EXPORT_H
 
 #include "googlesql/public/functions/date_time_util.h"
 // include sources
 #include "googlesql/public/functions/date_time_util.cc"
 // include dependencies
-#include "go-zetasql/public/functions/arithmetics/export.inc"
-#include "go-zetasql/public/functions/date_time_util_internal/export.inc"
-#include "go-zetasql/public/functions/datetime_cc_proto/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/mathutil/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/base/time_proto_util/export.inc"
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/public/civil_time/export.inc"
-#include "go-zetasql/public/interval_value/export.inc"
-#include "go-zetasql/public/pico_time/export.inc"
-#include "go-zetasql/public/time_zone_util/export.inc"
-#include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
-#include "go-zetasql/public/types/timestamp_util/export.inc"
+#include "go-googlesql/public/functions/arithmetics/export.inc"
+#include "go-googlesql/public/functions/date_time_util_internal/export.inc"
+#include "go-googlesql/public/functions/datetime_cc_proto/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/mathutil/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/base/time_proto_util/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/public/civil_time/export.inc"
+#include "go-googlesql/public/interval_value/export.inc"
+#include "go-googlesql/public/pico_time/export.inc"
+#include "go-googlesql/public/time_zone_util/export.inc"
+#include "go-googlesql/public/proto/type_annotation_cc_proto/export.inc"
+#include "go-googlesql/public/types/timestamp_util/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/no_destructor/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

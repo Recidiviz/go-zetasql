@@ -80,9 +80,9 @@
 #include "googlesql/common/warning_sink.cc"
 
 // include dependencies
-#include "go-zetasql/common/status_payload_utils/export.inc"
-#include "go-zetasql/proto/internal_error_location_cc_proto/export.inc"
-#include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
+#include "go-googlesql/common/status_payload_utils/export.inc"
+#include "go-googlesql/proto/internal_error_location_cc_proto/export.inc"
+#include "go-googlesql/public/deprecation_warning_cc_proto/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/types/span/export.inc"

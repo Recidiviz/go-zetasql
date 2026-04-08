@@ -217,7 +217,7 @@
 #define descriptor_table_proto_2fsummary_2eproto zetasql_public_timestamp_pico_value_descriptor_table_proto_2fsummary_2eproto
 #define TableStruct_proto_2fsummary_2eproto zetasql_public_timestamp_pico_value_TableStruct_proto_2fsummary_2eproto
 
-#define GO_EXPORT(def) export_zetasql_public_timestamp_pico_value_ ## def
+#define GO_EXPORT(def) export_googlesql_public_timestamp_pico_value_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers
@@ -229,10 +229,10 @@
 #include "googlesql/legacy_zetasql/public/timestamp_pico_value.cc"
 
 // include dependencies
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/endian/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/functions/date_time_util/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/endian/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/functions/date_time_util/export.inc"
 #include "go-absl/hash/hash/export.inc"
 #include "go-absl/numeric/int128/export.inc"
 #include "go-absl/status/status/export.inc"

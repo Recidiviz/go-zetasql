@@ -80,13 +80,13 @@
 #include "googlesql/parser/macros/token_provider.cc"
 
 // include dependencies
-#include "go-zetasql/parser/macros/token_provider_base/export.inc"
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/parser/token/export.inc"
-#include "go-zetasql/parser/token_with_location/export.inc"
-#include "go-zetasql/parser/tokenizer/export.inc"
-#include "go-zetasql/public/parse_location/export.inc"
+#include "go-googlesql/parser/macros/token_provider_base/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/parser/token/export.inc"
+#include "go-googlesql/parser/token_with_location/export.inc"
+#include "go-googlesql/parser/tokenizer/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

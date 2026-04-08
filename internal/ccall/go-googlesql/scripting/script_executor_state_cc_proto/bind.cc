@@ -85,9 +85,9 @@
 
 
 // include dependencies
-#include "go-zetasql/proto/function_cc_proto/export.inc"
-#include "go-zetasql/scripting/variable_cc_proto/export.inc"
-#include "go-zetasql/proto/script_exception_cc_proto/export.inc"
+#include "go-googlesql/proto/function_cc_proto/export.inc"
+#include "go-googlesql/scripting/variable_cc_proto/export.inc"
+#include "go-googlesql/proto/script_exception_cc_proto/export.inc"
 
 #include "bridge.h"
 

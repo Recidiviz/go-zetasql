@@ -1,11 +1,11 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_STATUS_PAYLOAD_UTILS_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_COMMON_STATUS_PAYLOAD_UTILS_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_COMMON_STATUS_PAYLOAD_UTILS_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_COMMON_STATUS_PAYLOAD_UTILS_EXPORT_H
 
 #include "googlesql/common/status_payload_utils.h"
 // include sources
 #include "googlesql/common/status_payload_utils.cc"
 // include dependencies
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"

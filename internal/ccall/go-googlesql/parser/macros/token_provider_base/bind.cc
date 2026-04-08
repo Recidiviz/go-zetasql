@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/parser/token_with_location/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/parser/token_with_location/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

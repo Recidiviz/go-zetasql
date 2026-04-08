@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_PROTO_FUNCTION_CC_PROTO_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_PROTO_FUNCTION_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_PROTO_FUNCTION_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_PROTO_FUNCTION_CC_PROTO_EXPORT_H
 
 #include "googlesql/proto/function.pb.h"
 // include sources
@@ -9,18 +9,18 @@
 #undef file_default_instances
 #undef schemas
 // include dependencies
-#include "go-zetasql/public/type_cc_proto/export.inc"
-#include "go-zetasql/public/value_cc_proto/export.inc"
-#include "go-zetasql/public/options_cc_proto/export.inc"
-#include "go-zetasql/public/simple_table_cc_proto/export.inc"
-#include "go-zetasql/public/simple_value_cc_proto/export.inc"
-#include "go-zetasql/public/function_cc_proto/export.inc"
-#include "go-zetasql/public/builtin_function_cc_proto/export.inc"
-#include "go-zetasql/public/parse_resume_location_cc_proto/export.inc"
-#include "go-zetasql/public/annotation_cc_proto/export.inc"
-#include "go-zetasql/public/deprecation_warning_cc_proto/export.inc"
-#include "go-zetasql/public/error_location_cc_proto/export.inc"
-#include "go-zetasql/public/parse_location_range_cc_proto/export.inc"
-#include "go-zetasql/resolved_ast/serialization_cc_proto/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
+#include "go-googlesql/public/value_cc_proto/export.inc"
+#include "go-googlesql/public/options_cc_proto/export.inc"
+#include "go-googlesql/public/simple_table_cc_proto/export.inc"
+#include "go-googlesql/public/simple_value_cc_proto/export.inc"
+#include "go-googlesql/public/function_cc_proto/export.inc"
+#include "go-googlesql/public/builtin_function_cc_proto/export.inc"
+#include "go-googlesql/public/parse_resume_location_cc_proto/export.inc"
+#include "go-googlesql/public/annotation_cc_proto/export.inc"
+#include "go-googlesql/public/deprecation_warning_cc_proto/export.inc"
+#include "go-googlesql/public/error_location_cc_proto/export.inc"
+#include "go-googlesql/public/parse_location_range_cc_proto/export.inc"
+#include "go-googlesql/resolved_ast/serialization_cc_proto/export.inc"
 
 #endif

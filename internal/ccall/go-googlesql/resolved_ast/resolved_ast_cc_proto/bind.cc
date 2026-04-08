@@ -85,10 +85,10 @@
 
 
 // include dependencies
-#include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
-#include "go-zetasql/public/type_parameters_cc_proto/export.inc"
-#include "go-zetasql/public/proto/type_annotation_cc_proto/export.inc"
-#include "go-zetasql/proto/function_cc_proto/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
+#include "go-googlesql/public/type_parameters_cc_proto/export.inc"
+#include "go-googlesql/public/proto/type_annotation_cc_proto/export.inc"
+#include "go-googlesql/proto/function_cc_proto/export.inc"
 
 #include "bridge.h"
 

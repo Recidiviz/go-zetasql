@@ -80,9 +80,9 @@
 #include "googlesql/base/ret_check.cc"
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
-#include "go-zetasql/base/source_location/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/logging/export.inc"
+#include "go-googlesql/base/source_location/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/status/status/export.inc"
 
 #include "bridge.h"

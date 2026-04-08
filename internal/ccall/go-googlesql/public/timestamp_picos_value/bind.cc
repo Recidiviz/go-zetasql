@@ -80,11 +80,11 @@
 #include "googlesql/public/timestamp_picos_value.cc"
 
 // include dependencies
-#include "go-zetasql/public/pico_time/export.inc"
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/endian/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/functions/date_time_util/export.inc"
+#include "go-googlesql/public/pico_time/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/endian/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/functions/date_time_util/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/hash/hash/export.inc"
 #include "go-absl/numeric/int128/export.inc"

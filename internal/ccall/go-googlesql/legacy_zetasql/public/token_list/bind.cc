@@ -79,7 +79,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/simple_token_list/export.inc"
+#include "go-googlesql/public/simple_token_list/export.inc"
 
 #include "bridge.h"
 

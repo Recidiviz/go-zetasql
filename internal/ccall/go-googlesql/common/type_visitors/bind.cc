@@ -80,10 +80,10 @@
 #include "googlesql/common/type_visitors.cc"
 
 // include dependencies
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/type_cc_proto/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/types/span/export.inc"

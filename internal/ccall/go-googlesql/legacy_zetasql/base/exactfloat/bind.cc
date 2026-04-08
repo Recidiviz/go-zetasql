@@ -80,7 +80,7 @@
 #include "googlesql/legacy_zetasql/base/exactfloat.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/base/base/export.inc"
+#include "go-googlesql/legacy_zetasql/base/base/export.inc"
 #include "go-boringssl/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/fixed_array/export.inc"

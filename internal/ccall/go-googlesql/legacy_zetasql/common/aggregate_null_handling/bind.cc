@@ -80,8 +80,8 @@
 #include "googlesql/legacy_zetasql/common/aggregate_null_handling.cc"
 
 // include dependencies
-#include "go-zetasql/base/case/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/base/case/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 
 #include "bridge.h"

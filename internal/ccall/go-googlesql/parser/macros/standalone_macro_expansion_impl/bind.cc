@@ -79,10 +79,10 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/parser/macros/macro_catalog/export.inc"
-#include "go-zetasql/parser/macros/macro_expander/export.inc"
-#include "go-zetasql/parser/macros/token_provider/export.inc"
-#include "go-zetasql/public/options_cc_proto/export.inc"
+#include "go-googlesql/parser/macros/macro_catalog/export.inc"
+#include "go-googlesql/parser/macros/macro_expander/export.inc"
+#include "go-googlesql/parser/macros/token_provider/export.inc"
+#include "go-googlesql/public/options_cc_proto/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

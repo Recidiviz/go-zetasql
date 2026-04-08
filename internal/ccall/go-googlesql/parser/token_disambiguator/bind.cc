@@ -201,7 +201,7 @@
 #define descriptor_table_proto_2fsummary_2eproto zetasql_parser_token_disambiguator_descriptor_table_proto_2fsummary_2eproto
 #define TableStruct_proto_2fsummary_2eproto zetasql_parser_token_disambiguator_TableStruct_proto_2fsummary_2eproto
 
-#define GO_EXPORT(def) export_zetasql_parser_token_disambiguator_ ## def
+#define GO_EXPORT(def) export_googlesql_parser_token_disambiguator_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers
@@ -213,20 +213,20 @@
 #include "googlesql/legacy_zetasql/parser/token_disambiguator.cc"
 
 // include dependencies
-#include "go-zetasql/parser/bison_parser_mode/export.inc"
-#include "go-zetasql/parser/bison_token_codes/export.inc"
-#include "go-zetasql/base/arena/export.inc"
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/parser/macros/flex_token_provider/export.inc"
-#include "go-zetasql/parser/macros/macro_catalog/export.inc"
-#include "go-zetasql/parser/macros/macro_expander/export.inc"
-#include "go-zetasql/parser/macros/token_with_location/export.inc"
-#include "go-zetasql/public/error_helpers/export.inc"
-#include "go-zetasql/public/language_options/export.inc"
-#include "go-zetasql/public/parse_location/export.inc"
+#include "go-googlesql/parser/bison_parser_mode/export.inc"
+#include "go-googlesql/parser/bison_token_codes/export.inc"
+#include "go-googlesql/base/arena/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/parser/macros/flex_token_provider/export.inc"
+#include "go-googlesql/parser/macros/macro_catalog/export.inc"
+#include "go-googlesql/parser/macros/macro_expander/export.inc"
+#include "go-googlesql/parser/macros/token_with_location/export.inc"
+#include "go-googlesql/public/error_helpers/export.inc"
+#include "go-googlesql/public/language_options/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/log/log/export.inc"

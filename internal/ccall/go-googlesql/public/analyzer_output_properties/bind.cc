@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/options_cc_proto/export.inc"
-#include "go-zetasql/resolved_ast/target_syntax/export.inc"
+#include "go-googlesql/public/options_cc_proto/export.inc"
+#include "go-googlesql/resolved_ast/target_syntax/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"

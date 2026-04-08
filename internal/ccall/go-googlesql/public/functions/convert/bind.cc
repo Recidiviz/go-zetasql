@@ -80,11 +80,11 @@
 #include "googlesql/public/functions/convert.cc"
 
 // include dependencies
-#include "go-zetasql/public/functions/convert_internal/export.inc"
-#include "go-zetasql/public/functions/util/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/numeric_value/export.inc"
+#include "go-googlesql/public/functions/convert_internal/export.inc"
+#include "go-googlesql/public/functions/util/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/numeric_value/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"

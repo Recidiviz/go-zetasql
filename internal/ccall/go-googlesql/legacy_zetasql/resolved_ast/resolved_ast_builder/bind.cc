@@ -79,10 +79,10 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/resolved_ast/resolved_ast/export.inc"
-#include "go-zetasql/base/logging/export.inc"
-#include "go-zetasql/base/source_location/export.inc"
-#include "go-zetasql/common/status_payload_utils/export.inc"
+#include "go-googlesql/legacy_zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/base/logging/export.inc"
+#include "go-googlesql/base/source_location/export.inc"
+#include "go-googlesql/common/status_payload_utils/export.inc"
 #include "go-absl/status/statusor/export.inc"
 
 #include "bridge.h"

@@ -80,12 +80,12 @@
 #include "googlesql/public/id_string.cc"
 
 // include dependencies
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/arena/export.inc"
-#include "go-zetasql/base/case/export.inc"
-#include "go-zetasql/base/endian/export.inc"
-#include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/common/unicode_utils/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/arena/export.inc"
+#include "go-googlesql/base/case/export.inc"
+#include "go-googlesql/base/endian/export.inc"
+#include "go-googlesql/base/map_util/export.inc"
+#include "go-googlesql/common/unicode_utils/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"

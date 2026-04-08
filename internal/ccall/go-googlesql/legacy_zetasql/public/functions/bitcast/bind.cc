@@ -79,7 +79,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/base/base/export.inc"
 
 #include "bridge.h"

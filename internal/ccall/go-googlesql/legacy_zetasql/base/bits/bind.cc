@@ -80,8 +80,8 @@
 #include "googlesql/legacy_zetasql/base/bits.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/base/check/export.inc"
-#include "go-zetasql/legacy_zetasql/base/endian/export.inc"
+#include "go-googlesql/legacy_zetasql/base/check/export.inc"
+#include "go-googlesql/legacy_zetasql/base/endian/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/numeric/int128/export.inc"
 #include "go-googletest/googletest/export.inc"

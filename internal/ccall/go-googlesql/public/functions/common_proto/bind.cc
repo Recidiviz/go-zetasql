@@ -80,11 +80,11 @@
 #include "googlesql/public/functions/common_proto.cc"
 
 // include dependencies
-#include "go-zetasql/public/functions/date_time_util/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/common/utf_util/export.inc"
-#include "go-zetasql/public/civil_time/export.inc"
+#include "go-googlesql/public/functions/date_time_util/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/common/utf_util/export.inc"
+#include "go-googlesql/public/civil_time/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"

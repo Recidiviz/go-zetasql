@@ -80,7 +80,7 @@
 #include "googlesql/base/arena.cc"
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
+#include "go-googlesql/base/logging/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/synchronization/synchronization/export.inc"
 

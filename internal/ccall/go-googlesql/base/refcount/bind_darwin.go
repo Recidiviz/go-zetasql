@@ -1,7 +1,7 @@
 package refcount
 
 /*
-#cgo CXXFLAGS: -std=c++1z
+#cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../protobuf
 #cgo CXXFLAGS: -I../../../gtest
@@ -15,6 +15,9 @@ package refcount
 #cgo CXXFLAGS: -Wno-switch
 #cgo CXXFLAGS: -Wno-unused-function
 #cgo CXXFLAGS: -Wno-deprecated-declarations
+#cgo CXXFLAGS: -Wno-deprecated-enum-enum-conversion
+#cgo CXXFLAGS: -Wno-deprecated-anon-enum-enum-conversion
+#cgo CXXFLAGS: -Wno-deprecated-this-capture
 #cgo CXXFLAGS: -Wno-inconsistent-missing-override
 #cgo CXXFLAGS: -Wno-unknown-attributes
 #cgo CXXFLAGS: -Wno-macro-redefined
@@ -26,7 +29,7 @@ package refcount
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 
-#define GO_EXPORT(API) export_zetasql_base_refcount_ ## API
+#define GO_EXPORT(API) export_googlesql_base_refcount_ ## API
 #include "bridge.h"
 */
 import "C"

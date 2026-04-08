@@ -80,8 +80,8 @@
 #include "googlesql/legacy_zetasql/common/match_recognize/nfa_matchers.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/common/match_recognize/nfa/export.inc"
-#include "go-zetasql/base/check/export.inc"
+#include "go-googlesql/legacy_zetasql/common/match_recognize/nfa/export.inc"
+#include "go-googlesql/base/check/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-googletest/googletest/export.inc"

@@ -79,7 +79,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/legacy_zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 
 #include "bridge.h"

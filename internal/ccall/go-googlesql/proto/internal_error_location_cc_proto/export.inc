@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_PROTO_INTERNAL_ERROR_LOCATION_CC_PROTO_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_PROTO_INTERNAL_ERROR_LOCATION_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_PROTO_INTERNAL_ERROR_LOCATION_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_PROTO_INTERNAL_ERROR_LOCATION_CC_PROTO_EXPORT_H
 
 #include "googlesql/proto/internal_error_location.pb.h"
 // include sources
@@ -9,6 +9,6 @@
 #undef file_default_instances
 #undef schemas
 // include dependencies
-#include "go-zetasql/public/error_location_cc_proto/export.inc"
+#include "go-googlesql/public/error_location_cc_proto/export.inc"
 
 #endif

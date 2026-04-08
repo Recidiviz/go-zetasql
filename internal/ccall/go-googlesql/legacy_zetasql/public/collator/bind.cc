@@ -80,11 +80,11 @@
 #include "googlesql/legacy_zetasql/public/collator.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/collator_lite/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/errors/export.inc"
+#include "go-googlesql/legacy_zetasql/public/collator_lite/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/errors/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

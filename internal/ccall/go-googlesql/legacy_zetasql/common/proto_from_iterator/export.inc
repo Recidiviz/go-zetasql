@@ -1,17 +1,17 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_COMMON_PROTO_FROM_ITERATOR_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_COMMON_PROTO_FROM_ITERATOR_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_COMMON_PROTO_FROM_ITERATOR_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_COMMON_PROTO_FROM_ITERATOR_EXPORT_H
 
 #include "googlesql/legacy_zetasql/common/proto_from_iterator.h"
 // include sources
 #include "googlesql/legacy_zetasql/common/proto_from_iterator.cc"
 // include dependencies
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/evaluator_table_iterator/export.inc"
-#include "go-zetasql/public/proto_value_conversion/export.inc"
-#include "go-zetasql/public/type/export.inc"
-#include "go-zetasql/public/value/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/evaluator_table_iterator/export.inc"
+#include "go-googlesql/public/proto_value_conversion/export.inc"
+#include "go-googlesql/public/type/export.inc"
+#include "go-googlesql/public/value/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

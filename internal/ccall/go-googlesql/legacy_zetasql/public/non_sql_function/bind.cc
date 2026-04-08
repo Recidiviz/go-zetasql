@@ -80,12 +80,12 @@
 #include "googlesql/legacy_zetasql/public/non_sql_function.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/error_helpers/export.inc"
-#include "go-zetasql/legacy_zetasql/public/function/export.inc"
-#include "go-zetasql/legacy_zetasql/public/parse_resume_location/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/legacy_zetasql/public/error_helpers/export.inc"
+#include "go-googlesql/legacy_zetasql/public/function/export.inc"
+#include "go-googlesql/legacy_zetasql/public/parse_resume_location/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"

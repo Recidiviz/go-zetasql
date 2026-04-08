@@ -220,7 +220,7 @@
 #define descriptor_table_proto_2fsummary_2eproto zetasql_public_token_list_descriptor_table_proto_2fsummary_2eproto
 #define TableStruct_proto_2fsummary_2eproto zetasql_public_token_list_TableStruct_proto_2fsummary_2eproto
 
-#define GO_EXPORT(def) export_zetasql_public_token_list_ ## def
+#define GO_EXPORT(def) export_googlesql_public_token_list_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers
@@ -231,7 +231,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/simple_token_list/export.inc"
+#include "go-googlesql/public/simple_token_list/export.inc"
 
 #include "bridge.h"
 

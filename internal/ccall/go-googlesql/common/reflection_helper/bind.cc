@@ -80,8 +80,8 @@
 #include "googlesql/common/reflection_helper.cc"
 
 // include dependencies
-#include "go-zetasql/common/reflection_cc_proto/export.inc"
-#include "go-zetasql/public/strings/export.inc"
+#include "go-googlesql/common/reflection_cc_proto/export.inc"
+#include "go-googlesql/public/strings/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/types/span/export.inc"

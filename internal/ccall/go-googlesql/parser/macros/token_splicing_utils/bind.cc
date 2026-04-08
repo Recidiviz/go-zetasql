@@ -80,9 +80,9 @@
 #include "googlesql/parser/macros/token_splicing_utils.cc"
 
 // include dependencies
-#include "go-zetasql/parser/keywords/export.inc"
-#include "go-zetasql/parser/token/export.inc"
-#include "go-zetasql/parser/token_with_location/export.inc"
+#include "go-googlesql/parser/keywords/export.inc"
+#include "go-googlesql/parser/token/export.inc"
+#include "go-googlesql/parser/token_with_location/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

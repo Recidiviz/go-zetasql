@@ -80,7 +80,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/base/logging/export.inc"
+#include "go-googlesql/legacy_zetasql/base/logging/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/numeric/int128/export.inc"

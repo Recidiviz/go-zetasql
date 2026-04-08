@@ -80,8 +80,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
-#include "go-zetasql/base/no_destructor/export.inc"
+#include "go-googlesql/base/logging/export.inc"
+#include "go-googlesql/base/no_destructor/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
 
 #include "bridge.h"

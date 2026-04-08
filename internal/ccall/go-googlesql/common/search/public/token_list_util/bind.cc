@@ -80,8 +80,8 @@
 #include "googlesql/common/search/public/token_list_util.cc"
 
 // include dependencies
-#include "go-zetasql/public/simple_token_list/export.inc"
-#include "go-zetasql/public/strings/export.inc"
+#include "go-googlesql/public/simple_token_list/export.inc"
+#include "go-googlesql/public/strings/export.inc"
 #include "go-absl/base/no_destructor/export.inc"
 #include "go-absl/functional/any_invocable/export.inc"
 #include "go-absl/strings/strings/export.inc"

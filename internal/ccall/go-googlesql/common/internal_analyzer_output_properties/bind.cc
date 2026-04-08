@@ -79,9 +79,9 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/analyzer_output_properties/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
-#include "go-zetasql/resolved_ast/target_syntax/export.inc"
+#include "go-googlesql/public/analyzer_output_properties/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/resolved_ast/target_syntax/export.inc"
 
 #include "bridge.h"
 

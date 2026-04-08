@@ -80,7 +80,7 @@
 #include "googlesql/common/unicode_utils.cc"
 
 // include dependencies
-#include "go-zetasql/base/base/export.inc"
+#include "go-googlesql/base/base/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/nullability/export.inc"
 #include "go-absl/flags/flag/export.inc"

@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PARSER_FLEX_TOKENIZER_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PARSER_FLEX_TOKENIZER_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PARSER_FLEX_TOKENIZER_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PARSER_FLEX_TOKENIZER_EXPORT_H
 
 #include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
 // include sources
@@ -7,14 +7,14 @@
 #include "googlesql/legacy_zetasql/parser/flex_tokenizer.cc"
 #include "googlesql/legacy_zetasql/parser/flex_tokenizer.flex.cc"
 // include dependencies
-#include "go-zetasql/legacy_zetasql/parser/flex_istream/export.inc"
-#include "go-zetasql/legacy_zetasql/parser/tm_lexer/export.inc"
-#include "go-zetasql/legacy_zetasql/parser/token_codes/export.inc"
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/public/parse_location/export.inc"
+#include "go-googlesql/legacy_zetasql/parser/flex_istream/export.inc"
+#include "go-googlesql/legacy_zetasql/parser/tm_lexer/export.inc"
+#include "go-googlesql/legacy_zetasql/parser/token_codes/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/status/status/export.inc"

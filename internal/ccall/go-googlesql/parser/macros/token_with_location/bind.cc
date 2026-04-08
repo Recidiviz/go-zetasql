@@ -208,7 +208,7 @@
 #define descriptor_table_proto_2fsummary_2eproto zetasql_parser_macros_token_with_location_descriptor_table_proto_2fsummary_2eproto
 #define TableStruct_proto_2fsummary_2eproto zetasql_parser_macros_token_with_location_TableStruct_proto_2fsummary_2eproto
 
-#define GO_EXPORT(def) export_zetasql_parser_macros_token_with_location_ ## def
+#define GO_EXPORT(def) export_googlesql_parser_macros_token_with_location_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers
@@ -220,7 +220,7 @@
 #include "googlesql/legacy_zetasql/parser/macros/token_with_location.cc"
 
 // include dependencies
-#include "go-zetasql/public/parse_location/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

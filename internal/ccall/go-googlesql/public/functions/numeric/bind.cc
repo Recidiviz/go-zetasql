@@ -80,9 +80,9 @@
 #include "googlesql/public/functions/numeric.cc"
 
 // include dependencies
-#include "go-zetasql/public/functions/util/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/public/numeric_value/export.inc"
+#include "go-googlesql/public/functions/util/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/public/numeric_value/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

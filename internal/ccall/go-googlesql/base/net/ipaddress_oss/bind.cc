@@ -80,8 +80,8 @@
 #include "googlesql/base/net/ipaddress_oss.cc"
 
 // include dependencies
-#include "go-zetasql/base/endian/export.inc"
-#include "go-zetasql/base/logging/export.inc"
+#include "go-googlesql/base/endian/export.inc"
+#include "go-googlesql/base/logging/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/numeric/int128/export.inc"

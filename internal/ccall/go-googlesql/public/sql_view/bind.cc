@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/catalog/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
+#include "go-googlesql/public/catalog/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
 
 #include "bridge.h"
 

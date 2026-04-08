@@ -79,13 +79,13 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/catalog/export.inc"
-#include "go-zetasql/legacy_zetasql/public/error_helpers/export.inc"
-#include "go-zetasql/legacy_zetasql/public/function/export.inc"
-#include "go-zetasql/legacy_zetasql/public/options_cc_proto/export.inc"
-#include "go-zetasql/legacy_zetasql/public/parse_resume_location/export.inc"
-#include "go-zetasql/legacy_zetasql/public/type/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/legacy_zetasql/public/catalog/export.inc"
+#include "go-googlesql/legacy_zetasql/public/error_helpers/export.inc"
+#include "go-googlesql/legacy_zetasql/public/function/export.inc"
+#include "go-googlesql/legacy_zetasql/public/options_cc_proto/export.inc"
+#include "go-googlesql/legacy_zetasql/public/parse_resume_location/export.inc"
+#include "go-googlesql/legacy_zetasql/public/type/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"

@@ -78,8 +78,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/base/case/export.inc"
-#include "go-zetasql/base/string_numbers/export.inc"
+#include "go-googlesql/base/case/export.inc"
+#include "go-googlesql/base/string_numbers/export.inc"
 
 #include "bridge.h"
 

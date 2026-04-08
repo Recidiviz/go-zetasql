@@ -80,8 +80,8 @@
 #include "googlesql/legacy_zetasql/public/evaluator.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/evaluator_base/export.inc"
-#include "go-zetasql/common/evaluator_registration_utils/export.inc"
+#include "go-googlesql/legacy_zetasql/public/evaluator_base/export.inc"
+#include "go-googlesql/common/evaluator_registration_utils/export.inc"
 
 #include "bridge.h"
 

@@ -80,7 +80,7 @@
 #include "googlesql/base/net/idn_oss.cc"
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
+#include "go-googlesql/base/logging/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-icu/icu/export.inc"

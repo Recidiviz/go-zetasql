@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_BASE_STATUS_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_BASE_STATUS_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_BASE_STATUS_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_BASE_STATUS_EXPORT_H
 
 #include "googlesql/legacy_zetasql/base/canonical_errors.h"
 #include "googlesql/legacy_zetasql/base/status.h"
@@ -10,8 +10,8 @@
 #include "googlesql/legacy_zetasql/base/status_builder.cc"
 #include "googlesql/legacy_zetasql/base/status_payload.cc"
 // include dependencies
-#include "go-zetasql/legacy_zetasql/base/logging/export.inc"
-#include "go-zetasql/legacy_zetasql/base/source_location/export.inc"
+#include "go-googlesql/legacy_zetasql/base/logging/export.inc"
+#include "go-googlesql/legacy_zetasql/base/source_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/log_severity/export.inc"
 #include "go-absl/log/log/export.inc"

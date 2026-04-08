@@ -80,11 +80,11 @@
 #include "googlesql/legacy_zetasql/reference_impl/variable_generator.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/reference_impl/common/export.inc"
-#include "go-zetasql/legacy_zetasql/reference_impl/parameters/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/analyzer_options/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/legacy_zetasql/reference_impl/common/export.inc"
+#include "go-googlesql/legacy_zetasql/reference_impl/parameters/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/analyzer_options/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"

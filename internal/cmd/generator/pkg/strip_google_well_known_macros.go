@@ -70,8 +70,8 @@ func shouldDropBindCCMacroLine(line string) bool {
 	return false
 }
 
-func stripGoZetasqlBindCCGoogleMacros() error {
-	root := filepath.Join(ccallDir(), "go-zetasql")
+func stripGoGooglesqlBindCCGoogleMacros() error {
+	root := filepath.Join(ccallDir(), "go-googlesql")
 	return filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -87,6 +87,6 @@ func stripGoZetasqlBindCCGoogleMacros() error {
 }
 
 func stripRootAnalyzerAmalgamationMacros() error {
-	p := filepath.Join(ccallDir(), "go-zetasql", "root_analyzer_amalgamation_macros.inc")
+	p := filepath.Join(ccallDir(), "go-googlesql", "root_analyzer_amalgamation_macros.inc")
 	return stripGoogleWellKnownProtoAndAbslMacros(p)
 }

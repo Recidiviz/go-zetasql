@@ -81,7 +81,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
+#include "go-googlesql/base/logging/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/log_severity/export.inc"
 #include "go-absl/log/absl_check/export.inc"

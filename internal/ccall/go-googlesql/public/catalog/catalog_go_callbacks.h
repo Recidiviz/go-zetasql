@@ -1,4 +1,4 @@
-// Declarations for Go-exported callbacks in internal/ccall/go-zetasql/callback_{linux,darwin}.go
+// Declarations for Go-exported callbacks in internal/ccall/go-googlesql/callback_{linux,darwin}.go
 // (package googlesql). Prototypes must match cgo's generated declarations (including
 // non-const char* returns) or the catalog TU conflicts with cgo-gcc-export-header-prolog
 // when the root package is built. GoSlice is defined by cgo; do not typedef it here.

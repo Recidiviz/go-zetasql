@@ -80,11 +80,11 @@
 #include "googlesql/public/functions/net.cc"
 
 // include dependencies
-#include "go-zetasql/public/functions/util/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/base/net/idn/export.inc"
-#include "go-zetasql/base/net/ipaddress/export.inc"
-#include "go-zetasql/base/net/public_suffix/export.inc"
+#include "go-googlesql/public/functions/util/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/base/net/idn/export.inc"
+#include "go-googlesql/base/net/ipaddress/export.inc"
+#include "go-googlesql/base/net/public_suffix/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/functional/function_ref/export.inc"
 #include "go-absl/status/status/export.inc"

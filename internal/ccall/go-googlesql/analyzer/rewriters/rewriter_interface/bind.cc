@@ -177,7 +177,7 @@
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_analyzer_rewriters_rewriter_interface_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_analyzer_rewriters_rewriter_interface_TableStruct_zetasql_2fscripting_2fvariable_2eproto
 
-#define GO_EXPORT(def) export_zetasql_analyzer_rewriters_rewriter_interface_ ## def
+#define GO_EXPORT(def) export_googlesql_analyzer_rewriters_rewriter_interface_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers
@@ -188,7 +188,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/status/statusor/export.inc"
 
 #include "bridge.h"

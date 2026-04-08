@@ -1,12 +1,12 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_THREAD_STACK_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_COMMON_THREAD_STACK_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_COMMON_THREAD_STACK_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_COMMON_THREAD_STACK_EXPORT_H
 
 #include "googlesql/common/thread_stack.h"
 // include sources
 #include "googlesql/common/thread_stack.cc"
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/logging/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"

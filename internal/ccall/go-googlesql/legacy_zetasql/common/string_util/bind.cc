@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/common/canonicalize_signed_zero_to_string/export.inc"
-#include "go-zetasql/base/string_numbers/export.inc"
+#include "go-googlesql/legacy_zetasql/common/canonicalize_signed_zero_to_string/export.inc"
+#include "go-googlesql/base/string_numbers/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

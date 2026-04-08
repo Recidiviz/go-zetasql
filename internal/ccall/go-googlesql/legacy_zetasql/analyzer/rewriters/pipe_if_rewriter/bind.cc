@@ -80,13 +80,13 @@
 #include "googlesql/legacy_zetasql/analyzer/rewriters/pipe_if_rewriter.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/analyzer/rewriters/rewrite_subpipeline/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/rewriter_interface/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast_builder/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
-#include "go-zetasql/resolved_ast/rewrite_utils/export.inc"
+#include "go-googlesql/legacy_zetasql/analyzer/rewriters/rewrite_subpipeline/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/rewriter_interface/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_builder/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_rewrite_visitor/export.inc"
+#include "go-googlesql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/status/statusor/export.inc"
 
 #include "bridge.h"

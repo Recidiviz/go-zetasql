@@ -6,10 +6,10 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <stdint.h>
-#include "../go-zetasql/public/analyzer/bridge_extern.h"
-#include "../go-zetasql/public/catalog/bridge_extern.h"
-#include "../go-zetasql/public/simple_catalog/bridge_extern.h"
-#include "../go-zetasql/public/sql_formatter/bridge_extern.h"
+#include "../go-googlesql/public/analyzer/bridge_extern.h"
+#include "../go-googlesql/public/catalog/bridge_extern.h"
+#include "../go-googlesql/public/simple_catalog/bridge_extern.h"
+#include "../go-googlesql/public/sql_formatter/bridge_extern.h"
 
 #ifdef __cplusplus
 }

@@ -198,7 +198,7 @@
 #define descriptor_table_proto_2fsummary_2eproto zetasql_common_int_ops_util_descriptor_table_proto_2fsummary_2eproto
 #define TableStruct_proto_2fsummary_2eproto zetasql_common_int_ops_util_TableStruct_proto_2fsummary_2eproto
 
-#define GO_EXPORT(def) export_zetasql_common_int_ops_util_ ## def
+#define GO_EXPORT(def) export_googlesql_common_int_ops_util_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers

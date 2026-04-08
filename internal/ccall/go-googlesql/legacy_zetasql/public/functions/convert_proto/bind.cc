@@ -80,8 +80,8 @@
 #include "googlesql/legacy_zetasql/public/functions/convert_proto.cc"
 
 // include dependencies
-#include "go-zetasql/base/source_location/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/source_location/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"
 

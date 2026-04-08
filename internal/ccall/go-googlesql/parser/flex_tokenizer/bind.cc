@@ -220,7 +220,7 @@
 #define descriptor_table_proto_2fsummary_2eproto zetasql_parser_flex_tokenizer_descriptor_table_proto_2fsummary_2eproto
 #define TableStruct_proto_2fsummary_2eproto zetasql_parser_flex_tokenizer_TableStruct_proto_2fsummary_2eproto
 
-#define GO_EXPORT(def) export_zetasql_parser_flex_tokenizer_ ## def
+#define GO_EXPORT(def) export_googlesql_parser_flex_tokenizer_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers
@@ -233,14 +233,14 @@
 #include "googlesql/legacy_zetasql/parser/flex_tokenizer.flex.cc"
 
 // include dependencies
-#include "go-zetasql/parser/flex_istream/export.inc"
-#include "go-zetasql/parser/tm_lexer/export.inc"
-#include "go-zetasql/parser/token_codes/export.inc"
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/public/parse_location/export.inc"
+#include "go-googlesql/parser/flex_istream/export.inc"
+#include "go-googlesql/parser/tm_lexer/export.inc"
+#include "go-googlesql/parser/token_codes/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/flags/flag/export.inc"
 #include "go-absl/status/status/export.inc"

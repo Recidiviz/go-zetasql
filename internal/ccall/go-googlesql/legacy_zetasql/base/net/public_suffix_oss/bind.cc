@@ -81,7 +81,7 @@
 #include "googlesql/legacy_zetasql/base/net/public_suffix_oss.cc"
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
+#include "go-googlesql/base/logging/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/container/inlined_vector/export.inc"

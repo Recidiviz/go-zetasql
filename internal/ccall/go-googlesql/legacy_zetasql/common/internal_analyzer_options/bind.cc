@@ -79,7 +79,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/analyzer_options/export.inc"
+#include "go-googlesql/public/analyzer_options/export.inc"
 
 #include "bridge.h"
 

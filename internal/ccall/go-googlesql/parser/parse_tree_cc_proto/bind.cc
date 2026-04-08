@@ -85,9 +85,9 @@
 
 
 // include dependencies
-#include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
-#include "go-zetasql/public/parse_location_range_cc_proto/export.inc"
-#include "go-zetasql/public/type_cc_proto/export.inc"
+#include "go-googlesql/parser/ast_enums_cc_proto/export.inc"
+#include "go-googlesql/public/parse_location_range_cc_proto/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
 
 #include "bridge.h"
 

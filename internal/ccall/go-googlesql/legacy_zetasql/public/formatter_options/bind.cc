@@ -80,7 +80,7 @@
 #include "googlesql/legacy_zetasql/public/formatter_options.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/formatter_options_cc_proto/export.inc"
+#include "go-googlesql/legacy_zetasql/public/formatter_options_cc_proto/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

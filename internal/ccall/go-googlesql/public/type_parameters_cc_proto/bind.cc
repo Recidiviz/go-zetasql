@@ -85,7 +85,7 @@
 
 
 // include dependencies
-#include "go-zetasql/public/simple_value_cc_proto/export.inc"
+#include "go-googlesql/public/simple_value_cc_proto/export.inc"
 
 #include "bridge.h"
 

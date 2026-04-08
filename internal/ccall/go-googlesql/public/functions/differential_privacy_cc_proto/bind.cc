@@ -85,8 +85,8 @@
 
 
 // include dependencies
-#include "go-zetasql/proto/anon_output_with_report_cc_proto/export.inc"
-#include "go-zetasql/public/type_cc_proto/export.inc"
+#include "go-googlesql/proto/anon_output_with_report_cc_proto/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
 
 #include "bridge.h"
 

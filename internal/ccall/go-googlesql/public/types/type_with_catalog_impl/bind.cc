@@ -79,8 +79,8 @@
 #include "googlesql/public/types/row_type_with_catalog.cc"
 
 // include dependencies
-#include "go-zetasql/public/types/type/export.inc"
-#include "go-zetasql/public/catalog/export.inc"
+#include "go-googlesql/public/types/type/export.inc"
+#include "go-googlesql/public/catalog/export.inc"
 
 #include "bridge.h"
 

@@ -1,15 +1,15 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_COMMON_SCOPE_ERROR_CATALOG_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_COMMON_SCOPE_ERROR_CATALOG_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_COMMON_SCOPE_ERROR_CATALOG_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_COMMON_SCOPE_ERROR_CATALOG_EXPORT_H
 
 #include "googlesql/common/scope_error_catalog.h"
 // include sources
 #include "googlesql/common/scope_error_catalog.cc"
 // include dependencies
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/catalog/export.inc"
-#include "go-zetasql/public/strings/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/catalog/export.inc"
+#include "go-googlesql/public/strings/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

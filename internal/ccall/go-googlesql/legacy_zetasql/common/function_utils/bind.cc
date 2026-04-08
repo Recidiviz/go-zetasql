@@ -80,8 +80,8 @@
 #include "googlesql/legacy_zetasql/common/function_utils.cc"
 
 // include dependencies
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/public/function_headers/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/public/function_headers/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

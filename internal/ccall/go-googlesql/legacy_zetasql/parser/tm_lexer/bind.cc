@@ -81,9 +81,9 @@
 #include "googlesql/legacy_zetasql/parser/tm_lexer.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/parser/bison_parser_mode/export.inc"
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/public/parse_location/export.inc"
+#include "go-googlesql/legacy_zetasql/parser/bison_parser_mode/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/log/log/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

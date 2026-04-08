@@ -80,11 +80,11 @@
 #include "googlesql/legacy_zetasql/public/functions/regexp.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/functions/string/export.inc"
-#include "go-zetasql/legacy_zetasql/public/functions/util/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/utf_util/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/string/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/util/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/utf_util/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/status/export.inc"

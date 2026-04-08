@@ -80,8 +80,8 @@
 #include "googlesql/analyzer/resolver_util.cc"
 
 // include dependencies
-#include "go-zetasql/public/function_headers/export.inc"
-#include "go-zetasql/public/types/type/export.inc"
+#include "go-googlesql/public/function_headers/export.inc"
+#include "go-googlesql/public/types/type/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/types/span/export.inc"
 

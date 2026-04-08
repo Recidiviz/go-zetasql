@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PUBLIC_CATALOG_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PUBLIC_CATALOG_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PUBLIC_CATALOG_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PUBLIC_CATALOG_EXPORT_H
 
 #include "googlesql/legacy_zetasql/public/catalog.h"
 #include "googlesql/legacy_zetasql/public/catalog_helper.h"
@@ -8,16 +8,16 @@
 #include "googlesql/legacy_zetasql/public/catalog.cc"
 #include "googlesql/legacy_zetasql/public/catalog_helper.cc"
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/evaluator_table_iterator/export.inc"
-#include "go-zetasql/legacy_zetasql/public/strings/export.inc"
-#include "go-zetasql/legacy_zetasql/public/type/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/edit_distance/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/source_location/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/base/strings/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
+#include "go-googlesql/legacy_zetasql/public/evaluator_table_iterator/export.inc"
+#include "go-googlesql/legacy_zetasql/public/strings/export.inc"
+#include "go-googlesql/legacy_zetasql/public/type/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/edit_distance/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/source_location/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/base/strings/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/flags/flag/export.inc"

@@ -80,8 +80,8 @@
 #include "googlesql/legacy_zetasql/public/signature_match_result.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/type/export.inc"
-#include "go-zetasql/base/logging/export.inc"
+#include "go-googlesql/legacy_zetasql/public/type/export.inc"
+#include "go-googlesql/base/logging/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

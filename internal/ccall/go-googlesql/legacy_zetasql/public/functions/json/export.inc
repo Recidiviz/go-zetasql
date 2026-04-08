@@ -1,25 +1,25 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PUBLIC_FUNCTIONS_JSON_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PUBLIC_FUNCTIONS_JSON_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PUBLIC_FUNCTIONS_JSON_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PUBLIC_FUNCTIONS_JSON_EXPORT_H
 
 #include "googlesql/legacy_zetasql/public/functions/json.h"
 // include sources
 #include "googlesql/legacy_zetasql/public/functions/json.cc"
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/functions/convert/export.inc"
-#include "go-zetasql/legacy_zetasql/public/functions/convert_string/export.inc"
-#include "go-zetasql/legacy_zetasql/public/functions/json_format/export.inc"
-#include "go-zetasql/legacy_zetasql/public/functions/json_internal/export.inc"
-#include "go-zetasql/legacy_zetasql/public/functions/to_json/export.inc"
-#include "go-zetasql/base/lossless_convert/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/base/strings/export.inc"
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/common/json_util/export.inc"
-#include "go-zetasql/public/json_value/export.inc"
-#include "go-zetasql/public/language_options/export.inc"
-#include "go-zetasql/public/numeric_value/export.inc"
-#include "go-zetasql/public/value/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/convert/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/convert_string/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/json_format/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/json_internal/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/to_json/export.inc"
+#include "go-googlesql/base/lossless_convert/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/base/strings/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/common/json_util/export.inc"
+#include "go-googlesql/public/json_value/export.inc"
+#include "go-googlesql/public/language_options/export.inc"
+#include "go-googlesql/public/numeric_value/export.inc"
+#include "go-googlesql/public/value/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/btree/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"

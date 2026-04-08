@@ -41,21 +41,25 @@ func stripBazelExternalPrefix(seg string) string {
 	return strings.TrimPrefix(seg, "@")
 }
 
-// mapGooglesqlToZetasqlGoImportTree maps Bazel paths under googlesql/ to the stable
-// internal/ccall/go-zetasql/... layout. Upstream renamed zetasql→googlesql; Go import paths
-// and the ccall folder prefix remain go-zetasql.
-func mapGooglesqlToZetasqlGoImportTree(path string) string {
-	if path == "googlesql" {
-		return "zetasql"
+// mapBazelRootToCcallPath maps Bazel package roots to directory segments under
+// internal/ccall/go-googlesql/.... Modern targets use googlesql/...; legacy
+// BUILD files still reference zetasql/... for the same on-disk tree — map those
+// to googlesql so generated #include paths use go-googlesql/... only.
+func mapBazelRootToCcallPath(path string) string {
+	switch {
+	case path == "googlesql" || strings.HasPrefix(path, "googlesql/"):
+		return path
+	case path == "zetasql":
+		return "googlesql"
+	case strings.HasPrefix(path, "zetasql/"):
+		return "googlesql/" + strings.TrimPrefix(path, "zetasql/")
+	default:
+		return path
 	}
-	if strings.HasPrefix(path, "googlesql/") {
-		return "zetasql/" + strings.TrimPrefix(path, "googlesql/")
-	}
-	return path
 }
 
 func goPkgPath(base, pkg string) string {
-	base = mapGooglesqlToZetasqlGoImportTree(base)
+	base = mapBazelRootToCcallPath(base)
 	newPath := []string{}
 	for _, path := range strings.Split(base, "/") {
 		path = stripBazelExternalPrefix(path)

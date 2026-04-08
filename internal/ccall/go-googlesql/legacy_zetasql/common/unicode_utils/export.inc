@@ -1,11 +1,11 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_COMMON_UNICODE_UTILS_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_COMMON_UNICODE_UTILS_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_COMMON_UNICODE_UTILS_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_COMMON_UNICODE_UTILS_EXPORT_H
 
 #include "googlesql/legacy_zetasql/common/unicode_utils.h"
 // include sources
 #include "googlesql/legacy_zetasql/common/unicode_utils.cc"
 // include dependencies
-#include "go-zetasql/base/base/export.inc"
+#include "go-googlesql/base/base/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/nullability/export.inc"
 #include "go-absl/flags/flag/export.inc"

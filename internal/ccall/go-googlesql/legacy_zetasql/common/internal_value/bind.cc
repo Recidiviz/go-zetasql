@@ -80,10 +80,10 @@
 #include "googlesql/legacy_zetasql/common/internal_value.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/common/float_margin/export.inc"
-#include "go-zetasql/public/type/export.inc"
-#include "go-zetasql/public/value/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
+#include "go-googlesql/legacy_zetasql/common/float_margin/export.inc"
+#include "go-googlesql/public/type/export.inc"
+#include "go-googlesql/public/value/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/types/span/export.inc"
 

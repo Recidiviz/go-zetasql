@@ -79,7 +79,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/evaluator_base/export.inc"
+#include "go-googlesql/legacy_zetasql/public/evaluator_base/export.inc"
 
 #include "bridge.h"
 

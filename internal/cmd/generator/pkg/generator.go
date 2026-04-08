@@ -15,18 +15,21 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/goccy/go-zetasql/internal/exportinc"
+	"github.com/vantaboard/go-googlesql/internal/exportinc"
 )
+
+// defaultCgoStd is the -std= value for generated #cgo CXXFLAGS (matches upstream Bazel / GoogleSQL).
+const defaultCgoStd = "c++20"
 
 var (
 	bazelSupportedLibs = []string{"googlesql", "absl", "algorithms", "base", "proto"}
 	includeDirs        = []string{"protobuf", "utf8_range", "gtest", "icu", "re2", "json", "googleapis", "boringssl", "flex/src"}
 	// goProtobufImportPath ensures CGO links the package that owns the protobuf amalgamation TU.
-	goProtobufImportPath = "github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf"
+	goProtobufImportPath = "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
 	// goProtobufCCLibPkgKey is the synthetic cc_library key for internal/ccall/go-protobuf/protobuf.
 	goProtobufCCLibPkgKey = "protobuf/protobuf"
 	// goRootAnalyzerPublicImportPath links options.pb.cc and analyzer amalgamation for root bind.cc.
-	goRootAnalyzerPublicImportPath = "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/public/analyzer"
+	goRootAnalyzerPublicImportPath = "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/public/analyzer"
 )
 
 type Generator struct {
@@ -117,7 +120,7 @@ func (g *Generator) Generate() error {
 	}
 	// Some cc_library dirs are not regenerated from Bazel; strip stale macros so
 	// single-owner protobuf + plain absl stay link-consistent across all bind.cc.
-	if err := stripGoZetasqlBindCCGoogleMacros(); err != nil {
+	if err := stripGoGooglesqlBindCCGoogleMacros(); err != nil {
 		return err
 	}
 	if err := stripRootAnalyzerAmalgamationMacros(); err != nil {
@@ -341,7 +344,7 @@ func (g *Generator) generate(f *ParsedFile) error {
 			return err
 		}
 	}
-	rootOutputDir := filepath.Join(ccallDir(), "go-zetasql")
+	rootOutputDir := filepath.Join(ccallDir(), "go-googlesql")
 	if err := os.MkdirAll(rootOutputDir, 0o755); err != nil {
 		return err
 	}
@@ -357,10 +360,10 @@ func (g *Generator) generate(f *ParsedFile) error {
 	return nil
 }
 
-// rootZetaSQLAmalgamationLibs lists googlesql ccall libs linked into root bind.cc / bridge.h.
+// rootGoogleSQLAmalgamationLibs lists googlesql ccall libs linked into root bind.cc / bridge.h.
 // googlesql/parser/parser is omitted: that package has its own bind.cc with namespace-prefix
 // macros; re-including parser/export.inc in the parent TU duplicates absl flags and parser .o.
-func (g *Generator) rootZetaSQLAmalgamationLibs() []string {
+func (g *Generator) rootGoogleSQLAmalgamationLibs() []string {
 	pkgs := g.pkgs()
 	libs := make([]string, 0, len(pkgs))
 	for _, pkg := range pkgs {
@@ -370,13 +373,13 @@ func (g *Generator) rootZetaSQLAmalgamationLibs() []string {
 		if pkg.Name == "googlesql/parser/parser" {
 			continue
 		}
-		libs = append(libs, mapGooglesqlToZetasqlGoImportTree(pkg.Name))
+		libs = append(libs, pkg.Name)
 	}
 	return libs
 }
 
 func (g *Generator) generateRootBindCC(outputDir string) error {
-	libs := g.rootZetaSQLAmalgamationLibs()
+	libs := g.rootGoogleSQLAmalgamationLibs()
 	output, err := g.generateCCSourceByTemplate(
 		"templates/root_bind.cc.tmpl",
 		libs,
@@ -417,7 +420,7 @@ func wrapParserBindTokenDisambiguatorInclude(lib *Lib, bindCC []byte) []byte {
 	if !isGooglesqlParserPackage(lib) {
 		return bindCC
 	}
-	const direct = `#include "go-zetasql/parser/token_disambiguator/export.inc"`
+	const direct = `#include "go-googlesql/parser/token_disambiguator/export.inc"`
 	repl := "#define ZETASQL_PARSER_AMALGAMATION_HAS_FLEX\n" +
 		direct + "\n" +
 		"#undef ZETASQL_PARSER_AMALGAMATION_HAS_FLEX"
@@ -453,7 +456,7 @@ func (g *Generator) pkgs() []*Package {
 }
 
 func (g *Generator) generateRootBridgeH(outputDir string) error {
-	libs := g.rootZetaSQLAmalgamationLibs()
+	libs := g.rootGoogleSQLAmalgamationLibs()
 	output, err := g.generateCCSourceByTemplate(
 		"templates/root_bridge.h.tmpl",
 		libs,
@@ -1037,7 +1040,7 @@ func (g *Generator) goReservedKeyword(keyword string) bool {
 }
 
 func (g *Generator) cgoCompiler(lib *Lib) string {
-	return "c++17"
+	return defaultCgoStd
 }
 
 func (g *Generator) goPkgName(lib *Lib) string {
@@ -1067,6 +1070,8 @@ func (g *Generator) createBindGoParamLinux(lib *Lib) *BindGoParam {
 	cxxflags := []string{
 		"-Wno-final-dtor-non-final-class",
 		"-Wno-implicit-const-int-float-conversion",
+		"-Wno-deprecated-enum-enum-conversion",
+		"-Wno-deprecated-anon-enum-enum-conversion",
 	}
 	return g.createBindGoParam(lib, cxxflags, ldflags)
 }
@@ -1087,6 +1092,8 @@ func (g *Generator) createRootBindGoParamLinux() *BindGoParam {
 	cxxflags := []string{
 		"-Wno-final-dtor-non-final-class",
 		"-Wno-implicit-const-int-float-conversion",
+		"-Wno-deprecated-enum-enum-conversion",
+		"-Wno-deprecated-anon-enum-enum-conversion",
 	}
 	return g.createRootBindGoParam(cxxflags, ldflags)
 }
@@ -1097,9 +1104,9 @@ func (g *Generator) createRootBindGoParamDarwin() *BindGoParam {
 
 func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoParam {
 	param := &BindGoParam{DebugMode: false}
-	param.Pkg = "zetasql"
+	param.Pkg = "googlesql"
 	param.FQDN = "zetasql"
-	param.Compiler = "c++17"
+	param.Compiler = defaultCgoStd
 	param.CXXFlags = cxxflags
 	param.LDFlags = ldflags
 
@@ -1111,7 +1118,7 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 	param.IncludePaths = includePaths
 	bridgeHeaderMap := map[string]struct{}{}
 	for _, pkg := range g.pkgs() {
-		// Parser methods use export_zetasql_parser_parser_* in parser/parser/bind_linux.go only.
+		// Parser methods use export_googlesql_parser_parser_* in parser/parser/bind_linux.go only.
 		if pkg.Name == "googlesql/parser/parser" {
 			continue
 		}
@@ -1125,7 +1132,7 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 				continue
 			}
 			goPkgPath := normalizeGoPkgPath(dep)
-			libName := fmt.Sprintf("github.com/goccy/go-zetasql/internal/ccall/%s", goPkgPath)
+			libName := fmt.Sprintf("github.com/vantaboard/go-googlesql/internal/ccall/%s", goPkgPath)
 			param.ImportGoLibs = append(param.ImportGoLibs, libName)
 			basePkg := sanitizeIdentifier(filepath.Base(goPkgPath))
 			bridgeHeader := filepath.Join(ccallDir, goPkgPath, "bridge.h")
@@ -1153,7 +1160,7 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 		}
 	}
 	param.ImportGoLibs = append(param.ImportGoLibs,
-		"github.com/goccy/go-zetasql/internal/ccall/utf8_range_link",
+		"github.com/vantaboard/go-googlesql/internal/ccall/utf8_range_link",
 	)
 	param.ImportGoLibs = appendUniqueGoImport(param.ImportGoLibs, goProtobufImportPath)
 	param.ImportGoLibs = appendUniqueGoImport(param.ImportGoLibs, goRootAnalyzerPublicImportPath)
@@ -1187,7 +1194,7 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 			continue
 		}
 		goPkgPath := normalizeGoPkgPath(dep)
-		libName := fmt.Sprintf("github.com/goccy/go-zetasql/internal/ccall/%s", goPkgPath)
+		libName := fmt.Sprintf("github.com/vantaboard/go-googlesql/internal/ccall/%s", goPkgPath)
 		importGoLibs = append(importGoLibs, libName)
 		basePkg := sanitizeIdentifier(filepath.Base(goPkgPath))
 		bridgeHeaders = append(bridgeHeaders, filepath.Join(ccallDir, goPkgPath, "bridge.h"))

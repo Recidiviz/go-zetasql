@@ -80,12 +80,12 @@
 #include "googlesql/common/proto_helper.cc"
 
 // include dependencies
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/common/thread_stack/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/common/thread_stack/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/map_util/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"
 

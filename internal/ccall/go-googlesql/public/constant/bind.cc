@@ -79,10 +79,10 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/type/export.inc"
-#include "go-zetasql/public/value/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
+#include "go-googlesql/public/type/export.inc"
+#include "go-googlesql/public/value/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

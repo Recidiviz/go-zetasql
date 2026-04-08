@@ -80,9 +80,9 @@
 #include "googlesql/common/match_recognize/edge_tracker.cc"
 
 // include dependencies
-#include "go-zetasql/common/match_recognize/compiled_nfa/export.inc"
-#include "go-zetasql/common/match_recognize/nfa/export.inc"
-#include "go-zetasql/common/match_recognize/row_edge_list/export.inc"
+#include "go-googlesql/common/match_recognize/compiled_nfa/export.inc"
+#include "go-googlesql/common/match_recognize/nfa/export.inc"
+#include "go-googlesql/common/match_recognize/row_edge_list/export.inc"
 #include "go-absl/functional/any_invocable/export.inc"
 
 #include "bridge.h"

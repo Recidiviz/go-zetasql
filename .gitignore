@@ -22,8 +22,11 @@ full_export.inc
 .genpatch-baseline/
 
 # CGO ephemeral output (not checked in)
-internal/ccall/go-zetasql/_obj/
 internal/ccall/go-googlesql/_obj/
+internal/ccall/go-googlesql/_obj/
+
+# Generator output lives under go-googlesql only (never commit a parallel go-zetasql tree).
+internal/ccall/go-zetasql/
 
 # Local Python deps / resolved_ast codegen output (not checked in)
 internal/gen/

@@ -80,8 +80,8 @@
 #include "googlesql/base/string_numbers.cc"
 
 // include dependencies
-#include "go-zetasql/base/check/export.inc"
-#include "go-zetasql/base/logging/export.inc"
+#include "go-googlesql/base/check/export.inc"
+#include "go-googlesql/base/logging/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

@@ -80,7 +80,7 @@
 #include "googlesql/public/functions/date_time_util_internal.cc"
 
 // include dependencies
-#include "go-zetasql/base/base/export.inc"
+#include "go-googlesql/base/base/export.inc"
 #include "go-absl/time/time/export.inc"
 
 #include "bridge.h"

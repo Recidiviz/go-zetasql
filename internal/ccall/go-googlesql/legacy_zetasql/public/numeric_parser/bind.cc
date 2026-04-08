@@ -80,9 +80,9 @@
 #include "googlesql/legacy_zetasql/public/numeric_parser.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/numeric_constants/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/multiprecision_int/export.inc"
+#include "go-googlesql/legacy_zetasql/public/numeric_constants/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/multiprecision_int/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"

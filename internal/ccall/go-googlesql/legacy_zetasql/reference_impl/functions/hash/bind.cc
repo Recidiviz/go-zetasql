@@ -80,12 +80,12 @@
 #include "googlesql/legacy_zetasql/reference_impl/functions/hash.cc"
 
 // include dependencies
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/public/type_cc_proto/export.inc"
-#include "go-zetasql/public/value/export.inc"
-#include "go-zetasql/public/functions/hash/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
-#include "go-zetasql/reference_impl/evaluation/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
+#include "go-googlesql/public/value/export.inc"
+#include "go-googlesql/public/functions/hash/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
+#include "go-googlesql/reference_impl/evaluation/export.inc"
 #include "go-absl/log/log/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/string_view/export.inc"

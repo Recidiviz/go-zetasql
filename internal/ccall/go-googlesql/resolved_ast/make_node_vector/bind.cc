@@ -80,7 +80,7 @@
 #include "googlesql/resolved_ast/make_node_vector_internal.h"
 
 // include dependencies
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
 
 #include "bridge.h"

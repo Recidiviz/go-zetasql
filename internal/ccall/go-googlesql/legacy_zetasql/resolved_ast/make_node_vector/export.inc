@@ -1,11 +1,11 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_RESOLVED_AST_MAKE_NODE_VECTOR_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_RESOLVED_AST_MAKE_NODE_VECTOR_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_RESOLVED_AST_MAKE_NODE_VECTOR_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_RESOLVED_AST_MAKE_NODE_VECTOR_EXPORT_H
 
 #include "googlesql/legacy_zetasql/resolved_ast/make_node_vector.h"
 // include sources
 #include "googlesql/legacy_zetasql/resolved_ast/make_node_vector_internal.h"
 // include dependencies
-#include "go-zetasql/legacy_zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/legacy_zetasql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
 
 #endif

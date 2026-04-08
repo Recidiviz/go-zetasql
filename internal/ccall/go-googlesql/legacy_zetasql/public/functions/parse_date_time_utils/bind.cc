@@ -80,7 +80,7 @@
 #include "googlesql/legacy_zetasql/public/functions/parse_date_time_utils.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/functions/date_time_util/export.inc"
+#include "go-googlesql/legacy_zetasql/public/functions/date_time_util/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/time/time/export.inc"
 

@@ -79,10 +79,10 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/catalog/export.inc"
-#include "go-zetasql/public/function/export.inc"
-#include "go-zetasql/public/module_details/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/public/catalog/export.inc"
+#include "go-googlesql/public/function/export.inc"
+#include "go-googlesql/public/module_details/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/status/statusor/export.inc"
 

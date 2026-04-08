@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TYPE_CC_PROTO_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TYPE_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_TYPE_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_TYPE_CC_PROTO_EXPORT_H
 
 // Descriptor table identifiers match googlesql/public/analyzer (type.pb.cc amalgamation).
 #define googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_googlesql_2fpublic_2ftype_2eproto

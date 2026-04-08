@@ -79,10 +79,10 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/public/analyzer_options/export.inc"
-#include "go-zetasql/public/types/type/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/base/map_util/export.inc"
+#include "go-googlesql/public/analyzer_options/export.inc"
+#include "go-googlesql/public/types/type/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/string_view/export.inc"

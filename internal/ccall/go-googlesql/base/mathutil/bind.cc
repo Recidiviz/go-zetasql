@@ -80,8 +80,8 @@
 #include "googlesql/base/mathutil.cc"
 
 // include dependencies
-#include "go-zetasql/base/bits/export.inc"
-#include "go-zetasql/base/check/export.inc"
+#include "go-googlesql/base/bits/export.inc"
+#include "go-googlesql/base/check/export.inc"
 #include "go-absl/base/base/export.inc"
 
 #include "bridge.h"

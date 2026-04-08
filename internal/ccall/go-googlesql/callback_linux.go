@@ -1,7 +1,7 @@
-package zetasql
+package googlesql
 
 /*
-#cgo CXXFLAGS: -std=c++1z
+#cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I../
 #cgo CXXFLAGS: -I../protobuf
 #cgo CXXFLAGS: -I../gtest
@@ -27,7 +27,7 @@ package zetasql
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
 
-#define GO_EXPORT(API) export_zetasql_ ## API
+#define GO_EXPORT(API) export_googlesql_ ## API
 #include "bridge.h"
 #include "../go-absl/time/go_internal/cctz/time_zone/bridge.h"
 */
@@ -37,7 +37,7 @@ import (
 	"runtime/cgo"
 	"unsafe"
 
-	_ "github.com/goccy/go-zetasql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
 )
 
 type GoCatalog struct {

@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_EXAMPLES_TPCH_CATALOG_CATALOG_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_EXAMPLES_TPCH_CATALOG_CATALOG_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_EXAMPLES_TPCH_CATALOG_CATALOG_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_EXAMPLES_TPCH_CATALOG_CATALOG_EXPORT_H
 
 #include "googlesql/legacy_zetasql/examples/tpch/catalog/tpch_catalog.h"
 // include sources
@@ -13,22 +13,22 @@
 #include "googlesql/legacy_zetasql/examples/tpch/catalog/supplier.tbl.h"
 #include "googlesql/legacy_zetasql/examples/tpch/catalog/tpch_catalog.cc"
 // include dependencies
-#include "go-zetasql/base/clock/export.inc"
-#include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/simple_evaluator_table_iterator/export.inc"
-#include "go-zetasql/public/analyzer_options/export.inc"
-#include "go-zetasql/public/analyzer_output/export.inc"
-#include "go-zetasql/public/catalog/export.inc"
-#include "go-zetasql/public/evaluator_table_iterator/export.inc"
-#include "go-zetasql/public/simple_catalog/export.inc"
-#include "go-zetasql/public/simple_catalog_util/export.inc"
-#include "go-zetasql/public/type/export.inc"
-#include "go-zetasql/public/value/export.inc"
-#include "go-zetasql/public/functions/date_time_util/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
-#include "go-zetasql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
+#include "go-googlesql/base/clock/export.inc"
+#include "go-googlesql/base/map_util/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/simple_evaluator_table_iterator/export.inc"
+#include "go-googlesql/public/analyzer_options/export.inc"
+#include "go-googlesql/public/analyzer_output/export.inc"
+#include "go-googlesql/public/catalog/export.inc"
+#include "go-googlesql/public/evaluator_table_iterator/export.inc"
+#include "go-googlesql/public/simple_catalog/export.inc"
+#include "go-googlesql/public/simple_catalog_util/export.inc"
+#include "go-googlesql/public/type/export.inc"
+#include "go-googlesql/public/value/export.inc"
+#include "go-googlesql/public/functions/date_time_util/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
+#include "go-googlesql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"

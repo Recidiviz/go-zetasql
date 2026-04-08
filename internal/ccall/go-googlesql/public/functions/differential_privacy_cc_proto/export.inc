@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_DIFFERENTIAL_PRIVACY_CC_PROTO_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_DIFFERENTIAL_PRIVACY_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_FUNCTIONS_DIFFERENTIAL_PRIVACY_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_FUNCTIONS_DIFFERENTIAL_PRIVACY_CC_PROTO_EXPORT_H
 
 #include "googlesql/public/functions/differential_privacy.pb.h"
 // include sources
@@ -9,7 +9,7 @@
 #undef file_default_instances
 #undef schemas
 // include dependencies
-#include "go-zetasql/proto/anon_output_with_report_cc_proto/export.inc"
-#include "go-zetasql/public/type_cc_proto/export.inc"
+#include "go-googlesql/proto/anon_output_with_report_cc_proto/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
 
 #endif

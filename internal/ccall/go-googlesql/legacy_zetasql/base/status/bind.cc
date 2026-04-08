@@ -85,8 +85,8 @@
 #include "googlesql/legacy_zetasql/base/status_payload.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/base/logging/export.inc"
-#include "go-zetasql/legacy_zetasql/base/source_location/export.inc"
+#include "go-googlesql/legacy_zetasql/base/logging/export.inc"
+#include "go-googlesql/legacy_zetasql/base/source_location/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/log_severity/export.inc"
 #include "go-absl/log/log/export.inc"

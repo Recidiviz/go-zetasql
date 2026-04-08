@@ -80,11 +80,11 @@
 #include "googlesql/legacy_zetasql/public/json_value.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/numeric_parser/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/map_util/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/legacy_zetasql/public/numeric_parser/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/map_util/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

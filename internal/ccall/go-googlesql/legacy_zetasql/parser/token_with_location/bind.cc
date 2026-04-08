@@ -80,9 +80,9 @@
 #include "googlesql/legacy_zetasql/parser/token_with_location.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/parser/token_codes/export.inc"
-#include "go-zetasql/public/error_location_cc_proto/export.inc"
-#include "go-zetasql/public/parse_location/export.inc"
+#include "go-googlesql/legacy_zetasql/parser/token_codes/export.inc"
+#include "go-googlesql/public/error_location_cc_proto/export.inc"
+#include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/base/nullability/export.inc"
 #include "go-absl/strings/strings/export.inc"
 

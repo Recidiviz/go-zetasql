@@ -1703,7 +1703,7 @@ void GO_EXPORT(SimpleCatalog_AddConstantWithName)(void * arg0,void * arg1,void *
   catalog->AddConstant((char *)arg1, (googlesql::Constant *)arg2);
 }
 
-void GO_EXPORT(SimpleCatalog_AddZetaSQLFunctions)(void * arg0,void *arg1)
+void GO_EXPORT(SimpleCatalog_AddGoogleSQLFunctions)(void * arg0,void *arg1)
 {
   googlesql::SimpleCatalog *catalog = (googlesql::SimpleCatalog *)arg0;
   googlesql::GoogleSQLBuiltinFunctionOptions *options = (googlesql::GoogleSQLBuiltinFunctionOptions *)arg1;
@@ -1861,7 +1861,7 @@ void GO_EXPORT(Function_Group)(void * arg0,void ** arg1)
   *arg1 = (void *)((new std::string(f->GetGroup()))->c_str());
 }
 
-void GO_EXPORT(Function_IsZetaSQLBuiltin)(void * arg0,char* arg1)
+void GO_EXPORT(Function_IsGoogleSQLBuiltin)(void * arg0,char* arg1)
 {
   googlesql::Function *f = (googlesql::Function *)arg0;
   *arg1 = f->IsGoogleSQLBuiltin();

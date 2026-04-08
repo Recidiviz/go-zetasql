@@ -80,9 +80,9 @@
 #include "googlesql/common/match_recognize/epsilon_remover.cc"
 
 // include dependencies
-#include "go-zetasql/common/match_recognize/nfa/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/common/match_recognize/nfa/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"

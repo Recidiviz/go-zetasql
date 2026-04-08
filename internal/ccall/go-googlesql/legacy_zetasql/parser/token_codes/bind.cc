@@ -79,7 +79,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/parser/token/export.inc"
+#include "go-googlesql/legacy_zetasql/parser/token/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 
 #include "bridge.h"

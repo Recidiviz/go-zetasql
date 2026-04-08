@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/base/logging/export.inc"
-#include "go-zetasql/legacy_zetasql/base/path/export.inc"
+#include "go-googlesql/legacy_zetasql/base/logging/export.inc"
+#include "go-googlesql/legacy_zetasql/base/path/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-re2/re2/export.inc"

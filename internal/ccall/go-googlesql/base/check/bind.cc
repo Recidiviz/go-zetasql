@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/base/logging/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/logging/export.inc"
+#include "go-googlesql/base/status/export.inc"
 
 #include "bridge.h"
 

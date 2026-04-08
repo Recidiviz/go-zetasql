@@ -79,8 +79,8 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/scripting/parsed_script/export.inc"
-#include "go-zetasql/parser/parser/export.inc"
+#include "go-googlesql/scripting/parsed_script/export.inc"
+#include "go-googlesql/parser/parser/export.inc"
 
 #include "bridge.h"
 

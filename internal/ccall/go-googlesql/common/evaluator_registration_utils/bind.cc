@@ -80,8 +80,8 @@
 #include "googlesql/common/evaluator_registration_utils.cc"
 
 // include dependencies
-#include "go-zetasql/public/collator/export.inc"
-#include "go-zetasql/reference_impl/functions/register_all/export.inc"
+#include "go-googlesql/public/collator/export.inc"
+#include "go-googlesql/reference_impl/functions/register_all/export.inc"
 #include "go-absl/base/base/export.inc"
 #include "go-absl/strings/string_view/export.inc"
 

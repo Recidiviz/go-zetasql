@@ -160,7 +160,7 @@
 #define descriptor_table_zetasql_2fscripting_2fvariable_2eproto zetasql_base_refcount_descriptor_table_zetasql_2fscripting_2fvariable_2eproto
 #define TableStruct_zetasql_2fscripting_2fvariable_2eproto zetasql_base_refcount_TableStruct_zetasql_2fscripting_2fvariable_2eproto
 
-#define GO_EXPORT(def) export_zetasql_base_refcount_ ## def
+#define GO_EXPORT(def) export_googlesql_base_refcount_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
 // include headers

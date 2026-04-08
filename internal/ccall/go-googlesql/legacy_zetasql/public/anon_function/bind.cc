@@ -80,9 +80,9 @@
 #include "googlesql/legacy_zetasql/public/anon_function.cc"
 
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/function/export.inc"
-#include "go-zetasql/legacy_zetasql/public/function_cc_proto/export.inc"
-#include "go-zetasql/legacy_zetasql/public/language_options/export.inc"
+#include "go-googlesql/legacy_zetasql/public/function/export.inc"
+#include "go-googlesql/legacy_zetasql/public/function_cc_proto/export.inc"
+#include "go-googlesql/legacy_zetasql/public/language_options/export.inc"
 #include "go-absl/functional/bind_front/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/span/export.inc"

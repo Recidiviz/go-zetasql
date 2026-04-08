@@ -1,11 +1,11 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PUBLIC_SIMPLE_TOKEN_LIST_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_LEGACY_ZETASQL_PUBLIC_SIMPLE_TOKEN_LIST_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PUBLIC_SIMPLE_TOKEN_LIST_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_LEGACY_ZETASQL_PUBLIC_SIMPLE_TOKEN_LIST_EXPORT_H
 
 #include "googlesql/legacy_zetasql/public/simple_token_list.h"
 // include sources
 #include "googlesql/legacy_zetasql/public/simple_token_list.cc"
 // include dependencies
-#include "go-zetasql/legacy_zetasql/public/simple_token_list_cc_proto/export.inc"
+#include "go-googlesql/legacy_zetasql/public/simple_token_list_cc_proto/export.inc"
 #include "go-absl/container/flat_hash_set/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"

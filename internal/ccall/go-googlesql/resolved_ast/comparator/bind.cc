@@ -80,14 +80,14 @@
 #include "googlesql/resolved_ast/resolved_ast_comparator.cc"
 
 // include dependencies
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
-#include "go-zetasql/base/base/export.inc"
-#include "go-zetasql/base/case/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/common/errors/export.inc"
-#include "go-zetasql/common/thread_stack/export.inc"
-#include "go-zetasql/public/catalog/export.inc"
-#include "go-zetasql/public/types/type/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/base/base/export.inc"
+#include "go-googlesql/base/case/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/common/errors/export.inc"
+#include "go-googlesql/common/thread_stack/export.inc"
+#include "go-googlesql/public/catalog/export.inc"
+#include "go-googlesql/public/types/type/export.inc"
 #include "go-absl/status/statusor/export.inc"
 
 #include "bridge.h"

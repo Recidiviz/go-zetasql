@@ -79,9 +79,9 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/public/parse_resume_location_cc_proto/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/public/parse_resume_location_cc_proto/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

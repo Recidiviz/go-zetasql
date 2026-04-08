@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SIMPLE_TABLE_CC_PROTO_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_SIMPLE_TABLE_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_SIMPLE_TABLE_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_SIMPLE_TABLE_CC_PROTO_EXPORT_H
 
 #include "googlesql/public/simple_table.pb.h"
 // include sources
@@ -9,8 +9,8 @@
 #undef file_default_instances
 #undef schemas
 // include dependencies
-#include "go-zetasql/public/type_cc_proto/export.inc"
-#include "go-zetasql/public/annotation_cc_proto/export.inc"
-#include "go-zetasql/public/simple_value_cc_proto/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
+#include "go-googlesql/public/annotation_cc_proto/export.inc"
+#include "go-googlesql/public/simple_value_cc_proto/export.inc"
 
 #endif

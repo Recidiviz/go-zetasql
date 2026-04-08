@@ -80,8 +80,8 @@
 #include "googlesql/base/arena_allocator.cc"
 
 // include dependencies
-#include "go-zetasql/base/arena/export.inc"
-#include "go-zetasql/base/logging/export.inc"
+#include "go-googlesql/base/arena/export.inc"
+#include "go-googlesql/base/logging/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 
 #include "bridge.h"

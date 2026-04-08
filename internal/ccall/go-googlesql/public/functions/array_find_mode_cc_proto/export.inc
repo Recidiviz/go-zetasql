@@ -1,5 +1,5 @@
-#ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_ARRAY_FIND_MODE_CC_PROTO_EXPORT_H
-#define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_FUNCTIONS_ARRAY_FIND_MODE_CC_PROTO_EXPORT_H
+#ifndef INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_FUNCTIONS_ARRAY_FIND_MODE_CC_PROTO_EXPORT_H
+#define INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_FUNCTIONS_ARRAY_FIND_MODE_CC_PROTO_EXPORT_H
 
 #include "googlesql/public/functions/array_find_mode.pb.h"
 // include sources
@@ -9,6 +9,6 @@
 #undef file_default_instances
 #undef schemas
 // include dependencies
-#include "go-zetasql/public/type_cc_proto/export.inc"
+#include "go-googlesql/public/type_cc_proto/export.inc"
 
 #endif

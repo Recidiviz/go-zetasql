@@ -79,7 +79,7 @@
 // include sources
 
 // include dependencies
-#include "go-zetasql/base/flat_internal/export.inc"
+#include "go-googlesql/base/flat_internal/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
 
 #include "bridge.h"

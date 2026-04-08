@@ -80,7 +80,7 @@
 #include "googlesql/legacy_zetasql/common/status_payload_utils.cc"
 
 // include dependencies
-#include "go-zetasql/base/status/export.inc"
+#include "go-googlesql/base/status/export.inc"
 #include "go-absl/memory/memory/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"

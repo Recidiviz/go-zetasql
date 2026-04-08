@@ -80,12 +80,12 @@
 #include "googlesql/public/sql_tvf.cc"
 
 // include dependencies
-#include "go-zetasql/public/catalog/export.inc"
-#include "go-zetasql/public/function/export.inc"
-#include "go-zetasql/base/ret_check/export.inc"
-#include "go-zetasql/base/status/export.inc"
-#include "go-zetasql/public/types/types/export.inc"
-#include "go-zetasql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/public/catalog/export.inc"
+#include "go-googlesql/public/function/export.inc"
+#include "go-googlesql/base/ret_check/export.inc"
+#include "go-googlesql/base/status/export.inc"
+#include "go-googlesql/public/types/types/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
 #include "go-absl/status/status/export.inc"
 
 #include "bridge.h"
