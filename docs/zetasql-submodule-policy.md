@@ -13,7 +13,7 @@ The Git submodule at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/
    - [`go run ./internal/cmd/vendorpatch`](../internal/cmd/vendorpatch/main.go) and [`scripts/apply-vendor-patches.sh`](../scripts/apply-vendor-patches.sh),
    - committed patches under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md) where appropriate (see [`protobuf-vendoring.md`](protobuf-vendoring.md)).
 
-   Typical GoogleSQL paths that have needed CGO-specific care in the past include `zetasql/public/error_helpers.cc`, `zetasql/base/status_payload.h`, and `zetasql/common/status_payload_utils.h`—**edit the copies under `internal/ccall/zetasql/`** (or the mechanism that produces them), not the submodule working tree.
+   Typical GoogleSQL paths that have needed CGO-specific care in the past include `googlesql/public/error_helpers.cc`, `googlesql/base/status_payload.h`, and `googlesql/common/status_payload_utils.h`—**edit the copies under `internal/ccall/googlesql/`** (or the mechanism that produces them), not the submodule working tree.
 
 4. **Historical docs** — Older `docs/googlesql-upgrade-delta-*.md` notes may mention cherry-picking into the submodule; that workflow is **retired** in favor of this policy.
 

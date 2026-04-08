@@ -56,6 +56,8 @@ The first time you run it, it takes time to build all the GoogleSQL code used by
 
 **Sequential tests (multi-repo):** If you work in `go-googlesql`, `go-googlesqlite`, and `bigquery-emulator` together, run heavy `go test` **one repo at a time**. Running full CGO test suites in parallel on one machine often exhausts memory.
 
+**Host `go test` memory cap (systemd):** [`scripts/cgo-go.sh`](scripts/cgo-go.sh) optionally wraps `go build` / `go test` in a user or system scope with **`GOOGLESQL_CGO_MEMORY_MAX`** (default `22G`). If you still have automation using **`ZETASQL_CGO_MEMORY_MAX`**, rename it—only **`GOOGLESQL_CGO_MEMORY_MAX`** is read now.
+
 **Reuse local compile cache:** Point the same Go caches at all three checkouts so `go-googlesql` objects are not rebuilt for every downstream test:
 
 ```console
@@ -74,7 +76,7 @@ Then run tests with `CGO_ENABLED=1 CC=clang CXX=clang++` as usual.
 
 **Optional Bazel protobuf archive (Linux/macOS):** **`make extract-protobuf-lib`** runs [`internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh`](internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh). Default **`bind_*.go`** still uses amalgamation; see [`docs/protobuf-vendoring.md`](docs/protobuf-vendoring.md).
 
-**Large structural changes (deferred):** Merging many CGO packages or switching to a single Bazel-built **`libzetasql.a`** would require a new bridge/export story and profiling evidence; see [`contrib/zetasql.pc.example`](contrib/zetasql.pc.example) and [`Dockerfile.prebaked`](Dockerfile.prebaked) for a future consolidated install prefix / artifact layout.
+**Large structural changes (deferred):** Merging many CGO packages or switching to a single Bazel-built **`libgooglesql.a`** would require a new bridge/export story and profiling evidence; see [`contrib/googlesql.pc.example`](contrib/googlesql.pc.example) and [`Dockerfile.prebaked`](Dockerfile.prebaked) for a future consolidated install prefix / artifact layout.
 
 **Docker-based tests (recommended):** Use **`make test`** or **`make test/linux`** — this builds a slim **`go-googlesql:dev`** image (**`--target dev`**: Go + clang + **ccache** only; no module compile in the image build) and runs **`go test`** with your **working tree** and **`GO_CACHE_ROOT`** (default **`~/.cache/go-googlesql`**) bind-mounted as **`gocache/`**, **`gomodcache/`**, and **`ccache/`** (Clang object cache for CGO). After a cold cache or toolchain change, run **`make docker/warm-cache`** once: it runs **`go test -race`** with **`-run '^$'`** (matches no tests) so you **pre-compile** the same **`-race`** graph without executing tests; later **`test/linux`** stays much faster. Set **`TESTPKG=./...`** to widen scope. **`go-googlesqlite`** and **`bigquery-emulator`** **`make test/linux`** use the same **`GO_CACHE_ROOT`** so the stack shares one warm cache. Host-only **`make local/build`** / **`local/test`** use the same default tree. Rebuild **`go-googlesql:dev`** after Dockerfile changes (**`make docker/build-dev`**). The default **`docker build`** (release image) still runs **`go install`** with BuildKit cache mounts for registry builds; that path is separate from local test caches.
 
@@ -110,7 +112,7 @@ import (
 
 func main() {
 
-  stmt, err := zetasql.ParseStatement("SELECT * FROM Samples WHERE id = 1", nil)
+  stmt, err := googlesql.ParseStatement("SELECT * FROM Samples WHERE id = 1", nil)
   if err != nil {
     panic(err)
   }
@@ -134,7 +136,7 @@ import (
 
 func main() {
 
-  stmt, err := zetasql.ParseStatement("SELECT * FROM Samples WHERE id = 1", nil)
+  stmt, err := googlesql.ParseStatement("SELECT * FROM Samples WHERE id = 1", nil)
   if err != nil {
     panic(err)
   }
@@ -174,12 +176,12 @@ func main() {
     }),
   )
   catalog.AddGoogleSQLBuiltinFunctions()
-  out, err := zetasql.AnalyzeStatement("SELECT * FROM Samples WHERE id = 1000", catalog, nil)
+  out, err := googlesql.AnalyzeStatement("SELECT * FROM Samples WHERE id = 1000", catalog, nil)
   if err != nil {
     panic(err)
   }
 
-  // get statement node from zetasql.AnalyzerOutput.
+  // get statement node from googlesql.AnalyzerOutput.
   stmt := out.Statement()
 
   // traverse all nodes of stmt.
@@ -207,7 +209,7 @@ Apache-2.0 License
 
 Since go-googlesql builds all source code including dependencies at install time, it directly contains the source code of the following libraries. Therefore, the license is set according to the license of the dependent library.
 
-- [zetasql](https://github.com/google/zetasql): [Apache License 2.0](https://github.com/google/zetasql/blob/master/LICENSE)
+- [GoogleSQL (upstream)](https://github.com/google/zetasql): [Apache License 2.0](https://github.com/google/zetasql/blob/master/LICENSE)
 - [abseil](https://github.com/abseil/abseil-cpp): [Apache License 2.0](https://github.com/abseil/abseil-cpp/blob/master/LICENSE)
 - [json](https://github.com/nlohmann/json): [MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT)
 - [re2](https://github.com/google/re2): [BSD 3-Clause](https://github.com/google/re2/blob/main/LICENSE)

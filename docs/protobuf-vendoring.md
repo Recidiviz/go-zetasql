@@ -39,8 +39,8 @@ This file is **not** copied from upstream; treat it as part of the go-googlesql 
 | Area | File(s) | What it does |
 |------|---------|----------------|
 | ICU | [`internal/ccall/icu/common/bytesinkutil.h`](../internal/ccall/icu/common/bytesinkutil.h) | Adds `GO_GOOGLESQL_ICU_*` include guards around the file body. |
-| GoogleSQL | `internal/ccall/zetasql/public/types/BUILD` | Appends a missing proto dependency line if absent. |
-| GoogleSQL | `internal/ccall/zetasql/public/functions/date_time_util.cc` | Restores an `#undef FCT` after a specific `MakeEvalError` block when missing. |
+| GoogleSQL | `internal/ccall/googlesql/public/types/BUILD` | Appends a missing proto dependency line if absent. |
+| GoogleSQL | `internal/ccall/googlesql/public/functions/date_time_util.cc` | Restores an `#undef FCT` after a specific `MakeEvalError` block when missing. |
 
 **Protobuf amalgamation:** after `applyPostCopyOverlays()`, the updater runs **`go run ./internal/cmd/vendorpatch`** from the repository root (the nested updater module cannot import [`internal/vendorpatch`](../internal/vendorpatch/) directly). That first applies [`ApplyProtobufAmalgamationPatches()`](../internal/vendorpatch/amalgamation.go) to [`port_def.inc`](../internal/ccall/protobuf/google/protobuf/port_def.inc) and [`port_undef.inc`](../internal/ccall/protobuf/google/protobuf/port_undef.inc), then [`ApplyProtobufGitPatches()`](../internal/vendorpatch/git_patch.go) (sorted `*.patch` files under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md), if any). Amalgamation is **idempotent** (if the markers are already present, files are unchanged). Git patches require **`git` on `PATH`** and unified diffs with paths relative to the repo root. Anchors for amalgamation live in [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go) (and tests); git patches must be **rebased or regenerated** when upstream edits the same lines.
 
@@ -122,7 +122,7 @@ Parser errors (e.g. missing AST types or fields in generated headers) usually me
 1. Run [`internal/cmd/updater`](../internal/cmd/updater) with a populated **`cache/`** as required by the tool.
 2. **Unset** `GO_GOOGLESQL_SKIP_PROTOBUF_COPY` (do **not** set `=1`) when you intend a **full** protobuf copy from cache for that upgrade.
 3. Run [`internal/cmd/generator`](../internal/cmd/generator) so `includeDirs`, copied trees (e.g. `utf8_range`, protobuf), and generated Go stay aligned.
-4. Re-check parser sources (e.g. [`parse_tree_serializer.cc`](../internal/ccall/zetasql/parser/parse_tree_serializer.cc)) against [`parse_tree.pb.h`](../internal/ccall/zetasql/parser/parse_tree.pb.h) after protos match the pinned tag (e.g. **2023.08.1**).
+4. Re-check parser sources (e.g. [`parse_tree_serializer.cc`](../internal/ccall/googlesql/parser/parse_tree_serializer.cc)) against [`parse_tree.pb.h`](../internal/ccall/googlesql/parser/parse_tree.pb.h) after protos match the pinned tag (e.g. **2023.08.1**).
 
 Commit large `internal/ccall` vendor updates separately from small CGO flag fixes, per conventional commits.
 
@@ -199,7 +199,7 @@ go run .
 
 After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_undef.inc` amalgamation guards** are present (the updater or `go run ./internal/cmd/vendorpatch` applies them), then validate **`export.inc`** and the rows in the table above if upstream still omits those edits.
 
-**Amalgamation (`go-protobuf/protobuf/export.inc`):** the bundle ends with `port_undef`, which clears all protobuf macros while `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` was still set — so later zetasql `*.pb.cc` in the same TU saw an empty `port_def.inc` (e.g. unknown `PROTOBUF_PRAGMA_INIT_SEG`). **Undef `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` immediately after that `port_undef`.** The amalgamation must **not** redefine the host `bind.cc` **`GO_EXPORT`** (ICU’s `U_ICU_ENTRY_POINT_RENAME` depends on it); protobuf symbol wrapping in this file uses **`GO_GOOGLESQL_PB_EXPORT(sym)`** (`export_protobuf_##sym`) instead.
+**Amalgamation (`go-protobuf/protobuf/export.inc`):** the bundle ends with `port_undef`, which clears all protobuf macros while `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` was still set — so later googlesql `*.pb.cc` in the same TU saw an empty `port_def.inc` (e.g. unknown `PROTOBUF_PRAGMA_INIT_SEG`). **Undef `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` immediately after that `port_undef`.** The amalgamation must **not** redefine the host `bind.cc` **`GO_EXPORT`** (ICU’s `U_ICU_ENTRY_POINT_RENAME` depends on it); protobuf symbol wrapping in this file uses **`GO_GOOGLESQL_PB_EXPORT(sym)`** (`export_protobuf_##sym`) instead.
 
 **Abseil `optional` (generator [`config.yaml`](../internal/cmd/generator/config.yaml)):** Bazel lists `internal/optional.h` as a `src` for `absl/types/optional`, so the generator used to emit a second `#include` after `optional.h`. Under C++17, Abseil uses **`using std::optional`**, and that extra include conflicts. **`cclib.exclude_amalgamation_headers`** drops `absl/types/internal/optional.h` for that lib (it is already pulled in by `optional.h` when using the non-std implementation).
 
@@ -208,10 +208,10 @@ After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_u
 Vendored C++ protobuf is **4.23.3** (`GOOGLE_PROTOBUF_VERSION` **4023003**). Use **protoc 23.3** (e.g. [releases](https://github.com/protocolbuffers/protobuf/releases/tag/v23.3)) — not `protoc` 25+ / 30+, which emit incompatible `*.pb.{h,cc}` for this tree. From **`internal/ccall`**:
 
 ```bash
-protoc -I. -Iprotobuf --cpp_out=. zetasql/parser/parse_tree.proto
+protoc -I. -Iprotobuf --cpp_out=. googlesql/parser/parse_tree.proto
 ```
 
-Use **`--cpp_out=.`** so outputs land in `zetasql/parser/`. Passing **`--cpp_out=zetasql/parser`** with `zetasql/parser/parse_tree.proto` nests files under `zetasql/parser/zetasql/parser/`.
+Use **`--cpp_out=.`** so outputs land in `googlesql/parser/`. Passing **`--cpp_out=googlesql/parser`** with `googlesql/parser/parse_tree.proto` nests files under `googlesql/parser/googlesql/parser/`.
 
 ### Verification (three repositories)
 
@@ -224,7 +224,7 @@ Use **`--cpp_out=.`** so outputs land in `zetasql/parser/`. Passing **`--cpp_out
 These are **not** fixed by protobuf amalgamation alone; treat them as separate upgrade checklist items:
 
 - **`utf8_validity.h`**: newer `parse_context.cc` / `wire_format_lite.cc` include it; vendor **`utf8_range`** (or equivalent) into [`internal/ccall/`](../internal/ccall/) and expose include paths in the relevant `bind_*.go` packages, or extend the updater **`copyExternalLibMap`** when the Bazel tree is available.
-- **Generated `.pb.cc` / macros**: unknown **`PROTOBUF_PRAGMA_INIT_SEG`** / **`PROTOBUF_NAMESPACE_ID`** in a zetasql `*.pb.cc` after **`go-protobuf/export.inc`** usually means **amalgamation left `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` on** after the final `port_undef` — see **`export.inc`** notes above. If macros are present but still wrong, `.pb.*` may be from the **wrong protoc** vs **4023003** headers — regenerate with **protoc 23.3** or copy from the matching Bazel output.
+- **Generated `.pb.cc` / macros**: unknown **`PROTOBUF_PRAGMA_INIT_SEG`** / **`PROTOBUF_NAMESPACE_ID`** in a googlesql `*.pb.cc` after **`go-protobuf/export.inc`** usually means **amalgamation left `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` on** after the final `port_undef` — see **`export.inc`** notes above. If macros are present but still wrong, `.pb.*` may be from the **wrong protoc** vs **4023003** headers — regenerate with **protoc 23.3** or copy from the matching Bazel output.
 - **Parser / flex amalgamation**: do not splice **`flex_tokenizer_base.inc`** on top of a full **`flex_tokenizer.flex.cc`** (generator **`add_sources`** for that pair was removed). Older failures from mixed **`darwin-fastbuild`** vs **`k8-fastbuild`** layouts used the same symptom (`yy_ec`, `yy_base`, …); keep a **single** generated lexer tree.
 - **`parse_tree` skew**: serializer C++ referencing **`ASTWithClauseEntry`** / **`anonymization_options`** when **`parse_tree.pb.h`** does not match — rerun updater + generator against the same GoogleSQL revision until C++ and `.pb.h` agree.
 - **Raw `internal/ccall/absl/strings`**: the vendored tree is not a stand-alone Go cgo package; [`strings.go`](../internal/ccall/absl/strings/strings.go) uses **`//go:build ignore`** so **`go test ./...`** does not treat `*.cc` as illegal in a non-cgo package.
