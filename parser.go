@@ -5,7 +5,7 @@ import (
 	"unsafe"
 
 	"github.com/vantaboard/go-googlesql/ast"
-	zetasqlparser "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/parser"
+	googlesqlparser "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/parser"
 	"github.com/vantaboard/go-googlesql/internal/helper"
 )
 
@@ -15,7 +15,7 @@ type ParserOptions struct {
 
 func NewParserOptions() *ParserOptions {
 	var v unsafe.Pointer
-	zetasqlparser.ParserOptions_new(&v)
+	googlesqlparser.ParserOptions_new(&v)
 	return newParserOptions(v)
 }
 
@@ -34,12 +34,12 @@ func (o *ParserOptions) getRaw() unsafe.Pointer {
 }
 
 func (o *ParserOptions) SetLanguageOptions(opt *LanguageOptions) {
-	zetasqlparser.ParserOptions_set_language_options(o.raw, opt.raw)
+	googlesqlparser.ParserOptions_set_language_options(o.raw, opt.raw)
 }
 
 func (o *ParserOptions) LanguageOptions() *LanguageOptions {
 	var v unsafe.Pointer
-	zetasqlparser.ParserOptions_language_options(o.raw, &v)
+	googlesqlparser.ParserOptions_language_options(o.raw, &v)
 	return newLanguageOptions(v)
 }
 
@@ -49,7 +49,7 @@ type parserOutput struct {
 
 func (o *parserOutput) stmt() (ast.StatementNode, error) {
 	var stmt unsafe.Pointer
-	zetasqlparser.ParserOutput_statement(o.raw, &stmt)
+	googlesqlparser.ParserOutput_statement(o.raw, &stmt)
 	node, ok := newNode(stmt).(ast.StatementNode)
 	if !ok {
 		return nil, ErrParseStatement
@@ -59,7 +59,7 @@ func (o *parserOutput) stmt() (ast.StatementNode, error) {
 
 func (o *parserOutput) script() (ast.ScriptNode, error) {
 	var script unsafe.Pointer
-	zetasqlparser.ParserOutput_script(o.raw, &script)
+	googlesqlparser.ParserOutput_script(o.raw, &script)
 	node, ok := newNode(script).(ast.ScriptNode)
 	if !ok {
 		return nil, ErrParseScript
@@ -69,7 +69,7 @@ func (o *parserOutput) script() (ast.ScriptNode, error) {
 
 func (o *parserOutput) typ() (ast.TypeNode, error) {
 	var typ unsafe.Pointer
-	zetasqlparser.ParserOutput_type(o.raw, &typ)
+	googlesqlparser.ParserOutput_type(o.raw, &typ)
 	node, ok := newNode(typ).(ast.TypeNode)
 	if !ok {
 		return nil, ErrParseType
@@ -79,7 +79,7 @@ func (o *parserOutput) typ() (ast.TypeNode, error) {
 
 func (o *parserOutput) expr() (ast.ExpressionNode, error) {
 	var expr unsafe.Pointer
-	zetasqlparser.ParserOutput_expression(o.raw, &expr)
+	googlesqlparser.ParserOutput_expression(o.raw, &expr)
 	node, ok := newNode(expr).(ast.ExpressionNode)
 	if !ok {
 		return nil, ErrParseExpression
@@ -100,7 +100,7 @@ func ParseStatement(stmt string, opt *ParserOptions) (ast.StatementNode, error) 
 		out    unsafe.Pointer
 		status unsafe.Pointer
 	)
-	zetasqlparser.ParseStatement(unsafe.Pointer(C.CString(stmt)), opt.getRaw(), &out, &status)
+	googlesqlparser.ParseStatement(unsafe.Pointer(C.CString(stmt)), opt.getRaw(), &out, &status)
 	st := helper.NewStatus(status)
 	if !st.OK() {
 		return nil, st.Error()
@@ -120,7 +120,7 @@ func ParseScript(script string, opt *ParserOptions, mode ErrorMessageMode) (ast.
 		out    unsafe.Pointer
 		status unsafe.Pointer
 	)
-	zetasqlparser.ParseScript(unsafe.Pointer(C.CString(script)), opt.getRaw(), int(mode), &out, &status)
+	googlesqlparser.ParseScript(unsafe.Pointer(C.CString(script)), opt.getRaw(), int(mode), &out, &status)
 	st := helper.NewStatus(status)
 	if !st.OK() {
 		return nil, st.Error()
@@ -138,7 +138,7 @@ func ParseType(typ string, opt *ParserOptions) (ast.TypeNode, error) {
 		out    unsafe.Pointer
 		status unsafe.Pointer
 	)
-	zetasqlparser.ParseType(unsafe.Pointer(C.CString(typ)), opt.getRaw(), &out, &status)
+	googlesqlparser.ParseType(unsafe.Pointer(C.CString(typ)), opt.getRaw(), &out, &status)
 	st := helper.NewStatus(status)
 	if !st.OK() {
 		return nil, st.Error()
@@ -156,7 +156,7 @@ func ParseExpression(expr string, opt *ParserOptions) (ast.ExpressionNode, error
 		out    unsafe.Pointer
 		status unsafe.Pointer
 	)
-	zetasqlparser.ParseExpression(unsafe.Pointer(C.CString(expr)), opt.getRaw(), &out, &status)
+	googlesqlparser.ParseExpression(unsafe.Pointer(C.CString(expr)), opt.getRaw(), &out, &status)
 	st := helper.NewStatus(status)
 	if !st.OK() {
 		return nil, st.Error()
@@ -187,7 +187,7 @@ func ParseNextStatement(loc *ParseResumeLocation, opt *ParserOptions) (ast.State
 		isEnd  bool
 		status unsafe.Pointer
 	)
-	zetasqlparser.ParseNextStatement(loc.raw, opt.getRaw(), &out, &isEnd, &status)
+	googlesqlparser.ParseNextStatement(loc.raw, opt.getRaw(), &out, &isEnd, &status)
 	st := helper.NewStatus(status)
 	if !st.OK() {
 		return nil, isEnd, st.Error()
@@ -208,7 +208,7 @@ func ParseNextScriptStatement(loc *ParseResumeLocation, opt *ParserOptions) (ast
 		isEnd  bool
 		status unsafe.Pointer
 	)
-	zetasqlparser.ParseNextScriptStatement(loc.raw, opt.getRaw(), &out, &isEnd, &status)
+	googlesqlparser.ParseNextScriptStatement(loc.raw, opt.getRaw(), &out, &isEnd, &status)
 	st := helper.NewStatus(status)
 	if !st.OK() {
 		return nil, isEnd, st.Error()
@@ -222,6 +222,6 @@ func ParseNextScriptStatement(loc *ParseResumeLocation, opt *ParserOptions) (ast
 // Works for any AST node.
 func Unparse(node ast.Node) string {
 	var v unsafe.Pointer
-	zetasqlparser.Unparse(getNodeRaw(node), &v)
+	googlesqlparser.Unparse(getNodeRaw(node), &v)
 	return C.GoString((*C.char)(v))
 }

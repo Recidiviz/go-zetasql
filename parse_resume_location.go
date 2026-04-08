@@ -4,7 +4,7 @@ import "C"
 import (
 	"unsafe"
 
-	zetasqlparser "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/parser"
+	googlesqlparser "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/parser"
 )
 
 // ParseResumeLocation stores the parser input and a location, and is used as a restart token
@@ -17,6 +17,6 @@ type ParseResumeLocation struct {
 // NewParseResumeLocation creates ParseResumeLocation instance.
 func NewParseResumeLocation(src string) *ParseResumeLocation {
 	var v unsafe.Pointer
-	zetasqlparser.ParseResumeLocation_FromStringView(unsafe.Pointer(C.CString(src)), &v)
+	googlesqlparser.ParseResumeLocation_FromStringView(unsafe.Pointer(C.CString(src)), &v)
 	return &ParseResumeLocation{raw: v}
 }

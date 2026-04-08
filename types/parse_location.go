@@ -3,7 +3,7 @@ package types
 import (
 	"unsafe"
 
-	zetasqlparser "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/parser"
+	googlesqlparser "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/parser"
 	"github.com/vantaboard/go-googlesql/internal/helper"
 )
 
@@ -17,19 +17,19 @@ func (p *ParseLocationPoint) getRaw() unsafe.Pointer {
 
 func (p *ParseLocationPoint) Filename() string {
 	var v unsafe.Pointer
-	zetasqlparser.ParseLocationPoint_filename(p.raw, &v)
+	googlesqlparser.ParseLocationPoint_filename(p.raw, &v)
 	return helper.PtrToString(v)
 }
 
 func (p *ParseLocationPoint) ByteOffset() int {
 	var v int
-	zetasqlparser.ParseLocationPoint_GetByteOffset(p.raw, &v)
+	googlesqlparser.ParseLocationPoint_GetByteOffset(p.raw, &v)
 	return v
 }
 
 func (p *ParseLocationPoint) String() string {
 	var v unsafe.Pointer
-	zetasqlparser.ParseLocationPoint_GetString(p.raw, &v)
+	googlesqlparser.ParseLocationPoint_GetString(p.raw, &v)
 	return helper.PtrToString(v)
 }
 
@@ -43,19 +43,19 @@ func (r *ParseLocationRange) getRaw() unsafe.Pointer {
 
 func (r *ParseLocationRange) Start() *ParseLocationPoint {
 	var v unsafe.Pointer
-	zetasqlparser.ParseLocationRange_start(r.raw, &v)
+	googlesqlparser.ParseLocationRange_start(r.raw, &v)
 	return newParseLocationPoint(v)
 }
 
 func (r *ParseLocationRange) End() *ParseLocationPoint {
 	var v unsafe.Pointer
-	zetasqlparser.ParseLocationRange_end(r.raw, &v)
+	googlesqlparser.ParseLocationRange_end(r.raw, &v)
 	return newParseLocationPoint(v)
 }
 
 func (r *ParseLocationRange) String() string {
 	var v unsafe.Pointer
-	zetasqlparser.ParseLocationRange_GetString(r.raw, &v)
+	googlesqlparser.ParseLocationRange_GetString(r.raw, &v)
 	return helper.PtrToString(v)
 }
 
