@@ -124,7 +124,7 @@ func TestParseNextScriptStatementMerge(t *testing.T) {
 }
 
 func TestParseStatementMerge(t *testing.T) {
-	// From internal/ccall/zetasql/parser/testdata/dml_merge.test (known-good tree shape).
+	// From internal/ccall/googlesql/parser/testdata/dml_merge.test (known-good tree shape).
 	q := `MERGE INTO T
 USING S
 ON t1 = s1

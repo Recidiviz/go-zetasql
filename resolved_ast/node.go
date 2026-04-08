@@ -780,7 +780,7 @@ func (n *AggregateFunctionCallNode) SetLimit(v ExprNode) {
 // there is no extra information to consider besides the arguments
 // and other fields from BaseFunctionCallNode. However, for
 // example, the TemplateSQLFunction in
-// zetasql/public/templated_sql_function.h defines the
+// googlesql/public/templated_sql_function.h defines the
 // TemplatedSQLFunctionCall subclass which includes the
 // fully-resolved function body in context of the actual concrete
 // types of the arguments provided to the function call.
@@ -1030,7 +1030,7 @@ func (n *MakeProtoNode) AddField(v *MakeProtoFieldNode) {
 }
 
 // MakeProtoFieldNode one field assignment in a MakeProtoNode expression.
-// The type of expr will match with the zetasql type of the proto field.
+// The type of expr will match with the googlesql type of the proto field.
 // The type will be an array if the field is repeated.
 //
 // For NULL values of Expr, the proto field should be cleared.
@@ -1163,7 +1163,7 @@ func (n *GetProtoFieldNode) SetFormat(v FieldFormat) {
 //
 // This can only be set for non-message fields. If the field is a
 // proto2 field, then it must be annotated with
-// zetasql.UseDefaults=true. This cannot be set when HasBit is true or the field is required.
+// googlesql.UseDefaults=true. This cannot be set when HasBit is true or the field is required.
 func (n *GetProtoFieldNode) ReturnDefaultValueWhenUnset() bool {
 	var v bool
 	internal.ResolvedGetProtoField_return_default_value_when_unset(n.raw, &v)
@@ -3246,10 +3246,10 @@ func (n *ForeignKeyNode) AddReferencingColumn(v string) {
 	internal.ResolvedForeignKey_add_referencing_column_list(n.raw, helper.StringToPtr(v))
 }
 
-// CheckConstraintNode this represents the ZETASQL_CHECK constraint on a table. It is of the form:
+// CheckConstraintNode this represents the GOOGLESQL_CHECK constraint on a table. It is of the form:
 //
 //	CONSTRAINT <constraint_name>
-//	ZETASQL_CHECK <expression>
+//	GOOGLESQL_CHECK <expression>
 //	<enforced>
 //	<option_list>
 //
@@ -4271,7 +4271,7 @@ func (n *CreateSchemaStmtNode) AddOption(v *OptionNode) {
 //	nullptr when no PRIMARY KEY is specified.
 //
 // <foreign_key_list> specifies the FOREIGN KEY constraints on the table.
-// <check_constraint_list> specifies the ZETASQL_CHECK constraints on the table.
+// <check_constraint_list> specifies the GOOGLESQL_CHECK constraints on the table.
 // <partition_by_list> specifies the partitioning expressions for the table.
 // <cluster_by_list> specifies the clustering expressions for the table.
 // TODO: Return error when the PARTITION BY / CLUSTER BY
@@ -10989,7 +10989,7 @@ func (n *AnalyzeStmtNode) AddTableAndColumnIndex(v *TableAndColumnInfoNode) {
 //	If specified, and the table already exists, the foreign keys are
 //	required to be the same as that of the existing.
 //
-// <check_constraint_list> specifies the ZETASQL_CHECK constraints on the table.
+// <check_constraint_list> specifies the GOOGLESQL_CHECK constraints on the table.
 //
 //	If specified, and the table already exists, the constraints are
 //	required to be the same as that of the existing.

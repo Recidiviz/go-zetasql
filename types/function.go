@@ -1059,7 +1059,7 @@ type BuiltinFunctionOptions struct {
 // <namePath>, identifying the full path name of the function
 // including its containing catalog names.
 //
-// These constructors perform ZETASQL_CHECK validations of basic invariants:
+// These constructors perform GOOGLESQL_CHECK validations of basic invariants:
 // * Scalar functions cannot support the OVER clause.
 // * Analytic functions must support OVER clause.
 // * Signatures must satisfy FunctionSignature.IsValidForFunction().
