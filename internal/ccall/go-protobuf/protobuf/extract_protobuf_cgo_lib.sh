@@ -3,8 +3,10 @@
 # non-test .pic.o objects (plus utf8_range) into lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a.
 #
 # Runs on Linux and macOS when bazelisk/bazel is installed. Default CGO bindings still compile
-# protobuf via amalgamation (export.inc); this archive is for experiments or a future link-only
-# path — see docs/protobuf-vendoring.md.
+# protobuf via amalgamation (export.inc); this archive is for experiments or a future Tier-B
+# path. See docs/protobuf-vendoring.md ("Single-owner protobuf") and
+# docs/protobuf-single-owner-inventory.md for why link-only protobuf must align Abseil/macro
+# policy with the rest of go-zetasql.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"

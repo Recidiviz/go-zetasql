@@ -39,6 +39,7 @@ description: >-
 - **Protobuf is a hub package:** `internal/ccall/go-protobuf/protobuf` is blank-imported from a large set of `internal/ccall/...` proto and ZetaSQL CGO packages. Changing generated wrappers, `export.inc`, or that package’s `bind_*.go` **correctly invalidates a wide CGO subgraph**—that is coupling by design, not a broken cache. Go still rebuilds **only stale packages** in the graph unless you pass `-a`.
 - **Package granularity only:** You cannot ask Go to recompile “just part of” one CGO package. You *can* (optional) sanity-check the hub alone with `go build` / `go test` scoped to `./internal/ccall/go-protobuf/protobuf`, then run the real downstream test **without `-a`** so unrelated packages stay cache-hot.
 - **Script default:** `scripts/cgo-go.sh` uses `-p 1 -count=1` and **does not** pass `-a`—prefer that shape for heavy CGO gates unless you explicitly need a forced rebuild.
+- **Protobuf vs per-shard `absl` rename:** Each `bind.cc` uses `#define absl …_absl` (and similar) so symbols do not collide across CGO packages. Protobuf headers use `absl::` types; compiling protobuf in a **separate** `go-protobuf` TU with plain `absl::` while other shards use **renamed** `absl` breaks link with missing `google::protobuf::…` / wrong `once_flag` namespace. A “single-owner protobuf” layout needs **aligned Abseil/protobuf macro policy** or prebuilt libs with matching ABI—not only `GOCACHE`. See [`docs/protobuf-vendoring.md`](../../../docs/protobuf-vendoring.md) (*Single-owner protobuf*) and [`docs/protobuf-single-owner-inventory.md`](../../../docs/protobuf-single-owner-inventory.md).
 
 ## Downstream
 
@@ -56,6 +57,7 @@ description: >-
 | Pass root tests, fail obscure subpackages only | Unsupported isolated compile of split packages | Confirm with `make local/test` / CI matrix |
 | OOM | Parallel heavy CGO | One repo at a time; `-p 1`; `cgo-go.sh` |
 | Long compile, “cache not working” | `-a`, pipe to `tail`, or protobuf-wide invalidation | Drop `-a`; check `GOCACHE` mtime/size; see **Build cache and incremental CGO** |
+| Link: `undefined … google::protobuf` / `AssignDescriptors(…, *_absl::once_flag*, …)` | Shard compiles protobuf-facing code with **renamed** `absl`; separate `go-protobuf` TU uses plain `absl::` | Not a missing `.o` from cache—**ABI/macro mismatch**; see **Protobuf vs per-shard absl rename** and docs above |
 
 ## Slash command
 

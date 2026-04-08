@@ -140,6 +140,17 @@ After go-zetasql is green:
 - **Optional archive:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) builds **`lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a`** using Bazel in the ZetaSQL submodule. It runs on **Linux and macOS** when `bazelisk`/`bazel` is available. From the repo root: **`make extract-protobuf-lib`**. The archive is **not** linked by the default `bind_*.go` files (Bazel’s object symbols do not match the **`GO_ZETASQL_PB_EXPORT`** renaming in amalgamation); the script remains for experiments or a future link-only path.
 - **Stray artifacts:** `*.a` is gitignored globally; local `lib/` trees from the extract script need not be committed.
 
+### Single-owner protobuf / link-only dependents (design constraint)
+
+The tree **intentionally** compiles [`go-protobuf/protobuf/export.inc`](../internal/ccall/go-protobuf/protobuf/export.inc) in **many** CGO translation units: each `internal/ccall/go-zetasql/**/bind.cc` applies **shard-specific** `#define` macros (`googlesql`, `absl` → `…_googlesql`, `…_absl`, etc.) so symbols from the same headers do not collide at the final link (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)). Protobuf’s headers instantiate code using **`absl::` types**. If protobuf were built **only** inside `go-protobuf` with plain `absl::`, while analyzer/parser shards compile protobuf-facing code with **renamed** `absl`, the **templates and ABIs do not match**—link errors such as missing `AssignDescriptors(…, <shard>_absl::once_flag*, …)` are expected. So a naive “drop `#include "go-protobuf/protobuf/export.inc"` everywhere and blank-import `go-protobuf`” does **not** work without also aligning **Abseil / protobuf macro policy**.
+
+**Directions that can still match a “lower maintenance” goal:**
+
+- **Prebuilt protobuf + Abseil (Tier B):** use Bazel-built `libprotobuf_cgo.a` (and a consistent Abseil archive) and evolve the generator so **all** code that links that stack shares **one** `absl` / `google` namespace story—typically meaning **relaxing or restructuring** per-shard `absl` rename for protobuf-touching packages, or splitting processes. See [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) and [`docs/protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
+- **Smaller win:** deduplicate amalgamation only **within** the same macro island (fewer redundant includes), without claiming a single global protobuf TU.
+
+**Vendor patches** ([`descriptor_database.cc`](../internal/ccall/protobuf/google/protobuf/descriptor_database.cc), etc.) that address **multi-TU descriptor registration** should be revisited only **after** a new link layout is green end-to-end; do not assume they can be deleted on theory alone.
+
 ### Risk notes
 
 - Porting **`ParseField(CodedInputStream*)`** must stay consistent with current **`ExtensionInfo`** and **`ExtensionSet::Add*`** APIs; expect iterative compile fixes, not a blind copy-paste from old protobuf.

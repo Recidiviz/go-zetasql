@@ -70,6 +70,10 @@ docker/build-dev: cache-dirs
 CGO_CC ?= clang
 CGO_CXX ?= clang++
 
+# --allow-multiple-definition: needed while multiple CGO TUs each embed overlapping C++ (incl.
+# protobuf amalgamation). Removing it requires a single macro/link domain for protobuf+absl;
+# see docs/protobuf-vendoring.md "Single-owner protobuf".
+
 # Example: make local/build BUILDPKG=./internal/ccall/go-zetasql
 local/build: cache-dirs
 	CGO_ENABLED=1 \
