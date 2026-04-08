@@ -1105,7 +1105,7 @@ func (g *Generator) createRootBindGoParamDarwin() *BindGoParam {
 func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoParam {
 	param := &BindGoParam{DebugMode: false}
 	param.Pkg = "googlesql"
-	param.FQDN = "zetasql"
+	param.FQDN = "googlesql"
 	param.Compiler = defaultCgoStd
 	param.CXXFlags = cxxflags
 	param.LDFlags = ldflags
@@ -1153,7 +1153,7 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 				})
 			}
 		}
-		funcs, needsImportUnsafePkg := g.pkgToFuncs("zetasql", pkg)
+		funcs, needsImportUnsafePkg := g.pkgToFuncs("googlesql", pkg)
 		param.Funcs = append(param.Funcs, funcs...)
 		if needsImportUnsafePkg {
 			param.ImportUnsafePkg = true
