@@ -5,8 +5,17 @@ package protobuf
 // Protobuf is compiled via export.inc (single TU). Optional libprotobuf_cgo.a from
 // extract_protobuf_cgo_lib.sh is not linked here by default; see docs/protobuf-vendoring.md.
 //
-// cgo-invalidate: 20260408m — bump this when editing vendored C++ under internal/ccall/protobuf/
+// cgo-invalidate: 20260408n — bump this when editing vendored C++ under internal/ccall/protobuf/
 // (Go does not track #included .cc files; changing only those will not rebuild the TU).
+//
+// Linux: the previous flag set mixed Clang-only -Wno options (e.g. -Wno-unknown-warning-option,
+// -Wno-macro-redefined) with GCC, which then printed "unrecognized command-line option" and noisy
+// notes. This file uses GCC-supported names (e.g. -Wno-builtin-macro-redefined) and -Wno-attributes
+// for protobuf always_inline / -Wattributes noise.
+//
+// Remaining -Wsubobject-linkage from vendored protobuf/absl is GCC-specific to suppress; Clang does
+// not accept -Wno-subobject-linkage. If you use GCC for C++ (recommended: CC=gcc CXX=g++), you can
+// add e.g. export CGO_CXXFLAGS="$CGO_CXXFLAGS -Wno-subobject-linkage" for a quieter build.
 
 /*
 #cgo CFLAGS: -x c++
@@ -21,15 +30,10 @@ package protobuf
 #cgo CFLAGS: -Wno-switch
 #cgo CFLAGS: -Wno-unused-function
 #cgo CFLAGS: -Wno-deprecated-declarations
-#cgo CFLAGS: -Wno-inconsistent-missing-override
-#cgo CFLAGS: -Wno-unknown-attributes
-#cgo CFLAGS: -Wno-macro-redefined
+#cgo CFLAGS: -Wno-builtin-macro-redefined
 #cgo CFLAGS: -Wno-shift-count-overflow
-#cgo CFLAGS: -Wno-enum-compare-switch
 #cgo CFLAGS: -Wno-return-type
-#cgo CFLAGS: -Wno-subobject-linkage
-#cgo CFLAGS: -Wno-defaulted-function-deleted
-#cgo CFLAGS: -Wno-unknown-warning-option
+#cgo CFLAGS: -Wno-attributes
 #cgo CFLAGS: -DHAVE_PTHREAD
 #cgo CFLAGS: -DHAVE_ZLIB
 #cgo CFLAGS: -DU_COMMON_IMPLEMENTATION
@@ -39,8 +43,8 @@ package protobuf
 #cgo CXXFLAGS: -I${SRCDIR}/../../gtest
 #cgo CXXFLAGS: -I${SRCDIR}/../../icu
 #cgo CXXFLAGS: -I${SRCDIR}/../../utf8_range
-#cgo CXXFLAGS: -Wno-macro-redefined
-#cgo CXXFLAGS: -Wno-defaulted-function-deleted
+#cgo CXXFLAGS: -Wno-builtin-macro-redefined
+#cgo CXXFLAGS: -Wno-attributes
 #cgo LDFLAGS: -ldl -lz -lstdc++
 
 #include "export.inc"
