@@ -647,15 +647,17 @@ bool EncodedDescriptorDatabase::DescriptorIndex::AddFile(const FileProto& file,
   }
   all_values_.back().encoded_package = EncodeString(file.package());
 
+  // go-zetasql: several CGO packages each #include go-protobuf/protobuf/export.inc;
+  // identical generated descriptors are registered more than once. When the
+  // btree insert fails (same file name), drop the duplicate all_values_ entry
+  // and succeed. Do not use a secondary check against by_name_flat_: after
+  // EnsureFlat(), a successful btree insert can still find the same name in
+  // the flat vector, which would pop_back() without erasing the btree entry
+  // and corrupt the index (FindFileByName then misses e.g. error_location.proto).
   if (!by_name_
            .insert({static_cast<int>(all_values_.size() - 1),
                     EncodeString(file.name())})
-           .second ||
-      std::binary_search(by_name_flat_.begin(), by_name_flat_.end(),
-                         file.name(), by_name_.key_comp())) {
-    // go-zetasql: several CGO packages each #include go-protobuf/protobuf/export.inc;
-    // identical generated descriptors are registered more than once. Drop the
-    // duplicate all_values_ entry and succeed (same bytes as the first copy).
+           .second) {
     all_values_.pop_back();
     return true;
   }

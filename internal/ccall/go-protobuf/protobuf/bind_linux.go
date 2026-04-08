@@ -3,7 +3,7 @@ package protobuf
 // Protobuf is compiled via export.inc (single TU). Optional libprotobuf_cgo.a from
 // extract_protobuf_cgo_lib.sh is not linked here by default; see docs/protobuf-vendoring.md.
 //
-// cgo-invalidate: 20260407 — bump this when editing vendored C++ under internal/ccall/protobuf/
+// cgo-invalidate: 20260408j — bump this when editing vendored C++ under internal/ccall/protobuf/
 // (Go does not track #included .cc files; changing only those will not rebuild the TU).
 
 /*
