@@ -3,6 +3,7 @@
 
 #include "googlesql/public/analyzer.h"
 // include sources
+// options/type/proto type_annotation+wire_format .pb.cc amalgamation blocks are only in analyzer bind.cc; root links that package.
 #include "googlesql/public/analyzer.cc"
 #include "googlesql/public/table_name_resolver.cc"
 #include "googlesql/public/table_name_resolver.h"

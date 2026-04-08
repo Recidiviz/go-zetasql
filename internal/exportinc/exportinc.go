@@ -86,6 +86,14 @@ func PreludeLinesFromBindCC(bindCC []byte) ([]string, error) {
 
 // applyExportPreludePolicy applies export.inc exceptions derived from bind.cc preludes.
 func applyExportPreludePolicy(packageDir string, prelude []string) []string {
+	prelude = filterGoProtobufAmalgamationSingleOwner(packageDir, prelude)
+	prelude = filterPublicOptionsCcProtoSourcesSingleOwner(packageDir, prelude)
+	prelude = filterPublicTypeCcProtoSourcesSingleOwner(packageDir, prelude)
+	prelude = filterPublicProtoTypeAnnotationCcProtoSourcesSingleOwner(packageDir, prelude)
+	prelude = filterPublicAnalyzerExportIncOptionsPbSingleOwner(packageDir, prelude)
+	prelude = prependPublicOptionsCcProtoDescriptorMacros(packageDir, prelude)
+	prelude = prependPublicTypeCcProtoDescriptorMacros(packageDir, prelude)
+	prelude = prependPublicProtoTypeAnnotationCcProtoDescriptorMacros(packageDir, prelude)
 	prelude = prependParserExportFlexSuppress(packageDir, prelude)
 	prelude = filterBisonExportDuplicateFlexTokenizer(packageDir, prelude)
 	prelude = filterFlexTokenizerExportDuplicateSources(packageDir, prelude)
@@ -100,6 +108,278 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 		}
 	}
 	return prelude
+}
+
+// filterGoProtobufAmalgamationSingleOwner drops the protobuf amalgamation include from every
+// package except internal/ccall/go-protobuf/protobuf (single compile TU; others link via import).
+func filterGoProtobufAmalgamationSingleOwner(packageDir string, prelude []string) []string {
+	if strings.Contains(packageDir, "go-protobuf/protobuf") {
+		return prelude
+	}
+	const includeLine = `#include "go-protobuf/protobuf/export.inc"`
+	out := make([]string, 0, len(prelude))
+	for _, line := range prelude {
+		if strings.TrimSpace(line) == includeLine {
+			continue
+		}
+		out = append(out, line)
+	}
+	return out
+}
+
+// prependPublicOptionsCcProtoDescriptorMacros inserts descriptor table #defines before
+// options.pb.h so every TU that includes this export.inc resolves the same symbols as
+// googlesql/public/analyzer (where options.pb.cc is amalgamated). Matches
+// root_analyzer_amalgamation_macros.inc lines for googlesql/public/options.proto.
+func prependPublicOptionsCcProtoDescriptorMacros(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-zetasql/public/options_cc_proto") {
+		return prelude
+	}
+	const includeOpt = `#include "googlesql/public/options.pb.h"`
+	out := make([]string, 0, len(prelude)+8)
+	for _, line := range prelude {
+		if strings.TrimSpace(line) == includeOpt {
+			out = append(out,
+				"// Descriptor table identifiers match googlesql/public/analyzer (options.pb.cc amalgamation).",
+				"#define googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_googlesql_2fpublic_2foptions_2eproto",
+				"#define descriptor_table_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2foptions_2eproto",
+				"#define TableStruct_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2foptions_2eproto",
+				line,
+			)
+			continue
+		}
+		out = append(out, line)
+	}
+	return out
+}
+
+// filterPublicOptionsCcProtoSourcesSingleOwner removes googlesql/public/options.pb.cc from the
+// export.inc prelude for go-zetasql/public/options_cc_proto. The .pb.cc is amalgamated only in
+// googlesql/public/analyzer/bind.cc; including it again via export.inc duplicates extension registrations.
+func filterPublicOptionsCcProtoSourcesSingleOwner(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-zetasql/public/options_cc_proto") {
+		return prelude
+	}
+	out := make([]string, 0, len(prelude))
+	for i := 0; i < len(prelude); i++ {
+		line := prelude[i]
+		if strings.TrimSpace(line) != "// include sources" {
+			out = append(out, line)
+			continue
+		}
+		out = append(out, line)
+		out = append(out, "// googlesql/public/options.pb.cc is amalgamated only in googlesql/public/analyzer/bind.cc (single owner).")
+		i++
+		for i < len(prelude) && strings.TrimSpace(prelude[i]) != "// include dependencies" {
+			t := strings.TrimSpace(prelude[i])
+			if isPublicOptionsPbCcAmalgamationLine(t) {
+				i++
+				continue
+			}
+			out = append(out, prelude[i])
+			i++
+		}
+		if i < len(prelude) {
+			out = append(out, prelude[i])
+		}
+	}
+	return out
+}
+
+func isPublicOptionsPbCcAmalgamationLine(t string) bool {
+	return strings.HasPrefix(t, "#define schemas") ||
+		strings.HasPrefix(t, "#define file_default_instances") ||
+		t == `#include "googlesql/public/options.pb.cc"` ||
+		strings.HasPrefix(t, "#undef file_default_instances") ||
+		strings.HasPrefix(t, "#undef schemas")
+}
+
+func isPublicTypePbCcAmalgamationLine(t string) bool {
+	return strings.HasPrefix(t, "#define schemas") ||
+		strings.HasPrefix(t, "#define file_default_instances") ||
+		t == `#include "googlesql/public/type.pb.cc"` ||
+		strings.HasPrefix(t, "#undef file_default_instances") ||
+		strings.HasPrefix(t, "#undef schemas")
+}
+
+// isAnalyzerOwnedOptionsOrTypePbCcAmalgamationLine matches conflict-wrapped amalgamation of
+// options.pb.cc and/or type.pb.cc in analyzer bind.cc (stripped from analyzer/export.inc for root).
+func isPublicProtoTypeAnnotationCcProtoAmalgamationLine(t string) bool {
+	return strings.HasPrefix(t, "#define schemas") ||
+		strings.HasPrefix(t, "#define file_default_instances") ||
+		t == `#include "googlesql/public/proto/type_annotation.pb.cc"` ||
+		t == `#include "googlesql/public/proto/wire_format_annotation.pb.cc"` ||
+		strings.HasPrefix(t, "#undef file_default_instances") ||
+		strings.HasPrefix(t, "#undef schemas")
+}
+
+func isAnalyzerOwnedOptionsOrTypePbCcAmalgamationLine(t string) bool {
+	return isPublicOptionsPbCcAmalgamationLine(t) ||
+		isPublicTypePbCcAmalgamationLine(t) ||
+		isPublicProtoTypeAnnotationCcProtoAmalgamationLine(t)
+}
+
+// filterPublicProtoTypeAnnotationCcProtoSourcesSingleOwner removes proto/type_annotation and
+// wire_format_annotation .pb.cc amalgamation from go-zetasql/public/proto/type_annotation_cc_proto.
+// Both compile only in googlesql/public/analyzer/bind.cc.
+func filterPublicProtoTypeAnnotationCcProtoSourcesSingleOwner(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-zetasql/public/proto/type_annotation_cc_proto") {
+		return prelude
+	}
+	out := make([]string, 0, len(prelude))
+	for i := 0; i < len(prelude); i++ {
+		line := prelude[i]
+		if strings.TrimSpace(line) != "// include sources" {
+			out = append(out, line)
+			continue
+		}
+		out = append(out, line)
+		out = append(out, "// googlesql/public/proto/type_annotation.pb.cc and wire_format_annotation.pb.cc are amalgamated only in googlesql/public/analyzer/bind.cc (single owner).")
+		i++
+		for i < len(prelude) && strings.TrimSpace(prelude[i]) != "// include dependencies" {
+			t := strings.TrimSpace(prelude[i])
+			if isPublicProtoTypeAnnotationCcProtoAmalgamationLine(t) {
+				i++
+				continue
+			}
+			out = append(out, prelude[i])
+			i++
+		}
+		if i < len(prelude) {
+			out = append(out, prelude[i])
+		}
+	}
+	return out
+}
+
+// prependPublicProtoTypeAnnotationCcProtoDescriptorMacros inserts descriptor table #defines before
+// the .pb.h includes so TUs that include this export.inc match googlesql/public/analyzer.
+func prependPublicProtoTypeAnnotationCcProtoDescriptorMacros(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-zetasql/public/proto/type_annotation_cc_proto") {
+		return prelude
+	}
+	const (
+		includeWire = `#include "googlesql/public/proto/wire_format_annotation.pb.h"`
+		includeType = `#include "googlesql/public/proto/type_annotation.pb.h"`
+	)
+	out := make([]string, 0, len(prelude)+16)
+	for _, line := range prelude {
+		switch strings.TrimSpace(line) {
+		case includeWire:
+			out = append(out,
+				"// Descriptor table identifiers match googlesql/public/analyzer (wire_format_annotation.pb.cc amalgamation).",
+				"#define googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto",
+				"#define descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto",
+				"#define TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto",
+				line,
+			)
+		case includeType:
+			out = append(out,
+				"// Descriptor table identifiers match googlesql/public/analyzer (proto/type_annotation.pb.cc amalgamation).",
+				"#define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto",
+				"#define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto",
+				"#define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto",
+				line,
+			)
+		default:
+			out = append(out, line)
+		}
+	}
+	return out
+}
+
+// filterPublicTypeCcProtoSourcesSingleOwner removes googlesql/public/type.pb.cc from the
+// export.inc prelude for go-zetasql/public/type_cc_proto. The .pb.cc is amalgamated only in
+// googlesql/public/analyzer/bind.cc; including it again via export.inc duplicates extension registrations.
+func filterPublicTypeCcProtoSourcesSingleOwner(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-zetasql/public/type_cc_proto") {
+		return prelude
+	}
+	out := make([]string, 0, len(prelude))
+	for i := 0; i < len(prelude); i++ {
+		line := prelude[i]
+		if strings.TrimSpace(line) != "// include sources" {
+			out = append(out, line)
+			continue
+		}
+		out = append(out, line)
+		out = append(out, "// googlesql/public/type.pb.cc is amalgamated only in googlesql/public/analyzer/bind.cc (single owner).")
+		i++
+		for i < len(prelude) && strings.TrimSpace(prelude[i]) != "// include dependencies" {
+			t := strings.TrimSpace(prelude[i])
+			if isPublicTypePbCcAmalgamationLine(t) {
+				i++
+				continue
+			}
+			out = append(out, prelude[i])
+			i++
+		}
+		if i < len(prelude) {
+			out = append(out, prelude[i])
+		}
+	}
+	return out
+}
+
+// prependPublicTypeCcProtoDescriptorMacros inserts descriptor table #defines before
+// type.pb.h so every TU that includes this export.inc resolves the same symbols as
+// googlesql/public/analyzer (where type.pb.cc is amalgamated). Matches
+// root_analyzer_amalgamation_macros.inc lines for googlesql/public/type.proto.
+func prependPublicTypeCcProtoDescriptorMacros(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-zetasql/public/type_cc_proto") {
+		return prelude
+	}
+	const includeType = `#include "googlesql/public/type.pb.h"`
+	out := make([]string, 0, len(prelude)+8)
+	for _, line := range prelude {
+		if strings.TrimSpace(line) == includeType {
+			out = append(out,
+				"// Descriptor table identifiers match googlesql/public/analyzer (type.pb.cc amalgamation).",
+				"#define googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_googlesql_2fpublic_2ftype_2eproto",
+				"#define descriptor_table_googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2ftype_2eproto",
+				"#define TableStruct_googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2ftype_2eproto",
+				line,
+			)
+			continue
+		}
+		out = append(out, line)
+	}
+	return out
+}
+
+// filterPublicAnalyzerExportIncOptionsPbSingleOwner removes googlesql/public/options.pb.cc and
+// googlesql/public/type.pb.cc amalgamation blocks from go-zetasql/public/analyzer/export.inc.
+// Root bind.cc includes that export.inc; without this, those .pb.cc files would be compiled twice
+// (root TU + analyzer package) and duplicate extension registration. The root package links the
+// analyzer archive for those symbols.
+func filterPublicAnalyzerExportIncOptionsPbSingleOwner(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-zetasql/public/analyzer") {
+		return prelude
+	}
+	out := make([]string, 0, len(prelude))
+	for i := 0; i < len(prelude); i++ {
+		line := prelude[i]
+		if strings.TrimSpace(line) != "// include sources" {
+			out = append(out, line)
+			continue
+		}
+		out = append(out, line)
+		out = append(out, "// options/type/proto type_annotation+wire_format .pb.cc amalgamation blocks are only in analyzer bind.cc; root links that package.")
+		i++
+		for i < len(prelude) && strings.TrimSpace(prelude[i]) != "// include dependencies" {
+			t := strings.TrimSpace(prelude[i])
+			if isAnalyzerOwnedOptionsOrTypePbCcAmalgamationLine(t) {
+				i++
+				continue
+			}
+			out = append(out, prelude[i])
+			i++
+		}
+		if i < len(prelude) {
+			out = append(out, prelude[i])
+		}
+	}
+	return out
 }
 
 // filterBisonExportDuplicateFlexTokenizer drops flex_tokenizer.cc from the bison generated-lib

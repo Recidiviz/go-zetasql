@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/table_valued_function.h"
+#include "googlesql/legacy_zetasql/public/table_valued_function.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -24,24 +24,24 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/function_utils.h"
-#include "zetasql/proto/function.pb.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/input_argument_type.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/signature_match_result.h"
-#include "zetasql/public/simple_table.pb.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_deserializer.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/common/function_utils.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/signature_match_result.h"
+#include "googlesql/legacy_zetasql/public/simple_table.pb.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_deserializer.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
@@ -49,9 +49,9 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 
@@ -259,8 +259,10 @@ void TableValuedFunction::RegisterDeserializer(
     FunctionEnums::TableValuedFunctionType type, TVFDeserializer deserializer) {
   // ABSL_CHECK validated -- This is used at initialization time only.
   ABSL_CHECK(FunctionEnums::TableValuedFunctionType_IsValid(type)) << type;
-  // ABSL_CHECK validated -- This is used at initialization time only.
-  ABSL_CHECK(!(*TvfDeserializers())[type]) << type;
+  // Multiple CGO TUs may include the same amalgamation via export.inc; first registration wins.
+  if ((*TvfDeserializers())[type]) {
+    return;
+  }
   (*TvfDeserializers())[type] = std::move(deserializer);
 }
 

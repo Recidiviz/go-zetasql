@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.h"
 
 #include <ctype.h>
 
@@ -25,15 +25,15 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/function_utils.h"
-#include "zetasql/proto/function.pb.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/type_deserializer.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/function_utils.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_deserializer.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "absl/status/status.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
@@ -41,8 +41,8 @@
 #include "absl/strings/str_replace.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 
@@ -247,9 +247,12 @@ absl::Status Function::Serialize(
 // static
 void Function::RegisterDeserializer(const std::string& group_name,
                                     FunctionDeserializer deserializer) {
-  // ABSL_CHECK validated -- This is used at initialization time only.
-  ABSL_CHECK(zetasql_base::InsertIfNotPresent(FunctionDeserializers(), group_name,
-                                deserializer));
+  // Multiple CGO TUs may include the same amalgamation; first registration wins.
+  auto* m = FunctionDeserializers();
+  if (m->find(group_name) != m->end()) {
+    return;
+  }
+  (*m)[group_name] = std::move(deserializer);
 }
 
 const std::string Function::FullName(bool include_group) const {

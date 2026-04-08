@@ -1,14 +1,13 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_OPTIONS_CC_PROTO_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_OPTIONS_CC_PROTO_EXPORT_H
 
+// Descriptor table identifiers match googlesql/public/analyzer (options.pb.cc amalgamation).
+#define googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_googlesql_2fpublic_2foptions_2eproto
+#define descriptor_table_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2foptions_2eproto
+#define TableStruct_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2foptions_2eproto
 #include "googlesql/public/options.pb.h"
 // include sources
-#define schemas googlesql_public_options_cc_proto_schemas
-#define file_default_instances googlesql_public_options_cc_proto_file_default_instances
-#include "googlesql/public/options.pb.cc"
-#undef file_default_instances
-#undef schemas
+// googlesql/public/options.pb.cc is amalgamated only in googlesql/public/analyzer/bind.cc (single owner).
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

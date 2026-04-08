@@ -357,8 +357,10 @@ void TableValuedFunction::RegisterDeserializer(
     FunctionEnums::TableValuedFunctionType type, TVFDeserializer deserializer) {
   // ABSL_CHECK validated -- This is used at initialization time only.
   ABSL_CHECK(FunctionEnums::TableValuedFunctionType_IsValid(type)) << type;
-  // ABSL_CHECK validated -- This is used at initialization time only.
-  ABSL_CHECK(!(*TvfDeserializers())[type]) << type;
+  // Multiple CGO TUs may include the same amalgamation via export.inc; first registration wins.
+  if ((*TvfDeserializers())[type]) {
+    return;
+  }
   (*TvfDeserializers())[type] = std::move(deserializer);
 }
 

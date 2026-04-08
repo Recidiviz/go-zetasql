@@ -255,9 +255,12 @@ absl::Status Function::Serialize(
 // static
 void Function::RegisterDeserializer(const std::string& group_name,
                                     FunctionDeserializer deserializer) {
-  // ABSL_CHECK validated -- This is used at initialization time only.
-  ABSL_CHECK(googlesql_base::InsertIfNotPresent(FunctionDeserializers(), group_name,
-                                deserializer));
+  // Multiple CGO TUs may include the same amalgamation; first registration wins.
+  auto* m = FunctionDeserializers();
+  if (m->find(group_name) != m->end()) {
+    return;
+  }
+  (*m)[group_name] = std::move(deserializer);
 }
 
 std::string Function::FullName(bool include_group) const {

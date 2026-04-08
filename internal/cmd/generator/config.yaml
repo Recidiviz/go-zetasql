@@ -372,6 +372,15 @@ add_sources:
       - googlesql/parser/textmapper_lexer_adapter.cc
       - googlesql/parser/tm_parser.cc
       - googlesql/parser/join_processor.cc
+  # options.pb.cc / type.pb.cc compile in the same googlesql namespace shard as consumers (analyzer).
+  # public/options_cc_proto and public/type_cc_proto export.inc are header-only; .cc is amalgamated here only.
+  # After table_name_resolver.cc + .h (matches prior order: sources then options/type from export.inc).
+  - file: googlesql/public/table_name_resolver.h
+    after_includes:
+      - googlesql/public/options.pb.cc
+      - googlesql/public/type.pb.cc
+      - googlesql/public/proto/type_annotation.pb.cc
+      - googlesql/public/proto/wire_format_annotation.pb.cc
 
 protobuf_internal_export_name_files:
   - protobuf/google/protobuf/descriptor.pb.h
@@ -392,10 +401,10 @@ protobuf_internal_export_name_files:
   - googlesql/public/proto/wire_format_annotation.pb.h
 
 cclib:
-  # Tier B + unified absl/google (experimental). Uncomment and set e.g. [absl, google] so every
-  # bind.cc omits those #defines — requires a single linked absl/protobuf ABI; see docs/tier-b-absl-protobuf.md.
-  # Leaving unset is equivalent to [].
-  global_exclude_replace_names: []
+  # Unified absl/google: plain namespaces match go-protobuf amalgamation + single include policy.
+  global_exclude_replace_names:
+    - absl
+    - google
   excludes:
     - bison_keyword_token_codes_inc
     - ^mock_helpers$
@@ -426,6 +435,19 @@ cclib:
       sources:
         - googlesql/parser/flex_tokenizer.h
         - googlesql/parser/flex_tokenizer.cc
+    - pkg: googlesql/public/options_cc_proto
+      sources:
+        # Single owner: googlesql/public/analyzer amalgamation (add_sources on analyzer.cc).
+        - googlesql/public/options.pb.cc
+    - pkg: googlesql/public/type_cc_proto
+      sources:
+        # Single owner: googlesql/public/analyzer amalgamation (add_sources on table_name_resolver.h).
+        - googlesql/public/type.pb.cc
+    - pkg: googlesql/public/proto/type_annotation_cc_proto
+      sources:
+        # Single owner: googlesql/public/analyzer (add_sources); wire_format pairs with proto/type_annotation.
+        - googlesql/public/proto/type_annotation.pb.cc
+        - googlesql/public/proto/wire_format_annotation.pb.cc
   bind_cc_prelude_before_headers:
     - pkg: googlesql/parser/parser
       lines: |

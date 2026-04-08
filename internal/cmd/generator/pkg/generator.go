@@ -21,6 +21,12 @@ import (
 var (
 	bazelSupportedLibs = []string{"googlesql", "absl", "algorithms", "base", "proto"}
 	includeDirs        = []string{"protobuf", "utf8_range", "gtest", "icu", "re2", "json", "googleapis", "boringssl", "flex/src"}
+	// goProtobufImportPath ensures CGO links the package that owns the protobuf amalgamation TU.
+	goProtobufImportPath = "github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf"
+	// goProtobufCCLibPkgKey is the synthetic cc_library key for internal/ccall/go-protobuf/protobuf.
+	goProtobufCCLibPkgKey = "protobuf/protobuf"
+	// goRootAnalyzerPublicImportPath links options.pb.cc and analyzer amalgamation for root bind.cc.
+	goRootAnalyzerPublicImportPath = "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/public/analyzer"
 )
 
 type Generator struct {
@@ -108,6 +114,14 @@ func (g *Generator) Generate() error {
 		if err := g.generate(parsedFile); err != nil {
 			return err
 		}
+	}
+	// Some cc_library dirs are not regenerated from Bazel; strip stale macros so
+	// single-owner protobuf + plain absl stay link-consistent across all bind.cc.
+	if err := stripGoZetasqlBindCCGoogleMacros(); err != nil {
+		return err
+	}
+	if err := stripRootAnalyzerAmalgamationMacros(); err != nil {
+		return err
 	}
 	dummyGo, err := g.templates.ReadFile("templates/dummy.go.tmpl")
 	if err != nil {
@@ -660,6 +674,52 @@ func (g *Generator) amalgamationExcludeSourcePaths(lib *Lib) map[string]struct{}
 	return exclude
 }
 
+// optionsPublicDescriptorMacrosPrelude must appear before "// include headers" for every
+// googlesql/* bind.cc whose headers may include googlesql/public/options.pb.h or type.pb.h (often before
+// "// include dependencies" can pull *_cc_proto/export.inc). Matches
+// root_analyzer_amalgamation_macros.inc and internal/exportinc prepend*DescriptorMacros.
+const optionsPublicDescriptorMacrosPrelude = `
+// Descriptor table identifiers for googlesql/public/options.proto (see googlesql/public/analyzer amalgamation).
+#define googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_googlesql_2fpublic_2foptions_2eproto
+#define descriptor_table_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2foptions_2eproto
+#define TableStruct_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2foptions_2eproto
+// Descriptor table identifiers for googlesql/public/type.proto (same single-owner TU as options.pb.cc).
+#define googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_googlesql_2fpublic_2ftype_2eproto
+#define descriptor_table_googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2ftype_2eproto
+#define TableStruct_googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2ftype_2eproto
+// googlesql/public/proto/wire_format_annotation.proto (paired with public/proto/type_annotation in analyzer).
+#define googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
+#define descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
+#define TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
+// googlesql/public/proto/type_annotation.proto (extends google.protobuf.FieldOptions; single-owner TU).
+#define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
+#define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
+#define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
+`
+
+// appendConflictWrappedInclude emits #include for a dependency .cc (e.g. add_sources after_includes)
+// with the same #define schemas / file_default_instances wrapping as a primary amalgamation source.
+func (g *Generator) appendConflictWrappedInclude(sb *strings.Builder, incPath string, fqdn string) {
+	symbols, hasConflict := g.containsConflictSymbolFileMap[incPath]
+	if hasConflict {
+		for _, symbol := range symbols {
+			rhs := fmt.Sprintf("%s_%s", fqdn, symbol)
+			if g.conflictExportSuffixByFileSymbol != nil {
+				if suf, ok := g.conflictExportSuffixByFileSymbol[incPath][symbol]; ok && suf != "" {
+					rhs = fmt.Sprintf("%s_%s_%s", fqdn, suf, symbol)
+				}
+			}
+			sb.WriteString(fmt.Sprintf("\n#define %s %s", symbol, rhs))
+		}
+	}
+	sb.WriteString(fmt.Sprintf("\n#include \"%s\"\n", incPath))
+	if hasConflict {
+		for i := len(symbols) - 1; i >= 0; i-- {
+			sb.WriteString(fmt.Sprintf("#undef %s\n", symbols[i]))
+		}
+	}
+}
+
 func bindCCPreludeBeforeHeaders(cfg *Config, lib *Lib) string {
 	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
 	for _, ph := range cfg.CCLib.BindCCPreludeBeforeHeaders {
@@ -678,12 +738,15 @@ func bindCCPreludeBeforeHeaders(cfg *Config, lib *Lib) string {
 
 func (g *Generator) buildReplaceNameEntries(pkgKey string) []ReplaceNameEntry {
 	names := append(
-		append(
-			append([]string{}, g.cfg.TopLevelNamespaces...),
-			g.cfg.GlobalSymbols...,
-		),
-		g.internalExportNames...,
+		append([]string{}, g.cfg.TopLevelNamespaces...),
+		g.cfg.GlobalSymbols...,
 	)
+	// Descriptor table / PROTOBUF_INTERNAL_EXPORT_* names must match the single-owner TU
+	// (go-protobuf/protobuf). Other packages link that archive; shard-prefixing these symbols
+	// causes undefined references to google::protobuf::* and descriptor_table_*.
+	if pkgKey == goProtobufCCLibPkgKey {
+		names = append(names, g.internalExportNames...)
+	}
 	for _, inj := range g.cfg.CCLib.InjectReplaceNames {
 		if inj.Pkg != pkgKey {
 			continue
@@ -787,6 +850,42 @@ func (g *Generator) omitDependencyExportInclude(pkgKey, depKey string) bool {
 	return false
 }
 
+func appendUniqueGoImport(imports []string, s string) []string {
+	for _, x := range imports {
+		if x == s {
+			return imports
+		}
+	}
+	return append(imports, s)
+}
+
+// libNeedsGoProtobufImport is true when this library's dependency graph includes the
+// synthetic protobuf/protobuf cc_library (needs blank-import when bind.cc omits export.inc).
+func (g *Generator) libNeedsGoProtobufImport(lib *Lib) bool {
+	seen := map[string]bool{}
+	var walk func(*Lib) bool
+	walk = func(l *Lib) bool {
+		pn := fmt.Sprintf("%s/%s", l.BasePkg, l.Name)
+		if seen[pn] {
+			return false
+		}
+		seen[pn] = true
+		for _, d := range l.Deps {
+			if d.BasePkg == "protobuf" && d.Pkg == "protobuf" {
+				return true
+			}
+			dpn := fmt.Sprintf("%s/%s", d.BasePkg, d.Pkg)
+			if child, ok := g.libMap[dpn]; ok {
+				if walk(child) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+	return walk(lib)
+}
+
 func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	param := &BindCCParam{}
 
@@ -796,6 +895,9 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
 	param.ReplaceNameEntries = g.buildReplaceNameEntries(pkgKey)
 	param.PreludeBeforeHeaders = bindCCPreludeBeforeHeaders(g.cfg, lib)
+	if strings.HasPrefix(lib.BasePkg, "googlesql") {
+		param.PreludeBeforeHeaders += optionsPublicDescriptorMacrosPrelude
+	}
 	excludeAmalg := g.amalgamationExcludePaths(lib)
 	excludeSrc := g.amalgamationExcludeSourcePaths(lib)
 	param.Headers = dropCCHeadersDuplicatedInSources(filterStrings(lib.HeaderPaths(), excludeAmalg), lib)
@@ -829,9 +931,11 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 			}
 		}
 		if addSource, exists := g.containsAddSourceFileMap[src]; exists {
+			var sb strings.Builder
 			for _, inc := range addSource.AfterIncludes {
-				sourceParam.AfterIncludeHook += fmt.Sprintf("\n#include \"%s\"\n", inc)
+				g.appendConflictWrappedInclude(&sb, inc, param.FQDN)
 			}
+			sourceParam.AfterIncludeHook += sb.String()
 			if addSource.Source != "" {
 				sourceParam.AfterIncludeHook += fmt.Sprintf("\n#include \"%s\"\n", addSource.Source)
 			}
@@ -855,6 +959,10 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 		}
 		depKey := fmt.Sprintf("%s/%s", dep.BasePkg, dep.Pkg)
 		if g.omitDependencyExportInclude(pkgKey, depKey) {
+			continue
+		}
+		// Single-owner protobuf TU: only go-protobuf/protobuf compiles export.inc; others link it.
+		if dep.BasePkg == "protobuf" && dep.Pkg == "protobuf" {
 			continue
 		}
 		deps = append(deps, goPkgPath(dep.BasePkg, dep.Pkg))
@@ -1047,6 +1155,8 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 	param.ImportGoLibs = append(param.ImportGoLibs,
 		"github.com/goccy/go-zetasql/internal/ccall/utf8_range_link",
 	)
+	param.ImportGoLibs = appendUniqueGoImport(param.ImportGoLibs, goProtobufImportPath)
+	param.ImportGoLibs = appendUniqueGoImport(param.ImportGoLibs, goRootAnalyzerPublicImportPath)
 	return param
 }
 
@@ -1109,6 +1219,9 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 		if needsImportUnsafePkg {
 			param.ImportUnsafePkg = true
 		}
+	}
+	if g.libNeedsGoProtobufImport(lib) {
+		param.ImportGoLibs = appendUniqueGoImport(param.ImportGoLibs, goProtobufImportPath)
 	}
 	return param
 }
