@@ -15,7 +15,7 @@ description: >-
 
 1. **Classify before fixing** — Decide whether the failure is *sync drift* (updater/generator/vendorpatch not run), *link/amalgamation* (duplicate or missing symbols), *codegen* (missing `resolved_ast` / protos), or *runtime/semantic* (parser, status payloads, language features). Do not treat every red build as a random code bug.
 2. **Delta-first** — Read or write `docs/googlesql-upgrade-delta-<from>-to-<to>.md` and skim upstream `git log`/`diff` between tags for protos, builtins, and `resolved_ast` churn before deep edits.
-3. **Submodule is read-only upstream** — The checkout under `internal/cmd/updater/zetasql` must be an **upstream release tag only**; do not add commits inside the submodule. CGO-specific fixes belong in `internal/ccall/` (after the updater), `vendorpatch`, or documented overlays—see [`docs/zetasql-submodule-policy.md`](../../../docs/zetasql-submodule-policy.md).
+3. **Submodule is read-only upstream** — The checkout under `internal/cmd/updater/googlesql` must be an **upstream release tag only**; do not add commits inside the submodule. CGO-specific fixes belong in `internal/ccall/` (after the updater), `vendorpatch`, or documented overlays—see [`docs/zetasql-submodule-policy.md`](../../../docs/zetasql-submodule-policy.md).
 4. **Pipeline order** — Submodule tag checkout → `internal/cmd/updater` (incremental; know what ran) → `go run ./internal/cmd/vendorpatch` or `scripts/apply-vendor-patches.sh` as needed → `go run ./internal/cmd/generator` → **then** tests. If C++ or Go bindings look impossible, suspect skipped steps.
 5. **One heavy repo at a time** — Do not run full test suites for go-googlesql, go-googlesqlite, and bigquery-emulator in parallel (OOM).
 

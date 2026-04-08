@@ -1,4 +1,4 @@
 .git
 .github
 internal/cmd/updater/cache
-internal/cmd/updater/zetasql
+internal/cmd/updater/googlesql

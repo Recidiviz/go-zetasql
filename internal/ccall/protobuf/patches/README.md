@@ -29,19 +29,19 @@ The script writes `.genpatch-baseline/` under the repo root (listed in `.gitigno
 
 CGO-specific hardening for **status payloads** when protobuf descriptors are not initialized in every amalgamation shard: `zetasql/base/status_payload.h`, `zetasql/common/status_payload_utils.h`, and `zetasql/public/error_helpers.cc` under [`internal/ccall/zetasql/`](../../zetasql/). See [`docs/zetasql-submodule-policy.md`](../../../../docs/zetasql-submodule-policy.md) — do **not** cherry-pick these edits into the upstream submodule; keep the submodule at a release tag and apply this patch after the updater copies sources into `internal/ccall/zetasql/`.
 
-**Regenerate** after a GoogleSQL tag bump (baseline = files under [`internal/cmd/updater/zetasql`](../../../cmd/updater/zetasql) at the tag, current = committed `internal/ccall/zetasql/`):
+**Regenerate** after a GoogleSQL tag bump (baseline = files under [`internal/cmd/updater/googlesql`](../../../cmd/updater/zetasql) at the tag, current = committed `internal/ccall/zetasql/`):
 
 ```bash
 repo=/path/to/go-googlesql
-u="$repo/internal/cmd/updater/zetasql/zetasql"
+u="$repo/internal/cmd/updater/googlesql/zetasql"
 c="$repo/internal/ccall/zetasql"
 {
   git -C "$repo" diff --no-index "$u/base/status_payload.h" "$c/base/status_payload.h"
   git -C "$repo" diff --no-index "$u/common/status_payload_utils.h" "$c/common/status_payload_utils.h"
   git -C "$repo" diff --no-index "$u/public/error_helpers.cc" "$c/public/error_helpers.cc"
 } | sed -e '/^index /d' -e '/^old mode/d' -e '/^new mode/d' \
-  -e 's#^diff --git a/internal/cmd/updater/zetasql/zetasql/#diff --git a/internal/ccall/zetasql/#g' \
-  -e 's#--- a/internal/cmd/updater/zetasql/zetasql/#--- a/internal/ccall/zetasql/#g' \
+  -e 's#^diff --git a/internal/cmd/updater/googlesql/zetasql/#diff --git a/internal/ccall/zetasql/#g' \
+  -e 's#--- a/internal/cmd/updater/googlesql/zetasql/#--- a/internal/ccall/zetasql/#g' \
   > "$repo/internal/ccall/protobuf/patches/02-zetasql-cgo-status-payload.patch"
 # Then: git apply --reverse --check internal/ccall/protobuf/patches/02-zetasql-cgo-status-payload.patch
 ```

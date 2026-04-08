@@ -14,7 +14,7 @@ At these tags the tree uses the **`zetasql/`** directory name; the later **zetas
 
 ### go-googlesql source snapshot
 
-The vendored tree under [`internal/cmd/updater/zetasql/zetasql/`](../internal/cmd/updater/zetasql/zetasql/) in this repo is **newer than** tag `2023.03.2` (for example, `builtin_function.proto` is a strict superset in line count). It **includes** the delta below; **do not downgrade** protos to `2023.03.2` when tracking the `2023.08.x` upgrade line unless you intentionally pin that tag.
+The vendored tree under [`internal/cmd/updater/googlesql/zetasql/`](../internal/cmd/updater/googlesql/zetasql/) in this repo is **newer than** tag `2023.03.2` (for example, `builtin_function.proto` is a strict superset in line count). It **includes** the delta below; **do not downgrade** protos to `2023.03.2` when tracking the `2023.08.x` upgrade line unless you intentionally pin that tag.
 
 Regenerating bindings: run **`go run ./internal/cmd/generator`** from [`internal/cmd/generator`](../internal/cmd/generator) after intentional proto or C++ tree changes (see [`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Use **protoc 23.3** when regenerating `*.pb.{h,cc}` per that doc.
 

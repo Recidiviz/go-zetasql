@@ -4,7 +4,7 @@ This note tracks **upstream** changes between tags `2023.04.1` and `2023.08.1` i
 
 ## go-googlesql source snapshot
 
-The vendored tree under [`internal/cmd/updater/zetasql/zetasql/`](../internal/cmd/updater/zetasql/zetasql/) was **byte-identical** to tag `2023.08.1` for checked protos (`public/options.proto`, `public/builtin_function.proto`, `public/function.proto`, `resolved_ast/serialization.proto`).
+The vendored tree under [`internal/cmd/updater/googlesql/zetasql/`](../internal/cmd/updater/googlesql/zetasql/) was **byte-identical** to tag `2023.08.1` for checked protos (`public/options.proto`, `public/builtin_function.proto`, `public/function.proto`, `resolved_ast/serialization.proto`).
 
 Refreshing `internal/ccall/` is done with [`internal/cmd/updater`](../internal/cmd/updater) against a populated Bazel `cache/` layout (see [`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). A full updater run without a matching `execroot`/`external` cache can break CGO links; do not run it ad hoc without that runbook.
 

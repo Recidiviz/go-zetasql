@@ -27,8 +27,8 @@ End-to-end workflow for bumping **google/zetasql** (submodule in go-googlesql) a
 - **Cursor Plan mode (mandatory):** User has enabled **Plan** mode for this chat before starting; agent does not begin Phase 0+ implementation until planning is complete and mode allows execution.
 - **Phrases:** `zetasql-upgrade to <tag>`, `upgrade zetasql to <tag>`, `bump googlesql to <tag>`.
 - **Required:** Target **tag** (canonical form `YYYY.MM.P`, e.g. `2023.09.1`). Normalize user input (strip `v`, collapse spaces) to that form.
-- **Optional `from` tag:** If omitted, derive from the current submodule commit in [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) (`git describe --tags`) or from the latest [docs/googlesql-upgrade-delta-*.md](../../docs/) baseline.
-- **Submodule must match an upstream tag:** After `git fetch --tags` and `git checkout <to>` inside the submodule, `git -C internal/cmd/updater/zetasql describe --tags --exact-match` should succeed. **Do not** add commits inside the submodule—embedding-only fixes belong in **`internal/ccall/`** after the updater (or via vendorpatch / documented overlays). Policy: [`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md). If you see `<tag>-<N>-g<hash>` with **N ≥ 1**, reset to the tag: `git -C internal/cmd/updater/zetasql checkout <to>`.
+- **Optional `from` tag:** If omitted, derive from the current submodule commit in [internal/cmd/updater/googlesql](../../internal/cmd/updater/googlesql) (`git describe --tags`) or from the latest [docs/googlesql-upgrade-delta-*.md](../../docs/) baseline.
+- **Submodule must match an upstream tag:** After `git fetch --tags` and `git checkout <to>` inside the submodule, `git -C internal/cmd/updater/googlesql describe --tags --exact-match` should succeed. **Do not** add commits inside the submodule—embedding-only fixes belong in **`internal/ccall/`** after the updater (or via vendorpatch / documented overlays). Policy: [`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md). If you see `<tag>-<N>-g<hash>` with **N ≥ 1**, reset to the tag: `git -C internal/cmd/updater/googlesql checkout <to>`.
 
 ## Phase 0 — Workspace prep (all three repos)
 
@@ -65,7 +65,7 @@ Before large mechanical edits, understand what changed between **`from`** and **
 
 ## Phase 2 — go-googlesql
 
-1. **Submodule:** In `GO_GOOGLESQL_ROOT`, update [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) to tag `<to>` (`git fetch --tags` and `git checkout <to>` inside submodule—**tag tip only**; see [`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md)), then commit the submodule pointer in the parent when ready. Any CGO-specific GoogleSQL edits go in **`internal/ccall`** / updater overlays / `vendorpatch`, not as extra submodule commits.
+1. **Submodule:** In `GO_GOOGLESQL_ROOT`, update [internal/cmd/updater/googlesql](../../internal/cmd/updater/googlesql) to tag `<to>` (`git fetch --tags` and `git checkout <to>` inside submodule—**tag tip only**; see [`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md)), then commit the submodule pointer in the parent when ready. Any CGO-specific GoogleSQL edits go in **`internal/ccall`** / updater overlays / `vendorpatch`, not as extra submodule commits.
 2. **Regeneration / vendoring:**
    - A **full** run of `internal/cmd/updater` can **break the CGO link** (duplicate symbols, protobuf/flex skew). Prefer **incremental** steps and document what you ran.
    - Use `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1` when refreshing GoogleSQL sources while **preserving** the existing protobuf vendoring story (see [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md)).
@@ -135,7 +135,7 @@ Use **`GOOGLESQL_ROOT`** for `git log` / `git diff` between release tags (upstre
 The **go-googlesql** submodule path (for checkout inside the repo):
 
 ```text
-$GO_GOOGLESQL_ROOT/internal/cmd/updater/zetasql
+$GO_GOOGLESQL_ROOT/internal/cmd/updater/googlesql
 ```
 
 ### Canonical tag and branch
@@ -186,12 +186,12 @@ git -C "$GOOGLESQL_ROOT" diff --stat "${FROM_TAG}..${TO_TAG}"
 ### Submodule bump (go-googlesql)
 
 ```bash
-cd "$GO_GOOGLESQL_ROOT/internal/cmd/updater/zetasql"
+cd "$GO_GOOGLESQL_ROOT/internal/cmd/updater/googlesql"
 git fetch --tags
 git checkout "$TO_TAG"
 git submodule status
 cd "$GO_GOOGLESQL_ROOT"
-# git add internal/cmd/updater/zetasql && git commit -m "chore(deps): bump zetasql submodule to ${TO_TAG}"
+# git add internal/cmd/updater/googlesql && git commit -m "chore(deps): bump zetasql submodule to ${TO_TAG}"
 ```
 
 ### Protobuf / vendorpatch (go-googlesql repo root)

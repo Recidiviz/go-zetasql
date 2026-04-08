@@ -16,7 +16,7 @@
     "analysisProgressReporting": false,
     "staticcheck": false,
     "directoryFilters": [
-      "-internal/cmd/updater/zetasql"
+      "-internal/cmd/updater/googlesql"
     ]
   },
   "files.watcherExclude": {
@@ -28,7 +28,7 @@
     "**/internal/ccall/json/**": true,
     "**/internal/ccall/protobuf/**": true,
     "**/internal/ccall/re2/**": true,
-    "**/internal/cmd/updater/zetasql/**": true
+    "**/internal/cmd/updater/googlesql/**": true
   },
   "search.exclude": {
     "**/internal/ccall/absl/**": true,
@@ -39,6 +39,6 @@
     "**/internal/ccall/json/**": true,
     "**/internal/ccall/protobuf/**": true,
     "**/internal/ccall/re2/**": true,
-    "**/internal/cmd/updater/zetasql/**": true
+    "**/internal/cmd/updater/googlesql/**": true
   }
 }

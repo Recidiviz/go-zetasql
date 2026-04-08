@@ -396,7 +396,7 @@ func main() {
 		)
 	}
 	cp.Copy(
-		filepath.Join(pkgDir(), "zetasql", "googlesql"),
+		filepath.Join(pkgDir(), "googlesql", "googlesql"),
 		filepath.Join(ccallDir(), "googlesql"),
 		opt,
 	)

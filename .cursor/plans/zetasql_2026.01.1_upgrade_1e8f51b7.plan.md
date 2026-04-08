@@ -35,17 +35,17 @@ isProject: false
 
 | Item | Value |
 |------|--------|
-| **From** | `2025.03.1` (`94ff7f5f95b42218193b61184b8797d6ae527004`) — current [internal/cmd/updater/zetasql](/home/brighten-tompkins/Code/go-zetasql/internal/cmd/updater/zetasql) |
+| **From** | `2025.03.1` (`94ff7f5f95b42218193b61184b8797d6ae527004`) — current [internal/cmd/updater/googlesql](/home/brighten-tompkins/Code/go-zetasql/internal/cmd/updater/googlesql) |
 | **To** | `2026.01.1` (`36dd14aa0657ea299725504bc0f938732f58f380`) |
 | **Branches** | `refactor/upgrade-to-2026.01.1` in each repo (already used in your workspace) |
 
-Verify after checkout: `git -C internal/cmd/updater/zetasql describe --tags --exact-match` prints `2026.01.1`.
+Verify after checkout: `git -C internal/cmd/updater/googlesql describe --tags --exact-match` prints `2026.01.1`.
 
 ## Why this bump is different
 
 Upstream ships **[zetasql_to_googlesql_migration.md](https://github.com/google/zetasql/blob/2026.01.1/zetasql_to_googlesql_migration.md)** at the repo root. At `2026.01.1`, the submodule has top-level **`googlesql/`** (not `zetasql/`), headers use **`#include "googlesql/..."`**, **`namespace googlesql`**, and **`GOOGLESQL_*`** include guards — e.g. `googlesql/public/language_options.h` on the tag.
 
-The embedding pipeline today assumes a **`zetasql/`** tree under [`internal/ccall/zetasql`](/home/brighten-tompkins/Code/go-zetasql/internal/ccall/zetasql) and copy sources from **`internal/cmd/updater/zetasql/zetasql/zetasql`** in [`internal/cmd/updater/main.go`](/home/brighten-tompkins/Code/go-zetasql/internal/cmd/updater/main.go) (see the `cp.Copy` and the walk over `outDir()/zetasql`). **That path no longer exists at `2026.01.1`**, so the updater and downstream include/CGO layout must be updated to follow **`googlesql/`** (and likely rename or mirror the ccall subtree to match upstream includes).
+The embedding pipeline today assumes a **`zetasql/`** tree under [`internal/ccall/zetasql`](/home/brighten-tompkins/Code/go-zetasql/internal/ccall/zetasql) and copy sources from **`internal/cmd/updater/googlesql/zetasql/zetasql`** in [`internal/cmd/updater/main.go`](/home/brighten-tompkins/Code/go-zetasql/internal/cmd/updater/main.go) (see the `cp.Copy` and the walk over `outDir()/zetasql`). **That path no longer exists at `2026.01.1`**, so the updater and downstream include/CGO layout must be updated to follow **`googlesql/`** (and likely rename or mirror the ccall subtree to match upstream includes).
 
 ```mermaid
 flowchart LR
@@ -94,7 +94,7 @@ The GitHub repository has been renamed. While GitHub provides redirects, we reco
 
 ```bash
 # Update your 'origin' remote
-git remote set-url origin https://github.com/google/googlesql.git
+git remote set-url origin https://github.com/google/zetasql.git
 ```
 
 If you have forks or other references, ensure they are updated to point to `google/googlesql`.
@@ -142,7 +142,7 @@ Replace path:
 
 **Step 3.2: Update Build Dependencies**
 
-GoogleSQL requires Bzlmod as of version `2025.12.1`. If you are not using Bzlmod (i.e., you are using the `WORKSPACE` system), you must migrate to Bzlmod first (see [Bazel Migration Guide](https://bazel.build/external/migration)). Check out examples to use GoogleSQL as a module [here](https://github.com/google/googlesql/tree/master/examples/bazel).
+GoogleSQL requires Bzlmod as of version `2025.12.1`. If you are not using Bzlmod (i.e., you are using the `WORKSPACE` system), you must migrate to Bzlmod first (see [Bazel Migration Guide](https://bazel.build/external/migration)). Check out examples to use GoogleSQL as a module [here](https://github.com/google/zetasql/tree/master/examples/bazel).
 
 If you are using Bzlmod, update your `MODULE.bazel` file to depend on `googlesql` instead of `zetasql`.
 
@@ -209,7 +209,7 @@ In `GOOGLESQL_ROOT` (or the submodule after fetch):
 
 ## Phase 2 — go-zetasql
 
-1. **Submodule:** In [internal/cmd/updater/zetasql](/home/brighten-tompkins/Code/go-zetasql/internal/cmd/updater/zetasql), `git fetch --tags`, `git checkout 2026.01.1`, commit submodule pointer in parent ([zetasql-submodule-policy.md](/home/brighten-tompkins/Code/go-zetasql/docs/zetasql-submodule-policy.md): tag tip only, no extra submodule commits).
+1. **Submodule:** In [internal/cmd/updater/googlesql](/home/brighten-tompkins/Code/go-zetasql/internal/cmd/updater/googlesql), `git fetch --tags`, `git checkout 2026.01.1`, commit submodule pointer in parent ([zetasql-submodule-policy.md](/home/brighten-tompkins/Code/go-zetasql/docs/zetasql-submodule-policy.md): tag tip only, no extra submodule commits).
 
 2. **Updater:** Extend [`internal/cmd/updater/main.go`](/home/brighten-tompkins/Code/go-zetasql/internal/cmd/updater/main.go) so sources copy from the **`googlesql`** tree (and fix Bazel `outDir` walk keys if they moved from `zetasql` to `googlesql`). Update **`applyPostCopyOverlays`** and any hardcoded `filepath.Join(ccallDir(), "zetasql", ...)` / `::zetasql::` strings to match **`googlesql`** paths and **`googlesql::`** as needed.
 

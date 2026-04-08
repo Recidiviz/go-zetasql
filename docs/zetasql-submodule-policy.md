@@ -1,10 +1,10 @@
 # GoogleSQL submodule policy (read-only upstream)
 
-The Git submodule at [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql) tracks **[google/zetasql](https://github.com/google/zetasql)** release tags.
+The Git submodule at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) tracks **[google/zetasql](https://github.com/google/zetasql)** release tags.
 
 ## Rules
 
-1. **Checkout upstream tags only** — Inside the submodule, `git checkout <YYYY.MM.P>` for the release you are upgrading to. The parent repo’s submodule pointer should reference **that tag’s commit** (verify with `git -C internal/cmd/updater/zetasql describe --tags --exact-match` when HEAD is at the tag).
+1. **Checkout upstream tags only** — Inside the submodule, `git checkout <YYYY.MM.P>` for the release you are upgrading to. The parent repo’s submodule pointer should reference **that tag’s commit** (verify with `git -C internal/cmd/updater/googlesql describe --tags --exact-match` when HEAD is at the tag).
 
 2. **No extra commits in the submodule** — Do not cherry-pick, rebase, or maintain a “vendor branch” on top of the tag. You do not need push access to a fork: the submodule remote stays the public upstream.
 
