@@ -3543,7 +3543,7 @@ void AssignDescriptorsImpl(const DescriptorTable* table, bool eager) {
   const FileDescriptor* file =
       DescriptorPool::internal_generated_pool()->FindFileByName(
           table->filename);
-  // go-zetasql: with a single amalgamated protobuf TU and duplicate descriptor
+  // go-googlesql: with a single amalgamated protobuf TU and duplicate descriptor
   // registration, table->filename can disagree with the name key used in the
   // encoded descriptor database. Retry using the name from the embedded bytes.
   if (file == nullptr) {

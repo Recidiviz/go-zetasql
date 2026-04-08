@@ -1,12 +1,12 @@
 # Googlesql upgrade delta: `2024.11.1` → `2025.03.1`
 
-This note tracks **upstream** changes between tags `2024.11.1` and `2025.03.1` in [ZetaSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2024.11.1` and `2025.03.1` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
-Upstream ships as a single **“Export of internal ZetaSQL changes”** commit on `2025.03.1` (`94ff7f5f`), with **~980 files** changed—large churn in `resolved_ast` (validator, `sql_builder`, `rewrite_utils`), parser, formatter, and tests. Prioritize **protos**, **FunctionSignatureId**, **TypeKind** / **ValueProto**, **resolved_ast** codegen, and **builtin** surfaces when syncing this repo.
+Upstream ships as a single **“Export of internal GoogleSQL changes”** commit on `2025.03.1` (`94ff7f5f`), with **~980 files** changed—large churn in `resolved_ast` (validator, `sql_builder`, `rewrite_utils`), parser, formatter, and tests. Prioritize **protos**, **FunctionSignatureId**, **TypeKind** / **ValueProto**, **resolved_ast** codegen, and **builtin** surfaces when syncing this repo.
 
-## go-zetasql source snapshot
+## go-googlesql source snapshot
 
-Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2025.03.1`. Prefer `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run ./internal/cmd/vendorpatch` (invoked by the updater) and `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
+Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2025.03.1`. Prefer `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run ./internal/cmd/vendorpatch` (invoked by the updater) and `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
 
 **`.proto` files:** The updater `Skip` callback does not copy `*.proto` from the submodule; sync them explicitly, e.g. `rsync` of `*.proto` from `internal/cmd/updater/zetasql/zetasql/` into `internal/ccall/zetasql/`.
 
@@ -18,13 +18,13 @@ Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/u
 
 **Flex:** Keep the existing flex/post-copy policy in [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) `applyPostCopyOverlays` and [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) in sync with tokenizer changes.
 
-**Root `bind.cc` / `root_bind.cc.tmpl`:** Include [`root_analyzer_amalgamation_macros.inc`](../internal/ccall/go-zetasql/root_analyzer_amalgamation_macros.inc) **before** `_cgo_export.h` (same ordering constraints as prior upgrades).
+**Root `bind.cc` / `root_bind.cc.tmpl`:** Include [`root_analyzer_amalgamation_macros.inc`](../internal/ccall/go-googlesql/root_analyzer_amalgamation_macros.inc) **before** `_cgo_export.h` (same ordering constraints as prior upgrades).
 
 ### Embedding-only fixes (not in the submodule)
 
 Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)).
 
-If go-zetasql needs CGO-specific changes (for example guarding **status payloads** when protobuf descriptors are missing in amalgamation shards), apply them in **`internal/ccall/zetasql/`** after the updater copies sources, or via `go run ./internal/cmd/vendorpatch` / overlays in [`protobuf-vendoring.md`](protobuf-vendoring.md).
+If go-googlesql needs CGO-specific changes (for example guarding **status payloads** when protobuf descriptors are missing in amalgamation shards), apply them in **`internal/ccall/zetasql/`** after the updater copies sources, or via `go run ./internal/cmd/vendorpatch` / overlays in [`protobuf-vendoring.md`](protobuf-vendoring.md).
 
 ## Themes relevant to the Go stack (high level)
 
@@ -46,7 +46,7 @@ If go-zetasql needs CGO-specific changes (for example guarding **status payloads
 
 - Small diffs in **`function.proto`**, **`logging.proto`**, **`type_annotation.proto`** BUILD/metadata — re-verify after sync.
 
-## go-zetasqlite / bigquery-emulator
+## go-googlesqlite / bigquery-emulator
 
-- **go-zetasqlite:** Sync **FunctionSignatureId** / builtin registration and `function_bind.go` for new builtins you choose to support (e.g. `JSON_CONTAINS`); **TypeKind** / **ValueProto** changes may require type mapping. Add **query tests** for any newly implemented behavior.
+- **go-googlesqlite:** Sync **FunctionSignatureId** / builtin registration and `function_bind.go` for new builtins you choose to support (e.g. `JSON_CONTAINS`); **TypeKind** / **ValueProto** changes may require type mapping. Add **query tests** for any newly implemented behavior.
 - **bigquery-emulator:** Add or extend HTTP/query tests when user-visible builtins or types change; otherwise rely on existing suites after zetasqlite passes.

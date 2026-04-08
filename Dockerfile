@@ -16,7 +16,7 @@ ENV PATH="/usr/lib/ccache:${PATH}"
 ENV CCACHE_COMPRESS=1
 ENV CCACHE_DIR=/root/.ccache
 
-WORKDIR /go-zetasql
+WORKDIR /go-googlesql
 
 # Local tests: `make docker/build-dev` builds this target only (Go + clang). Compilation runs inside
 # `docker run` with host-mounted GOCACHE/GOMODCACHE so work is not duplicated by a separate image build.

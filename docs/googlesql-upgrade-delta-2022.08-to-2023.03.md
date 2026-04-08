@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2022.08.1` → `2023.03.2`
 
-This note captures a **directory-scoped review** of upstream changes between tags `2022.08.1` and `2023.03.2` in the [googlesql](https://github.com/google/zetasql) history (paths under `zetasql/` at those tags). Export commits are squashed; **commit messages do not list features**—review **`git diff 2022.08.1..2023.03.2 -- zetasql/`** for full detail. This file focuses on **proto / public API / builtins** relevant to **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator**.
+This note captures a **directory-scoped review** of upstream changes between tags `2022.08.1` and `2023.03.2` in the [googlesql](https://github.com/google/zetasql) history (paths under `zetasql/` at those tags). Export commits are squashed; **commit messages do not list features**—review **`git diff 2022.08.1..2023.03.2 -- zetasql/`** for full detail. This file focuses on **proto / public API / builtins** relevant to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 ## Scale
 
@@ -12,7 +12,7 @@ This note captures a **directory-scoped review** of upstream changes between tag
 
 At these tags the tree uses the **`zetasql/`** directory name; the later **zetasql → googlesql** rename is not in this range.
 
-### go-zetasql source snapshot
+### go-googlesql source snapshot
 
 The vendored tree under [`internal/cmd/updater/zetasql/zetasql/`](../internal/cmd/updater/zetasql/zetasql/) in this repo is **newer than** tag `2023.03.2` (for example, `builtin_function.proto` is a strict superset in line count). It **includes** the delta below; **do not downgrade** protos to `2023.03.2` when tracking the `2023.08.x` upgrade line unless you intentionally pin that tag.
 
@@ -57,11 +57,11 @@ Regenerating bindings: run **`go run ./internal/cmd/generator`** from [`internal
 - **`deprecation_warning.proto`:** `QUERY_TOO_COMPLEX`, `DEPRECATED_ANONYMIZATION_OPTION_KAPPA`.
 - **`formatter_options.proto`:** `capitalize_functions`.
 
-## go-zetasqlite parity (runtime)
+## go-googlesqlite parity (runtime)
 
-Cross-check against [`go-zetasqlite/internal/function_register.go`](../../go-zetasqlite/internal/function_register.go) and [`function_bind.go`](../../go-zetasqlite/internal/function_bind.go).
+Cross-check against [`go-googlesqlite/internal/function_register.go`](../../go-googlesqlite/internal/function_register.go) and [`function_bind.go`](../../go-googlesqlite/internal/function_bind.go).
 
-| Area | Upstream (2022.08→2023.03) | go-zetasqlite (this repo) |
+| Area | Upstream (2022.08→2023.03) | go-googlesqlite (this repo) |
 |------|---------------------------|---------------------------|
 | `ARRAY_SUM`, `ARRAY_AVG`, `ARRAY_MIN`, `ARRAY_MAX` | Scalar array aggregates | **Registered** (`array_sum`, `array_avg`, `array_min`, `array_max`) with tests |
 | `LAX_INT64`, `LAX_BOOL`, `LAX_STRING`, `LAX_FLOAT64` / `LAX_DOUBLE` | JSON coercion | **Registered** (`lax_int64`, `lax_bool`, `lax_string`, `lax_double`, **`lax_float64`** alias for analyzer name) |
@@ -86,4 +86,4 @@ Cross-check against [`go-zetasqlite/internal/function_register.go`](../../go-zet
 
 ### Verifying without heavy emulator tests
 
-Prefer **go-zetasqlite** [`query_test.go`](../../go-zetasqlite/query_test.go) for SQL-level checks; run full **bigquery-emulator** tests only when you need HTTP/API coverage (memory-heavy).
+Prefer **go-googlesqlite** [`query_test.go`](../../go-googlesqlite/query_test.go) for SQL-level checks; run full **bigquery-emulator** tests only when you need HTTP/API coverage (memory-heavy).

@@ -38,8 +38,8 @@ sub="$1"
 shift
 
 case "$sub" in
-  build) run_with_limit go build -tags zetasql -p 1 "$@" ;;
-  test)  run_with_limit go test  -tags zetasql -p 1 -count=1 "$@" ;;
+  build) run_with_limit go build -tags googlesql -p 1 "$@" ;;
+  test)  run_with_limit go test  -tags googlesql -p 1 -count=1 "$@" ;;
   *)
     echo "Usage: $0 {build|test} [arguments passed to go build or go test]" >&2
     echo "Environment: GOMAXPROCS (default: 2), ZETASQL_CGO_MEMORY_MAX (default: 22G for systemd-run)" >&2

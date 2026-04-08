@@ -1,14 +1,14 @@
-DOCKER_IMAGE ?= go-zetasql
-DOCKER_DEV_IMAGE ?= go-zetasql:dev
-# Shared host tree for GOCACHE, GOMODCACHE, and ccache (CGO). Default matches go-zetasqlite and
+DOCKER_IMAGE ?= go-googlesql
+DOCKER_DEV_IMAGE ?= go-googlesql:dev
+# Shared host tree for GOCACHE, GOMODCACHE, and ccache (CGO). Default matches go-googlesqlite and
 # bigquery-emulator Makefiles so Docker runs and local/build share one warm cache.
-GO_CACHE_ROOT ?= $(HOME)/.cache/go-zetasql
+GO_CACHE_ROOT ?= $(HOME)/.cache/go-googlesql
 # Default matches .github/workflows/go.yml (root package only). Set TESTPKG=./... to test all packages.
 TESTPKG ?= ./
 # For local/build: package pattern passed to go build (default all modules under repo root).
 BUILDPKG ?= ./...
 
-# Parallel go build/test workers (-p). CGO + ZetaSQL C++ amalgamation is very memory-heavy; each
+# Parallel go build/test workers (-p). CGO + GoogleSQL C++ amalgamation is very memory-heavy; each
 # concurrent job can peak at multiple GiB. Default: estimate jobs from ~80% MemAvailable /
 # GO_BUILD_MEM_PER_JOB_KB, cap by CPU, then cap again by GO_BUILD_P_MAX (default 2) so IDEs do not OOM.
 # Override examples: make local/build GO_BUILD_P=6
@@ -29,7 +29,7 @@ GO_BUILD_P ?= $(shell \
 	if [ "$$P" -gt "$$MAX" ] 2>/dev/null; then P=$$MAX; fi; \
 	echo "$$P")
 
-# When `mold` is on PATH (e.g. go-zetasql:dev image), speed up the final link step.
+# When `mold` is on PATH (e.g. go-googlesql:dev image), speed up the final link step.
 MOLD_LD := $(shell command -v mold >/dev/null 2>&1 && echo -fuse-ld=mold)
 
 DOCKER_DEV_ENV := \
@@ -40,7 +40,7 @@ DOCKER_DEV_ENV := \
 	-e CCACHE_COMPRESS=1
 
 DOCKER_DEV_VOLUMES := \
-	-v "$(CURDIR)":/go-zetasql \
+	-v "$(CURDIR)":/go-googlesql \
 	-v "$(GO_CACHE_ROOT)/gocache":/root/.cache/go-build \
 	-v "$(GO_CACHE_ROOT)/gomodcache":/go/pkg/mod \
 	-v "$(GO_CACHE_ROOT)/ccache":/root/.ccache
@@ -74,7 +74,7 @@ CGO_CXX ?= clang++
 # protobuf amalgamation). Removing it requires a single macro/link domain for protobuf+absl;
 # see docs/protobuf-vendoring.md "Single-owner protobuf".
 
-# Example: make local/build BUILDPKG=./internal/ccall/go-zetasql
+# Example: make local/build BUILDPKG=./internal/ccall/go-googlesql
 local/build: cache-dirs
 	CGO_ENABLED=1 \
 	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
@@ -85,7 +85,7 @@ local/build: cache-dirs
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go build -p "$(GO_BUILD_P)" -tags zetasql $(BUILDPKG)
+	go build -p "$(GO_BUILD_P)" -tags googlesql $(BUILDPKG)
 
 # Same toolchain as local/build; mirrors test/linux but runs on the host (no -race unless you add it).
 local/test: cache-dirs
@@ -98,7 +98,7 @@ local/test: cache-dirs
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags zetasql -v $(TESTPKG) -count=1
+	go test -p "$(GO_BUILD_P)" -tags googlesql -v $(TESTPKG) -count=1
 
 # Rough cold vs warm timing + ccache stats. Uses TESTPKG (default ./). Requires ccache + clang on PATH.
 profile-bottleneck: cache-dirs
@@ -134,24 +134,24 @@ local/test-tier-b: cache-dirs
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags zetasql,zetasql_tier_b -v $(TESTPKG) -count=1
+	go test -p "$(GO_BUILD_P)" -tags zetasql,googlesql_tier_b -v $(TESTPKG) -count=1
 
 # Compile-only warm-up: same -race toolchain as tests, but -run '^$' matches no tests so this only
 # populates gomodcache/gocache/ccache. Run after toolchain upgrades or cold cache; then test/linux stays incremental.
 docker/warm-cache: docker/build-dev
 	docker run --rm $(DOCKER_DEV_ENV) $(DOCKER_DEV_VOLUMES) \
-		-w /go-zetasql \
+		-w /go-googlesql \
 		$(DOCKER_DEV_IMAGE) \
 		bash -c "go test -race $(TESTPKG) -count=1 -run '^$$'"
 
-# Preferred path for ZetaSQL upgrades and local CI parity: tests run inside $(DOCKER_DEV_IMAGE)
+# Preferred path for GoogleSQL upgrades and local CI parity: tests run inside $(DOCKER_DEV_IMAGE)
 # with the working tree mounted and shared host paths for GOCACHE/GOMODCACHE.
-# Do not run heavy tests in parallel with go-zetasqlite / bigquery-emulator on the same host (memory).
+# Do not run heavy tests in parallel with go-googlesqlite / bigquery-emulator on the same host (memory).
 test: test/linux
 test-docker: test/linux
 
 test/linux: docker/build-dev
 	docker run --rm $(DOCKER_DEV_ENV) $(DOCKER_DEV_VOLUMES) \
-		-w /go-zetasql \
+		-w /go-googlesql \
 		$(DOCKER_DEV_IMAGE) \
 		bash -c "go test -race -v $(TESTPKG) -count=1"

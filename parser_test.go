@@ -1,15 +1,15 @@
-package zetasql_test
+package googlesql_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/goccy/go-zetasql"
-	"github.com/goccy/go-zetasql/ast"
+	"github.com/vantaboard/go-googlesql"
+	"github.com/vantaboard/go-googlesql/ast"
 )
 
 func TestParser(t *testing.T) {
-	stmt, err := zetasql.ParseStatement("SELECT * FROM Samples WHERE id = 1", nil)
+	stmt, err := googlesql.ParseStatement("SELECT * FROM Samples WHERE id = 1", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,12 +55,12 @@ func TestParser(t *testing.T) {
 }
 
 func TestParseGroupByAll(t *testing.T) {
-	lang := zetasql.NewLanguageOptions()
-	lang.EnableLanguageFeature(zetasql.FeatureV14GroupByAll)
-	opt := zetasql.NewParserOptions()
+	lang := googlesql.NewLanguageOptions()
+	lang.EnableLanguageFeature(googlesql.FeatureV14GroupByAll)
+	opt := googlesql.NewParserOptions()
 	opt.SetLanguageOptions(lang)
 
-	stmt, err := zetasql.ParseStatement("SELECT a, SUM(b) AS s FROM t GROUP BY ALL", opt)
+	stmt, err := googlesql.ParseStatement("SELECT a, SUM(b) AS s FROM t GROUP BY ALL", opt)
 	if err != nil {
 		t.Fatalf("parse: %v", err)
 	}
@@ -91,7 +91,7 @@ func TestWalk(t *testing.T) {
 		{"struct with array field", "SELECT SingerId, @songinfo.SongName FROM Singers WHERE STRUCT<FirstName STRING, LastName STRING>(FirstName, LastName) IN UNNEST(@songinfo.ArtistNames)"},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			stmt, err := zetasql.ParseStatement(test.query, zetasql.NewParserOptions())
+			stmt, err := googlesql.ParseStatement(test.query, googlesql.NewParserOptions())
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -104,20 +104,20 @@ func TestWalk(t *testing.T) {
 }
 
 func TestParseNextScriptStatementBegin(t *testing.T) {
-	opt := zetasql.NewParserOptions()
-	loc := zetasql.NewParseResumeLocation("BEGIN TRANSACTION;")
-	_, _, err := zetasql.ParseNextScriptStatement(loc, opt)
+	opt := googlesql.NewParserOptions()
+	loc := googlesql.NewParseResumeLocation("BEGIN TRANSACTION;")
+	_, _, err := googlesql.ParseNextScriptStatement(loc, opt)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestParseNextScriptStatementMerge(t *testing.T) {
-	opt := zetasql.NewParserOptions()
-	loc := zetasql.NewParseResumeLocation(
+	opt := googlesql.NewParserOptions()
+	loc := googlesql.NewParseResumeLocation(
 		"MERGE Inventory AS I USING tmp AS T ON I.product = T.product WHEN NOT MATCHED THEN INSERT ROW;",
 	)
-	_, _, err := zetasql.ParseNextScriptStatement(loc, opt)
+	_, _, err := googlesql.ParseNextScriptStatement(loc, opt)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -130,7 +130,7 @@ USING S
 ON t1 = s1
 WHEN MATCHED AND T.T1 = 5 THEN
 UPDATE SET T1 = T1 + 10, T2 = T.T1 + S.C1`
-	_, err := zetasql.ParseStatement(q, zetasql.NewParserOptions())
+	_, err := googlesql.ParseStatement(q, googlesql.NewParserOptions())
 	if err != nil {
 		t.Fatal(err)
 	}

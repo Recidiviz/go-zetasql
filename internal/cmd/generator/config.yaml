@@ -352,7 +352,7 @@ conflict_symbols:
   - file:   googlesql/public/templated_sql_tvf.cc
     symbol: module_initialization_complete
 
-exclude_zetasql_dirs:
+exclude_googlesql_dirs:
   - testing
   - testdata
   - compliance
@@ -460,7 +460,7 @@ cclib:
         // parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.
         #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
   # Parser/bison CGO packages link with the root analyzer TU; align googlesql* namespace
-  # mangling with go-zetasql/public/analyzer (root_analyzer_amalgamation_macros.inc) so
+  # mangling with go-googlesql/public/analyzer (root_analyzer_amalgamation_macros.inc) so
   # protobuf extensions and shared types resolve across packages.
   symbol_define_overrides:
     - pkg: googlesql/parser/parser
@@ -500,19 +500,19 @@ cclib:
   extra_bind_go_imports:
     - pkg: googlesql/parser/parser
       imports:
-        - github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/bison_parser_generated_lib
-        - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
+        - github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/bison_parser_generated_lib
+        - github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf
     # Parser/bison TUs include protobuf headers; link go-protobuf for out-of-line symbols.
     - pkg: googlesql/parser/bison_parser_generated_lib
       imports:
-        - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
+        - github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf
     - pkg: googlesql/public/analyzer
       imports:
-        - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
+        - github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf
     # Same as analyzer: renaming `google` breaks protobuf amalgamation; link go-protobuf/protobuf.
     - pkg: googlesql/public/catalog
       imports:
-        - github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf
+        - github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf
   omit_extern_c_around_bridge_inc:
     - googlesql/public/catalog
   omit_cgo_export_prolog:

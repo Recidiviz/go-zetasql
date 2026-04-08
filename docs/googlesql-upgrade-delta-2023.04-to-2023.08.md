@@ -1,8 +1,8 @@
 # Googlesql upgrade delta: `2023.04.1` → `2023.08.1`
 
-This note tracks **upstream** changes between tags `2023.04.1` and `2023.08.1` in [googlesql](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator`.
+This note tracks **upstream** changes between tags `2023.04.1` and `2023.08.1` in [googlesql](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator`.
 
-## go-zetasql source snapshot
+## go-googlesql source snapshot
 
 The vendored tree under [`internal/cmd/updater/zetasql/zetasql/`](../internal/cmd/updater/zetasql/zetasql/) was **byte-identical** to tag `2023.08.1` for checked protos (`public/options.proto`, `public/builtin_function.proto`, `public/function.proto`, `resolved_ast/serialization.proto`).
 
@@ -38,8 +38,8 @@ Regenerating Go/CGO bridges after intentional tree changes: `go run .` from [`in
 
 - **`Catalog::SuggestSequence`**; **`Column`** API uses **`GetExpression()`** / **`ExpressionAttributes`** (default vs generated) instead of older default-only helpers.
 
-## go-zetasqlite / bigquery-emulator
+## go-googlesqlite / bigquery-emulator
 
-Runtime parity for new **scalar** builtins and tests live in **go-zetasqlite** (`internal/function_register.go`, `function_bind.go`, JSON/array/math helpers). **bigquery-emulator** inherits SQL behavior through the driver; add HTTP/query tests when exposing new surface area.
+Runtime parity for new **scalar** builtins and tests live in **go-googlesqlite** (`internal/function_register.go`, `function_bind.go`, JSON/array/math helpers). **bigquery-emulator** inherits SQL behavior through the driver; add HTTP/query tests when exposing new surface area.
 
-See **go-zetasqlite** `query_test.go` for end-to-end checks. Enable analyzer features as needed via raw `LanguageFeature` numeric IDs in [`internal/analyzer.go`](../../go-zetasqlite/internal/analyzer.go) when the Go `enum.go` has not yet gained named constants for v1.4 flags.
+See **go-googlesqlite** `query_test.go` for end-to-end checks. Enable analyzer features as needed via raw `LanguageFeature` numeric IDs in [`internal/analyzer.go`](../../go-googlesqlite/internal/analyzer.go) when the Go `enum.go` has not yet gained named constants for v1.4 flags.

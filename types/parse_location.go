@@ -3,8 +3,8 @@ package types
 import (
 	"unsafe"
 
-	zetasqlparser "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/parser"
-	"github.com/goccy/go-zetasql/internal/helper"
+	zetasqlparser "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/parser"
+	"github.com/vantaboard/go-googlesql/internal/helper"
 )
 
 type ParseLocationPoint struct {

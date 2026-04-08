@@ -1,6 +1,6 @@
 package status
 
 import (
-	_ "github.com/goccy/go-zetasql/internal/ccall/go-absl/status/status"
-	_ "github.com/goccy/go-zetasql/internal/ccall/go-absl/status/statusor"
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-absl/status/status"
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-absl/status/statusor"
 )

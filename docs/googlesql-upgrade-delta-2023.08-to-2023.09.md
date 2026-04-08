@@ -1,12 +1,12 @@
 # Googlesql upgrade delta: `2023.08.1` → `2023.09.1`
 
-This note tracks **upstream** changes between tags `2023.08.1` and `2023.09.1` in [ZetaSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2023.08.1` and `2023.09.1` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 The tag range is a **single** export commit (`0b082e84` on top of `2023.08.1` at `54d659fe`). Most churn is in analyzer tests and anonymization; **public protos** and **serialization** changes below are the main integration surface for this stack.
 
-## go-zetasql source snapshot
+## go-googlesql source snapshot
 
-Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2023.09.1`. Prefer `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
+Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2023.09.1`. Prefer `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
 
 ## Themes relevant to the Go stack
 
@@ -34,8 +34,8 @@ Comment-only tweak for **`FEATURE_DISABLE_OUTER_JOIN_ARRAY`** (wording).
 
 No diff between `2023.08.1` and `2023.09.1` for this file in the upstream export.
 
-## go-zetasqlite / bigquery-emulator
+## go-googlesqlite / bigquery-emulator
 
-New **scalar** builtins (cosine/euclidean distance, edit distance, `ST_HAUSDORFF_DISTANCE`) need registration and bindings in **go-zetasqlite** if exposed end-to-end. Analyzer **LanguageFeature** flags for v1.4 items may use raw numeric IDs in [`internal/analyzer.go`](../../go-zetasqlite/internal/analyzer.go) until named constants exist in generated `enum.go`.
+New **scalar** builtins (cosine/euclidean distance, edit distance, `ST_HAUSDORFF_DISTANCE`) need registration and bindings in **go-googlesqlite** if exposed end-to-end. Analyzer **LanguageFeature** flags for v1.4 items may use raw numeric IDs in [`internal/analyzer.go`](../../go-googlesqlite/internal/analyzer.go) until named constants exist in generated `enum.go`.
 
 **bigquery-emulator** inherits behavior through the driver; add HTTP/query tests when adding user-visible SQL surface.

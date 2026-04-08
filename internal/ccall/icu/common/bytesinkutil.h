@@ -4,8 +4,8 @@
 // bytesinkutil.h
 // created: 2017sep14 Markus W. Scherer
 
-#ifndef GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
-#define GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+#ifndef GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_
+#define GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_
 
 #include "unicode/utypes.h"
 #include "unicode/bytestream.h"
@@ -85,4 +85,4 @@ private:
 
 U_NAMESPACE_END
 
-#endif  // GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+#endif  // GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_

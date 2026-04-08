@@ -1,4 +1,4 @@
-#define GO_EXPORT(def) export_zetasql_ ## def
+#define GO_EXPORT(def) export_googlesql_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 // Apply namespace macros before _cgo_export.h: the generated header can pull
 // nested includes that reach zetasql amalgamation headers; those must see the

@@ -35,7 +35,7 @@
 // TODO: Remove flag when references are gone.
 // Parser CGO also amalgamates this file; define flags only once (root analyzer
 // TU) and use ABSL_DECLARE_FLAG in secondary packages to avoid duplicate
-// absl::Flag symbols at link time (e.g. go-zetasql + parser/parser).
+// absl::Flag symbols at link time (e.g. go-googlesql + parser/parser).
 #if !defined(ZETASQL_FLEX_TOKENIZER_FLAGS_SKIP_DEFINITION)
 ABSL_FLAG(bool, zetasql_use_customized_flex_istream, true, "Unused");
 ABSL_FLAG(bool, use_textmapper_lexer, false,

@@ -125,7 +125,7 @@ template <typename Value>
 bool SimpleDescriptorDatabase::DescriptorIndex<Value>::AddFile(
     const FileDescriptorProto& file, Value value) {
   if (!by_name_.emplace(file.name(), value).second) {
-    // go-zetasql: duplicate CGO protobuf embedding can register the same file twice.
+    // go-googlesql: duplicate CGO protobuf embedding can register the same file twice.
     return true;
   }
 
@@ -647,7 +647,7 @@ bool EncodedDescriptorDatabase::DescriptorIndex::AddFile(const FileProto& file,
   }
   all_values_.back().encoded_package = EncodeString(file.package());
 
-  // go-zetasql: several CGO packages each #include go-protobuf/protobuf/export.inc;
+  // go-googlesql: several CGO packages each #include go-protobuf/protobuf/export.inc;
   // identical generated descriptors are registered more than once. When the
   // btree insert fails (same file name), drop the duplicate all_values_ entry
   // and succeed. Do not use a secondary check against by_name_flat_: after

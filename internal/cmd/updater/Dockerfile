@@ -18,8 +18,8 @@ RUN bazelisk build \
   --jobs=2 \
   --local_ram_resources=8192 \
   --local_cpu_resources=4 \
-  --cxxopt=-std=c++17 \
-  --host_cxxopt=-std=c++17 \
+  --cxxopt=-std=c++20 \
+  --host_cxxopt=-std=c++20 \
   '//zetasql/public:sql_formatter' \
   '//zetasql/public:anonymization_utils' \
   '//zetasql/resolved_ast:serialization_cc_proto' \

@@ -1,4 +1,4 @@
-// go-zetasql: Singleton definitions for DescriptorPool::generated_pool() and
+// go-googlesql: Singleton definitions for DescriptorPool::generated_pool() and
 // EncodedDescriptorDatabase backing the generated descriptor pool. Included
 // once from go-protobuf/protobuf/export.inc immediately after descriptor.cc so
 // static data is not duplicated when descriptor.cc is linked into multiple

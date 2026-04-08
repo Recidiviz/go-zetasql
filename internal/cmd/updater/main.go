@@ -12,11 +12,11 @@ import (
 	cp "github.com/otiai10/copy"
 )
 
-// When GO_ZETASQL_SKIP_PROTOBUF_COPY=1, do not copy com_google_protobuf from the
+// When GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1, do not copy com_google_protobuf from the
 // Bazel external tree into internal/ccall/protobuf. Use this when upgrading
-// ZetaSQL sources while keeping the existing protobuf vendoring + export.inc in sync.
+// GoogleSQL sources while keeping the existing protobuf vendoring + export.inc in sync.
 func copyExternalLibMapForRun() map[string]string {
-	if os.Getenv("GO_ZETASQL_SKIP_PROTOBUF_COPY") == "1" {
+	if os.Getenv("GO_GOOGLESQL_SKIP_PROTOBUF_COPY") == "1" {
 		m := make(map[string]string, len(copyExternalLibMap))
 		for k, v := range copyExternalLibMap {
 			if k == "com_google_protobuf/src" {
@@ -136,7 +136,7 @@ func applyPostCopyOverlays() error {
 	); err != nil {
 		return err
 	}
-	// Upstream googlesql/public/BUILD omits :sql_tvf next to public/types in one cc_library; go-zetasql
+	// Upstream googlesql/public/BUILD omits :sql_tvf next to public/types in one cc_library; go-googlesql
 	// needs it for TVF-related sources pulled into the amalgamation.
 	if err := replaceIfMissing(
 		filepath.Join(ccallDir(), "googlesql", "public", "BUILD"),
@@ -158,8 +158,8 @@ func applyPostCopyOverlays() error {
 		filepath.Join(ccallDir(), "icu", "common", "bytesinkutil.h"),
 		`#include "unicode/utypes.h"
 `,
-		`#ifndef GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
-#define GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+		`#ifndef GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_
+#define GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_
 
 #include "unicode/utypes.h"
 `,
@@ -171,7 +171,7 @@ func applyPostCopyOverlays() error {
 		"U_NAMESPACE_END\n",
 		`U_NAMESPACE_END
 
-#endif  // GO_ZETASQL_ICU_COMMON_BYTESINKUTIL_H_
+#endif  // GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_
 `,
 	); err != nil {
 		return err

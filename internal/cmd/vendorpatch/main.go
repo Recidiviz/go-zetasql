@@ -23,7 +23,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/goccy/go-zetasql/internal/vendorpatch"
+	"github.com/vantaboard/go-googlesql/internal/vendorpatch"
 )
 
 func repoRoot() string {

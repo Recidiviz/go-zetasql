@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2022.02.1` → `2022.08.1`
 
-This note captures a **directory-scoped review** of upstream changes between tags `2022.02.1` and `2022.08.1` in the [googlesql](https://github.com/google/zetasql) history (paths under `zetasql/` at those tags). Export commits bundle **hundreds** of internal CLs; only a subset of bullets appear in commit messages—this file focuses on **proto / public API / builtins** relevant to **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator**.
+This note captures a **directory-scoped review** of upstream changes between tags `2022.02.1` and `2022.08.1` in the [googlesql](https://github.com/google/zetasql) history (paths under `zetasql/` at those tags). Export commits bundle **hundreds** of internal CLs; only a subset of bullets appear in commit messages—this file focuses on **proto / public API / builtins** relevant to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 ## Scale
 
@@ -62,11 +62,11 @@ Notable new or adjusted **`FunctionSignatureId`** entries (non-exhaustive):
 - **`resolved_ast*.template`**, **`resolved_ast_builder`**: builder rules (optional fields, `Build()` checks) per export notes.
 - **`FlattenRewriter`**: bugfix for invalid `ResolvedAST` on some shapes.
 
-## go-zetasqlite builtin parity (runtime)
+## go-googlesqlite builtin parity (runtime)
 
-Cross-check of **2022.08.1-relevant** builtins vs [`internal/function_register.go`](../../go-zetasqlite/internal/function_register.go) and [`internal/function_bind.go`](../../go-zetasqlite/internal/function_bind.go):
+Cross-check of **2022.08.1-relevant** builtins vs [`internal/function_register.go`](../../go-googlesqlite/internal/function_register.go) and [`internal/function_bind.go`](../../go-googlesqlite/internal/function_bind.go):
 
-| Area | Upstream (2022.02→08) | go-zetasqlite |
+| Area | Upstream (2022.02→08) | go-googlesqlite |
 |------|------------------------|---------------|
 | `ARRAY_FIRST` / `ARRAY_LAST` / `ARRAY_SLICE` | Added to catalog | **Registered** (`bindArrayFirst`, etc.) |
 | `ARRAY_MIN` | Signature in library | **Not** in `normalFuncs` (use `min` aggregate or add binding if required) |
@@ -79,11 +79,11 @@ Cross-check of **2022.08.1-relevant** builtins vs [`internal/function_register.g
 | `IEEE_DIVIDE` | Existing | **Registered** (`ieee_divide`) |
 | `LIKE ALL` NULL-pattern semantics | Reference + rewriter changes | **No** dedicated tests in repo; behavior follows analyzer + SQLite func layer—add targeted queries if you support `LIKE ALL` |
 
-**NaN / FORMAT / ROUND**: Upstream **canonicalizes CAST/FORMAT of NaN and 0** and extends **ROUND** with **banker’s rounding** for Numeric types—confirm [`internal/function_math.go`](../../go-zetasqlite/internal/function_math.go) and FORMAT paths match compliance expectations when you enable those language features.
+**NaN / FORMAT / ROUND**: Upstream **canonicalizes CAST/FORMAT of NaN and 0** and extends **ROUND** with **banker’s rounding** for Numeric types—confirm [`internal/function_math.go`](../../go-googlesqlite/internal/function_math.go) and FORMAT paths match compliance expectations when you enable those language features.
 
 ## Recommended follow-ups
 
-1. Regenerate or diff **go-zetasql** bindings against protos and resolved-AST templates after pinning the new library version.
+1. Regenerate or diff **go-googlesql** bindings against protos and resolved-AST templates after pinning the new library version.
 2. Add bindings + tests for **high-demand** gaps: `ISERROR` family, `CBRT`, `DEGREES`/`RADIANS`/`PI`, `ROUND(..., rounding_mode)`, **`ARRAY_MIN`** (if exposed as scalar), **`ARRAY_INCLUDES_ALL`**.
 3. **`TYPE_RANGE`**: requires **value type** support in decode/eval—not only parser—before enabling `FEATURE_RANGE_TYPE` in tests.
 
@@ -91,5 +91,5 @@ Cross-check of **2022.08.1-relevant** builtins vs [`internal/function_register.g
 
 Building and running `bigquery-emulator/server` tests loads **CGO** and the full emulator stack and can use **large amounts of RAM** (enough to stress IDEs). Prefer:
 
-- **`go-zetasqlite`** [`query_test.go`](../../go-zetasqlite/query_test.go) (and related tests) for ARRAY builtins, math, and SQL semantics.
+- **`go-googlesqlite`** [`query_test.go`](../../go-googlesqlite/query_test.go) (and related tests) for ARRAY builtins, math, and SQL semantics.
 - CI or a dedicated machine with ample memory if you need end-to-end HTTP/API checks against the emulator.

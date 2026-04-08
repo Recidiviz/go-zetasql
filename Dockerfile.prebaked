@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 # Experimental skeleton for a "link-only" workflow: toolchain + optional layout for
 # preinstalled headers and static libraries (see README Development and contrib/zetasql.pc.example).
-# Not used by default; build with: docker build -f Dockerfile.prebaked -t go-zetasql:prebaked .
+# Not used by default; build with: docker build -f Dockerfile.prebaked -t go-googlesql:prebaked .
 FROM golang:1.24-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends clang ccache mold pkg-config \
@@ -14,10 +14,10 @@ ENV PATH="/usr/lib/ccache:${PATH}"
 ENV CCACHE_COMPRESS=1
 ENV CGO_LDFLAGS=-fuse-ld=mold
 
-# When a consolidated prebuild exists, unpack under /opt/go-zetasql-cgo and set e.g.:
-# ENV PKG_CONFIG_PATH=/opt/go-zetasql-cgo/lib/pkgconfig
-# ENV CGO_CFLAGS=-I/opt/go-zetasql-cgo/include
-# ENV CGO_LDFLAGS=-L/opt/go-zetasql-cgo/lib -fuse-ld=mold ...
+# When a consolidated prebuild exists, unpack under /opt/go-googlesql-cgo and set e.g.:
+# ENV PKG_CONFIG_PATH=/opt/go-googlesql-cgo/lib/pkgconfig
+# ENV CGO_CFLAGS=-I/opt/go-googlesql-cgo/include
+# ENV CGO_LDFLAGS=-L/opt/go-googlesql-cgo/lib -fuse-ld=mold ...
 
 WORKDIR /work
 CMD ["bash"]

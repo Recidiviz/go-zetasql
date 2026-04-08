@@ -1,11 +1,11 @@
-package zetasql_test
+package googlesql_test
 
 import (
 	"testing"
 
-	"github.com/goccy/go-zetasql"
-	"github.com/goccy/go-zetasql/resolved_ast"
-	"github.com/goccy/go-zetasql/types"
+	"github.com/vantaboard/go-googlesql"
+	"github.com/vantaboard/go-googlesql/resolved_ast"
+	"github.com/vantaboard/go-googlesql/types"
 )
 
 type myCatalog struct {
@@ -149,19 +149,19 @@ var (
 )
 
 func TestCatalog(t *testing.T) {
-	langOpt := zetasql.NewLanguageOptions()
-	langOpt.SetNameResolutionMode(zetasql.NameResolutionDefault)
+	langOpt := googlesql.NewLanguageOptions()
+	langOpt.SetNameResolutionMode(googlesql.NameResolutionDefault)
 	langOpt.SetProductMode(types.ProductExternal)
-	langOpt.SetEnabledLanguageFeatures([]zetasql.LanguageFeature{
-		zetasql.FeatureTemplateFunctions,
+	langOpt.SetEnabledLanguageFeatures([]googlesql.LanguageFeature{
+		googlesql.FeatureTemplateFunctions,
 	})
 	langOpt.SetSupportedStatementKinds([]resolved_ast.Kind{resolved_ast.QueryStmt})
-	opt := zetasql.NewAnalyzerOptions()
+	opt := googlesql.NewAnalyzerOptions()
 	opt.SetAllowUndeclaredParameters(true)
 	opt.SetLanguage(langOpt)
 
 	simpleCatalog := types.NewSimpleCatalog("simple")
-	simpleCatalog.AddZetaSQLBuiltinFunctions(langOpt.BuiltinFunctionOptions())
+	simpleCatalog.AddGoogleSQLBuiltinFunctions(langOpt.BuiltinFunctionOptions())
 	catalog := &myCatalog{
 		simpleCatalog: simpleCatalog,
 		tables: []types.Table{
@@ -195,7 +195,7 @@ func TestCatalog(t *testing.T) {
 		},
 	}
 	query := `SELECT * FROM sample_table WHERE MY_FUNC(1.0) = 'foo'`
-	if _, err := zetasql.AnalyzeStatement(query, catalog, opt); err != nil {
+	if _, err := googlesql.AnalyzeStatement(query, catalog, opt); err != nil {
 		t.Fatal(err)
 	}
 }

@@ -1,14 +1,14 @@
-package zetasql
+package googlesql
 
 import (
 	"fmt"
 	"unsafe"
 
-	"github.com/goccy/go-zetasql/ast"
-	internal "github.com/goccy/go-zetasql/internal/ccall/go-zetasql"
-	"github.com/goccy/go-zetasql/internal/helper"
-	"github.com/goccy/go-zetasql/resolved_ast"
-	"github.com/goccy/go-zetasql/types"
+	"github.com/vantaboard/go-googlesql/ast"
+	internal "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql"
+	"github.com/vantaboard/go-googlesql/internal/helper"
+	"github.com/vantaboard/go-googlesql/resolved_ast"
+	"github.com/vantaboard/go-googlesql/types"
 )
 
 import "C"
@@ -47,7 +47,7 @@ func (o *AnalyzerOptions) SetLanguage(options *LanguageOptions) {
 // Parameter name lookups are case insensitive.
 // Paramater names in the output ParameterNode nodes will always be in lowercase.
 //
-// ZetaSQL only uses the parameter Type and not the Value. Query analysis is
+// GoogleSQL only uses the parameter Type and not the Value. Query analysis is
 // not dependent on the value, and query engines may substitute a value after
 // analysis.
 //
@@ -90,7 +90,7 @@ func (o *AnalyzerOptions) ClearQueryParameters() {
 
 // AddPositionalQueryParameter adds a positional query parameter.
 //
-// ZetaSQL only uses the parameter Type and not the Value. Query analysis is
+// GoogleSQL only uses the parameter Type and not the Value. Query analysis is
 // not dependent on the value, and query engines may substitute a value after
 // analysis.
 //
@@ -381,7 +381,7 @@ func (o *AnalyzerOutput) AnalyzerOutputProperties() *AnalyzerOutputProperties {
 	return nil
 }
 
-// AnalyzeStatement analyze a ZetaSQL statement.
+// AnalyzeStatement analyze a GoogleSQL statement.
 //
 // This can return errors that point at a location in the input.
 // How this location is reported is given by <opt.ErrorMessageMode()>.
@@ -453,7 +453,7 @@ func AnalyzeNextStatement(loc *ParseResumeLocation, catalog types.Catalog, opt *
 	return newAnalyzerOutput(out), isEnd, nil
 }
 
-// AnalyzeExpression analyze a ZetaSQL expression.
+// AnalyzeExpression analyze a GoogleSQL expression.
 // The expression may include query parameters, subqueries, and any other valid expression syntax.
 //
 // The Catalog provides functions and named data types as usual.  If it
@@ -492,7 +492,7 @@ func AnalyzeExpression(sql string, catalog types.Catalog, opt *AnalyzerOptions) 
 }
 
 func AnalyzeType(typeName string, catalog types.Catalog, opt *AnalyzerOptions) ([]types.Type, error) {
-	return nil, fmt.Errorf("go-zetasql: unimplemented")
+	return nil, fmt.Errorf("go-googlesql: unimplemented")
 }
 
 func AnalyzeStatementFromParserAST(sql string, stmt ast.StatementNode, catalog types.Catalog, opt *AnalyzerOptions) (*AnalyzerOutput, error) {
@@ -524,13 +524,13 @@ func AnalyzeStatementFromParserAST(sql string, stmt ast.StatementNode, catalog t
 type TableNameSet struct{}
 
 func ExtractTableNamesFromStatement(sql string) (*TableNameSet, error) {
-	return nil, fmt.Errorf("go-zetasql: unimplemented")
+	return nil, fmt.Errorf("go-googlesql: unimplemented")
 }
 
 func ExtractTableNamesFromNextStatement(loc *ParseResumeLocation) (*TableNameSet, bool, error) {
-	return nil, false, fmt.Errorf("go-zetasql: unimplemented")
+	return nil, false, fmt.Errorf("go-googlesql: unimplemented")
 }
 
 func ExtractTableNamesFromScript(sql string) (*TableNameSet, error) {
-	return nil, fmt.Errorf("go-zetasql: unimplemented")
+	return nil, fmt.Errorf("go-googlesql: unimplemented")
 }

@@ -1,12 +1,12 @@
 # Googlesql upgrade delta: `2023.10.1` → `2023.11.1`
 
-This note tracks **upstream** changes between tags `2023.10.1` and `2023.11.1` in [ZetaSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2023.10.1` and `2023.11.1` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 Upstream ships as **one** export commit (`589026c4` on `2023.11.1`). Mechanical churn is concentrated in `zetasql/public/options.proto`, `zetasql/public/builtin_function.proto`, `zetasql/resolved_ast/` (sql builder, validator, `target_syntax.h`, templates), and `zetasql/public/value.*`.
 
-## go-zetasql source snapshot
+## go-googlesql source snapshot
 
-Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2023.11.1`. Prefer `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run ./internal/cmd/vendorpatch` and `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
+Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2023.11.1`. Prefer `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run ./internal/cmd/vendorpatch` and `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
 
 **`.proto` files:** The updater `Skip` callback does not copy `*.proto` from the submodule; sync them explicitly, e.g. `rsync` of `*.proto` from `internal/cmd/updater/zetasql/zetasql/` into `internal/ccall/zetasql/`.
 
@@ -20,7 +20,7 @@ Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/u
 
 ### Embedding-only fixes (not in the submodule)
 
-Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)). If go-zetasql needs CGO-specific status-payload or related fixes, apply them under **`internal/ccall/zetasql/`** after the updater, or via [`vendorpatch` / `protobuf-vendoring.md`](protobuf-vendoring.md).
+Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)). If go-googlesql needs CGO-specific status-payload or related fixes, apply them under **`internal/ccall/zetasql/`** after the updater, or via [`vendorpatch` / `protobuf-vendoring.md`](protobuf-vendoring.md).
 
 *Historical note:* Older text here referenced cherry-picking into the submodule; that workflow is **retired**.
 
@@ -39,7 +39,7 @@ Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/u
 
 - New `target_syntax.h`, updates to `sql_builder.cc`, `validator.cc`, `query_expression.*`, `rewrite_utils.*`, `gen_resolved_ast.py`, templates, and tests; refreshed via updater + generator (not hand-edited).
 
-## go-zetasqlite / bigquery-emulator
+## go-googlesqlite / bigquery-emulator
 
-- **go-zetasqlite**: If generated builtin enums or ARRAY_ZIP / distance registrations drift, update `internal/function_register.go` and implementations; align **LanguageFeature** / analyzer options if new SQL surface is enabled in tests.
+- **go-googlesqlite**: If generated builtin enums or ARRAY_ZIP / distance registrations drift, update `internal/function_register.go` and implementations; align **LanguageFeature** / analyzer options if new SQL surface is enabled in tests.
 - **bigquery-emulator**: Add or extend HTTP/query tests if user-visible builtins or ARRAY_ZIP behavior changes; otherwise verify with existing suites.

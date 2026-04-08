@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Build @com_google_protobuf//:protobuf with Bazel in the ZetaSQL submodule, then merge all
+# Build @com_google_protobuf//:protobuf with Bazel in the GoogleSQL submodule, then merge all
 # non-test .pic.o objects (plus utf8_range) into lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a.
 #
 # Runs on Linux and macOS when bazelisk/bazel is installed. Default CGO bindings still compile
 # protobuf via amalgamation (export.inc); this archive is for experiments or a future Tier-B
 # path. See docs/protobuf-vendoring.md ("Single-owner protobuf") and
 # docs/protobuf-single-owner-inventory.md for why link-only protobuf must align Abseil/macro
-# policy with the rest of go-zetasql.
+# policy with the rest of go-googlesql.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
@@ -23,7 +23,7 @@ fi
 BAZEL="${BAZEL:-$(command -v bazelisk || command -v bazel)}"
 
 "$BAZEL" build @com_google_protobuf//:protobuf \
-  --cxxopt=-std=c++17 --host_cxxopt=-std=c++17 \
+  --cxxopt=-std=c++20 --host_cxxopt=-std=c++20 \
   --jobs="${BAZEL_JOBS:-8}"
 
 BINROOT="$("$BAZEL" info bazel-bin | tr -d '\r')"

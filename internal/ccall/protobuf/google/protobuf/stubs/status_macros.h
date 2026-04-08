@@ -91,7 +91,7 @@ absl::Status DoAssignOrReturn(T& lhs, absl::StatusOr<T> result) {
 
 #include "google/protobuf/port_undef.inc"  // NOLINT
 
-// go-zetasql: port_undef clears PROTOBUF_PREDICT_FALSE; these macros still
+// go-googlesql: port_undef clears PROTOBUF_PREDICT_FALSE; these macros still
 // expanded to uses of it. Undef so TUs that include differential_privacy
 // base/status_macros.h are not left with a broken RETURN_IF_ERROR.
 #undef RETURN_IF_ERROR

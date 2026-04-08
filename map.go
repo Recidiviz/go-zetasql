@@ -1,11 +1,11 @@
-package zetasql
+package googlesql
 
 import (
 	"unsafe"
 
-	"github.com/goccy/go-zetasql/ast"
-	"github.com/goccy/go-zetasql/resolved_ast"
-	"github.com/goccy/go-zetasql/types"
+	"github.com/vantaboard/go-googlesql/ast"
+	"github.com/vantaboard/go-googlesql/resolved_ast"
+	"github.com/vantaboard/go-googlesql/types"
 )
 
 type NodeMap struct {

@@ -247,7 +247,7 @@ const (
 )
 
 // UpdateItemMode controls behavior when a subscript does not resolve to an
-// existing element (see ResolvedUpdateItemElement in upstream ZetaSQL).
+// existing element (see ResolvedUpdateItemElement in upstream GoogleSQL).
 type UpdateItemMode int
 
 const (

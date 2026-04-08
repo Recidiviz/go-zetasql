@@ -1,28 +1,28 @@
-# go-zetasql
+# go-googlesql
 
-![Go](https://github.com/goccy/go-zetasql/workflows/Go/badge.svg)
-[![GoDoc](https://godoc.org/github.com/goccy/go-zetasql?status.svg)](https://pkg.go.dev/github.com/goccy/go-zetasql?tab=doc)
+![Go](https://github.com/vantaboard/go-googlesql/workflows/Go/badge.svg)
+[![GoDoc](https://godoc.org/github.com/vantaboard/go-googlesql?status.svg)](https://pkg.go.dev/github.com/vantaboard/go-googlesql?tab=doc)
 
-Go bindings for [ZetaSQL](https://github.com/google/zetasql)
+Go bindings for [GoogleSQL](https://github.com/google/zetasql)
 
-ZetaSQL can parse all queries related to Cloud Spanner and BigQuery. This functionality is provided from the Go language using cgo. 
+GoogleSQL can parse all queries related to Cloud Spanner and BigQuery. This functionality is provided from the Go language using cgo. 
 
 # Features
 
-- No need to install ZetaSQL library
-  - go-zetasql contains all the source code needed to build ZetaSQL and builds at `go get github.com/goccy/go-zetasql` timing. Therefore, there is no need to install dependent libraries separately.
+- No need to install GoogleSQL library
+  - go-googlesql contains all the source code needed to build GoogleSQL and builds at `go get github.com/vantaboard/go-googlesql` timing. Therefore, there is no need to install dependent libraries separately.
 
 - Can create a portable single binary even though it using cgo
   - You can create a static binary even with `CGO_ENABLED=1` by specifying the following options at build time: `--ldflags '-extldflags "-static"'`
 
-- Can access all the APIs of the ZetaSQL parser
-  - The ZetaSQL parser is not publicly available, but it is available in go-zetasql
+- Can access all the APIs of the GoogleSQL parser
+  - The GoogleSQL parser is not publicly available, but it is available in go-googlesql
 
 - Can access analyzer APIs
 
 # Status
 
-In the features of ZetaSQL, you can use the functions of the following packages. Will be added sequentially.
+In the features of GoogleSQL, you can use the functions of the following packages. Will be added sequentially.
 
 | Package        | Supported  |
 | ----           | ----       |
@@ -34,7 +34,7 @@ In the features of ZetaSQL, you can use the functions of the following packages.
 
 # Prerequisites
 
-go-zetasql uses cgo. Therefore, `CGO_ENABLED=1` is required to build.  
+go-googlesql uses cgo. Therefore, `CGO_ENABLED=1` is required to build.  
 Also, the compiler recommends `clang++`. Please set `CXX=clang++` to install.
 
 |  Environment Name |  Value                   |
@@ -45,21 +45,21 @@ Also, the compiler recommends `clang++`. Please set `CXX=clang++` to install.
 # Installation
 
 ```
-go get github.com/goccy/go-zetasql
+go get github.com/vantaboard/go-googlesql
 ```
 
-The first time you run it, it takes time to build all the ZetaSQL code used by go-zetasql.
+The first time you run it, it takes time to build all the GoogleSQL code used by go-googlesql.
 
 ## Development
 
-**Fast path (stack work):** `make docker/build-dev` in this repo → optional `make docker/warm-cache` → use the same **`GO_CACHE_ROOT`** (default `~/.cache/go-zetasql`) when running **`make test/linux`** in sibling checkouts **`go-zetasqlite`** and **`bigquery-emulator`**. Those READMEs document **`GO_CACHE_ROOT`**, **ccache**, **mold** (Linux), and optional warm-up for host and Docker workflows.
+**Fast path (stack work):** `make docker/build-dev` in this repo → optional `make docker/warm-cache` → use the same **`GO_CACHE_ROOT`** (default `~/.cache/go-googlesql`) when running **`make test/linux`** in sibling checkouts **`go-googlesqlite`** and **`bigquery-emulator`**. Those READMEs document **`GO_CACHE_ROOT`**, **ccache**, **mold** (Linux), and optional warm-up for host and Docker workflows.
 
-**Sequential tests (multi-repo):** If you work in `go-zetasql`, `go-zetasqlite`, and `bigquery-emulator` together, run heavy `go test` **one repo at a time**. Running full CGO test suites in parallel on one machine often exhausts memory.
+**Sequential tests (multi-repo):** If you work in `go-googlesql`, `go-googlesqlite`, and `bigquery-emulator` together, run heavy `go test` **one repo at a time**. Running full CGO test suites in parallel on one machine often exhausts memory.
 
-**Reuse local compile cache:** Point the same Go caches at all three checkouts so `go-zetasql` objects are not rebuilt for every downstream test:
+**Reuse local compile cache:** Point the same Go caches at all three checkouts so `go-googlesql` objects are not rebuilt for every downstream test:
 
 ```console
-export GOCACHE=$HOME/.cache/go-zetasql-stack
+export GOCACHE=$HOME/.cache/go-googlesql-stack
 export GOMODCACHE=$HOME/.cache/go-mod
 mkdir -p "$GOCACHE" "$GOMODCACHE"
 ```
@@ -68,7 +68,7 @@ Then run tests with `CGO_ENABLED=1 CC=clang CXX=clang++` as usual.
 
 **GitHub Actions** uses **`ccache clang`** / **`ccache clang++`** with a persisted **`CCACHE_DIR`** so CI gets incremental C++ compiles across runs, similar in spirit to **`make local/build`**.
 
-**Mold (Linux):** The **`go-zetasql:dev`** image installs **`mold`** and sets **`CGO_LDFLAGS=-fuse-ld=mold`**. On Linux hosts, if **`mold`** is on **`PATH`**, **`make local/build`** / **`local/test`** pass the same flag for faster linking.
+**Mold (Linux):** The **`go-googlesql:dev`** image installs **`mold`** and sets **`CGO_LDFLAGS=-fuse-ld=mold`**. On Linux hosts, if **`mold`** is on **`PATH`**, **`make local/build`** / **`local/test`** pass the same flag for faster linking.
 
 **Rough cold vs warm timing:** **`make profile-bottleneck`** runs two **`go test -c`** passes and prints **`ccache -s`** (install **`ccache`** locally for stats). Uses **`TESTPKG`** like other targets.
 
@@ -76,20 +76,20 @@ Then run tests with `CGO_ENABLED=1 CC=clang CXX=clang++` as usual.
 
 **Large structural changes (deferred):** Merging many CGO packages or switching to a single Bazel-built **`libzetasql.a`** would require a new bridge/export story and profiling evidence; see [`contrib/zetasql.pc.example`](contrib/zetasql.pc.example) and [`Dockerfile.prebaked`](Dockerfile.prebaked) for a future consolidated install prefix / artifact layout.
 
-**Docker-based tests (recommended):** Use **`make test`** or **`make test/linux`** — this builds a slim **`go-zetasql:dev`** image (**`--target dev`**: Go + clang + **ccache** only; no module compile in the image build) and runs **`go test`** with your **working tree** and **`GO_CACHE_ROOT`** (default **`~/.cache/go-zetasql`**) bind-mounted as **`gocache/`**, **`gomodcache/`**, and **`ccache/`** (Clang object cache for CGO). After a cold cache or toolchain change, run **`make docker/warm-cache`** once: it runs **`go test -race`** with **`-run '^$'`** (matches no tests) so you **pre-compile** the same **`-race`** graph without executing tests; later **`test/linux`** stays much faster. Set **`TESTPKG=./...`** to widen scope. **`go-zetasqlite`** and **`bigquery-emulator`** **`make test/linux`** use the same **`GO_CACHE_ROOT`** so the stack shares one warm cache. Host-only **`make local/build`** / **`local/test`** use the same default tree. Rebuild **`go-zetasql:dev`** after Dockerfile changes (**`make docker/build-dev`**). The default **`docker build`** (release image) still runs **`go install`** with BuildKit cache mounts for registry builds; that path is separate from local test caches.
+**Docker-based tests (recommended):** Use **`make test`** or **`make test/linux`** — this builds a slim **`go-googlesql:dev`** image (**`--target dev`**: Go + clang + **ccache** only; no module compile in the image build) and runs **`go test`** with your **working tree** and **`GO_CACHE_ROOT`** (default **`~/.cache/go-googlesql`**) bind-mounted as **`gocache/`**, **`gomodcache/`**, and **`ccache/`** (Clang object cache for CGO). After a cold cache or toolchain change, run **`make docker/warm-cache`** once: it runs **`go test -race`** with **`-run '^$'`** (matches no tests) so you **pre-compile** the same **`-race`** graph without executing tests; later **`test/linux`** stays much faster. Set **`TESTPKG=./...`** to widen scope. **`go-googlesqlite`** and **`bigquery-emulator`** **`make test/linux`** use the same **`GO_CACHE_ROOT`** so the stack shares one warm cache. Host-only **`make local/build`** / **`local/test`** use the same default tree. Rebuild **`go-googlesql:dev`** after Dockerfile changes (**`make docker/build-dev`**). The default **`docker build`** (release image) still runs **`go install`** with BuildKit cache mounts for registry builds; that path is separate from local test caches.
 
-**Downstream Docker images:** `bigquery-emulator` accepts `GO_ZETASQL_BASE` (default: the Recidiviz base image). After building `go-zetasql:dev`, you can point the emulator at it, for example:
+**Downstream Docker images:** `bigquery-emulator` accepts `GO_GOOGLESQL_BASE` (default: the Recidiviz base image). After building `go-googlesql:dev`, you can point the emulator at it, for example:
 
 ```console
 # in bigquery-emulator/
-make docker/build GO_ZETASQL_BASE=go-zetasql:dev
+make docker/build GO_GOOGLESQL_BASE=go-googlesql:dev
 ```
 
 # Editor Tips
 
 Opening this repository in VS Code or Cursor can be expensive because the Go extension loads a large CGO-backed package graph.
 
-- Open `go-zetasql.code-workspace` when you only need this repository. This avoids indexing sibling repositories in the same window.
+- Open `go-googlesql.code-workspace` when you only need this repository. This avoids indexing sibling repositories in the same window.
 - The repository includes `.vscode/settings.json` with conservative Go extension defaults for this module:
   - disables build, lint, and vet on save
   - reduces `gopls` background work
@@ -104,8 +104,8 @@ Opening this repository in VS Code or Cursor can be expensive because the Go ext
 package main
 
 import (
-  "github.com/goccy/go-zetasql"
-  "github.com/goccy/go-zetasql/ast"
+  "github.com/vantaboard/go-googlesql"
+  "github.com/vantaboard/go-googlesql/ast"
 )
 
 func main() {
@@ -128,8 +128,8 @@ package main
 import (
   "fmt"
 
-  "github.com/goccy/go-zetasql"
-  "github.com/goccy/go-zetasql/ast"
+  "github.com/vantaboard/go-googlesql"
+  "github.com/vantaboard/go-googlesql/ast"
 )
 
 func main() {
@@ -159,9 +159,9 @@ package main
 import (
   "fmt"
 
-  "github.com/goccy/go-zetasql"
-  "github.com/goccy/go-zetasql/resolved_ast"
-  "github.com/goccy/go-zetasql/types"
+  "github.com/vantaboard/go-googlesql"
+  "github.com/vantaboard/go-googlesql/resolved_ast"
+  "github.com/vantaboard/go-googlesql/types"
 )
 
 func main() {
@@ -173,7 +173,7 @@ func main() {
       types.NewSimpleColumn(tableName, "name", types.StringType()),
     }),
   )
-  catalog.AddZetaSQLBuiltinFunctions()
+  catalog.AddGoogleSQLBuiltinFunctions()
   out, err := zetasql.AnalyzeStatement("SELECT * FROM Samples WHERE id = 1000", catalog, nil)
   if err != nil {
     panic(err)
@@ -205,7 +205,7 @@ fmt.Println(stmt.DebugString())
 
 Apache-2.0 License
 
-Since go-zetasql builds all source code including dependencies at install time, it directly contains the source code of the following libraries. Therefore, the license is set according to the license of the dependent library.
+Since go-googlesql builds all source code including dependencies at install time, it directly contains the source code of the following libraries. Therefore, the license is set according to the license of the dependent library.
 
 - [zetasql](https://github.com/google/zetasql): [Apache License 2.0](https://github.com/google/zetasql/blob/master/LICENSE)
 - [abseil](https://github.com/abseil/abseil-cpp): [Apache License 2.0](https://github.com/abseil/abseil-cpp/blob/master/LICENSE)

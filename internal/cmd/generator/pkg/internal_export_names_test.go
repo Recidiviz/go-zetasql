@@ -27,7 +27,7 @@ func TestBuildReplaceNameEntriesOmitsDescriptorTablesExceptProtobuf(t *testing.T
 		"descriptor_table_google_2fprotobuf_2ftimestamp_2eproto",
 		"TableStruct_google_2fprotobuf_2ftimestamp_2eproto",
 	}
-	leaf := g.buildReplaceNameEntries("zetasql/parser/location")
+	leaf := g.buildReplaceNameEntries("googlesql/parser/location")
 	for _, e := range leaf {
 		if strings.HasPrefix(e.Name, "descriptor_table_google_2fprotobuf") {
 			t.Fatalf("leaf package should not get google well-known descriptor renames: %q", e.Name)

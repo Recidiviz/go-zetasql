@@ -13,10 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// go-zetasql: included from both the protobuf amalgamation (export.inc) and
+// go-googlesql: included from both the protobuf amalgamation (export.inc) and
 // go-absl log export.inc in some TUs; guard prevents one-TU redefinition.
-#ifndef GO_ZETASQL_GUARD_ABSL_LOG_INTERNAL_LOG_MESSAGE_CC
-#define GO_ZETASQL_GUARD_ABSL_LOG_INTERNAL_LOG_MESSAGE_CC
+#ifndef GO_GOOGLESQL_GUARD_ABSL_LOG_INTERNAL_LOG_MESSAGE_CC
+#define GO_GOOGLESQL_GUARD_ABSL_LOG_INTERNAL_LOG_MESSAGE_CC
 
 #include "absl/log/internal/log_message.h"
 
@@ -622,4 +622,4 @@ LogMessageQuietlyFatal::~LogMessageQuietlyFatal() {
 ABSL_NAMESPACE_END
 }  // namespace absl
 
-#endif  // GO_ZETASQL_GUARD_ABSL_LOG_INTERNAL_LOG_MESSAGE_CC
+#endif  // GO_GOOGLESQL_GUARD_ABSL_LOG_INTERNAL_LOG_MESSAGE_CC

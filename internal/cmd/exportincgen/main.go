@@ -14,7 +14,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/goccy/go-zetasql/internal/exportinc"
+	"github.com/vantaboard/go-googlesql/internal/exportinc"
 )
 
 func main() {

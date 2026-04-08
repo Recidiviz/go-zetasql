@@ -10,10 +10,10 @@ func TestApplyPortDefAmalgamationPatch_idempotent(t *testing.T) {
 // #undef.
 
 // The definitions in this file are intended to be portable across Clang,
-#ifdef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
+#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
 #else
 body
-#endif  // GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
+#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
 `
 	out, err := ApplyPortDefAmalgamationPatch(patched)
 	if err != nil {
@@ -35,13 +35,13 @@ func TestApplyPortDefAmalgamationPatch_unpatched(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(out, "GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF") {
+	if !strings.Contains(out, "GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF") {
 		t.Fatal("expected guard in output")
 	}
 	if !strings.Contains(out, "#define X 1") {
 		t.Fatal("expected body preserved")
 	}
-	if !strings.HasSuffix(strings.TrimSpace(out), "#endif  // GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF") {
+	if !strings.HasSuffix(strings.TrimSpace(out), "#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF") {
 		t.Fatalf("expected closing endif at end of output")
 	}
 }
@@ -57,11 +57,11 @@ func TestApplyPortUndefAmalgamationPatch_idempotent(t *testing.T) {
 	const patched = `// license
 // for more info.
 
-#ifdef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
+#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
 #else
 #ifndef PROTOBUF_NAMESPACE
 #endif
-#endif  // GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
+#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
 `
 	out, err := ApplyPortUndefAmalgamationPatch(patched)
 	if err != nil {
@@ -85,7 +85,7 @@ func TestApplyPortUndefAmalgamationPatch_unpatched(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(out, "GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF") {
+	if !strings.Contains(out, "GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF") {
 		t.Fatal("expected guard")
 	}
 	if !strings.Contains(out, "#undef FOO") {

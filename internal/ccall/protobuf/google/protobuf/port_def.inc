@@ -49,9 +49,9 @@
 // detect/prohibit anytime it is #included twice without a corresponding
 // #undef.
 
-// go-zetasql: in amalgamation.cc / export.inc, port_def is included once at
+// go-googlesql: in amalgamation.cc / export.inc, port_def is included once at
 // the start of the TU; subsequent includes from headers skip the body.
-#ifdef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
+#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
 #else
 
 // The definitions in this file are intended to be portable across Clang,
@@ -1147,4 +1147,4 @@ PROTOBUF_EXPORT void protobuf_assumption_failed(const char *pred,
 #  undef PROTOBUF_has_builtin_DEFINED_
 #endif
 
-#endif  // GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
+#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF

@@ -32,9 +32,9 @@
 // #undefs all macros defined in port_def.inc.  See comments in port_def.inc
 // for more info.
 
-// go-zetasql: skip intermediate undefs in amalgamation (export.inc does one
+// go-googlesql: skip intermediate undefs in amalgamation (export.inc does one
 // final port_undef at the end of the TU).
-#ifdef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
+#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
 #else
 
 #ifndef PROTOBUF_NAMESPACE
@@ -204,4 +204,4 @@
 #pragma warning(pop)
 #endif
 
-#endif  // GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
+#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF

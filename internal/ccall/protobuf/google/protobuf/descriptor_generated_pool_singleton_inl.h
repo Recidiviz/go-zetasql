@@ -1,4 +1,4 @@
-// go-zetasql: Inline definitions for the generated EncodedDescriptorDatabase and
+// go-googlesql: Inline definitions for the generated EncodedDescriptorDatabase and
 // DescriptorPool singletons. When the protobuf amalgamation is compiled into more
 // than one CGO archive, anonymous-namespace helpers in descriptor.cc each get a
 // distinct database (internal linkage). Marking these as inline merges the static

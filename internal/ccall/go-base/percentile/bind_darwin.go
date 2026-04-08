@@ -1,7 +1,7 @@
 package percentile
 
 /*
-#cgo CXXFLAGS: -std=c++17
+#cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I../../
 #cgo CXXFLAGS: -I../../protobuf
 #cgo CXXFLAGS: -I../../utf8_range
@@ -17,6 +17,9 @@ package percentile
 #cgo CXXFLAGS: -Wno-switch
 #cgo CXXFLAGS: -Wno-unused-function
 #cgo CXXFLAGS: -Wno-deprecated-declarations
+#cgo CXXFLAGS: -Wno-deprecated-enum-enum-conversion
+#cgo CXXFLAGS: -Wno-deprecated-anon-enum-enum-conversion
+#cgo CXXFLAGS: -Wno-deprecated-this-capture
 #cgo CXXFLAGS: -Wno-inconsistent-missing-override
 #cgo CXXFLAGS: -Wno-unknown-attributes
 #cgo CXXFLAGS: -Wno-macro-redefined
@@ -34,5 +37,5 @@ package percentile
 */
 import "C"
 import (
-	_ "github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf"
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
 )

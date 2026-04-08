@@ -1,4 +1,4 @@
-//go:build !zetasql_tier_b
+//go:build !googlesql_tier_b
 
 package protobuf
 
@@ -6,7 +6,7 @@ package protobuf
 
 /*
 #cgo CFLAGS: -x c++
-#cgo CFLAGS: -std=c++17
+#cgo CFLAGS: -std=c++20
 #cgo CFLAGS: -I${SRCDIR}/../../
 #cgo CFLAGS: -I${SRCDIR}/../../protobuf
 #cgo CFLAGS: -I${SRCDIR}/../../gtest
@@ -29,7 +29,7 @@ package protobuf
 #cgo CFLAGS: -DHAVE_PTHREAD
 #cgo CFLAGS: -DHAVE_ZLIB
 #cgo CFLAGS: -DU_COMMON_IMPLEMENTATION
-#cgo CXXFLAGS: -std=c++17
+#cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I${SRCDIR}/../../
 #cgo CXXFLAGS: -I${SRCDIR}/../../protobuf
 #cgo CXXFLAGS: -I${SRCDIR}/../../gtest
@@ -45,5 +45,5 @@ package protobuf
 import "C"
 
 import (
-	_ "github.com/goccy/go-zetasql/internal/ccall/utf8_range_link"
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/utf8_range_link"
 )

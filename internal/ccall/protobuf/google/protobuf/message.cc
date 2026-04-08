@@ -307,7 +307,7 @@ GeneratedMessageFactory* GeneratedMessageFactory::singleton() {
 
 void GeneratedMessageFactory::RegisterFile(
     const google::protobuf::internal::DescriptorTable* table) {
-  // go-zetasql: CGO can compile the same generated .pb.cc into multiple TUs;
+  // go-googlesql: CGO can compile the same generated .pb.cc into multiple TUs;
   // DescriptorByNameEq treats same filename as one slot, so a second insert
   // is a benign duplicate—do not abort.
   (void)files_.insert(table);

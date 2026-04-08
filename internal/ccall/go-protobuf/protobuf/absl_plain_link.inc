@@ -1,5 +1,5 @@
-#ifndef GO_ZETASQL_GO_PROTOBUF_ABSL_PLAIN_LINK_INC_
-#define GO_ZETASQL_GO_PROTOBUF_ABSL_PLAIN_LINK_INC_
+#ifndef GO_GOOGLESQL_GO_PROTOBUF_ABSL_PLAIN_LINK_INC_
+#define GO_GOOGLESQL_GO_PROTOBUF_ABSL_PLAIN_LINK_INC_
 
 // Plain `absl::` symbols for protobuf in this CGO TU (single amalgamation).
 // Additional Abseil sources are compiled as separate .cc files in
@@ -12,4 +12,4 @@
 #include "absl/hash/internal/hash.cc"
 #include "absl/container/internal/raw_hash_set.cc"
 
-#endif  // GO_ZETASQL_GO_PROTOBUF_ABSL_PLAIN_LINK_INC_
+#endif  // GO_GOOGLESQL_GO_PROTOBUF_ABSL_PLAIN_LINK_INC_

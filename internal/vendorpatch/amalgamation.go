@@ -1,4 +1,4 @@
-// Package vendorpatch applies go-zetasql-specific mechanical patches to vendored
+// Package vendorpatch applies go-googlesql-specific mechanical patches to vendored
 // third-party trees (see docs/protobuf-vendoring.md).
 package vendorpatch
 
@@ -10,33 +10,33 @@ import (
 )
 
 const (
-	portDefMarker   = "GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF"
-	portUndefMarker = "GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF"
+	portDefMarker   = "GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF"
+	portUndefMarker = "GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF"
 
 	portDefBodyPrefix = "// The definitions in this file are intended to be portable"
 
-	portDefGuardOpen = `// go-zetasql: in amalgamation.cc / export.inc, port_def is included once at
+	portDefGuardOpen = `// go-googlesql: in amalgamation.cc / export.inc, port_def is included once at
 // the start of the TU; subsequent includes from headers skip the body.
-#ifdef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
+#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
 #else
 
 `
 
 	portDefGuardClose = `
-#endif  // GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
+#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
 `
 
 	portUndefAnchorSuffix = "// for more info.\n"
 
-	portUndefGuardOpen = `// go-zetasql: skip intermediate undefs in amalgamation (export.inc does one
+	portUndefGuardOpen = `// go-googlesql: skip intermediate undefs in amalgamation (export.inc does one
 // final port_undef at the end of the TU).
-#ifdef GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
+#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
 #else
 
 `
 
 	portUndefGuardClose = `
-#endif  // GO_ZETASQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
+#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
 `
 )
 

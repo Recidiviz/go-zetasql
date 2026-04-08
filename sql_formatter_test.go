@@ -1,14 +1,14 @@
-package zetasql_test
+package googlesql_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/goccy/go-zetasql"
+	"github.com/vantaboard/go-googlesql"
 )
 
 func TestSQLFormatter(t *testing.T) {
-	formatted, err := zetasql.FormatSQL("SELECT * FROM Tables WHERE id = 1")
+	formatted, err := googlesql.FormatSQL("SELECT * FROM Tables WHERE id = 1")
 	if err != nil {
 		t.Fatal(err)
 	}

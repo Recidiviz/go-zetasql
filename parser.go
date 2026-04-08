@@ -1,12 +1,12 @@
-package zetasql
+package googlesql
 
 import "C"
 import (
 	"unsafe"
 
-	"github.com/goccy/go-zetasql/ast"
-	zetasqlparser "github.com/goccy/go-zetasql/internal/ccall/go-zetasql/parser/parser"
-	"github.com/goccy/go-zetasql/internal/helper"
+	"github.com/vantaboard/go-googlesql/ast"
+	zetasqlparser "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/parser/parser"
+	"github.com/vantaboard/go-googlesql/internal/helper"
 )
 
 type ParserOptions struct {

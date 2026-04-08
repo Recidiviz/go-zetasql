@@ -1,7 +1,7 @@
 package have_sse
 
 /*
-#cgo CXXFLAGS: -std=c++17
+#cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I../../../
 #cgo CXXFLAGS: -I../../../protobuf
 #cgo CXXFLAGS: -I../../../gtest
@@ -15,6 +15,8 @@ package have_sse
 #cgo CXXFLAGS: -Wno-switch
 #cgo CXXFLAGS: -Wno-unused-function
 #cgo CXXFLAGS: -Wno-deprecated-declarations
+#cgo CXXFLAGS: -Wno-deprecated-enum-enum-conversion
+#cgo CXXFLAGS: -Wno-deprecated-anon-enum-enum-conversion
 #cgo CXXFLAGS: -Wno-inconsistent-missing-override
 #cgo CXXFLAGS: -Wno-unknown-attributes
 #cgo CXXFLAGS: -Wno-macro-redefined

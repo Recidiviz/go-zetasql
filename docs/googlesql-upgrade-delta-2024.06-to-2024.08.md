@@ -1,12 +1,12 @@
 # Googlesql upgrade delta: `2024.06.1` → `2024.08.1`
 
-This note tracks **upstream** changes between tags `2024.06.1` and `2024.08.1` in [ZetaSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2024.06.1` and `2024.08.1` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
-Upstream ships as a single **“Exported ZetaSQL changes”** commit on `2024.08.1` (highlights: **SQL pipe syntax**, new language features, documentation). Mechanical churn is concentrated in `zetasql/public/options.proto`, `zetasql/public/builtin_function.proto`, `zetasql/public/function.proto`, `zetasql/public/types/` (e.g. removal of `list_backed_type`), and `zetasql/resolved_ast/` (`sql_builder`, `rewrite_utils`, `validator`, `gen_resolved_ast.py`).
+Upstream ships as a single **“Exported GoogleSQL changes”** commit on `2024.08.1` (highlights: **SQL pipe syntax**, new language features, documentation). Mechanical churn is concentrated in `zetasql/public/options.proto`, `zetasql/public/builtin_function.proto`, `zetasql/public/function.proto`, `zetasql/public/types/` (e.g. removal of `list_backed_type`), and `zetasql/resolved_ast/` (`sql_builder`, `rewrite_utils`, `validator`, `gen_resolved_ast.py`).
 
-## go-zetasql source snapshot
+## go-googlesql source snapshot
 
-Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2024.08.1`. Prefer `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run ./internal/cmd/vendorpatch` and `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
+Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/updater) after bumping the submodule to `2024.08.1`. Prefer `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1` when protobuf vendoring should stay on the existing pin ([`docs/protobuf-vendoring.md`](protobuf-vendoring.md)). Then run `go run ./internal/cmd/vendorpatch` and `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) so CGO amalgamation and generated Go stay aligned.
 
 **`.proto` files:** The updater `Skip` callback does not copy `*.proto` from the submodule; sync them explicitly, e.g. `rsync` of `*.proto` from `internal/cmd/updater/zetasql/zetasql/` into `internal/ccall/zetasql/`.
 
@@ -18,11 +18,11 @@ Refresh `internal/ccall/zetasql` with [`internal/cmd/updater`](../internal/cmd/u
 
 **Flex:** Keep the existing flex/post-copy policy in [`internal/cmd/updater/main.go`](../internal/cmd/updater/main.go) `applyPostCopyOverlays` and [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) in sync with tokenizer changes.
 
-**Root `bind.cc` / `root_bind.cc.tmpl`:** Include [`root_analyzer_amalgamation_macros.inc`](../internal/ccall/go-zetasql/root_analyzer_amalgamation_macros.inc) **before** `_cgo_export.h` (same ordering constraints as prior upgrades).
+**Root `bind.cc` / `root_bind.cc.tmpl`:** Include [`root_analyzer_amalgamation_macros.inc`](../internal/ccall/go-googlesql/root_analyzer_amalgamation_macros.inc) **before** `_cgo_export.h` (same ordering constraints as prior upgrades).
 
 ### Embedding-only fixes (not in the submodule)
 
-Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)). If go-zetasql needs CGO-specific status-payload or related fixes, apply them under **`internal/ccall/zetasql/`** after the updater, or via [`vendorpatch` / `protobuf-vendoring.md`](protobuf-vendoring.md).
+Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/updater/zetasql). Check out the **upstream release tag** only ([`zetasql-submodule-policy.md`](zetasql-submodule-policy.md)). If go-googlesql needs CGO-specific status-payload or related fixes, apply them under **`internal/ccall/zetasql/`** after the updater, or via [`vendorpatch` / `protobuf-vendoring.md`](protobuf-vendoring.md).
 
 *Historical note:* Older delta docs described cherry-picking into the submodule; that workflow is **retired**.
 
@@ -43,9 +43,9 @@ Do **not** add commits inside [`internal/cmd/updater/zetasql`](../internal/cmd/u
 
 ### `resolved_ast` / parser (C++)
 
-- Pipe syntax and new resolved nodes may require **bridge** / **enum** / **AST** updates in go-zetasql if exposed through the Go API; add parser tests with `FEATURE_PIPES` (and related features) when validating this release.
+- Pipe syntax and new resolved nodes may require **bridge** / **enum** / **AST** updates in go-googlesql if exposed through the Go API; add parser tests with `FEATURE_PIPES` (and related features) when validating this release.
 
-## go-zetasqlite / bigquery-emulator
+## go-googlesqlite / bigquery-emulator
 
-- **go-zetasqlite:** Sync **LanguageFeature** / **FunctionSignatureId** where referenced; **builtin registration** and `function_bind.go` for `SPLIT_SUBSTR` and new map builtins.
+- **go-googlesqlite:** Sync **LanguageFeature** / **FunctionSignatureId** where referenced; **builtin registration** and `function_bind.go` for `SPLIT_SUBSTR` and new map builtins.
 - **bigquery-emulator:** Add or extend HTTP/query tests when user-visible builtins change; otherwise rely on existing suites after zetasqlite passes.

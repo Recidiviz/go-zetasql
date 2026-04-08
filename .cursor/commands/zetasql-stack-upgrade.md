@@ -2,7 +2,7 @@
 
 **Required — Plan mode:** The **user** must switch this conversation to **Plan** mode before you proceed with any repo edits, submodule bumps, or test runs. Stay in Plan mode until there is an agreed upgrade plan (tag, `from`/`to`, branch names, and order of operations); only then switch to Agent mode to execute. If the session is not in Plan mode, stop and ask the user to enable Plan mode first.
 
-This workflow upgrades **go-zetasql**, **go-zetasqlite**, and **bigquery-emulator** to a new ZetaSQL/googlesql release tag. It covers upstream delta review, submodule bump, protobuf-safe regeneration, builtin parity, emulator integration tests, and sequential CGO test runs. Take the target **tag** from the user in this chat (canonical `YYYY.MM.P`, e.g. `2023.09.1`); normalize input (strip `v`, collapse spaces). Follow the phases below in order; downstream assumes upstream is green.
+This workflow upgrades **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator** to a new GoogleSQL/googlesql release tag. It covers upstream delta review, submodule bump, protobuf-safe regeneration, builtin parity, emulator integration tests, and sequential CGO test runs. Take the target **tag** from the user in this chat (canonical `YYYY.MM.P`, e.g. `2023.09.1`); normalize input (strip `v`, collapse spaces). Follow the phases below in order; downstream assumes upstream is green.
 
 ## Slash command vs skill
 
@@ -12,15 +12,15 @@ This workflow upgrades **go-zetasql**, **go-zetasqlite**, and **bigquery-emulato
 ## Methodology (avoid brute-force loops)
 
 1. **Delta before mechanics** — Complete Phase 1 (upstream diff) and draft or update `docs/googlesql-upgrade-delta-<from>-to-<to>.md` *before* chasing unrelated test failures. Prior edits should follow known proto/builtin/`resolved_ast` themes.
-2. **Regeneration pipeline** — **Upstream submodule tag only** ([`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md)) → updater (incremental; document flags like `GO_ZETASQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **sync `*.proto` into `internal/ccall` if needed** (updater `Skip` rules may **omit `.proto`** — stale `options.proto` / enums cause confusing failures) → **protoc** / `gen_parse_tree` / `gen_resolved_ast` (order per [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md) and your delta doc) → **`go run` generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
-3. **Canonical green definition** — **go-zetasql:** `make local/test` (`TESTPKG` defaults to `./`, root package — matches CI). Do not treat failures from `go test ./...` across every `internal/ccall/...` shard as blocking unless that scope is explicitly in scope (see skill).
+2. **Regeneration pipeline** — **Upstream submodule tag only** ([`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md)) → updater (incremental; document flags like `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **sync `*.proto` into `internal/ccall` if needed** (updater `Skip` rules may **omit `.proto`** — stale `options.proto` / enums cause confusing failures) → **protoc** / `gen_parse_tree` / `gen_resolved_ast` (order per [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md) and your delta doc) → **`go run` generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
+3. **Canonical green definition** — **go-googlesql:** `make local/test` (`TESTPKG` defaults to `./`, root package — matches CI). Do not treat failures from `go test ./...` across every `internal/ccall/...` shard as blocking unless that scope is explicitly in scope (see skill).
 4. **Classify the failure** — Sync drift, linker/amalgamation, protobuf vendoring, or runtime/semantic (parser, language features, emulator path). Fix the matching layer; avoid alternating random edits with full tree rebuilds.
 5. **Generator and exportinc** — Manual edits to `bind.cc` templates, `export.inc`, or [`internal/cmd/generator`](../../internal/cmd/generator) / `exportinc` can be **overwritten** on the next generate pass. If a fix “comes back” after regeneration, change the **generator or policy** (e.g. flex suppress flags), not only the generated file.
 6. **Resume after OOM or agent crash** — Re-read `git status` in each repo; do not assume partial work was saved. Continue with **one repo**, `go test -p 1` / `GOMAXPROCS=1`, and narrowed `TESTPKG` before broad suites.
 
-# ZetaSQL stack upgrade
+# GoogleSQL stack upgrade
 
-End-to-end workflow for bumping **google/zetasql** (submodule in go-zetasql) and keeping **go-zetasqlite** and **bigquery-emulator** aligned.
+End-to-end workflow for bumping **google/zetasql** (submodule in go-googlesql) and keeping **go-googlesqlite** and **bigquery-emulator** aligned.
 
 ## Triggers and inputs
 
@@ -36,20 +36,20 @@ Repositories (adjust if your layout differs; set env vars per **Reference → En
 
 | Variable | Typical path |
 |----------|--------------|
-| `GO_ZETASQL_ROOT` | go-zetasql checkout |
-| `GO_ZETASQLITE_ROOT` | go-zetasqlite checkout |
+| `GO_GOOGLESQL_ROOT` | go-googlesql checkout |
+| `GO_GOOGLESQLITE_ROOT` | go-googlesqlite checkout |
 | `BIGQUERY_EMULATOR_ROOT` | bigquery-emulator checkout |
 | `GOOGLESQL_ROOT` | Sibling clone of **google/zetasql** or **google/googlesql** for `git log` / diff between release tags |
 
 **Branch naming:** `refactor/upgrade-to-<tag>` using **dots** in the version to match git tags (e.g. `refactor/upgrade-to-2023.09.1`).
 
-For **each** of `GO_ZETASQL_ROOT`, `GO_ZETASQLITE_ROOT`, `BIGQUERY_EMULATOR_ROOT`:
+For **each** of `GO_GOOGLESQL_ROOT`, `GO_GOOGLESQLITE_ROOT`, `BIGQUERY_EMULATOR_ROOT`:
 
 1. `git status`. If dirty: `git stash push -m "wip: pre zetasql upgrade to <tag>"` unless the user forbids stashing.
 2. `git fetch --all --prune`.
 3. Create or switch to the upgrade branch: prefer `git checkout -b refactor/upgrade-to-<tag>` when the branch does not exist; if it exists, `git checkout refactor/upgrade-to-<tag>` and merge/rebase per user preference.
 
-**Local stack:** Confirm `replace` lines in go-zetasqlite and bigquery-emulator `go.mod` point at sibling `../go-zetasql` and `../go-zetasqlite` when testing the full stack locally.
+**Local stack:** Confirm `replace` lines in go-googlesqlite and bigquery-emulator `go.mod` point at sibling `../go-googlesql` and `../go-googlesqlite` when testing the full stack locally.
 
 ## Phase 1 — Upstream delta (googlesql / zetasql)
 
@@ -61,14 +61,14 @@ Before large mechanical edits, understand what changed between **`from`** and **
 
 **Focus areas** relevant to this stack: **resolved AST**, **public API**, **builtins**, **protos** (`options`, `builtin_function`, `function`, `serialization`, enums).
 
-**Deliverable:** A short checklist (bullet list) of upgrade-relevant items to implement or verify in go-zetasql → go-zetasqlite → emulator. Add or extend a delta doc under `docs/` (see Phase 2).
+**Deliverable:** A short checklist (bullet list) of upgrade-relevant items to implement or verify in go-googlesql → go-googlesqlite → emulator. Add or extend a delta doc under `docs/` (see Phase 2).
 
-## Phase 2 — go-zetasql
+## Phase 2 — go-googlesql
 
-1. **Submodule:** In `GO_ZETASQL_ROOT`, update [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) to tag `<to>` (`git fetch --tags` and `git checkout <to>` inside submodule—**tag tip only**; see [`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md)), then commit the submodule pointer in the parent when ready. Any CGO-specific ZetaSQL edits go in **`internal/ccall`** / updater overlays / `vendorpatch`, not as extra submodule commits.
+1. **Submodule:** In `GO_GOOGLESQL_ROOT`, update [internal/cmd/updater/zetasql](../../internal/cmd/updater/zetasql) to tag `<to>` (`git fetch --tags` and `git checkout <to>` inside submodule—**tag tip only**; see [`docs/zetasql-submodule-policy.md`](../../docs/zetasql-submodule-policy.md)), then commit the submodule pointer in the parent when ready. Any CGO-specific GoogleSQL edits go in **`internal/ccall`** / updater overlays / `vendorpatch`, not as extra submodule commits.
 2. **Regeneration / vendoring:**
    - A **full** run of `internal/cmd/updater` can **break the CGO link** (duplicate symbols, protobuf/flex skew). Prefer **incremental** steps and document what you ran.
-   - Use `GO_ZETASQL_SKIP_PROTOBUF_COPY=1` when refreshing ZetaSQL sources while **preserving** the existing protobuf vendoring story (see [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md)).
+   - Use `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1` when refreshing GoogleSQL sources while **preserving** the existing protobuf vendoring story (see [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md)).
    - **Protos under `internal/ccall`:** If enums or generated Go/C++ look wrong after updater, **rsync or copy `*.proto` from the submodule** and rerun **protoc** (and parse_tree / resolved_ast helpers) — the updater does not always refresh every proto in ccall.
    - **Flex:** Conflicting `yyFlexLexer` stubs vs `%option yyclass` in generated flex output may require **post-copy fixes** (e.g. [`internal/cmd/updater/main.go`](../../internal/cmd/updater/main.go) `applyPostCopyOverlays`) and generator config (e.g. `ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS` in [`internal/cmd/generator/config.yaml`](../../internal/cmd/generator/config.yaml)) so regenerations stay consistent.
    - After copying protobuf or vendor trees, run **`go run ./internal/cmd/vendorpatch`** or **`scripts/apply-vendor-patches.sh`** so amalgamation and git patches apply.
@@ -78,12 +78,12 @@ Before large mechanical edits, understand what changed between **`from`** and **
 
 **Pointers:** [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), [internal/cmd/updater/main.go](../../internal/cmd/updater/main.go).
 
-## Phase 3 — go-zetasqlite
+## Phase 3 — go-googlesqlite
 
-1. Ensure module uses the intended go-zetasql (`replace` or bumped version).
+1. Ensure module uses the intended go-googlesql (`replace` or bumped version).
 2. Align **LanguageFeature** / analyzer options and **builtin registration** with new upstream surface (`internal/analyzer.go`, `internal/function_register.go`, function implementations). Watch for **signature changes** (extra args, types) — update `function_bind.go` and builtins (e.g. JSON helpers) when upstream changes function catalogs.
 3. Add **tests** (e.g. `query_test.go` subtests named for the release).
-4. Run tests **after** go-zetasql passes: e.g. `go test -tags zetasql .` or Makefile targets from the repo README. Keep **one repo at a time** for heavy CGO loads.
+4. Run tests **after** go-googlesql passes: e.g. `go test -tags googlesql .` or Makefile targets from the repo README. Keep **one repo at a time** for heavy CGO loads.
 
 ## Phase 4 — bigquery-emulator
 
@@ -93,7 +93,7 @@ Before large mechanical edits, understand what changed between **`from`** and **
 ## Verification order and caching
 
 ```text
-go-zetasql  →  go-zetasqlite  →  bigquery-emulator
+go-googlesql  →  go-googlesqlite  →  bigquery-emulator
 ```
 
 - **Never** run full `go test` across all three repos **simultaneously** on one machine (OOM risk).
@@ -124,18 +124,18 @@ Use [`.cursor/skills/zetasql-stack-debug/SKILL.md`](../skills/zetasql-stack-debu
 Set these to absolute paths for your machine (example: sibling repos under `~/Code`):
 
 ```bash
-export GO_ZETASQL_ROOT="${GO_ZETASQL_ROOT:-$HOME/Code/go-zetasql}"
-export GO_ZETASQLITE_ROOT="${GO_ZETASQLITE_ROOT:-$HOME/Code/go-zetasqlite}"
+export GO_GOOGLESQL_ROOT="${GO_GOOGLESQL_ROOT:-$HOME/Code/go-googlesql}"
+export GO_GOOGLESQLITE_ROOT="${GO_GOOGLESQLITE_ROOT:-$HOME/Code/go-googlesqlite}"
 export BIGQUERY_EMULATOR_ROOT="${BIGQUERY_EMULATOR_ROOT:-$HOME/Code/bigquery-emulator}"
 export GOOGLESQL_ROOT="${GOOGLESQL_ROOT:-$HOME/Code/googlesql}"
 ```
 
 Use **`GOOGLESQL_ROOT`** for `git log` / `git diff` between release tags (upstream may be **google/googlesql** or **google/zetasql**; tags like `2023.09.1` should match the submodule release you target).
 
-The **go-zetasql** submodule path (for checkout inside the repo):
+The **go-googlesql** submodule path (for checkout inside the repo):
 
 ```text
-$GO_ZETASQL_ROOT/internal/cmd/updater/zetasql
+$GO_GOOGLESQL_ROOT/internal/cmd/updater/zetasql
 ```
 
 ### Canonical tag and branch
@@ -167,8 +167,8 @@ upgrade_repo() {
   fi
 }
 
-# upgrade_repo "$GO_ZETASQL_ROOT" "$TAG"
-# upgrade_repo "$GO_ZETASQLITE_ROOT" "$TAG"
+# upgrade_repo "$GO_GOOGLESQL_ROOT" "$TAG"
+# upgrade_repo "$GO_GOOGLESQLITE_ROOT" "$TAG"
 # upgrade_repo "$BIGQUERY_EMULATOR_ROOT" "$TAG"
 ```
 
@@ -183,23 +183,23 @@ git -C "$GOOGLESQL_ROOT" log --oneline "${FROM_TAG}..${TO_TAG}"
 git -C "$GOOGLESQL_ROOT" diff --stat "${FROM_TAG}..${TO_TAG}"
 ```
 
-### Submodule bump (go-zetasql)
+### Submodule bump (go-googlesql)
 
 ```bash
-cd "$GO_ZETASQL_ROOT/internal/cmd/updater/zetasql"
+cd "$GO_GOOGLESQL_ROOT/internal/cmd/updater/zetasql"
 git fetch --tags
 git checkout "$TO_TAG"
 git submodule status
-cd "$GO_ZETASQL_ROOT"
+cd "$GO_GOOGLESQL_ROOT"
 # git add internal/cmd/updater/zetasql && git commit -m "chore(deps): bump zetasql submodule to ${TO_TAG}"
 ```
 
-### Protobuf / vendorpatch (go-zetasql repo root)
+### Protobuf / vendorpatch (go-googlesql repo root)
 
 ```bash
-cd "$GO_ZETASQL_ROOT"
+cd "$GO_GOOGLESQL_ROOT"
 # Optional: preserve protobuf tree during updater experiments
-# export GO_ZETASQL_SKIP_PROTOBUF_COPY=1
+# export GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1
 
 go run ./internal/cmd/vendorpatch
 # or: ./scripts/apply-vendor-patches.sh
@@ -210,7 +210,7 @@ Deep playbook: [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md).
 ### Shared Go cache (stack tests)
 
 ```bash
-export GOCACHE="${GOCACHE:-$HOME/.cache/go-zetasql-stack}"
+export GOCACHE="${GOCACHE:-$HOME/.cache/go-googlesql-stack}"
 export GOMODCACHE="${GOMODCACHE:-$HOME/.cache/go-mod}"
 mkdir -p "$GOCACHE" "$GOMODCACHE"
 export CGO_ENABLED=1
@@ -221,21 +221,21 @@ export CXX=clang++
 
 ### Tests (sequential — one repo at a time)
 
-**go-zetasql** (from repo root):
+**go-googlesql** (from repo root):
 
 ```bash
-cd "$GO_ZETASQL_ROOT"
+cd "$GO_GOOGLESQL_ROOT"
 make local/test
 # or: make test/linux
 # narrow: TESTPKG=./internal/... make local/test
 # After OOM: narrow TESTPKG, use go test -p 1, optional GOMAXPROCS=1 (see Phase 2 and zetasql-stack-debug)
 ```
 
-**go-zetasqlite:**
+**go-googlesqlite:**
 
 ```bash
-cd "$GO_ZETASQLITE_ROOT"
-go test -tags zetasql -count=1 -p 1 .
+cd "$GO_GOOGLESQLITE_ROOT"
+go test -tags googlesql -count=1 -p 1 .
 ```
 
 **bigquery-emulator:**
