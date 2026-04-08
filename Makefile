@@ -134,7 +134,7 @@ local/test-tier-b: cache-dirs
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags zetasql,googlesql_tier_b -v $(TESTPKG) -count=1
+	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b -v $(TESTPKG) -count=1
 
 # Compile-only warm-up: same -race toolchain as tests, but -run '^$' matches no tests so this only
 # populates gomodcache/gocache/ccache. Run after toolchain upgrades or cold cache; then test/linux stays incremental.

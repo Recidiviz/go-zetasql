@@ -65,7 +65,7 @@ Align [`go-googlesqlite`](https://github.com/vantaboard/go-googlesqlite) and [`b
 
 | Tag | Meaning |
 |-----|---------|
-| `zetasql` | Normal CGO GoogleSQL/GoogleSQL build (existing). |
+| `googlesql` | Normal CGO GoogleSQL/GoogleSQL build (existing). |
 | `googlesql_tier_b` | Use `bind_tier_b.go` in `go-protobuf/protobuf` (link `libprotobuf_cgo.a`); requires archive + symlink. |
 
 Use **both** for Tier B experiments: `-tags 'googlesql,googlesql_tier_b'`.
