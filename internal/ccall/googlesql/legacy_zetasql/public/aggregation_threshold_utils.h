@@ -19,9 +19,9 @@
 
 #include <string>
 
-#include "zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 
 namespace zetasql {
 // Returns map of allowed options for ResolvedAggregationThresholdAggregateScan

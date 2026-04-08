@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/constant_utils.h"
+#include "googlesql/legacy_zetasql/common/constant_utils.h"
 
 #include <algorithm>
 #include <ostream>
 
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

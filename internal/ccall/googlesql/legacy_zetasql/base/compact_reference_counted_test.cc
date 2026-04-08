@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/compact_reference_counted.h"
+#include "googlesql/legacy_zetasql/base/compact_reference_counted.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

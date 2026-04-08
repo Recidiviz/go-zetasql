@@ -23,10 +23,10 @@
 #include <string>
 #include <variant>
 
-#include "zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
-#include "zetasql/public/functions/match_recognize/match_partition.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/match_partition.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/homedir.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/homedir.h"
 
 #include <unistd.h>
 

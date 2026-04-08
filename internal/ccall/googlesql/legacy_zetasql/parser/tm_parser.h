@@ -10,14 +10,14 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/parser/bison_parser.h"
-#include "zetasql/parser/textmapper_lexer_adapter.h"
-#include "zetasql/parser/join_processor.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser_internal.h"
-#include "zetasql/parser/statement_properties.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser.h"
+#include "googlesql/legacy_zetasql/parser/textmapper_lexer_adapter.h"
+#include "googlesql/legacy_zetasql/parser/join_processor.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser_internal.h"
+#include "googlesql/legacy_zetasql/parser/statement_properties.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/base/attributes.h"
 #include "absl/functional/function_ref.h"
 #include "absl/log/log.h"
@@ -26,7 +26,7 @@
 #include "absl/strings/match.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
-#include "zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
 
 using namespace zetasql::parser_internal;
 

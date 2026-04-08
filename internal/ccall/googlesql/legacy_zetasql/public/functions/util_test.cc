@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

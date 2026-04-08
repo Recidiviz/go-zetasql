@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/operator.h"
+#include "googlesql/legacy_zetasql/reference_impl/operator.h"
 
 #include <memory>
 #include <optional>
@@ -22,11 +22,11 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/public/type.h"
-#include "zetasql/reference_impl/tuple.h"
-#include "zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
 #include "absl/base/attributes.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/memory/memory.h"
@@ -35,8 +35,8 @@
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/stl_util.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/stl_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

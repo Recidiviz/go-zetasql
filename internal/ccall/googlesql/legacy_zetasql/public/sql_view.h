@@ -17,8 +17,8 @@
 #ifndef ZETASQL_PUBLIC_SQL_VIEW_H_
 #define ZETASQL_PUBLIC_SQL_VIEW_H_
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
 
 namespace zetasql {
 

@@ -12,6 +12,5 @@
 #include "go-zetasql/parser/ast_enums_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location_range_cc_proto/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

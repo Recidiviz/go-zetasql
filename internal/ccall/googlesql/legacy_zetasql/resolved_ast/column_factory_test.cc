@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/resolved_ast/column_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/column_factory.h"
 
 #include <memory>
 #include <string>
 
-#include "zetasql/base/atomic_sequence_num.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/collation.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/base/atomic_sequence_num.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/collation.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

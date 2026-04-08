@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -24,17 +24,17 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/proto_util.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/tuple_comparator.h"
-#include "zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/proto_util.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple_comparator.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/public/simple_sequence.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

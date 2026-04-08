@@ -18,9 +18,9 @@
 // implementations.
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/type.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
 

@@ -14,25 +14,25 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/type_parameter_constraints.h"
+#include "googlesql/legacy_zetasql/reference_impl/type_parameter_constraints.h"
 
 #include <cstdint>
 #include <limits>
 #include <string>
 #include <vector>
 
-#include "zetasql/public/functions/string.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type_parameters.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/functions/string.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

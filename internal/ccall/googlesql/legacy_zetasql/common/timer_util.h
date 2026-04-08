@@ -22,10 +22,10 @@
 #include <ctime>
 
 #include "google/protobuf/duration.pb.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/public/proto/logging.pb.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/public/proto/logging.pb.h"
 #include "absl/base/attributes.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 

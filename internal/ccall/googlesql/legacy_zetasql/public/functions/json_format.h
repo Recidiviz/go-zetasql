@@ -22,17 +22,17 @@
 #include <cstdint>
 #include <string>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/interval_value.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 namespace functions {

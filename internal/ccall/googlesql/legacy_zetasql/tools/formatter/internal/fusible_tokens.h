@@ -20,7 +20,7 @@
 #include <ostream>
 #include <vector>
 
-#include "zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"

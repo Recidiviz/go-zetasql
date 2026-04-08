@@ -19,13 +19,13 @@
 
 #include <memory>
 
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/rewriter_interface.h"
-#include "zetasql/public/type.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/rewrite_utils.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/rewrite_utils.h"
 #include "absl/base/attributes.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/statusor.h"

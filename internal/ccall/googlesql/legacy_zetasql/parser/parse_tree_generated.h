@@ -21,11 +21,11 @@
 #ifndef ZETASQL_PARSER_PARSE_TREE_GENERATED_H_
 #define ZETASQL_PARSER_PARSE_TREE_GENERATED_H_
 
-#include "zetasql/parser/ast_enums.pb.h"
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/parse_tree_decls.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/parser/ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_decls.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 
 // NOLINTBEGIN(whitespace/line_length)
 

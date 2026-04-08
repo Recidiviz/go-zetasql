@@ -17,7 +17,7 @@
 #ifndef THIRD_PARTY_ZETASQL_ZETASQL_BASE_DIE_IF_NULL_H_
 #define THIRD_PARTY_ZETASQL_ZETASQL_BASE_DIE_IF_NULL_H_
 
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 
 #define ZETASQL_DIE_IF_NULL(expr) ::zetasql_internal::DieIfNull(expr)
 

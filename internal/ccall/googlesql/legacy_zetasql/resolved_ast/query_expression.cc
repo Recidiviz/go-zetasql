@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/resolved_ast/query_expression.h"
+#include "googlesql/legacy_zetasql/resolved_ast/query_expression.h"
 
 #include <cassert>
 #include <map>
@@ -24,10 +24,10 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/analyzer/query_resolver_helper.h"
+#include "googlesql/legacy_zetasql/analyzer/query_resolver_helper.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/match.h"
@@ -37,10 +37,10 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
 #include "absl/types/span.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "re2/re2.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

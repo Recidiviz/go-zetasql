@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_MACROS_FLEX_TOKEN_PROVIDER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_MACROS_FLEX_TOKEN_PROVIDER_EXPORT_H
 
-#include "zetasql/parser/macros/flex_token_provider.h"
+#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.h"
 // include sources
-#include "zetasql/parser/macros/flex_token_provider.cc"
+#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.cc"
 // include dependencies
 #include "go-zetasql/parser/macros/token_provider_base/export.inc"
 #include "go-zetasql/base/check/export.inc"

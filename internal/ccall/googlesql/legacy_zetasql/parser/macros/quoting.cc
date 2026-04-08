@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/quoting.h"
+#include "googlesql/legacy_zetasql/parser/macros/quoting.h"
 
 #include <string>
 
@@ -22,8 +22,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace parser {

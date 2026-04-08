@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/variable_generator.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_generator.h"
 
 #include <map>
 #include <memory>
 #include <utility>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/type.h"
-#include "zetasql/reference_impl/parameters.h"
-#include "zetasql/reference_impl/variable_id.h"
-#include "zetasql/testing/using_test_value.cc"  // NOLINT
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/reference_impl/parameters.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"  // NOLINT
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

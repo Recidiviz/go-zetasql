@@ -14,28 +14,28 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/privacy/privacy_utility.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/privacy/privacy_utility.h"
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "zetasql/analyzer/expr_resolver_helper.h"
-#include "zetasql/analyzer/name_scope.h"
-#include "zetasql/analyzer/named_argument_info.h"
-#include "zetasql/analyzer/query_resolver_helper.h"
-#include "zetasql/analyzer/resolver.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/analyzer/expr_resolver_helper.h"
+#include "googlesql/legacy_zetasql/analyzer/name_scope.h"
+#include "googlesql/legacy_zetasql/analyzer/named_argument_info.h"
+#include "googlesql/legacy_zetasql/analyzer/query_resolver_helper.h"
+#include "googlesql/legacy_zetasql/analyzer/resolver.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 zetasql_base::StatusBuilder MakeSqlErrorAtNode(const ResolvedNode& node) {

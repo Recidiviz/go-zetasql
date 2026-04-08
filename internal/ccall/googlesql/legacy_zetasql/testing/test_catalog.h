@@ -26,15 +26,15 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/container/node_hash_map.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

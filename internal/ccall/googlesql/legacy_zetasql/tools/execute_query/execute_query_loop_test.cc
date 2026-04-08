@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_loop.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_loop.h"
 
 #include <iosfwd>
 #include <optional>
@@ -22,13 +22,13 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/common/testing/proto_matchers.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/testing/status_payload_matchers.h"
-#include "zetasql/tools/execute_query/execute_query.pb.h"
-#include "zetasql/tools/execute_query/execute_query_prompt.h"
-#include "zetasql/tools/execute_query/execute_query_tool.h"
-#include "zetasql/tools/execute_query/execute_query_writer.h"
+#include "googlesql/legacy_zetasql/common/testing/proto_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/testing/status_payload_matchers.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query.pb.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_writer.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

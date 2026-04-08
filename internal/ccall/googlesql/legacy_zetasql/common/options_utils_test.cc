@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/options_utils.h"
+#include "googlesql/legacy_zetasql/common/options_utils.h"
 
 #include <memory>
 #include <string>
 
-#include "zetasql/common/testing/proto_matchers.h"  // NOLINT
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/testing/testing_proto_util.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/common/testing/proto_matchers.h"  // NOLINT
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/testing/testing_proto_util.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/btree_set.h"

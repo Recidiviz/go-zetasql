@@ -20,12 +20,12 @@
 #include <string>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

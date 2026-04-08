@@ -26,14 +26,14 @@
 #include <functional>
 #include <type_traits>
 
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/collator.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 // TODO: Remove the second template parameter and always use T for

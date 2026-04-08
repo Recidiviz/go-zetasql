@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/testing/test_catalog.h"
+#include "googlesql/legacy_zetasql/testing/test_catalog.h"
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

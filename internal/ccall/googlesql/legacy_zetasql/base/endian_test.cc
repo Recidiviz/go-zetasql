@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
 
 #include <algorithm>
 #include <cstdint>

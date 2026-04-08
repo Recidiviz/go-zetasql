@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/epsilon_remover.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/epsilon_remover.h"
 
 #include <memory>
 #include <vector>
 
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/common/match_recognize/nfa_matchers.h"
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

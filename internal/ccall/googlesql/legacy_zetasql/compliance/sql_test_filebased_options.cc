@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/sql_test_filebased_options.h"
+#include "googlesql/legacy_zetasql/compliance/sql_test_filebased_options.h"
 
 #include <array>
 #include <memory>
@@ -23,11 +23,11 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/compliance/parameters_test_util.h"
-#include "zetasql/compliance/test_driver.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/compliance/parameters_test_util.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/flags/flag.h"
 #include "absl/memory/memory.h"
@@ -38,9 +38,9 @@
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
 #include "file_based_test_driver/test_case_options.h"
-#include "zetasql/base/file_util.h"  
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/file_util.h"  
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 ABSL_FLAG(bool, auto_generate_test_names, false,
           "When true, test cases in file don't have to have [name] tag, the "

@@ -22,11 +22,11 @@
 #include <memory>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
 
 namespace zetasql {
 

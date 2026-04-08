@@ -23,10 +23,10 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/type_parameters.pb.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/type_parameters.pb.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/types/optional.h"

@@ -32,9 +32,9 @@
 #include <cstdint>
 #include <string>
 
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

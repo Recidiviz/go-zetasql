@@ -29,21 +29,21 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/interval_value.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/timestamp_picos_value.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/extended_type.h"
-#include "zetasql/public/types/map_type.h"
-#include "zetasql/public/types/value_equality_check_options.h"
-#include "zetasql/public/types/value_representations.h"
-#include "zetasql/public/uuid_value.h"
-#include "zetasql/public/value.pb.h"
-#include "zetasql/public/value_content.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/timestamp_picos_value.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/extended_type.h"
+#include "googlesql/legacy_zetasql/public/types/map_type.h"
+#include "googlesql/legacy_zetasql/public/types/value_equality_check_options.h"
+#include "googlesql/legacy_zetasql/public/types/value_representations.h"
+#include "googlesql/legacy_zetasql/public/uuid_value.h"
+#include "googlesql/legacy_zetasql/public/value.pb.h"
+#include "googlesql/legacy_zetasql/public/value_content.h"
 #include "absl/base/attributes.h"
 #include "absl/base/macros.h"
 #include "absl/status/status.h"
@@ -53,7 +53,7 @@
 #include "absl/time/civil_time.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
-#include "zetasql/base/map_view.h"
+#include "googlesql/legacy_zetasql/base/map_view.h"
 
 namespace zetasql {
 
@@ -1414,6 +1414,6 @@ Value TimestampPicosArray(absl::Span<const TimestampPicosValue> values);
 
 // Include the implementations of the inline methods. Out of line for
 // clarity. Is not intended to be read by users.
-#include "zetasql/public/value_inl.h"  
+#include "googlesql/legacy_zetasql/public/value_inl.h"  
 
 #endif  // ZETASQL_PUBLIC_VALUE_H_

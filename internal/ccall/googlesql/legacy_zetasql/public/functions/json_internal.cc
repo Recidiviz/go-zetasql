@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/json_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/json_internal.h"
 
 #include <cstdint>
 #include <memory>
@@ -31,9 +31,9 @@
 #include "absl/strings/numbers.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/case.h"  
+#include "googlesql/legacy_zetasql/base/case.h"  
 #include "re2/re2.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace functions {

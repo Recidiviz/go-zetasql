@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
 
 #include <map>
 #include <memory>
@@ -22,20 +22,20 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/test_driver.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/proto_type.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
 

@@ -20,12 +20,12 @@
 #include <memory>
 #include <vector>
 
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 namespace zetasql {

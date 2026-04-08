@@ -18,6 +18,5 @@
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/recursive_queries.h"
+#include "googlesql/legacy_zetasql/analyzer/recursive_queries.h"
 
 #include <algorithm>
 #include <initializer_list>
@@ -23,21 +23,21 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/analyzer/container_hash_equals.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/parser/parse_tree_visitor.h"
-#include "zetasql/parser/visit_result.h"
-#include "zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/analyzer/container_hash_equals.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_visitor.h"
+#include "googlesql/legacy_zetasql/parser/visit_result.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

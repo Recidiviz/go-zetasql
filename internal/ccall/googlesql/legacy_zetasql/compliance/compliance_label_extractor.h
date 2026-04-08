@@ -20,8 +20,8 @@
 #include <set>
 #include <string>
 
-#include "zetasql/public/options.pb.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/container/btree_set.h"
 
 namespace zetasql {

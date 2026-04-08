@@ -21,12 +21,12 @@
 #include <ostream>
 #include <string>
 
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
 #include "absl/base/macros.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

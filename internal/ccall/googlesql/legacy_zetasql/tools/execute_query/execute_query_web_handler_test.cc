@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_web_handler.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_web_handler.h"
 
 #include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/path.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/resolved_ast/sql_builder.h"
-#include "zetasql/tools/execute_query/execute_query_tool.h"
-#include "zetasql/tools/execute_query/web/embedded_resources.h"
+#include "googlesql/legacy_zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/resolved_ast/sql_builder.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/embedded_resources.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/algorithm/container.h"

@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/rewrite_flags.h"
+#include "googlesql/legacy_zetasql/reference_impl/rewrite_flags.h"
 
 #include <string>
 
-#include "zetasql/common/options_utils.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/common/options_utils.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "absl/container/btree_set.h"
 #include "absl/flags/flag.h"
 #include "absl/strings/str_cat.h"

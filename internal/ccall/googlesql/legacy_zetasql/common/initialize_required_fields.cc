@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/initialize_required_fields.h"
+#include "googlesql/legacy_zetasql/common/initialize_required_fields.h"
 
 #include <set>
 #include <string>

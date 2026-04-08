@@ -308,11 +308,11 @@ int yyFlexLexer::yylex()
 #include <string>
 #include <string.h>
 
-#include "zetasql/parser/bison_parser.bison.h"
-#include "zetasql/parser/flex_tokenizer.h"
-#include "zetasql/parser/keywords.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser.bison.h"
+#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
 #include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
 

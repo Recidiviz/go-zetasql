@@ -14,23 +14,23 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 
 #include <set>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.pb.h"
-#include "zetasql/parser/keywords.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/base/macros.h"
 #include "absl/container/btree_set.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_join.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

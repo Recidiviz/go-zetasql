@@ -22,14 +22,14 @@
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/base/attributes.h"
 #include "absl/status/status.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 // This file includes interfaces and classes related to templated SQL
 // Functions.  It includes a generic interface (SQLFunctionInterface), and a

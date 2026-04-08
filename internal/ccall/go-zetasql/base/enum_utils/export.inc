@@ -4,6 +4,5 @@
 #include "googlesql/base/enum_utils.h"
 // include sources
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

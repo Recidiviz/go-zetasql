@@ -17,6 +17,6 @@
 #ifndef THIRD_PARTY_ZETASQL_ZETASQL_BASE_CHECK_H_
 #define THIRD_PARTY_ZETASQL_ZETASQL_BASE_CHECK_H_
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 #endif  // THIRD_PARTY_ZETASQL_ZETASQL_BASE_CHECK_H_

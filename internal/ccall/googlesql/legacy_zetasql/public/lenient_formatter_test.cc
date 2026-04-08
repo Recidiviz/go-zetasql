@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/lenient_formatter.h"
+#include "googlesql/legacy_zetasql/public/lenient_formatter.h"
 
 #include <algorithm>
 #include <string>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

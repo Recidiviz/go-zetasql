@@ -17,13 +17,13 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/public/types/graph_path_type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/graph_element_type.h"
+#include "googlesql/legacy_zetasql/public/types/graph_path_type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/hash/hash_testing.h"

@@ -14,27 +14,27 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/json_parser.h"
+#include "googlesql/legacy_zetasql/common/json_parser.h"
 
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <string>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/escaping.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/string_numbers.h"  // iwyu: keep
+#include "googlesql/legacy_zetasql/base/string_numbers.h"  // iwyu: keep
 #include "unicode/utf8.h"
 #include "unicode/utypes.h"
 #include "re2/re2.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

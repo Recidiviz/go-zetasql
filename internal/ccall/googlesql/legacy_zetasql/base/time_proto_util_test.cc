@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include "zetasql/base/time_proto_util.h"
+#include "googlesql/legacy_zetasql/base/time_proto_util.h"
 
 #include <limits>
 
@@ -22,7 +22,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/time/time.h"
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 
 namespace zetasql_base {
 

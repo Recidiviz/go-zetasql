@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
 
 #include <memory>
 #include <optional>
@@ -23,22 +23,22 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/path.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/map_field.h"
 #include "google/protobuf/text_format.h"
-#include "zetasql/common/options_utils.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/tools/execute_query/execute_query_proto_writer.h"
-#include "zetasql/tools/execute_query/execute_query_writer.h"
+#include "googlesql/legacy_zetasql/common/options_utils.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_proto_writer.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_writer.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/btree_set.h"

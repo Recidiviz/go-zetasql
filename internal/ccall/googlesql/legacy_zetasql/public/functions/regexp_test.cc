@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/regexp.h"
+#include "googlesql/legacy_zetasql/public/functions/regexp.h"
 
 #include <cstdint>
 #include <memory>
@@ -23,19 +23,19 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "re2/re2.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

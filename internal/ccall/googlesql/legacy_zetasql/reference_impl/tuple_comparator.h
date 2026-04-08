@@ -20,7 +20,7 @@
 #include <memory>
 #include <vector>
 
-#include "zetasql/reference_impl/common.h"
+#include "googlesql/legacy_zetasql/reference_impl/common.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
 

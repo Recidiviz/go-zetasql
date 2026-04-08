@@ -20,13 +20,13 @@
 #include <memory>
 #include <vector>
 
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/coercer.h"
-#include "zetasql/public/input_argument_type.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/coercer.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_map.h"
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/proto_from_iterator.h"
+#include "googlesql/legacy_zetasql/common/proto_from_iterator.h"
 
 #include <memory>
 #include <string>
@@ -24,17 +24,17 @@
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
-#include "zetasql/public/convert_type_to_proto.h"
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/proto_value_conversion.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/convert_type_to_proto.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/proto_value_conversion.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

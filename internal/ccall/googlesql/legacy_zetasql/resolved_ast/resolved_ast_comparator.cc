@@ -15,12 +15,12 @@
 //
 
 // resolved_ast_comparator.cc GENERATED FROM resolved_ast_comparator.cc.template
-#include "zetasql/resolved_ast/resolved_ast_comparator.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_comparator.h"
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
 
 namespace zetasql {
 

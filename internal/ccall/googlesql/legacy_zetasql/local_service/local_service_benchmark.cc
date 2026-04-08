@@ -16,15 +16,15 @@
 
 #include <cstdint>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/local_service/local_service.h"
-#include "zetasql/local_service/local_service.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.pb.h"
 #include "benchmark/benchmark.h"
 #include "gtest/gtest.h"
 #include "absl/base/internal/sysinfo.h"
 #include "absl/status/status.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

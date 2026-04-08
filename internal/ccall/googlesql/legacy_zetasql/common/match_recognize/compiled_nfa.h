@@ -22,8 +22,8 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"

@@ -17,6 +17,6 @@
 #ifndef THIRD_PARTY_ZETASQL_ZETASQL_BASE_NET_IPADDRESS_H_
 #define THIRD_PARTY_ZETASQL_ZETASQL_BASE_NET_IPADDRESS_H_
 
-#include "zetasql/base/net/ipaddress_oss.h"
+#include "googlesql/legacy_zetasql/base/net/ipaddress_oss.h"
 
 #endif  // THIRD_PARTY_ZETASQL_ZETASQL_BASE_NET_IPADDRESS_H_

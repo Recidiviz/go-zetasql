@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/hash.h"
+#include "googlesql/legacy_zetasql/public/functions/hash.h"
 
 #include <cstdint>
 #include <cstring>
 #include <memory>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/base/casts.h"
 #include "openssl/md5.h"
 #include "openssl/sha.h"
-#include "zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
 #include "farmhash.h"
 
 namespace zetasql {

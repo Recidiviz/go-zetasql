@@ -20,9 +20,9 @@
 #include <memory>
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/input_argument_type.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/types/span.h"
 
 namespace zetasql {

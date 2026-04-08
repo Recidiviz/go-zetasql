@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/range_value.h"
+#include "googlesql/legacy_zetasql/public/range_value.h"
 
 #include <cstdint>
 #include <string>
 #include <vector>
 
-#include "zetasql/common/testing/proto_matchers.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/timestamp_util.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/common/testing/proto_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/timestamp_util.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_format.h"

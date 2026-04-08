@@ -30,6 +30,5 @@
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/time/time/export.inc"
 #include "go-google/type/date_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

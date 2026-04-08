@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
 
 #include <string>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

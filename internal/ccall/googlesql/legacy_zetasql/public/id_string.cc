@@ -14,19 +14,19 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
 
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <unordered_set>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/unicode_utils.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/unicode_utils.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/synchronization/mutex.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

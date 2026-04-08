@@ -30,8 +30,8 @@
 #include <set>
 #include <string>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/common/unicode_utils.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/common/unicode_utils.h"
 #include "gtest/gtest_prod.h"
 #include "absl/algorithm/container.h"
 #include "absl/base/attributes.h"
@@ -46,7 +46,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/span.h"
-#include "zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
 
 namespace zetasql {
 

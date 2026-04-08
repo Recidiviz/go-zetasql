@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/types/enum_type.h"
+#include "googlesql/legacy_zetasql/public/types/enum_type.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

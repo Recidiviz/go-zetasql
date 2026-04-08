@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/function_signature_testutil.h"
+#include "googlesql/legacy_zetasql/common/function_signature_testutil.h"
 
 #include <vector>
 
-#include "zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
 
 namespace zetasql {
 

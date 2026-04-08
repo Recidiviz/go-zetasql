@@ -20,8 +20,8 @@
 #include <optional>
 #include <string>
 
-#include "zetasql/public/types/container_type.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/container_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 
 namespace zetasql {
 

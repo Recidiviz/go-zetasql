@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/map_traits.h"
+#include "googlesql/legacy_zetasql/base/map_traits.h"
 
 #include <unordered_map>
 

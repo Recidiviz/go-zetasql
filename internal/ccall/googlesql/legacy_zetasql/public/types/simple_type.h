@@ -21,12 +21,12 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/type_parameters.pb.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/type_parameters.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/hash/hash.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"

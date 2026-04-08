@@ -18,14 +18,14 @@
 #include <functional>
 #include <memory>
 
-#include "zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
 #include "absl/base/thread_annotations.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/synchronization/mutex.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 namespace {

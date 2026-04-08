@@ -14,22 +14,22 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/filter_fields_path_validator.h"
+#include "googlesql/legacy_zetasql/analyzer/filter_fields_path_validator.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/substitute.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

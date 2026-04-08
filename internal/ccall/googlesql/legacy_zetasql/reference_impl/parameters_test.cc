@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/parameters.h"
+#include "googlesql/legacy_zetasql/reference_impl/parameters.h"
 
-#include "zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

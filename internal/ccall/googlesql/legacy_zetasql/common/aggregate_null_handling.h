@@ -17,7 +17,7 @@
 #ifndef ZETASQL_COMMON_AGGREGATE_NULL_HANDLING_H_
 #define ZETASQL_COMMON_AGGREGATE_NULL_HANDLING_H_
 
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 
 namespace zetasql {
 

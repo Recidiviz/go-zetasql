@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/uuid_value.h"
+#include "googlesql/legacy_zetasql/public/uuid_value.h"
 
 #include <sys/types.h>
 
@@ -24,8 +24,8 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/functions/uuid.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/functions/uuid.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/hash/hash_testing.h"

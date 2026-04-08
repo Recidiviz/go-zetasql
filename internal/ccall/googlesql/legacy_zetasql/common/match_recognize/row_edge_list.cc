@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/row_edge_list.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/row_edge_list.h"
 
 #include <cstddef>
 #include <string>
 #include <vector>
 
-#include "zetasql/common/match_recognize/compiled_nfa.h"
-#include "zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
 #include "absl/base/nullability.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/str_cat.h"
 
 namespace zetasql::functions::match_recognize {

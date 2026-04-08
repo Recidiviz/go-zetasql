@@ -21,16 +21,16 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/resolved_ast/make_node_vector_internal.h"  
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/make_node_vector_internal.h"  
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 
 // This library provides a more readable mechanism for construction of
 // ResolvedAST nodes with node vector inputs. This is primarily useful for
 // single statement construction of node trees for unit tests.
 //
 // Example:
-// #include "zetasql/resolved_ast/resolved_ast.h"
-// #include "zetasql/resolved_ast/testing/make_node_vector.h"
+// #include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+// #include "googlesql/legacy_zetasql/resolved_ast/testing/make_node_vector.h"
 // auto call = MakeResolvedFunctionCall(
 //      ...,
 //      // MakeNodeVector will return a value of type:

@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <string>
 
-#include "zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
 #include "absl/time/time.h"
 
 namespace zetasql {

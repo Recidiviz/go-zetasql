@@ -21,8 +21,8 @@
 #include <ostream>
 #include <string>
 
-#include "zetasql/common/match_recognize/compiled_nfa.h"
-#include "zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
 #include "gmock/gmock.h"
 namespace zetasql::functions::match_recognize {
 

@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/compiled_nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
 
 #include <memory>
 
-#include "zetasql/common/match_recognize/edge_matchers.h"
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/edge_matchers.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 

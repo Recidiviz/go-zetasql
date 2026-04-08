@@ -12,6 +12,5 @@
 #include "go-zetasql/proto/function_cc_proto/export.inc"
 #include "go-zetasql/scripting/variable_cc_proto/export.inc"
 #include "go-zetasql/proto/script_exception_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

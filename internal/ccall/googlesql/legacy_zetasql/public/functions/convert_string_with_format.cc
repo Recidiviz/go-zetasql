@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/convert_string_with_format.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_string_with_format.h"
 
 #include <algorithm>
 #include <cctype>
@@ -25,10 +25,10 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/functions/convert.h"
-#include "zetasql/public/functions/format_max_output_width.h"
-#include "zetasql/public/functions/string_format.h"
-#include "zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/functions/convert.h"
+#include "googlesql/legacy_zetasql/public/functions/format_max_output_width.h"
+#include "googlesql/legacy_zetasql/public/functions/string_format.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/flags/flag.h"
@@ -38,7 +38,7 @@
 #include "absl/strings/substitute.h"
 #include "re2/re2.h"
 // TODO : Remove copybara strip after the bug is fixed.
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 // Format a numeric type value into a string with a format sting.
 // For the spec, see (broken link).

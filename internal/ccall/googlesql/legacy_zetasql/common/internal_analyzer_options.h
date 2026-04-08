@@ -19,7 +19,7 @@
 
 #include <utility>
 
-#include "zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
 
 namespace zetasql {
 

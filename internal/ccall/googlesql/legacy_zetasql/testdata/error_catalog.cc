@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/testdata/error_catalog.h"
+#include "googlesql/legacy_zetasql/testdata/error_catalog.h"
 
 #include <memory>
 #include <string>
 
-#include "zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
 #include "absl/status/status.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

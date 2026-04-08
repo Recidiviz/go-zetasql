@@ -26,16 +26,16 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/tools/execute_query/execute_query_loop.h"
-#include "zetasql/tools/execute_query/execute_query_prompt.h"
-#include "zetasql/tools/execute_query/execute_query_tool.h"
-#include "zetasql/tools/execute_query/execute_query_web.h"
-#include "zetasql/tools/execute_query/execute_query_writer.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_loop.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_web.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_writer.h"
 #include "absl/flags/flag.h"
 #include "absl/functional/bind_front.h"
 #include "absl/flags/parse.h"
@@ -48,7 +48,7 @@
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/str_split.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace {
 constexpr absl::string_view kHistoryFileName{

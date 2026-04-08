@@ -22,10 +22,10 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "gtest/gtest_prod.h"
 #include "absl/base/attributes.h"
 #include "absl/base/macros.h"
@@ -34,8 +34,8 @@
 #include "absl/status/status.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/case.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

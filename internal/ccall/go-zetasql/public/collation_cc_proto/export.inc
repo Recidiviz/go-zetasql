@@ -9,6 +9,5 @@
 #undef file_default_instances
 #undef schemas
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

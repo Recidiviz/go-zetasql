@@ -16,7 +16,7 @@
 
 // This file tests string processing functions related to numeric values.
 
-#include "zetasql/base/string_numbers.h"
+#include "googlesql/legacy_zetasql/base/string_numbers.h"
 
 #include <array>
 #include <cstddef>

@@ -19,11 +19,11 @@
 #include <limits>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/casts.h"
-#include "zetasql/base/exactfloat.h"
+#include "googlesql/legacy_zetasql/base/exactfloat.h"
 
 namespace zetasql_base {
 namespace {

@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/functions/register_all.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/register_all.h"
 
-#include "zetasql/reference_impl/functions/hash.h"
-#include "zetasql/reference_impl/functions/json.h"
-#include "zetasql/reference_impl/functions/map.h"
-#include "zetasql/reference_impl/functions/range.h"
-#include "zetasql/reference_impl/functions/string_with_collation.h"
-#include "zetasql/reference_impl/functions/uuid.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/hash.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/json.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/map.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/range.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/string_with_collation.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/uuid.h"
 
-#include "zetasql/reference_impl/functions/graph.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/graph.h"
 
 namespace zetasql {
 

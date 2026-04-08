@@ -26,13 +26,13 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/arena_allocator.h"
+#include "googlesql/legacy_zetasql/base/arena_allocator.h"
 
-#include "zetasql/parser/ast_enums.pb.h"
-#include "zetasql/parser/ast_node_internal.h"
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/parser/ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_internal.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 // This header file has the definition of ASTNode, the superclass of all
 // AST classes. It should not be included directly. Include parse_tree.h.

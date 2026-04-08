@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/table_from_proto.h"
+#include "googlesql/legacy_zetasql/public/table_from_proto.h"
 
 #include <string>
 
 #include "google/protobuf/descriptor.pb.h"
-#include "zetasql/public/proto/wire_format_annotation.pb.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/proto/wire_format_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/test_util.h"
+#include "googlesql/legacy_zetasql/compliance/test_util.h"
 
 #include "gtest/gtest.h"
 

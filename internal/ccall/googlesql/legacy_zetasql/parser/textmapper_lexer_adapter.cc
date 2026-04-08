@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/textmapper_lexer_adapter.h"
+#include "googlesql/legacy_zetasql/parser/textmapper_lexer_adapter.h"
 
 #include <algorithm>
 #include <deque>
@@ -22,14 +22,14 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/lookahead_transformer.h"
-#include "zetasql/parser/macros/macro_catalog.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/parser/lookahead_transformer.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_catalog.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "absl/base/attributes.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 

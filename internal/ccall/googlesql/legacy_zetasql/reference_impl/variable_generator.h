@@ -25,10 +25,10 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/reference_impl/parameters.h"
-#include "zetasql/reference_impl/variable_id.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/reference_impl/parameters.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/statusor.h"
 

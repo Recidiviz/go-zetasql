@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/resolved_ast/resolved_ast_helper.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_helper.h"
 
 #include <memory>
 #include <vector>
 
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/make_node_vector.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/make_node_vector.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

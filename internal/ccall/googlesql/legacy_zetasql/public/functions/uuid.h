@@ -19,10 +19,10 @@
 
 #include <string>
 
-#include "zetasql/public/uuid_value.h"
+#include "googlesql/legacy_zetasql/public/uuid_value.h"
 #include "absl/random/bit_gen_ref.h"
 #include "absl/random/random.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

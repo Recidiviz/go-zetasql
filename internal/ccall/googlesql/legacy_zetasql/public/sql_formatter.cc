@@ -14,27 +14,27 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/sql_formatter.h"
+#include "googlesql/legacy_zetasql/public/sql_formatter.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

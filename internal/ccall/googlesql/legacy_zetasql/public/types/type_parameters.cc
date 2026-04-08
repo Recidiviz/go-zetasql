@@ -14,30 +14,30 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
 
 #include <cstdint>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/util/message_differencer.h"
-#include "zetasql/public/functions/rounding_mode.pb.h"
-#include "zetasql/public/simple_value.pb.h"
-#include "zetasql/public/type_parameters.pb.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/range_type.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/functions/rounding_mode.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_value.pb.h"
+#include "googlesql/legacy_zetasql/public/type_parameters.pb.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/range_type.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/substitute.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

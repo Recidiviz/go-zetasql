@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/set_operation_corresponding_rewriter.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/set_operation_corresponding_rewriter.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_builder.h"
-#include "zetasql/resolved_ast/resolved_ast_rewrite_visitor.h"
-#include "zetasql/resolved_ast/rewrite_utils.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_builder.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_rewrite_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/rewrite_utils.h"
 
 namespace zetasql {
 namespace {

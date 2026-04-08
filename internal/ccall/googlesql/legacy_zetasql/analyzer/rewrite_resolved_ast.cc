@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewrite_resolved_ast.h"
+#include "googlesql/legacy_zetasql/analyzer/rewrite_resolved_ast.h"
 
 #include <cstdint>
 #include <functional>
@@ -23,25 +23,25 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/base/atomic_sequence_num.h"
-#include "zetasql/base/logging.h"
-#include "zetasql/analyzer/analyzer_output_mutator.h"
-#include "zetasql/analyzer/builtin_only_catalog.h"
-#include "zetasql/analyzer/rewriters/registration.h"
-#include "zetasql/analyzer/rewriters/rewriter_relevance_checker.h"
-#include "zetasql/analyzer/rewriters/templated_function_call_rewriter.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/internal_analyzer_options.h"
-#include "zetasql/common/timer_util.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/analyzer_output.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/rewriter_interface.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/validator.h"
+#include "googlesql/legacy_zetasql/base/atomic_sequence_num.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/analyzer/analyzer_output_mutator.h"
+#include "googlesql/legacy_zetasql/analyzer/builtin_only_catalog.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/registration.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/rewriter_relevance_checker.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/templated_function_call_rewriter.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/internal_analyzer_options.h"
+#include "googlesql/legacy_zetasql/common/timer_util.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/validator.h"
 #include "absl/algorithm/container.h"
 #include "absl/cleanup/cleanup.h"
 #include "absl/container/btree_set.h"
@@ -49,8 +49,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -22,13 +22,13 @@
 #include <optional>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_replace.h"
 #include "absl/strings/string_view.h"
 #include "unicode/utf8.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

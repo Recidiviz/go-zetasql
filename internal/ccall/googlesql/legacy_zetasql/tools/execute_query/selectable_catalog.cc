@@ -14,26 +14,26 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/selectable_catalog.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/selectable_catalog.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/examples/tpch/catalog/tpch_catalog.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/testdata/sample_catalog_impl.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/tpch_catalog.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/testdata/sample_catalog_impl.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

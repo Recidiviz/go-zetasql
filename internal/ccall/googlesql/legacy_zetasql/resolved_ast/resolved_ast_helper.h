@@ -17,10 +17,10 @@
 #ifndef ZETASQL_RESOLVED_AST_RESOLVED_AST_HELPER_H_
 #define ZETASQL_RESOLVED_AST_RESOLVED_AST_HELPER_H_
 
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_visitor.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"

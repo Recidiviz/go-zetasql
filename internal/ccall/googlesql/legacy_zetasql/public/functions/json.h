@@ -28,11 +28,11 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/functions/json_internal.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/value.h"
-#include "zetasql/base/string_numbers.h"  
+#include "googlesql/legacy_zetasql/public/functions/json_internal.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/base/string_numbers.h"  
 #include "absl/base/attributes.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"

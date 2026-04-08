@@ -17,12 +17,12 @@
 #ifndef ZETASQL_LOCAL_SERVICE_LOCAL_SERVICE_GRPC_H_
 #define ZETASQL_LOCAL_SERVICE_LOCAL_SERVICE_GRPC_H_
 
-#include "zetasql/local_service/local_service.grpc.pb.h"
-#include "zetasql/local_service/local_service.h"
-#include "zetasql/local_service/local_service.pb.h"
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/public/parse_resume_location.pb.h"
-#include "zetasql/public/simple_table.pb.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.grpc.pb.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.pb.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_table.pb.h"
 
 namespace zetasql {
 namespace local_service {

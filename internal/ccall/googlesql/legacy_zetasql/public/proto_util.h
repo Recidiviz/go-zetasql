@@ -24,16 +24,16 @@
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/base/attributes.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/declare.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 ABSL_DECLARE_FLAG(bool, zetasql_read_proto_field_optimized_path);
 

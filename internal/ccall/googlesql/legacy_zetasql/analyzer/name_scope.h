@@ -25,11 +25,11 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/analyzer/path_expression_span.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/type.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/analyzer/path_expression_span.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "gtest/gtest_prod.h"
 #include "absl/base/macros.h"
 #include "absl/container/flat_hash_map.h"
@@ -37,7 +37,7 @@
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

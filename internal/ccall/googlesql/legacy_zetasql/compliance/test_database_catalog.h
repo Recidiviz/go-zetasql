@@ -22,13 +22,13 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/compliance/test_driver.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"

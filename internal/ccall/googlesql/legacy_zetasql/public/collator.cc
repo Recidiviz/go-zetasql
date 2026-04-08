@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
 
 #include <cstdint>
 #include <memory>
@@ -23,8 +23,8 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -35,7 +35,7 @@
 #include "unicode/errorcode.h"
 #include "unicode/tblcoll.h"
 #include "unicode/utypes.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 namespace {

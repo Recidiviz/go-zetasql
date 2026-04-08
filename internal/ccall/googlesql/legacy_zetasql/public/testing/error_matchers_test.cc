@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/testing/error_matchers.h"
+#include "googlesql/legacy_zetasql/public/testing/error_matchers.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

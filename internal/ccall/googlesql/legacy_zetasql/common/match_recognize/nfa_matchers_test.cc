@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/nfa_matchers.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_matchers.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gtest/gtest.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::functions::match_recognize {
 

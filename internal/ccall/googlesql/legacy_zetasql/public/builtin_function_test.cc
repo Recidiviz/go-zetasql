@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/builtin_function.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.h"
 
 #include <map>
 #include <memory>
@@ -22,29 +22,29 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/enum_utils.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/table_valued_function.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/enum_utils.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/table_valued_function.h"
+#include "googlesql/legacy_zetasql/public/types/proto_type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/flat_set.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/flat_set.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

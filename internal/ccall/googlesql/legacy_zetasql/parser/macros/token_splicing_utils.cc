@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/token_splicing_utils.h"
+#include "googlesql/legacy_zetasql/parser/macros/token_splicing_utils.h"
 
 #include <cctype>
 
-#include "zetasql/parser/keywords.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

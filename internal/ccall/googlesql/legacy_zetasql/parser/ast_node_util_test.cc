@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/ast_node_util.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_util.h"
 
 #include <memory>
 #include <string>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
 

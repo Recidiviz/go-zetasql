@@ -17,7 +17,7 @@
 #ifndef ZETASQL_PUBLIC_TESTING_TEST_CASE_OPTIONS_UTIL_H_
 #define ZETASQL_PUBLIC_TESTING_TEST_CASE_OPTIONS_UTIL_H_
 
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "file_based_test_driver/test_case_options.h"

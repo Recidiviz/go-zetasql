@@ -19,7 +19,7 @@
 #include <limits>
 #include <type_traits>
 
-#include "zetasql/base/castops.h"
+#include "googlesql/legacy_zetasql/base/castops.h"
 
 namespace zetasql_base {
 

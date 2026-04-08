@@ -22,13 +22,13 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/common/match_recognize/match_test_result.pb.h"
-#include "zetasql/public/functions/match_recognize/compiled_pattern.h"
-#include "zetasql/public/functions/match_recognize/match_partition.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/match_test_result.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/match_partition.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"

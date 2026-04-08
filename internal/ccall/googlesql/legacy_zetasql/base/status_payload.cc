@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/status_payload.h"
+#include "googlesql/legacy_zetasql/base/status_payload.h"
 
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"

@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/rewrite_subpipeline.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/rewrite_subpipeline.h"
 
 #include <memory>
 #include <utility>
 
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_rewrite_visitor.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_rewrite_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

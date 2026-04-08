@@ -22,7 +22,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "zetasql/base/edit_distance.h"
+#include "googlesql/legacy_zetasql/base/edit_distance.h"
 
 #include <ctype.h>
 
@@ -32,7 +32,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql_base {
 

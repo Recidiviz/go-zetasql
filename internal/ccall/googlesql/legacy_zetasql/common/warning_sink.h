@@ -21,7 +21,7 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/deprecation_warning.pb.h"
+#include "googlesql/legacy_zetasql/public/deprecation_warning.pb.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
 #include "absl/types/span.h"

@@ -9,6 +9,5 @@
 #include "go-zetasql/public/proto/logging_cc_proto/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/time/time/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

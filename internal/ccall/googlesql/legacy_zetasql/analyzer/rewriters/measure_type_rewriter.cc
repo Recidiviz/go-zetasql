@@ -14,24 +14,24 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/measure_type_rewriter.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/measure_type_rewriter.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "zetasql/analyzer/rewriters/measure_type_rewriter_util.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/rewriter_interface.h"
-#include "zetasql/resolved_ast/column_factory.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/measure_type_rewriter_util.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/resolved_ast/column_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

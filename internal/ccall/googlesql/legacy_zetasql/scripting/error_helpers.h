@@ -19,16 +19,16 @@
 
 #include <functional>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/proto/script_exception.pb.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/scripting/script_segment.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/proto/script_exception.pb.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/scripting/script_segment.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/substitute.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

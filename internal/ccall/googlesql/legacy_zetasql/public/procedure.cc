@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/procedure.h"
+#include "googlesql/legacy_zetasql/public/procedure.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

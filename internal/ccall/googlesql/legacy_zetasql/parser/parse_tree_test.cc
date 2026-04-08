@@ -14,36 +14,36 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parse_tree_visitor.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_visitor.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace testing {

@@ -69,6 +69,5 @@
 #include "go-absl/types/span/export.inc"
 #include "go-google/type/date_cc_proto/export.inc"
 #include "go-google/type/timeofday_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

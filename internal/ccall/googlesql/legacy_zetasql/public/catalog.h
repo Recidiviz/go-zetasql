@@ -25,17 +25,17 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/property_graph.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/property_graph.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "absl/types/variant.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 // TODO: Over time the number of files related to catalog objects
 // has grown.  Consider creating a new public subdirectory for Catalog

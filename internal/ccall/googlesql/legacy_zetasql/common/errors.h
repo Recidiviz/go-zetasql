@@ -59,12 +59,12 @@
 #include <string_view>
 #include <vector>
 
-#include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/public/deprecation_warning.pb.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/deprecation_warning.pb.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/base/macros.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -72,8 +72,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

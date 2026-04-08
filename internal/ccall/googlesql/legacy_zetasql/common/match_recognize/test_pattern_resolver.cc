@@ -14,22 +14,22 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/test_pattern_resolver.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/test_pattern_resolver.h"
 
 #include <memory>
 #include <string>
 #include <variant>
 #include <vector>
 
-#include "zetasql/public/analyzer.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/public/analyzer.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "absl/container/btree_set.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
@@ -38,9 +38,9 @@
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "re2/re2.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::functions::match_recognize {
 

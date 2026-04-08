@@ -20,10 +20,10 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/compliance/functions_testlib_common.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/using_test_value.cc"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib_common.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"
 #include "gmock/gmock.h"
 #include "absl/strings/substitute.h"
 

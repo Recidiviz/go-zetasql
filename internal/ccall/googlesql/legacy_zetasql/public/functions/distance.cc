@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/distance.h"
+#include "googlesql/legacy_zetasql/public/functions/distance.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -25,11 +25,11 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/functions/arithmetics.h"
-#include "zetasql/public/functions/math.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/functions/arithmetics.h"
+#include "googlesql/legacy_zetasql/public/functions/math.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/container/btree_set.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/functional/function_ref.h"
@@ -41,9 +41,9 @@
 #include "absl/types/span.h"
 #include "unicode/umachine.h"
 #include "unicode/utf8.h"
-#include "zetasql/base/edit_distance.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/edit_distance.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace functions {

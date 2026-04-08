@@ -24,18 +24,18 @@
 
 #include "google/protobuf/timestamp.pb.h"
 #include "google/type/date.pb.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/interval_value.h"
-#include "zetasql/public/pico_time.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
 #include "absl/base/attributes.h"
 #include "absl/base/macros.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/civil_time.h"
 #include "absl/time/time.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 // ZetaSQL dates are represented as an int32_t value, indicating the offset
 // in days from the epoch 1970-01-01.  ZetaSQL dates are not timezone aware,

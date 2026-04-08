@@ -27,7 +27,7 @@
 #include "absl/strings/cord.h"
 #include "absl/strings/string_view.h"
 #include "unicode/tblcoll.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

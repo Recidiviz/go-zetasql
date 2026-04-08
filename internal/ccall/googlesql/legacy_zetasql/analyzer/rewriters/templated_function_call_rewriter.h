@@ -20,8 +20,8 @@
 #include <functional>
 #include <memory>
 
-#include "zetasql/public/options.pb.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql {

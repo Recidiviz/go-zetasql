@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 #include <string>
 #include <vector>
@@ -25,9 +25,9 @@
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/test_payload.pb.h"
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/test_payload.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 
 namespace zetasql_base {
 namespace {

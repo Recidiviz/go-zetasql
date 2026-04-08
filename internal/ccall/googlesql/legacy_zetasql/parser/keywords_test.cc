@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
 
 #include <cstdlib>
 #include <fstream>  
@@ -22,8 +22,8 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/path.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/flags/flag.h"

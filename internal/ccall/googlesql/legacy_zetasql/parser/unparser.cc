@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/unparser.h"
+#include "googlesql/legacy_zetasql/parser/unparser.h"
 
 #include <ctype.h>
 
@@ -22,21 +22,21 @@
 #include <set>
 #include <string>
 
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 ABSL_DECLARE_FLAG(bool, output_asc_explicitly);
 

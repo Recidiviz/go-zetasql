@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/match_recognize/compiled_pattern.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.h"
 
 #include <functional>
 #include <memory>
@@ -24,22 +24,22 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/common/match_recognize/compiled_nfa.h"
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/common/match_recognize/nfa_builder.h"
-#include "zetasql/common/match_recognize/nfa_match_partition.h"
-#include "zetasql/public/functions/match_recognize/match_partition.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_builder.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_match_partition.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/match_partition.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::functions::match_recognize {
 

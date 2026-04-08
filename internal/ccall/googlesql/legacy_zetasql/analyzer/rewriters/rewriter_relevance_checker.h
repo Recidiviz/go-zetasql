@@ -17,8 +17,8 @@
 #ifndef ZETASQL_ANALYZER_REWRITERS_REWRITER_RELEVANCE_CHECKER_H_
 #define ZETASQL_ANALYZER_REWRITERS_REWRITER_RELEVANCE_CHECKER_H_
 
-#include "zetasql/public/options.pb.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/container/btree_set.h"
 #include "absl/status/statusor.h"
 

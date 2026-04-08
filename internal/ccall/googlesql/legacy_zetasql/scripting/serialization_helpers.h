@@ -21,14 +21,14 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/public/evaluator.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/scripting/script_executor.h"
-#include "zetasql/scripting/script_executor_state.pb.h"
-#include "zetasql/scripting/type_aliases.h"
-#include "zetasql/scripting/variable.pb.h"
+#include "googlesql/legacy_zetasql/public/evaluator.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/scripting/script_executor.h"
+#include "googlesql/legacy_zetasql/scripting/script_executor_state.pb.h"
+#include "googlesql/legacy_zetasql/scripting/type_aliases.h"
+#include "googlesql/legacy_zetasql/scripting/variable.pb.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "google/protobuf/descriptor.h"

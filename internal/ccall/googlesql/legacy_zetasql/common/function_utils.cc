@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/function_utils.h"
+#include "googlesql/legacy_zetasql/common/function_utils.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/public/function.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 

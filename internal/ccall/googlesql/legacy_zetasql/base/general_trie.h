@@ -46,7 +46,7 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/base/attributes.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"

@@ -24,24 +24,24 @@
 #include <string>
 #include <type_traits>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/interval_value.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/range_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/range_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/endian.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 // Helper functions used for parsing range values from strings.
 namespace zetasql {

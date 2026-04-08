@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/resolved_ast/resolved_collation.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_collation.h"
 
 #include <memory>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/serialization.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/serialization.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/types/span.h"
 
 namespace zetasql {

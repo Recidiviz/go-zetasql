@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/generate_array.h"
+#include "googlesql/legacy_zetasql/public/functions/generate_array.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -25,20 +25,20 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/float_margin.h"
-#include "zetasql/common/internal_value.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/common/float_margin.h"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/substitute.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

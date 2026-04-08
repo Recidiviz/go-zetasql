@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/canonicalize_signed_zero_to_string.h"
+#include "googlesql/legacy_zetasql/common/canonicalize_signed_zero_to_string.h"
 
 #include "absl/flags/flag.h"
 

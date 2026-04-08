@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/common/match_recognize/match_test_result.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

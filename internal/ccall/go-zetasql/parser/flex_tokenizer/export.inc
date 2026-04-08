@@ -1,7 +1,7 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_FLEX_TOKENIZER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_FLEX_TOKENIZER_EXPORT_H
 
-#include "zetasql/parser/flex_tokenizer.h"
+#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
 // include sources
 // flex_tokenizer.cc / flex_tokenizer.flex.cc are amalgamated in parser/bind.cc (parser prelude).
 // include dependencies

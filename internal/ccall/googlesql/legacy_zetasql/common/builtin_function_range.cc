@@ -16,15 +16,15 @@
 
 #include <vector>
 
-#include "zetasql/common/builtin_function_internal.h"
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/input_argument_type.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/common/builtin_function_internal.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/status.h"
 #include "absl/types/span.h"
 

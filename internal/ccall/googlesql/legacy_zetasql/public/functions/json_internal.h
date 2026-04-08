@@ -30,13 +30,13 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/common/json_parser.h"
-#include "zetasql/common/json_util.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/base/string_numbers.h"  
+#include "googlesql/legacy_zetasql/common/json_parser.h"
+#include "googlesql/legacy_zetasql/common/json_util.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/base/string_numbers.h"  
 #include "absl/base/attributes.h"
 #include "absl/base/optimization.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"

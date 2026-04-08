@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/examples/tpch/catalog/tpch_catalog.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/tpch_catalog.h"
 
 #include <cstdint>
 #include <memory>
@@ -22,26 +22,26 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/simple_evaluator_table_iterator.h"
-#include "zetasql/examples/tpch/catalog/customer.tbl.h"
-#include "zetasql/examples/tpch/catalog/lineitem.tbl.h"
-#include "zetasql/examples/tpch/catalog/nation.tbl.h"
-#include "zetasql/examples/tpch/catalog/orders.tbl.h"
-#include "zetasql/examples/tpch/catalog/part.tbl.h"
-#include "zetasql/examples/tpch/catalog/partsupp.tbl.h"
-#include "zetasql/examples/tpch/catalog/region.tbl.h"
-#include "zetasql/examples/tpch/catalog/supplier.tbl.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/analyzer_output.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/simple_catalog_util.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/common/simple_evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/customer.tbl.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/lineitem.tbl.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/nation.tbl.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/orders.tbl.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/part.tbl.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/partsupp.tbl.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/region.tbl.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/supplier.tbl.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog_util.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/base/const_init.h"
 #include "absl/base/macros.h"
 #include "absl/container/flat_hash_set.h"
@@ -55,9 +55,9 @@
 #include "riegeli/base/maker.h"
 #include "riegeli/bytes/string_reader.h"
 #include "riegeli/csv/csv_reader.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
-#include "zetasql/base/clock.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/clock.h"
 
 namespace zetasql {
 

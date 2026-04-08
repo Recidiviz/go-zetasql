@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/scripting/script_segment.h"
+#include "googlesql/legacy_zetasql/scripting/script_segment.h"
 
 #include <algorithm>
 #include <ostream>
 #include <stack>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

@@ -14,28 +14,28 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/set_operation_resolver_base.h"
+#include "googlesql/legacy_zetasql/analyzer/set_operation_resolver_base.h"
 
 #include <functional>
 #include <string>
 #include <vector>
 
-#include "zetasql/analyzer/input_argument_type_resolver_helper.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/public/coercer.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/input_argument_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/resolved_ast/column_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_helper.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/analyzer/input_argument_type_resolver_helper.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/public/coercer.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/column_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_helper.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

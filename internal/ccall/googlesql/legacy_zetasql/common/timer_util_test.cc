@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/timer_util.h"
+#include "googlesql/legacy_zetasql/common/timer_util.h"
 
 #include <cstdint>
 

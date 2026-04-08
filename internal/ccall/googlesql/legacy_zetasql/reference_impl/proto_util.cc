@@ -14,22 +14,22 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/proto_util.h"
+#include "googlesql/legacy_zetasql/reference_impl/proto_util.h"
 
 #include <cstdint>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/internal_value.h"
-#include "zetasql/public/functions/arithmetics.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/proto_util.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/public/functions/arithmetics.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/proto_util.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/base/casts.h"
 #include "absl/status/status.h"
 #include "absl/strings/cord.h"
@@ -37,8 +37,8 @@
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl_lite.h"
 #include "google/protobuf/wire_format_lite.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 using google::protobuf::FieldDescriptor;
 using google::protobuf::internal::WireFormatLite;

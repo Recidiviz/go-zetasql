@@ -21,11 +21,11 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
 #include "re2/re2.h"

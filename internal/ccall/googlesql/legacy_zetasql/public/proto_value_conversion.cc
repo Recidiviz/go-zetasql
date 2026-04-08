@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/proto_value_conversion.h"
+#include "googlesql/legacy_zetasql/public/proto_value_conversion.h"
 
 #include <cstdint>
 #include <memory>
@@ -26,26 +26,26 @@
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/functions/range.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/proto/wire_format_annotation.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/uuid_value.h"
-#include "zetasql/public/value.h"
-#include "zetasql/public/value.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/range.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/wire_format_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/uuid_value.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/value.pb.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

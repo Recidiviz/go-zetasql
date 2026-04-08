@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/initialize_required_fields.h"
+#include "googlesql/legacy_zetasql/common/initialize_required_fields.h"
 
 #include <memory>
 
@@ -22,8 +22,8 @@
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/dynamic_message.h"
 #include "google/protobuf/message.h"
-#include "zetasql/common/initialize_required_fields_test.pb.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/common/initialize_required_fields_test.pb.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gtest/gtest.h"
 
 namespace zetasql {

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 #include <string>
 #include <utility>
@@ -24,7 +24,7 @@
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
 
 namespace zetasql_base {
 

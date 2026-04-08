@@ -3,6 +3,7 @@
 
 #include "googlesql/public/analyzer_options.h"
 // include sources
+// options/type/proto type_annotation+wire_format .pb.cc amalgamation blocks are only in analyzer bind.cc; root links that package.
 #include "googlesql/public/analyzer_options.cc"
 // include dependencies
 #include "go-zetasql/public/catalog/export.inc"
@@ -39,7 +40,5 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/time/time/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-protobuf/protobuf/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

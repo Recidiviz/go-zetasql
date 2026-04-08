@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/regexp.h"
+#include "googlesql/legacy_zetasql/public/functions/regexp.h"
 
 #include <ctype.h>
 
@@ -28,10 +28,10 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/utf_util.h"
-#include "zetasql/public/functions/string.h"
-#include "zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/public/functions/string.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -42,7 +42,7 @@
 #include "absl/types/span.h"
 #include "unicode/utf8.h"
 #include "re2/re2.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

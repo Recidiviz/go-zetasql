@@ -20,8 +20,8 @@
 #include <set>
 #include <vector>
 
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"

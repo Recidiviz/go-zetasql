@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
 
 #include <cstdint>
 #include <string>

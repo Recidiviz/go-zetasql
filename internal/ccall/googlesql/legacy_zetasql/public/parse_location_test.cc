@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

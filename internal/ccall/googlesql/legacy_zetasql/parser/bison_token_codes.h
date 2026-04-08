@@ -25,7 +25,7 @@ enum TokenKinds {
 // This is a generated file that contains just the lines of the form KW_... =
 // in the bison parser. We don't want to take a full compilation dependency on
 // the parser because that would create cyclic dependencies.
-#include "zetasql/parser/bison_token_codes.inc"  
+#include "googlesql/legacy_zetasql/parser/bison_token_codes.inc"  
 };
 
 }  // namespace parser

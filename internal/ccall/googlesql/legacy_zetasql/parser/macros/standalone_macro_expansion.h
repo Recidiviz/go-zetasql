@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
 #include "absl/base/macros.h"
 #include "absl/container/btree_map.h"
 #include "absl/types/span.h"

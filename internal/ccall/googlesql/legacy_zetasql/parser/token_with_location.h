@@ -19,9 +19,9 @@
 
 #include <string>
 
-#include "zetasql/parser/token_codes.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/parser/token_codes.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
 

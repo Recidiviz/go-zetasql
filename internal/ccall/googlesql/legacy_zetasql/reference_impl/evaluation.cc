@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/evaluation.h"
 
 #include <cstdint>
 #include <memory>
@@ -22,24 +22,24 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/internal_value.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/flags/flag.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
-#include "zetasql/base/clock.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/clock.h"
 
 ABSL_FLAG(
     int64_t, zetasql_call_verify_not_aborted_rows_period, 1000,

@@ -19,7 +19,7 @@
 
 #include <string>
 
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "absl/base/attributes.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"

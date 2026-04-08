@@ -17,7 +17,7 @@
 #ifndef ZETASQL_PARSER_MACROS_TOKEN_WITH_LOCATION_H_
 #define ZETASQL_PARSER_MACROS_TOKEN_WITH_LOCATION_H_
 
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

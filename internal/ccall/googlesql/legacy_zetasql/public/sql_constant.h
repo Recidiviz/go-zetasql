@@ -21,12 +21,12 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/constant.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/public/constant.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

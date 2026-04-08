@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_proto_writer.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_proto_writer.h"
 
 #include <functional>
 #include <memory>
@@ -22,21 +22,21 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/dynamic_message.h"
 #include "google/protobuf/message.h"
 #include "google/protobuf/text_format.h"
 #include "google/protobuf/util/json_util.h"
-#include "zetasql/common/proto_from_iterator.h"
-#include "zetasql/public/convert_type_to_proto.h"
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/common/proto_from_iterator.h"
+#include "googlesql/legacy_zetasql/public/convert_type_to_proto.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "google/protobuf/io/zero_copy_stream_impl.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

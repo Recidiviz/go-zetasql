@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
 
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "absl/container/flat_hash_set.h"
 
 namespace zetasql {

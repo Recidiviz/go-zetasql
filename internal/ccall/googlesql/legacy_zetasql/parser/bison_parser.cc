@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/bison_parser.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser.h"
 
 #include <cctype>
 #include <cstdint>
@@ -24,26 +24,26 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/timer_util.h"
-#include "zetasql/common/utf_util.h"
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/keywords.h"
-#include "zetasql/parser/lookahead_transformer.h"
-#include "zetasql/parser/macros/macro_catalog.h"
-#include "zetasql/parser/parser_runtime_info.h"
-#include "zetasql/parser/statement_properties.h"
-#include "zetasql/parser/textmapper_lexer_adapter.h"
-#include "zetasql/parser/tm_parser.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/proto/logging.pb.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/timer_util.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/parser/lookahead_transformer.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_catalog.h"
+#include "googlesql/legacy_zetasql/parser/parser_runtime_info.h"
+#include "googlesql/legacy_zetasql/parser/statement_properties.h"
+#include "googlesql/legacy_zetasql/parser/textmapper_lexer_adapter.h"
+#include "googlesql/legacy_zetasql/parser/tm_parser.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/proto/logging.pb.h"
 #include "absl/cleanup/cleanup.h"
 #include "absl/flags/flag.h"
 #include "absl/log/log.h"
@@ -55,11 +55,11 @@
 #include "absl/strings/str_replace.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_builder.h"  
+#include "googlesql/legacy_zetasql/base/status_builder.h"  
 #include "re2/re2.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 
 

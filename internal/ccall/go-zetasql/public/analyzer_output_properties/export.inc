@@ -3,6 +3,7 @@
 
 #include "googlesql/public/analyzer_output_properties.h"
 // include sources
+// options/type/proto type_annotation+wire_format .pb.cc amalgamation blocks are only in analyzer bind.cc; root links that package.
 // include dependencies
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/target_syntax/export.inc"

@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/numeric_value_test_utils.h"
+#include "googlesql/legacy_zetasql/public/numeric_value_test_utils.h"
 
 #include <cstddef>
 #include <string>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "gtest/gtest.h"
 #include "absl/random/random.h"
 #include "absl/strings/str_format.h"

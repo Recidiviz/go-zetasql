@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 
 #include "absl/strings/str_cat.h"
 

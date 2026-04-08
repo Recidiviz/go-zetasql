@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zetasql/public/functions/json.h"
+#include "googlesql/legacy_zetasql/public/functions/json.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -26,17 +26,17 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/common/json_util.h"
-#include "zetasql/public/functions/convert.h"
-#include "zetasql/public/functions/convert_string.h"
-#include "zetasql/public/functions/json_format.h"
-#include "zetasql/public/functions/json_internal.h"
-#include "zetasql/public/functions/to_json.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/json_util.h"
+#include "googlesql/legacy_zetasql/public/functions/convert.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_string.h"
+#include "googlesql/legacy_zetasql/public/functions/json_format.h"
+#include "googlesql/legacy_zetasql/public/functions/json_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/to_json.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/base/optimization.h"
 #include "absl/container/btree_set.h"
 #include "absl/functional/function_ref.h"
@@ -48,10 +48,10 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/lossless_convert.h"
+#include "googlesql/legacy_zetasql/base/lossless_convert.h"
 #include "re2/re2.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace functions {

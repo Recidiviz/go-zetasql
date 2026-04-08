@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/examples/tpch/catalog/tpch_catalog.h"
+#include "googlesql/legacy_zetasql/examples/tpch/catalog/tpch_catalog.h"
 
 #include <cstdint>
 #include <memory>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

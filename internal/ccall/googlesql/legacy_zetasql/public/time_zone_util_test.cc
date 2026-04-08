@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/time_zone_util.h"
+#include "googlesql/legacy_zetasql/public/time_zone_util.h"
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/time/civil_time.h"

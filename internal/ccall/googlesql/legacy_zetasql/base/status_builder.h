@@ -30,9 +30,9 @@
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/logging.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/status_payload.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/status_payload.h"
 
 namespace zetasql_base {
 

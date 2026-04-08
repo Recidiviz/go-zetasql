@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/builtin_only_catalog.h"
+#include "googlesql/legacy_zetasql/analyzer/builtin_only_catalog.h"
 
 #include <algorithm>
 #include <memory>
 #include <string>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/property_graph.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/property_graph.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/log/log.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
@@ -32,8 +32,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

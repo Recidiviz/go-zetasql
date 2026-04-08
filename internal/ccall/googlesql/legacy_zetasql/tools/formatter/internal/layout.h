@@ -22,9 +22,9 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/tools/formatter/internal/chunk.h"
-#include "zetasql/tools/formatter/internal/parsed_file.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/parsed_file.h"
 #include "absl/container/btree_set.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"

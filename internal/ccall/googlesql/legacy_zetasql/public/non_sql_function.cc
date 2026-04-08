@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/non_sql_function.h"
+#include "googlesql/legacy_zetasql/public/non_sql_function.h"
 
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

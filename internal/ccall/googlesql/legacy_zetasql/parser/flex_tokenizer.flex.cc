@@ -45976,8 +45976,8 @@ static const yy_state_type yy_NUL_trans[1433] =
    remainder of the class definition is controlled by us, in
    flex_tokenizer.h. */
 #line 27 "flex_tokenizer.l"
-#include "zetasql/parser/flex_tokenizer.cc.inc"
-#include "zetasql/parser/token_codes.h"
+#include "googlesql/legacy_zetasql/parser/flex_tokenizer.cc.inc"
+#include "googlesql/legacy_zetasql/parser/token_codes.h"
 #line 45991 "flex_tokenizer.flex.cc"
 /* These are some basic regex definitions that are used in the lexer rules
    below.

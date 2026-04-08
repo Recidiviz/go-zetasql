@@ -21,7 +21,7 @@
 
 #include <optional>
 
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql {

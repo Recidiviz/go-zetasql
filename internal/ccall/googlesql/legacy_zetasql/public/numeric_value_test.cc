@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 
 #include <stdlib.h>
 
@@ -35,10 +35,10 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/numeric_constants.h"
-#include "zetasql/public/numeric_value_test_utils.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/numeric_constants.h"
+#include "googlesql/legacy_zetasql/public/numeric_value_test_utils.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/casts.h"
@@ -56,10 +56,10 @@
 #include "absl/strings/substitute.h"
 #include "absl/types/optional.h"
 #include "absl/types/variant.h"
-#include "zetasql/base/bits.h"
-#include "zetasql/base/endian.h"
-#include "zetasql/base/mathutil.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/bits.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace std {
 std::ostream& operator<<(std::ostream& o, __int128 x) {

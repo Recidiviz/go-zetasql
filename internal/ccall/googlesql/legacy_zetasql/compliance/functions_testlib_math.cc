@@ -23,17 +23,17 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/float_margin.h"
-#include "zetasql/compliance/functions_testlib_common.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/test_value.h"
-#include "zetasql/testing/using_test_value.cc"  // NOLINT
+#include "googlesql/legacy_zetasql/common/float_margin.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib_common.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"  // NOLINT
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace {

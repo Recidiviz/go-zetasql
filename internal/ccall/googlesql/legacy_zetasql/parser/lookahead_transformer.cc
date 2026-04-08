@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/lookahead_transformer.h"
+#include "googlesql/legacy_zetasql/parser/lookahead_transformer.h"
 
 #include <cstdint>
 #include <memory>
@@ -22,27 +22,27 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/macros/flex_token_provider.h"
-#include "zetasql/parser/macros/macro_catalog.h"
-#include "zetasql/parser/macros/macro_expander.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_catalog.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_expander.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/base/macros.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

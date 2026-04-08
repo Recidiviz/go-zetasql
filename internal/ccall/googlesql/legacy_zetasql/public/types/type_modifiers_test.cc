@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/type_modifiers.h"
+#include "googlesql/legacy_zetasql/public/types/type_modifiers.h"
 
 #include <memory>
 
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

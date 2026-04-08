@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/formatter/internal/parsed_file.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/parsed_file.h"
 
 #include <stdint.h>
 
@@ -24,19 +24,19 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/utf_util.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/tools/formatter/internal/chunk.h"
-#include "zetasql/tools/formatter/internal/chunk_grouping_strategy.h"
-#include "zetasql/tools/formatter/internal/range_utils.h"
-#include "zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk_grouping_strategy.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/range_utils.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
@@ -45,7 +45,7 @@
 #include "absl/strings/string_view.h"
 #include "unicode/unistr.h"
 #include "unicode/utypes.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::formatter::internal {
 

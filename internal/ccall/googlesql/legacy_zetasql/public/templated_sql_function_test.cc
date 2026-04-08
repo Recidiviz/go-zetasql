@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/templated_sql_function.h"
+#include "googlesql/legacy_zetasql/public/templated_sql_function.h"
 
 #include <cstdint>
 #include <memory>
 
-#include "zetasql/base/testing/status_matchers.h"  
-#include "zetasql/public/function.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"  
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

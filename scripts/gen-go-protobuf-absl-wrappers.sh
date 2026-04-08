@@ -50,7 +50,10 @@ for entry in (
         if x not in merged:
             merged.append(x)
 
-SKIP = {"absl/numeric/int128.cc"}
+SKIP = {
+    "absl/numeric/int128.cc",
+    "absl/log/internal/log_message.cc",  # amalgamated in go-protobuf/protobuf/export.inc
+}
 ALREADY_IN_PLAIN_LINK = {
     "absl/base/internal/raw_logging.cc",
     "absl/hash/internal/city.cc",

@@ -19,8 +19,8 @@
 
 #include <string>
 
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
 
 namespace zetasql {
 namespace parser {

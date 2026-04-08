@@ -14,19 +14,19 @@
 // limitations under the License.
 //
 
-#include "zetasql/resolved_ast/column_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/column_factory.h"
 
 #include <cstdint>
 #include <limits>
 #include <memory>
 #include <utility>
 
-#include "zetasql/base/atomic_sequence_num.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/atomic_sequence_num.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/expr_matching_helpers.h"
+#include "googlesql/legacy_zetasql/analyzer/expr_matching_helpers.h"
 
 #include <stddef.h>
 
@@ -24,26 +24,26 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/analyzer/name_scope.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_helper.h"
-#include "zetasql/resolved_ast/resolved_collation.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/analyzer/name_scope.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_helper.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_collation.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/hash/hash.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -23,7 +23,7 @@
 // suggested by Ron van der Wal and Scott Meyers at
 //     http://www.aristeia.com/BookErrata/M27Comments_frames.html
 
-#include "zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
 
 #include <assert.h>
 #include <stdarg.h>  // for vsnprintf
@@ -36,7 +36,7 @@
 #include <vector>
 
 #include "absl/synchronization/mutex.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql_base {
 

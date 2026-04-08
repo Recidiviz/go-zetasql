@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/lenient_formatter.h"
+#include "googlesql/legacy_zetasql/public/lenient_formatter.h"
 
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <vector>
 
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/tools/formatter/internal/layout.h"
-#include "zetasql/tools/formatter/internal/parsed_file.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/layout.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/parsed_file.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

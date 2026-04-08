@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/flat_internal.h"
+#include "googlesql/legacy_zetasql/base/flat_internal.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

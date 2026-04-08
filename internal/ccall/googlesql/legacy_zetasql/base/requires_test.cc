@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/requires.h"
+#include "googlesql/legacy_zetasql/base/requires.h"
 
 #include <string>
 #include <vector>

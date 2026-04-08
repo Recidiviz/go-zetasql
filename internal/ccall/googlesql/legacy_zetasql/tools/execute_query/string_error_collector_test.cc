@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/string_error_collector.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/string_error_collector.h"
 
 #include <memory>
 #include <string>

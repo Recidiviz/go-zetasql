@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include "zetasql/public/formatter_options.pb.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.pb.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

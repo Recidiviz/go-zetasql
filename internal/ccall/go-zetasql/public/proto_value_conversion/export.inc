@@ -26,6 +26,5 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"
 #include "go-absl/time/time/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

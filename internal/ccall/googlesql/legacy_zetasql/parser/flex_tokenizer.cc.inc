@@ -19,9 +19,9 @@
 // functions. Mostly we use this to define macros to customize flex behavior and
 // to call from the various rules.
 
-#include "zetasql/parser/flex_tokenizer.h"  
-#include "zetasql/parser/token_codes.h"
-#include "zetasql/public/parse_location.h"  
+#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"  
+#include "googlesql/legacy_zetasql/parser/token_codes.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"  
 #include "absl/strings/escaping.h"        
 #include "absl/strings/str_format.h"      
 #include "absl/strings/string_view.h"     

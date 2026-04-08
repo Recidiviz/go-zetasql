@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
 
 #include <map>
 #include <memory>
@@ -22,29 +22,29 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/enum_utils.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/common/testing/proto_matchers.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/testing/status_payload_matchers.h"
-#include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/proto/script_exception.pb.h"
-#include "zetasql/public/deprecation_warning.pb.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/enum_utils.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/common/testing/proto_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/testing/status_payload_matchers.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/proto/script_exception.pb.h"
+#include "googlesql/legacy_zetasql/public/deprecation_warning.pb.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

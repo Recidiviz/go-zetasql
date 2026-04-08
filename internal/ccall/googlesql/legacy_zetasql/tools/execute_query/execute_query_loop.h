@@ -21,9 +21,9 @@
 #include <memory>
 #include <string>
 
-#include "zetasql/tools/execute_query/execute_query_prompt.h"
-#include "zetasql/tools/execute_query/execute_query_tool.h"
-#include "zetasql/tools/execute_query/execute_query_writer.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_writer.h"
 #include "absl/functional/function_ref.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"

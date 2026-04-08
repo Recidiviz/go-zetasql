@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/standalone_macro_expansion.h"
+#include "googlesql/legacy_zetasql/parser/macros/standalone_macro_expansion.h"
 
 #include <cctype>
 #include <cstddef>
 #include <string>
 #include <vector>
 
-#include "zetasql/parser/macros/token_splicing_utils.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/parser/macros/token_splicing_utils.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
 #include "absl/container/btree_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"

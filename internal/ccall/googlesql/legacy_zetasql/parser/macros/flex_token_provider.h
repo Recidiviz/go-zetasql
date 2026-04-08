@@ -21,13 +21,13 @@
 #include <optional>
 #include <queue>
 
-#include "zetasql/parser/flex_tokenizer.h"
-#include "zetasql/parser/macros/token_provider_base.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
+#include "googlesql/legacy_zetasql/parser/macros/token_provider_base.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace parser {

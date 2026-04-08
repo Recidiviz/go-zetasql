@@ -18,21 +18,21 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/graph_element_utils.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/common/graph_element_utils.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/graph_element_type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

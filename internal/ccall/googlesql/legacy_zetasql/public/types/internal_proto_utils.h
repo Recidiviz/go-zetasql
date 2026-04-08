@@ -19,9 +19,9 @@
 
 #include <stddef.h>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/status/status.h"
 #include "google/protobuf/descriptor.h"
 

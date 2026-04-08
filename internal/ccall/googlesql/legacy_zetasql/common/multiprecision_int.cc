@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
 
 #include <cstdint>
 #include <type_traits>

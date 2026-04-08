@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/macro_expander.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_expander.h"
 
 #include <algorithm>
 #include <cctype>
@@ -28,23 +28,23 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/macros/diagnostic.h"
-#include "zetasql/parser/macros/flex_token_provider.h"
-#include "zetasql/parser/macros/macro_catalog.h"
-#include "zetasql/parser/macros/quoting.h"
-#include "zetasql/parser/macros/standalone_macro_expansion.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/parser/macros/diagnostic.h"
+#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_catalog.h"
+#include "googlesql/legacy_zetasql/parser/macros/quoting.h"
+#include "googlesql/legacy_zetasql/parser/macros/standalone_macro_expansion.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/nullability.h"

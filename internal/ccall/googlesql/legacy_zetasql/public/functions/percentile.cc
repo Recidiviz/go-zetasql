@@ -14,22 +14,22 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/percentile.h"
+#include "googlesql/legacy_zetasql/public/functions/percentile.h"
 
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/mathutil.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 template <typename T>

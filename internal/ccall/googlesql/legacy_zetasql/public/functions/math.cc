@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/math.h"
+#include "googlesql/legacy_zetasql/public/functions/math.h"
 
 #include <array>
 #include <cmath>
@@ -22,9 +22,9 @@
 #include <limits>
 #include <type_traits>
 
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/functions/rounding_mode.pb.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/functions/rounding_mode.pb.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"

@@ -17,7 +17,7 @@
 #ifndef ZETASQL_RESOLVED_AST_TARGET_SYNTAX_H_
 #define ZETASQL_RESOLVED_AST_TARGET_SYNTAX_H_
 
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/container/flat_hash_map.h"
 
 namespace zetasql {

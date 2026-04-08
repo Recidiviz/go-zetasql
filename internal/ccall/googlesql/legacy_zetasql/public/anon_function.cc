@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/anon_function.h"
+#include "googlesql/legacy_zetasql/public/anon_function.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/public/function.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "absl/functional/bind_front.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"

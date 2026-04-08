@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
 
 #include <ctype.h>
 
@@ -23,16 +23,16 @@
 #include <string_view>
 #include <vector>
 
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/public/deprecation_warning.pb.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/deprecation_warning.pb.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/base/attributes.h"
 #include "absl/flags/flag.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -41,8 +41,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "google/protobuf/repeated_ptr_field.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

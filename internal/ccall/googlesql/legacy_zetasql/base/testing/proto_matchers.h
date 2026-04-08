@@ -17,6 +17,6 @@
 #ifndef THIRD_PARTY_ZETASQL_ZETASQL_BASE_TESTING_PROTO_MATCHERS_H_
 #define THIRD_PARTY_ZETASQL_ZETASQL_BASE_TESTING_PROTO_MATCHERS_H_
 
-#include "zetasql/base/testing/proto_matchers_oss.h"
+#include "googlesql/legacy_zetasql/base/testing/proto_matchers_oss.h"
 
 #endif  // THIRD_PARTY_ZETASQL_ZETASQL_BASE_TESTING_PROTO_MATCHERS_H_

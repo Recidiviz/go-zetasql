@@ -21,15 +21,15 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/coercer.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/input_argument_type.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/resolved_ast/column_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/coercer.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/column_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
 

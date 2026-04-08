@@ -19,13 +19,13 @@
 #ifndef ZETASQL_PUBLIC_FUNCTIONS_TO_JSON_H_
 #define ZETASQL_PUBLIC_FUNCTIONS_TO_JSON_H_
 
-#include "zetasql/public/functions/unsupported_fields.pb.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/functions/unsupported_fields.pb.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

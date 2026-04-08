@@ -17,7 +17,7 @@
 #ifndef ZETASQL_PARSER_TOKEN_CODES_H_
 #define ZETASQL_PARSER_TOKEN_CODES_H_
 
-#include "zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
 #include "absl/base/macros.h"
 
 namespace zetasql {

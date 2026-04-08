@@ -10,6 +10,5 @@
 #undef schemas
 // include dependencies
 #include "go-proto/data_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

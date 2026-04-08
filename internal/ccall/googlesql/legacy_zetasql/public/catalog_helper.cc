@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/catalog_helper.h"
+#include "googlesql/legacy_zetasql/public/catalog_helper.h"
 
 #include <cstdint>
 #include <functional>
@@ -23,14 +23,14 @@
 #include <string_view>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/flags/flag.h"
 #include "absl/functional/function_ref.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/edit_distance.h"
+#include "googlesql/legacy_zetasql/base/edit_distance.h"
 
 ABSL_FLAG(int64_t, zetasql_min_length_required_for_edit_distance, 3,
           "Minimum length required of the input string to find its closest "

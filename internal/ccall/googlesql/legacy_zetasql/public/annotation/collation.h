@@ -20,12 +20,12 @@
 #include <memory>
 #include <vector>
 
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/public/annotation/default_annotation_spec.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/public/annotation/default_annotation_spec.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 

@@ -181,4 +181,7 @@
 
 #undef InsertIfNotPresent
 
+// Same TU as protobuf call sites so LogMessage::operator<< template mangling matches.
+#include "absl/log/internal/log_message.cc"
+
 #endif

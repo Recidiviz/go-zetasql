@@ -14,25 +14,25 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/proto_helper.h"
+#include "googlesql/legacy_zetasql/common/proto_helper.h"
 
 #include <cstdint>
 #include <optional>
 #include <set>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

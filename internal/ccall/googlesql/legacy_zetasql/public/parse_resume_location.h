@@ -20,11 +20,11 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/public/parse_resume_location.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.pb.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

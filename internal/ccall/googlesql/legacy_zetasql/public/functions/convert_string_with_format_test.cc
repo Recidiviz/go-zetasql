@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/convert_string_with_format.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_string_with_format.h"
 
 #include <math.h>
 
@@ -26,22 +26,22 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/functions/convert_string.h"
-#include "zetasql/public/functions/format_max_output_width.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_string.h"
+#include "googlesql/legacy_zetasql/public/functions/format_max_output_width.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/flags/flag.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

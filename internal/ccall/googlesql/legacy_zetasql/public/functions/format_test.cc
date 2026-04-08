@@ -22,17 +22,17 @@
 #include <tuple>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/format_max_output_width.h"
-#include "zetasql/public/functions/string_format.h"
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/format_max_output_width.h"
+#include "googlesql/legacy_zetasql/public/functions/string_format.h"
+#include "googlesql/legacy_zetasql/public/types/graph_element_type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/casts.h"
@@ -43,7 +43,7 @@
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 namespace functions {

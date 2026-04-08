@@ -17,8 +17,8 @@
 #ifndef ZETASQL_SCRIPTING_STACK_FRAME_H_
 #define ZETASQL_SCRIPTING_STACK_FRAME_H_
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/scripting/parsed_script.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/scripting/parsed_script.h"
 
 namespace zetasql {
 

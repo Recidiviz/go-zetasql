@@ -33,11 +33,11 @@
 
 #include <cstdint>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/base/config.h"
 #include "absl/base/port.h"
 #include "absl/numeric/int128.h"
-#include "zetasql/base/unaligned_access.h"
+#include "googlesql/legacy_zetasql/base/unaligned_access.h"
 
 namespace zetasql_base {
 

@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/enum_utils.h"
+#include "googlesql/legacy_zetasql/base/enum_utils.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/test_payload.pb.h"
+#include "googlesql/legacy_zetasql/base/test_payload.pb.h"
 
 namespace zetasql_base {
 

@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/public/feature_label_dictionary.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

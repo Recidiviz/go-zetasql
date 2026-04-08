@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
 
 #include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/interval_value_test_util.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/interval_value_test_util.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/hash/hash_testing.h"

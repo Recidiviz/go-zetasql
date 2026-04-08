@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/unicode_utils.h"
+#include "googlesql/legacy_zetasql/common/unicode_utils.h"
 
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/algorithm/container.h"
 #include "absl/base/nullability.h"
 #include "absl/flags/flag.h"

@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/testing/proto_matchers_oss.h"
+#include "googlesql/legacy_zetasql/base/testing/proto_matchers_oss.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/test_payload.pb.h"
+#include "googlesql/legacy_zetasql/base/test_payload.pb.h"
 
 namespace {
 

@@ -21,15 +21,15 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 // This header includes the common macros used in the resolver*.cc files.
-#include "zetasql/analyzer/resolver.h"
-#include "zetasql/common/thread_stack.h"  
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/function.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/analyzer/resolver.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"  
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

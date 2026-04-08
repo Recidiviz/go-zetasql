@@ -19,9 +19,9 @@
 
 #include <cstdint>
 
-#include "zetasql/common/timer_util.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/proto/logging.pb.h"
+#include "googlesql/legacy_zetasql/common/timer_util.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/logging.pb.h"
 
 namespace zetasql {
 

@@ -22,11 +22,11 @@
 #include <optional>
 #include <string>
 
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/value_equality_check_options.h"
-#include "zetasql/public/types/value_representations.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/value_equality_check_options.h"
+#include "googlesql/legacy_zetasql/public/types/value_representations.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 

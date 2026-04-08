@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/evaluator_registration_utils.h"
+#include "googlesql/legacy_zetasql/common/evaluator_registration_utils.h"
 
-#include "zetasql/public/collator.h"
-#include "zetasql/reference_impl/functions/register_all.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/register_all.h"
 #include "absl/base/call_once.h"
 #include "absl/strings/string_view.h"
 

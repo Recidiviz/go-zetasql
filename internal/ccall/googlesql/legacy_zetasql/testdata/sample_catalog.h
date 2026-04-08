@@ -17,12 +17,12 @@
 #ifndef ZETASQL_TESTDATA_SAMPLE_CATALOG_H_
 #define ZETASQL_TESTDATA_SAMPLE_CATALOG_H_
 
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/type.h"
-#include "zetasql/testdata/sample_catalog_impl.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/testdata/sample_catalog_impl.h"
 #include "absl/status/status.h"
 
 namespace zetasql {

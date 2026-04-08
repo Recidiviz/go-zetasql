@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
 
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/table_valued_function.h"
-#include "zetasql/public/type.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/table_valued_function.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/cord.h"

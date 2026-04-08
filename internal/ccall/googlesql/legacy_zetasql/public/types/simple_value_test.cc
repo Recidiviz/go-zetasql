@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
 
 #include <utility>
 

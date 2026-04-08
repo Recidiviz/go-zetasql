@@ -19,7 +19,7 @@
 
 #include <memory>
 
-#include "zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
 
 namespace zetasql {
 

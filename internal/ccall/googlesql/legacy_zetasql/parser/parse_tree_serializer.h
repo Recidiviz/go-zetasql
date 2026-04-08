@@ -17,10 +17,10 @@
 #ifndef ZETASQL_PARSER_PARSE_TREE_SERIALIZER_H_
 #define ZETASQL_PARSER_PARSE_TREE_SERIALIZER_H_
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parse_tree.pb.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.pb.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 // NOLINTBEGIN(whitespace/line_length)
 

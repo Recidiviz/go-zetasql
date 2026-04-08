@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/join_processor.h"
+#include "googlesql/legacy_zetasql/parser/join_processor.h"
 
 #include <memory>
 #include <stack>
 #include <string>
 
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

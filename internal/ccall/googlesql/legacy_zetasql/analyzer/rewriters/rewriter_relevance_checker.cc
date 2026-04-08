@@ -14,29 +14,29 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/rewriter_relevance_checker.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/rewriter_relevance_checker.h"
 
 #include <memory>
 #include <optional>
 #include <vector>
 
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/sql_function.h"
-#include "zetasql/public/sql_tvf.h"
-#include "zetasql/public/sql_view.h"
-#include "zetasql/public/templated_sql_function.h"
-#include "zetasql/public/templated_sql_tvf.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_visitor.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/sql_function.h"
+#include "googlesql/legacy_zetasql/public/sql_tvf.h"
+#include "googlesql/legacy_zetasql/public/sql_view.h"
+#include "googlesql/legacy_zetasql/public/templated_sql_function.h"
+#include "googlesql/legacy_zetasql/public/templated_sql_tvf.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/container/btree_set.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

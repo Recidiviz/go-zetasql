@@ -18,12 +18,12 @@
 #include <limits>
 #include <vector>
 
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/compliance/functions_testlib_common.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/using_test_value.cc"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib_common.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"
 
 namespace zetasql {
 namespace {

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include "zetasql/base/time_proto_util.h"
+#include "googlesql/legacy_zetasql/base/time_proto_util.h"
 
 #include "google/protobuf/timestamp.pb.h"
 #include "absl/status/status.h"

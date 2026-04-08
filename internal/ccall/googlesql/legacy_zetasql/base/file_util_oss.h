@@ -31,8 +31,8 @@
 #include "absl/strings/str_replace.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/logging.h"
-#include "zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/path.h"
 #include "re2/re2.h"
 
 namespace zetasql::internal {

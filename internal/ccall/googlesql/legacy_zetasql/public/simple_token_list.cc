@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/simple_token_list.h"
+#include "googlesql/legacy_zetasql/public/simple_token_list.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -23,7 +23,7 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/simple_token_list.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_token_list.pb.h"
 #include "absl/strings/escaping.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"

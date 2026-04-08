@@ -14,21 +14,21 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/compiled_nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
 
 #include <memory>
 #include <optional>
 #include <string>
 
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::functions::match_recognize {
 using CompiledNFAProto = ::zetasql::functions::match_recognize::

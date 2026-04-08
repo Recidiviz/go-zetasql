@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/signature_match_result.h"
+#include "googlesql/legacy_zetasql/public/signature_match_result.h"
 
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 

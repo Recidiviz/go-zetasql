@@ -55,19 +55,26 @@ func externalDir() string {
 	return filepath.Join(cacheDir(), "external")
 }
 
-func outDir() string {
-	return filepath.Join(
-		cacheDir(),
-		"execroot",
-		"com_google_zetasql",
-		"bazel-out",
-		"k8-fastbuild",
-		"bin",
-	)
+// execrootRoot returns the Bazel execroot directory for the vendored SQL engine
+// workspace. Upstream renamed the module to googlesql; older caches may still use
+// com_google_zetasql.
+func execrootRoot() string {
+	root := filepath.Join(cacheDir(), "execroot")
+	for _, name := range []string{"googlesql", "com_google_googlesql", "com_google_zetasql"} {
+		p := filepath.Join(root, name)
+		if st, err := os.Stat(p); err == nil && st.IsDir() {
+			return p
+		}
+	}
+	return filepath.Join(root, "googlesql")
+}
+
+func bazelBinDir() string {
+	return filepath.Join(execrootRoot(), "bazel-out", "k8-fastbuild", "bin")
 }
 
 func outExternalDir() string {
-	return filepath.Join(outDir(), "external")
+	return filepath.Join(bazelBinDir(), "external")
 }
 
 func appendLineIfMissing(path string, needle string, insertAfter string) error {
@@ -107,7 +114,7 @@ func replaceIfMissing(path string, old string, new string) error {
 // Maintainer notes on vendored protobuf/third-party patches: docs/protobuf-vendoring.md
 func applyPostCopyOverlays() error {
 	if err := replaceIfMissing(
-		filepath.Join(ccallDir(), "zetasql", "public", "functions", "date_time_util.cc"),
+		filepath.Join(ccallDir(), "googlesql", "public", "functions", "date_time_util.cc"),
 		`  return MakeEvalError() << "Converting timestamp interval " << interval
                          << " at " << TimestampScale_Name(interval_scale)
                          << " scale to " << TimestampScale_Name(output_scale)
@@ -123,9 +130,9 @@ func applyPostCopyOverlays() error {
 		return err
 	}
 	if err := appendLineIfMissing(
-		filepath.Join(ccallDir(), "zetasql", "public", "types", "BUILD"),
-		`        "//zetasql/public/proto:wire_format_annotation_cc_proto",`,
-		`        "//zetasql/public/functions:rounding_mode_cc_proto",`,
+		filepath.Join(ccallDir(), "googlesql", "public", "types", "BUILD"),
+		`        "//googlesql/public/proto:wire_format_annotation_cc_proto",`,
+		`        "//googlesql/public/functions:rounding_mode_cc_proto",`,
 	); err != nil {
 		return err
 	}
@@ -172,14 +179,14 @@ func applyPostCopyOverlays() error {
 	// options.pb.h may lag options.proto for new LanguageFeature values; use numeric id 102 ==
 	// FEATURE_ENABLE_ALTER_ARRAY_OPTIONS until protos are regenerated in lockstep.
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "bison_parser.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "bison_parser.cc"),
 		"FEATURE_ENABLE_ALTER_ARRAY_OPTIONS",
 		"static_cast<::zetasql::LanguageFeature>(102)",
 	); err != nil {
 		return err
 	}
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "flex_tokenizer.cc"),
 		"FEATURE_ENABLE_ALTER_ARRAY_OPTIONS",
 		"static_cast<::zetasql::LanguageFeature>(102)",
 	); err != nil {
@@ -187,7 +194,7 @@ func applyPostCopyOverlays() error {
 	}
 	// Generated flex uses yyFlexLexer=ZetaSqlFlexLexer; flex_tokenizer.h expects ZetaSqlFlexTokenizerBase.
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "flex_tokenizer.flex.cc"),
 		"    #define yyFlexLexer ZetaSqlFlexLexer",
 		`#ifndef yyFlexLexer
     #define yyFlexLexer ZetaSqlFlexTokenizerBase
@@ -197,7 +204,7 @@ func applyPostCopyOverlays() error {
 	}
 	// bind.cc includes flex_tokenizer.h first (FlexLexer.h once); drop duplicate #include only.
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "flex_tokenizer.flex.cc"),
 		`#define yytext_ptr yytext
 
 #include <FlexLexer.h>
@@ -212,7 +219,7 @@ int yyFlexLexer::yywrap()`,
 	// With %option yyclass="FlexTokenizer", yyFlexLexer stub definitions conflict with
 	// YY_DECL; flex_tokenizer.h supplies inline stubs unless SUPPRESS is set (see generator).
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "flex_tokenizer.flex.cc"),
 		`int yyFlexLexer::yywrap() { return 1; }
 int yyFlexLexer::yylex()
 	{
@@ -227,7 +234,7 @@ int yyFlexLexer::yylex()
 	}
 	// Bazel/flex may leave a stray YY_DECL before the tables; flex_tokenizer.cc.inc redefines it.
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "flex_tokenizer.flex.cc"),
 		`#define YY_DECL int FlexTokenizer::yylex()`,
 		``,
 	); err != nil {
@@ -235,14 +242,14 @@ int yyFlexLexer::yylex()
 	}
 	// Out-of-line ctor/dtor names must match the renamed lexer class (yyFlexLexer macro is unreliable here).
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "flex_tokenizer.flex.cc"),
 		`ZetaSqlFlexTokenizerBase::yyFlexLexer(`,
 		`ZetaSqlFlexTokenizerBase::ZetaSqlFlexTokenizerBase(`,
 	); err != nil {
 		return err
 	}
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.flex.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "flex_tokenizer.flex.cc"),
 		`ZetaSqlFlexTokenizerBase::~yyFlexLexer(`,
 		`ZetaSqlFlexTokenizerBase::~ZetaSqlFlexTokenizerBase(`,
 	); err != nil {
@@ -250,7 +257,7 @@ int yyFlexLexer::yylex()
 	}
 	// Stubs conflict with flex-generated yylex when amalgamated after flex_tokenizer.flex.cc.
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "flex_tokenizer.h"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "flex_tokenizer.h"),
 		`// This incantation is necessary because for some reason these functions are not
 // generated for ZetaSqlFlexTokenizerBase, but the class does reference them.
 inline int ZetaSqlFlexTokenizerBase::yylex() { return 0; }
@@ -270,7 +277,7 @@ inline int ZetaSqlFlexTokenizerBase::yywrap() { return 1; }
 	}
 	// ASTOptionsEntry dropped GetSQLForOperator upstream; options entries use " = " between name and value.
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "unparser.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "unparser.cc"),
 		`UnparseChildrenWithSeparator(node, data, node->GetSQLForOperator());`,
 		`UnparseChildrenWithSeparator(node, data, " = ");`,
 	); err != nil {
@@ -278,14 +285,14 @@ inline int ZetaSqlFlexTokenizerBase::yywrap() { return 1; }
 	}
 	// Until bison/flex are regenerated together with keywords.cc, drop "project" (KW_PROJECT).
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "keywords.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "keywords.cc"),
 		"    {\"project\", KW_PROJECT},\n",
 		"",
 	); err != nil {
 		return err
 	}
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "parser", "parse_tree.cc"),
+		filepath.Join(ccallDir(), "googlesql", "legacy_zetasql", "parser", "parse_tree.cc"),
 		`
 
 std::string ASTOptionsEntry::GetSQLForOperator() const {
@@ -306,14 +313,14 @@ std::string ASTOptionsEntry::GetSQLForOperator() const {
 		return err
 	}
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "public", "types", "proto_type.cc"),
+		filepath.Join(ccallDir(), "googlesql", "public", "types", "proto_type.cc"),
 		"  value_proto->set_proto_value(GetCordValue(value));",
 		"  value_proto->set_proto_value(std::string(GetCordValue(value)));",
 	); err != nil {
 		return err
 	}
 	if err := replaceAllInFile(
-		filepath.Join(ccallDir(), "zetasql", "public", "types", "proto_type.cc"),
+		filepath.Join(ccallDir(), "googlesql", "public", "types", "proto_type.cc"),
 		"  value->set(new internal::ProtoRep(this, value_proto.proto_value()));",
 		"  value->set(\n      new internal::ProtoRep(this, absl::Cord(value_proto.proto_value())));",
 	); err != nil {
@@ -389,13 +396,19 @@ func main() {
 		)
 	}
 	cp.Copy(
-		filepath.Join(pkgDir(), "zetasql", "zetasql"),
-		filepath.Join(ccallDir(), "zetasql"),
+		filepath.Join(pkgDir(), "zetasql", "googlesql"),
+		filepath.Join(ccallDir(), "googlesql"),
 		opt,
 	)
-	if err := filepath.Walk(
-		filepath.Join(outDir(), "zetasql"),
-		func(path string, info fs.FileInfo, err error) error {
+	copyBazelGenerated := func(binSegment, legacySubdir string) error {
+		root := filepath.Join(bazelBinDir(), binSegment)
+		if _, err := os.Stat(root); err != nil {
+			return nil
+		}
+		return filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
 			if info.IsDir() {
 				return nil
 			}
@@ -403,31 +416,49 @@ func main() {
 				return nil
 			}
 			fileName := filepath.Base(path)
+			if len(fileName) == 0 {
+				return nil
+			}
 			lastChar := fileName[len(fileName)-1]
-			if lastChar == 'h' || lastChar == 'c' {
-				idx := strings.LastIndex(path, "zetasql")
-				trimmedPath := path[idx:]
-				dstFile := filepath.Join(ccallDir(), trimmedPath)
-				src, err := os.Open(path)
-				if err != nil {
-					return err
-				}
-				defer src.Close()
-				if err := os.Remove(dstFile); err != nil && !os.IsNotExist(err) {
-					return err
-				}
-				dst, err := os.Create(dstFile)
-				if err != nil {
-					return err
-				}
-				defer dst.Close()
-				if _, err := io.Copy(dst, src); err != nil {
-					return err
-				}
+			if lastChar != 'h' && lastChar != 'c' {
+				return nil
+			}
+			rel, err := filepath.Rel(root, path)
+			if err != nil {
+				return err
+			}
+			var dstFile string
+			if legacySubdir == "" {
+				dstFile = filepath.Join(ccallDir(), "googlesql", rel)
+			} else {
+				dstFile = filepath.Join(ccallDir(), "googlesql", legacySubdir, rel)
+			}
+			src, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer src.Close()
+			if err := os.MkdirAll(filepath.Dir(dstFile), 0o755); err != nil {
+				return err
+			}
+			if err := os.Remove(dstFile); err != nil && !os.IsNotExist(err) {
+				return err
+			}
+			dst, err := os.Create(dstFile)
+			if err != nil {
+				return err
+			}
+			defer dst.Close()
+			if _, err := io.Copy(dst, src); err != nil {
+				return err
 			}
 			return nil
-		},
-	); err != nil {
+		})
+	}
+	if err := copyBazelGenerated("googlesql", ""); err != nil {
+		panic(err)
+	}
+	if err := copyBazelGenerated("zetasql", "legacy_zetasql"); err != nil {
 		panic(err)
 	}
 	if err := applyPostCopyOverlays(); err != nil {

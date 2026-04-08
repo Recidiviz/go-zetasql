@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
 
 #include <cstdint>
 #include <optional>
 #include <string>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/functions_testlib_common.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib_common.h"
 #include "gtest/gtest.h"
 #include "absl/strings/string_view.h"
 namespace zetasql {

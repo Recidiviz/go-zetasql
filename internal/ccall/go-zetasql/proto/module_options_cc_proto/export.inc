@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/proto/module_options.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

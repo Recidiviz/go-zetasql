@@ -14,31 +14,31 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/enum_type.h"
+#include "googlesql/legacy_zetasql/public/types/enum_type.h"
 
 #include <cstdint>
 #include <limits>
 #include <string>
 #include <utility>
 
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/internal_proto_utils.h"
-#include "zetasql/public/types/internal_utils.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.pb.h"
-#include "zetasql/public/value_content.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/internal_proto_utils.h"
+#include "googlesql/legacy_zetasql/public/types/internal_utils.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.pb.h"
+#include "googlesql/legacy_zetasql/public/value_content.h"
 #include "absl/algorithm/container.h"
 #include "absl/hash/hash.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

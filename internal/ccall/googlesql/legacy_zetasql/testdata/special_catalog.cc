@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/testdata/special_catalog.h"
+#include "googlesql/legacy_zetasql/testdata/special_catalog.h"
 
 #include <cstdint>
 #include <map>
@@ -24,16 +24,16 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/type.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "absl/container/btree_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

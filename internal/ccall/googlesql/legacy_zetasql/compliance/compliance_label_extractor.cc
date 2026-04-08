@@ -14,36 +14,36 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/compliance_label_extractor.h"
+#include "googlesql/legacy_zetasql/compliance/compliance_label_extractor.h"
 
 #include <memory>
 #include <string>
 #include <tuple>
 #include <utility>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/function_utils.h"
-#include "zetasql/public/builtin_function.h"
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
-#include "zetasql/resolved_ast/resolved_ast_visitor.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/function_utils.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/container/btree_map.h"
 #include "absl/container/btree_set.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

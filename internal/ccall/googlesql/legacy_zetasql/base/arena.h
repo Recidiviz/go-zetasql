@@ -111,7 +111,7 @@
 //    arena_allocator.h provides zetasql_base::NewInArena and that can be used as
 //    follows:
 //
-//      #include "zetasql/base/arena_allocator.h"
+//      #include "googlesql/legacy_zetasql/base/arena_allocator.h"
 //
 //      UnsafeArena arena(1024);
 //      Foo* foo = zetasql_base::NewInArena<Foo>(&arena);
@@ -132,7 +132,7 @@
 //    as STL containers).  arena_allocator.h provides a global operator new
 //    that can be used as follows:
 //
-//    #include "zetasql/base/arena_allocator.h"
+//    #include "googlesql/legacy_zetasql/base/arena_allocator.h"
 //
 //      UnsafeArena arena(1024);
 //      Foo* foo = new (AllocateInArena, &arena) Foo;
@@ -264,7 +264,7 @@
 #endif
 #include "absl/base/thread_annotations.h"
 #include "absl/synchronization/mutex.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql_base {
 

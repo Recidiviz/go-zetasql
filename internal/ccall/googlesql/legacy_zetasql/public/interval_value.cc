@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
 
 #include <cctype>
 #include <cmath>
@@ -26,12 +26,12 @@
 #include <string>
 #include <type_traits>
 
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
 #include "absl/base/macros.h"
 #include "absl/base/optimization.h"
 #include "absl/hash/hash.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/numeric/int128.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -40,10 +40,10 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
 #include "re2/re2.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

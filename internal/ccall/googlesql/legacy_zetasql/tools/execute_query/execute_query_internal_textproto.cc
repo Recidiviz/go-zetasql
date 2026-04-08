@@ -19,18 +19,18 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/dynamic_message.h"
 #include "google/protobuf/message.h"
 #include "google/protobuf/text_format.h"
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/tools/execute_query/simple_proto_evaluator_table_iterator.h"
-#include "zetasql/tools/execute_query/string_error_collector.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/proto_type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/simple_proto_evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/string_error_collector.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -38,8 +38,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "absl/types/span.h"
-#include "zetasql/base/file_util.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/file_util.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

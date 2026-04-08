@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/generalized_query_stmt_rewriter.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/generalized_query_stmt_rewriter.h"
 
 // This rewrites a ResolvedGeneralizedQueryStmt, replacing it with one
 // statement node, which is either the Stmt for the terminal operator inside
@@ -124,21 +124,21 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/public/rewriter_interface.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_builder.h"
-#include "zetasql/resolved_ast/resolved_ast_rewrite_visitor.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/public/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_builder.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_rewrite_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/procedure.h"
+#include "googlesql/legacy_zetasql/public/procedure.h"
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/testing/proto_matchers.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/types/type_deserializer.h"
+#include "googlesql/legacy_zetasql/common/testing/proto_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/types/type_deserializer.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_cat.h"

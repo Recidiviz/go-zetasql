@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/public/information_schema/property_graph.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/lambda_util.h"
+#include "googlesql/legacy_zetasql/analyzer/lambda_util.h"
 
 #include <algorithm>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

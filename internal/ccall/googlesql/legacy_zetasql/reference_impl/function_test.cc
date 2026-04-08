@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/function.h"
+#include "googlesql/legacy_zetasql/reference_impl/function.h"
 
 #include <cstdint>
 #include <functional>
@@ -24,26 +24,26 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/evaluator_registration_utils.h"
-#include "zetasql/common/internal_value.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/interval_value.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/common.h"
-#include "zetasql/reference_impl/evaluation.h"
-#include "zetasql/reference_impl/functions/graph.h"
-#include "zetasql/reference_impl/functions/hash.h"
-#include "zetasql/reference_impl/operator.h"
-#include "zetasql/reference_impl/tuple.h"
-#include "zetasql/reference_impl/variable_id.h"
-#include "zetasql/resolved_ast/resolved_collation.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/common/evaluator_registration_utils.h"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/proto_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/common.h"
+#include "googlesql/legacy_zetasql/reference_impl/evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/graph.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/hash.h"
+#include "googlesql/legacy_zetasql/reference_impl/operator.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_collation.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/memory/memory.h"
@@ -53,7 +53,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/types/span.h"
-#include "zetasql/base/optional_ref.h"
+#include "googlesql/legacy_zetasql/base/optional_ref.h"
 
 namespace zetasql {
 

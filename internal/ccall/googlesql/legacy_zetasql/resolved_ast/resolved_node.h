@@ -25,19 +25,19 @@
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/type.h"
-#include "zetasql/resolved_ast/resolved_ast.pb.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
-#include "zetasql/resolved_ast/serialization.pb.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/serialization.pb.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

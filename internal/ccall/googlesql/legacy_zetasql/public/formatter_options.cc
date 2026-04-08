@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
 
 #include <string>
 
-#include "zetasql/public/formatter_options.pb.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.pb.h"
 
 namespace zetasql {
 

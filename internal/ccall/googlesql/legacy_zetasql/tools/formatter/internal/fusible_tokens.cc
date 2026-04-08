@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/formatter/internal/fusible_tokens.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/fusible_tokens.h"
 
 #include <ostream>
 #include <type_traits>
 #include <vector>
 
-#include "zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_split.h"

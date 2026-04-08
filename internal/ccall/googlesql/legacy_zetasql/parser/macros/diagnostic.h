@@ -17,9 +17,9 @@
 #ifndef ZETASQL_PARSER_MACROS_DIAGNOSTIC_H_
 #define ZETASQL_PARSER_MACROS_DIAGNOSTIC_H_
 
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/base/nullability.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"

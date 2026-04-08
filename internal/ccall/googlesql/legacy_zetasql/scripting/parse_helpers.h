@@ -19,10 +19,10 @@
 
 #include <memory>
 
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/scripting/parsed_script.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/scripting/parsed_script.h"
 #include "absl/base/macros.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"

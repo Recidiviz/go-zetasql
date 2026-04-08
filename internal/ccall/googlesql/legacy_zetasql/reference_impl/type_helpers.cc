@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/type_helpers.h"
+#include "googlesql/legacy_zetasql/reference_impl/type_helpers.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/type.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

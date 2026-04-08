@@ -61,7 +61,7 @@
 #include <algorithm>
 #include <limits>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql {
 namespace functions {

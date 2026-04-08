@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
 
 #include <ostream>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 

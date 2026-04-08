@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 
 #include <string.h>
 
@@ -32,34 +32,34 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/dynamic_message.h"
 #include "google/protobuf/message.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/public/functions/comparison.h"
-#include "zetasql/public/functions/convert_string.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/timestamp_picos_value.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/public/types/map_type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/types/value_equality_check_options.h"
-#include "zetasql/public/types/value_representations.h"
-#include "zetasql/public/value_content.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/public/functions/comparison.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_string.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/timestamp_picos_value.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/graph_element_type.h"
+#include "googlesql/legacy_zetasql/public/types/map_type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/types/value_equality_check_options.h"
+#include "googlesql/legacy_zetasql/public/types/value_representations.h"
+#include "googlesql/legacy_zetasql/public/value_content.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/algorithm/container.h"
 #include "absl/base/optimization.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/flags/flag.h"
 #include "absl/hash/hash.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -74,9 +74,9 @@
 #include "absl/strings/substitute.h"
 #include "absl/time/civil_time.h"
 #include "absl/time/time.h"
-#include "zetasql/base/map_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_view.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 // TODO: Remove flag once no longer required.
 ABSL_FLAG(bool, zetasql_allow_proto3_unknown_enum_values, true,

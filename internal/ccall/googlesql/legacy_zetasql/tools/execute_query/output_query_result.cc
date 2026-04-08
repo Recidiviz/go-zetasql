@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/output_query_result.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/output_query_result.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -22,15 +22,15 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/functions/string.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/reference_impl/type_helpers.h"
+#include "googlesql/legacy_zetasql/public/functions/string.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/reference_impl/type_helpers.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_split.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

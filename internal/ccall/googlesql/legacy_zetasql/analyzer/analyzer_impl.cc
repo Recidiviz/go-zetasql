@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/analyzer_impl.h"
+#include "googlesql/legacy_zetasql/analyzer/analyzer_impl.h"
 
 #include <iostream>
 #include <memory>
@@ -23,30 +23,30 @@
 
 #include <thread>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/analyzer/analyzer_output_mutator.h"
-#include "zetasql/analyzer/resolver.h"
-#include "zetasql/analyzer/rewrite_resolved_ast.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/internal_analyzer_options.h"
-#include "zetasql/common/timer_util.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/analyzer_output.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/validator.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/analyzer/analyzer_output_mutator.h"
+#include "googlesql/legacy_zetasql/analyzer/resolver.h"
+#include "googlesql/legacy_zetasql/analyzer/rewrite_resolved_ast.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/internal_analyzer_options.h"
+#include "googlesql/legacy_zetasql/common/timer_util.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/validator.h"
 #include "absl/flags/flag.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 // This provides a way to extract and look at the zetasql resolved AST
 // from within some other test or tool.  It prints to cout rather than logging

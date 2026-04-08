@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
 
 #include <algorithm>
 #include <functional>
@@ -27,16 +27,16 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/utf_util.h"
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/parser/parse_tree_visitor.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_visitor.h"
 // This is not a header -- it is a generated part of this source file.
-#include "zetasql/parser/parse_tree_accept_methods.inc"  
-#include "zetasql/parser/visit_result.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_accept_methods.inc"  
+#include "googlesql/legacy_zetasql/parser/visit_result.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
 #include "absl/base/attributes.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/flag.h"
@@ -45,10 +45,10 @@
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 ABSL_FLAG(bool, output_asc_explicitly, false,
           "If true, outputs the asc explicitly in "

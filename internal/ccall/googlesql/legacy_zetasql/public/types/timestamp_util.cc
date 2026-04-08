@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/timestamp_util.h"
+#include "googlesql/legacy_zetasql/public/types/timestamp_util.h"
 
 #include <type_traits>
 

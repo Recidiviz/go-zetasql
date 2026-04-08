@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/analyzer_test_options.h"
+#include "googlesql/legacy_zetasql/analyzer/analyzer_test_options.h"
 
 #include <cstddef>
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

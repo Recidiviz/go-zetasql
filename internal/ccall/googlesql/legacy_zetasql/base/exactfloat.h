@@ -86,7 +86,7 @@
 #include <iostream>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "openssl/bn.h"
 
 namespace zetasql_base {

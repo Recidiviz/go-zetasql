@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include "zetasql/base/flat_internal.h"
+#include "googlesql/legacy_zetasql/base/flat_internal.h"
 
 namespace zetasql_base {
 // This class has no state, and the only reason it's not a POD is to disallow

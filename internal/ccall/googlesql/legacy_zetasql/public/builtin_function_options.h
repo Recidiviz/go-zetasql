@@ -19,10 +19,10 @@
 
 #include <utility>
 
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/functional/bind_front.h"

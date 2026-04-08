@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/clock.h"
+#include "googlesql/legacy_zetasql/base/clock.h"
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"

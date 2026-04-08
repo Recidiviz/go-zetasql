@@ -16,7 +16,7 @@
 
 // Tests for the ZetaSQL JSON functions.
 
-#include "zetasql/public/functions/json.h"
+#include "googlesql/legacy_zetasql/public/functions/json.h"
 
 #include <stddef.h>
 
@@ -33,17 +33,17 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/functions/json_internal.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/functions/json_internal.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

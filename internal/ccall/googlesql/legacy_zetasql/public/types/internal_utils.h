@@ -23,8 +23,8 @@
 
 #include <vector>
 
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/container/node_hash_map.h"

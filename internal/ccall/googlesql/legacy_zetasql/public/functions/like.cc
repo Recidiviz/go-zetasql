@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/like.h"
+#include "googlesql/legacy_zetasql/public/functions/like.h"
 
 #include <cstddef>
 #include <memory>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/memory/memory.h"
 #include "re2/re2.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace functions {

@@ -24,8 +24,8 @@
 
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_payload.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_payload.h"
 #include "google/rpc/status.pb.h"
 
 namespace zetasql {

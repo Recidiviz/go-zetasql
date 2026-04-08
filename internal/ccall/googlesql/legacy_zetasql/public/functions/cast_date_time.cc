@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/cast_date_time.h"
+#include "googlesql/legacy_zetasql/public/functions/cast_date_time.h"
 
 #include <string.h>
 #include <time.h>
@@ -28,17 +28,17 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/utf_util.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/functions/input_format_string_max_width.h"
-#include "zetasql/public/functions/parse_date_time_utils.h"
-#include "zetasql/public/pico_time.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/input_format_string_max_width.h"
+#include "googlesql/legacy_zetasql/public/functions/parse_date_time_utils.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 #include "absl/base/optimization.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/flag.h"
@@ -58,11 +58,11 @@
 #include "absl/types/span.h"
 #include "unicode/uchar.h"
 #include "unicode/utf8.h"
-#include "zetasql/base/general_trie.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/mathutil.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/general_trie.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace functions {

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/map_view.h"
+#include "googlesql/legacy_zetasql/base/map_view.h"
 
 #include <algorithm>
 #include <array>

@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/enum_type.h"
+#include "googlesql/legacy_zetasql/public/types/enum_type.h"
 
 #include <string>
 
-#include "zetasql/public/functions/rounding_mode.pb.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/testdata/bad_test_schema.pb.h"
-#include "zetasql/testdata/recursive_schema.pb.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/rounding_mode.pb.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/testdata/bad_test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testdata/recursive_schema.pb.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/string_view.h"

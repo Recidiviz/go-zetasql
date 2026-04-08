@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -29,16 +29,16 @@
 #include <type_traits>
 #include <variant>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/arithmetics.h"
-#include "zetasql/public/functions/date_time_util_internal.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/interval_value.h"
-#include "zetasql/public/pico_time.h"
-#include "zetasql/public/time_zone_util.h"
-#include "zetasql/public/types/timestamp_util.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/arithmetics.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/time_zone_util.h"
+#include "googlesql/legacy_zetasql/public/types/timestamp_util.h"
 #include "absl/base/optimization.h"
 #include "absl/numeric/int128.h"
 #include "absl/status/status.h"
@@ -53,10 +53,10 @@
 #include "absl/time/civil_time.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
-#include "zetasql/base/mathutil.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
-#include "zetasql/base/time_proto_util.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/time_proto_util.h"
 
 namespace zetasql {
 namespace functions {

@@ -27,7 +27,7 @@
 // Most methods should be tested with 2), which has higher coverage than 1), but
 // if the derivation logic is not trivial, then 1) is also necessary.
 
-#include "zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
 
 #include <array>
 #include <cstdint>
@@ -43,7 +43,7 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/multiprecision_int_impl.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int_impl.h"
 #include "gtest/gtest.h"
 #include "absl/base/macros.h"
 #include "absl/hash/hash.h"
@@ -55,7 +55,7 @@
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
 
 namespace std {
 std::ostream& operator<<(std::ostream& o, unsigned __int128 x) {

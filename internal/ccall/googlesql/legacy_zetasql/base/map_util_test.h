@@ -24,8 +24,8 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "zetasql/base/logging.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql_base {
 

@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/search/public/token_list_util.h"
+#include "googlesql/legacy_zetasql/common/search/public/token_list_util.h"
 
 #include <string>
 
-#include "zetasql/public/token_list.h"  
+#include "googlesql/legacy_zetasql/public/token_list.h"  
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_cat.h"

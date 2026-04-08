@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/uuid_value.h"
+#include "googlesql/legacy_zetasql/public/uuid_value.h"
 
 #include <sys/types.h>
 
@@ -26,7 +26,7 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/hash/hash.h"
 #include "absl/status/status.h"
@@ -35,10 +35,10 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
 #include "absl/strings/substitute.h"
-#include "zetasql/base/endian.h"
-#include "zetasql/base/no_destructor.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/no_destructor.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

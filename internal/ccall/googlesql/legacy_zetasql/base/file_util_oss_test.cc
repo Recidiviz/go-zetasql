@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/file_util_oss.h"
+#include "googlesql/legacy_zetasql/base/file_util_oss.h"
 
 #include <sys/stat.h>
 
@@ -23,7 +23,7 @@
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 
 namespace zetasql::internal {
 

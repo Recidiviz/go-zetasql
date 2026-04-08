@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
 
 #include <string>
 
@@ -22,8 +22,8 @@
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/strip.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_payload.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_payload.h"
 
 namespace zetasql {
 namespace internal {

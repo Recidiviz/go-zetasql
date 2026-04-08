@@ -12,6 +12,5 @@
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/annotation_cc_proto/export.inc"
 #include "go-zetasql/public/simple_value_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

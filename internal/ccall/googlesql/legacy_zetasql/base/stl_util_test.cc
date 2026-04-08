@@ -25,7 +25,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/macros.h"
-#include "zetasql/base/stl_util.h"
+#include "googlesql/legacy_zetasql/base/stl_util.h"
 
 namespace zetasql_base {
 namespace {

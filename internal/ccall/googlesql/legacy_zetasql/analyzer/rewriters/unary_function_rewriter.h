@@ -17,7 +17,7 @@
 #ifndef ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_H_
 #define ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_H_
 
-#include "zetasql/analyzer/rewriters/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/rewriter_interface.h"
 
 namespace zetasql {
 

@@ -22,17 +22,17 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/statusor.h"
 #include "absl/time/time.h"
 #include "absl/types/optional.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 // The full specification for ZetaSQL casting and coercion is at:
 //   (broken link)

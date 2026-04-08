@@ -19,11 +19,11 @@
 
 #include <memory>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/property_graph.h"
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/property_graph.h"
+#include "googlesql/legacy_zetasql/public/types/graph_element_type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"

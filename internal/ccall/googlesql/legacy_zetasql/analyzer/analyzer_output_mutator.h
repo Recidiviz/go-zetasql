@@ -20,16 +20,16 @@
 #include <memory>
 #include <utility>
 
-#include "zetasql/common/timer_util.h"
-#include "zetasql/public/analyzer_output.h"
-#include "zetasql/public/analyzer_output_properties.h"
-#include "zetasql/public/proto/logging.pb.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/common/timer_util.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output_properties.h"
+#include "googlesql/legacy_zetasql/public/proto/logging.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 // Helper to allow mutating AnalyzerOutput.

@@ -1929,35 +1929,6 @@ bool DescriptorPool::InternalIsFileLoaded(absl::string_view filename) const {
   return tables_->FindFile(filename) != nullptr;
 }
 
-// generated_pool ====================================================
-
-namespace {
-
-
-EncodedDescriptorDatabase* GeneratedDatabase() {
-  static auto generated_database =
-      internal::OnShutdownDelete(new EncodedDescriptorDatabase());
-  return generated_database;
-}
-
-DescriptorPool* NewGeneratedPool() {
-  auto generated_pool = new DescriptorPool(GeneratedDatabase());
-  generated_pool->InternalSetLazilyBuildDependencies();
-  return generated_pool;
-}
-
-}  // anonymous namespace
-
-DescriptorDatabase* DescriptorPool::internal_generated_database() {
-  return GeneratedDatabase();
-}
-
-DescriptorPool* DescriptorPool::internal_generated_pool() {
-  static DescriptorPool* generated_pool =
-      internal::OnShutdownDelete(NewGeneratedPool());
-  return generated_pool;
-}
-
 const DescriptorPool* DescriptorPool::generated_pool() {
   const DescriptorPool* pool = internal_generated_pool();
   // Ensure that descriptor.proto gets registered in the generated pool. It is a
@@ -1967,7 +1938,6 @@ const DescriptorPool* DescriptorPool::generated_pool() {
   DescriptorProto::descriptor();
   return pool;
 }
-
 
 void DescriptorPool::InternalAddGeneratedFile(
     const void* encoded_file_descriptor, int size) {
@@ -1993,7 +1963,9 @@ void DescriptorPool::InternalAddGeneratedFile(
   // Therefore, when we parse one, we have to be very careful to avoid using
   // any descriptor-based operations, since this might cause infinite recursion
   // or deadlock.
-  ABSL_CHECK(GeneratedDatabase()->Add(encoded_file_descriptor, size));
+  ABSL_CHECK(
+      GeneratedEncodedDescriptorDatabaseSingleton()->Add(encoded_file_descriptor,
+                                                            size));
 }
 
 

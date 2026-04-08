@@ -20,7 +20,7 @@
 #include <optional>
 #include <string>
 
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/container/node_hash_map.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"

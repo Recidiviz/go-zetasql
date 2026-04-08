@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/test_database_catalog.h"
+#include "googlesql/legacy_zetasql/compliance/test_database_catalog.h"
 
 #include <memory>
 #include <set>
@@ -22,26 +22,26 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/testing/testing_proto_util.h"
-#include "zetasql/compliance/test_driver.h"
-#include "zetasql/compliance/test_util.h"
-#include "zetasql/public/builtin_function.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/common/testing/testing_proto_util.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/compliance/test_util.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_join.h"
 #include "absl/types/span.h"
 #include "google/protobuf/compiler/importer.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

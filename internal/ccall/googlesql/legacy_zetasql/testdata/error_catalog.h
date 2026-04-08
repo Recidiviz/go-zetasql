@@ -20,10 +20,10 @@
 #include <memory>
 #include <string>
 
-#include "zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
 #include "absl/status/status.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

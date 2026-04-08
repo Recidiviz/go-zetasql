@@ -14,22 +14,22 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/common.h"
+#include "googlesql/legacy_zetasql/reference_impl/common.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "zetasql/public/collator.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_collation.h"
-#include "zetasql/resolved_ast/serialization.pb.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_collation.h"
+#include "googlesql/legacy_zetasql/resolved_ast/serialization.pb.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

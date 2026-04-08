@@ -24,7 +24,7 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 
 namespace zetasql {
 namespace depth_limit_detector_internal {

@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/testdata/populate_sample_tables.h"
+#include "googlesql/legacy_zetasql/testdata/populate_sample_tables.h"
 
 #include <string>
 
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testdata/sample_catalog.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testdata/sample_catalog.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "absl/status/status.h"
 #include "absl/time/civil_time.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -25,8 +25,8 @@
 
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
-#include "zetasql/public/convert_type_to_proto.h"
-#include "zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/convert_type_to_proto.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"

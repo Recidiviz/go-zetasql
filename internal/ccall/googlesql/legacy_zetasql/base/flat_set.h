@@ -46,7 +46,7 @@
 #include <vector>
 
 #include "absl/meta/type_traits.h"
-#include "zetasql/base/flat_internal.h"
+#include "googlesql/legacy_zetasql/base/flat_internal.h"
 
 namespace zetasql_base {
 

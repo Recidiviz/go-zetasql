@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/net/public_suffix_oss.h"
+#include "googlesql/legacy_zetasql/base/net/public_suffix_oss.h"
 
 #include "absl/functional/function_ref.h"
 #include "absl/strings/ascii.h"
@@ -22,8 +22,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/logging.h"
-#include "zetasql/base/net/public_suffix_list_data.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/net/public_suffix_list_data.h"
 #include "unicode/errorcode.h"
 #include "unicode/idna.h"
 

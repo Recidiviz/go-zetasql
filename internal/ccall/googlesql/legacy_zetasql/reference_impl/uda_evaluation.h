@@ -21,14 +21,14 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/functions/differential_privacy.pb.h"
-#include "zetasql/reference_impl/operator.h"
-#include "zetasql/reference_impl/type_helpers.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
-#include "zetasql/resolved_ast/serialization.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/functions/differential_privacy.pb.h"
+#include "googlesql/legacy_zetasql/reference_impl/operator.h"
+#include "googlesql/legacy_zetasql/reference_impl/type_helpers.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/serialization.pb.h"
 
 namespace zetasql {
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
 
 #include <ctype.h>
 
@@ -24,27 +24,27 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/keywords.h"
-#include "zetasql/parser/lookahead_transformer.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_codes.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/functions/convert_string.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/value.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/parser/lookahead_transformer.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_codes.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_string.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

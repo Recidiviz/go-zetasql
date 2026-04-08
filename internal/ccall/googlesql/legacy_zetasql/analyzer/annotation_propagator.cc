@@ -14,26 +14,26 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/annotation_propagator.h"
+#include "googlesql/legacy_zetasql/analyzer/annotation_propagator.h"
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/annotation/collation.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/annotation/collation.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/status/status.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

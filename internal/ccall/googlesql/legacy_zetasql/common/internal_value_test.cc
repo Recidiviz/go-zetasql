@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
 
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "gtest/gtest.h"
 
 namespace zetasql {

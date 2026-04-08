@@ -21,11 +21,11 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/match_recognize/compiled_nfa.h"
-#include "zetasql/common/match_recognize/edge_tracker.h"
-#include "zetasql/common/match_recognize/row_edge_list.h"
-#include "zetasql/public/functions/match_recognize/match_partition.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/edge_tracker.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/row_edge_list.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/match_partition.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql::functions::match_recognize {

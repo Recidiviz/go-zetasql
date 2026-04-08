@@ -14,30 +14,30 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/annotation/collation.h"
+#include "googlesql/legacy_zetasql/public/annotation/collation.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/public/annotation/default_annotation_spec.h"
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_collation.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/public/annotation/default_annotation_spec.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_collation.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/substitute.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

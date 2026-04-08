@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/container_type.h"
+#include "googlesql/legacy_zetasql/public/types/container_type.h"
 
 #include <optional>
 #include <stack>
 #include <string>
 
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 
 namespace zetasql {
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
 
 #include <cstdint>
 #include <string>
@@ -22,7 +22,7 @@
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
-#include "zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
 
 namespace {
 

@@ -30,7 +30,7 @@
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/generated_enum_reflection.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.

@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/formatter/internal/chunk_grouping_strategy.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk_grouping_strategy.h"
 
 #include <iterator>
 #include <vector>
 
-#include "zetasql/tools/formatter/internal/chunk.h"
-#include "zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 

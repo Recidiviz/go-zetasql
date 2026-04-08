@@ -16,8 +16,8 @@
 
 #include <memory>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

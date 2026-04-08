@@ -27,7 +27,7 @@
 #include "google/protobuf/descriptor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/types/optional.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

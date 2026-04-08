@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/depth_limit_detector_test_cases.h"
+#include "googlesql/legacy_zetasql/compliance/depth_limit_detector_test_cases.h"
 
 #include <cmath>
 #include <cstdint>
@@ -24,17 +24,17 @@
 #include <string_view>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/compliance/depth_limit_detector_internal.h"
-#include "zetasql/compliance/test_driver.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_tokens.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/reference_impl/reference_driver.h"
-#include "zetasql/testing/type_util.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/compliance/depth_limit_detector_internal.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/reference_impl/reference_driver.h"
+#include "googlesql/legacy_zetasql/testing/type_util.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/flags/flag.h"

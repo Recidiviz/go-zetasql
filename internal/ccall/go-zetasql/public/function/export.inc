@@ -56,7 +56,6 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/optional/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 #include "go-re2/re2/export.inc"
 
 #endif

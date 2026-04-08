@@ -17,6 +17,6 @@
 #ifndef ZETASQL_PUBLIC_TOKEN_LIST_H_
 #define ZETASQL_PUBLIC_TOKEN_LIST_H_
 
-#include "zetasql/public/simple_token_list.h"
+#include "googlesql/legacy_zetasql/public/simple_token_list.h"
 
 #endif  // ZETASQL_PUBLIC_TOKEN_LIST_H_

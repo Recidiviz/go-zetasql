@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/parse_helpers.h"
+#include "googlesql/legacy_zetasql/public/parse_helpers.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/btree_map.h"

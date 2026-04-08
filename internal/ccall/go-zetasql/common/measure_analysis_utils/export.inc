@@ -32,6 +32,5 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/string_view/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

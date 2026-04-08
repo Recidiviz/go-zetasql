@@ -22,8 +22,8 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/match_recognize/compiled_nfa.h"
-#include "zetasql/common/match_recognize/row_edge_list.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/row_edge_list.h"
 #include "absl/functional/any_invocable.h"
 
 namespace zetasql::functions::match_recognize {

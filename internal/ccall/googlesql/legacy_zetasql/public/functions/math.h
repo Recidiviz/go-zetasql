@@ -23,16 +23,16 @@
 #include <string>
 #include <type_traits>
 
-#include "zetasql/public/functions/arithmetics.h"
-#include "zetasql/public/functions/rounding_mode.pb.h"
-#include "zetasql/public/functions/util.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/functions/arithmetics.h"
+#include "googlesql/legacy_zetasql/public/functions/rounding_mode.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/arena_allocator.h"
+#include "googlesql/legacy_zetasql/base/arena_allocator.h"
 
 namespace zetasql_base {
 

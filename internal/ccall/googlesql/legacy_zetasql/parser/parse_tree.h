@@ -24,13 +24,13 @@
 
 #include <stack>
 
-#include "zetasql/parser/ast_node.h"  
-#include "zetasql/parser/parse_tree_generated.h"  
-#include "zetasql/parser/visit_result.h"
-#include "zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"  
+#include "googlesql/legacy_zetasql/parser/parse_tree_generated.h"  
+#include "googlesql/legacy_zetasql/parser/visit_result.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

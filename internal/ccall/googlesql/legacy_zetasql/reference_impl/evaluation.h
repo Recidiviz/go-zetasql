@@ -26,14 +26,14 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/tuple.h"
-#include "zetasql/reference_impl/variable_id.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/base/attributes.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/declare.h"
@@ -41,8 +41,8 @@
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/clock.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/clock.h"
 
 // See description in the cc file.
 ABSL_DECLARE_FLAG(int64_t, zetasql_call_verify_not_aborted_rows_period);

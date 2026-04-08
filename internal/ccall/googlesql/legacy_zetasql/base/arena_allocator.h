@@ -54,8 +54,8 @@
 #include <utility>
 
 #include "absl/base/macros.h"
-#include "zetasql/base/arena.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql_base {
 

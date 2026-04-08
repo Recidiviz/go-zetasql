@@ -17,7 +17,7 @@
 #ifndef ZETASQL_ANALYZER_REWRITERS_PIPE_ASSERT_REWRITER_H_
 #define ZETASQL_ANALYZER_REWRITERS_PIPE_ASSERT_REWRITER_H_
 
-#include "zetasql/public/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/public/rewriter_interface.h"
 
 namespace zetasql {
 

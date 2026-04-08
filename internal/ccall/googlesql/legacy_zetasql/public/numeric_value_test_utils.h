@@ -22,8 +22,8 @@
 #include <cmath>
 #include <cstdint>
 
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/random/random.h"
 #include "absl/status/statusor.h"
 

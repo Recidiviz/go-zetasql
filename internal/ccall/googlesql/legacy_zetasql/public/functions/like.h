@@ -20,12 +20,12 @@
 #include <memory>
 #include <string>
 
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 #include "absl/base/attributes.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "re2/re2.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

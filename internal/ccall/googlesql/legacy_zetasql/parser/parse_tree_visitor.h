@@ -1,7 +1,7 @@
 #ifndef STORAGE_ZETASQL_PARSER_PARSE_TREE_VISITOR_H_
 #define STORAGE_ZETASQL_PARSER_PARSE_TREE_VISITOR_H_
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/visit_result.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/visit_result.h"
 
 namespace zetasql {
 class ParseTreeVisitor {

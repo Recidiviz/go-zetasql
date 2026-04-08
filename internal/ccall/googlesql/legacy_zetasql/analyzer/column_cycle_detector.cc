@@ -14,23 +14,23 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/column_cycle_detector.h"
+#include "googlesql/legacy_zetasql/analyzer/column_cycle_detector.h"
 
 #include <optional>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

@@ -29,15 +29,15 @@
 #include "google/protobuf/wrappers.pb.h"
 #include "google/type/latlng.pb.h"
 #include "google/type/timeofday.pb.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/utf_util.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 namespace functions {

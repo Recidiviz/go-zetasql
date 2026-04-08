@@ -14,31 +14,31 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/functions/range.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/range.h"
 
 #include <cstdint>
 #include <optional>
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/range.h"
-#include "zetasql/public/interval_value.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/evaluation.h"
-#include "zetasql/reference_impl/function.h"
-#include "zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/range.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/function.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/time/time.h"
-#include "zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

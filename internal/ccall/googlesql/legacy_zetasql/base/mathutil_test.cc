@@ -16,7 +16,7 @@
 
 // Test functions in MathUtil.
 
-#include "zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
 
 #include <stdio.h>
 

@@ -19,7 +19,7 @@
 
 #include <vector>
 
-#include "zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
 
 namespace zetasql {
 

@@ -30,28 +30,28 @@
 // As shown, each computed column in the WITH/Let expression can refer to prior
 // columns in the expression.
 
-#include "zetasql/analyzer/rewriters/with_expr_rewriter.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/with_expr_rewriter.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/analyzer_output_properties.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/rewriter_interface.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/column_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/rewrite_utils.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output_properties.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/column_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/rewrite_utils.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

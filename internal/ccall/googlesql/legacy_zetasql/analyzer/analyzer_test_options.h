@@ -26,8 +26,8 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/status/statusor.h"
 #include "file_based_test_driver/test_case_options.h"
 

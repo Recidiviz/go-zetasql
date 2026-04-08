@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/no_destructor.h"
+#include "googlesql/legacy_zetasql/base/no_destructor.h"
 
 #include <initializer_list>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql_base {
 namespace {

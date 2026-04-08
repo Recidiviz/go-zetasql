@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/exactfloat.h"
+#include "googlesql/legacy_zetasql/base/exactfloat.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +24,7 @@
 #include <cmath>
 #include <limits>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/base/macros.h"
 #include "absl/container/fixed_array.h"
 #include "openssl/bn.h"

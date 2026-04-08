@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
 
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

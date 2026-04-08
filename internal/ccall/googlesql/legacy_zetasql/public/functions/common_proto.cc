@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/common_proto.h"
+#include "googlesql/legacy_zetasql/public/functions/common_proto.h"
 
 #include <cstdint>
 #include <string>
 
 #include "google/type/timeofday.pb.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 namespace functions {

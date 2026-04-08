@@ -12,6 +12,5 @@
 #include "go-zetasql/common/proto_helper/export.inc"
 #include "go-zetasql/public/options_cc_proto/export.inc"
 #include "go-absl/status/status/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

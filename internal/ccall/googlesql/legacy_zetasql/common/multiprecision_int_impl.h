@@ -29,13 +29,13 @@
 #include <string>
 #include <type_traits>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/base/optimization.h"
 #include "absl/numeric/bits.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/bits.h"
-#include "zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/bits.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
 
 namespace zetasql {
 namespace multiprecision_int_impl {

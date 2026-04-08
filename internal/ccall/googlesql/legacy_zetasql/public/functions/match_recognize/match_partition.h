@@ -23,7 +23,7 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 

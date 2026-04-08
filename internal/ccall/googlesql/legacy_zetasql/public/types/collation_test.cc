@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/collation.h"
+#include "googlesql/legacy_zetasql/public/types/collation.h"
 
 #include <memory>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

@@ -19,12 +19,12 @@
 
 #include <memory>
 
-#include "zetasql/base/atomic_sequence_num.h"
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/base/atomic_sequence_num.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
 

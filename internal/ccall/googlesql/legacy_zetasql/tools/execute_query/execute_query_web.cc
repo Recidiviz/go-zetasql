@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_web.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_web.h"
 
 #include <cstdint>
 #include <cstdio>
@@ -22,10 +22,10 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/tools/execute_query/execute_query_tool.h"
-#include "zetasql/tools/execute_query/execute_query_web_handler.h"
-#include "zetasql/tools/execute_query/execute_query_web_server.h"
-#include "zetasql/tools/execute_query/web/embedded_resources.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_web_handler.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_web_server.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/embedded_resources.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"

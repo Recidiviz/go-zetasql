@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/functions_testlib_common.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib_common.h"
 
 #include <cstdint>
 #include <functional>
@@ -29,14 +29,14 @@
 #include "google/type/timeofday.pb.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/text_format.h"
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/common/testing/testing_proto_util.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/testing/using_test_value.cc"  // NOLINT
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/common/testing/testing_proto_util.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"  // NOLINT
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/string_view.h"

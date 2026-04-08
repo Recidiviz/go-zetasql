@@ -20,8 +20,8 @@
 #include <memory>
 #include <string>
 
-#include "zetasql/compliance/matchers.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/compliance/matchers.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 #include <deque>
 #include <list>
@@ -30,13 +30,13 @@
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/node_hash_map.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 // All of the templates for the tests are defined here.
 // This file is critical to understand what is tested.
 #include "absl/container/btree_map.h"
 #include "absl/container/btree_set.h"
-#include "zetasql/base/map_util_test.h"
+#include "googlesql/legacy_zetasql/base/map_util_test.h"
 
 namespace zetasql_base {
 

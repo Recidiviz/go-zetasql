@@ -17,12 +17,12 @@
 #ifndef ZETASQL_PUBLIC_TYPES_TYPE_DESERIALIZER_H_
 #define ZETASQL_PUBLIC_TYPES_TYPE_DESERIALIZER_H_
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/extended_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/extended_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"

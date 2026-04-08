@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/mathlimits.h"
+#include "googlesql/legacy_zetasql/base/mathlimits.h"
 
 #include <stdio.h>
 
@@ -22,8 +22,8 @@
 #include <limits>
 
 #include "gtest/gtest.h"
-#include "zetasql/base/logging.h"
-#include "zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
 
 namespace zetasql_base {
 

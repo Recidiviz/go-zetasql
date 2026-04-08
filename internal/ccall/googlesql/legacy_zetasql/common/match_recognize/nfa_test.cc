@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
 
 #include <memory>
 #include <ostream>
 #include <string>
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_set.h"

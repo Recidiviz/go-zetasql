@@ -48,7 +48,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "re2/re2.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

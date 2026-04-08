@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/proto_util.h"
+#include "googlesql/legacy_zetasql/public/proto_util.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -27,20 +27,20 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/arithmetics.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/token_list.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/arithmetics.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/token_list.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/base/casts.h"
 #include "absl/base/optimization.h"
 #include "absl/container/flat_hash_set.h"
@@ -50,16 +50,16 @@
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
 #include "absl/types/span.h"
 #include "absl/types/variant.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/wire_format_lite.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 // This flag is only for testing the non-optimized path when reading one proto
 // field.

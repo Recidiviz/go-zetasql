@@ -23,18 +23,18 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/functions/match_recognize/compiled_pattern.h"
-#include "zetasql/public/functions/match_recognize/match_partition.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/evaluation.h"
-#include "zetasql/reference_impl/operator.h"
-#include "zetasql/reference_impl/tuple.h"
-#include "zetasql/reference_impl/tuple_comparator.h"
-#include "zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/match_partition.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/operator.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple_comparator.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
@@ -42,8 +42,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

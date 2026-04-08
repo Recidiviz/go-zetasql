@@ -11,6 +11,5 @@
 // include dependencies
 #include "go-zetasql/proto/anon_output_with_report_cc_proto/export.inc"
 #include "go-zetasql/public/type_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

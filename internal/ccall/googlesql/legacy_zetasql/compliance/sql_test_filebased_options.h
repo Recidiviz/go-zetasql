@@ -29,13 +29,13 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/compliance/known_error.pb.h"
-#include "zetasql/compliance/test_driver.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/reference_driver.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/compliance/known_error.pb.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/reference_driver.h"
 #include "gtest/gtest.h"
 #include "absl/container/btree_map.h"
 #include "absl/container/btree_set.h"
@@ -45,7 +45,7 @@
 #include "absl/strings/string_view.h"
 #include "file_based_test_driver/test_case_options.h"
 #include "re2/re2.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

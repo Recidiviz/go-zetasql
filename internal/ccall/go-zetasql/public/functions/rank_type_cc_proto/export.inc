@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/public/functions/rank_type.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

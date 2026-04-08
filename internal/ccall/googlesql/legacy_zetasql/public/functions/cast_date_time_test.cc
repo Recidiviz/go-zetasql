@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/cast_date_time.h"
+#include "googlesql/legacy_zetasql/public/functions/cast_date_time.h"
 
 #include <cstdint>
 #include <functional>
@@ -23,14 +23,14 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/functions/input_format_string_max_width.h"
-#include "zetasql/public/pico_time.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/input_format_string_max_width.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
 #include "gtest/gtest.h"
 #include "absl/cleanup/cleanup.h"
 #include "absl/flags/flag.h"
@@ -43,7 +43,7 @@
 #include "absl/strings/substitute.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 namespace functions {

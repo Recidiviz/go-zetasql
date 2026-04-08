@@ -17,7 +17,7 @@
 #ifndef ZETASQL_PUBLIC_FUNCTIONS_NUMERIC_H_
 #define ZETASQL_PUBLIC_FUNCTIONS_NUMERIC_H_
 
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 

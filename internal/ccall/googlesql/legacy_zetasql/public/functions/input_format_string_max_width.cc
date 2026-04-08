@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/input_format_string_max_width.h"
+#include "googlesql/legacy_zetasql/public/functions/input_format_string_max_width.h"
 
 #include "absl/flags/flag.h"
 

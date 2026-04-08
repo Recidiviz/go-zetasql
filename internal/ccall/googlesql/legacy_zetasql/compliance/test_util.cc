@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/test_util.h"
+#include "googlesql/legacy_zetasql/compliance/test_util.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -23,7 +23,7 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/container/btree_map.h"
 #include "absl/flags/commandlineflag.h"
 #include "absl/flags/reflection.h"
@@ -33,7 +33,7 @@
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

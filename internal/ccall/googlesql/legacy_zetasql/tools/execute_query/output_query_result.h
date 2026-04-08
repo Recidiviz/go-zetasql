@@ -20,9 +20,9 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/operator.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/operator.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/types/span.h"
 
 namespace zetasql {

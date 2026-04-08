@@ -17,9 +17,9 @@
 #ifndef ZETASQL_TESTDATA_SAMPLE_SYSTEM_VARIABLES_H_
 #define ZETASQL_TESTDATA_SAMPLE_SYSTEM_VARIABLES_H_
 
-#include "zetasql/public/analyzer.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/analyzer.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 
 namespace zetasql {
 // Adds a set of sample system variables to the analyzer options.

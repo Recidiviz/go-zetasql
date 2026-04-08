@@ -18,7 +18,7 @@ language sql(cc);
 namespace = "zetasql::parser"
 includeGuardPrefix = "STORAGE_ZETASQL_PARSER"
 abseilIncludePrefix = "absl"
-dirIncludePrefix = "zetasql/parser/"
+dirIncludePrefix = "googlesql/legacy_zetasql/parser/"
 debugParser = false # Set to true to print the parser shift/reduce decisions.
 optimizeTables = true
 defaultReduce = true

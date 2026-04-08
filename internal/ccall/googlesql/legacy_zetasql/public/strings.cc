@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
 
 #include <ctype.h>
 
@@ -22,13 +22,13 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/utf_util.h"
-#include "zetasql/parser/keywords.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "absl/algorithm/container.h"
 #include "absl/base/optimization.h"
 #include "absl/container/flat_hash_set.h"
@@ -41,13 +41,13 @@
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "unicode/utf.h"
 #include "unicode/utf8.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

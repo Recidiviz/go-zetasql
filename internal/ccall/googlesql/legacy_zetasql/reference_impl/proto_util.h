@@ -17,8 +17,8 @@
 #ifndef ZETASQL_REFERENCE_IMPL_PROTO_UTIL_H_
 #define ZETASQL_REFERENCE_IMPL_PROTO_UTIL_H_
 
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/status.h"
 #include "google/protobuf/io/coded_stream.h"
 

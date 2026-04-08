@@ -26,7 +26,7 @@
 // uint64_t.
 
 #include "absl/base/casts.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

@@ -33,9 +33,9 @@
 #include "gtest/gtest.h"
 #include "absl/container/node_hash_set.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/arena.h"
-#include "zetasql/base/arena_allocator.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/base/arena_allocator.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql_base {
 namespace {

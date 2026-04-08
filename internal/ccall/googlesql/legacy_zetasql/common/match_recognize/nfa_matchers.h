@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
 #include "gmock/gmock.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"

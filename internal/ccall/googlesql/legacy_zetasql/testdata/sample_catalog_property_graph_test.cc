@@ -19,13 +19,13 @@
 #include <string>
 #include <string_view>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/property_graph.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/testdata/sample_catalog.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/property_graph.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/testdata/sample_catalog.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/algorithm/container.h"

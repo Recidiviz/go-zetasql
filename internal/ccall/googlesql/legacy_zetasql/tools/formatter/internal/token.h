@@ -24,9 +24,9 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 

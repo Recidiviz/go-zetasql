@@ -17,7 +17,7 @@
 #ifndef ZETASQL_PUBLIC_EVALUATOR_LITE_H_
 #define ZETASQL_PUBLIC_EVALUATOR_LITE_H_
 
-#include "zetasql/public/evaluator_base.h"
+#include "googlesql/legacy_zetasql/public/evaluator_base.h"
 
 // ZetaSQL in-memory expression or query evaluation using the reference
 // implementation. Please see evaluator_base.h for full documentation and usage

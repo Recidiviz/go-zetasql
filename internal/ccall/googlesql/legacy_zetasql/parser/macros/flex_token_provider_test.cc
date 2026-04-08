@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/flex_token_provider.h"
+#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.h"
 
 #include <optional>
 #include <ostream>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"

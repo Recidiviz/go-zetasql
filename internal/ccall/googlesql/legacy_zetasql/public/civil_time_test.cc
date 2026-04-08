@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
 
 #include <cstdint>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "gtest/gtest.h"
 #include "absl/hash/hash_testing.h"
 #include "absl/time/civil_time.h"

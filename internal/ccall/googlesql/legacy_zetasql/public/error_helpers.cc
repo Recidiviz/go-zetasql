@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
 
 #include <ctype.h>
 
@@ -24,15 +24,15 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/common/utf_util.h"
-#include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/proto/script_exception.pb.h"
-#include "zetasql/public/deprecation_warning.pb.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/proto/script_exception.pb.h"
+#include "googlesql/legacy_zetasql/public/deprecation_warning.pb.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -45,10 +45,10 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "re2/re2.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

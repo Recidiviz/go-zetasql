@@ -17,10 +17,10 @@
 #ifndef ZETASQL_ANALYZER_REWRITE_RESOLVED_AST_H_
 #define ZETASQL_ANALYZER_REWRITE_RESOLVED_AST_H_
 
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/analyzer_output.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 

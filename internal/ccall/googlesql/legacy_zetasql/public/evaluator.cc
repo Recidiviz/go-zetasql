@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/evaluator.h"
+#include "googlesql/legacy_zetasql/public/evaluator.h"
 
 #include <string>
 
-#include "zetasql/common/evaluator_registration_utils.h"
+#include "googlesql/legacy_zetasql/common/evaluator_registration_utils.h"
 
 namespace zetasql {
 

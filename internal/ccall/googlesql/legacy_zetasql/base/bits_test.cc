@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/bits.h"
+#include "googlesql/legacy_zetasql/base/bits.h"
 
 #include <string.h>
 

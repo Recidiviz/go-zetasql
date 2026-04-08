@@ -51,8 +51,8 @@
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/endian.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 #ifdef __APPLE__
 #define s6_addr16 __u6_addr.__u6_addr16

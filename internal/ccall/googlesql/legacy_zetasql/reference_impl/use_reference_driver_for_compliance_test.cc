@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/test_driver.h"
-#include "zetasql/reference_impl/reference_driver.h"
-#include "zetasql/reference_impl/rewrite_flags.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/reference_impl/reference_driver.h"
+#include "googlesql/legacy_zetasql/reference_impl/rewrite_flags.h"
 #include "absl/flags/flag.h"
 
 namespace zetasql {

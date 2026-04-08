@@ -2723,4 +2723,7 @@ PROTOBUF_EXPORT Utf8CheckMode GetUtf8CheckMode(const FieldDescriptor* field,
 #undef PROTOBUF_INTERNAL_CHECK_CLASS_SIZE
 #include "google/protobuf/port_undef.inc"
 
+// go-zetasql: after port_undef so descriptor_database.h can include port_def.inc again.
+#include "google/protobuf/descriptor_generated_pool_singleton_inl.h"
+
 #endif  // GOOGLE_PROTOBUF_DESCRIPTOR_H__

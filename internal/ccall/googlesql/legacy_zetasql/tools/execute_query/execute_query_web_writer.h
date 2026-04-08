@@ -20,7 +20,7 @@
 #include <memory>
 #include <string>
 
-#include "zetasql/tools/execute_query/execute_query_writer.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_writer.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"

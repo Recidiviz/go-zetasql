@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/testdata/sample_system_variables.h"
+#include "googlesql/legacy_zetasql/testdata/sample_system_variables.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/proto_type.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_join.h"

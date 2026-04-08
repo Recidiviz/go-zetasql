@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/scripting/parse_helpers.h"
+#include "googlesql/legacy_zetasql/scripting/parse_helpers.h"
 
 #include <memory>
 
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/scripting/parsed_script.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/scripting/parsed_script.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 absl::StatusOr<std::unique_ptr<ParserOutput>> ParseAndValidateScript(

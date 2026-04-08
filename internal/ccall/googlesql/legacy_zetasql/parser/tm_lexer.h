@@ -8,10 +8,10 @@
 #include <ostream>
 
 #include "absl/strings/string_view.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
 #include "absl/strings/escaping.h"
 
 namespace zetasql::parser {

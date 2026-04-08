@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/graph_stmt_resolver.h"
+#include "googlesql/legacy_zetasql/analyzer/graph_stmt_resolver.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -27,28 +27,28 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/analyzer/expr_resolver_helper.h"
-#include "zetasql/analyzer/name_scope.h"
-#include "zetasql/analyzer/resolver.h"
-#include "zetasql/analyzer/resolver_common_inl.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parse_tree_errors.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/property_graph.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_builder.h"
-#include "zetasql/resolved_ast/resolved_ast_comparator.h"
-#include "zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
-#include "zetasql/resolved_ast/resolved_column.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/analyzer/expr_resolver_helper.h"
+#include "googlesql/legacy_zetasql/analyzer/name_scope.h"
+#include "googlesql/legacy_zetasql/analyzer/resolver.h"
+#include "googlesql/legacy_zetasql/analyzer/resolver_common_inl.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_errors.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/property_graph.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_builder.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_comparator.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/algorithm/container.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
@@ -61,8 +61,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

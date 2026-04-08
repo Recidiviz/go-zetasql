@@ -21,10 +21,10 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/constant.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/constant.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"

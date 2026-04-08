@@ -54,15 +54,15 @@
 #include <string>
 #include <type_traits>
 
-#include "zetasql/public/functions/bitwise_agg_mode.pb.h"
-#include "zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/functions/bitwise_agg_mode.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
 #include "absl/base/attributes.h"
 #include "absl/base/casts.h"
 #include "absl/base/optimization.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/bits.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/bits.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

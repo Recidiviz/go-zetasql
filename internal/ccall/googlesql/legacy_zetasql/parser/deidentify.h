@@ -20,9 +20,9 @@
 #include <set>
 #include <string>
 
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_format.h"

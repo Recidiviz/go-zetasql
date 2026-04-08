@@ -23,16 +23,16 @@
 #include <type_traits>
 #include <vector>
 
-#include "zetasql/common/float_margin.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/using_test_value.cc"  // NOLINT
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/common/float_margin.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"  // NOLINT
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 

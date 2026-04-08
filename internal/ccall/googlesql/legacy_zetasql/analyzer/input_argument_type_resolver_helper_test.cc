@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/input_argument_type_resolver_helper.h"
+#include "googlesql/legacy_zetasql/analyzer/input_argument_type_resolver_helper.h"
 
 #include <memory>
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/input_argument_type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "gtest/gtest.h"
 
 namespace zetasql {

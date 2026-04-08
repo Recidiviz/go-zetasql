@@ -23,7 +23,7 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/statusor.h"

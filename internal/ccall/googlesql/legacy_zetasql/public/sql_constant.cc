@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/sql_constant.h"
+#include "googlesql/legacy_zetasql/public/sql_constant.h"
 
 #include <memory>
 #include <string>

@@ -14,6 +14,5 @@
 #include "go-zetasql/public/catalog/export.inc"
 #include "go-zetasql/public/types/type/export.inc"
 #include "go-absl/status/statusor/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

@@ -17,8 +17,8 @@
 #ifndef ZETASQL_SCRIPTING_TYPE_ALIASES_H_
 #define ZETASQL_SCRIPTING_TYPE_ALIASES_H_
 
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 
 namespace zetasql {
 // Mapping which associates a script variable with its current value.

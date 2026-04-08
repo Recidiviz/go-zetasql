@@ -21,22 +21,22 @@
 #include <cstdint>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_modifiers.h"
-#include "zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_modifiers.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
 #include "absl/hash/hash.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 class LanguageOptions;

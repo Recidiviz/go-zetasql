@@ -36,6 +36,7 @@ package rewrite_flags
 import "C"
 import (
 	_ "github.com/goccy/go-zetasql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
+	_ "github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf"
 	"unsafe"
 )
 

@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/registration.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/registration.h"
 
 #include <memory>
 #include <string>
 
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/rewriter_interface.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"

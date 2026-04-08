@@ -19,11 +19,11 @@
 
 #include <memory>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql {

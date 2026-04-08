@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/sql_function.h"
+#include "googlesql/legacy_zetasql/public/sql_function.h"
 
 #include <memory>
 #include <optional>
@@ -22,18 +22,18 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/function.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

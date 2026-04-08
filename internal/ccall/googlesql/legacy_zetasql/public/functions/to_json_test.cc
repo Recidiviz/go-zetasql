@@ -15,26 +15,26 @@
 //
 
 // Tests for TO_JSON functions.
-#include "zetasql/public/functions/to_json.h"
+#include "googlesql/legacy_zetasql/public/functions/to_json.h"
 
 #include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/float_margin.h"
-#include "zetasql/common/internal_value.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/functions/unsupported_fields.pb.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/types/value_equality_check_options.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/common/float_margin.h"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/functions/unsupported_fields.pb.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/types/value_equality_check_options.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
@@ -42,7 +42,7 @@
 #include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 namespace functions {

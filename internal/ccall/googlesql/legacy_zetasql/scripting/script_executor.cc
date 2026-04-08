@@ -14,25 +14,25 @@
 // limitations under the License.
 //
 
-#include "zetasql/scripting/script_executor.h"
+#include "googlesql/legacy_zetasql/scripting/script_executor.h"
 
 #include <cstdint>
 #include <memory>
 #include <optional>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/scripting/error_helpers.h"
-#include "zetasql/scripting/parsed_script.h"
-#include "zetasql/scripting/script_executor_impl.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/scripting/error_helpers.h"
+#include "googlesql/legacy_zetasql/scripting/parsed_script.h"
+#include "googlesql/legacy_zetasql/scripting/script_executor_impl.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

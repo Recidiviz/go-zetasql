@@ -21,9 +21,9 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
 namespace zetasql {

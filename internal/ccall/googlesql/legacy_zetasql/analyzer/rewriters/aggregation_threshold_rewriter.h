@@ -17,7 +17,7 @@
 #ifndef ZETASQL_ANALYZER_REWRITERS_AGGREGATION_THRESHOLD_REWRITER_H_
 #define ZETASQL_ANALYZER_REWRITERS_AGGREGATION_THRESHOLD_REWRITER_H_
 
-#include "zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
 
 namespace zetasql {
 

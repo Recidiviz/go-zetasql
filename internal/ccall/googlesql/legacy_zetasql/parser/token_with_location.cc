@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
 
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 
 namespace zetasql {
 namespace parser {

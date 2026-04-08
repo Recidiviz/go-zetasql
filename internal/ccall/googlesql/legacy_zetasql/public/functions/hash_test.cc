@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/hash.h"
+#include "googlesql/legacy_zetasql/public/functions/hash.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
 #include "gtest/gtest.h"
 #include "absl/strings/substitute.h"
 

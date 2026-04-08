@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/sql_formatter.h"
+#include "googlesql/legacy_zetasql/public/sql_formatter.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

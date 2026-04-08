@@ -19,8 +19,8 @@
 
 #include <utility>
 
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 

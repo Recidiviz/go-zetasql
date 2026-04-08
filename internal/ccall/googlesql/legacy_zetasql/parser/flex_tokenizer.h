@@ -20,9 +20,9 @@
 #include <istream>
 #include <memory>
 
-#include "zetasql/parser/tm_lexer.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_codes.h"
+#include "googlesql/legacy_zetasql/parser/tm_lexer.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_codes.h"
 #include "absl/flags/declare.h"
 
 // Some contortions to avoid duplicate inclusion of FlexLexer.h in the
@@ -31,7 +31,7 @@
 #define yyFlexLexer ZetaSqlFlexTokenizerBase
 #include <FlexLexer.h>
 
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/base/macros.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"

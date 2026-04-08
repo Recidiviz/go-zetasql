@@ -14,23 +14,23 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/measure_type.h"
+#include "googlesql/legacy_zetasql/public/types/measure_type.h"
 
 #include <string>
 #include <utility>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/types/collation.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_modifiers.h"
-#include "zetasql/public/types/value_equality_check_options.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/types/collation.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_modifiers.h"
+#include "googlesql/legacy_zetasql/public/types/value_equality_check_options.h"
 #include "absl/hash/hash.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

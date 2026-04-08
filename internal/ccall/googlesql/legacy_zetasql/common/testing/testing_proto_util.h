@@ -19,7 +19,7 @@
 
 #include <memory>
 
-#include "zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/path.h"
 #include "google/protobuf/compiler/importer.h"
 #include "google/protobuf/message.h"
 #include "gtest/gtest.h"

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/scripting/parsed_script.h"
+#include "googlesql/legacy_zetasql/scripting/parsed_script.h"
 
 #include <cstdint>
 #include <memory>
@@ -26,13 +26,13 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/scripting/type_aliases.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/scripting/type_aliases.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
@@ -41,7 +41,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
 #include "absl/types/span.h"
 #include "absl/types/variant.h"
 

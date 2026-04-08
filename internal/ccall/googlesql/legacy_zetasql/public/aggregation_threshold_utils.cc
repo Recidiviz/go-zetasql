@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/aggregation_threshold_utils.h"
+#include "googlesql/legacy_zetasql/public/aggregation_threshold_utils.h"
 
 #include <string>
 
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/case.h"
-#include "zetasql/base/no_destructor.h"
+#include "googlesql/legacy_zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/no_destructor.h"
 
 namespace zetasql {
 const absl::flat_hash_map<std::string, AllowedOptionProperties,

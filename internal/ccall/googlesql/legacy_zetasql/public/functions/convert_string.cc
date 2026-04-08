@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/convert_string.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_string.h"
 
 #include <cmath>
 #include <cstdint>
 #include <string>
 
-#include "zetasql/common/string_util.h"
-#include "zetasql/public/functions/util.h"
-#include "zetasql/base/case.h"
-#include "zetasql/base/string_numbers.h"
+#include "googlesql/legacy_zetasql/common/string_util.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/string_numbers.h"
 #include "absl/base/optimization.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/escaping.h"

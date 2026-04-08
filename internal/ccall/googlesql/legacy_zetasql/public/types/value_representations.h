@@ -25,22 +25,22 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/interval_value.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/numeric_value.h"
-#include "zetasql/public/timestamp_picos_value.h"
-#include "zetasql/public/token_list.h"  
-#include "zetasql/public/uuid_value.h"
-#include "zetasql/public/value_content.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/timestamp_picos_value.h"
+#include "googlesql/legacy_zetasql/public/token_list.h"  
+#include "googlesql/legacy_zetasql/public/uuid_value.h"
+#include "googlesql/legacy_zetasql/public/value_content.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/container/btree_map.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "absl/types/span.h"
 #include "absl/types/variant.h"
-#include "zetasql/base/compact_reference_counted.h"
+#include "googlesql/legacy_zetasql/base/compact_reference_counted.h"
 
 // This file contains classes that are used to represent values of ZetaSQL
 // types. They are intended for internal use only and shouldn't be referenced

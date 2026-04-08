@@ -33,10 +33,10 @@
 #include "google/protobuf/generated_enum_reflection.h"
 #include "google/protobuf/unknown_field_set.h"
 #include "google/protobuf/any.pb.h"
-#include "zetasql/proto/function.pb.h"
-#include "zetasql/proto/script_exception.pb.h"
-#include "zetasql/scripting/procedure_extension.pb.h"
-#include "zetasql/scripting/variable.pb.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/proto/script_exception.pb.h"
+#include "googlesql/legacy_zetasql/scripting/procedure_extension.pb.h"
+#include "googlesql/legacy_zetasql/scripting/variable.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.

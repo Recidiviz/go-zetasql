@@ -19,7 +19,7 @@
 
 #include <memory>
 
-#include "zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql::functions::match_recognize {

@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/token_list_util.h"
+#include "googlesql/legacy_zetasql/public/token_list_util.h"
 
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/simple_token_list.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/simple_token_list.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

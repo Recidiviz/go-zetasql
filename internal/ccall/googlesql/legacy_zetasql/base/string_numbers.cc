@@ -18,7 +18,7 @@
 // This file contains string processing functions related to
 // numeric values.
 
-#include "zetasql/base/string_numbers.h"
+#include "googlesql/legacy_zetasql/base/string_numbers.h"
 
 #include <cassert>
 #include <cfloat>  // for DBL_DIG and FLT_DIG
@@ -29,11 +29,11 @@
 #include <limits>
 #include <string>
 
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/numbers.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql_base {
 namespace {

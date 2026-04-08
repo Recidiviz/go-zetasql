@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/textmapper_lexer_adapter.h"
+#include "googlesql/legacy_zetasql/parser/textmapper_lexer_adapter.h"
 
 #include <vector>
 
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/string_view.h"

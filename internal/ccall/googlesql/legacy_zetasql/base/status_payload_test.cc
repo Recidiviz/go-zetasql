@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/status_payload.h"
+#include "googlesql/legacy_zetasql/base/status_payload.h"
 
 #include "google/protobuf/any.pb.h"
 #include "google/protobuf/util/message_differencer.h"
@@ -23,7 +23,7 @@
 #include "absl/base/attributes.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/test_payload.pb.h"
+#include "googlesql/legacy_zetasql/base/test_payload.pb.h"
 
 namespace zetasql_base {
 

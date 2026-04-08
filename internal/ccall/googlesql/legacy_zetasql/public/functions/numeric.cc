@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/numeric.h"
+#include "googlesql/legacy_zetasql/public/functions/numeric.h"
 
 #include <cstddef>
 #include <string>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/functions/util.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"

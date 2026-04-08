@@ -22,11 +22,11 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/base/macros.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/status.h"

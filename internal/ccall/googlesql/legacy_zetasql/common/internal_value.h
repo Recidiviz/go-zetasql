@@ -21,10 +21,10 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/float_margin.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/value_equality_check_options.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/common/float_margin.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/value_equality_check_options.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
 

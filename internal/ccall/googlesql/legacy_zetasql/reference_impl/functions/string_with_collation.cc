@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/functions/string_with_collation.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/string_with_collation.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -23,23 +23,23 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/collator.h"
-#include "zetasql/public/functions/string_with_collation.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/evaluation.h"
-#include "zetasql/reference_impl/function.h"
-#include "zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/public/functions/string_with_collation.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/function.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

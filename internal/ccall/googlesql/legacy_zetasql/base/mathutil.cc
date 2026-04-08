@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
 
 #include <stdlib.h>
 

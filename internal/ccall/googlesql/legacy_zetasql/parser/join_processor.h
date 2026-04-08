@@ -19,10 +19,10 @@
 
 #include <string>
 
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/bison_parser.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 
 namespace zetasql {
 namespace parser {

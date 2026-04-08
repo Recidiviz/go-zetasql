@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/json_parser.h"
+#include "googlesql/legacy_zetasql/common/json_parser.h"
 
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/depth_limit_detector_test_cases.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/depth_limit_detector_test_cases.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

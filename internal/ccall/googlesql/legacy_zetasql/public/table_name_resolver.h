@@ -17,14 +17,14 @@
 #ifndef ZETASQL_PUBLIC_TABLE_NAME_RESOLVER_H_
 #define ZETASQL_PUBLIC_TABLE_NAME_RESOLVER_H_
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/analyzer.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/analyzer.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace table_name_resolver {

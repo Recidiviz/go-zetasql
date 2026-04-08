@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
 
 #include <cctype>
 #include <cstdint>
@@ -26,15 +26,15 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_codes.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_codes.h"
 #include "absl/base/macros.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/variant.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 namespace parser {

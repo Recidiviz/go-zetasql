@@ -21,8 +21,8 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql {

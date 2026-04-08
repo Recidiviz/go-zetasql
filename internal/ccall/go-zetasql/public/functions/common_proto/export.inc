@@ -15,6 +15,5 @@
 #include "go-absl/strings/cord/export.inc"
 #include "go-google/type/latlng_cc_proto/export.inc"
 #include "go-google/type/timeofday_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

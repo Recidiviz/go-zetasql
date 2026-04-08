@@ -14,21 +14,21 @@
 // limitations under the License.
 //
 
-#include "zetasql/testing/test_catalog.h"
+#include "googlesql/legacy_zetasql/testing/test_catalog.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/format_max_output_width.h"
+#include "googlesql/legacy_zetasql/public/functions/format_max_output_width.h"
 
 #include "absl/flags/flag.h"
 

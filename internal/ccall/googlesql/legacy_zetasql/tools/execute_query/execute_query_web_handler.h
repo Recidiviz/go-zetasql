@@ -20,10 +20,10 @@
 #include <optional>
 #include <string>
 
-#include "zetasql/resolved_ast/sql_builder.h"
-#include "zetasql/tools/execute_query/execute_query_tool.h"
-#include "zetasql/tools/execute_query/execute_query_writer.h"
-#include "zetasql/tools/execute_query/web/embedded_resources.h"
+#include "googlesql/legacy_zetasql/resolved_ast/sql_builder.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_writer.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/embedded_resources.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/status/status.h"

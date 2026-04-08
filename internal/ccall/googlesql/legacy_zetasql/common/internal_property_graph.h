@@ -17,8 +17,8 @@
 #ifndef ZETASQL_COMMON_INTERNAL_PROPERTY_GRAPH_H_
 #define ZETASQL_COMMON_INTERNAL_PROPERTY_GRAPH_H_
 
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 
 namespace zetasql {
 

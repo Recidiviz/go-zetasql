@@ -17,9 +17,9 @@
 #ifndef ZETASQL_PUBLIC_ANALYZER_OUTPUT_PROPERTIES_H_
 #define ZETASQL_PUBLIC_ANALYZER_OUTPUT_PROPERTIES_H_
 
-#include "zetasql/public/options.pb.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/target_syntax.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/target_syntax.h"
 #include "absl/base/attributes.h"
 #include "absl/container/btree_set.h"
 #include "absl/container/flat_hash_map.h"

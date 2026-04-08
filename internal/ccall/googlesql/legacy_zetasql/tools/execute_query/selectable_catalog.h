@@ -21,8 +21,8 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 

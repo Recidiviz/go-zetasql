@@ -22,7 +22,7 @@
 #include <utility>
 
 #include "absl/base/attributes.h"
-#include "zetasql/base/associative_view_internal.h"  
+#include "googlesql/legacy_zetasql/base/associative_view_internal.h"  
 
 namespace zetasql_base {
 

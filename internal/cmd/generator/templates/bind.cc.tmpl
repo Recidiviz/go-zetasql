@@ -17,6 +17,9 @@
 #define GO_EXPORT(def) export_{{ $fqdn }}_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
+// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
+#include "_cgo_export.h"
+
 {{ .PreludeBeforeHeaders }}// include headers
 //#define private public
 {{- range .Headers }}

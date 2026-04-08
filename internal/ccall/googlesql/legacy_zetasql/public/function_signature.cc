@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
 
 #include <array>
 #include <cstdint>
@@ -27,21 +27,21 @@
 #include <vector>
 
 #include "google/protobuf/util/message_differencer.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/proto/function.pb.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/table_valued_function.h"
-#include "zetasql/public/types/type_deserializer.h"
-#include "zetasql/resolved_ast/serialization.pb.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/table_valued_function.h"
+#include "googlesql/legacy_zetasql/public/types/type_deserializer.h"
+#include "googlesql/legacy_zetasql/resolved_ast/serialization.pb.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/algorithm/container.h"
 #include "absl/container/btree_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -52,11 +52,11 @@
 #include "absl/strings/substitute.h"
 #include "absl/types/optional.h"
 #include "absl/types/span.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

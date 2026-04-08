@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/public/constness_level.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

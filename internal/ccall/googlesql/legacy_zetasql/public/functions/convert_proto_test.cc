@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/convert_proto.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_proto.h"
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

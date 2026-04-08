@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/path_expression_span.h"
+#include "googlesql/legacy_zetasql/analyzer/path_expression_span.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -23,15 +23,15 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
 #include "absl/base/casts.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

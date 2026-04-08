@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/flex_istream.h"
+#include "googlesql/legacy_zetasql/parser/flex_istream.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -23,9 +23,9 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/log/log.h"

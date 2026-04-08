@@ -14,21 +14,21 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/variable_generator.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_generator.h"
 
 #include <map>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/reference_impl/parameters.h"
-#include "zetasql/reference_impl/variable_id.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/reference_impl/parameters.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/str_replace.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

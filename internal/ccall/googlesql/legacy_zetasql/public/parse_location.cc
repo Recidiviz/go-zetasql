@@ -17,7 +17,7 @@
 // ParseLocationTranslator is tested by public/error_helpers_test.cc and
 // analyzer/testdata/parse_locations.test.
 
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -26,14 +26,14 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
 #include "absl/status/statusor.h"
 #include "unicode/umachine.h"
 #include "unicode/utf8.h"
-#include "zetasql/base/mathutil.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

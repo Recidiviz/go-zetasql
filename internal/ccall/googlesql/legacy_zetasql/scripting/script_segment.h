@@ -19,9 +19,9 @@
 
 #include <ostream>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

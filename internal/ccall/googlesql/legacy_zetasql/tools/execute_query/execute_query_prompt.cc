@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_prompt.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt.h"
 
 #include <algorithm>
 #include <functional>
@@ -23,12 +23,12 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/parse_tokens.h"
-#include "zetasql/tools/execute_query/execute_query.pb.h"
-#include "zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query.pb.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
 #include "absl/functional/bind_front.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -39,7 +39,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "absl/types/optional.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

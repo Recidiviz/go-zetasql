@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/common/initialize_required_fields.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

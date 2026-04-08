@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/search/public/token_list_util.h"
+#include "googlesql/legacy_zetasql/common/search/public/token_list_util.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -24,9 +24,9 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/strings.h"
-#include "zetasql/public/token_list.h"  
-#include "zetasql/base/no_destructor.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/token_list.h"  
+#include "googlesql/legacy_zetasql/base/no_destructor.h"
 #include "absl/strings/escaping.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"

@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/deidentify.h"
+#include "googlesql/legacy_zetasql/parser/deidentify.h"
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

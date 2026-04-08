@@ -20,7 +20,7 @@
 
 #include <string>
 
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 
 namespace zetasql {
 

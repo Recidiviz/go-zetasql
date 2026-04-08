@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/proto/internal_fix_suggestion.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

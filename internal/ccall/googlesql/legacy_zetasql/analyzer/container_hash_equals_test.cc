@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/container_hash_equals.h"
+#include "googlesql/legacy_zetasql/analyzer/container_hash_equals.h"
 
 #include <vector>
 
-#include "zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/strings/string_view.h"

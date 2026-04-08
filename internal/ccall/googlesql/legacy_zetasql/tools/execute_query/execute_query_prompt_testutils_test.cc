@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_prompt_testutils.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt_testutils.h"
 
 #include <algorithm>
 #include <iterator>

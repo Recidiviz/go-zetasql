@@ -22,7 +22,7 @@
 #include <tuple>
 #include <utility>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

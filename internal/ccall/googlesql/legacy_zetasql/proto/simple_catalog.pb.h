@@ -31,14 +31,14 @@
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/unknown_field_set.h"
-#include "zetasql/proto/function.pb.h"
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/proto/simple_property_graph.pb.h"
-#include "zetasql/public/simple_connection.pb.h"
-#include "zetasql/public/simple_constant.pb.h"
-#include "zetasql/public/simple_model.pb.h"
-#include "zetasql/public/simple_table.pb.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/proto/simple_property_graph.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_connection.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_constant.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_model.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_table.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.

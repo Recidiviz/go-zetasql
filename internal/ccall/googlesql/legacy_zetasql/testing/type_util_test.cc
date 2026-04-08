@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/testing/type_util.h"
+#include "googlesql/legacy_zetasql/testing/type_util.h"
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/type.h"
-#include "zetasql/testing/sql_types_test.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/testing/sql_types_test.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

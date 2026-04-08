@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_ARRAY_FUNCTIONS_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_ARRAY_FUNCTIONS_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/array_functions_rewriter.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/array_functions_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/array_functions_rewriter.cc"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/array_functions_rewriter.cc"
 // include dependencies
 #include "go-zetasql/analyzer/substitute/export.inc"
 #include "go-zetasql/base/ret_check/export.inc"

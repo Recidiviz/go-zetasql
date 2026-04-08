@@ -14,34 +14,34 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
 
 #include <cstdint>
 #include <memory>
 #include <string>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/helpers.h"
-#include "zetasql/base/options.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/helpers.h"
+#include "googlesql/legacy_zetasql/base/options.h"
 #include "parsers/sql/sql_parser_test_helpers.h"
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parser_runtime_info.h"
-#include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/proto/logging.pb.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parser_runtime_info.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/proto/logging.pb.h"
 #include "benchmark/benchmark.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 ABSL_FLAG(std::string, parser_benchmark_query,
           "SELECT Column FROM Table WHERE OtherColumn = 123",

@@ -21,8 +21,8 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/public/simple_value.pb.h"
-#include "zetasql/public/types/value_representations.h"
+#include "googlesql/legacy_zetasql/public/simple_value.pb.h"
+#include "googlesql/legacy_zetasql/public/types/value_representations.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 

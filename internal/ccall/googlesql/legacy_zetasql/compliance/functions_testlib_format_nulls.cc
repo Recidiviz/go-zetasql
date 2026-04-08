@@ -21,11 +21,11 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/compliance/functions_testlib_common.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/using_test_value.cc"  // NOLINT
+#include "googlesql/legacy_zetasql/compliance/functions_testlib_common.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"  // NOLINT
 #include "absl/strings/substitute.h"
 #include "re2/re2.h"
 

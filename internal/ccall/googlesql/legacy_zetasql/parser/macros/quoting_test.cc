@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/quoting.h"
+#include "googlesql/legacy_zetasql/parser/macros/quoting.h"
 
 #include <tuple>
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gtest/gtest.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_format.h"

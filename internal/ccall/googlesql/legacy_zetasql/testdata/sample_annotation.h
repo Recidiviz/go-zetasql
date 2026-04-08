@@ -19,8 +19,8 @@
 
 #include <vector>
 
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
 #include "absl/status/status.h"
 
 namespace zetasql {

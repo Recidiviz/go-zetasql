@@ -27,10 +27,10 @@
 #include <type_traits>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/numeric_constants.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/numeric_constants.h"
 #include "absl/base/attributes.h"
 #include "absl/base/optimization.h"
 #include "absl/base/port.h"
@@ -38,7 +38,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/compare.h"
 #include "absl/types/optional.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

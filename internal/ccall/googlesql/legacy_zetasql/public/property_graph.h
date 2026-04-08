@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.h"
 #include "absl/base/attributes.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/log/log.h"

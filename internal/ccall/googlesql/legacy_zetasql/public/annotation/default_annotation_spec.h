@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/status.h"
 
 namespace zetasql {

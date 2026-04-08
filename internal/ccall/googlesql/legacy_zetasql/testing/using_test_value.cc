@@ -22,7 +22,7 @@
 //
 // Use with caution.
 
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 
 // NOLINTBEGIN(google-global-names-in-headers)
 using zetasql::test_values::Array;

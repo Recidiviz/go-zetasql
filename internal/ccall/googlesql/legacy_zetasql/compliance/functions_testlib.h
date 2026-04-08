@@ -21,7 +21,7 @@
 
 #include <vector>
 
-#include "zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
 
 namespace zetasql {
 

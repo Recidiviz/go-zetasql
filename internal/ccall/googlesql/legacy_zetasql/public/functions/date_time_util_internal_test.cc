@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/date_time_util_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util_internal.h"
 
 #include <ostream>
 

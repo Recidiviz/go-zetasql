@@ -17,7 +17,7 @@
 #ifndef ZETASQL_PARSER_AST_NODE_UTIL_H_
 #define ZETASQL_PARSER_AST_NODE_UTIL_H_
 
-#include "zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql {

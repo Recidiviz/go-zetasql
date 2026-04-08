@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/runtime_expected_errors.h"
+#include "googlesql/legacy_zetasql/compliance/runtime_expected_errors.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/compliance/matchers.h"
+#include "googlesql/legacy_zetasql/compliance/matchers.h"
 #include "absl/status/status.h"
 #include "absl/strings/substitute.h"
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/scripting/serialization_helpers.h"
+#include "googlesql/legacy_zetasql/scripting/serialization_helpers.h"
 
 #include <memory>
 #include <optional>
@@ -23,24 +23,24 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/public/evaluator.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_deserializer.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/types/type_parameters.h"
-#include "zetasql/public/value.h"
-#include "zetasql/scripting/procedure_extension.pb.h"
-#include "zetasql/scripting/script_executor.h"
-#include "zetasql/scripting/script_executor_state.pb.h"
-#include "zetasql/scripting/type_aliases.h"
+#include "googlesql/legacy_zetasql/public/evaluator.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_deserializer.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/scripting/procedure_extension.pb.h"
+#include "googlesql/legacy_zetasql/scripting/script_executor.h"
+#include "googlesql/legacy_zetasql/scripting/script_executor_state.pb.h"
+#include "googlesql/legacy_zetasql/scripting/type_aliases.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "google/protobuf/repeated_ptr_field.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

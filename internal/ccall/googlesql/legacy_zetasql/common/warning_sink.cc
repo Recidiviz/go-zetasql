@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/warning_sink.h"
+#include "googlesql/legacy_zetasql/common/warning_sink.h"
 
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/public/deprecation_warning.pb.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/public/deprecation_warning.pb.h"
 #include "absl/status/status.h"
 #include "absl/types/span.h"
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/net.h"
+#include "googlesql/legacy_zetasql/public/functions/net.h"
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -26,17 +26,17 @@
 #include <limits>
 #include <string>
 
-#include "zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
 #include "absl/base/optimization.h"
 #include "absl/functional/function_ref.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/net/idn.h"
-#include "zetasql/base/net/ipaddress.h"
-#include "zetasql/base/net/public_suffix.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/net/idn.h"
+#include "googlesql/legacy_zetasql/base/net/ipaddress.h"
+#include "googlesql/legacy_zetasql/base/net/public_suffix.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace functions {

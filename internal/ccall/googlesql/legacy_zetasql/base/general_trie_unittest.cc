@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/general_trie.h"
+#include "googlesql/legacy_zetasql/base/general_trie.h"
 
 #include <string.h>
 

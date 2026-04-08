@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/formatter/internal/parsing_utils.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/parsing_utils.h"
 
 #include <algorithm>
 #include <set>
@@ -22,9 +22,9 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/tools/formatter/internal/token.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::formatter::internal {
 

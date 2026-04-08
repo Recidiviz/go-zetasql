@@ -14,23 +14,23 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/timestamp_picos_value.h"
+#include "googlesql/legacy_zetasql/public/timestamp_picos_value.h"
 
 #include <cstddef>
 #include <cstdint>
 #include <string>
 
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
 #include "absl/hash/hash.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/numeric/int128.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

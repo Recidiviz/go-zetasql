@@ -14,31 +14,31 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/flex_tokenizer.h"
+#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
 
 #include <memory>
 #include <optional>
 #include <vector>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/bison_parser_mode.h"
-#include "zetasql/parser/bison_token_codes.h"
-#include "zetasql/parser/macros/macro_catalog.h"
-#include "zetasql/parser/macros/token_with_location.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/parser/token_disambiguator.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/legacy_zetasql/parser/bison_token_codes.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_catalog.h"
+#include "googlesql/legacy_zetasql/parser/macros/token_with_location.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/parser/token_disambiguator.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::parser {
 

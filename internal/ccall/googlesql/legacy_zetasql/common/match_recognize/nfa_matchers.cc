@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/nfa_matchers.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_matchers.h"
 
 #include <memory>
 #include <ostream>
@@ -22,9 +22,9 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 

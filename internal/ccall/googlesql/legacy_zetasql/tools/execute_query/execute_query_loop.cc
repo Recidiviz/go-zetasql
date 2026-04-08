@@ -14,24 +14,24 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_loop.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_loop.h"
 
 #include <iostream>
 #include <optional>
 #include <ostream>
 #include <string>
 
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/tools/execute_query/execute_query.pb.h"
-#include "zetasql/tools/execute_query/execute_query_prompt.h"
-#include "zetasql/tools/execute_query/execute_query_tool.h"
-#include "zetasql/tools/execute_query/execute_query_writer.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query.pb.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_writer.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

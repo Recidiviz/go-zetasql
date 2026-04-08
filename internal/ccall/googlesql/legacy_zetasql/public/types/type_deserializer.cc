@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/type_deserializer.h"
+#include "googlesql/legacy_zetasql/public/types/type_deserializer.h"
 
 #include <string>
 #include <type_traits>
@@ -22,24 +22,24 @@
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/proto_helper.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/enum_type.h"
-#include "zetasql/public/types/extended_type.h"
-#include "zetasql/public/types/map_type.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/proto_helper.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/enum_type.h"
+#include "googlesql/legacy_zetasql/public/types/extended_type.h"
+#include "googlesql/legacy_zetasql/public/types/map_type.h"
+#include "googlesql/legacy_zetasql/public/types/proto_type.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
 #include "google/protobuf/text_format.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

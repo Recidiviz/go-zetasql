@@ -14,21 +14,21 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/flex_token_provider.h"
+#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.h"
 
 #include <cstddef>
 #include <memory>
 #include <optional>
 
-#include "zetasql/parser/flex_tokenizer.h"
-#include "zetasql/parser/macros/token_provider_base.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
+#include "googlesql/legacy_zetasql/parser/macros/token_provider_base.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace parser {

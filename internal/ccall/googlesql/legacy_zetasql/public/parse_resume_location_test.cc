@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
 
 #include <cstdint>
 #include <string>
 #include <utility>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/parse_resume_location.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.pb.h"
 #include "gtest/gtest.h"
 
 namespace zetasql {

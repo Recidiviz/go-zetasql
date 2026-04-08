@@ -17,6 +17,6 @@
 #ifndef ZETASQL_COMMON_TESTING_STATUS_PAYLOAD_MATCHERS_H_
 #define ZETASQL_COMMON_TESTING_STATUS_PAYLOAD_MATCHERS_H_
 
-#include "zetasql/common/testing/status_payload_matchers_oss.h"
+#include "googlesql/legacy_zetasql/common/testing/status_payload_matchers_oss.h"
 
 #endif  // ZETASQL_COMMON_TESTING_STATUS_PAYLOAD_MATCHERS_H_

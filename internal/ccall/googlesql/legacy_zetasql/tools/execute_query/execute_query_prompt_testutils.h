@@ -17,7 +17,7 @@
 #ifndef ZETASQL_TOOLS_EXECUTE_QUERY_EXECUTE_QUERY_PROMPT_TESTUTILS_H_
 #define ZETASQL_TOOLS_EXECUTE_QUERY_EXECUTE_QUERY_PROMPT_TESTUTILS_H_
 
-#include "zetasql/tools/execute_query/execute_query_prompt.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt.h"
 #include "gmock/gmock.h"
 #include "absl/strings/string_view.h"
 

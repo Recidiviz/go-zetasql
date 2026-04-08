@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 
 #include <string>
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_set.h"

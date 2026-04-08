@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
 
 #include <cstdint>
 #include <memory>
@@ -22,19 +22,19 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/internal_value.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/proto_util.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/evaluation.h"
-#include "zetasql/reference_impl/operator.h"
-#include "zetasql/reference_impl/tuple_comparator.h"
-#include "zetasql/reference_impl/tuple_test_util.h"
-#include "zetasql/reference_impl/variable_id.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/testing/using_test_value.cc"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/proto_util.h"
+#include "googlesql/legacy_zetasql/public/types/proto_type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/operator.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple_comparator.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple_test_util.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/log/log.h"
@@ -42,7 +42,7 @@
 #include "absl/status/statusor.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 using ::testing::ElementsAre;
 using ::testing::HasSubstr;

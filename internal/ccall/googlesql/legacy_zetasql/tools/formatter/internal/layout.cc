@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/formatter/internal/layout.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/layout.h"
 
 #include <algorithm>
 #include <cmath>
@@ -28,12 +28,12 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/tools/formatter/internal/chunk.h"
-#include "zetasql/tools/formatter/internal/parsed_file.h"
-#include "zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/parsed_file.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
 #include "absl/container/btree_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/match.h"
@@ -41,8 +41,8 @@
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/flat_set.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/flat_set.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::formatter::internal {
 

@@ -36,15 +36,15 @@
 #include <type_traits>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/annotation.pb.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

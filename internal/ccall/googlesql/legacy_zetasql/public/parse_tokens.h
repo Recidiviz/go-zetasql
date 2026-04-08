@@ -20,10 +20,10 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 

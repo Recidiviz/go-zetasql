@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/nfa_builder.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_builder.h"
 
 #include <memory>
 #include <optional>
@@ -22,19 +22,19 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/common/match_recognize/epsilon_remover.h"
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/public/cast.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/epsilon_remover.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/public/cast.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::functions::match_recognize {
 

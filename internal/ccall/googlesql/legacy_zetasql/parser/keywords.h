@@ -22,10 +22,10 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_codes.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_codes.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"

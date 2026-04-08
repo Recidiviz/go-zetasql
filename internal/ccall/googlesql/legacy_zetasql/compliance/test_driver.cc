@@ -14,26 +14,26 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/compliance/test_driver.pb.h"
-#include "zetasql/public/annotation.pb.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.pb.h"
+#include "googlesql/legacy_zetasql/public/annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/flags/flag.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

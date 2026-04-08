@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/matchers.h"
+#include "googlesql/legacy_zetasql/compliance/matchers.h"
 
 #include <map>
 #include <memory>
@@ -24,7 +24,7 @@
 #include "absl/status/status.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 #include "re2/re2.h"
 
 namespace zetasql {

@@ -31,15 +31,15 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/path.h"
-#include "zetasql/compliance/test_driver.pb.h"
-#include "zetasql/public/functions/date_time_util.h"  
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"  
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/flags/declare.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -47,13 +47,13 @@
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
-#include "zetasql/base/file_util.h"
+#include "googlesql/legacy_zetasql/base/file_util.h"
 #include "google/protobuf/compiler/importer.h"
 #include "google/protobuf/io/zero_copy_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl_lite.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

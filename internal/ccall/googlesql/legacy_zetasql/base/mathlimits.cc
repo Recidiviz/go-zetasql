@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/mathlimits.h"
+#include "googlesql/legacy_zetasql/base/mathlimits.h"
 
-// #include "zetasql/base/integral_types.h"
+// #include "googlesql/legacy_zetasql/base/integral_types.h"
 
 namespace zetasql_base {
 

@@ -20,7 +20,7 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
 
 namespace zetasql {
 

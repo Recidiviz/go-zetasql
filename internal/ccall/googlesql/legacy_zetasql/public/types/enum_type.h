@@ -20,13 +20,13 @@
 #include <cstdint>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_modifiers.h"
-#include "zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_modifiers.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
 #include "absl/base/attributes.h"
 #include "absl/hash/hash.h"
 #include "absl/status/status.h"

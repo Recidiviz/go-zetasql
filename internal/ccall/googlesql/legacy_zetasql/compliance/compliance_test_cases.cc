@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/compliance_test_cases.h"
+#include "googlesql/legacy_zetasql/compliance/compliance_test_cases.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -29,30 +29,30 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/path.h"
 #include "google/protobuf/message.h"
-#include "zetasql/common/float_margin.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/testing/testing_proto_util.h"
-#include "zetasql/compliance/depth_limit_detector_test_cases.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/compliance/sql_test_base.h"
-#include "zetasql/compliance/test_driver.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/reference_driver.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/test_value.h"
-#include "zetasql/testing/type_util.h"
-#include "zetasql/testing/using_test_value.cc"  // NOLINT
+#include "googlesql/legacy_zetasql/common/float_margin.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/testing/testing_proto_util.h"
+#include "googlesql/legacy_zetasql/compliance/depth_limit_detector_test_cases.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/compliance/sql_test_base.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/reference_driver.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/testing/type_util.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"  // NOLINT
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/attributes.h"

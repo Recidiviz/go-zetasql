@@ -14,24 +14,24 @@
 // limitations under the License.
 //
 
-#include "zetasql/scripting/error_helpers.h"
+#include "googlesql/legacy_zetasql/scripting/error_helpers.h"
 
 #include <memory>
 #include <string>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/scripting/script_segment.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/scripting/script_segment.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace {

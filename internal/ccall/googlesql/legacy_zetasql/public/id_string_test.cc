@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -23,8 +23,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "zetasql/common/unicode_utils.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/common/unicode_utils.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/container/node_hash_set.h"
@@ -35,7 +35,7 @@
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 namespace {

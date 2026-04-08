@@ -14,21 +14,21 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
 
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/table_valued_function.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/table_valued_function.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/types/span.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

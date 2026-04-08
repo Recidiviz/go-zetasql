@@ -27,7 +27,7 @@
 
 #include <type_traits>
 
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/meta/type_traits.h"
 
 namespace zetasql {

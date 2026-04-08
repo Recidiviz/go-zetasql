@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -28,12 +28,12 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/depth_limit_detector_test_cases.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/depth_limit_detector_test_cases.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
@@ -41,7 +41,7 @@
 #include "absl/strings/substitute.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace {
 

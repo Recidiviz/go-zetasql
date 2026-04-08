@@ -21,13 +21,13 @@
 #include <cstddef>
 #include <string>
 
-#include "zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
 #include "absl/numeric/int128.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/endian.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

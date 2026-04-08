@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/evaluator_lite.h"
+#include "googlesql/legacy_zetasql/public/evaluator_lite.h"
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

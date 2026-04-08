@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/testing/type_util.h"
+#include "googlesql/legacy_zetasql/testing/type_util.h"
 
 #include <string>
 #include <vector>
@@ -26,12 +26,12 @@
 #include "google/type/latlng.pb.h"
 #include "google/type/timeofday.pb.h"
 #include "google/protobuf/descriptor.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/testdata/test_proto3.pb.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/testdata/test_proto3.pb.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "google/protobuf/descriptor.h"
 
 namespace zetasql {

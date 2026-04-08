@@ -22,15 +22,15 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/pico_time.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

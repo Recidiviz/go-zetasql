@@ -22,12 +22,12 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/tools/formatter/internal/chunk.h"
-#include "zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"

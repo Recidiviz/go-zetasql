@@ -23,11 +23,11 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parse_tree_generated.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_generated.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 
 namespace zetasql {
 

@@ -15,7 +15,7 @@
 //
 
 
-#include "zetasql/public/functions/arithmetics_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/arithmetics_internal.h"
 
 #include <cstdint>
 #include <limits>

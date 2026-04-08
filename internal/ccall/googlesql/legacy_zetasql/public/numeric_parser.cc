@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/numeric_parser.h"
+#include "googlesql/legacy_zetasql/public/numeric_parser.h"
 
 #include <array>
 #include <cstdint>
 #include <limits>
 
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/numeric_constants.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/numeric_constants.h"
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

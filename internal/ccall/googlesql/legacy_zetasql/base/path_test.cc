@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/path.h"
 
 #include <utility>
 

@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/extended_type.h"
+#include "googlesql/legacy_zetasql/public/types/extended_type.h"
 
 #include <string>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/type_modifiers.h"
-#include "zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_modifiers.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql {

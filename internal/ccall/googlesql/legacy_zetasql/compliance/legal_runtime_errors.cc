@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/legal_runtime_errors.h"
+#include "googlesql/legacy_zetasql/compliance/legal_runtime_errors.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/compliance/matchers.h"
+#include "googlesql/legacy_zetasql/compliance/matchers.h"
 #include "absl/memory/memory.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

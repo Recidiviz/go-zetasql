@@ -14,21 +14,21 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/bitwise.h"
+#include "googlesql/legacy_zetasql/public/functions/bitwise.h"
 
 #include <cstdint>
 #include <functional>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/compliance/functions_testlib.h"
-#include "zetasql/public/functions/bitwise_agg_mode.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib.h"
+#include "googlesql/legacy_zetasql/public/functions/bitwise_agg_mode.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
 #include "gtest/gtest.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

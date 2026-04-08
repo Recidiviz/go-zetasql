@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/range_value.h"
+#include "googlesql/legacy_zetasql/public/range_value.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -22,18 +22,18 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/status/status.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_split.h"
 #include "absl/time/time.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

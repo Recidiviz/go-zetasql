@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include "zetasql/base/flat_set.h"
+#include "googlesql/legacy_zetasql/base/flat_set.h"
 
 #include <algorithm>
 #include <iterator>
@@ -24,7 +24,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/inlined_vector.h"
@@ -34,7 +34,7 @@
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
-#include "zetasql/base/stl_util.h"
+#include "googlesql/legacy_zetasql/base/stl_util.h"
 
 namespace zetasql_base {
 namespace {

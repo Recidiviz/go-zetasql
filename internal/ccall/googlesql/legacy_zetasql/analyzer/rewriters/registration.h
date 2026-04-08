@@ -19,7 +19,7 @@
 
 #include <vector>
 
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/synchronization/mutex.h"

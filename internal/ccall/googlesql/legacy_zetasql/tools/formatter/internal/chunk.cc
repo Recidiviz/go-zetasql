@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/formatter/internal/chunk.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk.h"
 
 #include <stddef.h>
 
@@ -27,24 +27,24 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/builtin_function.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_tokens.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/tools/formatter/internal/fusible_tokens.h"
-#include "zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/fusible_tokens.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
 #include "absl/algorithm/container.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/die_if_null.h"
 #include "absl/log/log.h"
 #include "absl/memory/memory.h"
@@ -55,8 +55,8 @@
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
-#include "zetasql/base/flat_set.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/flat_set.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::formatter::internal {
 namespace {

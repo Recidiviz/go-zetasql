@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/parse_tree_serializer.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_serializer.h"
 
 // NOLINTBEGIN(whitespace/line_length)
 

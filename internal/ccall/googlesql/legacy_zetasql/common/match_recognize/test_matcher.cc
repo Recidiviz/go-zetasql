@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/test_matcher.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/test_matcher.h"
 
 #include <cstddef>
 #include <memory>
@@ -23,23 +23,23 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/common/match_recognize/match_test_result.pb.h"
-#include "zetasql/common/match_recognize/test_pattern_resolver.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/functions/match_recognize/compiled_pattern.h"
-#include "zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
-#include "zetasql/public/functions/match_recognize/match_partition.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/match_test_result.pb.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/test_pattern_resolver.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/compiled_pattern.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/match_partition.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::functions::match_recognize {
 using QueryParametersValueMap = absl::flat_hash_map<std::string, Value>;

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/nfa_match_partition.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_match_partition.h"
 
 #include <memory>
 #include <optional>
@@ -22,17 +22,17 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/match_recognize/compiled_nfa.h"
-#include "zetasql/common/match_recognize/edge_tracker.h"
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/common/match_recognize/row_edge_list.h"
-#include "zetasql/public/functions/match_recognize/match_partition.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/compiled_nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/edge_tracker.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/row_edge_list.h"
+#include "googlesql/legacy_zetasql/public/functions/match_recognize/match_partition.h"
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::functions::match_recognize {
 

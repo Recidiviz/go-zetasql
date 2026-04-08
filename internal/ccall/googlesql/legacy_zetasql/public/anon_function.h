@@ -20,9 +20,9 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/function.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
 #include "absl/strings/string_view.h"
 
 namespace zetasql {

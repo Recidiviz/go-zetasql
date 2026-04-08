@@ -14,21 +14,21 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/string_format.h"
+#include "googlesql/legacy_zetasql/public/functions/string_format.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/graph_element_type.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/local_service/local_service_grpc.h"
+#include "googlesql/legacy_zetasql/local_service/local_service_grpc.h"
 
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
 
 #include <memory>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/local_service/local_service.grpc.pb.h"
-#include "zetasql/local_service/local_service.h"
-#include "zetasql/local_service/local_service.pb.h"
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.grpc.pb.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.pb.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

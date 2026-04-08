@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/public/simple_token_list.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

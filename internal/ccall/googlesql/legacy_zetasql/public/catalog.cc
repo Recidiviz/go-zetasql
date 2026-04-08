@@ -14,24 +14,24 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "zetasql/public/catalog_helper.h"
-#include "zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/catalog_helper.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "google/protobuf/io/tokenizer.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

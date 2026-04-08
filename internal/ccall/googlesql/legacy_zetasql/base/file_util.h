@@ -21,7 +21,7 @@
 // implemented in the open source version. The API is documented here for
 // convenience.
 //
-#include "zetasql/base/file_util_oss.h"
+#include "googlesql/legacy_zetasql/base/file_util_oss.h"
 
 namespace zetasql::internal {
 

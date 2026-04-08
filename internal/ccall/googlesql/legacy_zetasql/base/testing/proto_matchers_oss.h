@@ -17,7 +17,7 @@
 #ifndef THIRD_PARTY_ZETASQL_ZETASQL_BASE_TESTING_PROTO_MATCHERS_OSS_H_
 #define THIRD_PARTY_ZETASQL_ZETASQL_BASE_TESTING_PROTO_MATCHERS_OSS_H_
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/text_format.h"
 #include "google/protobuf/util/message_differencer.h"
 #include "gmock/gmock.h"

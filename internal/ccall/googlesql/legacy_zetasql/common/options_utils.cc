@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/options_utils.h"
+#include "googlesql/legacy_zetasql/common/options_utils.h"
 
 #include <optional>
 #include <string>
@@ -22,9 +22,9 @@
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/evaluator.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/public/evaluator.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
 #include "absl/container/btree_set.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/status.h"

@@ -23,12 +23,12 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/analyzer/query_resolver_helper.h"
+#include "googlesql/legacy_zetasql/analyzer/query_resolver_helper.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

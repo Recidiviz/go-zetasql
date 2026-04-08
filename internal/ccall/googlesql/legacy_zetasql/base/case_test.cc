@@ -17,7 +17,7 @@
 // This file tests string processing functions related to case:
 // uppercase, lowercase, etc.
 
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 
 #include <algorithm>
 #include <cstring>

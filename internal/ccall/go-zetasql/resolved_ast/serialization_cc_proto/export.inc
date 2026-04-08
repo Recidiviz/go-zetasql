@@ -13,6 +13,5 @@
 #include "go-zetasql/public/value_cc_proto/export.inc"
 #include "go-zetasql/public/annotation_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location_range_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

@@ -21,9 +21,9 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/types/list_backed_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/value_representations.h"
+#include "googlesql/legacy_zetasql/public/types/list_backed_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/value_representations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/hash/hash.h"
@@ -33,7 +33,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/span.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 
 namespace zetasql {
 

@@ -23,7 +23,7 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/reference_impl/variable_id.h"
+#include "googlesql/legacy_zetasql/reference_impl/variable_id.h"
 
 namespace zetasql {
 

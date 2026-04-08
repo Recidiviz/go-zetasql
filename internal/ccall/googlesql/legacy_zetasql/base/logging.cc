@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 #include <errno.h>
 #include <fcntl.h>

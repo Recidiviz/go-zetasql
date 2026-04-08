@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/bitcast.h"
+#include "googlesql/legacy_zetasql/public/functions/bitcast.h"
 
 #include <cstdint>
 #include <limits>
 
 #include "gtest/gtest.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

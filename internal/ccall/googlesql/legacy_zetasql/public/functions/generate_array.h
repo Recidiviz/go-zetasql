@@ -23,15 +23,15 @@
 #include <cstdint>
 #include <vector>
 
-#include "zetasql/public/functions/arithmetics.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/functions/arithmetics.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/status/statusor.h"
 #include "absl/time/time.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace functions {

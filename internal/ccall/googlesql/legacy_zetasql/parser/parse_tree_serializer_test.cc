@@ -14,19 +14,19 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/parse_tree_serializer.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_serializer.h"
 
 #include <iostream>
 #include <memory>
 #include <string>
 
-#include "zetasql/base/path.h"
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/ast_node_kind.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/parser/ast_node.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_kind.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/functional/bind_front.h"

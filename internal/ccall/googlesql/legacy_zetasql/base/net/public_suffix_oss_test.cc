@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/net/public_suffix_oss.h"
+#include "googlesql/legacy_zetasql/base/net/public_suffix_oss.h"
 
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/net/idn_oss.h"
-#include "zetasql/base/net/public_suffix_test_psl.h"
+#include "googlesql/legacy_zetasql/base/net/idn_oss.h"
+#include "googlesql/legacy_zetasql/base/net/public_suffix_test_psl.h"
 
 namespace zetasql::internal {
 namespace {

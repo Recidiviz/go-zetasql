@@ -48,7 +48,7 @@
 #include <cstdint>
 
 #include "absl/base/casts.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/numeric/int128.h"
 #if defined(__i386__) || defined(__x86_64__)
 #include <x86intrin.h>
@@ -57,7 +57,7 @@
 #include <type_traits>
 
 #include "gtest/gtest_prod.h"
-#include "zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
 
 namespace zetasql_base {
 

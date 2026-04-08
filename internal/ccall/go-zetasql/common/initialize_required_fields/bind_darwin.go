@@ -33,4 +33,6 @@ package initialize_required_fields
 #include "bridge.h"
 */
 import "C"
-import ()
+import (
+	_ "github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf"
+)

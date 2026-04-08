@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
 
 namespace zetasql {
 

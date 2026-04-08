@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/testing/test_case_options_util.h"
+#include "googlesql/legacy_zetasql/public/testing/test_case_options_util.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_split.h"
 #include "file_based_test_driver/test_case_options.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 

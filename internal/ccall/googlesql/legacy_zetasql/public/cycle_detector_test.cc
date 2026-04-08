@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/cycle_detector.h"
+#include "googlesql/legacy_zetasql/public/cycle_detector.h"
 
 #include <cstdint>
 #include <deque>

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/type_modifiers.h"
+#include "googlesql/legacy_zetasql/public/types/type_modifiers.h"
 
 #include <string>
 

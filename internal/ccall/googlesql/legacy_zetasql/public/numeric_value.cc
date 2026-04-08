@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -33,11 +33,11 @@
 #include <type_traits>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/numeric_constants.h"
-#include "zetasql/public/numeric_parser.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/numeric_constants.h"
+#include "googlesql/legacy_zetasql/public/numeric_parser.h"
 #include "absl/base/optimization.h"
 #include "absl/hash/hash.h"
 #include "absl/status/status.h"
@@ -46,11 +46,11 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "absl/types/optional.h"
-#include "zetasql/base/endian.h"
-#include "zetasql/base/stl_util.h"
-#include "zetasql/base/mathutil.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/stl_util.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

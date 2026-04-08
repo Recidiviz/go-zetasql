@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/testing/status_payload_matchers_oss.h"
+#include "googlesql/legacy_zetasql/common/testing/status_payload_matchers_oss.h"
 
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/common/testing/status_payload_matchers_test.pb.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/common/testing/status_payload_matchers_test.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/testing/proto_matchers_oss.h"
+#include "googlesql/legacy_zetasql/base/testing/proto_matchers_oss.h"
 
 using ::testing::AllOf;
 using ::testing::Not;

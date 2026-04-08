@@ -5,6 +5,5 @@
 // include sources
 // include dependencies
 #include "go-proto/util-lib/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

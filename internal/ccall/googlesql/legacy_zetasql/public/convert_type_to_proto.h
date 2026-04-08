@@ -24,14 +24,14 @@
 
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/node_hash_map.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

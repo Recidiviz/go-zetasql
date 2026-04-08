@@ -19,7 +19,7 @@
 
 #include <memory>
 
-#include "zetasql/parser/location.hh"
+#include "googlesql/legacy_zetasql/parser/location.hh"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 

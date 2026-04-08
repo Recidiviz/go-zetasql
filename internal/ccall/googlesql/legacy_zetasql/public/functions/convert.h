@@ -38,14 +38,14 @@
 #include <limits>
 #include <type_traits>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/functions/convert_internal.h"
-#include "zetasql/public/functions/util.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/functions/convert_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/base/optimization.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

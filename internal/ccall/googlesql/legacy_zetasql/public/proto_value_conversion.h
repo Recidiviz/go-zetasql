@@ -32,7 +32,7 @@
 
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/message.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

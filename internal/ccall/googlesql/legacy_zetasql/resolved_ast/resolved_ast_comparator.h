@@ -18,9 +18,9 @@
 #ifndef ZETASQL_RESOLVED_AST_RESOLVED_AST_COMPARATOR_H_
 #define ZETASQL_RESOLVED_AST_RESOLVED_AST_COMPARATOR_H_
 
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql {

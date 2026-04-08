@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/scripting/error_helpers.h"
+#include "googlesql/legacy_zetasql/scripting/error_helpers.h"
 
 #include <functional>
 #include <utility>
 
-#include "zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

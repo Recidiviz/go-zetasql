@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
 
 #include <pthread.h>
 #include <string.h>
@@ -33,7 +33,7 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "absl/base/log_severity.h"
 #include "absl/flags/flag.h"
 #include "absl/log/log.h"

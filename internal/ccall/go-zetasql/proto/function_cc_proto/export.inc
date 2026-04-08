@@ -22,6 +22,5 @@
 #include "go-zetasql/public/error_location_cc_proto/export.inc"
 #include "go-zetasql/public/parse_location_range_cc_proto/export.inc"
 #include "go-zetasql/resolved_ast/serialization_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

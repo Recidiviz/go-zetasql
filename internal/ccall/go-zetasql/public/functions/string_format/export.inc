@@ -26,7 +26,6 @@
 #include "go-absl/strings/cord/export.inc"
 #include "go-absl/strings/str_format/export.inc"
 #include "go-absl/types/span/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 #include "go-re2/re2/export.inc"
 #include "go-icu/icu/export.inc"
 

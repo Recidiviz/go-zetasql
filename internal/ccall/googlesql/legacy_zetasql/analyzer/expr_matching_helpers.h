@@ -19,10 +19,10 @@
 
 #include <stddef.h>
 
-#include "zetasql/analyzer/name_scope.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/legacy_zetasql/analyzer/name_scope.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_column.h"
 #include "absl/status/statusor.h"
 
 namespace zetasql {

@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/net/idn_oss.h"
+#include "googlesql/legacy_zetasql/base/net/idn_oss.h"
 
 #include <string>
 
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "unicode/errorcode.h"
 #include "unicode/idna.h"
 

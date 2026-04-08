@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/like.h"
+#include "googlesql/legacy_zetasql/public/functions/like.h"
 
 #include <memory>
 #include <vector>
@@ -22,7 +22,7 @@
 #include "gtest/gtest.h"
 #include "absl/strings/substitute.h"
 #include "re2/re2.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

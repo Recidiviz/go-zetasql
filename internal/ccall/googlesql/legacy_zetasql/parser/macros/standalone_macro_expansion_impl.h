@@ -20,10 +20,10 @@
 #include <memory>
 #include <optional>
 
-#include "zetasql/parser/macros/flex_token_provider.h"
-#include "zetasql/parser/macros/macro_catalog.h"
-#include "zetasql/parser/macros/macro_expander.h"
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_catalog.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_expander.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 

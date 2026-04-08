@@ -17,6 +17,6 @@
 #ifndef THIRD_PARTY_ZETASQL_ZETASQL_BASE_CANONICAL_ERRORS_H_
 #define THIRD_PARTY_ZETASQL_ZETASQL_BASE_CANONICAL_ERRORS_H_
 
-#include "zetasql/base/status.h"  
+#include "googlesql/legacy_zetasql/base/status.h"  
 
 #endif  // THIRD_PARTY_ZETASQL_ZETASQL_BASE_CANONICAL_ERRORS_H_

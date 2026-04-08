@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/aggregation_threshold_rewriter.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/aggregation_threshold_rewriter.h"
 
 #include <memory>
 #include <string>
 
-#include "zetasql/analyzer/rewriters/anonymization_helper.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/rewriter_interface.h"
-#include "zetasql/resolved_ast/column_factory.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/anonymization_helper.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/rewriter_interface.h"
+#include "googlesql/legacy_zetasql/resolved_ast/column_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -35,8 +35,8 @@
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/unknown_field_set.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/proto/wire_format_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/wire_format_annotation.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.

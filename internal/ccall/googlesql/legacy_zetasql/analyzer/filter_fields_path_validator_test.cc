@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/filter_fields_path_validator.h"
+#include "googlesql/legacy_zetasql/analyzer/filter_fields_path_validator.h"
 
 
-#include "zetasql/base/testing/status_matchers.h"  
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"  
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

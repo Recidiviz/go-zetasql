@@ -19,7 +19,7 @@
 
 #include <vector>
 
-#include "zetasql/tools/formatter/internal/chunk.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/chunk.h"
 #include "absl/status/status.h"
 
 namespace zetasql {

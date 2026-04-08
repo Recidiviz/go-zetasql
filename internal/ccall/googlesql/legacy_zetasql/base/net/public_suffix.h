@@ -21,7 +21,7 @@
 // implementation in the open source version.  Methods are documented here as a
 // convenience.
 
-#include "zetasql/base/net/public_suffix_oss.h"
+#include "googlesql/legacy_zetasql/base/net/public_suffix_oss.h"
 
 namespace zetasql::internal {
 

@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/diagnostic.h"
+#include "googlesql/legacy_zetasql/parser/macros/diagnostic.h"
 
 #include <algorithm>
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/base/nullability.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 namespace parser {

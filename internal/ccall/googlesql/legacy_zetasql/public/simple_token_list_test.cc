@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/simple_token_list.h"
+#include "googlesql/legacy_zetasql/public/simple_token_list.h"
 
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
 
 namespace zetasql {
 namespace tokens {

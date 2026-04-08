@@ -14,28 +14,28 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/analyzer_test_options.h"
+#include "googlesql/legacy_zetasql/analyzer/analyzer_test_options.h"
 
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/options_utils.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/testing/test_case_options_util.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/common/options_utils.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/testing/test_case_options_util.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "file_based_test_driver/test_case_options.h"
 #include "google/protobuf/text_format.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

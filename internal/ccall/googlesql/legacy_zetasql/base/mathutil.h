@@ -26,8 +26,8 @@
 #include <limits>
 #include <type_traits>
 
-#include "zetasql/base/check.h"
-#include "zetasql/base/bits.h"
+#include "googlesql/legacy_zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/bits.h"
 
 namespace zetasql_base {
 

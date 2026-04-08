@@ -42,15 +42,15 @@
 #include <limits>
 #include <type_traits>
 
-#include "zetasql/public/functions/arithmetics_internal.h"
-#include "zetasql/public/functions/convert.h"
-#include "zetasql/public/functions/util.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/public/functions/arithmetics_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/convert.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "absl/base/optimization.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 #ifndef __has_builtin
 #define __has_builtin(x) 0

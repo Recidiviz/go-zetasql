@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/formatter/internal/token.h"
+#include "googlesql/legacy_zetasql/tools/formatter/internal/token.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -25,15 +25,15 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/parser/keywords.h"
-#include "zetasql/public/formatter_options.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/parse_tokens.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/parser/keywords.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/parse_tokens.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
@@ -51,9 +51,9 @@
 #include "unicode/uchar.h"
 #include "unicode/unistr.h"
 #include "unicode/utypes.h"
-#include "zetasql/base/flat_set.h"
+#include "googlesql/legacy_zetasql/base/flat_set.h"
 #include "re2/re2.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::formatter::internal {
 

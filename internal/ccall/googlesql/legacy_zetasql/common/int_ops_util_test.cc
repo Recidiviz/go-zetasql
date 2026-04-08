@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/int_ops_util.h"
+#include "googlesql/legacy_zetasql/common/int_ops_util.h"
 
 #include <limits>
 

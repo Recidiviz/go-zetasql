@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/string_with_collation.h"
+#include "googlesql/legacy_zetasql/public/functions/string_with_collation.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -24,14 +24,14 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/utf_util.h"
-#include "zetasql/public/collator.h"
-#include "zetasql/public/functions/like.h"
-#include "zetasql/public/functions/string.h"
-#include "zetasql/public/functions/util.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/common/utf_util.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/public/functions/like.h"
+#include "googlesql/legacy_zetasql/public/functions/string.h"
+#include "googlesql/legacy_zetasql/public/functions/util.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
 #include "absl/base/optimization.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -47,7 +47,7 @@
 #include "unicode/ustring.h"
 #include "unicode/utypes.h"
 #include "re2/re2.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace functions {

@@ -14,20 +14,20 @@
 // limitations under the License.
 //
 
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/float_margin.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/types/value_equality_check_options.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/common/float_margin.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/graph_element_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/types/value_equality_check_options.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "google/protobuf/descriptor.h"

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/functions/json.h"
+#include "googlesql/legacy_zetasql/reference_impl/functions/json.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -25,33 +25,33 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/common/internal_value.h"
-#include "zetasql/public/functions/json.h"
-#include "zetasql/public/functions/json_format.h"
-#include "zetasql/public/functions/json_internal.h"
-#include "zetasql/public/functions/to_json.h"
-#include "zetasql/public/functions/unsupported_fields.pb.h"
-#include "zetasql/public/json_value.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/reference_impl/evaluation.h"
-#include "zetasql/reference_impl/function.h"
-#include "zetasql/reference_impl/tuple.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/internal_value.h"
+#include "googlesql/legacy_zetasql/public/functions/json.h"
+#include "googlesql/legacy_zetasql/public/functions/json_format.h"
+#include "googlesql/legacy_zetasql/public/functions/json_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/to_json.h"
+#include "googlesql/legacy_zetasql/public/functions/unsupported_fields.pb.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/reference_impl/evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/function.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

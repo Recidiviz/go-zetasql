@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/matchers.h"
+#include "googlesql/legacy_zetasql/compliance/matchers.h"
 
 #include <map>
 #include <memory>
@@ -23,9 +23,9 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/compliance/runtime_expected_errors.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/compliance/runtime_expected_errors.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 

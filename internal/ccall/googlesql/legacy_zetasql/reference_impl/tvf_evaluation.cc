@@ -14,31 +14,31 @@
 // limitations under the License.
 //
 
-#include "zetasql/reference_impl/tvf_evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/tvf_evaluation.h"
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/builtin_function.pb.h"
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/functions/differential_privacy.pb.h"
-#include "zetasql/public/table_valued_function.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/reference_impl/evaluation.h"
-#include "zetasql/reference_impl/operator.h"
-#include "zetasql/reference_impl/tuple.h"
-#include "zetasql/reference_impl/type_helpers.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
-#include "zetasql/resolved_ast/serialization.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.pb.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/functions/differential_privacy.pb.h"
+#include "googlesql/legacy_zetasql/public/table_valued_function.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/reference_impl/evaluation.h"
+#include "googlesql/legacy_zetasql/reference_impl/operator.h"
+#include "googlesql/legacy_zetasql/reference_impl/tuple.h"
+#include "googlesql/legacy_zetasql/reference_impl/type_helpers.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/serialization.pb.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace {

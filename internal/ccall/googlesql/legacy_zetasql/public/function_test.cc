@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.h"
 
 #include <cstddef>
 #include <memory>
@@ -23,36 +23,36 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/function_signature_testutil.h"
-#include "zetasql/common/testing/proto_matchers.h"  
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/testing/testing_proto_util.h"
-#include "zetasql/proto/function.pb.h"
-#include "zetasql/public/builtin_function.h"
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/deprecation_warning.pb.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/public/parse_location_range.pb.h"
-#include "zetasql/public/sql_function.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/type_deserializer.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/function_signature_testutil.h"
+#include "googlesql/legacy_zetasql/common/testing/proto_matchers.h"  
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/testing/testing_proto_util.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/public/builtin_function.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/deprecation_warning.pb.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/public/parse_location_range.pb.h"
+#include "googlesql/legacy_zetasql/public/sql_function.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_deserializer.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 
 // Note - test coverage for the 'Function' class interface is primarily
 // provided by builtin_function_test.cc which instantiates the concrete

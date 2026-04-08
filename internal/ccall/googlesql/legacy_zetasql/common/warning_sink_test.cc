@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/warning_sink.h"
+#include "googlesql/legacy_zetasql/common/warning_sink.h"
 
-#include "zetasql/common/errors.h"
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

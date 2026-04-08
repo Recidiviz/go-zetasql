@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/local_service/local_service_jni.h"
+#include "googlesql/legacy_zetasql/local_service/local_service_jni.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -27,7 +27,7 @@
 
 #include <memory>
 
-#include "zetasql/local_service/local_service_grpc.h"
+#include "googlesql/legacy_zetasql/local_service/local_service_grpc.h"
 
 namespace zetasql {
 namespace local_service {

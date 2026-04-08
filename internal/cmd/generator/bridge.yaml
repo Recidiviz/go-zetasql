@@ -7512,28 +7512,6 @@
       args:
         - struct
         - int
-    - name: ResolvedNonScalarFunctionCallBase_with_group_rows_subquery
-      args:
-        - struct
-      ret:
-        - struct
-    - name: ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery
-      args:
-        - struct
-        - struct
-    - name: ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list
-      args:
-        - struct
-      ret:
-        - struct
-    - name: ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list
-      args:
-        - struct
-        - struct
-    - name: ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list
-      args:
-        - struct
-        - struct
     - name: ResolvedAggregateFunctionCall_having_modifier
       args:
         - struct
@@ -10545,19 +10523,6 @@
       args:
         - struct
         - struct
-    - name: ResolvedUpdateItem_array_update_list
-      args:
-        - struct
-      ret:
-        - struct
-    - name: ResolvedUpdateItem_set_array_update_list
-      args:
-        - struct
-        - struct
-    - name: ResolvedUpdateItem_add_array_update_list
-      args:
-        - struct
-        - struct
     - name: ResolvedUpdateItem_delete_list
       args:
         - struct
@@ -10637,24 +10602,6 @@
       args:
         - struct
         - int
-    - name: ResolvedUpdateArrayItem_offset
-      args:
-        - struct
-      ret:
-        - struct
-    - name: ResolvedUpdateArrayItem_set_offset
-      args:
-        - struct
-        - struct
-    - name: ResolvedUpdateArrayItem_update_item
-      args:
-        - struct
-      ret:
-        - struct
-    - name: ResolvedUpdateArrayItem_set_update_item
-      args:
-        - struct
-        - struct
     - name: ResolvedUpdateStmt_table_scan
       args:
         - struct

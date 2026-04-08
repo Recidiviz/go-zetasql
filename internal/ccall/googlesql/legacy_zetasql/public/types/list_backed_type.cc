@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/list_backed_type.h"
+#include "googlesql/legacy_zetasql/public/types/list_backed_type.h"
 
 #include <stack>
 #include <string>
 
-#include "zetasql/public/types/value_representations.h"
-#include "zetasql/public/value_content.h"
+#include "googlesql/legacy_zetasql/public/types/value_representations.h"
+#include "googlesql/legacy_zetasql/public/value_content.h"
 
 namespace zetasql {
 

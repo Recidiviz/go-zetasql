@@ -23,10 +23,10 @@
 #include <ostream>
 #include <string>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/string_util.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/string_util.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/mathutil.h"
+#include "googlesql/legacy_zetasql/base/mathutil.h"
 
 namespace zetasql {
 

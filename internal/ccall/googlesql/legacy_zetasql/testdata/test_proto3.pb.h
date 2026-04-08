@@ -47,9 +47,9 @@
 #include "google/protobuf/struct.pb.h"
 #include "google/protobuf/timestamp.pb.h"
 #include "google/protobuf/wrappers.pb.h"
-#include "zetasql/public/proto/type_annotation.pb.h"
-#include "zetasql/public/proto/wire_format_annotation.pb.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/type_annotation.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/wire_format_annotation.pb.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.

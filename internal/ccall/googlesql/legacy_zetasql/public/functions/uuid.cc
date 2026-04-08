@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/uuid.h"
+#include "googlesql/legacy_zetasql/public/functions/uuid.h"
 
 #include <cstdint>
 #include <string>
 
-#include "zetasql/public/uuid_value.h"
+#include "googlesql/legacy_zetasql/public/uuid_value.h"
 #include "absl/random/bit_gen_ref.h"
 #include "absl/random/distributions.h"
 #include "absl/strings/string_view.h"

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/anonymization_utils.h"
+#include "googlesql/legacy_zetasql/public/anonymization_utils.h"
 
 #include <cmath>
 #include <cstdint>
@@ -22,11 +22,11 @@
 #include <memory>
 #include <optional>
 
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/functions/differential_privacy.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_visitor.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/functions/differential_privacy.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_visitor.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -35,14 +35,14 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "algorithms/partition-selection.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 // CGO bind.cc maps `differential_privacy` for exported symbols; restore the
 // real namespace for LaplacePartitionSelection (see partition_selection.h).
 #pragma push_macro("differential_privacy")
 #undef differential_privacy
-#include "zetasql/public/differential_privacy_partition_selection.h"
+#include "googlesql/legacy_zetasql/public/differential_privacy_partition_selection.h"
 
 namespace zetasql {
 namespace anonymization {

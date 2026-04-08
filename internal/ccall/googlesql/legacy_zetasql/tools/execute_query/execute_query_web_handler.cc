@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_web_handler.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_web_handler.h"
 
 #include <algorithm>
 #include <optional>
@@ -22,13 +22,13 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/options_utils.h"
-#include "zetasql/resolved_ast/sql_builder.h"
-#include "zetasql/tools/execute_query/execute_query_tool.h"
-#include "zetasql/tools/execute_query/execute_query_web_writer.h"
-#include "zetasql/tools/execute_query/execute_query_writer.h"
-#include "zetasql/tools/execute_query/selectable_catalog.h"
-#include "zetasql/tools/execute_query/web/embedded_resources.h"
+#include "googlesql/legacy_zetasql/common/options_utils.h"
+#include "googlesql/legacy_zetasql/resolved_ast/sql_builder.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_tool.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_web_writer.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_writer.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/selectable_catalog.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/embedded_resources.h"
 #include "absl/flags/flag.h"
 #include "absl/log/log.h"
 #include "absl/status/status.h"
@@ -39,7 +39,7 @@
 #include "absl/strings/strip.h"
 #include "absl/types/span.h"
 #include "external/mstch/mstch/include/mstch/mstch.hpp"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

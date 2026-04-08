@@ -15,7 +15,7 @@
 //
 //
 
-#include "zetasql/base/net/ipaddress_oss.h"
+#include "googlesql/legacy_zetasql/base/net/ipaddress_oss.h"
 
 #include <arpa/inet.h>
 #include <net/if.h>
@@ -37,8 +37,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_replace.h"
-#include "zetasql/base/endian.h"
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/endian.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 
 namespace zetasql::internal {
 namespace {

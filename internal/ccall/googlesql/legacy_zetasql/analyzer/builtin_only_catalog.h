@@ -21,9 +21,9 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/property_graph.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/property_graph.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"

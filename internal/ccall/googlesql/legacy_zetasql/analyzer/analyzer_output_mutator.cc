@@ -15,16 +15,16 @@
 //
 
 
-#include "zetasql/analyzer/analyzer_output_mutator.h"
+#include "googlesql/legacy_zetasql/analyzer/analyzer_output_mutator.h"
 
 #include <memory>
 #include <utility>
 
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/public/analyzer_output.h"
-#include "zetasql/public/proto/logging.pb.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/proto/logging.pb.h"
 #include "absl/flags/flag.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 
 ABSL_FLAG(

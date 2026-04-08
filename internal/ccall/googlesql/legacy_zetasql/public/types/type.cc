@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -31,24 +31,24 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/map_type.h"
-#include "zetasql/public/types/measure_type.h"
-#include "zetasql/public/types/range_type.h"
-#include "zetasql/public/types/simple_type.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/public/types/type_parameters.h"
-#include "zetasql/public/value.pb.h"
-#include "zetasql/public/value_content.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/map_type.h"
+#include "googlesql/legacy_zetasql/public/types/measure_type.h"
+#include "googlesql/legacy_zetasql/public/types/range_type.h"
+#include "googlesql/legacy_zetasql/public/types/simple_type.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/public/value.pb.h"
+#include "googlesql/legacy_zetasql/public/value_content.h"
 #include "absl/base/macros.h"
 #include "absl/base/optimization.h"
 #include "absl/hash/hash.h"
@@ -59,8 +59,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/variant.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

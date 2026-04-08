@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/execute_query_prompt_testutils.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt_testutils.h"
 
 #include <algorithm>
 #include <iterator>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/tools/execute_query/execute_query_prompt.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/execute_query_prompt.h"
 #include "absl/strings/ascii.h"
 
 namespace zetasql {

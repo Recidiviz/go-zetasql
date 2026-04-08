@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/macro_catalog.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_catalog.h"
 
 #include <optional>
 #include <string>

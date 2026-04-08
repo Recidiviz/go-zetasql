@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/percentile.h"
+#include "googlesql/legacy_zetasql/public/functions/percentile.h"
 
 #include <cmath>
 #include <cstddef>
@@ -25,9 +25,9 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/string_util.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/numeric_value.h"
+#include "googlesql/legacy_zetasql/common/string_util.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/numeric_value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

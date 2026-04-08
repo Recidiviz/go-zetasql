@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/simple_evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/common/simple_evaluator_table_iterator.h"
 
 #include <algorithm>
 #include <memory>
@@ -23,15 +23,15 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/memory/memory.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/status_macros.h"
-#include "zetasql/base/clock.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/clock.h"
 
 namespace zetasql {
 namespace {

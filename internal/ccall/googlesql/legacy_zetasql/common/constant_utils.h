@@ -17,7 +17,7 @@
 #ifndef ZETASQL_COMMON_CONSTANT_UTILS_H_
 #define ZETASQL_COMMON_CONSTANT_UTILS_H_
 
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 
 namespace zetasql {
 

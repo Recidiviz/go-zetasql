@@ -49,7 +49,7 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/functions/normalize_mode.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/normalize_mode.pb.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_replace.h"
@@ -58,7 +58,7 @@
 #include "unicode/casemap.h"
 #include "unicode/uniset.h"
 #include "unicode/utypes.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

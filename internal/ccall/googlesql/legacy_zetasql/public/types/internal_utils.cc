@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/internal_utils.h"
+#include "googlesql/legacy_zetasql/public/types/internal_utils.h"
 
 #include <cstdint>
 #include <limits>
@@ -22,15 +22,15 @@
 #include <optional>
 #include <set>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/common/proto_helper.h"
-#include "zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/common/proto_helper.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace internal {

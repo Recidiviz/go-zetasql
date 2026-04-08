@@ -25,14 +25,14 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/parse_location_range.pb.h"
+#include "googlesql/legacy_zetasql/public/parse_location_range.pb.h"
 #include "absl/base/attributes.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

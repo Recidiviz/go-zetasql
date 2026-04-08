@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_TERNARY_FUNCTION_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_ANALYZER_REWRITERS_TERNARY_FUNCTION_REWRITER_EXPORT_H
 
-#include "zetasql/analyzer/rewriters/ternary_function_rewriter.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/ternary_function_rewriter.h"
 // include sources
-#include "zetasql/analyzer/rewriters/ternary_function_rewriter.cc"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/ternary_function_rewriter.cc"
 // include dependencies
 #include "go-zetasql/analyzer/rewriters/rewriter_interface/export.inc"
 #include "go-zetasql/analyzer/substitute/export.inc"

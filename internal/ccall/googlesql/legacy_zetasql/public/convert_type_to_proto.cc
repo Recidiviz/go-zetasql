@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/convert_type_to_proto.h"
+#include "googlesql/legacy_zetasql/public/convert_type_to_proto.h"
 
 #include <ctype.h>
 
@@ -25,11 +25,11 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "google/protobuf/descriptor.pb.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/public/proto/wire_format_annotation.pb.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/proto/wire_format_annotation.pb.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/container/btree_set.h"
 #include "absl/status/status.h"
 #include "absl/strings/match.h"
@@ -37,10 +37,10 @@
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/aggregate_null_handling.h"
+#include "googlesql/legacy_zetasql/common/aggregate_null_handling.h"
 
 #include "absl/container/flat_hash_set.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 
 namespace zetasql {
 using StringViewCaseHash = ::zetasql_base::StringViewCaseHash;

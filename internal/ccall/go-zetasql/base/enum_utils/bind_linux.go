@@ -36,4 +36,6 @@ package enum_utils
 #include "bridge.h"
 */
 import "C"
-import ()
+import (
+	_ "github.com/goccy/go-zetasql/internal/ccall/go-protobuf/protobuf"
+)

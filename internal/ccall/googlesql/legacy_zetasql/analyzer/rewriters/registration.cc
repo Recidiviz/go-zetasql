@@ -14,15 +14,15 @@
 // limitations under the License.
 //
 
-#include "zetasql/analyzer/rewriters/registration.h"
+#include "googlesql/legacy_zetasql/analyzer/rewriters/registration.h"
 
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "absl/container/flat_hash_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/synchronization/mutex.h"
 
 namespace zetasql {

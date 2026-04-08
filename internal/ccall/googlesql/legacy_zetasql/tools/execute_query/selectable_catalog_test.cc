@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/selectable_catalog.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/selectable_catalog.h"
 
 #include <string>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/string_view.h"

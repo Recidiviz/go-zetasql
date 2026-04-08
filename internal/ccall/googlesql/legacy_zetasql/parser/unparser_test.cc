@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/unparser.h"
+#include "googlesql/legacy_zetasql/parser/unparser.h"
 
 #include <memory>
 #include <string>
 #include <string_view>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/string_view.h"

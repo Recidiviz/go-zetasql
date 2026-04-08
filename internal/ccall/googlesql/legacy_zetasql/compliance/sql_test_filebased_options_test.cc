@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/compliance/sql_test_filebased_options.h"
+#include "googlesql/legacy_zetasql/compliance/sql_test_filebased_options.h"
 
 #include <string>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/compliance/test_driver.h"
-#include "zetasql/reference_impl/reference_driver.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/compliance/test_driver.h"
+#include "googlesql/legacy_zetasql/reference_impl/reference_driver.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/string_view.h"

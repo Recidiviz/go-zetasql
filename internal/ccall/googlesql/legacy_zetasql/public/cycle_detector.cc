@@ -14,19 +14,19 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/cycle_detector.h"
+#include "googlesql/legacy_zetasql/public/cycle_detector.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/source_location.h"
-#include "zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
 
 namespace zetasql {
 

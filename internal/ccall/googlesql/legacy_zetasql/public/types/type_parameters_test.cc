@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
 
 #include <string>
 #include <vector>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/public/functions/rounding_mode.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/type_parameters.pb.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/rounding_mode.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/type_parameters.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_cat.h"

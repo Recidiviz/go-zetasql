@@ -11,6 +11,5 @@
 // include dependencies
 #include "go-zetasql/public/type_cc_proto/export.inc"
 #include "go-zetasql/public/value_cc_proto/export.inc"
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

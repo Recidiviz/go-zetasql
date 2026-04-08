@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/public/functions/unsupported_fields.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

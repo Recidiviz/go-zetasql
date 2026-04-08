@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
 
 #include <memory>
 #include <set>
@@ -22,19 +22,19 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/function_signature_testutil.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/proto/function.pb.h"
-#include "zetasql/public/error_location.pb.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/input_argument_type.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/table_valued_function.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_deserializer.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/common/function_signature_testutil.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/public/error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/input_argument_type.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/table_valued_function.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_deserializer.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/log_severity.h"
@@ -42,7 +42,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

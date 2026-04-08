@@ -17,12 +17,12 @@
 #ifndef ZETASQL_PUBLIC_COERCER_H_
 #define ZETASQL_PUBLIC_COERCER_H_
 
-#include "zetasql/public/function.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/signature_match_result.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/signature_match_result.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/time/time.h"
 
 namespace zetasql {

@@ -17,9 +17,9 @@
 #ifndef ZETASQL_COMMON_INTERNAL_ANALYZER_OUTPUT_PROPERTIES_H_
 #define ZETASQL_COMMON_INTERNAL_ANALYZER_OUTPUT_PROPERTIES_H_
 
-#include "zetasql/public/analyzer_output_properties.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/target_syntax.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output_properties.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/resolved_ast/target_syntax.h"
 
 namespace zetasql {
 

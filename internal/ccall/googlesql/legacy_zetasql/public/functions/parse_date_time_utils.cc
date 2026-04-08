@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/parse_date_time_utils.h"
+#include "googlesql/legacy_zetasql/public/functions/parse_date_time_utils.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -22,7 +22,7 @@
 
 #include <limits>
 
-#include "zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
 #include "absl/base/optimization.h"
 #include "absl/time/time.h"
 

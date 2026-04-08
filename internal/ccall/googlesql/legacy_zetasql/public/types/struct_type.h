@@ -23,12 +23,12 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/types/list_backed_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/value_representations.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/types/list_backed_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/value_representations.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/hash/hash.h"

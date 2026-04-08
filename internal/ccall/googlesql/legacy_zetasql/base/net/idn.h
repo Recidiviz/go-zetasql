@@ -19,6 +19,6 @@
 
 #include <string>
 
-#include "zetasql/base/net/idn_oss.h"
+#include "googlesql/legacy_zetasql/base/net/idn_oss.h"
 
 #endif  // THIRD_PARTY_ZETASQL_ZETASQL_BASE_NET_IDN_H_

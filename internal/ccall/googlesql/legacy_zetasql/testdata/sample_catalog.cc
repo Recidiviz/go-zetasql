@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-#include "zetasql/testdata/sample_catalog.h"
+#include "googlesql/legacy_zetasql/testdata/sample_catalog.h"
 
-#include "zetasql/public/builtin_function_options.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/testdata/sample_catalog_impl.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/public/builtin_function_options.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/testdata/sample_catalog_impl.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 
 namespace zetasql {
 

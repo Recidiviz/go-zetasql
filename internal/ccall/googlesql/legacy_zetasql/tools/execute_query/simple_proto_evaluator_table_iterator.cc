@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/simple_proto_evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/simple_proto_evaluator_table_iterator.h"
 
 #include <string>
 
-#include "zetasql/public/type.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "absl/status/status.h"
 
 namespace zetasql {

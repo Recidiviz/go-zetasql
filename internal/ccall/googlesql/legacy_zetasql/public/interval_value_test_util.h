@@ -19,7 +19,7 @@
 
 #include <cstdint>
 
-#include "zetasql/public/interval_value.h"
+#include "googlesql/legacy_zetasql/public/interval_value.h"
 #include "gmock/gmock.h"
 #include "absl/random/distributions.h"
 #include "absl/random/random.h"

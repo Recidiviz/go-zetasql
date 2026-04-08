@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -24,23 +24,23 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/base/enum_utils.h"
-#include "zetasql/common/timer_util.h"
-#include "zetasql/parser/parser.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/analyzer_output_properties.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/proto/logging.pb.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/base/enum_utils.h"
+#include "googlesql/legacy_zetasql/common/timer_util.h"
+#include "googlesql/legacy_zetasql/parser/parser.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output_properties.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/proto/logging.pb.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
-#include "zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
 
 namespace zetasql {
 

@@ -14,18 +14,18 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/aggregate_null_handling.h"
+#include "googlesql/legacy_zetasql/common/aggregate_null_handling.h"
 
 #include <memory>
 #include <string>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/analyzer.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/analyzer_output.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/testdata/sample_catalog.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/analyzer.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/testdata/sample_catalog.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

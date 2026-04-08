@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include "zetasql/base/castops.h"
+#include "googlesql/legacy_zetasql/base/castops.h"
 
 #include <cstdint>
 #include <limits>

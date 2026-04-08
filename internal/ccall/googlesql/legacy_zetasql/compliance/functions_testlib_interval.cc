@@ -18,15 +18,15 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/compliance/functions_testlib_common.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/interval_value_test_util.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testing/test_function.h"
-#include "zetasql/testing/using_test_value.cc"  // NOLINT (build/include)
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/compliance/functions_testlib_common.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/interval_value_test_util.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testing/test_function.h"
+#include "googlesql/legacy_zetasql/testing/using_test_value.cc"  // NOLINT (build/include)
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"

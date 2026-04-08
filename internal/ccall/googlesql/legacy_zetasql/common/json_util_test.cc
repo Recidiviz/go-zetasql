@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/json_util.h"
+#include "googlesql/legacy_zetasql/common/json_util.h"
 
 #include <limits>
 #include <string>

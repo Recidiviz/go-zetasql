@@ -19,8 +19,8 @@
 
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 

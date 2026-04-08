@@ -15,12 +15,12 @@
 //
 
 // resolved_ast_deep_copy_visitor.cc GENERATED FROM resolved_ast_deep_copy_visitor.cc.template
-#include "zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
 
 #include <string>
 
 #include "absl/memory/memory.h"
-#include "zetasql/base/source_location.h"
+#include "googlesql/legacy_zetasql/base/source_location.h"
 
 namespace zetasql {
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/convert.h"
+#include "googlesql/legacy_zetasql/public/functions/convert.h"
 
 #include "absl/base/attributes.h"
 

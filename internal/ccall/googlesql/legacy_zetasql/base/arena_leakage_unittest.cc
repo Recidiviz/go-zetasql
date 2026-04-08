@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
 
 #include "gtest/gtest.h"
 

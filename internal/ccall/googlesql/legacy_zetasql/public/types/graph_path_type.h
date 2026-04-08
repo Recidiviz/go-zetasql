@@ -20,10 +20,10 @@
 #include <cstddef>
 #include <string>
 
-#include "zetasql/public/types/graph_element_type.h"
-#include "zetasql/public/types/list_backed_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/value_representations.h"
+#include "googlesql/legacy_zetasql/public/types/graph_element_type.h"
+#include "googlesql/legacy_zetasql/public/types/list_backed_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/value_representations.h"
 #include "absl/base/thread_annotations.h"
 #include "absl/hash/hash.h"
 #include "absl/status/status.h"

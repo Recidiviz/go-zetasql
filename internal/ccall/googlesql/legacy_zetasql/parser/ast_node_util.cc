@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/ast_node_util.h"
+#include "googlesql/legacy_zetasql/parser/ast_node_util.h"
 
 #include <algorithm>
 #include <stack>
 
-#include "zetasql/parser/parse_tree_visitor.h"
-#include "zetasql/parser/visit_result.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_visitor.h"
+#include "googlesql/legacy_zetasql/parser/visit_result.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

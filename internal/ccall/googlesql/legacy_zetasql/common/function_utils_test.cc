@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/function_utils.h"
+#include "googlesql/legacy_zetasql/common/function_utils.h"
 
-#include "zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

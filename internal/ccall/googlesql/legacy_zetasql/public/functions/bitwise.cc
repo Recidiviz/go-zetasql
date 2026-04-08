@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/bitwise.h"
+#include "googlesql/legacy_zetasql/public/functions/bitwise.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -23,8 +23,8 @@
 #include <cstdint>
 #include <string>
 
-#include "zetasql/base/bits.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/bits.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace functions {

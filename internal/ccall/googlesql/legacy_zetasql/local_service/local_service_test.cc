@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/local_service/local_service.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.h"
 
 #include <cstdint>
 #include <memory>
@@ -22,36 +22,36 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/path.h"
 #include "google/protobuf/wrappers.pb.h"
 #include "google/protobuf/compiler/importer.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
 #include "google/protobuf/text_format.h"
-#include "zetasql/common/status_payload_utils.h"
-#include "zetasql/common/testing/proto_matchers.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/testing/testing_proto_util.h"
-#include "zetasql/proto/function.pb.h"
-#include "zetasql/proto/simple_catalog.pb.h"
-#include "zetasql/public/formatter_options.pb.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/parse_resume_location.pb.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/simple_table.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
-#include "zetasql/public/value.pb.h"
-#include "zetasql/resolved_ast/resolved_ast.pb.h"
-#include "zetasql/testdata/test_proto3.pb.h"
-#include "zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/common/testing/proto_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/testing/testing_proto_util.h"
+#include "googlesql/legacy_zetasql/proto/function.pb.h"
+#include "googlesql/legacy_zetasql/proto/simple_catalog.pb.h"
+#include "googlesql/legacy_zetasql/public/formatter_options.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/simple_table.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/public/value.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.pb.h"
+#include "googlesql/legacy_zetasql/testdata/test_proto3.pb.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 

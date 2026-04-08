@@ -83,9 +83,9 @@
 #include <vector>
 
 #include "absl/meta/type_traits.h"
-#include "zetasql/base/logging.h"
-#include "zetasql/base/map_traits.h"
-#include "zetasql/base/no_destructor.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/map_traits.h"
+#include "googlesql/legacy_zetasql/base/no_destructor.h"
 
 namespace zetasql_base {
 

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/macros/macro_expander.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_expander.h"
 
 #include <algorithm>
 #include <cctype>
@@ -27,25 +27,25 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/arena.h"
-#include "zetasql/base/arena_allocator.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/parser/macros/diagnostic.h"
-#include "zetasql/parser/macros/macro_catalog.h"
-#include "zetasql/parser/macros/quoting.h"
-#include "zetasql/parser/macros/standalone_macro_expansion.h"
-#include "zetasql/parser/macros/token_provider_base.h"
-#include "zetasql/parser/macros/token_splicing_utils.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/parser/token_with_location.h"
-#include "zetasql/proto/internal_error_location.pb.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/arena.h"
+#include "googlesql/legacy_zetasql/base/arena_allocator.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/parser/macros/diagnostic.h"
+#include "googlesql/legacy_zetasql/parser/macros/macro_catalog.h"
+#include "googlesql/legacy_zetasql/parser/macros/quoting.h"
+#include "googlesql/legacy_zetasql/parser/macros/standalone_macro_expansion.h"
+#include "googlesql/legacy_zetasql/parser/macros/token_provider_base.h"
+#include "googlesql/legacy_zetasql/parser/macros/token_splicing_utils.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/parser/token_with_location.h"
+#include "googlesql/legacy_zetasql/proto/internal_error_location.pb.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 #include "absl/base/nullability.h"
 #include "absl/container/btree_map.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -54,8 +54,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 namespace parser {

@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/associative_view_internal.h"
+#include "googlesql/legacy_zetasql/base/associative_view_internal.h"
 
 #include <map>
 #include <set>

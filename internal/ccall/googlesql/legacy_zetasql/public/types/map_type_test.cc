@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/types/map_type.h"
+#include "googlesql/legacy_zetasql/public/types/map_type.h"
 
 #include <initializer_list>
 #include <memory>
@@ -23,24 +23,24 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"  
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type_parameters.pb.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/array_type.h"
-#include "zetasql/public/types/collation.h"
-#include "zetasql/public/types/enum_type.h"
-#include "zetasql/public/types/proto_type.h"
-#include "zetasql/public/types/range_type.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/public/types/struct_type.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/types/type_modifiers.h"
-#include "zetasql/public/value.h"
-#include "zetasql/testdata/test_schema.pb.h"
-#include "zetasql/testing/test_value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"  
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type_parameters.pb.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/array_type.h"
+#include "googlesql/legacy_zetasql/public/types/collation.h"
+#include "googlesql/legacy_zetasql/public/types/enum_type.h"
+#include "googlesql/legacy_zetasql/public/types/proto_type.h"
+#include "googlesql/legacy_zetasql/public/types/range_type.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/public/types/struct_type.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/types/type_modifiers.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/testdata/test_schema.pb.h"
+#include "googlesql/legacy_zetasql/testing/test_value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"

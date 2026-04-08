@@ -18,7 +18,7 @@
 // This file contains string processing functions related to
 // uppercase, lowercase, etc.
 
-#include "zetasql/base/case.h"
+#include "googlesql/legacy_zetasql/base/case.h"
 
 #include <string>
 

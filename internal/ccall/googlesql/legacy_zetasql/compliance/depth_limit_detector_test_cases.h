@@ -25,7 +25,7 @@
 #include <tuple>
 #include <vector>
 
-#include "zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
 #include "absl/base/attributes.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/functional/function_ref.h"

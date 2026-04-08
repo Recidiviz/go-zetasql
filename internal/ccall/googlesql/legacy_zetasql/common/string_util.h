@@ -20,9 +20,9 @@
 #include <cmath>
 #include <string>
 
-#include "zetasql/common/canonicalize_signed_zero_to_string.h"
+#include "googlesql/legacy_zetasql/common/canonicalize_signed_zero_to_string.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/string_numbers.h"
+#include "googlesql/legacy_zetasql/base/string_numbers.h"
 
 namespace zetasql {
 

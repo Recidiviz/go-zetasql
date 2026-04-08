@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-#include "zetasql/local_service/local_service_grpc.h"
+#include "googlesql/legacy_zetasql/local_service/local_service_grpc.h"
 
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace local_service {

@@ -25,17 +25,17 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/local_service/local_service.pb.h"
-#include "zetasql/local_service/state.h"
-#include "zetasql/proto/options.pb.h"
-#include "zetasql/public/analyzer.h"
-#include "zetasql/public/evaluator.h"
-#include "zetasql/public/parse_resume_location.h"
-#include "zetasql/public/parse_resume_location.pb.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/simple_table.pb.h"
+#include "googlesql/legacy_zetasql/local_service/local_service.pb.h"
+#include "googlesql/legacy_zetasql/local_service/state.h"
+#include "googlesql/legacy_zetasql/proto/options.pb.h"
+#include "googlesql/legacy_zetasql/public/analyzer.h"
+#include "googlesql/legacy_zetasql/public/evaluator.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.h"
+#include "googlesql/legacy_zetasql/public/parse_resume_location.pb.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/simple_table.pb.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 namespace local_service {

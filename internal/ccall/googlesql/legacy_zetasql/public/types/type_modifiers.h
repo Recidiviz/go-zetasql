@@ -20,9 +20,9 @@
 #include <string>
 #include <utility>
 
-#include "zetasql/public/type_modifiers.pb.h"
-#include "zetasql/public/types/collation.h"
-#include "zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/public/type_modifiers.pb.h"
+#include "googlesql/legacy_zetasql/public/types/collation.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
 namespace zetasql {
 
 // This class wraps all modifiers following the type name in a type string, e.g.

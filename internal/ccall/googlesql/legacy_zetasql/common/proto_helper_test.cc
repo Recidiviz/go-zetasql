@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/proto_helper.h"
+#include "googlesql/legacy_zetasql/common/proto_helper.h"
 
 #include <cstdint>
 #include <memory>
@@ -22,12 +22,12 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/path.h"
+#include "googlesql/legacy_zetasql/base/path.h"
 #include "google/protobuf/compiler/importer.h"
 #include "google/protobuf/descriptor.pb.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/common/testing/testing_proto_util.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/common/testing/testing_proto_util.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/memory/memory.h"

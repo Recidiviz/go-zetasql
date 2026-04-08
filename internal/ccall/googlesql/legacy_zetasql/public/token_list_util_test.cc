@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/token_list_util.h"
+#include "googlesql/legacy_zetasql/public/token_list_util.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/type.pb.h"
-#include "zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/type.pb.h"
+#include "googlesql/legacy_zetasql/public/value.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 

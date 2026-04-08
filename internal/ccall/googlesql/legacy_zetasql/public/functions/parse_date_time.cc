@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/parse_date_time.h"
+#include "googlesql/legacy_zetasql/public/functions/parse_date_time.h"
 
 #include <string.h>
 #include <time.h>
@@ -26,16 +26,16 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/public/civil_time.h"
-#include "zetasql/public/functions/date_time_util.h"
-#include "zetasql/public/functions/date_time_util_internal.h"
-#include "zetasql/public/functions/datetime.pb.h"
-#include "zetasql/public/functions/parse_date_time_utils.h"
-#include "zetasql/public/pico_time.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/public/types/timestamp_util.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/civil_time.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util.h"
+#include "googlesql/legacy_zetasql/public/functions/date_time_util_internal.h"
+#include "googlesql/legacy_zetasql/public/functions/datetime.pb.h"
+#include "googlesql/legacy_zetasql/public/functions/parse_date_time_utils.h"
+#include "googlesql/legacy_zetasql/public/pico_time.h"
+#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/legacy_zetasql/public/types/timestamp_util.h"
 #include "absl/status/status.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
@@ -43,8 +43,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/time/civil_time.h"
 #include "absl/time/time.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 // This ParseTime() code was initially copied from base/time/format.cc.
 // It has been modified to provide ZetaSQL defined behavior for

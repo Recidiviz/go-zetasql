@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/comparison.h"
+#include "googlesql/legacy_zetasql/public/functions/comparison.h"
 
 #include <algorithm>
 #include <cstdint>

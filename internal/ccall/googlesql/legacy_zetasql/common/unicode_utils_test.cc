@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/unicode_utils.h"
+#include "googlesql/legacy_zetasql/common/unicode_utils.h"
 
 #include <cstdint>
 #include <string>

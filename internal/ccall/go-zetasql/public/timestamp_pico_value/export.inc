@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TIMESTAMP_PICO_VALUE_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PUBLIC_TIMESTAMP_PICO_VALUE_EXPORT_H
 
-#include "zetasql/public/timestamp_pico_value.h"
+#include "googlesql/legacy_zetasql/public/timestamp_pico_value.h"
 // include sources
-#include "zetasql/public/timestamp_pico_value.cc"
+#include "googlesql/legacy_zetasql/public/timestamp_pico_value.cc"
 // include dependencies
 #include "go-zetasql/base/check/export.inc"
 #include "go-zetasql/base/endian/export.inc"

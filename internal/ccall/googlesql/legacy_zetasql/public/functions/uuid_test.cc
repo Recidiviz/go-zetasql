@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/functions/uuid.h"
+#include "googlesql/legacy_zetasql/public/functions/uuid.h"
 
 #include <cstdint>
 #include <string>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/random/mock_distributions.h"

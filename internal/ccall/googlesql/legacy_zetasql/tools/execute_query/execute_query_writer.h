@@ -21,8 +21,8 @@
 #include <memory>
 #include <ostream>
 
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 

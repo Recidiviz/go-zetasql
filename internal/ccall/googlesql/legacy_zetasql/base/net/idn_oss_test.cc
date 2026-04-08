@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/net/idn_oss.h"
+#include "googlesql/legacy_zetasql/base/net/idn_oss.h"
 
 #include <string>
 

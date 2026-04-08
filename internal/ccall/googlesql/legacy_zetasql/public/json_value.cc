@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/json_value.h"
+#include "googlesql/legacy_zetasql/public/json_value.h"
 
 #define JSON_NOEXCEPTION
 #define JSON_THROW_USER(exception) ABSL_LOG(FATAL) << (exception).what();
@@ -34,8 +34,8 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/public/numeric_parser.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/public/numeric_parser.h"
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -44,10 +44,10 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "single_include/nlohmann/json.hpp"
-#include "zetasql/base/map_util.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_builder.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/map_util.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_builder.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

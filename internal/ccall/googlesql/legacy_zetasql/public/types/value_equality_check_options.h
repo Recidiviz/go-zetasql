@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/common/float_margin.h"
+#include "googlesql/legacy_zetasql/common/float_margin.h"
 
 namespace zetasql {
 

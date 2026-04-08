@@ -5,6 +5,5 @@
 // include sources
 #include "googlesql/public/functions/bitwise_agg_mode.pb.cc"
 // include dependencies
-#include "go-protobuf/protobuf/export.inc"
 
 #endif

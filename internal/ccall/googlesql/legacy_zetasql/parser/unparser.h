@@ -19,10 +19,10 @@
 
 #include <string>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parse_tree_visitor.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/common/thread_stack.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree_visitor.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 

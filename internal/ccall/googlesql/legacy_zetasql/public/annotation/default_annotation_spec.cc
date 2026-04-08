@@ -14,19 +14,19 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/annotation/default_annotation_spec.h"
+#include "googlesql/legacy_zetasql/public/annotation/default_annotation_spec.h"
 
 #include <string>
 #include <vector>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/public/types/annotation.h"
-#include "zetasql/public/types/simple_value.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/public/types/annotation.h"
+#include "googlesql/legacy_zetasql/public/types/simple_value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

@@ -29,7 +29,7 @@
 #include "absl/base/optimization.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/requires.h"
+#include "googlesql/legacy_zetasql/base/requires.h"
 
 namespace zetasql_base {
 

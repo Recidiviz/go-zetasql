@@ -16,7 +16,7 @@
 
 // Test repetitive queries and bisect to find limits of engine behaviour
 
-#include "zetasql/compliance/depth_limit_detector_test_cases.h"
+#include "googlesql/legacy_zetasql/compliance/depth_limit_detector_test_cases.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -31,14 +31,14 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/compliance/depth_limit_detector_internal.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/compliance/depth_limit_detector_internal.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
 #include "gtest/gtest.h"
 #include "absl/flags/flag.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/functional/function_ref.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/log/log.h"
 #include "absl/time/clock.h"
 #include "absl/time/time.h"

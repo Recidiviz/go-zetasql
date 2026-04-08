@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/simple_catalog_util.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog_util.h"
 
 #include <memory>
 #include <optional>
@@ -22,28 +22,28 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/internal_property_graph.h"
-#include "zetasql/public/analyzer.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/analyzer_output.h"
-#include "zetasql/public/catalog.h"
-#include "zetasql/public/function.h"
-#include "zetasql/public/function.pb.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/property_graph.h"
-#include "zetasql/public/simple_catalog.h"
-#include "zetasql/public/simple_property_graph.h"
-#include "zetasql/public/sql_constant.h"
-#include "zetasql/public/sql_function.h"
-#include "zetasql/public/sql_tvf.h"
-#include "zetasql/public/sql_view.h"
-#include "zetasql/public/table_valued_function.h"
-#include "zetasql/public/templated_sql_function.h"
-#include "zetasql/public/templated_sql_tvf.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_enums.pb.h"
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/legacy_zetasql/common/internal_property_graph.h"
+#include "googlesql/legacy_zetasql/public/analyzer.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/analyzer_output.h"
+#include "googlesql/legacy_zetasql/public/catalog.h"
+#include "googlesql/legacy_zetasql/public/function.h"
+#include "googlesql/legacy_zetasql/public/function.pb.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/property_graph.h"
+#include "googlesql/legacy_zetasql/public/simple_catalog.h"
+#include "googlesql/legacy_zetasql/public/simple_property_graph.h"
+#include "googlesql/legacy_zetasql/public/sql_constant.h"
+#include "googlesql/legacy_zetasql/public/sql_function.h"
+#include "googlesql/legacy_zetasql/public/sql_tvf.h"
+#include "googlesql/legacy_zetasql/public/sql_view.h"
+#include "googlesql/legacy_zetasql/public/table_valued_function.h"
+#include "googlesql/legacy_zetasql/public/templated_sql_function.h"
+#include "googlesql/legacy_zetasql/public/templated_sql_tvf.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast_enums.pb.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_node_kind.pb.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
@@ -52,8 +52,8 @@
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql {
 

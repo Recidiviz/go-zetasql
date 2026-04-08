@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_ZETASQL_PARSER_TOKEN_DISAMBIGUATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_ZETASQL_PARSER_TOKEN_DISAMBIGUATOR_EXPORT_H
 
-#include "zetasql/parser/token_disambiguator.h"
+#include "googlesql/legacy_zetasql/parser/token_disambiguator.h"
 // include sources
-#include "zetasql/parser/token_disambiguator.cc"
+#include "googlesql/legacy_zetasql/parser/token_disambiguator.cc"
 // include dependencies
 #include "go-zetasql/parser/bison_parser_mode/export.inc"
 #include "go-zetasql/parser/bison_token_codes/export.inc"

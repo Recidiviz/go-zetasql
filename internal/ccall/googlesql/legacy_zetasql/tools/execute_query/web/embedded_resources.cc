@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/tools/execute_query/web/embedded_resources.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/embedded_resources.h"
 
 #include <string>
 
-#include "zetasql/tools/execute_query/web/page_body.html.h"
-#include "zetasql/tools/execute_query/web/page_template.html.h"
-#include "zetasql/tools/execute_query/web/style.css.h"
-#include "zetasql/tools/execute_query/web/table.html.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/page_body.html.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/page_template.html.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/style.css.h"
+#include "googlesql/legacy_zetasql/tools/execute_query/web/table.html.h"
 
 namespace zetasql {
 

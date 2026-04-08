@@ -53,11 +53,11 @@
 #include <type_traits>
 
 #include "google/protobuf/descriptor.h"
-#include "zetasql/common/status_payload_utils.h"
+#include "googlesql/legacy_zetasql/common/status_payload_utils.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 
 namespace zetasql {
 namespace testing {

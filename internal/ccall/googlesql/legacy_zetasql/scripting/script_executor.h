@@ -26,31 +26,31 @@
 #include <variant>
 #include <vector>
 
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/public/analyzer.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/error_helpers.h"
-#include "zetasql/public/evaluator.h"
-#include "zetasql/public/evaluator_table_iterator.h"
-#include "zetasql/public/function_signature.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/language_options.h"
-#include "zetasql/public/options.pb.h"
-#include "zetasql/public/type.h"
-#include "zetasql/public/types/type_parameters.h"
-#include "zetasql/scripting/control_flow_graph.h"
-#include "zetasql/scripting/parsed_script.h"
-#include "zetasql/scripting/procedure_extension.pb.h"
-#include "zetasql/scripting/script_executor_state.pb.h"
-#include "zetasql/scripting/script_segment.h"
-#include "zetasql/scripting/stack_frame.h"
-#include "zetasql/scripting/type_aliases.h"
+#include "googlesql/legacy_zetasql/parser/parse_tree.h"
+#include "googlesql/legacy_zetasql/public/analyzer.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/error_helpers.h"
+#include "googlesql/legacy_zetasql/public/evaluator.h"
+#include "googlesql/legacy_zetasql/public/evaluator_table_iterator.h"
+#include "googlesql/legacy_zetasql/public/function_signature.h"
+#include "googlesql/legacy_zetasql/public/id_string.h"
+#include "googlesql/legacy_zetasql/public/language_options.h"
+#include "googlesql/legacy_zetasql/public/options.pb.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_parameters.h"
+#include "googlesql/legacy_zetasql/scripting/control_flow_graph.h"
+#include "googlesql/legacy_zetasql/scripting/parsed_script.h"
+#include "googlesql/legacy_zetasql/scripting/procedure_extension.pb.h"
+#include "googlesql/legacy_zetasql/scripting/script_executor_state.pb.h"
+#include "googlesql/legacy_zetasql/scripting/script_segment.h"
+#include "googlesql/legacy_zetasql/scripting/stack_frame.h"
+#include "googlesql/legacy_zetasql/scripting/type_aliases.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
-#include "zetasql/base/status.h"
+#include "googlesql/legacy_zetasql/base/status.h"
 
 namespace zetasql {
 
@@ -357,7 +357,7 @@ class ScriptExecutor {
 // It is suggested that evaluators convert analyzer errors specific to the
 // statement/expression into script-relative positions by using the following
 // pattern:
-//   #include "zetasql/scripting/error_helpers.h"
+//   #include "googlesql/legacy_zetasql/scripting/error_helpers.h"
 //   ...
 //
 //   ZETASQL_RETURN_IF_ERROR(AnalyzeStatement(...))

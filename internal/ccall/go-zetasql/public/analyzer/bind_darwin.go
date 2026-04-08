@@ -1633,61 +1633,6 @@ func analyzer_ResolvedNonScalarFunctionCallBase_set_null_handling_modifier(arg0 
 	C.export_googlesql_public_analyzer_ResolvedNonScalarFunctionCallBase_set_null_handling_modifier(arg0, arg1)
 }
 
-func ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	analyzer_ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedNonScalarFunctionCallBase_with_group_rows_subquery(arg0, arg1)
-}
-
-func ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedNonScalarFunctionCallBase_set_with_group_rows_subquery(arg0, arg1)
-}
-
-func ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	analyzer_ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedNonScalarFunctionCallBase_with_group_rows_parameter_list(arg0, arg1)
-}
-
-func ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedNonScalarFunctionCallBase_set_with_group_rows_parameter_list(arg0, arg1)
-}
-
-func ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedNonScalarFunctionCallBase_add_with_group_rows_parameter_list(arg0, arg1)
-}
-
 func ResolvedAggregateFunctionCall_having_modifier(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	analyzer_ResolvedAggregateFunctionCall_having_modifier(
 		arg0,
@@ -9168,39 +9113,6 @@ func analyzer_ResolvedUpdateItem_set_element_column(arg0 unsafe.Pointer, arg1 un
 	C.export_googlesql_public_analyzer_ResolvedUpdateItem_set_element_column(arg0, arg1)
 }
 
-func ResolvedUpdateItem_array_update_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	analyzer_ResolvedUpdateItem_array_update_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedUpdateItem_array_update_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedUpdateItem_array_update_list(arg0, arg1)
-}
-
-func ResolvedUpdateItem_set_array_update_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedUpdateItem_set_array_update_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedUpdateItem_set_array_update_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedUpdateItem_set_array_update_list(arg0, arg1)
-}
-
-func ResolvedUpdateItem_add_array_update_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedUpdateItem_add_array_update_list(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedUpdateItem_add_array_update_list(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedUpdateItem_add_array_update_list(arg0, arg1)
-}
-
 func ResolvedUpdateItem_delete_list(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
 	analyzer_ResolvedUpdateItem_delete_list(
 		arg0,
@@ -9397,50 +9309,6 @@ func ResolvedUpdateItemElement_set_update_item_mode(arg0 unsafe.Pointer, arg1 in
 
 func analyzer_ResolvedUpdateItemElement_set_update_item_mode(arg0 unsafe.Pointer, arg1 C.int) {
 	C.export_googlesql_public_analyzer_ResolvedUpdateItemElement_set_update_item_mode(arg0, arg1)
-}
-
-func ResolvedUpdateArrayItem_offset(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	analyzer_ResolvedUpdateArrayItem_offset(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedUpdateArrayItem_offset(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedUpdateArrayItem_offset(arg0, arg1)
-}
-
-func ResolvedUpdateArrayItem_set_offset(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedUpdateArrayItem_set_offset(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedUpdateArrayItem_set_offset(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedUpdateArrayItem_set_offset(arg0, arg1)
-}
-
-func ResolvedUpdateArrayItem_update_item(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	analyzer_ResolvedUpdateArrayItem_update_item(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedUpdateArrayItem_update_item(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedUpdateArrayItem_update_item(arg0, arg1)
-}
-
-func ResolvedUpdateArrayItem_set_update_item(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	analyzer_ResolvedUpdateArrayItem_set_update_item(
-		arg0,
-		arg1,
-	)
-}
-
-func analyzer_ResolvedUpdateArrayItem_set_update_item(arg0 unsafe.Pointer, arg1 unsafe.Pointer) {
-	C.export_googlesql_public_analyzer_ResolvedUpdateArrayItem_set_update_item(arg0, arg1)
 }
 
 func ResolvedUpdateStmt_table_scan(arg0 unsafe.Pointer, arg1 *unsafe.Pointer) {

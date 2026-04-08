@@ -14,22 +14,22 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/nfa_builder.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_builder.h"
 
 #include <memory>
 #include <string>
 #include <variant>
 #include <vector>
 
-#include "zetasql/common/match_recognize/nfa.h"
-#include "zetasql/common/match_recognize/nfa_matchers.h"
-#include "zetasql/common/match_recognize/test_pattern_resolver.h"
-#include "zetasql/base/testing/status_matchers.h"
-#include "zetasql/public/analyzer_options.h"
-#include "zetasql/public/types/type.h"
-#include "zetasql/public/types/type_factory.h"
-#include "zetasql/public/value.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa_matchers.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/test_pattern_resolver.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/public/analyzer_options.h"
+#include "googlesql/legacy_zetasql/public/types/type.h"
+#include "googlesql/legacy_zetasql/public/types/type_factory.h"
+#include "googlesql/legacy_zetasql/public/value.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_ast.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"

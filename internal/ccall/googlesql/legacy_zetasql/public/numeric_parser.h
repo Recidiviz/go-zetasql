@@ -19,8 +19,8 @@
 
 #include <cstdint>
 
-#include "zetasql/common/multiprecision_int.h"
-#include "zetasql/public/numeric_constants.h"
+#include "googlesql/legacy_zetasql/common/multiprecision_int.h"
+#include "googlesql/legacy_zetasql/public/numeric_constants.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 

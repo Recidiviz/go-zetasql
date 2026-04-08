@@ -14,21 +14,21 @@
 // limitations under the License.
 //
 
-#include "zetasql/common/match_recognize/epsilon_remover.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/epsilon_remover.h"
 
 #include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
 
-#include "zetasql/common/match_recognize/nfa.h"
+#include "googlesql/legacy_zetasql/common/match_recognize/nfa.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 namespace zetasql::functions::match_recognize {
 

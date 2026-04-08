@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#include "zetasql/base/optional_ref.h"
+#include "googlesql/legacy_zetasql/base/optional_ref.h"
 
 #include <cstddef>
 #include <memory>
@@ -23,11 +23,11 @@
 #include <string_view>
 #include <type_traits>
 
-#include "zetasql/base/logging.h"
+#include "googlesql/legacy_zetasql/base/logging.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/strings/str_cat.h"
-#include "zetasql/base/optional_ref_matchers.h"
+#include "googlesql/legacy_zetasql/base/optional_ref_matchers.h"
 
 namespace zetasql_base {
 namespace {

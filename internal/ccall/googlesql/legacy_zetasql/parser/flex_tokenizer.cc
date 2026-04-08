@@ -14,23 +14,23 @@
 // limitations under the License.
 //
 
-#include "zetasql/parser/flex_tokenizer.h"
+#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
 
 #include <ios>
 #include <memory>
 
-#include "zetasql/common/errors.h"
-#include "zetasql/parser/flex_istream.h"
-#include "zetasql/parser/tm_lexer.h"
-#include "zetasql/parser/tm_token.h"
-#include "zetasql/public/parse_location.h"
+#include "googlesql/legacy_zetasql/common/errors.h"
+#include "googlesql/legacy_zetasql/parser/flex_istream.h"
+#include "googlesql/legacy_zetasql/parser/tm_lexer.h"
+#include "googlesql/legacy_zetasql/parser/tm_token.h"
+#include "googlesql/legacy_zetasql/public/parse_location.h"
 #include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
-#include "zetasql/base/check.h"
+#include "googlesql/legacy_zetasql/base/check.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/legacy_zetasql/base/ret_check.h"
+#include "googlesql/legacy_zetasql/base/status_macros.h"
 
 // TODO: Remove flag when references are gone.
 // Parser CGO also amalgamates this file; define flags only once (root analyzer

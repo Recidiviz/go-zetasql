@@ -14,14 +14,14 @@
 // limitations under the License.
 //
 
-#include "zetasql/public/timestamp_pico_value.h"
+#include "googlesql/legacy_zetasql/public/timestamp_pico_value.h"
 
 #include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-#include "zetasql/base/testing/status_matchers.h"
+#include "googlesql/legacy_zetasql/base/testing/status_matchers.h"
 #include "gtest/gtest.h"
 #include "absl/status/status.h"
 #include "absl/time/time.h"

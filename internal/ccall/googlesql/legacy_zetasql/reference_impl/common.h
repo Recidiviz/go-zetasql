@@ -21,9 +21,9 @@
 #include <string>
 #include <vector>
 
-#include "zetasql/public/collator.h"
-#include "zetasql/public/type.h"
-#include "zetasql/resolved_ast/resolved_collation.h"
+#include "googlesql/legacy_zetasql/public/collator.h"
+#include "googlesql/legacy_zetasql/public/type.h"
+#include "googlesql/legacy_zetasql/resolved_ast/resolved_collation.h"
 #include "absl/status/statusor.h"
 #include "absl/types/span.h"
 
