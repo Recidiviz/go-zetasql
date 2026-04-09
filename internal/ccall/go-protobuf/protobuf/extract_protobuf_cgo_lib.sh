@@ -5,6 +5,10 @@
 # lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a. Abseil objects are required: protobuf
 # .pic.o reference absl:: symbols that would otherwise stay undefined at link time.
 #
+# Version note: this uses MODULE.bazel's `protobuf` (e.g. 29.x). Vendored internal/ccall/protobuf and
+# generated googlesql *.pb.h target ~4.23.x. Tier-B links that compile amalgamation against the vendor
+# tree need the same protobuf C++ ABI as this archive — see bind_tier_b.go and docs/protobuf-vendoring.md.
+#
 # Runs on Linux and macOS when bazelisk/bazel is installed. Default CGO bindings still compile
 # protobuf via amalgamation (export.inc); this archive is for experiments or a future Tier-B
 # path. See docs/protobuf-vendoring.md ("Single-owner protobuf") and
@@ -49,9 +53,12 @@ collect_protobuf_pic_o() {
 }
 # Bazel also builds per-target *_proto dirs (e.g. timestamp_proto) that duplicate cmake_wkt_cc_proto
 # objects — keep only cmake_wkt_cc_proto to avoid duplicate symbols at link time.
+# Exclude Abseil test-only objects (e.g. status_matchers) that reference gtest — otherwise
+# `-Wl,--whole-archive -lprotobuf_cgo` pulls them in and the link requires libgtest.
 OBJS=$(
   collect_protobuf_pic_o \
     | grep -Ev 'test|unittest|benchmark' \
+    | grep -Ev 'status_matchers|gmock|gtest|googletest|googlemock' \
     | grep -Ev '/_objs/(timestamp|duration|any|wrappers|struct|empty|field_mask|source_context|type|api)_proto/' \
     | sort -u || true
 )
