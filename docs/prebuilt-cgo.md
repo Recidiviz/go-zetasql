@@ -2,6 +2,20 @@
 
 This document describes the **optional Tier B** path: link a **Bazel-built** `libprotobuf_cgo.a` instead of compiling protobuf via the amalgamation (`export.inc`) in [`internal/ccall/go-protobuf/protobuf`](../internal/ccall/go-protobuf/protobuf). It complements [`tier-b-absl-protobuf.md`](tier-b-absl-protobuf.md) and [`protobuf-vendoring.md`](protobuf-vendoring.md) (*Single-owner protobuf*).
 
+## Default tags when prebuilts are present
+
+| Goal | Tags | Preconditions |
+|------|------|----------------|
+| **Tier B protobuf (this doc)** | `-tags googlesql,googlesql_tier_b` | `libprotobuf_cgo.a` for your `GOOS_GOARCH` under `internal/ccall/go-protobuf/protobuf/lib/` |
+| **Tier B Abseil (pilot)** | `-tags googlesql,googlesql_tier_b_absl` | `libabsl_cgo.a` under `internal/ccall/go-absl/lib/` — **not** combined with `googlesql_tier_b` |
+| **Unified prebuilt** | `-tags googlesql,googlesql_unified_prebuilt` | `libgooglesql.a` per [`libgooglesql-unified.md`](libgooglesql-unified.md) |
+
+Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Makefile`](../Makefile) `CGO_CXXFLAGS_TIER_B` for `local/test-prebuilt`) so the C++ standard library matches the Bazel-built archive.
+
+**Without prebuilts / first-time setup:** run `make prebuilt-libs` (requires Bazelisk, populated submodule, and time for a cold Bazel build—often tens of minutes). Alternatively download a **release tarball** (below) and extract into the repo root. Full native pipeline: [`native-build-pipeline.md`](native-build-pipeline.md).
+
+**Amalgamation (non–Tier B):** the **default** `go test` / `go build` path for protobuf uses amalgamation via `bind_linux.go` / `bind_darwin.go` when **`googlesql_tier_b` is omitted**—that is the long-supported CI path; Tier B is an explicit opt-in.
+
 ## When to use it
 
 - You want **incremental native work** to live in **Bazel + `ar` archives** under `internal/ccall/go-protobuf/protobuf/lib/`, with Go doing **link-only** for the protobuf shard (`bind_tier_b.go`).
@@ -176,6 +190,45 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 3. Run **`make prebuilt-libs`** (or copy the resulting `lib/` tree) in the **go-googlesql** checkout that `replace` points to—downstream does **not** build `libprotobuf_cgo.a` for you.
 4. Align **`CGO_CFLAGS`**, **`CGO_LDFLAGS`**, and **`CGO_LDFLAGS_ALLOW`** with this repo’s [`Makefile`](../Makefile) when running `go test` / `go build` outside Make.
 
+### Phase 5 checklist (dependent repos)
+
+Use this when aligning **go-googlesqlite**, **bigquery-emulator**, or **bigquery-emulator-ui** with the Tier B contract:
+
+- [ ] Bump / pin the `go-googlesql` module to a version that matches your **release prebuilts** or source tree.
+- [ ] Mirror **build tags** and **`CGO_CXXFLAGS`** / **`CGO_LDFLAGS`** / **`CGO_LDFLAGS_ALLOW`** with this repo’s Tier B defaults.
+- [ ] Add CI that either runs **`make prebuilt-libs`** (Bazel available) or **downloads and extracts** the matching `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` before `go test`.
+- [ ] Document **sqlite- or product-specific** caveats (linker, single archive owner) in the downstream README and link here—avoid duplicating the full pipeline; open issues only for **gaps** (extra platform, etc.).
+- [ ] For user-visible native contract changes, add **release notes** pointing at this repository’s tag and [`CHANGELOG.md`](../CHANGELOG.md).
+
+## Release tarballs (`linux_amd64`)
+
+Tagged releases can ship a **protobuf Tier B** archive alongside the module (not imported via `go get`):
+
+- **Asset name:** `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` (e.g. `<tag>` = `v1.2.3`)
+- **Checksums:** `SHA256SUMS` on the same [GitHub Release](https://github.com/vantaboard/go-googlesql/releases)
+- **Workflow:** [`.github/workflows/release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml) (runs on `push` of `v*` tags)
+
+**Install:**
+
+```bash
+# From repo root after verifying SHA256SUMS
+tar -xzf go-googlesql-prebuilts-protobuf-linux_amd64-vX.Y.Z.tar.gz
+make verify-prebuilt-protobuf
+make local/test-prebuilt TESTPKG=./internal/ccall/go-protobuf/protobuf/
+```
+
+The tarball contains `internal/ccall/go-protobuf/protobuf/lib/` with the same layout as `make prebuilt-libs`.
+
+## Versioning (tarball ↔ git ↔ module)
+
+| Artifact | Maps to |
+|----------|---------|
+| Release filename `...-<tag>.tar.gz` | Git tag `tag` (e.g. `v1.2.3`) |
+| Go module version | `go.mod` / `github.com/vantaboard/go-googlesql` **semver** matching the tag you depend on in `require` |
+| Prebuilt archive bytes | Built from that tag’s tree; **verify** `SHA256SUMS` when downloading |
+
+Downstream apps should pin the **same** module version and unpack the matching release asset (or rebuild with `make prebuilt-libs` on that checkout).
+
 ## Artifact matrix (CI vs local)
 
 | Context | Prebuilt `libprotobuf_cgo.a` | Tags |
@@ -183,9 +236,21 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 | Default **GitHub Actions** ([`go.yml`](../.github/workflows/go.yml)) | Not used; compile amalgamation | `googlesql` (implicit via build) |
 | **Manual Tier B workflow** ([`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml)) | Built on the runner with Bazel, then `make local/test-prebuilt` | `googlesql,googlesql_tier_b` |
 | **Manual Abseil Tier B** ([`go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml)) | Builds `libabsl_cgo.a`, then `make local/test-prebuilt-absl` | `googlesql,googlesql_tier_b_absl` |
+| **Consumer gate (no Bazel)** ([`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml)) | Artifact from producer job; extract then test | `googlesql,googlesql_tier_b` |
+| **GitHub Release** ([`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml)) | Published tarball per `v*` tag | N/A (download + extract) |
 | **Local dev** | Run `make prebuilt-libs` / `make prebuilt-libs-absl` per `GOOS_GOARCH` when experimenting | choose default or Tier B tags |
 
-Published binary releases of `.a` files are **not** part of the module; archives stay gitignored and are produced on demand.
+Static `.a` files remain **gitignored**; published **tarballs** are optional release assets, not part of the Go module zip.
+
+## Troubleshooting
+
+| Symptom | What to check |
+|---------|----------------|
+| `prebuilt protobuf archive not found` | Run `make prebuilt-libs` or extract release tarball so `internal/ccall/go-protobuf/protobuf/lib/<GOOS_GOARCH>/libprotobuf_cgo.a` exists. |
+| Wrong architecture | Archive is built for the machine that ran Bazel (`go env GOOS GOARCH`). Do not use a `linux_amd64` `.a` on `darwin_arm64`. |
+| Link errors after enabling both Tier B tags | `googlesql_tier_b` and `googlesql_tier_b_absl` must not be combined without [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). |
+| Undefined `std::__1::` vs `std::__cxx11::` | Set `CGO_CXXFLAGS=-stdlib=libc++` for Tier B protobuf (Bazel uses libc++). |
+| Drift between Bazel protobuf and vendored headers | Run `make verify-protobuf-tier-b-alignment`; follow alignment steps in **Protobuf version / codegen alignment** above. |
 
 ## Related files
 

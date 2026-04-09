@@ -32,9 +32,9 @@ jobs:
         with:
           path: |
             ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-tier-b-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock') }}
+          key: ${{ runner.os }}-bazel-googlesql-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock', 'internal/cmd/updater/googlesql/.bazelversion') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-tier-b-
+            ${{ runner.os }}-bazel-googlesql-
       - name: Protobuf Tier B alignment check
         run: make verify-protobuf-tier-b-alignment
       - name: Tier B tag policy

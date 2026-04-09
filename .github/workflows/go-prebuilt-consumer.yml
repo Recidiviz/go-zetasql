@@ -1,0 +1,93 @@
+# Producer builds libprotobuf_cgo.a with Bazel; consumer runs go test with prebuilts only (no Bazel on PATH).
+name: Prebuilt consumer (no Bazel)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 7 * * 1"
+
+jobs:
+  producer:
+    name: Build protobuf Tier B prebuilts (Bazel)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - name: setup Go
+        uses: actions/setup-go@7b8cf10d4e4a01d4992d18a89f4d7dc5a3e6d6f4 # v4
+        with:
+          go-version: "1.24"
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Install clang and bazelisk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang
+          go install github.com/bazelbuild/bazelisk@v1.20.0
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Cache Bazel
+        uses: actions/cache@1bd1e32a3bdcfcb76bb0b4f9d2ae9643b0fe58f7 # v4
+        with:
+          path: |
+            ~/.cache/bazel
+          key: ${{ runner.os }}-bazel-googlesql-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock', 'internal/cmd/updater/googlesql/.bazelversion') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-googlesql-
+      - name: Build prebuilts
+        run: |
+          make verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy prebuilt-libs verify-prebuilt-protobuf
+        env:
+          CC: clang
+          CXX: clang++
+          BAZEL_JOBS: "4"
+      - name: Package tarball for artifact
+        run: bash scripts/package-tier-b-protobuf-prebuilt.sh
+      - name: Upload prebuilt tarball
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: protobuf-tier-b-prebuilts-linux-amd64
+          path: go-googlesql-prebuilts-protobuf-linux_amd64.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+
+  consumer:
+    name: Test with prebuilts only (no Bazel)
+    needs: producer
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+      - name: setup Go
+        uses: actions/setup-go@7b8cf10d4e4a01d4992d18a89f4d7dc5a3e6d6f4 # v4
+        with:
+          go-version: "1.24"
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Install clang (no Bazel)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang
+      - name: Download prebuilt tarball
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: protobuf-tier-b-prebuilts-linux-amd64
+          path: prebuilt-artifact
+      - name: Extract prebuilts into workspace
+        run: tar -xzf prebuilt-artifact/go-googlesql-prebuilts-protobuf-linux_amd64.tar.gz -C "$GITHUB_WORKSPACE"
+      - name: Assert Bazel is not on PATH
+        run: |
+          if command -v bazelisk >/dev/null 2>&1; then echo "error: bazelisk should not be installed on consumer"; exit 1; fi
+          if command -v bazel >/dev/null 2>&1; then echo "error: bazel should not be installed on consumer"; exit 1; fi
+          echo "ok: consumer job has no Bazel tools"
+      - name: Verify and test (Tier B tags)
+        run: |
+          make verify-prebuilt-protobuf
+          make local/test-prebuilt TESTPKG=./internal/ccall/go-protobuf/protobuf/
+        env:
+          CC: clang
+          CXX: clang++

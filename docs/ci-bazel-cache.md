@@ -1,0 +1,69 @@
+# CI: caches and Bazel workflows
+
+This document is the **single inventory** for GitHub Actions caching related to **Go**, **C++ (ccache)**, and **Bazel** in this repository. Use it when debugging slow CI, cache misses, or skew after submodule / `MODULE.bazel` updates.
+
+## Workflows
+
+| Workflow | Trigger | Bazel | `actions/cache` (Bazel) | `actions/cache` (ccache) | Notes |
+|----------|---------|-------|---------------------------|---------------------------|--------|
+| [`go.yml`](../.github/workflows/go.yml) | `push` / `pull_request` to `main` | No | — | Yes (`.ccache`, key from `go.sum` / `go.mod`) | Default `go test -race`; amalgamation path (no Tier B). |
+| [`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) | `workflow_dispatch` | Yes | Yes (`~/.cache/bazel`) | No | Tier B protobuf: `make prebuilt-libs` → `make local/test-prebuilt`. |
+| [`go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml) | `workflow_dispatch` | Yes | Yes (`~/.cache/bazel`) | No | Abseil Tier B pilot. |
+| [`go-googlesql-unified-prebuilt.yml`](../.github/workflows/go-googlesql-unified-prebuilt.yml) | `workflow_dispatch`, weekly cron | Yes | Yes (`~/.cache/bazel`) | No | Unified `libgooglesql.a` smoke build. |
+| [`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml) | `workflow_dispatch`, weekly cron | **No** on consumer job | — | No | Validates **prebuilts without Bazel** (artifact from producer job). |
+| [`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml) | `push` tags `v*` | Yes | Yes | No | Attaches protobuf Tier B tarball + `SHA256SUMS` to the GitHub Release. |
+| [`release.yml`](../.github/workflows/release.yml) | `push` tags `v*` | No (Docker Buildx) | — | GHA cache (`type=gha`) | Container images only; separate from native prebuilts. |
+
+**Bazelisk** is installed in workflows that invoke Bazel (`go install github.com/bazelbuild/bazelisk@v1.20.0`); the GoogleSQL submodule pins the Bazel version via [`internal/cmd/updater/googlesql/.bazelversion`](../internal/cmd/updater/googlesql/.bazelversion).
+
+## Cache key segments
+
+### Go module cache (`actions/setup-go` with `cache: true`)
+
+- **Keys:** derived by `actions/setup-go` from `go.sum` (and `cache-dependency-path` where set).
+- **Scope:** Speeds `go mod download` / tool install only.
+
+### ccache (`go.yml`)
+
+- **Path:** `${{ github.workspace }}/.ccache`
+- **Key:** `ccache-${{ runner.os }}-${{ hashFiles('go.sum', 'go.mod') }}`
+- **Restore prefix:** `ccache-${{ runner.os }}-`
+- **Intent:** Incremental C++ compiles for the default amalgamation build across PRs that do not change module deps.
+
+### Bazel disk cache (Tier B / unified / release prebuilts)
+
+- **Path:** `~/.cache/bazel`
+- **Key segments:** `runner.os`, fixed workflow family prefix, and **`hashFiles`** on:
+  - `internal/cmd/updater/googlesql/MODULE.bazel`
+  - `internal/cmd/updater/googlesql/MODULE.bazel.lock`
+  - `internal/cmd/updater/googlesql/.bazelversion`
+- **Restore prefix:** same OS + family prefix without the hash (partial restore on lockfile bumps).
+
+Unrelated **documentation-only** changes should **not** change these hashes; doc edits under `.github/` or `docs/` do not invalidate the Bazel cache key.
+
+## Cold vs warm expectations (order of magnitude)
+
+Exact times depend on GitHub-hosted runner load and cache hit rate.
+
+| Job type | Cold (no or partial Bazel cache) | Warm (full Bazel + action cache hit) |
+|----------|-----------------------------------|----------------------------------------|
+| `go.yml` Test | Several minutes (first full CGO + ccache cold) | Often faster; ccache + Go cache hot |
+| Tier B `make prebuilt-libs` | **Tens of minutes to ~2h** (first Bazel analysis + C++ builds) | Much faster; dominated by invalidation scope |
+| Unified prebuilt smoke | Similar to Tier B for first Bazel graph | Similar improvement when cache hits |
+
+Use **`workflow_dispatch`** on Tier B workflows before releases or after changing extract scripts. Weekly **cron** on unified (and consumer) workflows keeps the **Bazel** cache warm for the submodule graph.
+
+## Failure modes and fallback
+
+| Symptom | Likely cause | Mitigation |
+|---------|----------------|------------|
+| Bazel analysis errors after submodule bump | Lockfile / module resolution drift | Run locally: `cd internal/cmd/updater/googlesql && bazelisk build …`; refresh `MODULE.bazel.lock` if policy allows. |
+| Spurious compile failures after cache restore | Rare cache corruption or toolchain skew | Re-run job; if persistent, **bump** the cache key by changing the hashed files legitimately (e.g. lockfile) or temporarily add a **version suffix** in the workflow key (last resort). |
+| “Works locally, fails in CI” | Different `BAZEL_JOBS`, OS, or missing `clang` | Match CI env; see workflow `env` blocks. |
+
+Do **not** commit `~/.cache/bazel` into the repo; CI restore/save is the supported reuse path.
+
+## Related
+
+- [`prebuilt-cgo.md`](prebuilt-cgo.md) — artifact layout and tags.
+- [`native-build-pipeline.md`](native-build-pipeline.md) — Bazel → static archives.

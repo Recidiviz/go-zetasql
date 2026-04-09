@@ -42,6 +42,19 @@ Also, the compiler recommends `clang++`. Please set `CXX=clang++` to install.
 |  CGO_ENABLED      |  1  ( required )         |
 |  CXX              |  clang++ ( recommended ) |
 
+## Build modes (quick reference)
+
+| Mode | Build tags | Bazel needed? | Notes |
+|------|------------|---------------|--------|
+| **Default (CI / `go get`)** | `googlesql` (typical) | No | Compiles **amalgamation** shards (large TUs). Same path as [`.github/workflows/go.yml`](.github/workflows/go.yml). |
+| **Tier B protobuf (prebuilt `.a`)** | `googlesql,googlesql_tier_b` | **Yes** to *produce* `libprotobuf_cgo.a`; **no** if you use a [release tarball](docs/prebuilt-cgo.md#release-tarballs-linux_amd64) | Link-only protobuf CGO; set `CGO_CXXFLAGS=-stdlib=libc++` as in [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md). |
+| **Tier B Abseil (pilot)** | `googlesql,googlesql_tier_b_absl` | Yes to build `libabsl_cgo.a` | Do **not** combine with `googlesql_tier_b` in one link — [`docs/prebuilt-absl-overlap.md`](docs/prebuilt-absl-overlap.md). |
+| **Unified `libgooglesql.a` (bootstrap)** | `googlesql,googlesql_unified_prebuilt` | Yes for Bazel extract | See [`docs/libgooglesql-unified.md`](docs/libgooglesql-unified.md). |
+
+**Legacy path:** “Amalgamation” here means the **default** `bind_linux.go` / `bind_darwin.go` files when **`googlesql_tier_b` is not set** for protobuf—there is no extra “amalgamation tag”; Tier B opts in with `googlesql_tier_b`. Deeper context: [`docs/native-build-pipeline.md`](docs/native-build-pipeline.md).
+
+**Contributor quick path (prebuilts):** clone → unpack release assets (or run `make prebuilt-libs` once) → `make local/test-prebuilt` or `go test -tags googlesql,googlesql_tier_b ./...` as documented in [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md). CI cache layout for Bazel: [`docs/ci-bazel-cache.md`](docs/ci-bazel-cache.md).
+
 # Installation
 
 ```

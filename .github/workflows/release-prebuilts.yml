@@ -1,12 +1,16 @@
-# Manual Abseil Tier B: Bazel-built libabsl_cgo.a + pilot package test.
-# Not run on every PR. Use workflow_dispatch when changing extract_absl_cgo_lib.sh / bind_tier_b_absl.go.
-name: Tier B prebuilt Abseil
+# Attach Tier B protobuf prebuilt tarball + SHA256SUMS to the same tag as the Docker release.
+# Primary "no Bazel" artifact for linux_amd64 (see docs/prebuilt-cgo.md, docs/ci-bazel-cache.md).
+name: Release prebuilt archives
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
 
 jobs:
-  tier-b-absl-prebuilt:
-    name: prebuilt-libs-absl + pilot test (ubuntu)
+  protobuf-tier-b-tarball:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -34,23 +38,23 @@ jobs:
           key: ${{ runner.os }}-bazel-googlesql-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock', 'internal/cmd/updater/googlesql/.bazelversion') }}
           restore-keys: |
             ${{ runner.os }}-bazel-googlesql-
-      - name: Tier B tag policy
-        run: make verify-tier-b-cgo-policy
-      - name: Build libabsl_cgo.a
-        run: make prebuilt-libs-absl
+      - name: Build and verify prebuilts
+        run: |
+          make verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy prebuilt-libs verify-prebuilt-protobuf
         env:
           CC: clang
           CXX: clang++
           BAZEL_JOBS: "4"
-      - name: Verify archive
-        run: make verify-prebuilt-absl
-      - name: Test Abseil Tier B pilot package
-        run: make local/test-prebuilt-absl
+      - name: Package release tarball and checksums
+        run: |
+          OUT="go-googlesql-prebuilts-protobuf-linux_amd64-${GITHUB_REF_NAME}.tar.gz"
+          OUTPUT_NAME="$OUT" bash scripts/package-tier-b-protobuf-prebuilt.sh
+          sha256sum "$OUT" > SHA256SUMS
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            go-googlesql-prebuilts-protobuf-linux_amd64-*.tar.gz
+            SHA256SUMS
         env:
-          CC: clang
-          CXX: clang++
-      - name: Build widened go-absl patterns (meta + types + base)
-        run: make local/build-prebuilt-absl BUILDPKG_ABSL='./internal/ccall/go-absl/meta/... ./internal/ccall/go-absl/types/... ./internal/ccall/go-absl/base/...'
-        env:
-          CC: clang
-          CXX: clang++
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

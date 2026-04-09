@@ -49,7 +49,7 @@ DOCKER_DEV_VOLUMES := \
 	local/build local/test local/test-tier-b local/build-prebuilt local/test-prebuilt \
 	local/test-prebuilt-absl local/build-prebuilt-absl \
 	local/build-prebuilt-googlesql-unified \
-	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified \
+	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified package-tier-b-protobuf-tarball \
 	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified smoke-link-googlesql-unified \
 	verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy sync-protobuf-vendor-from-bazel regenerate-googlesql-cpp-protos \
 	profile-bottleneck extract-protobuf-lib extract-absl-lib extract-googlesql-unified-lib \
@@ -138,6 +138,10 @@ prebuilt-libs: extract-protobuf-lib
 
 verify-prebuilt-protobuf:
 	bash scripts/verify-prebuilt-protobuf.sh
+
+# Tarball of internal/ccall/go-protobuf/protobuf/lib for releases (after prebuilt-libs).
+package-tier-b-protobuf-tarball: verify-prebuilt-protobuf
+	bash scripts/package-tier-b-protobuf-prebuilt.sh
 
 # Warn if vendored protobuf runtime is below Bazel 29.x-era macros (Tier B needs alignment). Strict: VERIFY_PROTOBUF_TIER_B_STRICT=1
 verify-protobuf-tier-b-alignment:

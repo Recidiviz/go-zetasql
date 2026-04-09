@@ -33,9 +33,9 @@ jobs:
         with:
           path: |
             ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-googlesql-unified-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock') }}
+          key: ${{ runner.os }}-bazel-googlesql-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock', 'internal/cmd/updater/googlesql/.bazelversion') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-googlesql-unified-
+            ${{ runner.os }}-bazel-googlesql-
       - name: Build libgooglesql.a
         run: make prebuilt-libs-googlesql-unified
         env:
