@@ -5,6 +5,8 @@ DOCKER_DEV_IMAGE ?= go-googlesql:dev
 GO_CACHE_ROOT ?= $(HOME)/.cache/go-googlesql
 # Default matches .github/workflows/go.yml (root package only). Set TESTPKG=./... to test all packages.
 TESTPKG ?= ./
+# Appended to go test for local/test and local/test-fresh (e.g. GO_TEST_FLAGS=-short).
+GO_TEST_FLAGS ?=
 # For local/build: package pattern passed to go build (default all modules under repo root).
 BUILDPKG ?= ./...
 
@@ -45,8 +47,8 @@ DOCKER_DEV_VOLUMES := \
 	-v "$(GO_CACHE_ROOT)/gomodcache":/go/pkg/mod \
 	-v "$(GO_CACHE_ROOT)/ccache":/root/.ccache
 
-.PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache \
-	local/build local/test \
+.PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache cache-clean-cgo \
+	local/build local/test local/test-fresh \
 	local/test-prebuilt-absl local/build-prebuilt-absl \
 	local/build-prebuilt-googlesql-unified \
 	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified package-protobuf-prebuilt-tarball \
@@ -60,6 +62,14 @@ cache-dirs:
 		"$(GO_CACHE_ROOT)/gocache" \
 		"$(GO_CACHE_ROOT)/gomodcache" \
 		"$(GO_CACHE_ROOT)/ccache"
+
+# After a full disk, kernel OOM, or unexplained SIGSEGV in go test, remove stale object code:
+#   make cache-clean-cgo && make local/test-fresh
+# If it still crashes at runtime after compile succeeds, try linking without mold:
+#   make local/test CGO_LDFLAGS_BASE='-Wl,--no-gc-sections -Wl,--allow-multiple-definition'
+# Or use Docker: make test/linux
+cache-clean-cgo:
+	rm -rf "$(GO_CACHE_ROOT)/gocache"/* "$(GO_CACHE_ROOT)/ccache"/*
 
 docker/build:
 	docker build -t $(DOCKER_IMAGE) .
@@ -119,7 +129,11 @@ local/test: cache-dirs verify-prebuilt-protobuf
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags googlesql -v $(TESTPKG) -count=1
+	go test -p "$(GO_BUILD_P)" -tags googlesql -v $(TESTPKG) -count=1 $(GO_TEST_FLAGS)
+
+# Like local/test but forces rebuilding every package (-a). Use after cache-clean-cgo or toolchain bumps.
+local/test-fresh:
+	$(MAKE) local/test GO_TEST_FLAGS=-a
 
 # Rough cold vs warm timing + ccache stats. Uses TESTPKG (default ./). Requires ccache + clang on PATH.
 profile-bottleneck: cache-dirs
