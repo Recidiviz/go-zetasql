@@ -3,7 +3,11 @@
 
 #include "googlesql/public/functions/unsupported_fields.pb.h"
 // include sources
+#define schemas googlesql_public_functions_unsupported_fields_schemas
+#define file_default_instances googlesql_public_functions_unsupported_fields_file_default_instances
 #include "googlesql/public/functions/unsupported_fields.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

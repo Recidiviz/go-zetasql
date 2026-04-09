@@ -3,7 +3,11 @@
 
 #include "googlesql/public/fix_suggestion.pb.h"
 // include sources
+#define schemas googlesql_public_fix_suggestion_schemas
+#define file_default_instances googlesql_public_fix_suggestion_file_default_instances
 #include "googlesql/public/fix_suggestion.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

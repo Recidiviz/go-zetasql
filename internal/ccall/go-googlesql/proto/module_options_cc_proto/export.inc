@@ -3,7 +3,11 @@
 
 #include "googlesql/proto/module_options.pb.h"
 // include sources
+#define schemas googlesql_proto_module_options_schemas
+#define file_default_instances googlesql_proto_module_options_file_default_instances
 #include "googlesql/proto/module_options.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

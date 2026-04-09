@@ -3,7 +3,11 @@
 
 #include "googlesql/public/constness_level.pb.h"
 // include sources
+#define schemas googlesql_public_constness_level_schemas
+#define file_default_instances googlesql_public_constness_level_file_default_instances
 #include "googlesql/public/constness_level.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

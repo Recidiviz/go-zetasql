@@ -3,7 +3,11 @@
 
 #include "googlesql/common/match_recognize/match_test_result.pb.h"
 // include sources
+#define schemas googlesql_common_match_recognize_match_test_result_schemas
+#define file_default_instances googlesql_common_match_recognize_match_test_result_file_default_instances
 #include "googlesql/common/match_recognize/match_test_result.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif
