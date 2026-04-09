@@ -17,7 +17,11 @@ nm internal/ccall/go-protobuf/protobuf/lib/linux_amd64/libprotobuf_cgo.a | grep 
 | `googlesql_tier_b_absl` only | Yes | Use for pilots and Abseil experiments **without** also relying on Tier B protobuf for the same link of duplicate Abseil symbols. |
 | `googlesql_tier_b` **and** `googlesql_tier_b_absl` | Risk of **duplicate Abseil symbols** | Not supported until object-level dedup or a single merged archive is implemented. |
 
-**Pilot package** [`internal/ccall/go-absl/meta/type_traits`](../internal/ccall/go-absl/meta/type_traits) validates `googlesql_tier_b_absl` with **default** protobuf (no `googlesql_tier_b`).
+Tier B Abseil is validated with **default** protobuf (no `googlesql_tier_b`). Migrated link-only packages include **`meta/type_traits`**, **`base/config`**, **`utility/utility`** (see [`prebuilt-cgo.md`](prebuilt-cgo.md)).
+
+## Multiple CGO packages each linking `-labsl_cgo`
+
+Each migrated package passes **`-L…/go-absl/lib -labsl_cgo`** in its `bind_tier_b_absl.go`. The final link may pull the same static archive more than once; [`Makefile`](../Makefile) uses **`-Wl,--allow-multiple-definition`** while this is rolled out. If you see link failures or unexpected duplication, prefer Option B (single `prebuilt` owner) in [`native-build-pipeline.md`](native-build-pipeline.md).
 
 ## Bazel pin
 

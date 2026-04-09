@@ -165,7 +165,7 @@ prebuilt-libs-absl: extract-absl-lib
 verify-prebuilt-absl:
 	bash scripts/verify-prebuilt-absl.sh
 
-# Pilot package meta/type_traits. Tags: googlesql + googlesql_tier_b_absl (see docs/prebuilt-absl-overlap.md).
+# Tier B Abseil: meta/type_traits, base/config, utility/utility (expand TESTPKG_PREBUILT_ABSL as you add packages).
 local/build-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	CGO_ENABLED=1 \
 	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
@@ -178,9 +178,9 @@ local/build-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b_absl $(BUILDPKG_ABSL)
 
-# Default pattern for Abseil Tier B pilot (override to widen scope).
-BUILDPKG_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/
-TESTPKG_PREBUILT_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/
+# Default: migrated Tier B absl packages (override to widen).
+BUILDPKG_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/ ./internal/ccall/go-absl/base/config/ ./internal/ccall/go-absl/utility/utility/
+TESTPKG_PREBUILT_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/ ./internal/ccall/go-absl/base/config/ ./internal/ccall/go-absl/utility/utility/
 
 local/test-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	CGO_ENABLED=1 \

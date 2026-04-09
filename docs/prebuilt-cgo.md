@@ -57,9 +57,37 @@ Verify:
 make verify-prebuilt-absl
 ```
 
-**Build tag `googlesql_tier_b_absl`** — link-only CGO for packages that ship `bind_tier_b_absl.go` (pilot: [`internal/ccall/go-absl/meta/type_traits`](../internal/ccall/go-absl/meta/type_traits)). Use **`make local/test-prebuilt-absl`** / **`make local/build-prebuilt-absl`** (defaults to the pilot path; override `TESTPKG_PREBUILT_ABSL` / `BUILDPKG_ABSL`).
+**Build tag `googlesql_tier_b_absl`** — link-only CGO for packages that ship `bind_tier_b_absl.go`. **Migrated packages (expand over time):** [`meta/type_traits`](../internal/ccall/go-absl/meta/type_traits), [`base/config`](../internal/ccall/go-absl/base/config), [`utility/utility`](../internal/ccall/go-absl/utility/utility). Use **`make local/test-prebuilt-absl`** / **`make local/build-prebuilt-absl`** (defaults list all three; override `TESTPKG_PREBUILT_ABSL` / `BUILDPKG_ABSL`).
 
 **Overlap with protobuf Tier B:** `libprotobuf_cgo.a` already embeds Abseil object code. Do **not** combine `googlesql_tier_b` and `googlesql_tier_b_absl` in one link without a dedup policy—see [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md).
+
+### Adding another `go-absl/...` package (manual)
+
+1. Add `//go:build !googlesql_tier_b_absl` to **`bind_linux.go`** and **`bind_darwin.go`** (first line, before `package`).
+2. Add **`bind_tier_b_absl.go`** next to them. For packages **three levels** under `go-absl/` (e.g. `foo/bar/baz`), include paths match the pilot:
+
+```go
+//go:build googlesql_tier_b_absl && (linux || darwin)
+
+package yourpkg
+
+/*
+#cgo CXXFLAGS: -std=c++20
+#cgo CXXFLAGS: -I${SRCDIR}/../../../
+#cgo CXXFLAGS: -I${SRCDIR}/../../../protobuf
+#cgo CXXFLAGS: -I${SRCDIR}/../../../utf8_range
+#cgo linux LDFLAGS: -L${SRCDIR}/../../lib -labsl_cgo -lz -lstdc++ -ldl -lpthread
+#cgo darwin LDFLAGS: -L${SRCDIR}/../../lib -labsl_cgo -lz -lc++
+
+void __go_googlesql_tier_b_absl_<unique_suffix>_anchor(void) {}
+*/
+import "C"
+```
+
+3. If depth under `go-absl/` differs, adjust `${SRCDIR}/..` segments so `${SRCDIR}/../../lib` resolves to [`internal/ccall/go-absl/lib`](../internal/ccall/go-absl/lib).
+4. Append the package path to **`TESTPKG_PREBUILT_ABSL`** / **`BUILDPKG_ABSL`** in the [`Makefile`](../Makefile).
+
+A future [`internal/cmd/generator`](../internal/cmd/generator) pass may emit this file from config; until then copy from an existing migrated package.
 
 ## Environment variables
 

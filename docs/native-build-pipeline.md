@@ -19,7 +19,7 @@ then merges `*.pic.o` from `com_google_protobuf` and `utf8_range` into `libproto
 | Phase | Content | Notes |
 |-------|---------|--------|
 | 1 | **Protobuf + utf8_range** | Implemented by `make prebuilt-libs` / `bind_tier_b.go`. |
-| 2 | **Abseil** | **`make prebuilt-libs-absl`** runs [`extract_absl_cgo_lib.sh`](../internal/ccall/go-absl/extract_absl_cgo_lib.sh) → `internal/ccall/go-absl/lib/$GOOS_$GOARCH/libabsl_cgo.a`. Pilot: [`go-absl/meta/type_traits`](../internal/ccall/go-absl/meta/type_traits) with `googlesql_tier_b_absl` and [`bind_tier_b_absl.go`](../internal/ccall/go-absl/meta/type_traits/bind_tier_b_absl.go). Overlap with `libprotobuf_cgo.a`: [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). Rollout: **incremental** (repeat per package) vs **consolidated** single owner—documented below. |
+| 2 | **Abseil** | **`make prebuilt-libs-absl`** → `libabsl_cgo.a`. **Incremental rollout:** [`meta/type_traits`](../internal/ccall/go-absl/meta/type_traits), [`base/config`](../internal/ccall/go-absl/base/config), [`utility/utility`](../internal/ccall/go-absl/utility/utility) use `bind_tier_b_absl.go` + `googlesql_tier_b_absl`. Overlap / multi-package link: [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). Consolidated single-owner option: below. |
 | 3 | **googlesql public / analyzer** | Large `export.inc` bundles; consolidating requires a stable C bridge ABI (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)). |
 | 4 | **Parser / flex** | Depends on phase 3 includes and generated sources. |
 
