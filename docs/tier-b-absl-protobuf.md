@@ -70,5 +70,7 @@ Align [`go-googlesqlite`](https://github.com/vantaboard/go-googlesqlite) and [`b
 |-----|---------|
 | `googlesql` | Normal CGO GoogleSQL/GoogleSQL build (existing). |
 | `googlesql_tier_b` | Use `bind_tier_b.go` in `go-protobuf/protobuf` (link `libprotobuf_cgo.a`); requires archive + symlink. |
+| `googlesql_tier_b_absl` | Use `bind_tier_b_absl.go` in packages that define it (pilot: `go-absl/meta/type_traits`); link `libabsl_cgo.a` from [`extract_absl_cgo_lib.sh`](../internal/ccall/go-absl/extract_absl_cgo_lib.sh). See [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md) before combining with `googlesql_tier_b`. |
 
-Use **both** for Tier B experiments: `-tags 'googlesql,googlesql_tier_b'`.
+Use **both** `googlesql` and `googlesql_tier_b` for protobuf Tier B: `-tags 'googlesql,googlesql_tier_b'`.  
+Use **`googlesql` and `googlesql_tier_b_absl`** for Abseil pilot: `-tags 'googlesql,googlesql_tier_b_absl'`.

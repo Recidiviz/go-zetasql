@@ -47,7 +47,9 @@ DOCKER_DEV_VOLUMES := \
 
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache \
 	local/build local/test local/test-tier-b local/build-prebuilt local/test-prebuilt \
-	prebuilt-libs verify-prebuilt-protobuf profile-bottleneck extract-protobuf-lib \
+	local/test-prebuilt-absl local/build-prebuilt-absl \
+	prebuilt-libs prebuilt-libs-absl verify-prebuilt-protobuf verify-prebuilt-absl \
+	profile-bottleneck extract-protobuf-lib extract-absl-lib \
 	test test/linux test-docker
 
 cache-dirs:
@@ -153,6 +155,44 @@ local/test-prebuilt: cache-dirs verify-prebuilt-protobuf
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b -v $(TESTPKG) -count=1
+
+# Bazel-built libabsl_cgo.a (see internal/ccall/go-absl/extract_absl_cgo_lib.sh, docs/prebuilt-absl-overlap.md).
+extract-absl-lib:
+	bash internal/ccall/go-absl/extract_absl_cgo_lib.sh
+
+prebuilt-libs-absl: extract-absl-lib
+
+verify-prebuilt-absl:
+	bash scripts/verify-prebuilt-absl.sh
+
+# Pilot package meta/type_traits. Tags: googlesql + googlesql_tier_b_absl (see docs/prebuilt-absl-overlap.md).
+local/build-prebuilt-absl: cache-dirs verify-prebuilt-absl
+	CGO_ENABLED=1 \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b_absl $(BUILDPKG_ABSL)
+
+# Default pattern for Abseil Tier B pilot (override to widen scope).
+BUILDPKG_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/
+TESTPKG_PREBUILT_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/
+
+local/test-prebuilt-absl: cache-dirs verify-prebuilt-absl
+	CGO_ENABLED=1 \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b_absl -v $(TESTPKG_PREBUILT_ABSL) -count=1
 
 # Experimental: go-protobuf links libprotobuf_cgo.a (see bind_tier_b.go, docs/tier-b-absl-protobuf.md).
 # Requires `make extract-protobuf-lib`. Expect failures until global_exclude_replace_names + unified ABI land.

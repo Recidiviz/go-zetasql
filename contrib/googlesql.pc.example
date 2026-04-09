@@ -21,7 +21,9 @@ Name: googlesql
 Description: go-googlesql prebuilt C++ stack (consolidated headers + static libs; template)
 Version: 0.0.0
 Requires:
-Libs: -L${libdir} -lprotobuf_cgo -lz -lstdc++ -ldl -lpthread
+# Static link order: if you ship both archives, list `-labsl_cgo` before or after `-lprotobuf_cgo` per link errors;
+# `libprotobuf_cgo.a` may already embed Abseil objects (see docs/prebuilt-absl-overlap.md).
+Libs: -L${libdir} -labsl_cgo -lprotobuf_cgo -lz -lstdc++ -ldl -lpthread
 Cflags: -I${includedir} -std=c++20
 
 # Platform notes:

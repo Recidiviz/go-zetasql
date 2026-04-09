@@ -1,0 +1,24 @@
+# Abseil prebuilt archive: overlap with `libprotobuf_cgo.a`
+
+## Finding
+
+`libprotobuf_cgo.a` (from `make prebuilt-libs`) merges Bazel-built protobuf and utf8_range object files. Those objects **include Abseil code** linked into the archive (e.g. `absl::log_internal::*`, `absl::container_internal::*`). A quick check:
+
+```bash
+nm internal/ccall/go-protobuf/protobuf/lib/linux_amd64/libprotobuf_cgo.a | grep -E '^[0-9a-f]+ [TtW] _ZN4absl' | head
+```
+
+## Policy (until deduplicated archives exist)
+
+| Build tags | Link `libabsl_cgo.a`? | Notes |
+|------------|----------------------|--------|
+| Default | No | Amalgamation compiles vendored C++. |
+| `googlesql_tier_b` only | No (protobuf package links `libprotobuf_cgo.a`) | Protobuf archive already embeds Abseil objects. |
+| `googlesql_tier_b_absl` only | Yes | Use for pilots and Abseil experiments **without** also relying on Tier B protobuf for the same link of duplicate Abseil symbols. |
+| `googlesql_tier_b` **and** `googlesql_tier_b_absl` | Risk of **duplicate Abseil symbols** | Not supported until object-level dedup or a single merged archive is implemented. |
+
+**Pilot package** [`internal/ccall/go-absl/meta/type_traits`](../internal/ccall/go-absl/meta/type_traits) validates `googlesql_tier_b_absl` with **default** protobuf (no `googlesql_tier_b`).
+
+## Bazel pin
+
+Abseil is built from the same pin as [`internal/cmd/updater/googlesql/MODULE.bazel`](../internal/cmd/updater/googlesql/MODULE.bazel): `abseil-cpp` **20240722.1** (`repo_name = "com_google_absl"`). Vendored headers under `internal/ccall` should stay consistent with that revision.

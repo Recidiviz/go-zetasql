@@ -1,3 +1,5 @@
+//go:build !googlesql_tier_b_absl
+
 package type_traits
 
 /*
