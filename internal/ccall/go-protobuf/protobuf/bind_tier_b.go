@@ -6,13 +6,11 @@ package protobuf
 // Build the archive: `make extract-protobuf-lib` from repo root (requires bazelisk, submodule cache).
 // The extract script writes lib/$GOOS_$GOARCH/libprotobuf_cgo.a and symlinks lib/libprotobuf_cgo.a.
 //
-// ABI alignment: amalgamation and generated `*.pb.h` under internal/ccall/googlesql are built against
-// vendored internal/ccall/protobuf (~4.23.x, GOOGLE_PROTOBUF_VERSION 4023003). `extract_protobuf_cgo_lib.sh`
-// uses `@com_google_protobuf` from internal/cmd/updater/googlesql/MODULE.bazel (currently 29.x). That
-// mix yields undefined `google::protobuf::…` at link time. Fixing it requires either refreshing the
-// vendored protobuf tree + regenerating protos to match MODULE.bazel, or pinning `protobuf` in MODULE.bazel
-// to the same OSS era as the vendor (older pins such as 23.1 conflict with current rules_java/grpc in the
-// GoogleSQL workspace).
+// ABI alignment (Tier B Phase 1): vendored internal/ccall/protobuf, regenerated
+// internal/ccall/googlesql/**/*.pb.{h,cc}, and libprotobuf_cgo.a from extract_protobuf_cgo_lib.sh all track
+// the same @com_google_protobuf revision as internal/cmd/updater/googlesql/MODULE.bazel (e.g. BCR 29.x,
+// GOOGLE_PROTOBUF_VERSION 5.29.x). Re-run sync → vendorpatch → regenerate → verify if MODULE.bazel bumps;
+// see docs/protobuf-vendoring.md and scripts/verify-protobuf-tier-b-alignment.sh.
 //
 // This path does not yet provide GO_GOOGLESQL_PB_EXPORT / export_protobuf_* symbols from the
 // amalgamation — use together with generator global_exclude_replace_names and a full unified
