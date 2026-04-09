@@ -1,5 +1,7 @@
 # Tier B + unified Abseil / protobuf namespaces
 
+Operational commands, env vars, and downstream notes: **[prebuilt-cgo.md](prebuilt-cgo.md)**.
+
 This document is the **implementation roadmap** for combining:
 
 1. **Tier B** — link [`libprotobuf_cgo.a`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) built by Bazel in the submodule instead of (or as an alternative to) the vendored [`export.inc`](../internal/ccall/go-protobuf/protobuf/export.inc) amalgamation in `go-protobuf/protobuf`.
@@ -14,13 +16,14 @@ The naive “drop `#include` of the amalgamation and blank-import `go-protobuf`�
 | [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) | Builds `lib/$GOOS_$GOARCH/libprotobuf_cgo.a` and symlinks `lib/libprotobuf_cgo.a`. |
 | [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) | Build tag **`googlesql_tier_b`**: CGO links `-lprotobuf_cgo` instead of compiling `export.inc` (experimental). |
 | [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) | Build tag **`!googlesql_tier_b`**: default amalgamation path. |
-| Generator [`global_exclude_replace_names`](../internal/cmd/generator/config.yaml) under `cclib` | When set to e.g. `[absl, google]`, **every** generated `bind.cc` omits `#define absl` / `#define google` — **opt-in**, default `[]`. |
+| Generator [`global_exclude_replace_names`](../internal/cmd/generator/config.yaml) under `cclib` | Set to **`[absl, google]`** so generated `bind.cc` omits per-shard `#define absl` / `#define google` where the generator applies global excludes (run `go run .` in `internal/cmd/generator` after edits). |
 
 ## Phase 1 — Build the Bazel archive locally
 
 ```bash
 # From go-googlesql repo root; requires bazelisk/bazel and populated submodule / cache per updater docs.
-make extract-protobuf-lib
+make prebuilt-libs
+# (same as make extract-protobuf-lib)
 ```
 
 Confirm `internal/ccall/go-protobuf/protobuf/lib/libprotobuf_cgo.a` exists (symlink to `linux_amd64/libprotobuf_cgo.a` or similar).

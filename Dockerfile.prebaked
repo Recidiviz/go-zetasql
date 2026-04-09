@@ -14,10 +14,13 @@ ENV PATH="/usr/lib/ccache:${PATH}"
 ENV CCACHE_COMPRESS=1
 ENV CGO_LDFLAGS=-fuse-ld=mold
 
-# When a consolidated prebuild exists, unpack under /opt/go-googlesql-cgo and set e.g.:
+# When a consolidated prebuild exists, unpack under /opt/go-googlesql-cgo (or set
+# GOOGLESQL_PREBUILT_PREFIX to match) and configure pkg-config, e.g.:
+# ENV GOOGLESQL_PREBUILT_PREFIX=/opt/go-googlesql-cgo
 # ENV PKG_CONFIG_PATH=/opt/go-googlesql-cgo/lib/pkgconfig
 # ENV CGO_CFLAGS=-I/opt/go-googlesql-cgo/include
 # ENV CGO_LDFLAGS=-L/opt/go-googlesql-cgo/lib -fuse-ld=mold ...
+# See contrib/googlesql.pc.example and docs/prebuilt-cgo.md (Tier B uses lib/ under go-protobuf/protobuf until then).
 
 WORKDIR /work
 CMD ["bash"]

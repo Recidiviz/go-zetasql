@@ -74,7 +74,11 @@ Then run tests with `CGO_ENABLED=1 CC=clang CXX=clang++` as usual.
 
 **Rough cold vs warm timing:** **`make profile-bottleneck`** runs two **`go test -c`** passes and prints **`ccache -s`** (install **`ccache`** locally for stats). Uses **`TESTPKG`** like other targets.
 
-**Optional Bazel protobuf archive (Linux/macOS):** **`make extract-protobuf-lib`** runs [`internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh`](internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh). Default **`bind_*.go`** still uses amalgamation; see [`docs/protobuf-vendoring.md`](docs/protobuf-vendoring.md).
+**Optional Bazel protobuf archive (Linux/macOS):** **`make extract-protobuf-lib`** (alias **`make prebuilt-libs`**) runs [`internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh`](internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh). Default **`bind_*.go`** still uses amalgamation; see [`docs/protobuf-vendoring.md`](docs/protobuf-vendoring.md).
+
+**Prebuilt CGO (Tier B, experimental):** After **`make prebuilt-libs`**, use **`make local/test-prebuilt`** or **`make local/build-prebuilt`** to build with **`-tags googlesql,googlesql_tier_b`** (requires **`libprotobuf_cgo.a`** under [`internal/ccall/go-protobuf/protobuf/lib/`](internal/ccall/go-protobuf/protobuf/)). **`make verify-prebuilt-protobuf`** fails fast if the archive is missing. Full details: [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md), [`docs/native-build-pipeline.md`](docs/native-build-pipeline.md). Install-prefix / **pkg-config** template: [`contrib/googlesql.pc.example`](contrib/googlesql.pc.example). Set **`GOOGLESQL_PREBUILT_PREFIX`** when using a consolidated prefix (documented in the `.pc` example); Tier B protobuf currently uses fixed paths under `go-protobuf/protobuf/lib/`.
+
+**Downstream (`go-googlesqlite`, `bigquery-emulator`):** Keep **`replace`** pointed at the same checkout where you ran **`make prebuilt-libs`**, and pass the **same** **`-tags googlesql,googlesql_tier_b`** plus matching **`CGO_*`** / **`Makefile`-style** `CGO_LDFLAGS_ALLOW` when enabling Tier B; see [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md#downstream-repositories).
 
 **Large structural changes (deferred):** Merging many CGO packages or switching to a single Bazel-built **`libgooglesql.a`** would require a new bridge/export story and profiling evidence; see [`contrib/googlesql.pc.example`](contrib/googlesql.pc.example) and [`Dockerfile.prebaked`](Dockerfile.prebaked) for a future consolidated install prefix / artifact layout.
 

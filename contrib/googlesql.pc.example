@@ -1,17 +1,29 @@
-# Example pkg-config file for a future consolidated install prefix (prebuilt headers + libs).
-# Not wired into generated #cgo blocks today; use when/if a single libgooglesql-style layout exists.
+# pkg-config template for a consolidated go-googlesql prebuilt install prefix.
+# Copy to e.g. $GOOGLESQL_PREBUILT_PREFIX/lib/pkgconfig/googlesql.pc and substitute @PREFIX@,
+# or use sed/configure to set prefix at install time.
 #
-# Typical usage after installing files under /opt/go-googlesql-cgo:
-#   export PKG_CONFIG_PATH=/opt/go-googlesql-cgo/lib/pkgconfig
-#   CGO_CFLAGS="$(pkg-config --cflags googlesql)" CGO_LDFLAGS="$(pkg-config --libs googlesql)" go build ...
+# Tier B protobuf today uses fixed paths under internal/ccall/go-protobuf/protobuf/lib/
+# (see docs/prebuilt-cgo.md). This file describes the *future* multi-lib layout.
 #
-# prefix=/opt/go-googlesql-cgo
-# exec_prefix=${prefix}
-# libdir=${exec_prefix}/lib
-# includedir=${prefix}/include
+# Example (after installing under /opt/go-googlesql-cgo):
+#   export GOOGLESQL_PREBUILT_PREFIX=/opt/go-googlesql-cgo
+#   export PKG_CONFIG_PATH=$GOOGLESQL_PREBUILT_PREFIX/lib/pkgconfig
+#   export CGO_CFLAGS="$(pkg-config --cflags googlesql)"
+#   export CGO_LDFLAGS="$(pkg-config --libs googlesql)"
+#   go build -tags googlesql,googlesql_tier_b ./...
 #
-# Name: googlesql
-# Description: go-googlesql prebuilt C++ stack (placeholder)
-# Version: 0.0.0
-# Libs: -L${libdir} -lstdc++ -ldl -lz
-# Cflags: -I${includedir} -std=c++17
+prefix=@PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${exec_prefix}/include
+
+Name: googlesql
+Description: go-googlesql prebuilt C++ stack (consolidated headers + static libs; template)
+Version: 0.0.0
+Requires:
+Libs: -L${libdir} -lprotobuf_cgo -lz -lstdc++ -ldl -lpthread
+Cflags: -I${includedir} -std=c++20
+
+# Platform notes:
+# - macOS: swap -lstdc++ for -lc++ in Libs if you only ship libc++-linked archives.
+# - Add -fuse-ld=mold via CGO_LDFLAGS / Makefile when mold is available (Linux).

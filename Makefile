@@ -46,7 +46,8 @@ DOCKER_DEV_VOLUMES := \
 	-v "$(GO_CACHE_ROOT)/ccache":/root/.ccache
 
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache \
-	local/build local/test local/test-tier-b profile-bottleneck extract-protobuf-lib \
+	local/build local/test local/test-tier-b local/build-prebuilt local/test-prebuilt \
+	prebuilt-libs verify-prebuilt-protobuf profile-bottleneck extract-protobuf-lib \
 	test test/linux test-docker
 
 cache-dirs:
@@ -121,6 +122,37 @@ profile-bottleneck: cache-dirs
 # Optional: build libprotobuf_cgo.a via Bazel (Linux/macOS). Not used by default bind_*.go (amalgamation).
 extract-protobuf-lib:
 	bash internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh
+
+# Alias for docs/prebuilt-cgo.md — produces Tier B protobuf archive.
+prebuilt-libs: extract-protobuf-lib
+
+verify-prebuilt-protobuf:
+	bash scripts/verify-prebuilt-protobuf.sh
+
+# Prebuilt Tier B: requires `make prebuilt-libs` first. Fails fast if libprotobuf_cgo.a is missing.
+local/build-prebuilt: cache-dirs verify-prebuilt-protobuf
+	CGO_ENABLED=1 \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b $(BUILDPKG)
+
+local/test-prebuilt: cache-dirs verify-prebuilt-protobuf
+	CGO_ENABLED=1 \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b -v $(TESTPKG) -count=1
 
 # Experimental: go-protobuf links libprotobuf_cgo.a (see bind_tier_b.go, docs/tier-b-absl-protobuf.md).
 # Requires `make extract-protobuf-lib`. Expect failures until global_exclude_replace_names + unified ABI land.
