@@ -8,6 +8,8 @@
 # Test binary, built with `go test -c`
 *.test
 *.py
+# Cursor agent shell hook (repo-owned; permissive default — see file docstring)
+!.cursor/hooks/before-shell-execution.py
 *.template
 *.textproto
 *.a
