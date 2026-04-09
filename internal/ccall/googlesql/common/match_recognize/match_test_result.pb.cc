@@ -745,7 +745,7 @@ namespace protobuf {
 }  // namespace google
 // @@protoc_insertion_point(global_scope)
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::std::false_type
-    _static_init2_ PROTOBUF_UNUSED =
+    _static_init_googlesql_common_match_recognize_match_test_result_ PROTOBUF_UNUSED =
         (::_pbi::AddDescriptors(&descriptor_table_googlesql_2fcommon_2fmatch_5frecognize_2fmatch_5ftest_5fresult_2eproto),
          ::std::false_type{});
 #include "google/protobuf/port_undef.inc"

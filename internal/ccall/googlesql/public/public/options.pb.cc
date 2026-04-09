@@ -1877,7 +1877,7 @@ namespace protobuf {
 }  // namespace google
 // @@protoc_insertion_point(global_scope)
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::std::false_type
-    _static_init2_ [[maybe_unused]] =
+    _static_init_googlesql_public_public_options_ [[maybe_unused]] =
         (::_pbi::AddDescriptors(&descriptor_table_public_2foptions_2eproto),
         ::_pbi::ExtensionSet::RegisterMessageExtension(
             &::google::protobuf::EnumValueOptions::default_instance(), 170219291, 11,

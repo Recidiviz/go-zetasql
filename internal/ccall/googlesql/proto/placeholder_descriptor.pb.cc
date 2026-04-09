@@ -342,7 +342,7 @@ namespace protobuf {
 }  // namespace google
 // @@protoc_insertion_point(global_scope)
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::std::false_type
-    _static_init2_ PROTOBUF_UNUSED =
+    _static_init_googlesql_proto_placeholder_descriptor_ PROTOBUF_UNUSED =
         (::_pbi::AddDescriptors(&descriptor_table_googlesql_2fproto_2fplaceholder_5fdescriptor_2eproto),
         ::_pbi::ExtensionSet::RegisterMessageExtension(
             &::google::protobuf::MessageOptions::default_instance(), 14004, 11,

@@ -2293,7 +2293,7 @@ namespace protobuf {
 }  // namespace google
 // @@protoc_insertion_point(global_scope)
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::std::false_type
-    _static_init2_ PROTOBUF_UNUSED =
+    _static_init_googlesql_public_functions_differential_privacy_ PROTOBUF_UNUSED =
         (::_pbi::AddDescriptors(&descriptor_table_googlesql_2fpublic_2ffunctions_2fdifferential_5fprivacy_2eproto),
          ::std::false_type{});
 #include "google/protobuf/port_undef.inc"
