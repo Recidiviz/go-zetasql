@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_GOOGLESQL_ANALYZER_ANONYMIZATION_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_GOOGLESQL_ANALYZER_ANONYMIZATION_REWRITER_EXPORT_H
 
-#include "googlesql/legacy_zetasql/analyzer/anonymization_rewriter.h"
+#include "googlesql/analyzer/anonymization_rewriter.h"
 // include sources
-#include "googlesql/legacy_zetasql/analyzer/anonymization_rewriter.cc"
+#include "googlesql/analyzer/anonymization_rewriter.cc"
 // include dependencies
 #include "go-googlesql/analyzer/expr_matching_helpers/export.inc"
 #include "go-googlesql/analyzer/name_scope/export.inc"

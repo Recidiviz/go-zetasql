@@ -213,11 +213,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/parser/macros/token_with_location.h"
+#include "googlesql/parser/macros/token_with_location.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/parser/macros/token_with_location.cc"
+#include "googlesql/parser/macros/token_with_location.cc"
 
 // include dependencies
 #include "go-googlesql/public/parse_location/export.inc"

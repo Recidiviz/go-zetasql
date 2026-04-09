@@ -206,11 +206,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/parser/token_disambiguator.h"
+#include "googlesql/parser/token_disambiguator.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/parser/token_disambiguator.cc"
+#include "googlesql/parser/token_disambiguator.cc"
 
 // include dependencies
 #include "go-googlesql/parser/bison_parser_mode/export.inc"

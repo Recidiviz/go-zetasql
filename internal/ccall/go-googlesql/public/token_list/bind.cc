@@ -225,7 +225,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/public/token_list.h"
+#include "googlesql/public/token_list.h"
 //#undef private
 
 // include sources

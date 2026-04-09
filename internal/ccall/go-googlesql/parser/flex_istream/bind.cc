@@ -225,7 +225,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/parser/flex_istream.h"
+#include "googlesql/parser/flex_istream.h"
 //#undef private
 
 // include sources

@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  REGISTRY_IMAGE: ghcr.io/recidiviz/go-googlesql
+  REGISTRY_IMAGE: ghcr.io/vantaboard/go-googlesql
 
 jobs:
   # For each platform in the matrix, creates and pushes a platform-compatible Docker image to the registry

@@ -4,10 +4,10 @@ OUT_DIR := $(abspath $(CURDIR)/cache/execroot/com_google_zetasql/bazel-out/k8-fa
 OUT_EXTERNAL_DIR := $(OUT_DIR)/external
 
 build:
-	docker build -t zetasql .
+	docker build -t googlesql .
 
 export: build
-	docker run --rm -v "$(CURDIR)/cache:/tmp" zetasql sh -c "bash export.sh"
+	docker run --rm -v "$(CURDIR)/cache:/tmp" googlesql sh -c "bash export.sh"
 
 update:
 	go run main.go

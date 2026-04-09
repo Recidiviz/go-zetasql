@@ -453,7 +453,7 @@ func slicesInsert(s []string, at int, val string) []string {
 }
 
 // wrapUnicodeUtilsCCInclude guards googlesql/common/unicode_utils.cc (or legacy zetasql path) so
-// the public/analyzer CGO package can define ZETASQL_OMIT_UNICODE_UTILS_CC (see
+// the public/analyzer CGO package can define GOOGLESQL_OMIT_UNICODE_UTILS_CC (see
 // bind_cc_prelude_before_headers) and avoid duplicating FLAGS_* idstring with root bind.cc.
 func wrapUnicodeUtilsCCInclude(prelude []string) []string {
 	const (
@@ -465,7 +465,7 @@ func wrapUnicodeUtilsCCInclude(prelude []string) []string {
 		t := strings.TrimSpace(line)
 		if t == directZeta || t == directGoogle {
 			out = append(out,
-				"#ifndef ZETASQL_OMIT_UNICODE_UTILS_CC",
+				"#ifndef GOOGLESQL_OMIT_UNICODE_UTILS_CC",
 				line,
 				"#endif",
 			)

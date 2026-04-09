@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2025.03.1` → `2026.01.1`
 
-This note tracks **upstream** changes between tags `2025.03.1` and `2026.01.1` in [google/googlesql](https://github.com/google/zetasql) and how **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator** align.
+This note tracks **upstream** changes between tags `2025.03.1` and `2026.01.1` in [google/googlesql](https://github.com/google/googlesql) and how **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator** align.
 
 ## GoogleSQL → GoogleSQL (upstream)
 

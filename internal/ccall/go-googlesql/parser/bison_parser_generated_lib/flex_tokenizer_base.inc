@@ -8,7 +8,7 @@
 #define FLEX_BETA
 #endif
 
-#define yyFlexLexer ZetaSqlFlexTokenizerBase
+#define yyFlexLexer GoogleSqlFlexTokenizerBase
 
 
 #ifndef FLEXINT_H
@@ -308,11 +308,11 @@ int yyFlexLexer::yylex()
 #include <string>
 #include <string.h>
 
-#include "googlesql/legacy_zetasql/parser/bison_parser.bison.h"
-#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
-#include "googlesql/legacy_zetasql/parser/keywords.h"
-#include "googlesql/legacy_zetasql/public/parse_location.h"
-#include "googlesql/legacy_zetasql/public/strings.h"
+#include "googlesql/parser/bison_parser.bison.h"
+#include "googlesql/parser/flex_tokenizer.h"
+#include "googlesql/parser/keywords.h"
+#include "googlesql/public/parse_location.h"
+#include "googlesql/public/strings.h"
 #include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
 
@@ -320,7 +320,7 @@ using zetasql_bison_parser::BisonParserImpl;
 
 #undef YY_DECL
 #define YY_DECL \
-    int zetasql::parser::ZetaSqlFlexTokenizer::GetNextTokenFlexImpl( \
+    int zetasql::parser::LegacyFlexTokenizer::GetNextTokenFlexImpl( \
         zetasql_bison_parser::location* yylloc)
 
 // This action is executed for every token that is matched, before the defined
@@ -345,7 +345,7 @@ using zetasql_bison_parser::BisonParserImpl;
     yylloc->end.column = yylloc->begin.column + prefix_length_result; \
   } while (0)
 
-constexpr char ::zetasql::parser::ZetaSqlFlexTokenizer::kEofSentinelInput[];
+constexpr char ::zetasql::parser::LegacyFlexTokenizer::kEofSentinelInput[];
 
 #line 3153 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
 /* These are some basic regex definitions that are used in the lexer rules
@@ -409,7 +409,7 @@ constexpr char ::zetasql::parser::ZetaSqlFlexTokenizer::kEofSentinelInput[];
 /* Requiring a newline at the end of dash_coment and pound_comment does not
    cause an error even if the comment comes in the last line of a query,
    thanks to the newline sentinel input (See:
-   https://github.com/google/zetasql/blob/master/zetasql/parser/flex_tokenizer.h?l=128).
+   https://github.com/google/googlesql/blob/master/zetasql/parser/flex_tokenizer.h?l=128).
 */
 /* Dash comments using -- */
 /* # comment ignores anything from # to the end of the line. */

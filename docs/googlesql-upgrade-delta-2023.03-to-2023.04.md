@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2023.03.2` → `2023.04.1`
 
-This note captures a **tag-scoped review** of upstream changes between `2023.03.2` and `2023.04.1` in [googlesql](https://github.com/google/zetasql) history (paths under `zetasql/` at those tags; the open-source tree may use `googlesql/` today). The range contains **two** squashed export commits (`06e004b3`, then `206e78c8`); **commit bodies list internal change titles** but not every file. Use **`git diff 2023.03.2..2023.04.1 -- zetasql/`** for line-level detail.
+This note captures a **tag-scoped review** of upstream changes between `2023.03.2` and `2023.04.1` in [googlesql](https://github.com/google/googlesql) history (paths under `zetasql/` at those tags; the open-source tree may use `googlesql/` today). The range contains **two** squashed export commits (`06e004b3`, then `206e78c8`); **commit bodies list internal change titles** but not every file. Use **`git diff 2023.03.2..2023.04.1 -- zetasql/`** for line-level detail.
 
 ## Scale
 
@@ -26,7 +26,7 @@ This note captures a **tag-scoped review** of upstream changes between `2023.03.
 |----------|----------------|
 | **`ParseRangeBoundaries`**: parse string literals `[start, end)` for **relational RANGE** type; strict `", "` delimiter | **Not** wired: zetasqlite has **window** `RANGE` / `RANGE_BUCKET` / geography-style uses, not full **RANGE&lt;T&gt;** values + `CAST(string AS RANGE …)` end-to-end |
 
-**Follow-up:** when `FEATURE_RANGE_TYPE` is enabled in tests, port boundary parsing and CAST from STRING using the same grammar as [`range.cc`](https://github.com/google/zetasql/blob/master/zetasql/public/functions/range.cc) (or current `googlesql` equivalent).
+**Follow-up:** when `FEATURE_RANGE_TYPE` is enabled in tests, port boundary parsing and CAST from STRING using the same grammar as [`range.cc`](https://github.com/google/googlesql/blob/master/zetasql/public/functions/range.cc) (or current `googlesql` equivalent).
 
 ### Built-ins and language surface
 

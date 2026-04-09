@@ -225,7 +225,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/parser/bison_parser_mode.h"
+#include "googlesql/parser/bison_parser_mode.h"
 //#undef private
 
 // include sources

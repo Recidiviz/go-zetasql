@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_GOOGLESQL_PARSER_TOKEN_DISAMBIGUATOR_EXPORT_H
 #define INTERNAL_CCALL_GO_GOOGLESQL_PARSER_TOKEN_DISAMBIGUATOR_EXPORT_H
 
-#include "googlesql/legacy_zetasql/parser/token_disambiguator.h"
+#include "googlesql/parser/token_disambiguator.h"
 // include sources
-#include "googlesql/legacy_zetasql/parser/token_disambiguator.cc"
+#include "googlesql/parser/token_disambiguator.cc"
 // include dependencies
 #include "go-googlesql/parser/bison_parser_mode/export.inc"
 #include "go-googlesql/parser/bison_token_codes/export.inc"

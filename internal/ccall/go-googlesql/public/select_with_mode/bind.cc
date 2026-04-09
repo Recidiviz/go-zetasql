@@ -225,7 +225,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/public/select_with_mode.h"
+#include "googlesql/public/select_with_mode.h"
 //#undef private
 
 // include sources

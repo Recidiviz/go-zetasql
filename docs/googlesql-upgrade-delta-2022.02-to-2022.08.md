@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2022.02.1` → `2022.08.1`
 
-This note captures a **directory-scoped review** of upstream changes between tags `2022.02.1` and `2022.08.1` in the [googlesql](https://github.com/google/zetasql) history (paths under `zetasql/` at those tags). Export commits bundle **hundreds** of internal CLs; only a subset of bullets appear in commit messages—this file focuses on **proto / public API / builtins** relevant to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
+This note captures a **directory-scoped review** of upstream changes between tags `2022.02.1` and `2022.08.1` in the [googlesql](https://github.com/google/googlesql) history (paths under `zetasql/` at those tags). Export commits bundle **hundreds** of internal CLs; only a subset of bullets appear in commit messages—this file focuses on **proto / public API / builtins** relevant to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 ## Scale
 

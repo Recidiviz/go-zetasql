@@ -55,7 +55,7 @@
 #include "_cgo_export.h"
 
 // parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.
-#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+#define GOOGLESQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
 
 
 // Descriptor table identifiers for googlesql/public/options.proto (see googlesql/public/analyzer amalgamation).

@@ -203,7 +203,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/common/int_ops_util.h"
+#include "googlesql/common/int_ops_util.h"
 //#undef private
 
 // include sources

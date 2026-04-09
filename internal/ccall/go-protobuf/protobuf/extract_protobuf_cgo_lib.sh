@@ -10,8 +10,8 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
-ZETASQL="$REPO_ROOT/internal/cmd/updater/googlesql"
-cd "$ZETASQL"
+GOOGLESQL="$REPO_ROOT/internal/cmd/updater/googlesql"
+cd "$GOOGLESQL"
 
 export CC="${CC:-clang}"
 export CXX="${CXX:-clang++}"

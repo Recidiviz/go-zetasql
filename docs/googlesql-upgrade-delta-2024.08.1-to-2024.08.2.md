@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2024.08.1` → `2024.08.2`
 
-This note tracks **upstream** changes between tags `2024.08.1` and `2024.08.2` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2024.08.1` and `2024.08.2` in [GoogleSQL](https://github.com/google/googlesql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 Upstream ships as a single **“Export of internal GoogleSQL changes”** commit on `2024.08.2` (highlights: **Measure type** placeholder in `type.proto`, **TO_JSON** signature with `unsupported_fields`, **map_replace** builtins, **map_insert** return type clarification, **analyzer** `CycleDetector` wiring in `AnalyzerOptions`, **lambda** handling in builtin registry scalar APIs, **per-column OPTIONS** / **WITH COLUMN OPTIONS**, parser/bison and `gen_parse_tree.py` churn, `execute_query` tooling). Mechanical churn also touches `zetasql/public/functions/to_json*`, `unsupported_fields.proto`, formatter, and many tests.
 

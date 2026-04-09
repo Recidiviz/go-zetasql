@@ -1,5 +1,5 @@
 #!/bin/bash
 
-BAZEL_ZETASQL=$(readlink bazel-zetasql)
-CACHE_ROOT=$BAZEL_ZETASQL/../../
+BAZEL_GOOGLESQL=$(readlink bazel-googlesql)
+CACHE_ROOT=$BAZEL_GOOGLESQL/../../
 cp -r $CACHE_ROOT/* /tmp/

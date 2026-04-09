@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2024.08.2` → `2024.11.1`
 
-This note tracks **upstream** changes between tags `2024.08.2` and `2024.11.1` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2024.08.2` and `2024.11.1` in [GoogleSQL](https://github.com/google/googlesql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 Upstream ships as a single **“Export of internal GoogleSQL changes”** commit on `2024.11.1` (`a516c6b2`), with **~711 files** changed—large churn in `resolved_ast` (validator, sql_builder, rewrite_utils), parser/bison, formatter, and tests. Prioritize **protos**, **FunctionSignatureId**, **TypeKind**, **resolved_ast** codegen, and **builtin** surfaces when syncing this repo.
 

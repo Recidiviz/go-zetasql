@@ -1,6 +1,6 @@
 # googlesql / GoogleSQL parity: `2023.03.2` → `2023.04.1`
 
-This document maps upstream changes in [googlesql](https://github.com/google/zetasql) between tags `2023.03.2` and `2023.04.1` to this repo and related **go-googlesqlite** / **bigquery-emulator** work. It complements the high-level delta list in the upgrade notes.
+This document maps upstream changes in [googlesql](https://github.com/google/googlesql) between tags `2023.03.2` and `2023.04.1` to this repo and related **go-googlesqlite** / **bigquery-emulator** work. It complements the high-level delta list in the upgrade notes.
 
 ## Upstream commits in range
 

@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2023.11.1` → `2024.03.1`
 
-This note tracks **upstream** changes between tags `2023.11.1` and `2024.03.1` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2023.11.1` and `2024.03.1` in [GoogleSQL](https://github.com/google/googlesql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 Upstream ships as **one** export commit on `2024.03.1`. Mechanical churn is concentrated in `zetasql/public/options.proto`, `zetasql/public/builtin_function.proto`, `zetasql/resolved_ast/`, `zetasql/parser/` (including `token_disambiguator.{cc,h}`), and `zetasql/public/value.*`.
 

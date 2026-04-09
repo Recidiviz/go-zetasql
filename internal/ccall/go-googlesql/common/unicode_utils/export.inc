@@ -3,7 +3,7 @@
 
 #include "googlesql/common/unicode_utils.h"
 // include sources
-#ifndef ZETASQL_OMIT_UNICODE_UTILS_CC
+#ifndef GOOGLESQL_OMIT_UNICODE_UTILS_CC
 #include "googlesql/common/unicode_utils.cc"
 #endif
 // include dependencies

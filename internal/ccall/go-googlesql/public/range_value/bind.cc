@@ -191,11 +191,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/public/range_value.h"
+#include "googlesql/public/range_value.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/public/range_value.cc"
+#include "googlesql/public/range_value.cc"
 
 // include dependencies
 #include "go-googlesql/public/civil_time/export.inc"

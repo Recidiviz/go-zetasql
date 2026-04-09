@@ -222,11 +222,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/public/timestamp_pico_value.h"
+#include "googlesql/public/timestamp_pico_value.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/public/timestamp_pico_value.cc"
+#include "googlesql/public/timestamp_pico_value.cc"
 
 // include dependencies
 #include "go-googlesql/base/check/export.inc"

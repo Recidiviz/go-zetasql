@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2023.08.1` → `2023.09.1`
 
-This note tracks **upstream** changes between tags `2023.08.1` and `2023.09.1` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2023.08.1` and `2023.09.1` in [GoogleSQL](https://github.com/google/googlesql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 The tag range is a **single** export commit (`0b082e84` on top of `2023.08.1` at `54d659fe`). Most churn is in analyzer tests and anonymization; **public protos** and **serialization** changes below are the main integration surface for this stack.
 

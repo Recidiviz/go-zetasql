@@ -7,9 +7,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y make g++ clang 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 100
 RUN GOBIN=/usr/local/bin go install github.com/bazelbuild/bazelisk@latest
 
-COPY zetasql /zetasql
+COPY googlesql /googlesql
 
-WORKDIR /zetasql
+WORKDIR /googlesql
 
 ENV CC=clang
 ENV CXX=clang++
@@ -20,46 +20,46 @@ RUN bazelisk build \
   --local_cpu_resources=4 \
   --cxxopt=-std=c++20 \
   --host_cxxopt=-std=c++20 \
-  '//zetasql/public:sql_formatter' \
-  '//zetasql/public:anonymization_utils' \
-  '//zetasql/resolved_ast:serialization_cc_proto' \
-  '//zetasql/resolved_ast:resolved_ast_enums_cc_proto' \
-  '//zetasql/resolved_ast:resolved_node_kind_cc_proto' \
-  '//zetasql/resolved_ast:resolved_ast_cc_proto' \
-  '//zetasql/scripting:variable_cc_proto' \
-  '//zetasql/scripting:script_executor_state_cc_proto' \
-  '//zetasql/scripting:script_exception_cc_proto' \
-  '//zetasql/proto:options_cc_proto' \
-  '//zetasql/proto:function_cc_proto' \
-  '//zetasql/proto:simple_catalog_cc_proto' \
-  '//zetasql/proto:internal_error_location_cc_proto' \
-  '//zetasql/proto:anon_output_with_report_cc_proto' \
-  '//zetasql/proto:placeholder_descriptor_cc_proto' \
-  '//zetasql/parser:ast_enums_cc_proto' \
-  '//zetasql/parser:parse_tree_cc_proto' \
-  '//zetasql/public:parse_location_range_cc_proto' \
-  '//zetasql/public:parse_resume_location_cc_proto' \
-  '//zetasql/public:options_cc_proto' \
-  '//zetasql/public:simple_value_cc_proto' \
-  '//zetasql/public:function_cc_proto' \
-  '//zetasql/public/proto:type_annotation_cc_proto' \
-  '//zetasql/public:error_location_cc_proto' \
-  '//zetasql/public:type_annotation_cc_proto' \
-  '//zetasql/public:type_parameters_cc_proto' \
-  '//zetasql/public:simple_constant_cc_proto' \
-  '//zetasql/public:simple_table_cc_proto' \
-  '//zetasql/public:builtin_function_cc_proto' \
-  '//zetasql/public/functions:datetime_cc_proto' \
-  '//zetasql/public/functions:normalize_mode_cc_proto' \
-  '//zetasql/public/functions:rounding_mode_cc_proto' \
-  '//zetasql/public:value_cc_proto' \
-  '//zetasql/public:annotation_cc_proto' \
-  '//zetasql/public:deprecation_warning_cc_proto' \
-  '//zetasql/public:type_cc_proto' \
-  '//zetasql/public:collation_cc_proto' \
-  '//zetasql/public:formatter_options_cc_proto' \
-  '//zetasql/public:type_modifiers_cc_proto' \
-  '//zetasql/reference_impl:evaluation' \
-  '//zetasql/scripting:procedure_extension_cc_proto'
+  '//googlesql/public:sql_formatter' \
+  '//googlesql/public:anonymization_utils' \
+  '//googlesql/resolved_ast:serialization_cc_proto' \
+  '//googlesql/resolved_ast:resolved_ast_enums_cc_proto' \
+  '//googlesql/resolved_ast:resolved_node_kind_cc_proto' \
+  '//googlesql/resolved_ast:resolved_ast_cc_proto' \
+  '//googlesql/scripting:variable_cc_proto' \
+  '//googlesql/scripting:script_executor_state_cc_proto' \
+  '//googlesql/scripting:script_exception_cc_proto' \
+  '//googlesql/proto:options_cc_proto' \
+  '//googlesql/proto:function_cc_proto' \
+  '//googlesql/proto:simple_catalog_cc_proto' \
+  '//googlesql/proto:internal_error_location_cc_proto' \
+  '//googlesql/proto:anon_output_with_report_cc_proto' \
+  '//googlesql/proto:placeholder_descriptor_cc_proto' \
+  '//googlesql/parser:ast_enums_cc_proto' \
+  '//googlesql/parser:parse_tree_cc_proto' \
+  '//googlesql/public:parse_location_range_cc_proto' \
+  '//googlesql/public:parse_resume_location_cc_proto' \
+  '//googlesql/public:options_cc_proto' \
+  '//googlesql/public:simple_value_cc_proto' \
+  '//googlesql/public:function_cc_proto' \
+  '//googlesql/public/proto:type_annotation_cc_proto' \
+  '//googlesql/public:error_location_cc_proto' \
+  '//googlesql/public:type_annotation_cc_proto' \
+  '//googlesql/public:type_parameters_cc_proto' \
+  '//googlesql/public:simple_constant_cc_proto' \
+  '//googlesql/public:simple_table_cc_proto' \
+  '//googlesql/public:builtin_function_cc_proto' \
+  '//googlesql/public/functions:datetime_cc_proto' \
+  '//googlesql/public/functions:normalize_mode_cc_proto' \
+  '//googlesql/public/functions:rounding_mode_cc_proto' \
+  '//googlesql/public:value_cc_proto' \
+  '//googlesql/public:annotation_cc_proto' \
+  '//googlesql/public:deprecation_warning_cc_proto' \
+  '//googlesql/public:type_cc_proto' \
+  '//googlesql/public:collation_cc_proto' \
+  '//googlesql/public:formatter_options_cc_proto' \
+  '//googlesql/public:type_modifiers_cc_proto' \
+  '//googlesql/reference_impl:evaluation' \
+  '//googlesql/scripting:procedure_extension_cc_proto'
 
 COPY export.sh export.sh

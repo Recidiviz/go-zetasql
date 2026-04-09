@@ -1,16 +1,16 @@
 # Example pkg-config file for a future consolidated install prefix (prebuilt headers + libs).
-# Not wired into generated #cgo blocks today; use when/if a single libzetasql-style layout exists.
+# Not wired into generated #cgo blocks today; use when/if a single libgooglesql-style layout exists.
 #
 # Typical usage after installing files under /opt/go-googlesql-cgo:
 #   export PKG_CONFIG_PATH=/opt/go-googlesql-cgo/lib/pkgconfig
-#   CGO_CFLAGS="$(pkg-config --cflags zetasql)" CGO_LDFLAGS="$(pkg-config --libs zetasql)" go build ...
+#   CGO_CFLAGS="$(pkg-config --cflags googlesql)" CGO_LDFLAGS="$(pkg-config --libs googlesql)" go build ...
 #
 # prefix=/opt/go-googlesql-cgo
 # exec_prefix=${prefix}
 # libdir=${exec_prefix}/lib
 # includedir=${prefix}/include
 #
-# Name: zetasql
+# Name: googlesql
 # Description: go-googlesql prebuilt C++ stack (placeholder)
 # Version: 0.0.0
 # Libs: -L${libdir} -lstdc++ -ldl -lz

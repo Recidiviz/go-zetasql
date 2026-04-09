@@ -203,11 +203,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/analyzer/anonymization_rewriter.h"
+#include "googlesql/analyzer/anonymization_rewriter.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/analyzer/anonymization_rewriter.cc"
+#include "googlesql/analyzer/anonymization_rewriter.cc"
 
 // include dependencies
 #include "go-googlesql/analyzer/expr_matching_helpers/export.inc"

@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2024.06.1` → `2024.08.1`
 
-This note tracks **upstream** changes between tags `2024.06.1` and `2024.08.1` in [GoogleSQL](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
+This note tracks **upstream** changes between tags `2024.06.1` and `2024.08.1` in [GoogleSQL](https://github.com/google/googlesql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator**.
 
 Upstream ships as a single **“Exported GoogleSQL changes”** commit on `2024.08.1` (highlights: **SQL pipe syntax**, new language features, documentation). Mechanical churn is concentrated in `zetasql/public/options.proto`, `zetasql/public/builtin_function.proto`, `zetasql/public/function.proto`, `zetasql/public/types/` (e.g. removal of `list_backed_type`), and `zetasql/resolved_ast/` (`sql_builder`, `rewrite_utils`, `validator`, `gen_resolved_ast.py`).
 

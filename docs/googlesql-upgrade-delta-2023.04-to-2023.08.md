@@ -1,6 +1,6 @@
 # Googlesql upgrade delta: `2023.04.1` → `2023.08.1`
 
-This note tracks **upstream** changes between tags `2023.04.1` and `2023.08.1` in [googlesql](https://github.com/google/zetasql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator`.
+This note tracks **upstream** changes between tags `2023.04.1` and `2023.08.1` in [googlesql](https://github.com/google/googlesql) (`zetasql/` at those tags) and how they relate to **go-googlesql**, **go-googlesqlite**, and **bigquery-emulator`.
 
 ## go-googlesql source snapshot
 

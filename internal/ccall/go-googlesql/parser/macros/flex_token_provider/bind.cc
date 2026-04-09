@@ -225,11 +225,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.h"
+#include "googlesql/parser/macros/flex_token_provider.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/parser/macros/flex_token_provider.cc"
+#include "googlesql/parser/macros/flex_token_provider.cc"
 
 // include dependencies
 #include "go-googlesql/parser/macros/token_provider_base/export.inc"

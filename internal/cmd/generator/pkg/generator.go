@@ -410,7 +410,7 @@ func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
 
 // wrapParserBindTokenDisambiguatorInclude matches exportinc.wrapParserTokenDisambiguatorFlexInclude:
 // parser amalgamation already includes flex_tokenizer.cc; downstream export.inc files must see
-// ZETASQL_PARSER_AMALGAMATION_HAS_FLEX while expanding token_disambiguator.
+// GOOGLESQL_PARSER_AMALGAMATION_HAS_FLEX while expanding token_disambiguator.
 // isGooglesqlParserPackage is true for the parser shard under googlesql/parser (not subpackages).
 func isGooglesqlParserPackage(lib *Lib) bool {
 	return lib.Name == "parser" && lib.BasePkg == "googlesql/parser"
@@ -421,9 +421,9 @@ func wrapParserBindTokenDisambiguatorInclude(lib *Lib, bindCC []byte) []byte {
 		return bindCC
 	}
 	const direct = `#include "go-googlesql/parser/token_disambiguator/export.inc"`
-	repl := "#define ZETASQL_PARSER_AMALGAMATION_HAS_FLEX\n" +
+	repl := "#define GOOGLESQL_PARSER_AMALGAMATION_HAS_FLEX\n" +
 		direct + "\n" +
-		"#undef ZETASQL_PARSER_AMALGAMATION_HAS_FLEX"
+		"#undef GOOGLESQL_PARSER_AMALGAMATION_HAS_FLEX"
 	return bytes.Replace(bindCC, []byte(direct), []byte(repl), 1)
 }
 

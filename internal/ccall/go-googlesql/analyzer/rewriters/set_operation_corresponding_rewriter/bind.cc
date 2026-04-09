@@ -203,11 +203,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/analyzer/rewriters/set_operation_corresponding_rewriter.h"
+#include "googlesql/analyzer/rewriters/set_operation_corresponding_rewriter.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/analyzer/rewriters/set_operation_corresponding_rewriter.cc"
+#include "googlesql/analyzer/rewriters/set_operation_corresponding_rewriter.cc"
 
 // include dependencies
 #include "go-googlesql/public/rewriter_interface/export.inc"

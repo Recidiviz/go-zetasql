@@ -68,7 +68,7 @@ assume **mixed revisions or incomplete post-copy patching** first. Re-copy a sin
 
 ## Upgrade playbook
 
-[`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) must track **upstream release tags only** (no extra submodule commits). Embedding-specific fixes live under `internal/ccall/` and related tooling; see [`zetasql-submodule-policy.md`](zetasql-submodule-policy.md).
+[`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) must track **upstream release tags only** (no extra submodule commits). Embedding-specific fixes live under `internal/ccall/` and related tooling; see [`googlesql-submodule-policy.md`](googlesql-submodule-policy.md).
 
 1. Update the updater **cache** / pins so `com_google_protobuf` matches the GoogleSQL release you target.
 2. Run the updater with `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1` when **preserving** local protobuf edits, or unset it when **forcing** a full refresh from cache.

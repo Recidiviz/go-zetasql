@@ -1,5 +1,5 @@
-#ifndef zetasql_bridge_h
-#define zetasql_bridge_h
+#ifndef googlesql_bridge_h
+#define googlesql_bridge_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,4 +15,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* zetasql_bridge_h */
+#endif /* googlesql_bridge_h */

@@ -353,6 +353,7 @@ conflict_symbols:
     symbol: module_initialization_complete
 
 exclude_googlesql_dirs:
+  - legacy_zetasql
   - testing
   - testdata
   - compliance
@@ -452,13 +453,13 @@ cclib:
     - pkg: googlesql/parser/parser
       lines: |
         // flex_tokenizer.flex.cc defines yyFlexLexer::{yylex,yywrap}; suppress flex_tokenizer.h inline stubs.
-        #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+        #define GOOGLESQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
         // flex_prelude uses distinct Legacyalloc symbols from root analyzer (see flex_prelude in add_sources).
-        #define ZETASQL_GO_FLEX_LEGACY_IN_PARSER_PKG 1
+        #define GOOGLESQL_GO_FLEX_LEGACY_IN_PARSER_PKG 1
     - pkg: googlesql/public/parse_helpers
       lines: |
         // parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.
-        #define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+        #define GOOGLESQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
   # Parser/bison CGO packages link with the root analyzer TU; align googlesql* namespace
   # mangling with go-googlesql/public/analyzer (root_analyzer_amalgamation_macros.inc) so
   # protobuf extensions and shared types resolve across packages.

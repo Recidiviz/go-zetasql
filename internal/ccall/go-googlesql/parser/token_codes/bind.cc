@@ -225,7 +225,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/parser/token_codes.h"
+#include "googlesql/parser/token_codes.h"
 //#undef private
 
 // include sources

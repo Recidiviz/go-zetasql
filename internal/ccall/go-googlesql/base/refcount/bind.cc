@@ -165,7 +165,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/base/simple_reference_counted.h"
+#include "googlesql/base/simple_reference_counted.h"
 //#undef private
 
 // include sources

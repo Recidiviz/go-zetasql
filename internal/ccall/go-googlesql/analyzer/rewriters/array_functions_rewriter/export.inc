@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_GOOGLESQL_ANALYZER_REWRITERS_ARRAY_FUNCTIONS_REWRITER_EXPORT_H
 #define INTERNAL_CCALL_GO_GOOGLESQL_ANALYZER_REWRITERS_ARRAY_FUNCTIONS_REWRITER_EXPORT_H
 
-#include "googlesql/legacy_zetasql/analyzer/rewriters/array_functions_rewriter.h"
+#include "googlesql/analyzer/rewriters/array_functions_rewriter.h"
 // include sources
-#include "googlesql/legacy_zetasql/analyzer/rewriters/array_functions_rewriter.cc"
+#include "googlesql/analyzer/rewriters/array_functions_rewriter.cc"
 // include dependencies
 #include "go-googlesql/analyzer/substitute/export.inc"
 #include "go-googlesql/base/ret_check/export.inc"

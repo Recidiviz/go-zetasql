@@ -213,7 +213,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/parser/bison_token_codes.h"
+#include "googlesql/parser/bison_token_codes.h"
 //#undef private
 
 // include sources

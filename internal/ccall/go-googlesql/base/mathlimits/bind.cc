@@ -213,11 +213,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/base/mathlimits.h"
+#include "googlesql/base/mathlimits.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/base/mathlimits.cc"
+#include "googlesql/base/mathlimits.cc"
 
 // include dependencies
 

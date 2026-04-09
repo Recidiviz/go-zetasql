@@ -165,11 +165,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/analyzer/rewriters/unary_function_rewriter.h"
+#include "googlesql/analyzer/rewriters/unary_function_rewriter.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/analyzer/rewriters/unary_function_rewriter.cc"
+#include "googlesql/analyzer/rewriters/unary_function_rewriter.cc"
 
 // include dependencies
 #include "go-googlesql/analyzer/rewriters/rewriter_interface/export.inc"

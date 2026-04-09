@@ -57,9 +57,9 @@
 #include "_cgo_export.h"
 
 // flex_tokenizer.flex.cc defines yyFlexLexer::{yylex,yywrap}; suppress flex_tokenizer.h inline stubs.
-#define ZETASQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
+#define GOOGLESQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
 // flex_prelude uses distinct Legacyalloc symbols from root analyzer (see flex_prelude in add_sources).
-#define ZETASQL_GO_FLEX_LEGACY_IN_PARSER_PKG 1
+#define GOOGLESQL_GO_FLEX_LEGACY_IN_PARSER_PKG 1
 
 
 // Descriptor table identifiers for googlesql/public/options.proto (see googlesql/public/analyzer amalgamation).

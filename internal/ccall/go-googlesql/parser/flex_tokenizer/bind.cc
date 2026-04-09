@@ -225,12 +225,12 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/parser/flex_tokenizer.h"
+#include "googlesql/parser/flex_tokenizer.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/parser/flex_tokenizer.cc"
-#include "googlesql/legacy_zetasql/parser/flex_tokenizer.flex.cc"
+#include "googlesql/parser/flex_tokenizer.cc"
+#include "googlesql/parser/flex_tokenizer.flex.cc"
 
 // include dependencies
 #include "go-googlesql/parser/flex_istream/export.inc"

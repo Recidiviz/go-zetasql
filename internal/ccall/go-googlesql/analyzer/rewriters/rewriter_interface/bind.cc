@@ -182,7 +182,7 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/analyzer/rewriters/rewriter_interface.h"
+#include "googlesql/analyzer/rewriters/rewriter_interface.h"
 //#undef private
 
 // include sources

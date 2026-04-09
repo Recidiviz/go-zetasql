@@ -1,9 +1,9 @@
 #ifndef INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_RANGE_VALUE_EXPORT_H
 #define INTERNAL_CCALL_GO_GOOGLESQL_PUBLIC_RANGE_VALUE_EXPORT_H
 
-#include "googlesql/legacy_zetasql/public/range_value.h"
+#include "googlesql/public/range_value.h"
 // include sources
-#include "googlesql/legacy_zetasql/public/range_value.cc"
+#include "googlesql/public/range_value.cc"
 // include dependencies
 #include "go-googlesql/public/civil_time/export.inc"
 #include "go-googlesql/public/options_cc_proto/export.inc"

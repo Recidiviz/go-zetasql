@@ -3,7 +3,7 @@
 ![Go](https://github.com/vantaboard/go-googlesql/workflows/Go/badge.svg)
 [![GoDoc](https://godoc.org/github.com/vantaboard/go-googlesql?status.svg)](https://pkg.go.dev/github.com/vantaboard/go-googlesql?tab=doc)
 
-Go bindings for [GoogleSQL](https://github.com/google/zetasql)
+Go bindings for [GoogleSQL](https://github.com/google/googlesql)
 
 GoogleSQL can parse all queries related to Cloud Spanner and BigQuery. This functionality is provided from the Go language using cgo. 
 
@@ -209,7 +209,7 @@ Apache-2.0 License
 
 Since go-googlesql builds all source code including dependencies at install time, it directly contains the source code of the following libraries. Therefore, the license is set according to the license of the dependent library.
 
-- [GoogleSQL (upstream)](https://github.com/google/zetasql): [Apache License 2.0](https://github.com/google/zetasql/blob/master/LICENSE)
+- [GoogleSQL (upstream)](https://github.com/google/googlesql): [Apache License 2.0](https://github.com/google/googlesql/blob/master/LICENSE)
 - [abseil](https://github.com/abseil/abseil-cpp): [Apache License 2.0](https://github.com/abseil/abseil-cpp/blob/master/LICENSE)
 - [json](https://github.com/nlohmann/json): [MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT)
 - [re2](https://github.com/google/re2): [BSD 3-Clause](https://github.com/google/re2/blob/main/LICENSE)

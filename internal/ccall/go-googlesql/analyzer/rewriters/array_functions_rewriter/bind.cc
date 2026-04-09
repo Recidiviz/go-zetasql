@@ -222,11 +222,11 @@
 
 // include headers
 //#define private public
-#include "googlesql/legacy_zetasql/analyzer/rewriters/array_functions_rewriter.h"
+#include "googlesql/analyzer/rewriters/array_functions_rewriter.h"
 //#undef private
 
 // include sources
-#include "googlesql/legacy_zetasql/analyzer/rewriters/array_functions_rewriter.cc"
+#include "googlesql/analyzer/rewriters/array_functions_rewriter.cc"
 
 // include dependencies
 #include "go-googlesql/analyzer/substitute/export.inc"
