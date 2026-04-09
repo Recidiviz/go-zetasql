@@ -4,19 +4,19 @@ overview: Codify supported build-tag combinations for a single Abseil owner per 
 todos:
   - id: docs-single-owner-policy
     content: Stabilize docs/prebuilt-absl-overlap.md and align docs/tier-b-absl-protobuf.md, docs/prebuilt-cgo.md (and libgooglesql-unified.md overlap notes) — one Abseil owner per link, googlesql_tier_b vs googlesql_tier_b_absl mutual exclusion, unsupported combos table.
-    status: pending
+    status: completed
   - id: verify-script-doc-parity
     content: Re-verify scripts/verify-tier-b-cgo-tag-policy.sh output matches the doc tag matrix after any policy edit; keep lists in sync.
-    status: pending
+    status: completed
   - id: ci-absl-verify-preflight
     content: Add make verify-tier-b-cgo-policy to .github/workflows/go-tier-b-absl-prebuilt.yml (same preflight banner as go-tier-b-prebuilt.yml) before prebuilt-libs-absl / pilot tests.
-    status: pending
+    status: completed
   - id: readme-tier-b-pointer
     content: Update README.md or Tier B doc index with pointer to the tag matrix and explicit note that googlesql_tier_b + googlesql_tier_b_absl together is out of scope for Phase 2.
-    status: pending
+    status: completed
   - id: generators-policy-crosscheck
     content: When editing internal/ccall go-protobuf bind_tier_b.go or go-absl bind_tier_b_absl.go, cross-check tag wiring against docs/prebuilt-absl-overlap.md (mutually exclusive at package level).
-    status: pending
+    status: completed
   - id: optional-ci-enforcement
     content: "Optional follow-up: extend verification so CI can fail on forbidden tag combinations in go test/build — only after matrix and docs are stable (avoid false positives)."
     status: pending

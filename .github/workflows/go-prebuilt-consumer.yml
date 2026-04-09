@@ -1,6 +1,15 @@
 # Producer builds libprotobuf_cgo.a with Bazel; consumer runs go test with prebuilts only (no Bazel on PATH).
 name: Prebuilt consumer (no Bazel)
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/go-prebuilt-consumer.yml"
+      - "internal/ccall/go-protobuf/**"
+      - "Makefile"
+      - "scripts/package-tier-b-protobuf-prebuilt.sh"
+      - "scripts/verify-prebuilt-protobuf.sh"
+      - "scripts/verify-protobuf-tier-b-alignment.sh"
+      - "scripts/verify-tier-b-cgo-tag-policy.sh"
   workflow_dispatch:
   schedule:
     - cron: "15 7 * * 1"

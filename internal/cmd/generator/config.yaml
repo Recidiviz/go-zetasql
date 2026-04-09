@@ -408,7 +408,10 @@ protobuf_internal_export_name_files:
 cclib:
   # Opt-in: packages (BasePkg/Name) that emit bind_link_only.cc.tmpl instead of amalgamated bind.cc.
   # Requires prebuilt native code to satisfy bridge symbols — see docs/link-only-cgo-migration.md.
-  link_only_bind_packages: []
+  # Pilot: base/status uses merged bind.cc (amalgamation vs -DGOOGLESQL_LINK_ONLY_BIND) + namespace
+  # excludes so Bazel libgooglesql.a symbols match; use -tags googlesql,googlesql_unified_prebuilt.
+  link_only_bind_packages:
+    - base/status
   # Unified absl/google: plain namespaces match go-protobuf amalgamation + single include policy.
   global_exclude_replace_names:
     - absl
@@ -532,6 +535,14 @@ cclib:
         - googlesql/public/proto/wire_format_annotation_cc_proto
   # Renaming `google` breaks protobuf headers (namespace google::protobuf) vs go-protobuf amalgamation.
   exclude_replace_names:
+    # Link-only + libgooglesql.a: use upstream namespaces (Bazel *.pic.o) for this package only.
+    - pkg: base/status
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
     - pkg: googlesql/parser/bison_parser_generated_lib
       names:
         - google

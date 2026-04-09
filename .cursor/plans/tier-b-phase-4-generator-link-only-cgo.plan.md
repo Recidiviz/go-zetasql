@@ -4,40 +4,40 @@ overview: Migrate generated CGO packages from amalgamated bind.cc.tmpl to link-o
 todos:
   - id: phase4-vertical-slice
     content: Pick the first vertical slice (parser-only or analyzer-only) and the corresponding BasePkg/Name key(s); plan dependency order for later batches.
-    status: pending
+    status: completed
   - id: phase4-symbol-closure
     content: Verify symbol closure — all C++ symbols used by the package bridge.inc are in libgooglesql.a (or merged archives); use nm / linker errors as needed.
-    status: pending
+    status: completed
   - id: phase4-generator-opt-in
     content: Append key(s) to cclib.link_only_bind_packages in internal/cmd/generator/config.yaml; run generator from internal/cmd/generator; commit regenerated bind.cc for opted-in packages only.
-    status: pending
+    status: completed
   - id: phase4-export-inc
     content: Confirm export.inc / syncExportInc behavior for each opted-in package (link-only path must not incorrectly pull amalgamated deps/export.inc chains).
-    status: pending
+    status: completed
   - id: phase4-unified-graph
     content: If new wrapper or bridge deps are required, update extract_googlesql_unified_lib.sh and/or GOOGLESQL_UNIFIED_BAZEL_TARGETS; rebuild prebuilts per docs/libgooglesql-unified.md.
-    status: pending
+    status: completed
   - id: phase4-bridge-abi
     content: Add C-callable googlesql_unified_* declarations to googlesql_unified.h and thin forwarding in cxx/googlesql_unified_wrapper.cc for the chosen vertical slice (ownership documented).
-    status: pending
+    status: completed
   - id: phase4-smoke-verify
     content: Run scripts/smoke_link_googlesql_unified.sh, make verify-prebuilt-googlesql-unified (and local/build-prebuilt as needed); duplicate-symbol checks per docs/prebuilt-absl-overlap.md.
-    status: pending
+    status: completed
   - id: phase4-docs-abi
     content: Document new symbols / ABI in docs/libgooglesql-unified.md; align Go-side googlesql_unified_prebuilt tags and CI expectations.
-    status: pending
+    status: completed
   - id: phase4-rollout
     content: Add additional BasePkg/Name entries in small batches (leaves before roots); defer full parser+flex+token disambiguator migration until hooks are validated unless explicitly scoped.
     status: pending
   - id: phase4-testing-exit
     content: Run narrow go test then widen to importers; confirm CI green; verify exit criterion — thin bind.cc (no amalgamation-scale bodies); optional before/after compile time or ftime-trace guard.
-    status: pending
+    status: completed
   - id: phase4-docs-pipeline
     content: Update docs/link-only-cgo-migration.md, docs/libgooglesql-unified.md, and docs/native-build-pipeline.md (or pipeline doc) for config keys, commands, and ABI additions.
-    status: pending
+    status: completed
   - id: phase4-deliverables
     content: Satisfy the Deliverables checklist — production packages on link_only_bind_packages, extended googlesql_unified.h + tests, docs updated, exit criterion met.
-    status: pending
+    status: completed
 isProject: false
 ---
 

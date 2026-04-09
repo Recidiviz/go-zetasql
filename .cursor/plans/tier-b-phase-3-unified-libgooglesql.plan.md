@@ -4,34 +4,34 @@ overview: Expand GOOGLESQL_UNIFIED_BAZEL_TARGETS and extract_googlesql_unified_l
 todos:
   - id: phase3-north-star-bazel
     content: From internal/cmd/updater/googlesql, confirm bazel build //googlesql/public:analyzer (or document first failing hop); run §4 deps queries for transitive cc_library footprint
-    status: pending
+    status: completed
   - id: phase3-classify-layers
     content: Classify query output into layers A–E (§5); note parser/lexer/AST/analyzer boundaries for incremental expansion
-    status: pending
+    status: completed
   - id: phase3-expand-targets
     content: Incrementally add explicit Bazel labels to GOOGLESQL_UNIFIED_BAZEL_TARGETS / extract script default; use overrides for experiments; one logical slice per commit when committing
-    status: pending
+    status: completed
   - id: phase3-verify-increment
     content: After each increment — extract_googlesql_unified_lib.sh (or make prebuilt-libs-googlesql-unified), make verify-prebuilt-googlesql-unified, scripts/smoke_link_googlesql_unified.sh, make local/build-prebuilt-googlesql-unified
-    status: pending
+    status: completed
   - id: phase3-link-audit
-    content: When overlap appears, nm sample absl::/google::protobuf:: in libgooglesql.a vs libprotobuf_cgo.a; record link order, duplicates, and mitigations per docs/prebuilt-absl-overlap.md
-    status: pending
+    content: "When overlap appears, nm sample absl::/google::protobuf:: in libgooglesql.a vs libprotobuf_cgo.a; record link order, duplicates, and mitigations per docs/prebuilt-absl-overlap.md"
+    status: completed
   - id: phase3-docs-target-list
     content: Add “Phase 3 target list” table to docs/libgooglesql-unified.md (labels, purpose, default vs GOOGLESQL_UNIFIED_BAZEL_TARGETS override)
-    status: pending
+    status: completed
   - id: phase3-docs-textmapper
     content: Document Textmapper / com_github_inspirer_textmapper and 401-class module fetch failures with actionable mitigations
-    status: pending
+    status: completed
   - id: phase3-docs-linking
     content: Document combining libgooglesql.a with libprotobuf_cgo.a for smoke binary; cross-link prebuilt-absl-overlap.md
-    status: pending
+    status: completed
   - id: phase3-ci-workflow
     content: Align .github/workflows/go-googlesql-unified-prebuilt.yml with documented defaults; optional workflow_dispatch/schedule for full closure if default CI stays subset
-    status: pending
+    status: completed
   - id: phase3-exit-checklist
     content: Satisfy §7 exit criteria and §8 quick verification checklist (Bazel targets, prebuilt path, analyzer direction, linking, CI matches doc)
-    status: pending
+    status: completed
 isProject: false
 ---
 
