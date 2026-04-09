@@ -57,15 +57,23 @@ Verify:
 make verify-prebuilt-absl
 ```
 
-**Build tag `googlesql_tier_b_absl`** — link-only CGO for packages that ship `bind_tier_b_absl.go`. **Migrated packages (expand over time):** [`meta/type_traits`](../internal/ccall/go-absl/meta/type_traits), [`base/config`](../internal/ccall/go-absl/base/config), [`base/core_headers`](../internal/ccall/go-absl/base/core_headers), [`base/endian`](../internal/ccall/go-absl/base/endian), [`base/errno_saver`](../internal/ccall/go-absl/base/errno_saver), [`base/prefetch`](../internal/ccall/go-absl/base/prefetch), [`utility/utility`](../internal/ccall/go-absl/utility/utility). Use **`make local/test-prebuilt-absl`** / **`make local/build-prebuilt-absl`** (defaults list all migrated paths; override `TESTPKG_PREBUILT_ABSL` / `BUILDPKG_ABSL`).
+**Build tag `googlesql_tier_b_absl`** — link-only CGO for packages that ship `bind_tier_b_absl.go`. **Migrated packages (expand over time):** [`meta/type_traits`](../internal/ccall/go-absl/meta/type_traits); [`types/any`](../internal/ccall/go-absl/types/any), [`types/bad_any_cast`](../internal/ccall/go-absl/types/bad_any_cast), [`types/bad_any_cast_impl`](../internal/ccall/go-absl/types/bad_any_cast_impl), [`types/bad_optional_access`](../internal/ccall/go-absl/types/bad_optional_access), [`types/bad_variant_access`](../internal/ccall/go-absl/types/bad_variant_access), [`types/compare`](../internal/ccall/go-absl/types/compare), [`types/optional`](../internal/ccall/go-absl/types/optional), [`types/span`](../internal/ccall/go-absl/types/span), [`types/variant`](../internal/ccall/go-absl/types/variant); [`base/config`](../internal/ccall/go-absl/base/config), [`base/core_headers`](../internal/ccall/go-absl/base/core_headers), [`base/endian`](../internal/ccall/go-absl/base/endian), [`base/errno_saver`](../internal/ccall/go-absl/base/errno_saver), [`base/prefetch`](../internal/ccall/go-absl/base/prefetch); [`utility/utility`](../internal/ccall/go-absl/utility/utility). Use **`make local/test-prebuilt-absl`** / **`make local/build-prebuilt-absl`** (defaults list all migrated paths; override `TESTPKG_PREBUILT_ABSL` / `BUILDPKG_ABSL`).
 
 ### Stress build notes (widening `BUILDPKG_ABSL`)
 
 Local checks used:
 
 - `./internal/ccall/go-absl/meta/...` — builds cleanly (only `type_traits` is a leaf package today).
+- `./internal/ccall/go-absl/types/...` — builds cleanly; all nine `types/*` packages use link-only `bind_tier_b_absl.go` when migrated.
 - `./internal/ccall/go-absl/base/...` — builds cleanly alongside migrated link-only packages; other `base/*` shards still compile `bind.cc` when the tag is set.
 - `./internal/ccall/go-absl/...` — **fails** on a few packages that pull **GoogleMock** (`#include <gmock/gmock.h>`), e.g. `log/scoped_mock_log`, `random/.../mock_*`. That is a **test/mock header** dependency gap, not missing `bind_tier_b_absl.go` on ordinary Abseil shards. Do not expect a full-tree `go build` until gmock is wired or those packages are excluded from the pattern.
+
+**Full-tree strategy (choose one):**
+
+| Approach | When to use |
+|----------|-------------|
+| **Exclude mock-only packages** | Default recommendation. Stress most of the tree with a pattern that omits gmock-dependent dirs, e.g. build `meta/...`, `types/...`, `base/...`, `utility/...`, and other subtrees explicitly instead of a single `./go-absl/...`. To approximate “all packages minus mocks”, run `go list` with `-f` and drop paths matching `mock`, `scoped_mock_log`, `mocking_bit_gen`, `mock_distributions`, `mock_overload_set`. |
+| **Add gmock to CGO** | Only if you need a literal `go build ./internal/ccall/go-absl/...` with zero exclusions: vendor or `-I` to googletest’s `googlemock/include`, link `gmock`/`gtest` as needed. High maintenance; prefer exclusions until a product requires full closure. |
 
 **Overlap with protobuf Tier B:** `libprotobuf_cgo.a` already embeds Abseil object code. Do **not** combine `googlesql_tier_b` and `googlesql_tier_b_absl` in one link without a dedup policy—see [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md).
 
@@ -95,7 +103,9 @@ import "C"
 3. If depth under `go-absl/` differs, adjust `${SRCDIR}/..` segments so `${SRCDIR}/../../lib` resolves to [`internal/ccall/go-absl/lib`](../internal/ccall/go-absl/lib).
 4. Append the package path to **`TESTPKG_PREBUILT_ABSL`** / **`BUILDPKG_ABSL`** in the [`Makefile`](../Makefile).
 
-A parameterized template lives at [`internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl). Fields: **`Package`** (Go package name), **`AnchorSuffix`** (unique identifier, e.g. `base_config`), **`IncludeRel`** (path segments from the package dir to `internal/ccall/`, e.g. `../../../`), **`LibRel`** (to [`go-absl/lib`](../internal/ccall/go-absl/lib), e.g. `../../lib`). Render with `text/template` or copy an existing migrated `bind_tier_b_absl.go` and adjust. The main generator does not emit this file by default yet; it is embedded alongside other `*.tmpl` assets for consistency.
+A parameterized template lives at [`internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl). Fields: **`Package`** (Go package name), **`AnchorSuffix`** (unique identifier, e.g. `base_config`), **`IncludeRel`** (path segments from the package dir to `internal/ccall/`, e.g. `../../../`), **`LibRel`** (to [`go-absl/lib`](../internal/ccall/go-absl/lib), e.g. `../../lib`). Render with `text/template` or copy an existing migrated `bind_tier_b_absl.go` and adjust.
+
+**Generator:** set **`emit_tier_b_absl_go: true`** in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) and run the generator from [`internal/cmd/generator`](../internal/cmd/generator): it emits **`bind_tier_b_absl.go`** and prepends **`//go:build !googlesql_tier_b_absl`** to generated **`bind_linux.go`** / **`bind_darwin.go`** for each package under **`internal/ccall/go-absl/`**. Default is **`false`** so normal regeneration does not change Tier B–ready trees until you opt in.
 
 ## Environment variables
 

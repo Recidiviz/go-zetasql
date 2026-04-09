@@ -94,3 +94,25 @@ func normalizeGoPkgPath(name string) string {
 	pkg := splitted[len(splitted)-1]
 	return goPkgPath(base, pkg)
 }
+
+// tierBAbslRelPaths computes include/lib path segments for bind_tier_b_absl.go from a package
+// directory under .../go-absl/<subpath>/ (outputDir may be absolute).
+func tierBAbslRelPaths(outputDir string) (includeRel, libRel, anchorSuffix string, ok bool) {
+	const mark = "go-absl"
+	s := filepath.ToSlash(outputDir)
+	i := strings.Index(s, mark+"/")
+	if i < 0 {
+		return "", "", "", false
+	}
+	sub := s[i+len(mark)+1:]
+	sub = strings.TrimSuffix(sub, "/")
+	if sub == "" {
+		return "", "", "", false
+	}
+	parts := strings.Split(sub, "/")
+	n := len(parts)
+	includeRel = strings.Repeat("../", n+1)
+	libRel = strings.Repeat("../", n) + "lib"
+	anchorSuffix = strings.Join(parts, "_")
+	return includeRel, libRel, anchorSuffix, true
+}

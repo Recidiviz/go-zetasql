@@ -39,8 +39,8 @@ jobs:
         env:
           CC: clang
           CXX: clang++
-      - name: Build widened go-absl patterns (meta + base)
-        run: make local/build-prebuilt-absl BUILDPKG_ABSL='./internal/ccall/go-absl/meta/... ./internal/ccall/go-absl/base/...'
+      - name: Build widened go-absl patterns (meta + types + base)
+        run: make local/build-prebuilt-absl BUILDPKG_ABSL='./internal/ccall/go-absl/meta/... ./internal/ccall/go-absl/types/... ./internal/ccall/go-absl/base/...'
         env:
           CC: clang
           CXX: clang++

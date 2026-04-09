@@ -499,30 +499,29 @@ func (g *Generator) generateBridgeExternH(outputDir string, lib *Lib) error {
 }
 
 func (g *Generator) generateBindGO(outputDir string, lib *Lib) error {
-	{
-		// for darwin ( currently windows not supported )
-		output, err := g.generateGoSourceByTemplate(
-			"templates/bind.go.tmpl",
-			g.createBindGoParamDarwin(lib),
-		)
-		if err != nil {
-			return err
-		}
-		if err := os.WriteFile(filepath.Join(outputDir, "bind_darwin.go"), output, 0o600); err != nil {
-			return err
-		}
+	darwinBytes, err := g.generateGoSourceByTemplate(
+		"templates/bind.go.tmpl",
+		g.createBindGoParamDarwin(lib),
+	)
+	if err != nil {
+		return err
 	}
-	{
-		output, err := g.generateGoSourceByTemplate(
-			"templates/bind.go.tmpl",
-			g.createBindGoParamLinux(lib),
-		)
-		if err != nil {
-			return err
-		}
-		if err := os.WriteFile(filepath.Join(outputDir, "bind_linux.go"), output, 0o600); err != nil {
-			return err
-		}
+	linuxBytes, err := g.generateGoSourceByTemplate(
+		"templates/bind.go.tmpl",
+		g.createBindGoParamLinux(lib),
+	)
+	if err != nil {
+		return err
+	}
+	darwinBytes, linuxBytes, err = g.applyTierBAbslGo(outputDir, lib, darwinBytes, linuxBytes)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(filepath.Join(outputDir, "bind_darwin.go"), darwinBytes, 0o600); err != nil {
+		return err
+	}
+	if err := os.WriteFile(filepath.Join(outputDir, "bind_linux.go"), linuxBytes, 0o600); err != nil {
+		return err
 	}
 	if existsFile(filepath.Join(outputDir, "bind.go")) {
 		if err := os.Remove(filepath.Join(outputDir, "bind.go")); err != nil {
@@ -530,6 +529,41 @@ func (g *Generator) generateBindGO(outputDir string, lib *Lib) error {
 		}
 	}
 	return nil
+}
+
+// tierBAbslBindParam is used with templates/bind_tier_b_absl.go.tmpl when Config.EmitTierBAbslGo is true.
+type tierBAbslBindParam struct {
+	Package      string
+	IncludeRel   string
+	LibRel       string
+	AnchorSuffix string
+}
+
+func (g *Generator) applyTierBAbslGo(outputDir string, lib *Lib, darwinBytes, linuxBytes []byte) ([]byte, []byte, error) {
+	if !g.cfg.EmitTierBAbslGo {
+		return darwinBytes, linuxBytes, nil
+	}
+	includeRel, libRel, anchorSuffix, ok := tierBAbslRelPaths(outputDir)
+	if !ok {
+		return darwinBytes, linuxBytes, nil
+	}
+	prefix := []byte("//go:build !googlesql_tier_b_absl\n\n")
+	darwinOut := append(prefix, darwinBytes...)
+	linuxOut := append(prefix, linuxBytes...)
+	param := tierBAbslBindParam{
+		Package:      g.goPkgName(lib),
+		IncludeRel:   includeRel,
+		LibRel:       libRel,
+		AnchorSuffix: anchorSuffix,
+	}
+	tierBytes, err := g.generateGoSourceByTemplate("templates/bind_tier_b_absl.go.tmpl", param)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := os.WriteFile(filepath.Join(outputDir, "bind_tier_b_absl.go"), tierBytes, 0o600); err != nil {
+		return nil, nil, err
+	}
+	return darwinOut, linuxOut, nil
 }
 
 func (g *Generator) generateRootBindGO(outputDir string) error {

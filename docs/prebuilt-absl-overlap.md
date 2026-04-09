@@ -17,7 +17,7 @@ nm internal/ccall/go-protobuf/protobuf/lib/linux_amd64/libprotobuf_cgo.a | grep 
 | `googlesql_tier_b_absl` only | Yes | Use for pilots and Abseil experiments **without** also relying on Tier B protobuf for the same link of duplicate Abseil symbols. |
 | `googlesql_tier_b` **and** `googlesql_tier_b_absl` | Risk of **duplicate Abseil symbols** | Not supported until object-level dedup or a single merged archive is implemented. |
 
-Tier B Abseil is validated with **default** protobuf (no `googlesql_tier_b`). Migrated link-only packages include **`meta/type_traits`**, **`base/config`**, **`base/core_headers`**, **`base/endian`**, **`base/errno_saver`**, **`base/prefetch`**, **`utility/utility`** (see [`prebuilt-cgo.md`](prebuilt-cgo.md)).
+Tier B Abseil is validated with **default** protobuf (no `googlesql_tier_b`). Migrated link-only packages include **`meta/type_traits`**, all nine **`types/*`** shards under [`go-absl/types`](../internal/ccall/go-absl/types), **`base/config`**, **`base/core_headers`**, **`base/endian`**, **`base/errno_saver`**, **`base/prefetch`**, **`utility/utility`** (see [`prebuilt-cgo.md`](prebuilt-cgo.md)).
 
 ## If both protobuf Tier B and Abseil Tier B must appear in one link (future)
 
@@ -28,6 +28,12 @@ Today this combination is **unsupported** because `libprotobuf_cgo.a` already co
 3. **Single CGO owner package** — one Go package links `-lprotobuf_cgo` (or a renamed unified archive); other packages use `cgo` `// #cgo LDFLAGS:` only if they do not pull a second copy of Abseil.
 
 Defer implementation until there is a real linker failure or CI requirement—not for hypothetical builds.
+
+**Checklist when duplicate Abseil symbols appear at link time**
+
+1. Identify which archives contribute the symbol (e.g. `nm …/libprotobuf_cgo.a | grep SYMBOL` vs `…/libabsl_cgo.a`).
+2. Prefer **avoiding mixed tags** in one link: use default protobuf with `googlesql_tier_b_absl`, or Tier B protobuf without also linking `libabsl_cgo.a` from separate packages.
+3. If the product truly needs both tags, choose a **single owner** (merged archive or one CGO package) before attempting fragile object-level stripping.
 
 ## Multiple CGO packages each linking `-labsl_cgo`
 

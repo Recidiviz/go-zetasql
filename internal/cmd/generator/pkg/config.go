@@ -5,7 +5,9 @@ import (
 )
 
 type Config struct {
-	Dependencies                    []ThirdPartyDependency `yaml:"dependencies"`
+	// EmitTierBAbslGo enables Tier B Abseil link-only bind files for go-absl generator output (see docs/prebuilt-cgo.md).
+	EmitTierBAbslGo bool `yaml:"emit_tier_b_absl_go"`
+	Dependencies    []ThirdPartyDependency `yaml:"dependencies"`
 	GlobalSymbols                   []string               `yaml:"global_symbols"`
 	TopLevelNamespaces              []string               `yaml:"top_level_namespaces"`
 	ConflictSymbols                 []ConflictSymbol       `yaml:"conflict_symbols"`

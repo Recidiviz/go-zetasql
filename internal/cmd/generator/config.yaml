@@ -1,3 +1,7 @@
+# When true, emit bind_tier_b_absl.go and add //go:build !googlesql_tier_b_absl to generated
+# bind_linux.go / bind_darwin.go for packages under internal/ccall/go-absl/. Default false.
+emit_tier_b_absl_go: false
+
 dependencies:
   - name: absl
     fqdn: @com_google_absl
