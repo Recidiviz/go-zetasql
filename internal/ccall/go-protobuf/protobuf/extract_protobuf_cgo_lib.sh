@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Build @com_google_protobuf//:protobuf with Bazel in the GoogleSQL submodule, then merge all
-# non-test .pic.o objects (plus utf8_range) into lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a.
+# non-test .pic.o objects from protobuf, utf8_range, and Abseil (protobuf's deps) into
+# lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a. Abseil objects are required: protobuf
+# .pic.o reference absl:: symbols that would otherwise stay undefined at link time.
 #
 # Runs on Linux and macOS when bazelisk/bazel is installed. Default CGO bindings still compile
 # protobuf via amalgamation (export.inc); this archive is for experiments or a future Tier-B
@@ -27,8 +29,20 @@ BAZEL="${BAZEL:-$(command -v bazelisk || command -v bazel)}"
   --jobs="${BAZEL_JOBS:-8}"
 
 BINROOT="$("$BAZEL" info bazel-bin | tr -d '\r')"
-OBJS=$(find "$BINROOT/external/com_google_protobuf" "$BINROOT/external/utf8_range" \
-  -name '*.pic.o' 2>/dev/null | grep -Ev 'test|unittest' | sort || true)
+# Bazel 7+ module repos use names like external/protobuf~; older layouts used com_google_protobuf.
+# utf8_range may live under protobuf/third_party/utf8_range or its own external root.
+collect_protobuf_pic_o() {
+  local d
+  for d in \
+    "$BINROOT/external/protobuf~" \
+    "$BINROOT/external/com_google_protobuf" \
+    "$BINROOT/external/utf8_range" \
+    "$BINROOT/external/abseil-cpp~"; do
+    [[ -d "$d" ]] || continue
+    find "$d" -name '*.pic.o' 2>/dev/null
+  done
+}
+OBJS=$(collect_protobuf_pic_o | grep -Ev 'test|unittest|benchmark' | sort -u || true)
 if [[ -z "${OBJS// }" ]]; then
   echo "no protobuf .pic.o under $BINROOT/external" >&2
   exit 1
