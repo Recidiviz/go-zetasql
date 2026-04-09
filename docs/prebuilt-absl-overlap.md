@@ -16,6 +16,7 @@ nm internal/ccall/go-protobuf/protobuf/lib/linux_amd64/libprotobuf_cgo.a | grep 
 | `googlesql_tier_b` only | No (protobuf package links `libprotobuf_cgo.a`) | Protobuf archive already embeds Abseil objects. |
 | `googlesql_tier_b_absl` only | Yes | Use for pilots and Abseil experiments **without** also relying on Tier B protobuf for the same link of duplicate Abseil symbols. |
 | `googlesql_tier_b` **and** `googlesql_tier_b_absl` | Risk of **duplicate Abseil symbols** | Not supported until object-level dedup or a single merged archive is implemented. |
+| `googlesql_unified_prebuilt` (links [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/lib)) | **GoogleSQL `.o` only** in v1; does **not** replace `libprotobuf_cgo.a` / `libabsl_cgo.a` | See [`libgooglesql-unified.md`](libgooglesql-unified.md). Do not also link overlapping Abseil/protobuf objects without a symbol audit; full analyzer closure should grow inside one Bazel build or a audited merge. |
 
 Tier B Abseil is validated with **default** protobuf (no `googlesql_tier_b`). Migrated link-only packages include **`meta/type_traits`**, all nine **`types/*`** shards under [`go-absl/types`](../internal/ccall/go-absl/types), **`base/config`**, **`base/core_headers`**, **`base/endian`**, **`base/errno_saver`**, **`base/prefetch`**, **`utility/utility`** (see [`prebuilt-cgo.md`](prebuilt-cgo.md)).
 
@@ -35,9 +36,13 @@ Defer implementation until there is a real linker failure or CI requirement—no
 2. Prefer **avoiding mixed tags** in one link: use default protobuf with `googlesql_tier_b_absl`, or Tier B protobuf without also linking `libabsl_cgo.a` from separate packages.
 3. If the product truly needs both tags, choose a **single owner** (merged archive or one CGO package) before attempting fragile object-level stripping.
 
+## Unified `libgooglesql.a` (`googlesql_unified_prebuilt`)
+
+v1 **`libgooglesql.a`** contains GoogleSQL-owned object code from selected Bazel targets plus a C anchor ([`libgooglesql-unified.md`](libgooglesql-unified.md)). It is **not** a full replacement for protobuf or Abseil static archives. When a future single merged archive subsumes protobuf + Abseil + GoogleSQL in **one** Bazel link, prefer **one** `-l` line and tighten link flags: the long-term goal in [`native-build-pipeline.md`](native-build-pipeline.md) is to **stop relying** on **`-Wl,--allow-multiple-definition`** for correctness once a single owner or merged archive removes duplicate ELF definitions.
+
 ## Multiple CGO packages each linking `-labsl_cgo`
 
-Each migrated package passes **`-L…/go-absl/lib -labsl_cgo`** in its `bind_tier_b_absl.go`. The final link may pull the same static archive more than once; [`Makefile`](../Makefile) uses **`-Wl,--allow-multiple-definition`** while this is rolled out. If you see link failures or unexpected duplication, prefer Option B (single `prebuilt` owner) in [`native-build-pipeline.md`](native-build-pipeline.md).
+Each migrated package passes **`-L…/go-absl/lib -labsl_cgo`** in its `bind_tier_b_absl.go`. The final link may pull the same static archive more than once; [`Makefile`](../Makefile) uses **`-Wl,--allow-multiple-definition`** while this is rolled out. If you see link failures or unexpected duplication, prefer Option B (single `prebuilt` owner) in [`native-build-pipeline.md`](native-build-pipeline.md), or the unified `libgooglesql.a` path once it covers your symbol closure.
 
 ## Bazel pin
 

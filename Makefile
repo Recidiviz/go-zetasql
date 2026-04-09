@@ -48,8 +48,10 @@ DOCKER_DEV_VOLUMES := \
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache \
 	local/build local/test local/test-tier-b local/build-prebuilt local/test-prebuilt \
 	local/test-prebuilt-absl local/build-prebuilt-absl \
-	prebuilt-libs prebuilt-libs-absl verify-prebuilt-protobuf verify-prebuilt-absl \
-	profile-bottleneck extract-protobuf-lib extract-absl-lib \
+	local/build-prebuilt-googlesql-unified \
+	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified \
+	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified \
+	profile-bottleneck extract-protobuf-lib extract-absl-lib extract-googlesql-unified-lib \
 	test test/linux test-docker
 
 cache-dirs:
@@ -193,6 +195,27 @@ local/test-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b_absl -v $(TESTPKG_PREBUILT_ABSL) -count=1
+
+# Unified libgooglesql.a (GoogleSQL Bazel *.pic.o + C anchor); see docs/libgooglesql-unified.md.
+extract-googlesql-unified-lib:
+	bash internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh
+
+prebuilt-libs-googlesql-unified: extract-googlesql-unified-lib
+
+verify-prebuilt-googlesql-unified:
+	bash scripts/verify-prebuilt-googlesql-unified.sh
+
+local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-unified
+	CGO_ENABLED=1 \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt ./internal/ccall/go-googlesql-unified/googlesqlunified/
 
 # Experimental: go-protobuf links libprotobuf_cgo.a (see bind_tier_b.go, docs/tier-b-absl-protobuf.md).
 # Requires `make extract-protobuf-lib`. Expect failures until global_exclude_replace_names + unified ABI land.

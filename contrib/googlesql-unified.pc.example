@@ -1,0 +1,23 @@
+# pkg-config template when using libgooglesql.a (GoogleSQL Bazel objects + C anchor) from
+# internal/ccall/go-googlesql-unified/lib — see docs/libgooglesql-unified.md.
+#
+# v1 libgooglesql.a does not include all of protobuf/abseil; for full stacks you may still need
+# -lprotobuf_cgo / -labsl_cgo or a single merged archive (see docs/prebuilt-absl-overlap.md).
+#
+# Example after copying to $PREFIX/lib/pkgconfig/googlesql-unified.pc:
+#   export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
+#   export CGO_LDFLAGS="$(pkg-config --libs googlesql-unified)"
+#
+prefix=@PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${exec_prefix}/include
+
+Name: googlesql-unified
+Description: go-googlesql libgooglesql.a (bootstrap unified static lib)
+Version: 0.0.0
+Requires:
+Libs: -L${libdir} -lgooglesql -lz -lstdc++ -ldl -lpthread
+Cflags: -I${includedir} -std=c++20
+
+# macOS: use -lc++ instead of -lstdc++ if linking only against libc++-built objects.

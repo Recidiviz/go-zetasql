@@ -133,6 +133,9 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 | `make verify-prebuilt-absl` | Fail fast if `libabsl_cgo.a` for current `GOOS_GOARCH` is missing |
 | `make local/build-prebuilt-absl` | `go build` with `-tags googlesql,googlesql_tier_b_absl` (pilot path by default) |
 | `make local/test-prebuilt-absl` | `go test` with Abseil Tier B tags (pilot path: `TESTPKG_PREBUILT_ABSL`) |
+| `make prebuilt-libs-googlesql-unified` | Build [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/lib) from GoogleSQL Bazel targets + C anchor (see [`libgooglesql-unified.md`](libgooglesql-unified.md)) |
+| `make verify-prebuilt-googlesql-unified` | Fail fast if `libgooglesql.a` for current `GOOS_GOARCH` is missing |
+| `make local/build-prebuilt-googlesql-unified` | `go build` with `-tags googlesql,googlesql_unified_prebuilt` on the unified CGO owner package (after verify) |
 
 ## Generator: unified `absl` / `google`
 
