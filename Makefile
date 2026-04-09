@@ -231,8 +231,9 @@ local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-uni
 smoke-link-googlesql-unified:
 	bash scripts/smoke_link_googlesql_unified.sh
 
-# Compile-only warm-up: same -race toolchain as tests, but -run '^$' matches no tests so this only
-# populates gomodcache/gocache/ccache. Run after toolchain upgrades or cold cache; then test/linux stays incremental.
+# Compile-only warm-up: same -race toolchain as tests; -run '^$' matches no tests.
+# -exec /bin/true skips executing the linked test binary (still compiles/links it), so caches are
+# warmed without running init/test harness code—handy when the harness would SIGSEGV (e.g. tight RAM).
 docker/warm-cache: docker/build-dev
 	docker run --rm $(DOCKER_DEV_ENV) $(DOCKER_DEV_VOLUMES) \
 		-w /go-googlesql \
@@ -241,7 +242,7 @@ docker/warm-cache: docker/build-dev
 		export CGO_CXXFLAGS='$(CGO_CXXFLAGS_PREBUILT)'; \
 		export CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)'; \
 		export CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)'; \
-		go test -race -p $(GO_BUILD_P) -tags googlesql $(TESTPKG) -count=1 -run '^$$'"
+		go test -race -p $(GO_BUILD_P) -tags googlesql $(TESTPKG) -count=1 -run '^$$' -exec /bin/true"
 
 # Preferred path for GoogleSQL upgrades and local CI parity: tests run inside $(DOCKER_DEV_IMAGE)
 # with the working tree mounted and shared host paths for GOCACHE/GOMODCACHE.

@@ -1,10 +1,13 @@
 # syntax=docker/dockerfile:1.7
-FROM golang:1.24-bookworm AS base
+# Trixie: glibc ≥ 2.38 provides __isoc23_strtol* used when linking Bazel-built
+# libprotobuf_cgo.a / libc++ prebuilts from newer toolchains. Bookworm's glibc
+# is too old for those archives.
+FROM golang:1.24-trixie AS base
 
 ARG VERSION
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	clang ccache mold libc++-dev libc++abi-dev \
+	clang ccache mold libc++-dev libc++abi-dev zlib1g-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV CGO_ENABLED=1

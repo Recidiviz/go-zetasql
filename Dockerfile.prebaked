@@ -2,9 +2,9 @@
 # Experimental skeleton for a "link-only" workflow: toolchain + optional layout for
 # preinstalled headers and static libraries (see README Development and contrib/googlesql.pc.example).
 # Not used by default; build with: docker build -f Dockerfile.prebaked -t go-googlesql:prebaked .
-FROM golang:1.24-bookworm
+FROM golang:1.24-trixie
 
-RUN apt-get update && apt-get install -y --no-install-recommends clang ccache mold pkg-config \
+RUN apt-get update && apt-get install -y --no-install-recommends clang ccache mold pkg-config zlib1g-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV CGO_ENABLED=1
