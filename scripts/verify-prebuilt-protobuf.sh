@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fail fast if Tier B protobuf archive is missing (see docs/prebuilt-cgo.md).
+# Fail fast if the default protobuf prebuilt archive is missing (see docs/prebuilt-cgo.md).
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
@@ -11,9 +11,9 @@ if [[ ! -f "$LIB" ]]; then
 	exit 1
 fi
 if [[ "$(go env GOOS)" == "linux" ]]; then
-	CXXTIER="$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/${GOOS_GOARCH}/libcxx_tier_b.a"
+	CXXTIER="$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/${GOOS_GOARCH}/libcxx_prebuilt.a"
 	if [[ ! -f "$CXXTIER" ]]; then
-		echo "Tier-B libc++ copy missing: $CXXTIER" >&2
+		echo "prebuilt libc++ copy missing: $CXXTIER" >&2
 		echo "Re-run: make prebuilt-libs  (extract script copies Bazel llvm_toolchain libc++)" >&2
 		exit 1
 	fi

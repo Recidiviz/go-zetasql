@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Optional nm-based checks for libprotobuf_cgo.a (Tier B). Off by default; set
+# Optional nm-based checks for the default protobuf prebuilt archive. Off by default; set
 # VERIFY_LIBPROTOBUF_CGO_SYMBOLS=1 to enable (e.g. in CI when debugging link issues).
 set -euo pipefail
 if [[ "${VERIFY_LIBPROTOBUF_CGO_SYMBOLS:-}" != "1" ]]; then

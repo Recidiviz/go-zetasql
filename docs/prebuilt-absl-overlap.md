@@ -1,15 +1,15 @@
 # Abseil prebuilt archive: overlap with `libprotobuf_cgo.a`
 
-**Single Abseil owner:** In any one final link, Abseil object code must come from **either** the objects embedded in `libprotobuf_cgo.a` (when using `googlesql_tier_b`) **or** from `libabsl_cgo.a` (when using `googlesql_tier_b_absl` with default protobuf), **not both**. **`googlesql_tier_b` and `googlesql_tier_b_absl` are mutually exclusive** until deduplication or a merged archive exists.
+**Single Abseil owner:** In any one final link, Abseil object code must come from **either** the objects embedded in the default `libprotobuf_cgo.a` owner **or** from `libabsl_cgo.a` (when using `googlesql_tier_b_absl` in isolated pilot packages), **not both**. The default protobuf prebuilt owner and `googlesql_tier_b_absl` are mutually exclusive until deduplication or a merged archive exists.
 
 **Canonical tag matrix** (base tag `googlesql` is implied for Tier B columns):
 
 | Build tags | Link `libabsl_cgo.a`? | Link `libprotobuf_cgo.a`? | Status |
 |------------|------------------------|----------------------------|--------|
-| *(default, no Tier B tags)* | No | No | **Supported** — amalgamation path. |
-| `googlesql_tier_b` | No (Abseil is inside the protobuf archive) | Yes | **Supported** — protobuf Tier B. |
-| `googlesql_tier_b_absl` | Yes (migrated `go-absl` packages) | No | **Supported** — Abseil Tier B pilot with **default** protobuf; **do not** also set `googlesql_tier_b`. |
-| `googlesql_tier_b` **and** `googlesql_tier_b_absl` | Yes + embedded Abseil | Yes | **Unsupported** — duplicate Abseil objects until dedup or one merged archive. |
+| `googlesql` *(default)* | No | Yes | **Supported** — default protobuf prebuilt path. |
+| `googlesql_tier_b` | No (Abseil is inside the protobuf archive) | Yes | **Deprecated compatibility alias** — same protobuf prebuilt owner as default. |
+| `googlesql_tier_b_absl` | Yes (migrated `go-absl` packages) | No, unless some imported package pulls the default protobuf owner | **Pilot only** — safe only for isolated `go-absl` package sets that do not also link the default protobuf owner. |
+| default protobuf owner (with or without `googlesql_tier_b`) **and** `googlesql_tier_b_absl` | Yes + embedded Abseil | Yes | **Unsupported** — duplicate Abseil objects until dedup or one merged archive. |
 | `googlesql_unified_prebuilt` | N/A (partial stack) | N/A | **Supported** with constraints; see below and [`libgooglesql-unified.md`](libgooglesql-unified.md). |
 | `googlesql_unified_prebuilt` **+** `googlesql_tier_b` and/or careless overlap with Tier B Abseil archives | Risk of duplicate / inconsistent native objects | — | **Unsupported** without an audited single-owner plan. |
 
@@ -29,18 +29,18 @@ The following rows expand the **Canonical tag matrix** with the same rules:
 
 | Build tags | Link `libabsl_cgo.a`? | Notes |
 |------------|----------------------|--------|
-| Default | No | Amalgamation compiles vendored C++. |
-| `googlesql_tier_b` only | No (protobuf package links `libprotobuf_cgo.a`) | Protobuf archive already embeds Abseil objects. |
-| `googlesql_tier_b_absl` only | Yes | Use for pilots and Abseil experiments **without** also enabling Tier B protobuf in the same binary. |
-| `googlesql_tier_b` **and** `googlesql_tier_b_absl` | Risk of **duplicate Abseil symbols** | Not supported until object-level dedup or a single merged archive is implemented. |
+| Default (`googlesql`) | No | Default protobuf prebuilt path; protobuf archive already embeds Abseil objects. |
+| `googlesql_tier_b` only | No (protobuf package still links `libprotobuf_cgo.a`) | Compatibility alias for the same default protobuf owner. |
+| `googlesql_tier_b_absl` only | Yes | Use only for isolated pilots and Abseil experiments that do **not** also pull the default protobuf owner into the same binary. |
+| default protobuf owner (with or without `googlesql_tier_b`) **and** `googlesql_tier_b_absl` | Risk of **duplicate Abseil symbols** | Not supported until object-level dedup or a single merged archive is implemented. |
 | `googlesql_unified_prebuilt` (links [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/lib)) | **GoogleSQL `.o` only** in v1; does **not** replace `libprotobuf_cgo.a` / `libabsl_cgo.a` | See [`libgooglesql-unified.md`](libgooglesql-unified.md). Do not also link overlapping Abseil/protobuf objects without a symbol audit; full analyzer closure should grow inside one Bazel build or a audited merge. |
 | `googlesql_unified_prebuilt` **and** `googlesql_tier_b` (or `googlesql_tier_b_absl`) in the **same** link | Risk of **duplicate** native objects or inconsistent Abseil/protobuf copies | Treat like overlapping Tier B archives: prefer **one** prebuilt story per binary until a single merged `libgooglesql.a` (or single CGO owner) covers the full closure. |
 
-Tier B Abseil is validated with **default** protobuf (no `googlesql_tier_b`). Migrated link-only packages include **`meta/type_traits`**, all nine **`types/*`** shards under [`go-absl/types`](../internal/ccall/go-absl/types), **`base/config`**, **`base/core_headers`**, **`base/endian`**, **`base/errno_saver`**, **`base/prefetch`**, **`utility/utility`** (see [`prebuilt-cgo.md`](prebuilt-cgo.md)).
+Tier B Abseil is validated only for isolated `go-absl` pilot packages that do not also link the default protobuf prebuilt owner. Migrated link-only packages include **`meta/type_traits`**, all nine **`types/*`** shards under [`go-absl/types`](../internal/ccall/go-absl/types), **`base/config`**, **`base/core_headers`**, **`base/endian`**, **`base/errno_saver`**, **`base/prefetch`**, **`utility/utility`** (see [`prebuilt-cgo.md`](prebuilt-cgo.md)).
 
-## If both protobuf Tier B and Abseil Tier B must appear in one link (future)
+## If both default protobuf prebuilts and Abseil Tier B must appear in one link (future)
 
-Today this combination is **unsupported** because `libprotobuf_cgo.a` already contains Abseil object code. When a concrete product needs **both** `googlesql_tier_b` and `googlesql_tier_b_absl` in the same binary, pick one of:
+Today this combination is **unsupported** because `libprotobuf_cgo.a` already contains Abseil object code. When a concrete product needs the default protobuf owner and `googlesql_tier_b_absl` in the same binary, pick one of:
 
 1. **Object-level dedup** — merge archives and strip duplicate ELF sections (fragile; needs a maintained symbol manifest).
 2. **Single merged static archive** — one Bazel target that owns protobuf + Abseil + utf8_range with a single link line (see [`native-build-pipeline.md`](native-build-pipeline.md) “single owner”).
@@ -51,7 +51,7 @@ Defer implementation until there is a real linker failure or CI requirement—no
 **Checklist when duplicate Abseil symbols appear at link time**
 
 1. Identify which archives contribute the symbol (e.g. `nm …/libprotobuf_cgo.a | grep SYMBOL` vs `…/libabsl_cgo.a`).
-2. Prefer **avoiding mixed tags** in one link: use default protobuf with `googlesql_tier_b_absl`, or Tier B protobuf without also linking `libabsl_cgo.a` from separate packages.
+2. Prefer **avoiding mixed owners** in one link: either use the default protobuf prebuilt path without `libabsl_cgo.a`, or isolate the `googlesql_tier_b_absl` experiment so it does not also pull `go-protobuf`.
 3. If the product truly needs both tags, choose a **single owner** (merged archive or one CGO package) before attempting fragile object-level stripping.
 
 ## Unified `libgooglesql.a` (`googlesql_unified_prebuilt`)

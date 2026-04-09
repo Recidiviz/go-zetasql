@@ -6,12 +6,12 @@
 # .pic.o reference absl:: symbols that would otherwise stay undefined at link time.
 #
 # Version note: this uses MODULE.bazel's `protobuf` (e.g. 29.x). Vendored internal/ccall/protobuf and
-# generated googlesql *.pb.h target ~4.23.x. Tier-B links that compile amalgamation against the vendor
-# tree need the same protobuf C++ ABI as this archive — see bind_tier_b.go and docs/protobuf-vendoring.md.
+# generated googlesql *.pb.h target ~4.23.x. The default prebuilt bind path must keep the same protobuf
+# C++ ABI as this archive — see internal/ccall/go-protobuf/protobuf/bind_linux.go,
+# bind_darwin.go, and docs/protobuf-vendoring.md.
 #
-# Runs on Linux and macOS when bazelisk/bazel is installed. Default CGO bindings still compile
-# protobuf via amalgamation (export.inc); this archive is for experiments or a future Tier-B
-# path. See docs/protobuf-vendoring.md ("Single-owner protobuf") and
+# Runs on Linux and macOS when bazelisk/bazel is installed. This archive is the default protobuf
+# CGO path for the repo. See docs/protobuf-vendoring.md ("Single-owner protobuf") and
 # docs/protobuf-single-owner-inventory.md for why link-only protobuf must align Abseil/macro
 # policy with the rest of go-googlesql.
 set -euo pipefail
@@ -30,7 +30,7 @@ fi
 BAZEL="${BAZEL:-$(command -v bazelisk || command -v bazel)}"
 
 # :protobuf is the core library; WKT (.pb.cc for Any, Timestamp, Duration, wrappers, etc.) live in
-# :cmake_wkt_cc_proto. Without those .pic.o files, Tier-B links miss GetMetadata, descriptor tables,
+# :cmake_wkt_cc_proto. Without those .pic.o files, prebuilt links miss GetMetadata, descriptor tables,
 # and Cord helpers for well-known types.
 "$BAZEL" build @com_google_protobuf//:protobuf \
   @com_google_protobuf//src/google/protobuf:cmake_wkt_cc_proto \
@@ -78,7 +78,7 @@ rm -f "$OUT"
 ar crs "$OUT" ${OBJS}
 echo "Wrote $OUT ($(ls -lh "$OUT" | awk '{print $5}'))"
 
-# Stable -L path for bind_tier_b.go: -L ${SRCDIR}/lib -lprotobuf_cgo
+# Stable -L path for the default protobuf bind files: -L ${SRCDIR}/lib -lprotobuf_cgo
 LINK_NAME="$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libprotobuf_cgo.a"
 REL="$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a"
 ln -sfn "$REL" "$LINK_NAME"
@@ -86,19 +86,19 @@ echo "Symlink $LINK_NAME -> $REL"
 
 # Copy libc++/libc++abi from the same Bazel LLVM toolchain that built Abseil/protobuf .pic.o. Linking
 # those objects against the host's /usr/lib/llvm-*/lib/libc++.a can fail (e.g. std::__1::__hash_memory
-# with a mismatched [abi:ne...] tag). Tier-B CGO uses these static libs in bind_tier_b.go.
+# with a mismatched [abi:ne...] tag). The default protobuf bind on Linux uses these static libs.
 LIB_DIR="$(dirname "$OUT")"
 OUTPUT_BASE="$("$BAZEL" info output_base | tr -d '\r')"
 if [[ "$(go env GOOS)" == "linux" ]]; then
   LLVM_LIBCPP="$(find "$OUTPUT_BASE/external" -name libc++.a -path '*llvm_toolchain_llvm*' -print -quit 2>/dev/null || true)"
   if [[ -n "$LLVM_LIBCPP" ]]; then
     LLVM_DIR="$(dirname "$LLVM_LIBCPP")"
-    cp -f "$LLVM_DIR/libc++.a" "$LIB_DIR/libcxx_tier_b.a"
-    cp -f "$LLVM_DIR/libc++abi.a" "$LIB_DIR/libcxxabi_tier_b.a"
-    echo "Copied Bazel LLVM libc++/libc++abi to $LIB_DIR (libcxx_tier_b.a, libcxxabi_tier_b.a)"
-    ln -sfn "$(go env GOOS)_$(go env GOARCH)/libcxx_tier_b.a" "$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libcxx_tier_b.a"
-    ln -sfn "$(go env GOOS)_$(go env GOARCH)/libcxxabi_tier_b.a" "$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libcxxabi_tier_b.a"
-    echo "Symlinks lib/libcxx_tier_b.a and lib/libcxxabi_tier_b.a -> $(go env GOOS)_$(go env GOARCH)/"
+    cp -f "$LLVM_DIR/libc++.a" "$LIB_DIR/libcxx_prebuilt.a"
+    cp -f "$LLVM_DIR/libc++abi.a" "$LIB_DIR/libcxxabi_prebuilt.a"
+    echo "Copied Bazel LLVM libc++/libc++abi to $LIB_DIR (libcxx_prebuilt.a, libcxxabi_prebuilt.a)"
+    ln -sfn "$(go env GOOS)_$(go env GOARCH)/libcxx_prebuilt.a" "$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libcxx_prebuilt.a"
+    ln -sfn "$(go env GOOS)_$(go env GOARCH)/libcxxabi_prebuilt.a" "$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libcxxabi_prebuilt.a"
+    echo "Symlinks lib/libcxx_prebuilt.a and lib/libcxxabi_prebuilt.a -> $(go env GOOS)_$(go env GOARCH)/"
   else
     echo "warning: could not find Bazel llvm_toolchain libc++.a under $OUTPUT_BASE/external" >&2
   fi

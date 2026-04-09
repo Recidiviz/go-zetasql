@@ -60,7 +60,7 @@ Use the output to justify expanding `GOOGLESQL_UNIFIED_BAZEL_TARGETS` toward par
 - **Symptom:** Bazel reports **`401 Unauthorized`** (or timeouts) while fetching `github.com/inspirer/textmapper@…` through a **private** Go module proxy (e.g. Artifact Registry). The Go toolchain may suggest adding the registry host to **`GONOPROXY`** / **`GOPRIVATE`** and using credential helpers.
 - **Mitigations (pick what matches org policy):** configure **`GOPROXY` / `GONOPROXY`** so public modules resolve from `proxy.golang.org` or direct VCS; use **`artifact-registry-go-tools`** or org credential helpers for private mirrors; **vendor** the module; populate **Bazel / module cache** on an online machine and reuse offline; run builds on a host or VPN that can reach the registry.
 
-### Relationship to Tier B protobuf / Abseil archives
+### Relationship to protobuf / Abseil prebuilts
 
 - **`libgooglesql.a` does not replace** `libprotobuf_cgo.a` or `libabsl_cgo.a`. It holds **GoogleSQL-owned** object code (including generated `*.pb.cc` from `cc_proto_library`) plus anchor/wrapper.
 - **`cc_proto_library` objects** reference **protobuf C++ runtime** symbols (`google::protobuf::…`); those resolve when you link **`libprotobuf_cgo.a`** (or an equivalent single-owner archive) in the same binary. **`nm`** on `libgooglesql.a` will show **undefined (`U`)** or **weak** references to Abseil/logging where generated code and `//googlesql/base` expect the runtime linked later.
@@ -68,9 +68,9 @@ Use the output to justify expanding `GOOGLESQL_UNIFIED_BAZEL_TARGETS` toward par
 
 ### Linking `libgooglesql.a` with `libprotobuf_cgo.a`
 
-For a binary that uses both GoogleSQL protos and the Tier B protobuf archive:
+For a binary that uses both GoogleSQL protos and the default protobuf prebuilt archive:
 
-1. **Single owner for protobuf + Abseil** — Prefer linking **`libprotobuf_cgo.a`** once (Tier B protobuf path) so protobuf and embedded Abseil objects come from one Bazel-built archive; **`libgooglesql.a`** adds GoogleSQL `.o` files that **call into** that runtime.
+1. **Single owner for protobuf + Abseil** — Prefer linking **`libprotobuf_cgo.a`** once (default protobuf prebuilt path) so protobuf and embedded Abseil objects come from one Bazel-built archive; **`libgooglesql.a`** adds GoogleSQL `.o` files that **call into** that runtime.
 2. **Order** — Depend on package / linker order documented in [`prebuilt-cgo.md`](prebuilt-cgo.md). If the linker reports **duplicate symbol** errors for `absl::` or `google::protobuf::`, compare **`nm …/libgooglesql.a`** vs **`nm …/libprotobuf_cgo.a`** and follow [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md) (avoid mixed Tier B tags; adjust `-l` order before using **`--allow-multiple-definition`** as a crutch).
 3. **Smoke-only unified tag** — `googlesql_unified_prebuilt` builds in CI link with flags similar to **`Makefile`** `local/build-prebuilt-googlesql-unified` (see below); they do **not** pull `libprotobuf_cgo.a` unless you add a second CGO package that does.
 

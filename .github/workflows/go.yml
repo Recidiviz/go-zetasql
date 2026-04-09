@@ -1,4 +1,4 @@
-name: Go
+name: Go (default prebuilts)
 on:
   push:
     branches:
@@ -38,8 +38,30 @@ jobs:
         key: ccache-${{ runner.os }}-${{ hashFiles('go.sum', 'go.mod') }}
         restore-keys: |
           ccache-${{ runner.os }}-
+    - name: Install bazelisk (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        go install github.com/bazelbuild/bazelisk@v1.20.0
+        echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+    - name: Install bazelisk (macOS)
+      if: runner.os == 'macOS'
+      run: brew install bazelisk
+    - name: Cache Bazel
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/bazel
+        key: bazel-${{ runner.os }}-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock', 'internal/cmd/updater/googlesql/.bazelversion') }}
+        restore-keys: |
+          bazel-${{ runner.os }}-
+    - name: Build default protobuf prebuilts
+      run: |
+        make verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy prebuilt-libs verify-prebuilt-protobuf
+      env:
+        CC: clang
+        CXX: clang++
+        BAZEL_JOBS: "4"
     - name: test
-      run: go test -race -v ./ -count=1
+      run: make local/test TESTPKG=./
       env:
         CC: ccache clang
         CXX: ccache clang++

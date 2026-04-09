@@ -1,4 +1,4 @@
-# Attach Tier B protobuf prebuilt tarball + SHA256SUMS to the same tag as the Docker release.
+# Attach the default protobuf prebuilt tarball + SHA256SUMS to the same tag as the Docker release.
 # Primary "no Bazel" artifact for linux_amd64 (see docs/prebuilt-cgo.md, docs/ci-bazel-cache.md).
 name: Release prebuilt archives
 on:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  protobuf-tier-b-tarball:
+  protobuf-prebuilt-tarball:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -48,7 +48,7 @@ jobs:
       - name: Package release tarball and checksums
         run: |
           OUT="go-googlesql-prebuilts-protobuf-linux_amd64-${GITHUB_REF_NAME}.tar.gz"
-          OUTPUT_NAME="$OUT" bash scripts/package-tier-b-protobuf-prebuilt.sh
+          OUTPUT_NAME="$OUT" bash scripts/package-protobuf-prebuilt.sh
           sha256sum "$OUT" > SHA256SUMS
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2

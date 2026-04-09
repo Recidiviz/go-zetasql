@@ -1,12 +1,12 @@
-# Manual Tier B check: Bazel-built libprotobuf_cgo.a + go test with googlesql_tier_b.
+# Manual default-prebuilt protobuf check: Bazel-built libprotobuf_cgo.a + focused Go test.
 # Not run on every PR (Bazel first build can be slow). Use workflow_dispatch before releases
-# or when changing extract_protobuf_cgo_lib.sh / bind_tier_b.go.
-name: Tier B prebuilt protobuf
+# or when changing extract_protobuf_cgo_lib.sh / default protobuf bind files.
+name: Default prebuilt protobuf
 on:
   workflow_dispatch:
 
 jobs:
-  tier-b-prebuilt:
+  prebuilt-protobuf:
     name: prebuilt-libs + test (ubuntu)
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -35,9 +35,9 @@ jobs:
           key: ${{ runner.os }}-bazel-googlesql-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock', 'internal/cmd/updater/googlesql/.bazelversion') }}
           restore-keys: |
             ${{ runner.os }}-bazel-googlesql-
-      - name: Protobuf Tier B alignment check
+      - name: Protobuf prebuilt alignment check
         run: make verify-protobuf-tier-b-alignment
-      - name: Tier B tag policy
+      - name: Prebuilt tag policy
         run: make verify-tier-b-cgo-policy
       - name: Build libprotobuf_cgo.a
         run: make prebuilt-libs
@@ -47,8 +47,8 @@ jobs:
           BAZEL_JOBS: "4"
       - name: Verify archive
         run: make verify-prebuilt-protobuf
-      - name: Test Tier B protobuf package
-        run: make local/test-prebuilt TESTPKG=./internal/ccall/go-protobuf/protobuf/
+      - name: Test default prebuilt protobuf package
+        run: make local/test TESTPKG=./internal/ccall/go-protobuf/protobuf/
         env:
           CC: clang
           CXX: clang++

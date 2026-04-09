@@ -6,12 +6,12 @@ This document is the **single inventory** for GitHub Actions caching related to 
 
 | Workflow | Trigger | Bazel | `actions/cache` (Bazel) | `actions/cache` (ccache) | Notes |
 |----------|---------|-------|---------------------------|---------------------------|--------|
-| [`go.yml`](../.github/workflows/go.yml) | `push` / `pull_request` to `main` | No | — | Yes (`.ccache`, key from `go.sum` / `go.mod`) | Default `go test -race`; amalgamation path (no Tier B). |
-| [`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) | `workflow_dispatch` | Yes | Yes (`~/.cache/bazel`) | No | Tier B protobuf: `make prebuilt-libs` → `make local/test-prebuilt`. |
+| [`go.yml`](../.github/workflows/go.yml) | `push` / `pull_request` to `main` | Yes | Yes (`~/.cache/bazel`) | Yes (`.ccache`, key from `go.sum` / `go.mod`) | Default protobuf prebuilt path: `make prebuilt-libs` → `make local/test`. |
+| [`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) | `workflow_dispatch` | Yes | Yes (`~/.cache/bazel`) | No | Focused default protobuf prebuilt verification: `make prebuilt-libs` → `make local/test TESTPKG=./internal/ccall/go-protobuf/protobuf/`. |
 | [`go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml) | `workflow_dispatch` | Yes | Yes (`~/.cache/bazel`) | No | Abseil Tier B pilot. |
 | [`go-googlesql-unified-prebuilt.yml`](../.github/workflows/go-googlesql-unified-prebuilt.yml) | `workflow_dispatch`, weekly cron | Yes | Yes (`~/.cache/bazel`) | No | Unified `libgooglesql.a` smoke build. |
 | [`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml) | `workflow_dispatch`, weekly cron | **No** on consumer job | — | No | Validates **prebuilts without Bazel** (artifact from producer job). |
-| [`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml) | `push` tags `v*` | Yes | Yes | No | Attaches protobuf Tier B tarball + `SHA256SUMS` to the GitHub Release. |
+| [`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml) | `push` tags `v*` | Yes | Yes | No | Attaches the default protobuf prebuilt tarball + `SHA256SUMS` to the GitHub Release. |
 | [`release.yml`](../.github/workflows/release.yml) | `push` tags `v*` | No (Docker Buildx) | — | GHA cache (`type=gha`) | Container images only; separate from native prebuilts. |
 
 **Bazelisk** is installed in workflows that invoke Bazel (`go install github.com/bazelbuild/bazelisk@v1.20.0`); the GoogleSQL submodule pins the Bazel version via [`internal/cmd/updater/googlesql/.bazelversion`](../internal/cmd/updater/googlesql/.bazelversion).
@@ -28,7 +28,7 @@ This document is the **single inventory** for GitHub Actions caching related to 
 - **Path:** `${{ github.workspace }}/.ccache`
 - **Key:** `ccache-${{ runner.os }}-${{ hashFiles('go.sum', 'go.mod') }}`
 - **Restore prefix:** `ccache-${{ runner.os }}-`
-- **Intent:** Incremental C++ compiles for the default amalgamation build across PRs that do not change module deps.
+- **Intent:** Incremental C++ compiles for the default protobuf prebuilt flow across PRs that do not change module deps.
 
 ### Bazel disk cache (Tier B / unified / release prebuilts)
 

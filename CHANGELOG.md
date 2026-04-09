@@ -6,8 +6,8 @@ All notable changes to this project are documented here. The format is loosely b
 
 ### Tier B / Phase 5 (CI, artifacts, docs)
 
-- **CI:** Shared Bazel disk cache key across Tier B protobuf, Tier B Abseil, unified prebuilt, release prebuilts, and consumer workflows (`internal/cmd/updater/googlesql/MODULE.bazel`, `MODULE.bazel.lock`, `.bazelversion`). Inventory: [`docs/ci-bazel-cache.md`](docs/ci-bazel-cache.md).
-- **Artifacts:** Tagged releases may include `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` and `SHA256SUMS` (workflow: `.github/workflows/release-prebuilts.yml`). Packaging script: `scripts/package-tier-b-protobuf-prebuilt.sh`; Make target: `make package-tier-b-protobuf-tarball`.
+- **CI:** Shared Bazel disk cache key across default protobuf prebuilts, Tier B Abseil, unified prebuilt, release prebuilts, and consumer workflows (`internal/cmd/updater/googlesql/MODULE.bazel`, `MODULE.bazel.lock`, `.bazelversion`). Inventory: [`docs/ci-bazel-cache.md`](docs/ci-bazel-cache.md).
+- **Artifacts:** Tagged releases may include `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` and `SHA256SUMS` (workflow: `.github/workflows/release-prebuilts.yml`). Packaging script: `scripts/package-protobuf-prebuilt.sh`; Make target: `make package-protobuf-prebuilt-tarball`.
 - **Consumer validation:** `.github/workflows/go-prebuilt-consumer.yml` runs a **no-Bazel** job that tests with prebuilts only.
 - **Docs:** README build matrix; expanded [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md), [`docs/native-build-pipeline.md`](docs/native-build-pipeline.md).
 

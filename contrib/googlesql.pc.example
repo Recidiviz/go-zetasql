@@ -2,7 +2,7 @@
 # Copy to e.g. $GOOGLESQL_PREBUILT_PREFIX/lib/pkgconfig/googlesql.pc and substitute @PREFIX@,
 # or use sed/configure to set prefix at install time.
 #
-# Tier B protobuf today uses fixed paths under internal/ccall/go-protobuf/protobuf/lib/
+# Default protobuf prebuilts today use fixed paths under internal/ccall/go-protobuf/protobuf/lib/
 # (see docs/prebuilt-cgo.md). This file describes the *future* multi-lib layout.
 # For libgooglesql.a alone (bootstrap), see googlesql-unified.pc.example and docs/libgooglesql-unified.md.
 #

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Package Tier B protobuf prebuilt tree for release artifacts or CI handoff.
+# Package the default protobuf prebuilt tree for release artifacts or CI handoff.
 # Preserves paths: internal/ccall/go-protobuf/protobuf/lib/<GOOS_GOARCH>/libprotobuf_cgo.a
 # Usage: run from repo root after `make prebuilt-libs`. Optional: OUTPUT_NAME override.
 set -euo pipefail

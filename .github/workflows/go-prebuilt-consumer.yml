@@ -1,4 +1,4 @@
-# Producer builds libprotobuf_cgo.a with Bazel; consumer runs go test with prebuilts only (no Bazel on PATH).
+# Producer builds the default protobuf prebuilts with Bazel; consumer runs go test with prebuilts only (no Bazel on PATH).
 name: Prebuilt consumer (no Bazel)
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - ".github/workflows/go-prebuilt-consumer.yml"
       - "internal/ccall/go-protobuf/**"
       - "Makefile"
-      - "scripts/package-tier-b-protobuf-prebuilt.sh"
+      - "scripts/package-protobuf-prebuilt.sh"
       - "scripts/verify-prebuilt-protobuf.sh"
       - "scripts/verify-protobuf-tier-b-alignment.sh"
       - "scripts/verify-tier-b-cgo-tag-policy.sh"
@@ -16,7 +16,7 @@ on:
 
 jobs:
   producer:
-    name: Build protobuf Tier B prebuilts (Bazel)
+    name: Build protobuf prebuilts (Bazel)
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -52,11 +52,11 @@ jobs:
           CXX: clang++
           BAZEL_JOBS: "4"
       - name: Package tarball for artifact
-        run: bash scripts/package-tier-b-protobuf-prebuilt.sh
+        run: bash scripts/package-protobuf-prebuilt.sh
       - name: Upload prebuilt tarball
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: protobuf-tier-b-prebuilts-linux-amd64
+          name: protobuf-prebuilts-linux-amd64
           path: go-googlesql-prebuilts-protobuf-linux_amd64.tar.gz
           if-no-files-found: error
           retention-days: 14
@@ -84,7 +84,7 @@ jobs:
       - name: Download prebuilt tarball
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: protobuf-tier-b-prebuilts-linux-amd64
+          name: protobuf-prebuilts-linux-amd64
           path: prebuilt-artifact
       - name: Extract prebuilts into workspace
         run: tar -xzf prebuilt-artifact/go-googlesql-prebuilts-protobuf-linux_amd64.tar.gz -C "$GITHUB_WORKSPACE"
@@ -93,10 +93,10 @@ jobs:
           if command -v bazelisk >/dev/null 2>&1; then echo "error: bazelisk should not be installed on consumer"; exit 1; fi
           if command -v bazel >/dev/null 2>&1; then echo "error: bazel should not be installed on consumer"; exit 1; fi
           echo "ok: consumer job has no Bazel tools"
-      - name: Verify and test (Tier B tags)
+      - name: Verify and test default prebuilts
         run: |
           make verify-prebuilt-protobuf
-          make local/test-prebuilt TESTPKG=./internal/ccall/go-protobuf/protobuf/
+          make local/test TESTPKG=./internal/ccall/go-protobuf/protobuf/
         env:
           CC: clang
           CXX: clang++
