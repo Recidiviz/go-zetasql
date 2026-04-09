@@ -36,7 +36,9 @@ if [[ ! -x "$PROTOC" ]]; then
 fi
 echo "Using protoc: $PROTOC"
 
-mapfile -t PROTOS < <(find "$REPO_ROOT/internal/ccall/googlesql" -name '*.proto' | sort)
+# Omit testdata: negative parser tests and stub .pb.h placeholders (see testdata/*.pb.h).
+mapfile -t PROTOS < <(find "$REPO_ROOT/internal/ccall/googlesql" -name '*.proto' \
+	! -path '*/testdata/*' | sort)
 
 # -I internal/ccall: googlesql/... imports
 # -I internal/ccall/protobuf: google/protobuf/*.proto
