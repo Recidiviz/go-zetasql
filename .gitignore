@@ -31,6 +31,9 @@ __pycache__/
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Local direnv overrides (optional; see .envrc)
+.envrc.local
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
