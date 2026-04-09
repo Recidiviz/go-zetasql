@@ -81,26 +81,26 @@
 #include "googlesql/public/analyzer.cc"
 #include "googlesql/public/table_name_resolver.cc"
 #include "googlesql/public/table_name_resolver.h"
-#define schemas googlesql_public_analyzer_schemas
-#define file_default_instances googlesql_public_analyzer_file_default_instances
+#define schemas googlesql_public_analyzer_options_schemas
+#define file_default_instances googlesql_public_analyzer_options_file_default_instances
 #include "googlesql/public/options.pb.cc"
 #undef file_default_instances
 #undef schemas
 
-#define schemas googlesql_public_analyzer_schemas
-#define file_default_instances googlesql_public_analyzer_file_default_instances
+#define schemas googlesql_public_analyzer_type_schemas
+#define file_default_instances googlesql_public_analyzer_type_file_default_instances
 #include "googlesql/public/type.pb.cc"
 #undef file_default_instances
 #undef schemas
 
-#define schemas googlesql_public_analyzer_schemas
-#define file_default_instances googlesql_public_analyzer_file_default_instances
+#define schemas googlesql_public_analyzer_type_annotation_schemas
+#define file_default_instances googlesql_public_analyzer_type_annotation_file_default_instances
 #include "googlesql/public/proto/type_annotation.pb.cc"
 #undef file_default_instances
 #undef schemas
 
-#define schemas googlesql_public_analyzer_schemas
-#define file_default_instances googlesql_public_analyzer_file_default_instances
+#define schemas googlesql_public_analyzer_wire_format_annotation_schemas
+#define file_default_instances googlesql_public_analyzer_wire_format_annotation_file_default_instances
 #include "googlesql/public/proto/wire_format_annotation.pb.cc"
 #undef file_default_instances
 #undef schemas
