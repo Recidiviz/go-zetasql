@@ -10,4 +10,12 @@ if [[ ! -f "$LIB" ]]; then
 	echo "Build it with: make prebuilt-libs  (requires bazelisk/bazel and a populated submodule)" >&2
 	exit 1
 fi
+if [[ "$(go env GOOS)" == "linux" ]]; then
+	CXXTIER="$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/${GOOS_GOARCH}/libcxx_tier_b.a"
+	if [[ ! -f "$CXXTIER" ]]; then
+		echo "Tier-B libc++ copy missing: $CXXTIER" >&2
+		echo "Re-run: make prebuilt-libs  (extract script copies Bazel llvm_toolchain libc++)" >&2
+		exit 1
+	fi
+fi
 echo "ok: $LIB"

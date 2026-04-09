@@ -31,16 +31,18 @@ package protobuf
 //
 // start-group/end-group: libc++ symbols such as std::__1::__hash_memory resolve when other CGO
 // packages append -lstdc++ and disturb single-pass resolution.
+//
+// Linux: link libc++/libc++abi from the same Bazel LLVM toolchain as extract_protobuf_cgo_lib.sh
+// (copied to lib/libcxx_tier_b.a). System -lc++ can mismatch Abseil .pic.o ABI tags inside
+// libprotobuf_cgo.a.
 
 /*
 #cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I${SRCDIR}/../../
 #cgo CXXFLAGS: -I${SRCDIR}/../../protobuf
 #cgo CXXFLAGS: -I${SRCDIR}/../../utf8_range
-#cgo linux LDFLAGS: -L/usr/lib/x86_64-linux-gnu
-#cgo linux LDFLAGS: -L/usr/lib/llvm-20/lib -L/usr/lib/llvm-19/lib -L/usr/lib/llvm-18/lib -L/usr/lib/llvm-17/lib -L/usr/lib/llvm-16/lib -L/usr/lib/llvm-15/lib -L/usr/lib/llvm-14/lib
 #cgo linux LDFLAGS: -L${SRCDIR}/lib -Wl,--whole-archive -lprotobuf_cgo -Wl,--no-whole-archive -lz
-#cgo linux LDFLAGS: -Wl,--start-group -lc++ -lc++abi -Wl,--end-group -ldl
+#cgo linux LDFLAGS: -Wl,--start-group -l:libcxx_tier_b.a -l:libcxxabi_tier_b.a -Wl,--end-group -ldl
 #cgo darwin LDFLAGS: -L${SRCDIR}/lib -Wl,-force_load,${SRCDIR}/lib/libprotobuf_cgo.a -lz -lc++
 
 void __go_googlesql_tier_b_protobuf_anchor(void) {}

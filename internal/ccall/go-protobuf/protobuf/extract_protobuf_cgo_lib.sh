@@ -53,6 +53,9 @@ collect_protobuf_pic_o() {
 }
 # Bazel also builds per-target *_proto dirs (e.g. timestamp_proto) that duplicate cmake_wkt_cc_proto
 # objects — keep only cmake_wkt_cc_proto to avoid duplicate symbols at link time.
+# Exclude google/protobuf/compiler/** — protoc backends (rust, csharp, java, ...) are not in the
+# runtime :protobuf link closure; merging their .pic.o pulls undefined symbols (e.g.
+# google::protobuf::File::ReadFileToString from crate_mapping.cc).
 # Exclude Abseil test-only objects (e.g. status_matchers) that reference gtest — otherwise
 # `-Wl,--whole-archive -lprotobuf_cgo` pulls them in and the link requires libgtest.
 OBJS=$(
@@ -60,6 +63,7 @@ OBJS=$(
     | grep -Ev 'test|unittest|benchmark' \
     | grep -Ev 'status_matchers|gmock|gtest|googletest|googlemock' \
     | grep -Ev '/_objs/(timestamp|duration|any|wrappers|struct|empty|field_mask|source_context|type|api)_proto/' \
+    | grep -Ev '/google/protobuf/compiler/' \
     | sort -u || true
 )
 if [[ -z "${OBJS// }" ]]; then
@@ -79,3 +83,23 @@ LINK_NAME="$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libprotobuf_cgo.a"
 REL="$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a"
 ln -sfn "$REL" "$LINK_NAME"
 echo "Symlink $LINK_NAME -> $REL"
+
+# Copy libc++/libc++abi from the same Bazel LLVM toolchain that built Abseil/protobuf .pic.o. Linking
+# those objects against the host's /usr/lib/llvm-*/lib/libc++.a can fail (e.g. std::__1::__hash_memory
+# with a mismatched [abi:ne...] tag). Tier-B CGO uses these static libs in bind_tier_b.go.
+LIB_DIR="$(dirname "$OUT")"
+OUTPUT_BASE="$("$BAZEL" info output_base | tr -d '\r')"
+if [[ "$(go env GOOS)" == "linux" ]]; then
+  LLVM_LIBCPP="$(find "$OUTPUT_BASE/external" -name libc++.a -path '*llvm_toolchain_llvm*' -print -quit 2>/dev/null || true)"
+  if [[ -n "$LLVM_LIBCPP" ]]; then
+    LLVM_DIR="$(dirname "$LLVM_LIBCPP")"
+    cp -f "$LLVM_DIR/libc++.a" "$LIB_DIR/libcxx_tier_b.a"
+    cp -f "$LLVM_DIR/libc++abi.a" "$LIB_DIR/libcxxabi_tier_b.a"
+    echo "Copied Bazel LLVM libc++/libc++abi to $LIB_DIR (libcxx_tier_b.a, libcxxabi_tier_b.a)"
+    ln -sfn "$(go env GOOS)_$(go env GOARCH)/libcxx_tier_b.a" "$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libcxx_tier_b.a"
+    ln -sfn "$(go env GOOS)_$(go env GOARCH)/libcxxabi_tier_b.a" "$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/libcxxabi_tier_b.a"
+    echo "Symlinks lib/libcxx_tier_b.a and lib/libcxxabi_tier_b.a -> $(go env GOOS)_$(go env GOARCH)/"
+  else
+    echo "warning: could not find Bazel llvm_toolchain libc++.a under $OUTPUT_BASE/external" >&2
+  fi
+fi

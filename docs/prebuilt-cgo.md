@@ -41,10 +41,11 @@ This runs [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf
 
 - `internal/ccall/go-protobuf/protobuf/lib/$GOOS_$GOARCH/libprotobuf_cgo.a`
 - Symlink `internal/ccall/go-protobuf/protobuf/lib/libprotobuf_cgo.a`
+- **Linux:** `libcxx_tier_b.a` and `libcxxabi_tier_b.a` (copies of **libc++** / **libc++abi** from the same Bazel **llvm_toolchain** that compiled the merged `.pic.o` objects), plus symlinks under `lib/`
 
 Archives are **gitignored** (`*.a`); each developer/CI agent builds locally.
 
-The extract script runs Bazel on **`@com_google_protobuf//:protobuf`** and **`@com_google_protobuf//src/google/protobuf:cmake_wkt_cc_proto`**, then merges **`*.pic.o`** from the Bazel `external/protobuf~` tree (including well-known types from `_objs/cmake_wkt_cc_proto/`), **`utf8_range`**, and **`abseil-cpp~`** (protobuf depends on Abseil; those objects must be in the archive or the link reports undefined `absl::` symbols). Per-target `*_proto` object dirs that duplicate `cmake_wkt_cc_proto` (e.g. `timestamp_proto`) are excluded so the archive does not contain two definitions of the same WKT `.pb.cc` compilation.
+The extract script runs Bazel on **`@com_google_protobuf//:protobuf`** and **`@com_google_protobuf//src/google/protobuf:cmake_wkt_cc_proto`**, then merges **`*.pic.o`** from the Bazel `external/protobuf~` tree (including well-known types from `_objs/cmake_wkt_cc_proto/`), **`utf8_range`**, and **`abseil-cpp~`** (protobuf depends on Abseil; those objects must be in the archive or the link reports undefined `absl::` symbols). Paths under **`google/protobuf/compiler/`** are **excluded** (protoc backends such as `compiler/rust/*.pic.o` are not runtime protobuf and pull stray references, e.g. to `google::protobuf::File::ReadFileToString`). Per-target `*_proto` object dirs that duplicate `cmake_wkt_cc_proto` (e.g. `timestamp_proto`) are excluded so the archive does not contain two definitions of the same WKT `.pb.cc` compilation.
 
 **Protobuf version / codegen alignment:** `libprotobuf_cgo.a` must match the **same** major protobuf and **same** `protoc` codegen conventions as the vendored headers and generated `*.pb.cc` under [`internal/ccall/protobuf`](../internal/ccall/protobuf) and the GoogleSQL amalgamation. Newer protobuf releases changed WKT codegen (for example, out-of-line `Arena::CreateMaybeMessage<google::protobuf::Timestamp>` in `timestamp.pb.cc` may disappear). If Bazel resolves `@com_google_protobuf` to a newer revision than the tree’s vendored protos, Tier-B links can still report undefined `google::protobuf::*` symbols even with a complete archive. Fix by pinning the Bazel module to the repo’s expected protobuf version, refreshing vendored generated code, or treating full `go test` with `googlesql_tier_b` as unsupported until that alignment is intentional.
 
@@ -57,7 +58,9 @@ The extract script runs Bazel on **`@com_google_protobuf//:protobuf`** and **`@c
 
 See also [link-only-cgo-migration.md](link-only-cgo-migration.md) for the long-term “no amalgamation” generator path.
 
-Bazel uses **Clang + libc++** for those objects; [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) links **`-lc++ -lc++abi`** on Linux and searches common **`/usr/lib/llvm-*/lib`** paths so `-lc++` resolves (install **`libc++` / `libc++abi`** from your distro or LLVM if the link still fails with “cannot find -lc++”). If you see undefined **`std::__1::__hash_memory`**, the link is missing libc++ for objects built with `-stdlib=libc++`; ensure **`CGO_CXXFLAGS=-stdlib=libc++`** for all CGO C++ (see below) and that **`-lc++`** appears on the link line after **`-lprotobuf_cgo`**.
+Bazel uses **Clang + libc++** for those objects. On **Linux**, [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) links the **copied** static libraries **`libcxx_tier_b.a`** and **`libcxxabi_tier_b.a`** (same LLVM toolchain as the Bazel build) in a **`--start-group` / `--end-group`** pair after **`libprotobuf_cgo.a`**. Using the host’s **`-lc++`** alone can fail: Abseil `.pic.o` inside the archive may reference **`std::__1::__hash_memory`** with a libc++ **ABI tag** that does not match the distro’s `/usr/lib/llvm-*/lib/libc++.a`, even when **`CGO_CXXFLAGS=-stdlib=libc++`** is set everywhere.
+
+**Abseil inline namespace:** vendored [`internal/ccall/absl/base/options.h`](../internal/ccall/absl/base/options.h) must match BCR **abseil-cpp** (e.g. **`lts_20240722`**) so amalgamation TUs and `libprotobuf_cgo.a` agree on **`absl::Cord`** / **`MessageLite::{Parse,Serialize}*Cord`** mangling.
 
 **ABI:** Vendored / amalgamated C++ that calls into `google::protobuf` templates must use the **same** standard library as `libprotobuf_cgo.a`. By default, Clang uses **libstdc++** (`std::__cxx11::` mangling); Bazel’s archive uses **libc++** (`std::__1::`). Without alignment you get undefined references to protobuf internals (e.g. `ArenaStringPtr::Set`, `RepeatedPtrFieldBase::AddOutOfLineHelper`). Set for Tier B builds:
 
@@ -247,9 +250,14 @@ Static `.a` files remain **gitignored**; published **tarballs** are optional rel
 | Symptom | What to check |
 |---------|----------------|
 | `prebuilt protobuf archive not found` | Run `make prebuilt-libs` or extract release tarball so `internal/ccall/go-protobuf/protobuf/lib/<GOOS_GOARCH>/libprotobuf_cgo.a` exists. |
+| `Tier-B libc++ copy missing` / `libcxx_tier_b.a` (Linux) | Re-run `make prebuilt-libs`; the extract script copies Bazel **llvm_toolchain** `libc++.a` / `libc++abi.a` next to `libprotobuf_cgo.a`. Release tarballs include the whole `lib/` tree. |
 | Wrong architecture | Archive is built for the machine that ran Bazel (`go env GOOS GOARCH`). Do not use a `linux_amd64` `.a` on `darwin_arm64`. |
 | Link errors after enabling both Tier B tags | `googlesql_tier_b` and `googlesql_tier_b_absl` must not be combined without [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). |
 | Undefined `std::__1::` vs `std::__cxx11::` | Set `CGO_CXXFLAGS=-stdlib=libc++` for Tier B protobuf (Bazel uses libc++). |
+| Undefined `std::__1::__hash_memory` / `[abi:ne…]` on libc++ symbols from `time_zone_impl.pic.o` / `cord_analysis.pic.o` | Host `-lc++` does not match the libc++ ABI used when Bazel built Abseil. Ensure **`libcxx_tier_b.a`** / **`libcxxabi_tier_b.a`** are present and linked (see **`bind_tier_b.go`**); rebuild prebuilts on this machine. |
+| Undefined Cord / `MessageLite::*Cord` while `llvm-nm` shows them **`T`** in `libprotobuf_cgo.a` | Often **Abseil inline namespace** mismatch (`absl::Cord` vs `absl::lts_20240722::Cord`). Align [`internal/ccall/absl/base/options.h`](../internal/ccall/absl/base/options.h) with BCR abseil-cpp (see **Abseil inline namespace** above). |
+| Undefined `google::protobuf::File::ReadFileToString` from archive members like **`crate_mapping.pic.o`** | The extract `find` was too broad; **`google/protobuf/compiler/**`** objects must not be merged (protoc backends). Current script excludes that path; rebuild **`libprotobuf_cgo.a`**. |
+| `nm` / `llvm-nm` spot checks | `llvm-nm -C internal/ccall/go-protobuf/protobuf/lib/<GOOS_GOARCH>/libprotobuf_cgo.a \| rg 'ParseFromCord\|crate_mapping\|compiler/'`. Optional: `VERIFY_LIBPROTOBUF_CGO_SYMBOLS=1 bash scripts/verify-libprotobuf-cgo-symbols.sh`. |
 | Drift between Bazel protobuf and vendored headers | Run `make verify-protobuf-tier-b-alignment`; follow alignment steps in **Protobuf version / codegen alignment** above. |
 
 ## Related files
