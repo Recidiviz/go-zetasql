@@ -5,8 +5,7 @@ This doc captures **inventory** from the protobuf CGO consolidation effort and t
 ## Scale (current generator output)
 
 - **~150+** `export.inc` files under `internal/ccall/go-googlesql/` reference
-  `#include "go-protobuf/protobuf/export.inc"` (plus parallel paths under
-  `legacy_zetasql/`).
+  `#include "go-protobuf/protobuf/export.inc"`.
 - **780+** `bind.cc` files under `internal/ccall/go-googlesql/`.
 - Each **separate** Go CGO package with its own `bind.cc` is a **separate
   translation unit**. The `PROTOBUF_EXPORT_H` guard in `export.inc` only
@@ -53,6 +52,6 @@ boundary.
 ## Verification (when changing layout)
 
 - `make local/test` (root package), then go-googlesqlite / bigquery-emulator with
-  shared `GOCACHE` per the zetasql-stack-debug skill.
+  shared `GOCACHE` per the googlesql-stack-debug skill.
 - On link errors involving `…_absl::` vs `absl::`, suspect **macro / ABI
   mismatch** before chasing “missing patch” in vendored protobuf.
