@@ -3,7 +3,8 @@ FROM golang:1.24-bookworm AS base
 
 ARG VERSION
 
-RUN apt-get update && apt-get install -y --no-install-recommends clang ccache mold \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	clang ccache mold libc++-dev libc++abi-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV CGO_ENABLED=1
@@ -15,6 +16,14 @@ ENV CGO_LDFLAGS=-fuse-ld=mold
 ENV PATH="/usr/lib/ccache:${PATH}"
 ENV CCACHE_COMPRESS=1
 ENV CCACHE_DIR=/root/.ccache
+
+# `bash -l` (login shells) source `/etc/profile`, which on Debian can reset PATH before
+# `/etc/profile.d/*.sh` runs. Ensure Go and ccache stay discoverable for `make local/test` /
+# `scripts/verify-prebuilt-protobuf.sh` when invoked under `bash -lc ...`.
+RUN mkdir -p /etc/profile.d \
+	&& printf '%s\n' 'export PATH="/usr/lib/ccache:/usr/local/go/bin:${PATH}"' \
+		> /etc/profile.d/zz-googlesql-go-cgo-path.sh \
+	&& chmod 0755 /etc/profile.d/zz-googlesql-go-cgo-path.sh
 
 WORKDIR /go-googlesql
 
