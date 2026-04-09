@@ -1,16 +1,16 @@
 void GO_EXPORT(cctz_FixedOffsetFromName)(void * arg0,void * arg1,char* arg2)
 {
-  *arg2 = absl::time_internal::cctz::FixedOffsetFromName((char *)arg0, (std::chrono::seconds *)arg1);
+  *arg2 = absl::time_internal::cctz::FixedOffsetFromName((char *)arg0, (absl::time_internal::cctz::seconds *)arg1);
 }
 
 void GO_EXPORT(cctz_FixedOffsetToName)(void * arg0,void ** arg1)
 {
-  *arg1 = (void *)absl::time_internal::cctz::FixedOffsetToName(*(std::chrono::seconds *)arg0).c_str();
+  *arg1 = (void *)absl::time_internal::cctz::FixedOffsetToName(*(absl::time_internal::cctz::seconds *)arg0).c_str();
 }
 
 void GO_EXPORT(cctz_FixedOffsetToAbbr)(void * arg0,void ** arg1)
 {
-  *arg1 = (void *)absl::time_internal::cctz::FixedOffsetToAbbr(*(std::chrono::seconds *)arg0).c_str();
+  *arg1 = (void *)absl::time_internal::cctz::FixedOffsetToAbbr(*(absl::time_internal::cctz::seconds *)arg0).c_str();
 }
 
 void GO_EXPORT(cctz_detail_format)(void * arg0,void * arg1,void * arg2,void * arg3,void ** arg4)
@@ -65,7 +65,7 @@ void GO_EXPORT(TimeZoneInfo_Load)(void * arg0,void * arg1,char* arg2)
 void GO_EXPORT(TimeZoneInfo_BreakTime)(void * arg0,void * arg1,void ** arg2)
 {
   absl::time_internal::cctz::TimeZoneInfo *info = (absl::time_internal::cctz::TimeZoneInfo *)arg0;
-  std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> *tp = (std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> *)arg1;
+  absl::time_internal::cctz::time_point<absl::time_internal::cctz::seconds> *tp = (absl::time_internal::cctz::time_point<absl::time_internal::cctz::seconds> *)arg1;
   absl::time_internal::cctz::time_zone::absolute_lookup ret = info->BreakTime(*tp);
   *arg2 = malloc(sizeof(absl::time_internal::cctz::time_zone::absolute_lookup));
   memcpy(*arg2, &ret, sizeof(absl::time_internal::cctz::time_zone::absolute_lookup));
@@ -94,13 +94,13 @@ void GO_EXPORT(TimeZoneInfo_Description)(void * arg0,void ** arg1)
 void GO_EXPORT(TimeZoneInfo_NextTransition)(void * arg0,void * arg1,void * arg2,char* arg3)
 {
   absl::time_internal::cctz::TimeZoneInfo *info = (absl::time_internal::cctz::TimeZoneInfo *)arg0;
-  *arg3 = info->NextTransition(*(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> *)arg1, (absl::time_internal::cctz::time_zone::civil_transition *)arg2);
+  *arg3 = info->NextTransition(*(absl::time_internal::cctz::time_point<absl::time_internal::cctz::seconds> *)arg1, (absl::time_internal::cctz::time_zone::civil_transition *)arg2);
 }
 
 void GO_EXPORT(TimeZoneInfo_PrevTransition)(void * arg0,void * arg1,void * arg2,char* arg3)
 {
   absl::time_internal::cctz::TimeZoneInfo *info = (absl::time_internal::cctz::TimeZoneInfo *)arg0;
-  *arg3 = info->PrevTransition(*(std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds> *)arg1, (absl::time_internal::cctz::time_zone::civil_transition *)arg2);
+  *arg3 = info->PrevTransition(*(absl::time_internal::cctz::time_point<absl::time_internal::cctz::seconds> *)arg1, (absl::time_internal::cctz::time_zone::civil_transition *)arg2);
 }
 
 void GO_EXPORT(TimeZoneLibC_BreakTime)(void * arg0,void * arg1,void ** arg2)
@@ -180,7 +180,7 @@ void GO_EXPORT(cctz_utc_time_zone)(void ** arg0)
 void GO_EXPORT(cctz_fixed_time_zone)(void * arg0,void ** arg1)
 {
   *arg1 = malloc(sizeof(absl::time_internal::cctz::time_zone));
-  absl::time_internal::cctz::time_zone ret = absl::time_internal::cctz::fixed_time_zone(*(std::chrono::seconds *)arg0);
+  absl::time_internal::cctz::time_zone ret = absl::time_internal::cctz::fixed_time_zone(*(absl::time_internal::cctz::seconds *)arg0);
   memcpy(*arg1, &ret, sizeof(absl::time_internal::cctz::time_zone));
 }
 
