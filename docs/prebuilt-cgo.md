@@ -30,7 +30,7 @@ This runs [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf
 
 Archives are **gitignored** (`*.a`); each developer/CI agent builds locally.
 
-The extract script merges **`*.pic.o`** from the Bazel `external/protobuf~` tree, **`utf8_range`**, and **`abseil-cpp~`** (protobuf depends on Abseil; those objects must be in the archive or the link reports undefined `absl::` symbols). [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) links **libc++** on Linux (`-lc++ -lc++abi`), matching Bazel’s Clang+libc++ ABI (`std::__1::`), not **libstdc++**.
+The extract script merges **`*.pic.o`** from the Bazel `external/protobuf~` tree, **`utf8_range`**, and **`abseil-cpp~`** (protobuf depends on Abseil; those objects must be in the archive or the link reports undefined `absl::` symbols). Bazel uses **Clang + libc++** for those objects; [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) links **`-lc++ -lc++abi`** on Linux and searches common **`/usr/lib/llvm-*/lib`** paths so `-lc++` resolves (install **`libc++` / `libc++abi`** from your distro or LLVM if the link still fails with “cannot find -lc++”). Other CGO packages may still use **`-lstdc++`** in the same binary; that combination is normal for a mostly self-contained static archive.
 
 ## Verify before testing
 

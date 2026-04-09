@@ -10,13 +10,16 @@ package protobuf
 // amalgamation — use together with generator global_exclude_replace_names and a full unified
 // link story (see docs/tier-b-absl-protobuf.md). The anchor only forces libprotobuf_cgo.a into the link.
 //
-// Linux: Bazel protobuf objects use libc++ (std::__1::); link libc++/libc++abi, not libstdc++.
+// Linux: Bazel-built .a uses libc++ (std::__1:: / Abseil). Bare -lc++ often fails ("cannot find -lc++")
+// because libdir is not on the default path — search common LLVM locations before -lc++.
 
 /*
 #cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I${SRCDIR}/../../
 #cgo CXXFLAGS: -I${SRCDIR}/../../protobuf
 #cgo CXXFLAGS: -I${SRCDIR}/../../utf8_range
+#cgo linux LDFLAGS: -L/usr/lib/x86_64-linux-gnu
+#cgo linux LDFLAGS: -L/usr/lib/llvm-20/lib -L/usr/lib/llvm-19/lib -L/usr/lib/llvm-18/lib -L/usr/lib/llvm-17/lib -L/usr/lib/llvm-16/lib -L/usr/lib/llvm-15/lib -L/usr/lib/llvm-14/lib
 #cgo linux LDFLAGS: -L${SRCDIR}/lib -lprotobuf_cgo -lz -lc++ -lc++abi -ldl
 #cgo darwin LDFLAGS: -L${SRCDIR}/lib -lprotobuf_cgo -lz -lc++
 
