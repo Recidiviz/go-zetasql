@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Build @com_google_protobuf//:protobuf with Bazel in the GoogleSQL submodule, then merge all
-# non-test .pic.o objects from protobuf, utf8_range, and Abseil (protobuf's deps) into
+# Build @com_google_protobuf//:protobuf and :cmake_wkt_cc_proto with Bazel in the GoogleSQL
+# submodule, then merge all non-test .pic.o objects from protobuf (incl. WKT from
+# _objs/cmake_wkt_cc_proto), utf8_range, and Abseil (protobuf's deps) into
 # lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a. Abseil objects are required: protobuf
 # .pic.o reference absl:: symbols that would otherwise stay undefined at link time.
 #
@@ -24,7 +25,11 @@ if ! command -v bazelisk >/dev/null 2>&1 && ! command -v bazel >/dev/null 2>&1; 
 fi
 BAZEL="${BAZEL:-$(command -v bazelisk || command -v bazel)}"
 
+# :protobuf is the core library; WKT (.pb.cc for Any, Timestamp, Duration, wrappers, etc.) live in
+# :cmake_wkt_cc_proto. Without those .pic.o files, Tier-B links miss GetMetadata, descriptor tables,
+# and Cord helpers for well-known types.
 "$BAZEL" build @com_google_protobuf//:protobuf \
+  @com_google_protobuf//src/google/protobuf:cmake_wkt_cc_proto \
   --cxxopt=-std=c++20 --host_cxxopt=-std=c++20 \
   --jobs="${BAZEL_JOBS:-8}"
 
@@ -42,7 +47,14 @@ collect_protobuf_pic_o() {
     find "$d" -name '*.pic.o' 2>/dev/null
   done
 }
-OBJS=$(collect_protobuf_pic_o | grep -Ev 'test|unittest|benchmark' | sort -u || true)
+# Bazel also builds per-target *_proto dirs (e.g. timestamp_proto) that duplicate cmake_wkt_cc_proto
+# objects — keep only cmake_wkt_cc_proto to avoid duplicate symbols at link time.
+OBJS=$(
+  collect_protobuf_pic_o \
+    | grep -Ev 'test|unittest|benchmark' \
+    | grep -Ev '/_objs/(timestamp|duration|any|wrappers|struct|empty|field_mask|source_context|type|api)_proto/' \
+    | sort -u || true
+)
 if [[ -z "${OBJS// }" ]]; then
   echo "no protobuf .pic.o under $BINROOT/external" >&2
   exit 1
