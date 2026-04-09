@@ -24,7 +24,7 @@ const defaultCgoStd = "c++20"
 var (
 	bazelSupportedLibs = []string{"googlesql", "absl", "algorithms", "base", "proto"}
 	includeDirs        = []string{"protobuf", "utf8_range", "gtest", "icu", "re2", "json", "googleapis", "boringssl", "flex/src"}
-	// goProtobufImportPath ensures CGO links the package that owns the protobuf amalgamation TU.
+	// goProtobufImportPath ensures CGO links the package that owns libprotobuf_cgo.a (prebuilt protobuf).
 	goProtobufImportPath = "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
 	// goProtobufCCLibPkgKey is the synthetic cc_library key for internal/ccall/go-protobuf/protobuf.
 	goProtobufCCLibPkgKey = "protobuf/protobuf"
@@ -664,7 +664,7 @@ func (g *Generator) generateBindGOLinkOnly(outputDir string, lib *Lib) error {
 
 	uniPre := linkOnlyUnifiedGoBuildPrefix(g.cfg)
 
-	// Tier B Abseil pilot: reuse applyTierBAbslGo for the default (amalgamation) CGO files only.
+	// Tier B Abseil pilot: reuse applyTierBAbslGo for the default CGO files only.
 	darwinBytes, linuxBytes, err = g.applyTierBAbslGo(outputDir, lib, darwinBytes, linuxBytes)
 	if err != nil {
 		return err
@@ -1070,7 +1070,7 @@ func appendUniqueGoImport(imports []string, s string) []string {
 }
 
 // libNeedsGoProtobufImport is true when this library's dependency graph includes the
-// synthetic protobuf/protobuf cc_library (needs blank-import when bind.cc omits export.inc).
+// synthetic protobuf/protobuf cc_library (needs blank-import when bind.cc omits the protobuf dep chain).
 func (g *Generator) libNeedsGoProtobufImport(lib *Lib) bool {
 	seen := map[string]bool{}
 	var walk func(*Lib) bool
@@ -1171,7 +1171,7 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 		if g.omitDependencyExportInclude(pkgKey, depKey) {
 			continue
 		}
-		// Single-owner protobuf TU: only go-protobuf/protobuf compiles export.inc; others link it.
+		// Single-owner protobuf: implementations come from go-protobuf/protobuf (prebuilt archive); omit duplicate export.inc.
 		if dep.BasePkg == "protobuf" && dep.Pkg == "protobuf" {
 			continue
 		}

@@ -1,31 +1,30 @@
-# Tier B + unified Abseil / protobuf namespaces
+# Default protobuf prebuilts + unified Abseil / protobuf namespaces
 
 Operational commands, env vars, and downstream notes: **[prebuilt-cgo.md](prebuilt-cgo.md)**.
 
 This document is the **implementation roadmap** for combining:
 
-1. **Tier B** — link [`libprotobuf_cgo.a`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) built by Bazel in the submodule instead of (or as an alternative to) the vendored [`export.inc`](../internal/ccall/go-protobuf/protobuf/export.inc) amalgamation in `go-protobuf/protobuf`.
+1. **Default protobuf prebuilt** — link [`libprotobuf_cgo.a`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) built by Bazel in the submodule instead of the removed single-TU amalgamation bundle that previously lived under `go-protobuf/protobuf`.
 2. **One namespace story** — use **plain** `absl::` and `google::protobuf::` everywhere in a single link, so protobuf code compiled in one archive matches headers included from analyzer/parser/other shards.
 
 The naive “drop `#include` of the amalgamation and blank-import `go-protobuf`” approach fails because those shards currently use **`#define absl <fqdn>_absl`** (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)), so templates and out-of-line references expect **renamed** Abseil types, while a separately built protobuf TU uses **plain** `absl::`. See [`docs/protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
 
-## Tier B tag policy (single Abseil owner)
+## Prebuilt tag policy (single Abseil owner)
 
-**Rule:** `googlesql_tier_b` (link `libprotobuf_cgo.a`) and `googlesql_tier_b_absl` (link `libabsl_cgo.a`) must **not** both appear in the same binary — `libprotobuf_cgo.a` already embeds Abseil objects. Use **either** protobuf Tier B **or** the Abseil Tier B pilot with **default** protobuf.
+**Rule:** the default protobuf prebuilt owner (with or without the deprecated `googlesql_tier_b` alias) and `googlesql_tier_b_absl` (link `libabsl_cgo.a`) must **not** both appear in the same binary — `libprotobuf_cgo.a` already embeds Abseil objects. Use **either** default protobuf prebuilts **or** the Abseil pilot in an isolated link.
 
 - **Canonical matrix:** [`docs/prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md)
 - **Preflight:** `make verify-tier-b-cgo-policy` ([`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh))
-- **CI:** manual workflows [`.github/workflows/go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) (protobuf Tier B) and [`.github/workflows/go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml) (Abseil pilot) both run **`verify-tier-b-cgo-policy`** before native builds.
+- **CI:** default workflow [`.github/workflows/go.yml`](../.github/workflows/go.yml) and manual workflows [`.github/workflows/go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) (focused protobuf prebuilt verification) plus [`.github/workflows/go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml) (Abseil pilot) run the same preflight policy before native builds.
 
-Generator / bind files: [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go), [`templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl) — cross-check edits against `prebuilt-absl-overlap.md`.
+Generator / bind files: [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go), [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go), [`templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl) — cross-check edits against `prebuilt-absl-overlap.md`.
 
 ## Phase 0 — Tooling in this repo (done / ongoing)
 
 | Piece | Role |
 |--------|------|
 | [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) | Builds `lib/$GOOS_$GOARCH/libprotobuf_cgo.a` and symlinks `lib/libprotobuf_cgo.a`. |
-| [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) | Build tag **`googlesql_tier_b`**: CGO links `-lprotobuf_cgo` instead of compiling `export.inc` (experimental). |
-| [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) | Build tag **`!googlesql_tier_b`**: default amalgamation path. |
+| [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) | Default protobuf CGO bind files: link `libprotobuf_cgo.a` only (no amalgamated protobuf sources in this package). |
 | Generator [`global_exclude_replace_names`](../internal/cmd/generator/config.yaml) under `cclib` | Set to **`[absl, google]`** so generated `bind.cc` omits per-shard `#define absl` / `#define google` where the generator applies global excludes (run `go run .` in `internal/cmd/generator` after edits). |
 
 ## Phase 1 — Build the Bazel archive locally
@@ -38,15 +37,13 @@ make prebuilt-libs
 
 Confirm `internal/ccall/go-protobuf/protobuf/lib/libprotobuf_cgo.a` exists (symlink to `linux_amd64/libprotobuf_cgo.a` or similar).
 
-## Phase 2 — Try Tier B link for `go-protobuf` only
+## Phase 2 — Try the default prebuilt link for `go-protobuf` only
 
 ```bash
-go test -tags 'googlesql,googlesql_tier_b' -count=1 ./internal/ccall/go-protobuf/protobuf/
+go test -tags 'googlesql' -count=1 ./internal/ccall/go-protobuf/protobuf/
 ```
 
 Expect link errors until Phases 3–4 align symbols (no `export_protobuf_*` from amalgamation, possible missing Abseil objects). This step checks that **`-lprotobuf_cgo`** resolves on your platform.
-
-Optional Makefile target: **`make local/test-tier-b`** (passes `-tags googlesql,googlesql_tier_b`).
 
 ## Phase 3 — Unified `absl` / `google` macros (generator)
 
@@ -88,9 +85,9 @@ Align [`go-googlesqlite`](https://github.com/vantaboard/go-googlesqlite) and [`b
 
 | Tag | Meaning |
 |-----|---------|
-| `googlesql` | Normal CGO GoogleSQL/GoogleSQL build (existing). |
-| `googlesql_tier_b` | Use `bind_tier_b.go` in `go-protobuf/protobuf` (link `libprotobuf_cgo.a`); requires archive + symlink. |
+| `googlesql` | Default CGO GoogleSQL build with the protobuf prebuilt owner. |
+| `googlesql_tier_b` | Deprecated compatibility alias; protobuf already uses the prebuilt owner by default. |
 | `googlesql_tier_b_absl` | Use `bind_tier_b_absl.go` in packages that define it (`go-absl/meta/type_traits`, `base/config`, `utility/utility`, …); link `libabsl_cgo.a` from [`extract_absl_cgo_lib.sh`](../internal/ccall/go-absl/extract_absl_cgo_lib.sh). See [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md) before combining with `googlesql_tier_b`. |
 
-Use **both** `googlesql` and `googlesql_tier_b` for protobuf Tier B: `-tags 'googlesql,googlesql_tier_b'`.  
-Use **`googlesql` and `googlesql_tier_b_absl`** for Abseil pilot: `-tags 'googlesql,googlesql_tier_b_absl'`.
+Use **`googlesql`** for the default protobuf prebuilt path: `-tags 'googlesql'`.  
+Use **`googlesql` and `googlesql_tier_b_absl`** for the isolated Abseil pilot: `-tags 'googlesql,googlesql_tier_b_absl'`.

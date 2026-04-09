@@ -1,54 +1,39 @@
-//go:build !googlesql_tier_b
+//go:build linux
 
 package protobuf
 
-// Protobuf is compiled via export.inc (single TU). Optional libprotobuf_cgo.a from
-// extract_protobuf_cgo_lib.sh is not linked here by default; see docs/protobuf-vendoring.md.
+// Default protobuf path: link Bazel-built libprotobuf_cgo.a (no amalgamated protobuf sources in this package).
+// Build the archive with `make prebuilt-libs` from repo root (requires bazelisk/bazel and a
+// populated GoogleSQL submodule / cache).
 //
-// cgo-invalidate: 20260408n — bump this when editing vendored C++ under internal/ccall/protobuf/
-// (Go does not track #included .cc files; changing only those will not rebuild the TU).
+// ABI alignment: vendored internal/ccall/protobuf, regenerated internal/ccall/googlesql/**/*.pb.{h,cc},
+// and libprotobuf_cgo.a from extract_protobuf_cgo_lib.sh must all track the same
+// @com_google_protobuf revision (see docs/protobuf-vendoring.md and
+// scripts/verify-protobuf-tier-b-alignment.sh).
 //
-// Linux: the previous flag set mixed Clang-only -Wno options (e.g. -Wno-unknown-warning-option,
-// -Wno-macro-redefined) with GCC, which then printed "unrecognized command-line option" and noisy
-// notes. This file uses GCC-supported names (e.g. -Wno-builtin-macro-redefined) and -Wno-attributes
-// for protobuf always_inline / -Wattributes noise.
+// Linux: Bazel-built .a uses libc++ (std::__1:: / Abseil). Compile all other CGO C++ with
+// CGO_CXXFLAGS=-stdlib=libc++ (see Makefile CGO_CXXFLAGS_PREBUILT) or protobuf template symbols
+// from other translation units won't link (std::__cxx11:: vs std::__1::).
 //
-// Remaining -Wsubobject-linkage from vendored protobuf/absl is GCC-specific to suppress; Clang does
-// not accept -Wno-subobject-linkage. If you use GCC for C++ (recommended: CC=gcc CXX=g++), you can
-// add e.g. export CGO_CXXFLAGS="$CGO_CXXFLAGS -Wno-subobject-linkage" for a quieter build.
+// --whole-archive: mold/ld otherwise omit .o members from the static archive and core protobuf
+// APIs stay undefined. extract_protobuf_cgo_lib.sh excludes gtest-backed Abseil objects so
+// whole-archive does not require libgtest.
+//
+// start-group/end-group: libc++ symbols such as std::__1::__hash_memory resolve when other CGO
+// packages append -lstdc++ and disturb single-pass resolution. The Linux bind links libc++ /
+// libc++abi copied from the same Bazel LLVM toolchain as extract_protobuf_cgo_lib.sh
+// (lib/libcxx_prebuilt.a, lib/libcxxabi_prebuilt.a), because system -lc++ can mismatch the ABI tags
+// used by Abseil objects inside libprotobuf_cgo.a.
 
 /*
-#cgo CFLAGS: -x c++
-#cgo CFLAGS: -std=c++20
-#cgo CFLAGS: -I${SRCDIR}/../../
-#cgo CFLAGS: -I${SRCDIR}/../../protobuf
-#cgo CFLAGS: -I${SRCDIR}/../../gtest
-#cgo CFLAGS: -I${SRCDIR}/../../icu
-#cgo CFLAGS: -I${SRCDIR}/../../utf8_range
-#cgo CFLAGS: -Wno-char-subscripts
-#cgo CFLAGS: -Wno-sign-compare
-#cgo CFLAGS: -Wno-switch
-#cgo CFLAGS: -Wno-unused-function
-#cgo CFLAGS: -Wno-deprecated-declarations
-#cgo CFLAGS: -Wno-builtin-macro-redefined
-#cgo CFLAGS: -Wno-shift-count-overflow
-#cgo CFLAGS: -Wno-return-type
-#cgo CFLAGS: -Wno-attributes
-#cgo CFLAGS: -DHAVE_PTHREAD
-#cgo CFLAGS: -DHAVE_ZLIB
-#cgo CFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I${SRCDIR}/../../
 #cgo CXXFLAGS: -I${SRCDIR}/../../protobuf
-#cgo CXXFLAGS: -I${SRCDIR}/../../gtest
-#cgo CXXFLAGS: -I${SRCDIR}/../../icu
 #cgo CXXFLAGS: -I${SRCDIR}/../../utf8_range
-#cgo CXXFLAGS: -Wno-builtin-macro-redefined
-#cgo CXXFLAGS: -Wno-attributes
-#cgo LDFLAGS: -ldl -lz -lstdc++
+#cgo LDFLAGS: -L${SRCDIR}/lib -Wl,--whole-archive -lprotobuf_cgo -Wl,--no-whole-archive -lz
+#cgo LDFLAGS: -Wl,--start-group -l:libcxx_prebuilt.a -l:libcxxabi_prebuilt.a -Wl,--end-group -ldl
 
-#include "export.inc"
-#include "absl_plain_link.inc"
+void __go_googlesql_protobuf_prebuilt_anchor(void) {}
 */
 import "C"
 

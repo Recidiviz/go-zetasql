@@ -1,46 +1,28 @@
-//go:build !googlesql_tier_b
+//go:build darwin
 
 package protobuf
 
-// cgo-invalidate: 20260408m — bump when editing vendored C++ under internal/ccall/protobuf/
+// Default protobuf path: link Bazel-built libprotobuf_cgo.a (no amalgamated protobuf sources in this package).
+// Build the archive with `make prebuilt-libs` from repo root (requires bazelisk/bazel and a
+// populated GoogleSQL submodule / cache).
+//
+// ABI alignment: vendored internal/ccall/protobuf, regenerated internal/ccall/googlesql/**/*.pb.{h,cc},
+// and libprotobuf_cgo.a from extract_protobuf_cgo_lib.sh must all track the same
+// @com_google_protobuf revision (see docs/protobuf-vendoring.md and
+// scripts/verify-protobuf-tier-b-alignment.sh).
+//
+// Darwin also uses libc++ throughout. Compile all other CGO C++ with
+// CGO_CXXFLAGS=-stdlib=libc++ (see Makefile CGO_CXXFLAGS_PREBUILT) so protobuf template symbols
+// match the prebuilt archive.
 
 /*
-#cgo CFLAGS: -x c++
-#cgo CFLAGS: -std=c++20
-#cgo CFLAGS: -I${SRCDIR}/../../
-#cgo CFLAGS: -I${SRCDIR}/../../protobuf
-#cgo CFLAGS: -I${SRCDIR}/../../gtest
-#cgo CFLAGS: -I${SRCDIR}/../../icu
-#cgo CFLAGS: -I${SRCDIR}/../../utf8_range
-#cgo CFLAGS: -Wno-char-subscripts
-#cgo CFLAGS: -Wno-sign-compare
-#cgo CFLAGS: -Wno-switch
-#cgo CFLAGS: -Wno-unused-function
-#cgo CFLAGS: -Wno-deprecated-declarations
-#cgo CFLAGS: -Wno-inconsistent-missing-override
-#cgo CFLAGS: -Wno-unknown-attributes
-#cgo CFLAGS: -Wno-macro-redefined
-#cgo CFLAGS: -Wno-shift-count-overflow
-#cgo CFLAGS: -Wno-enum-compare-switch
-#cgo CFLAGS: -Wno-return-type
-#cgo CFLAGS: -Wno-subobject-linkage
-#cgo CFLAGS: -Wno-defaulted-function-deleted
-#cgo CFLAGS: -Wno-unknown-warning-option
-#cgo CFLAGS: -DHAVE_PTHREAD
-#cgo CFLAGS: -DHAVE_ZLIB
-#cgo CFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo CXXFLAGS: -std=c++20
 #cgo CXXFLAGS: -I${SRCDIR}/../../
 #cgo CXXFLAGS: -I${SRCDIR}/../../protobuf
-#cgo CXXFLAGS: -I${SRCDIR}/../../gtest
-#cgo CXXFLAGS: -I${SRCDIR}/../../icu
 #cgo CXXFLAGS: -I${SRCDIR}/../../utf8_range
-#cgo CXXFLAGS: -Wno-macro-redefined
-#cgo CXXFLAGS: -Wno-defaulted-function-deleted
-#cgo LDFLAGS: -lc++ -lz
+#cgo LDFLAGS: -L${SRCDIR}/lib -Wl,-force_load,${SRCDIR}/lib/libprotobuf_cgo.a -lz -lc++
 
-#include "export.inc"
-#include "absl_plain_link.inc"
+void __go_googlesql_protobuf_prebuilt_anchor(void) {}
 */
 import "C"
 

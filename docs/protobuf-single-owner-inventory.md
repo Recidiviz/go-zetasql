@@ -4,30 +4,26 @@ This doc captures **inventory** from the protobuf CGO consolidation effort and t
 
 ## Scale (current generator output)
 
-- **~150+** `export.inc` files under `internal/ccall/go-googlesql/` reference
-  `#include "go-protobuf/protobuf/export.inc"`.
+- Generator policy and [`internal/exportinc`](../internal/exportinc/exportinc.go) **strip** any legacy `#include "go-protobuf/protobuf/export.inc"` line from `export.inc` preludes outside `go-protobuf/protobuf`; the **file itself is removed** — default protobuf comes from Bazel **`libprotobuf_cgo.a`** linked in [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go).
 - **780+** `bind.cc` files under `internal/ccall/go-googlesql/`.
 - Each **separate** Go CGO package with its own `bind.cc` is a **separate
-  translation unit**. The `PROTOBUF_EXPORT_H` guard in `export.inc` only
-  deduplicates **within** one TU, not across packages—so the amalgamation is
-  compiled **many times** unless the build model changes.
+  translation unit**; cross-package protobuf symbols are satisfied by the shared prebuilt archive plus consistent `#define` policy (see [`tier-b-absl-protobuf.md`](tier-b-absl-protobuf.md)).
 
-## Why “link-only go-protobuf” (Tier A) does not drop in
+## Historical spike: link-only import without prebuilt alignment
 
-A spike removed `#include "go-protobuf/protobuf/export.inc"` from non-`go-protobuf`
-packages and relied on blank-importing
-[`internal/ccall/go-protobuf/protobuf`](../internal/ccall/go-protobuf/protobuf).
+An earlier experiment removed `#include "go-protobuf/protobuf/export.inc"` from non-`go-protobuf`
+packages and relied only on blank-importing
+[`internal/ccall/go-protobuf/protobuf`](../internal/ccall/go-protobuf/protobuf)
+**without** aligning Abseil rename policy to a single-owner archive.
 
 **Link failed** with missing `google::protobuf::…` / `AssignDescriptors(…,
 <renamed absl>::once_flag*, …)`-style symbols.
 
-**Root cause:** [`go-protobuf/protobuf`](../internal/ccall/go-protobuf/protobuf)
-compiles the amalgamation with **plain** `absl::` and stable `google::protobuf::`.
-Analyzer, parser, and other shards compile with **per-shard preprocessor
+**Root cause:** shards compile with **per-shard preprocessor
 renames**, e.g. `#define absl googlesql_public_analyzer_googlesql_absl`, so
-protobuf headers in those TUs instantiate templates and types in the **renamed**
-Abseil namespace. A separately built `go-protobuf` TU cannot satisfy those
-symbols: it is not the same C++ ABI as “protobuf + renamed absl” in the shard.
+protobuf headers in those TUs instantiate templates in the **renamed**
+Abseil namespace. The **default prebuilt** path uses **plain** `absl::` inside
+`libprotobuf_cgo.a`; the generator’s **`cclib.global_exclude_replace_names`** (and related knobs) keeps that link coherent.
 
 So consolidation is not only “one archive”—it requires a **single Abseil /
 protobuf macro domain** for everything that must link together, or a redesigned
@@ -37,7 +33,8 @@ boundary.
 
 1. **Tier B + unified namespaces** — phased roadmap in
    **[`docs/tier-b-absl-protobuf.md`](tier-b-absl-protobuf.md)** (build tag
-   `googlesql_tier_b`, [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go),
+   default protobuf prebuilts, [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) /
+   [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go),
    generator `cclib.global_exclude_replace_names`). Prebuilt archive:
    [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh).
    Also [protobuf-vendoring.md](protobuf-vendoring.md) § *Single-owner protobuf*.

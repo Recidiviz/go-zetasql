@@ -1,8 +1,8 @@
 package utf8_range_link
 
-// Single translation unit for utf8_range so protobuf amalgamations in other packages
-// resolve utf8_range::IsStructurallyValid / SpanStructurallyValid without duplicating
-// utf8_validity.cc inside go-protobuf/protobuf/export.inc.
+// Single translation unit for utf8_range so other CGO packages resolve
+// utf8_range::IsStructurallyValid / SpanStructurallyValid while the default protobuf
+// path links Bazel-built libprotobuf_cgo.a (which does not embed this .cc).
 
 /*
 #cgo CFLAGS: -x c++

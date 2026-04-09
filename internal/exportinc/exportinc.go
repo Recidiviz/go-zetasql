@@ -110,8 +110,8 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 	return prelude
 }
 
-// filterGoProtobufAmalgamationSingleOwner drops the protobuf amalgamation include from every
-// package except internal/ccall/go-protobuf/protobuf (single compile TU; others link via import).
+// filterGoProtobufAmalgamationSingleOwner drops a legacy include of the removed
+// go-protobuf/protobuf/export.inc from generated export.inc preludes (historical single-TU bundle).
 func filterGoProtobufAmalgamationSingleOwner(packageDir string, prelude []string) []string {
 	if strings.Contains(packageDir, "go-protobuf/protobuf") {
 		return prelude

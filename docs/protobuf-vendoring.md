@@ -8,9 +8,11 @@ This document catalogs **go-googlesql–specific** changes layered on top of ven
 - Prefer a **single coherent revision** of protobuf for runtime headers, generated `*.pb.h` / `*.pb.cc`, and sources. Mixing files from different commits causes version checks (`PROTOBUF_MIN_*`), missing symbols, and subtle API skew.
 - **`GO_GOOGLESQL_SKIP_PROTOBUF_COPY`**: when set to **`1`**, the updater **skips** copying `com_google_protobuf/src` into `internal/ccall/protobuf`, so local patches or an in-progress vendor refresh are preserved (see `copyExternalLibMapForRun()` in the updater). Use a **full** copy when intentionally refreshing protobuf from the cache.
 
-## Stable mechanical patches (amalgamation / CGO)
+## Stable mechanical patches (vendored headers / CGO)
 
-These exist because protobuf is built here as a **single translation unit** included from [`internal/ccall/go-protobuf/protobuf/export.inc`](../internal/ccall/go-protobuf/protobuf/export.inc), not as many TUs like Google’s Bazel build. Upstream `port_def.inc` / `port_undef.inc` assume one include/undef pair per header; amalgamation breaks that unless we gate repeated includes.
+**Default runtime:** protobuf object code comes from Bazel-built **`libprotobuf_cgo.a`** linked by [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go), not from a vendored single-TU amalgamation in `go-protobuf/protobuf` (that bundle was removed).
+
+The **`port_def.inc` / `port_undef.inc`** wrappers below remain important for **vendored** [`internal/ccall/protobuf/`](../internal/ccall/protobuf/) headers: upstream assumes one include/undef pair per header; unusual include orders (or tooling that concatenates sources) still need the guards.
 
 ### `port_def.inc` / `port_undef.inc`
 
@@ -18,19 +20,8 @@ These exist because protobuf is built here as a **single translation unit** incl
 - **Mechanism**: After the standard file header comments, the main body is wrapped in:
   - `#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` / `#else` / `#endif` (port_def)
   - `#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF` / `#else` / `#endif` (port_undef)
-- **Effect**: The amalgamation TU includes `port_def.inc` **once** with the skip macros undefined so macros are defined; nested includes from other headers see the skip macro set and skip the body, avoiding duplicate macro definitions and paired `#undef` issues.
+- **Effect**: A TU that includes `port_def.inc` **first** with the skip macros undefined sees the full macro definitions; nested includes from other headers see the skip macro set and skip the body, avoiding duplicate macro definitions and paired `#undef` issues.
 - **Maintenance**: A full copy of `com_google_protobuf` **overwrites** these files and **removes** the wrappers. Re-apply them after every bulk copy, and ensure there is exactly **one** closing `#endif` for each guard (duplicate `#endif` lines cause hard-to-read preprocessor errors).
-
-### `export.inc` (amalgamation preamble)
-
-- **File**: [`internal/ccall/go-protobuf/protobuf/export.inc`](../internal/ccall/go-protobuf/protobuf/export.inc).
-- **Role**:
-  - Defines **`GO_EXPORT(x)`** → `export_protobuf_##x` and **`InsertIfNotPresent`** → `protobuf_InsertIfNotPresent` to reduce symbol collisions when linking the CGO static archive with other code.
-  - Includes `google/protobuf/port_def.inc` **once**, then defines `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` and `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF` before pulling in protobuf `.cc`/`.h` sources in a defined order.
-  - Includes `google/protobuf/stubs/macros.h` early so headers that expect `GOOGLE_DISALLOW_EVIL_CONSTRUCTORS` et al. compile in this TU.
-  - Ends with `#undef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF`, includes `port_undef.inc`, and cleans up export macros.
-
-This file is **not** copied from upstream; treat it as part of the go-googlesql embedding layer.
 
 ## Updater: what is automated today vs gaps
 
@@ -134,20 +125,17 @@ After go-googlesql is green:
 2. **[go-googlesqlite](https://github.com/vantaboard/go-googlesqlite)** — same, after updating the `go-googlesql` module replace/version if needed.
 3. **[bigquery-emulator](https://github.com/goccy/bigquery-emulator)** — same.
 
-### CI vs optional `libprotobuf_cgo.a`
+### CI vs `libprotobuf_cgo.a`
 
-- **Default build:** [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) compile protobuf via **`export.inc`** (single translation unit). This is what **`go test`** uses in [`.github/workflows/go.yml`](../.github/workflows/go.yml).
-- **Optional archive:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) builds **`lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a`** using Bazel in the GoogleSQL submodule. It runs on **Linux and macOS** when `bazelisk`/`bazel` is available. From the repo root: **`make extract-protobuf-lib`**. The archive is **not** linked by the default `bind_*.go` files (Bazel’s object symbols do not match the **`GO_GOOGLESQL_PB_EXPORT`** renaming in amalgamation); the script remains for experiments or a future link-only path.
+- **Default build:** [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) link **`libprotobuf_cgo.a`** (see **`make prebuilt-libs`** / **`make verify-prebuilt-protobuf`**). CI bootstraps the archive in [`.github/workflows/go.yml`](../.github/workflows/go.yml) before **`go test`**.
+- **Archive build:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) produces **`lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a`** using Bazel in the GoogleSQL submodule. From the repo root: **`make extract-protobuf-lib`**.
 - **Stray artifacts:** `*.a` is gitignored globally; local `lib/` trees from the extract script need not be committed.
 
-### Single-owner protobuf / link-only dependents (design constraint)
+### Single-owner protobuf / shard macros (design constraint)
 
-The tree **intentionally** compiles [`go-protobuf/protobuf/export.inc`](../internal/ccall/go-protobuf/protobuf/export.inc) in **many** CGO translation units: each `internal/ccall/go-googlesql/**/bind.cc` applies **shard-specific** `#define` macros (`googlesql`, `absl` → `…_googlesql`, `…_absl`, etc.) so symbols from the same headers do not collide at the final link (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)). Protobuf’s headers instantiate code using **`absl::` types**. If protobuf were built **only** inside `go-protobuf` with plain `absl::`, while analyzer/parser shards compile protobuf-facing code with **renamed** `absl`, the **templates and ABIs do not match**—link errors such as missing `AssignDescriptors(…, <shard>_absl::once_flag*, …)` are expected. So a naive “drop `#include "go-protobuf/protobuf/export.inc"` everywhere and blank-import `go-protobuf`” does **not** work without also aligning **Abseil / protobuf macro policy**.
+Each `internal/ccall/go-googlesql/**/bind.cc` may apply **shard-specific** `#define` macros (`googlesql`, `absl` → `…_googlesql`, `…_absl`, etc.) so symbols from shared headers do not collide at the final link (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)). Protobuf-facing code in those shards must stay consistent with **`libprotobuf_cgo.a`**, which uses **plain** `absl::` / `google::protobuf::`. The generator and [`docs/tier-b-absl-protobuf.md`](tier-b-absl-protobuf.md) describe how **`cclib.global_exclude_replace_names`** and related knobs keep that link coherent.
 
-**Directions that can still match a “lower maintenance” goal:**
-
-- **Prebuilt protobuf + Abseil (Tier B):** use Bazel-built `libprotobuf_cgo.a` (and a consistent Abseil archive) and evolve the generator so **all** code that links that stack shares **one** `absl` / `google` namespace story—typically meaning **relaxing or restructuring** per-shard `absl` rename for protobuf-touching packages, or splitting processes. See **[`docs/tier-b-absl-protobuf.md`](tier-b-absl-protobuf.md)** (roadmap, build tag `googlesql_tier_b`, `cclib.global_exclude_replace_names`), [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh), and [`docs/protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
-- **Smaller win:** deduplicate amalgamation only **within** the same macro island (fewer redundant includes), without claiming a single global protobuf TU.
+**Further reading:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh), [`docs/protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
 
 **Vendor patches** ([`descriptor_database.cc`](../internal/ccall/protobuf/google/protobuf/descriptor_database.cc), etc.) that address **multi-TU descriptor registration** should be revisited only **after** a new link layout is green end-to-end; do not assume they can be deleted on theory alone.
 
@@ -181,7 +169,7 @@ This section tracks the **“protobuf upgrade next steps”** plan: restore tabl
 CGO_ENABLED=1 go test -count=1 ./internal/ccall/go-protobuf/protobuf/
 ```
 
-(Package has no tests; a quick pass still builds the amalgamated protobuf TU.)
+(Package has no tests; a quick pass still links the prebuilt protobuf archive.)
 
 ### Updater / generator (runbook commands)
 
@@ -197,9 +185,9 @@ cd ../generator
 go run .
 ```
 
-After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_undef.inc` amalgamation guards** are present (the updater or `go run ./internal/cmd/vendorpatch` applies them), then validate **`export.inc`** and the rows in the table above if upstream still omits those edits.
+After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_undef.inc` amalgamation guards** are present (the updater or `go run ./internal/cmd/vendorpatch` applies them), then re-run **`make verify-prebuilt-protobuf`** / alignment checks if you changed protobuf sources.
 
-**Amalgamation (`go-protobuf/protobuf/export.inc`):** the bundle ends with `port_undef`, which clears all protobuf macros while `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` was still set — so later googlesql `*.pb.cc` in the same TU saw an empty `port_def.inc` (e.g. unknown `PROTOBUF_PRAGMA_INIT_SEG`). **Undef `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` immediately after that `port_undef`.** The amalgamation must **not** redefine the host `bind.cc` **`GO_EXPORT`** (ICU’s `U_ICU_ENTRY_POINT_RENAME` depends on it); protobuf symbol wrapping in this file uses **`GO_GOOGLESQL_PB_EXPORT(sym)`** (`export_protobuf_##sym`) instead.
+**Historical note:** the old `go-protobuf/protobuf/export.inc` single-TU bundle is **removed**; if you maintain a fork that still uses a mega-TU for protobuf, ensure `port_undef` does not leave `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` set across later includes (see port_def guard notes above).
 
 **Abseil `optional` (generator [`config.yaml`](../internal/cmd/generator/config.yaml)):** Bazel lists `internal/optional.h` as a `src` for `absl/types/optional`, so the generator used to emit a second `#include` after `optional.h`. Under C++17, Abseil uses **`using std::optional`**, and that extra include conflicts. **`cclib.exclude_amalgamation_headers`** drops `absl/types/internal/optional.h` for that lib (it is already pulled in by `optional.h` when using the non-std implementation).
 
@@ -224,7 +212,7 @@ Use **`--cpp_out=.`** so outputs land in `googlesql/parser/`. Passing **`--cpp_o
 These are **not** fixed by protobuf amalgamation alone; treat them as separate upgrade checklist items:
 
 - **`utf8_validity.h`**: newer `parse_context.cc` / `wire_format_lite.cc` include it; vendor **`utf8_range`** (or equivalent) into [`internal/ccall/`](../internal/ccall/) and expose include paths in the relevant `bind_*.go` packages, or extend the updater **`copyExternalLibMap`** when the Bazel tree is available.
-- **Generated `.pb.cc` / macros**: unknown **`PROTOBUF_PRAGMA_INIT_SEG`** / **`PROTOBUF_NAMESPACE_ID`** in a googlesql `*.pb.cc` after **`go-protobuf/export.inc`** usually means **amalgamation left `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` on** after the final `port_undef` — see **`export.inc`** notes above. If macros are present but still wrong, `.pb.*` may be from the **wrong protoc** vs **4023003** headers — regenerate with **protoc 23.3** or copy from the matching Bazel output.
+- **Generated `.pb.cc` / macros**: unknown **`PROTOBUF_PRAGMA_INIT_SEG`** / **`PROTOBUF_NAMESPACE_ID`** in a googlesql `*.pb.cc` can mean **`port_def.inc` / `port_undef.inc` guards** are wrong after a vendor copy, or **`port_undef` ordering** in a custom mega-TU left skip macros set. If guards look fine, `.pb.*` may be from the **wrong protoc** vs **4023003** headers — regenerate with **protoc 23.3** or copy from the matching Bazel output.
 - **Parser / flex amalgamation**: do not splice **`flex_tokenizer_base.inc`** on top of a full **`flex_tokenizer.flex.cc`** (generator **`add_sources`** for that pair was removed). Older failures from mixed **`darwin-fastbuild`** vs **`k8-fastbuild`** layouts used the same symptom (`yy_ec`, `yy_base`, …); keep a **single** generated lexer tree.
 - **`parse_tree` skew**: serializer C++ referencing **`ASTWithClauseEntry`** / **`anonymization_options`** when **`parse_tree.pb.h`** does not match — rerun updater + generator against the same GoogleSQL revision until C++ and `.pb.h` agree.
 - **Raw `internal/ccall/absl/strings`**: the vendored tree is not a stand-alone Go cgo package; [`strings.go`](../internal/ccall/absl/strings/strings.go) uses **`//go:build ignore`** so **`go test ./...`** does not treat `*.cc` as illegal in a non-cgo package.
