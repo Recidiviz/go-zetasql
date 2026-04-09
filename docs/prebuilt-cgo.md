@@ -30,7 +30,15 @@ This runs [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf
 
 Archives are **gitignored** (`*.a`); each developer/CI agent builds locally.
 
-The extract script merges **`*.pic.o`** from the Bazel `external/protobuf~` tree, **`utf8_range`**, and **`abseil-cpp~`** (protobuf depends on Abseil; those objects must be in the archive or the link reports undefined `absl::` symbols). Bazel uses **Clang + libc++** for those objects; [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) links **`-lc++ -lc++abi`** on Linux and searches common **`/usr/lib/llvm-*/lib`** paths so `-lc++` resolves (install **`libc++` / `libc++abi`** from your distro or LLVM if the link still fails with “cannot find -lc++”). Other CGO packages may still use **`-lstdc++`** in the same binary; that combination is normal for a mostly self-contained static archive.
+The extract script merges **`*.pic.o`** from the Bazel `external/protobuf~` tree, **`utf8_range`**, and **`abseil-cpp~`** (protobuf depends on Abseil; those objects must be in the archive or the link reports undefined `absl::` symbols). Bazel uses **Clang + libc++** for those objects; [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) links **`-lc++ -lc++abi`** on Linux and searches common **`/usr/lib/llvm-*/lib`** paths so `-lc++` resolves (install **`libc++` / `libc++abi`** from your distro or LLVM if the link still fails with “cannot find -lc++”).
+
+**ABI:** Vendored / amalgamated C++ that calls into `google::protobuf` templates must use the **same** standard library as `libprotobuf_cgo.a`. By default, Clang uses **libstdc++** (`std::__cxx11::` mangling); Bazel’s archive uses **libc++** (`std::__1::`). Without alignment you get undefined references to protobuf internals (e.g. `ArenaStringPtr::Set`, `RepeatedPtrFieldBase::AddOutOfLineHelper`). Set for Tier B builds:
+
+```bash
+export CGO_CXXFLAGS=-stdlib=libc++
+```
+
+[`Makefile`](../Makefile) **`local/test-prebuilt`**, **`local/build-prebuilt`**, and **`local/test-tier-b`** set **`CGO_CXXFLAGS_TIER_B`** (default `-stdlib=libc++`) automatically. Override only if you know your Bazel archive was built with a different `-stdlib`.
 
 ## Verify before testing
 

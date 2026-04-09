@@ -12,6 +12,8 @@ package protobuf
 //
 // Linux: Bazel-built .a uses libc++ (std::__1:: / Abseil). Bare -lc++ often fails ("cannot find -lc++")
 // because libdir is not on the default path — search common LLVM locations before -lc++.
+// Compile all other CGO C++ with CGO_CXXFLAGS=-stdlib=libc++ (see Makefile CGO_CXXFLAGS_TIER_B) or
+// protobuf template symbols from amalgamation TUs won't link (std::__cxx11:: vs std::__1::).
 
 /*
 #cgo CXXFLAGS: -std=c++20

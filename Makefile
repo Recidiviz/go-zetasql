@@ -75,6 +75,11 @@ docker/build-dev: cache-dirs
 CGO_CC ?= clang
 CGO_CXX ?= clang++
 
+# Tier B: libprotobuf_cgo.a comes from Bazel with libc++ (not libstdc++). Every CGO C++ TU must
+# use the same -stdlib or template instantiations (e.g. ArenaStringPtr with std::string) mangle as
+# std::__cxx11:: vs std::__1:: and the link fails with undefined protobuf internals.
+CGO_CXXFLAGS_TIER_B ?= -stdlib=libc++
+
 # --allow-multiple-definition: needed while multiple CGO TUs each embed overlapping C++ (incl.
 # protobuf amalgamation). Removing it requires a single macro/link domain for protobuf+absl;
 # see docs/protobuf-vendoring.md "Single-owner protobuf".
@@ -136,6 +141,7 @@ verify-prebuilt-protobuf:
 # Prebuilt Tier B: requires `make prebuilt-libs` first. Fails fast if libprotobuf_cgo.a is missing.
 local/build-prebuilt: cache-dirs verify-prebuilt-protobuf
 	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
 	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
@@ -148,6 +154,7 @@ local/build-prebuilt: cache-dirs verify-prebuilt-protobuf
 
 local/test-prebuilt: cache-dirs verify-prebuilt-protobuf
 	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
 	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
@@ -224,6 +231,7 @@ smoke-link-googlesql-unified:
 # Requires `make extract-protobuf-lib`. Expect failures until global_exclude_replace_names + unified ABI land.
 local/test-tier-b: cache-dirs
 	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
 	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
