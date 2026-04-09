@@ -100,6 +100,8 @@ Local checks used:
 
 **Overlap with protobuf Tier B:** `libprotobuf_cgo.a` already embeds Abseil object code. Do **not** combine `googlesql_tier_b` and `googlesql_tier_b_absl` in one link without a dedup policy—see [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md).
 
+**Tag policy preflight:** `make verify-tier-b-cgo-policy` prints supported and unsupported tag combinations ([`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh)); the canonical table lives in **`prebuilt-absl-overlap.md`**. Run it before local Tier B builds or when changing CI workflows.
+
 ### Adding another `go-absl/...` package (manual)
 
 1. Add `//go:build !googlesql_tier_b_absl` to **`bind_linux.go`** and **`bind_darwin.go`** (first line, before `package`).

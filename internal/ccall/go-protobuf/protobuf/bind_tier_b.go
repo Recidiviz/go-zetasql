@@ -6,6 +6,10 @@ package protobuf
 // Build the archive: `make extract-protobuf-lib` from repo root (requires bazelisk, submodule cache).
 // The extract script writes lib/$GOOS_$GOARCH/libprotobuf_cgo.a and symlinks lib/libprotobuf_cgo.a.
 //
+// Tag policy: do not combine googlesql_tier_b with googlesql_tier_b_absl in the same binary
+// (duplicate Abseil — see docs/prebuilt-absl-overlap.md). When editing this file or bind_tier_b_absl.go,
+// keep Tier B tags mutually exclusive at package/link scope.
+//
 // ABI alignment (Tier B Phase 1): vendored internal/ccall/protobuf, regenerated
 // internal/ccall/googlesql/**/*.pb.{h,cc}, and libprotobuf_cgo.a from extract_protobuf_cgo_lib.sh all track
 // the same @com_google_protobuf revision as internal/cmd/updater/googlesql/MODULE.bazel (e.g. BCR 29.x,

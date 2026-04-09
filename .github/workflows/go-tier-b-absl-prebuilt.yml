@@ -26,6 +26,8 @@ jobs:
           sudo apt-get install -y --no-install-recommends clang
           go install github.com/bazelbuild/bazelisk@v1.20.0
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Tier B tag policy
+        run: make verify-tier-b-cgo-policy
       - name: Build libabsl_cgo.a
         run: make prebuilt-libs-absl
         env:

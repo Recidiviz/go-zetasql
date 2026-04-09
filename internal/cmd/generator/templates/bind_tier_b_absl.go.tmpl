@@ -4,7 +4,8 @@ package {{ .Package }}
 
 // Link Bazel-built libabsl_cgo.a instead of compiling bind.cc for this package.
 // Build the archive: `make prebuilt-libs-absl` from repo root.
-// See docs/prebuilt-absl-overlap.md: do not combine with googlesql_tier_b (protobuf) in the same link without a dedup policy.
+// Tag policy: mutually exclusive with googlesql_tier_b in the same binary (see docs/prebuilt-absl-overlap.md).
+// When editing bind_tier_b_absl.go or bind_tier_b.go, cross-check tag wiring against that doc.
 
 /*
 #cgo CXXFLAGS: -std=c++20

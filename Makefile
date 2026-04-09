@@ -144,6 +144,7 @@ verify-protobuf-tier-b-alignment:
 	bash scripts/verify-protobuf-tier-b-alignment.sh
 
 # Print supported googlesql_tier_b / googlesql_tier_b_absl tag combinations (see docs/prebuilt-absl-overlap.md).
+# Optional: VERIFY_TIER_B_CGO_POLICY_ENFORCE=1 reserved for future strict checks (script still exits 0 until implemented).
 verify-tier-b-cgo-policy:
 	bash scripts/verify-tier-b-cgo-tag-policy.sh
 

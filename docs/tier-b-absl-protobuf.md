@@ -9,6 +9,16 @@ This document is the **implementation roadmap** for combining:
 
 The naive “drop `#include` of the amalgamation and blank-import `go-protobuf`” approach fails because those shards currently use **`#define absl <fqdn>_absl`** (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)), so templates and out-of-line references expect **renamed** Abseil types, while a separately built protobuf TU uses **plain** `absl::`. See [`docs/protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
 
+## Tier B tag policy (single Abseil owner)
+
+**Rule:** `googlesql_tier_b` (link `libprotobuf_cgo.a`) and `googlesql_tier_b_absl` (link `libabsl_cgo.a`) must **not** both appear in the same binary — `libprotobuf_cgo.a` already embeds Abseil objects. Use **either** protobuf Tier B **or** the Abseil Tier B pilot with **default** protobuf.
+
+- **Canonical matrix:** [`docs/prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md)
+- **Preflight:** `make verify-tier-b-cgo-policy` ([`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh))
+- **CI:** manual workflows [`.github/workflows/go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) (protobuf Tier B) and [`.github/workflows/go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml) (Abseil pilot) both run **`verify-tier-b-cgo-policy`** before native builds.
+
+Generator / bind files: [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go), [`templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl) — cross-check edits against `prebuilt-absl-overlap.md`.
+
 ## Phase 0 — Tooling in this repo (done / ongoing)
 
 | Piece | Role |

@@ -26,6 +26,7 @@ This is intentionally **not** the full `//googlesql/public:analyzer` closure by 
 
 - **`libgooglesql.a` does not replace** `libprotobuf_cgo.a` or `libabsl_cgo.a`. It holds **GoogleSQL-owned** object code plus anchor/wrapper.
 - A binary that calls into generated GoogleSQL C++ APIs will generally still need to link **protobuf and Abseil** consistent with [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). A future **single merged** archive from one Bazel graph can subsume those steps.
+- **Do not** combine `googlesql_unified_prebuilt` with `googlesql_tier_b` or `googlesql_tier_b_absl` in the **same** link without an audited single-owner plan — risk of duplicate or inconsistent Abseil/protobuf objects (see the unified + Tier B row in [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md)).
 
 ## Build
 
