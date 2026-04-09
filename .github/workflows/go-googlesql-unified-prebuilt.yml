@@ -38,3 +38,10 @@ jobs:
         env:
           CC: clang
           CXX: clang++
+          CGO_ENABLED: "1"
+          CGO_LDFLAGS_ALLOW: "-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold"
+          CGO_LDFLAGS: "-Wl,--no-gc-sections -Wl,--allow-multiple-definition"
+      - name: Native C link smoke
+        run: bash scripts/smoke_link_googlesql_unified.sh
+        env:
+          CC: clang

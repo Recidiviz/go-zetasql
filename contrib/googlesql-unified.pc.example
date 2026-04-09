@@ -15,9 +15,10 @@ includedir=${exec_prefix}/include
 
 Name: googlesql-unified
 Description: go-googlesql libgooglesql.a (bootstrap unified static lib)
-Version: 0.0.0
+Version: 0.2.0
 Requires:
 Libs: -L${libdir} -lgooglesql -lz -lstdc++ -ldl -lpthread
+# Install include/googlesql_unified.h as ${includedir}/googlesql_unified.h (flat include root).
 Cflags: -I${includedir} -std=c++20
 
 # macOS: use -lc++ instead of -lstdc++ if linking only against libc++-built objects.

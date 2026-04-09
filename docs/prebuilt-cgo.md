@@ -136,6 +136,7 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 | `make prebuilt-libs-googlesql-unified` | Build [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/lib) from GoogleSQL Bazel targets + C anchor (see [`libgooglesql-unified.md`](libgooglesql-unified.md)) |
 | `make verify-prebuilt-googlesql-unified` | Fail fast if `libgooglesql.a` for current `GOOS_GOARCH` is missing |
 | `make local/build-prebuilt-googlesql-unified` | `go build` with `-tags googlesql,googlesql_unified_prebuilt` on the unified CGO owner package (after verify) |
+| `make smoke-link-googlesql-unified` | Compile and run [`smoke/smoke_main.c`](../internal/ccall/go-googlesql-unified/smoke/smoke_main.c) against `libgooglesql.a` (after verify) |
 
 ## Generator: unified `absl` / `google`
 

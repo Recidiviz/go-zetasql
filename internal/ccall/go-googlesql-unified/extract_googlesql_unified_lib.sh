@@ -10,6 +10,8 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 GOOGLESQL="$REPO_ROOT/internal/cmd/updater/googlesql"
 C_ANCHOR_SRC="$REPO_ROOT/internal/ccall/go-googlesql-unified/c/googlesql_unified_anchor.c"
+WRAPPER_SRC="$REPO_ROOT/internal/ccall/go-googlesql-unified/cxx/googlesql_unified_wrapper.cc"
+INCLUDE_DIR="$REPO_ROOT/internal/ccall/go-googlesql-unified/include"
 OUT_DIR="$REPO_ROOT/internal/ccall/go-googlesql-unified/lib"
 GOOS_GOARCH="$(go env GOOS)_$(go env GOARCH)"
 OUT="$OUT_DIR/$GOOS_GOARCH/libgooglesql.a"
@@ -23,13 +25,13 @@ if ! command -v bazelisk >/dev/null 2>&1 && ! command -v bazel >/dev/null 2>&1; 
 fi
 BAZEL="${BAZEL:-$(command -v bazelisk || command -v bazel)}"
 
-if [[ ! -f "$C_ANCHOR_SRC" ]]; then
-  echo "missing anchor source: $C_ANCHOR_SRC" >&2
+if [[ ! -f "$C_ANCHOR_SRC" ]] || [[ ! -f "$WRAPPER_SRC" ]]; then
+  echo "missing anchor or wrapper source" >&2
   exit 1
 fi
 
-# Space-separated list of Bazel labels (googlesql module).
-TARGETS="${GOOGLESQL_UNIFIED_BAZEL_TARGETS:-//googlesql/base:logging}"
+# Space-separated list of Bazel labels (googlesql module). Default: parser-safe //googlesql/base/* shards.
+TARGETS="${GOOGLESQL_UNIFIED_BAZEL_TARGETS:-//googlesql/base:logging //googlesql/base:status //googlesql/base:check //googlesql/base:ret_check //googlesql/base:map_util}"
 
 cd "$GOOGLESQL"
 
@@ -61,13 +63,14 @@ if [[ ${#OBJS[@]} -eq 0 ]] || [[ -z "${OBJS[0]:-}" ]]; then
   exit 1
 fi
 
-echo "Compiling C anchor..."
+echo "Compiling C anchor and C++ wrapper..."
 "$CC" -c -o "$WORK/googlesql_unified_anchor.o" "$C_ANCHOR_SRC"
+"$CXX" -std=c++20 -c -o "$WORK/googlesql_unified_wrapper.o" -I"$INCLUDE_DIR" "$WRAPPER_SRC"
 
 mkdir -p "$(dirname "$OUT")"
 rm -f "$OUT"
 # shellcheck disable=SC2086
-ar crs "$OUT" "${OBJS[@]}" "$WORK/googlesql_unified_anchor.o"
+ar crs "$OUT" "${OBJS[@]}" "$WORK/googlesql_unified_anchor.o" "$WORK/googlesql_unified_wrapper.o"
 echo "Wrote $OUT ($(ls -lh "$OUT" | awk '{print $5}'))"
 
 LINK_NAME="$OUT_DIR/libgooglesql.a"

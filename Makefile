@@ -50,7 +50,7 @@ DOCKER_DEV_VOLUMES := \
 	local/test-prebuilt-absl local/build-prebuilt-absl \
 	local/build-prebuilt-googlesql-unified \
 	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified \
-	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified \
+	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified smoke-link-googlesql-unified \
 	profile-bottleneck extract-protobuf-lib extract-absl-lib extract-googlesql-unified-lib \
 	test test/linux test-docker
 
@@ -216,6 +216,9 @@ local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-uni
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt ./internal/ccall/go-googlesql-unified/googlesqlunified/
+
+smoke-link-googlesql-unified:
+	bash scripts/smoke_link_googlesql_unified.sh
 
 # Experimental: go-protobuf links libprotobuf_cgo.a (see bind_tier_b.go, docs/tier-b-absl-protobuf.md).
 # Requires `make extract-protobuf-lib`. Expect failures until global_exclude_replace_names + unified ABI land.

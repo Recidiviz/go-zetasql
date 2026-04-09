@@ -11,8 +11,10 @@ package googlesqlunified
 #cgo darwin LDFLAGS: -L${SRCDIR}/../lib -lgooglesql -lz -lc++
 
 void googlesql_unified_anchor(void);
+char* googlesql_unified_version_string(void);
 */
 import "C"
 
 // Link ensures the archive is pulled into the final link.
 var _ = C.googlesql_unified_anchor
+var _ = C.googlesql_unified_version_string
