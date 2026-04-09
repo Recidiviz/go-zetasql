@@ -1,32 +1,9 @@
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
-// https://developers.google.com/protocol-buffers/
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//     * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//     * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
 
 // Author: kenton@google.com (Kenton Varda)
 //  Based on original Protocol Buffers design by
@@ -125,8 +102,8 @@ template <typename Value>
 bool SimpleDescriptorDatabase::DescriptorIndex<Value>::AddFile(
     const FileDescriptorProto& file, Value value) {
   if (!by_name_.emplace(file.name(), value).second) {
-    // go-googlesql: duplicate CGO protobuf embedding can register the same file twice.
-    return true;
+    ABSL_LOG(ERROR) << "File already exists in database: " << file.name();
+    return false;
   }
 
   // We must be careful here -- calling file.package() if file.has_package() is
@@ -647,19 +624,14 @@ bool EncodedDescriptorDatabase::DescriptorIndex::AddFile(const FileProto& file,
   }
   all_values_.back().encoded_package = EncodeString(file.package());
 
-  // go-googlesql: several CGO packages each #include go-protobuf/protobuf/export.inc;
-  // identical generated descriptors are registered more than once. When the
-  // btree insert fails (same file name), drop the duplicate all_values_ entry
-  // and succeed. Do not use a secondary check against by_name_flat_: after
-  // EnsureFlat(), a successful btree insert can still find the same name in
-  // the flat vector, which would pop_back() without erasing the btree entry
-  // and corrupt the index (FindFileByName then misses e.g. error_location.proto).
   if (!by_name_
            .insert({static_cast<int>(all_values_.size() - 1),
                     EncodeString(file.name())})
-           .second) {
-    all_values_.pop_back();
-    return true;
+           .second ||
+      std::binary_search(by_name_flat_.begin(), by_name_flat_.end(),
+                         file.name(), by_name_.key_comp())) {
+    ABSL_LOG(ERROR) << "File already exists in database: " << file.name();
+    return false;
   }
 
   for (const auto& message_type : file.message_type()) {
@@ -893,7 +865,9 @@ bool EncodedDescriptorDatabase::FindAllFileNames(
 bool EncodedDescriptorDatabase::MaybeParse(
     std::pair<const void*, int> encoded_file, FileDescriptorProto* output) {
   if (encoded_file.first == nullptr) return false;
-  return output->ParseFromArray(encoded_file.first, encoded_file.second);
+  absl::string_view source(static_cast<const char*>(encoded_file.first),
+                           encoded_file.second);
+  return internal::ParseNoReflection(source, *output);
 }
 
 EncodedDescriptorDatabase::EncodedDescriptorDatabase()
@@ -907,8 +881,9 @@ EncodedDescriptorDatabase::~EncodedDescriptorDatabase() {
 
 // ===================================================================
 
-DescriptorPoolDatabase::DescriptorPoolDatabase(const DescriptorPool& pool)
-    : pool_(pool) {}
+DescriptorPoolDatabase::DescriptorPoolDatabase(
+    const DescriptorPool& pool, DescriptorPoolDatabaseOptions options)
+    : pool_(pool), options_(std::move(options)) {}
 DescriptorPoolDatabase::~DescriptorPoolDatabase() {}
 
 bool DescriptorPoolDatabase::FindFileByName(const std::string& filename,
@@ -917,6 +892,9 @@ bool DescriptorPoolDatabase::FindFileByName(const std::string& filename,
   if (file == nullptr) return false;
   output->Clear();
   file->CopyTo(output);
+  if (options_.preserve_source_code_info) {
+    file->CopySourceCodeInfoTo(output);
+  }
   return true;
 }
 
@@ -926,6 +904,9 @@ bool DescriptorPoolDatabase::FindFileContainingSymbol(
   if (file == nullptr) return false;
   output->Clear();
   file->CopyTo(output);
+  if (options_.preserve_source_code_info) {
+    file->CopySourceCodeInfoTo(output);
+  }
   return true;
 }
 
@@ -941,6 +922,9 @@ bool DescriptorPoolDatabase::FindFileContainingExtension(
 
   output->Clear();
   extension->file()->CopyTo(output);
+  if (options_.preserve_source_code_info) {
+    extension->file()->CopySourceCodeInfoTo(output);
+  }
   return true;
 }
 
@@ -1027,23 +1011,18 @@ bool MergedDescriptorDatabase::FindFileContainingExtension(
 
 bool MergedDescriptorDatabase::FindAllExtensionNumbers(
     const std::string& extendee_type, std::vector<int>* output) {
+  // NOLINTNEXTLINE(google3-runtime-rename-unnecessary-ordering)
   absl::btree_set<int> merged_results;
   std::vector<int> results;
   bool success = false;
-
   for (DescriptorDatabase* source : sources_) {
     if (source->FindAllExtensionNumbers(extendee_type, &results)) {
-      std::copy(results.begin(), results.end(),
-                std::insert_iterator<absl::btree_set<int> >(
-                    merged_results, merged_results.begin()));
+      for (int r : results) merged_results.insert(r);
       success = true;
     }
     results.clear();
   }
-
-  std::copy(merged_results.begin(), merged_results.end(),
-            std::insert_iterator<std::vector<int> >(*output, output->end()));
-
+  for (int r : merged_results) output->push_back(r);
   return success;
 }
 
@@ -1055,8 +1034,8 @@ bool MergedDescriptorDatabase::FindAllFileNames(
     std::vector<std::string> source_output;
     if (source->FindAllFileNames(&source_output)) {
       output->reserve(output->size() + source_output.size());
-      for (auto& source : source_output) {
-        output->push_back(std::move(source));
+      for (auto& source_out : source_output) {
+        output->push_back(std::move(source_out));
       }
       implemented = true;
     }
