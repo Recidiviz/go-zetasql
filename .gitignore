@@ -38,4 +38,5 @@ __pycache__/
 # vendor/
 
 *.txt
+!internal/ccall/go-googlesql-unified/default_bazel_targets.txt
 *.cmake

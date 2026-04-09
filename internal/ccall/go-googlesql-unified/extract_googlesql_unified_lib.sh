@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Build one or more //googlesql/... cc_library targets in the GoogleSQL submodule, collect
-# googlesql *.pic.o, add the C anchor object, and write lib/$(go env GOOS)_$(go env GOARCH)/libgooglesql.a
+# Build one or more //googlesql/... cc_library / cc_proto_library targets in the GoogleSQL submodule,
+# collect googlesql *.pic.o, add the C anchor object, and write lib/$(go env GOOS)_$(go env GOARCH)/libgooglesql.a
 #
-# Default targets avoid //googlesql/public:analyzer until the full Bazel graph is available
-# (parser gen may need private module access). Override with GOOGLESQL_UNIFIED_BAZEL_TARGETS.
-# See docs/libgooglesql-unified.md
+# Default labels are read from default_bazel_targets.txt (base + cc_proto closure toward AST/resolved_ast).
+# //googlesql/public:analyzer and //googlesql/parser:* need Textmapper — see docs/libgooglesql-unified.md.
+# Override with GOOGLESQL_UNIFIED_BAZEL_TARGETS.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
@@ -30,10 +30,18 @@ if [[ ! -f "$C_ANCHOR_SRC" ]] || [[ ! -f "$WRAPPER_SRC" ]]; then
   exit 1
 fi
 
-# Space-separated list of Bazel labels (googlesql module). Default: expanded //googlesql/base/*
-# shards (no //googlesql/parser/* here: parser graph may require private module fetches — see
-# MODULE.bazel / docs/libgooglesql-unified.md). Override with GOOGLESQL_UNIFIED_BAZEL_TARGETS.
-TARGETS="${GOOGLESQL_UNIFIED_BAZEL_TARGETS:-//googlesql/base:logging //googlesql/base:status //googlesql/base:check //googlesql/base:ret_check //googlesql/base:map_util //googlesql/base:arena //googlesql/base:strings //googlesql/base:stl_util //googlesql/base:base //googlesql/base:endian}"
+# Space-separated list of Bazel labels (googlesql module). Default: read from
+# default_bazel_targets.txt (version-controlled base + cc_proto closure toward AST/protobuf;
+# //googlesql/parser:* and //googlesql/public:analyzer require Textmapper — see docs). Override
+# with GOOGLESQL_UNIFIED_BAZEL_TARGETS.
+DEFAULT_TARGETS_FILE="$(cd "$(dirname "$0")" && pwd)/default_bazel_targets.txt"
+if [[ -n "${GOOGLESQL_UNIFIED_BAZEL_TARGETS:-}" ]]; then
+  TARGETS="$GOOGLESQL_UNIFIED_BAZEL_TARGETS"
+elif [[ -f "$DEFAULT_TARGETS_FILE" ]]; then
+  TARGETS="$(grep -v '^[[:space:]]*#' "$DEFAULT_TARGETS_FILE" | grep -v '^[[:space:]]*$' | tr '\n' ' ')"
+else
+  TARGETS="//googlesql/base:logging //googlesql/base:status //googlesql/base:check //googlesql/base:ret_check //googlesql/base:map_util //googlesql/base:arena //googlesql/base:strings //googlesql/base:stl_util //googlesql/base:base //googlesql/base:endian"
+fi
 
 cd "$GOOGLESQL"
 

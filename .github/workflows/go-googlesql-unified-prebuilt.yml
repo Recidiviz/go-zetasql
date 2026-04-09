@@ -1,7 +1,10 @@
-# Manual: unified libgooglesql.a + CGO smoke build. workflow_dispatch only.
+# Unified libgooglesql.a + CGO smoke build. Default Bazel labels: internal/ccall/go-googlesql-unified/default_bazel_targets.txt
 name: Unified libgooglesql prebuilt
 on:
   workflow_dispatch:
+  schedule:
+    # Weekly regression + Bazel cache warmth (same job as manual; optional full analyzer override stays local / dispatch-only).
+    - cron: "0 6 * * 1"
 
 jobs:
   libgooglesql-unified:
