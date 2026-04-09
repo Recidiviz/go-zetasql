@@ -1,3 +1,46 @@
+---
+name: Tier B Phase 4 — Generator link-only CGO
+overview: Migrate generated CGO packages from amalgamated bind.cc.tmpl to link-only bind_link_only.cc.tmpl via cclib.link_only_bind_packages; grow googlesql_unified.h / C bridge for parser or analyzer vertical slices; verify thin bind.cc TUs and green CI on the default dev path.
+todos:
+  - id: phase4-vertical-slice
+    content: Pick the first vertical slice (parser-only or analyzer-only) and the corresponding BasePkg/Name key(s); plan dependency order for later batches.
+    status: pending
+  - id: phase4-symbol-closure
+    content: Verify symbol closure — all C++ symbols used by the package bridge.inc are in libgooglesql.a (or merged archives); use nm / linker errors as needed.
+    status: pending
+  - id: phase4-generator-opt-in
+    content: Append key(s) to cclib.link_only_bind_packages in internal/cmd/generator/config.yaml; run generator from internal/cmd/generator; commit regenerated bind.cc for opted-in packages only.
+    status: pending
+  - id: phase4-export-inc
+    content: Confirm export.inc / syncExportInc behavior for each opted-in package (link-only path must not incorrectly pull amalgamated deps/export.inc chains).
+    status: pending
+  - id: phase4-unified-graph
+    content: If new wrapper or bridge deps are required, update extract_googlesql_unified_lib.sh and/or GOOGLESQL_UNIFIED_BAZEL_TARGETS; rebuild prebuilts per docs/libgooglesql-unified.md.
+    status: pending
+  - id: phase4-bridge-abi
+    content: Add C-callable googlesql_unified_* declarations to googlesql_unified.h and thin forwarding in cxx/googlesql_unified_wrapper.cc for the chosen vertical slice (ownership documented).
+    status: pending
+  - id: phase4-smoke-verify
+    content: Run scripts/smoke_link_googlesql_unified.sh, make verify-prebuilt-googlesql-unified (and local/build-prebuilt as needed); duplicate-symbol checks per docs/prebuilt-absl-overlap.md.
+    status: pending
+  - id: phase4-docs-abi
+    content: Document new symbols / ABI in docs/libgooglesql-unified.md; align Go-side googlesql_unified_prebuilt tags and CI expectations.
+    status: pending
+  - id: phase4-rollout
+    content: Add additional BasePkg/Name entries in small batches (leaves before roots); defer full parser+flex+token disambiguator migration until hooks are validated unless explicitly scoped.
+    status: pending
+  - id: phase4-testing-exit
+    content: Run narrow go test then widen to importers; confirm CI green; verify exit criterion — thin bind.cc (no amalgamation-scale bodies); optional before/after compile time or ftime-trace guard.
+    status: pending
+  - id: phase4-docs-pipeline
+    content: Update docs/link-only-cgo-migration.md, docs/libgooglesql-unified.md, and docs/native-build-pipeline.md (or pipeline doc) for config keys, commands, and ABI additions.
+    status: pending
+  - id: phase4-deliverables
+    content: Satisfy the Deliverables checklist — production packages on link_only_bind_packages, extended googlesql_unified.h + tests, docs updated, exit criterion met.
+    status: pending
+isProject: false
+---
+
 # Tier B (without amalgamation) — Phase 4: Generator link-only CGO + unified bridge growth
 
 **Repository:** `go-googlesql`  
@@ -24,6 +67,8 @@
 ---
 
 ## To-dos
+
+Statuses in the YAML frontmatter (`todos`) are the source of truth for Cursor plan tracking; the checklists below are the detailed execution order. Check off markdown items as you complete them and keep YAML `status` in sync (`pending` → `completed`).
 
 Track Phase 4 work item-by-item; check off as completed. The **Deliverables checklist** at the end of this doc is the phase-complete bar; these items are the usual execution order.
 
