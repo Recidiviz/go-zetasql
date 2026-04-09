@@ -12,9 +12,11 @@ package googlesqlunified
 
 void googlesql_unified_anchor(void);
 char* googlesql_unified_version_string(void);
+char* googlesql_unified_capabilities(void);
 */
 import "C"
 
 // Link ensures the archive is pulled into the final link.
 var _ = C.googlesql_unified_anchor
 var _ = C.googlesql_unified_version_string
+var _ = C.googlesql_unified_capabilities

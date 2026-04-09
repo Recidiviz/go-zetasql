@@ -14,6 +14,9 @@ void googlesql_unified_anchor(void);
 /* Human-readable build label (wrapper in cxx/googlesql_unified_wrapper.cc). */
 const char* googlesql_unified_version_string(void);
 
+/* Comma-separated feature tags for the unified archive (e.g. proto,base,analyzer). */
+const char* googlesql_unified_capabilities(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -23,7 +23,7 @@ then merges `*.pic.o` from `com_google_protobuf` and `utf8_range` into `libproto
 | 3 | **googlesql public / analyzer** | Large `export.inc` bundles; consolidating requires a stable C bridge ABI (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)). |
 | 3b | **Unified `libgooglesql.a` (bootstrap)** | [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) + [`docs/libgooglesql-unified.md`](libgooglesql-unified.md): Bazel `*.pic.o` from configurable targets (default several `//googlesql/base:*` libs) plus a C anchor. Expand targets toward `//googlesql/public:analyzer` when the Bazel graph is available. |
 | 4 | **Parser / flex** | Depends on phase 3 includes and generated sources. |
-| 4b | **Generator link-only `bind.cc`** | Opt-in `cclib.link_only_bind_packages` in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) + [`link-only-cgo-migration.md`](link-only-cgo-migration.md). |
+| 4b | **Generator link-only `bind.cc`** | Opt-in `cclib.link_only_bind_packages` in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) + [`link-only-cgo-migration.md`](link-only-cgo-migration.md). **Production opt-in** for `googlesql/public/*` is gated on namespace-aligned prebuilt objects (see **Namespace alignment** in that doc); generator templates and unified ABI (`googlesql_unified_capabilities`) support the rollout. |
 
 Detailed duplicate-symbol inventory: [`protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
 

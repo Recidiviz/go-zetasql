@@ -74,8 +74,13 @@ if [[ ${#OBJS[@]} -eq 0 ]] || [[ -z "${OBJS[0]:-}" ]]; then
 fi
 
 echo "Compiling C anchor and C++ wrapper..."
+WRAPPER_DEFS=()
+if echo " $TARGETS " | grep -q '//googlesql/public:analyzer'; then
+  WRAPPER_DEFS+=(-DGOOGLESQL_UNIFIED_INCLUDES_ANALYZER=1)
+fi
 "$CC" -c -o "$WORK/googlesql_unified_anchor.o" "$C_ANCHOR_SRC"
-"$CXX" -std=c++20 -c -o "$WORK/googlesql_unified_wrapper.o" -I"$INCLUDE_DIR" "$WRAPPER_SRC"
+# shellcheck disable=SC2086
+"$CXX" -std=c++20 -c -o "$WORK/googlesql_unified_wrapper.o" -I"$INCLUDE_DIR" "${WRAPPER_DEFS[@]}" "$WRAPPER_SRC"
 
 mkdir -p "$(dirname "$OUT")"
 rm -f "$OUT"

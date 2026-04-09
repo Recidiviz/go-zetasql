@@ -11,9 +11,10 @@ This document describes the **unified prebuilt** archive layout and C ABI. It co
 | Symbol | Purpose |
 |--------|---------|
 | `void googlesql_unified_anchor(void)` | Link / smoke anchor ([`c/googlesql_unified_anchor.c`](../internal/ccall/go-googlesql-unified/c/googlesql_unified_anchor.c)). |
-| `const char* googlesql_unified_version_string(void)` | Human-readable label ([`cxx/googlesql_unified_wrapper.cc`](../internal/ccall/go-googlesql-unified/cxx/googlesql_unified_wrapper.cc)). |
+| `const char* googlesql_unified_version_string(void)` | Human-readable label ([`cxx/googlesql_unified_wrapper.cc`](../internal/ccall/go-googlesql-unified/cxx/googlesql_unified_wrapper.cc)). Returns `0.3.0-unified+analyzer` when the archive was built with `//googlesql/public:analyzer` in the Bazel target list (see below). |
+| `const char* googlesql_unified_capabilities(void)` | Comma-separated tags describing what was linked into the archive (`proto,base,resolved_ast` by default; adds `analyzer` when `GOOGLESQL_UNIFIED_INCLUDES_ANALYZER` was set during wrapper compile — i.e. `//googlesql/public:analyzer` appears in `GOOGLESQL_UNIFIED_BAZEL_TARGETS` or the default list). |
 
-Future versions can add parse/analyzer wrappers once the Bazel closure you need builds in your environment (see **North-star analyzer build** and **Phase 3 target list** below).
+Future versions can add parse/analyzer-specific C entry points once a **namespace-aligned** link story exists for CGO (see [link-only-cgo-migration.md](link-only-cgo-migration.md) **Namespace alignment**). The **North-star analyzer build** and optional target override below remain the path to a larger `libgooglesql.a`.
 
 ### What is inside `libgooglesql.a`
 
@@ -34,7 +35,7 @@ GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging …' make prebuilt-lib
 |-------|---------|------------------|
 | **A** | `//googlesql/base:*` core (logging, status, check, arena, strings, stl_util, base, endian, …) | Yes — first block in `default_bazel_targets.txt` |
 | **B–D (proto)** | `cc_proto_library` for public protos, internal `//googlesql/proto:*`, function enums, `information_schema`, `public/proto`, and **`//googlesql/resolved_ast:*_cc_proto`** | Yes — remainder of the file |
-| **E (optional monolith)** | `//googlesql/public:analyzer` as a single label | **No** — requires a workspace where Textmapper and parser gen resolve (see below) |
+| **E (optional monolith)** | `//googlesql/public:analyzer` as a single label | **No** in the committed default list (keeps CI extract time predictable). Add via `GOOGLESQL_UNIFIED_BAZEL_TARGETS` when your workspace resolves Textmapper/parser gen (see below). When this label is built, the extract script sets `GOOGLESQL_UNIFIED_INCLUDES_ANALYZER` for the wrapper so `googlesql_unified_version_string` / `googlesql_unified_capabilities` report the expanded archive. **Link-only CGO** for generated packages still requires [namespace-aligned objects](link-only-cgo-migration.md#namespace-alignment-required-for-real-opt-in), not raw Bazel `*.pic.o` alone. |
 
 **North-star analyzer build:** From `internal/cmd/updater/googlesql`, the intended check is:
 
