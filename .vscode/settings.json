@@ -3,10 +3,15 @@
   "go.buildOnSave": "off",
   "go.lintOnSave": "off",
   "go.vetOnSave": "off",
+  "go.toolsManagement.autoUpdate": false,
   "go.toolsEnvVars": {
     "CGO_ENABLED": "1",
     "CXX": "clang++",
-    "GOMAXPROCS": "2"
+    "GOMAXPROCS": "2",
+    "GOFLAGS": "-p=1"
+  },
+  "[go]": {
+    "editor.formatOnSave": false
   },
   "gopls": {
     "ui.semanticTokens": false,
