@@ -297,7 +297,9 @@ absl::Status Validator::CheckColumnList(
   return absl::OkStatus();
 }
 
-Validator::Validator() = default;
+Validator::Validator()
+    : options_(),
+      language_options_() {}
 
 Validator::~Validator() = default;
 
