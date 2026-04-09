@@ -46,10 +46,10 @@ DOCKER_DEV_VOLUMES := \
 	-v "$(GO_CACHE_ROOT)/ccache":/root/.ccache
 
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache \
-	local/build local/test local/test-tier-b local/build-prebuilt local/test-prebuilt \
+	local/build local/test \
 	local/test-prebuilt-absl local/build-prebuilt-absl \
 	local/build-prebuilt-googlesql-unified \
-	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified package-tier-b-protobuf-tarball \
+	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified package-protobuf-prebuilt-tarball \
 	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified smoke-link-googlesql-unified \
 	verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy sync-protobuf-vendor-from-bazel regenerate-googlesql-cpp-protos \
 	profile-bottleneck extract-protobuf-lib extract-absl-lib extract-googlesql-unified-lib \
@@ -76,20 +76,29 @@ docker/build-dev: cache-dirs
 CGO_CC ?= clang
 CGO_CXX ?= clang++
 
-# Tier B: libprotobuf_cgo.a comes from Bazel with libc++ (not libstdc++). Every CGO C++ TU must
+# Default prebuilt protobuf: libprotobuf_cgo.a comes from Bazel with libc++ (not libstdc++).
+# Every CGO C++ TU must
 # use the same -stdlib or template instantiations (e.g. ArenaStringPtr with std::string) mangle as
 # std::__cxx11:: vs std::__1:: and the link fails with undefined protobuf internals.
-CGO_CXXFLAGS_TIER_B ?= -stdlib=libc++
+CGO_CXXFLAGS_PREBUILT ?= -stdlib=libc++
+# g++ does not support -stdlib=libc++; keep default clang++ for prebuilts. If you override CXX to g++,
+# clear this only when you have a libstdc++-matched prebuilt (not the default Bazel libc++ archive).
 
 # --allow-multiple-definition: needed while multiple CGO TUs each embed overlapping C++ (incl.
 # protobuf amalgamation). Removing it requires a single macro/link domain for protobuf+absl;
 # see docs/protobuf-vendoring.md "Single-owner protobuf".
+#
+# Go rejects non-allowlisted #cgo LDFLAGS; bind_linux.go uses -Wl,--whole-archive etc. This list
+# must stay in sync with internal/ccall/go-protobuf/protobuf/bind_*.go.
+CGO_LDFLAGS_ALLOW_LIST := -Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group
+CGO_LDFLAGS_BASE := -Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)
 
 # Example: make local/build BUILDPKG=./internal/ccall/go-googlesql
-local/build: cache-dirs
+local/build: cache-dirs verify-prebuilt-protobuf
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
-	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
@@ -99,10 +108,11 @@ local/build: cache-dirs
 	go build -p "$(GO_BUILD_P)" -tags googlesql $(BUILDPKG)
 
 # Same toolchain as local/build; mirrors test/linux but runs on the host (no -race unless you add it).
-local/test: cache-dirs
+local/test: cache-dirs verify-prebuilt-protobuf
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
-	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
@@ -129,19 +139,19 @@ profile-bottleneck: cache-dirs
 		go test -count=1 -c -o /dev/null $(TESTPKG)
 	@echo "=== ccache stats (after) ==="; ccache -s 2>/dev/null || true
 
-# Optional: build libprotobuf_cgo.a via Bazel (Linux/macOS). Not used by default bind_*.go (amalgamation).
+# Build the default protobuf prebuilt archive via Bazel (Linux/macOS).
 extract-protobuf-lib:
 	bash internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh
 
-# Alias for docs/prebuilt-cgo.md — produces Tier B protobuf archive.
+# Default protobuf prebuilt archive for this checkout.
 prebuilt-libs: extract-protobuf-lib
 
 verify-prebuilt-protobuf:
 	bash scripts/verify-prebuilt-protobuf.sh
 
 # Tarball of internal/ccall/go-protobuf/protobuf/lib for releases (after prebuilt-libs).
-package-tier-b-protobuf-tarball: verify-prebuilt-protobuf
-	bash scripts/package-tier-b-protobuf-prebuilt.sh
+package-protobuf-prebuilt-tarball: verify-prebuilt-protobuf
+	bash scripts/package-protobuf-prebuilt.sh
 
 # Warn if vendored protobuf runtime is below Bazel 29.x-era macros (Tier B needs alignment). Strict: VERIFY_PROTOBUF_TIER_B_STRICT=1
 verify-protobuf-tier-b-alignment:
@@ -159,33 +169,6 @@ sync-protobuf-vendor-from-bazel:
 regenerate-googlesql-cpp-protos:
 	bash scripts/regenerate-googlesql-cpp-protos.sh
 
-# Prebuilt Tier B: requires `make prebuilt-libs` first. Fails fast if libprotobuf_cgo.a is missing.
-local/build-prebuilt: cache-dirs verify-prebuilt-protobuf
-	CGO_ENABLED=1 \
-	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
-	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
-	CC="$(CGO_CC)" \
-	CXX="$(CGO_CXX)" \
-	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
-	CCACHE_COMPRESS=1 \
-	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
-	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b $(BUILDPKG)
-
-local/test-prebuilt: cache-dirs verify-prebuilt-protobuf
-	CGO_ENABLED=1 \
-	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
-	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
-	CC="$(CGO_CC)" \
-	CXX="$(CGO_CXX)" \
-	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
-	CCACHE_COMPRESS=1 \
-	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
-	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b -v $(TESTPKG) -count=1
-
 # Bazel-built libabsl_cgo.a (see internal/ccall/go-absl/extract_absl_cgo_lib.sh, docs/prebuilt-absl-overlap.md).
 extract-absl-lib:
 	bash internal/ccall/go-absl/extract_absl_cgo_lib.sh
@@ -198,8 +181,8 @@ verify-prebuilt-absl:
 # Tier B Abseil: migrated packages below (expand TESTPKG_PREBUILT_ABSL / BUILDPKG_ABSL as you add more).
 local/build-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
-	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
@@ -214,8 +197,8 @@ TESTPKG_PREBUILT_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/ ./internal/c
 
 local/test-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
-	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
@@ -235,8 +218,8 @@ verify-prebuilt-googlesql-unified:
 
 local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-unified
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
-	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
 	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
@@ -248,28 +231,17 @@ local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-uni
 smoke-link-googlesql-unified:
 	bash scripts/smoke_link_googlesql_unified.sh
 
-# Experimental: go-protobuf links libprotobuf_cgo.a (see bind_tier_b.go, docs/tier-b-absl-protobuf.md).
-# Requires `make extract-protobuf-lib`. Expect failures until global_exclude_replace_names + unified ABI land.
-local/test-tier-b: cache-dirs
-	CGO_ENABLED=1 \
-	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
-	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
-	CC="$(CGO_CC)" \
-	CXX="$(CGO_CXX)" \
-	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
-	CCACHE_COMPRESS=1 \
-	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
-	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b -v $(TESTPKG) -count=1
-
 # Compile-only warm-up: same -race toolchain as tests, but -run '^$' matches no tests so this only
 # populates gomodcache/gocache/ccache. Run after toolchain upgrades or cold cache; then test/linux stays incremental.
 docker/warm-cache: docker/build-dev
 	docker run --rm $(DOCKER_DEV_ENV) $(DOCKER_DEV_VOLUMES) \
 		-w /go-googlesql \
 		$(DOCKER_DEV_IMAGE) \
-		bash -c "go test -race $(TESTPKG) -count=1 -run '^$$'"
+		bash -c "set -e; bash scripts/verify-prebuilt-protobuf.sh; \
+		export CGO_CXXFLAGS='$(CGO_CXXFLAGS_PREBUILT)'; \
+		export CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)'; \
+		export CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)'; \
+		go test -race -p $(GO_BUILD_P) -tags googlesql $(TESTPKG) -count=1 -run '^$$'"
 
 # Preferred path for GoogleSQL upgrades and local CI parity: tests run inside $(DOCKER_DEV_IMAGE)
 # with the working tree mounted and shared host paths for GOCACHE/GOMODCACHE.
@@ -281,4 +253,8 @@ test/linux: docker/build-dev
 	docker run --rm $(DOCKER_DEV_ENV) $(DOCKER_DEV_VOLUMES) \
 		-w /go-googlesql \
 		$(DOCKER_DEV_IMAGE) \
-		bash -c "go test -race -v $(TESTPKG) -count=1"
+		bash -c "set -e; bash scripts/verify-prebuilt-protobuf.sh; \
+		export CGO_CXXFLAGS='$(CGO_CXXFLAGS_PREBUILT)'; \
+		export CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)'; \
+		export CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)'; \
+		go test -race -p $(GO_BUILD_P) -tags googlesql -v $(TESTPKG) -count=1"
