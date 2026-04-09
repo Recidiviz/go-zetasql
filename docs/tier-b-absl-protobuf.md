@@ -64,6 +64,16 @@ After the link is stable, revisit vendored edits under [`internal/ccall/protobuf
 
 Align [`go-googlesqlite`](https://github.com/vantaboard/go-googlesqlite) and [`bigquery-emulator`](https://github.com/goccy/bigquery-emulator) `CGO_LDFLAGS` and tags once go-googlesql’s default or documented path is fixed.
 
+## Related tooling (repo root)
+
+| Makefile / script | Purpose |
+|-------------------|---------|
+| `make verify-protobuf-tier-b-alignment` | Warn if vendored protobuf is below Bazel 29.x-era macros; strict mode: `VERIFY_PROTOBUF_TIER_B_STRICT=1` |
+| `make sync-protobuf-vendor-from-bazel` | Copy Bazel `@com_google_protobuf` sources into `internal/ccall/protobuf/` (then `go run ./internal/cmd/vendorpatch`) |
+| `make regenerate-googlesql-cpp-protos` | Regenerate `internal/ccall/googlesql/**/*.pb.{h,cc}` with Bazel-built `protoc` |
+| `make verify-tier-b-cgo-policy` | Print supported / unsupported tag combinations |
+| [link-only-cgo-migration.md](link-only-cgo-migration.md) | Generator opt-in `cclib.link_only_bind_packages` for thin `bind.cc` |
+
 ## Build tags summary
 
 | Tag | Meaning |

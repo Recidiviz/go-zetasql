@@ -1,0 +1,45 @@
+{{- $fqdn := .FQDN }}
+#ifndef {{ .FQDN }}_bind_cc
+#define {{ .FQDN }}_bind_cc
+
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
+
+{{- range .ReplaceNameEntries }}
+{{- if .CustomReplacement }}
+{{- if .Comment }}
+// {{ .Comment }}
+{{- end }}
+#define {{ .Name }} {{ .CustomReplacement }}
+{{- else }}
+#define {{ .Name }} {{ $fqdn }}_{{ .Name }}
+{{- end }}
+{{- end }}
+
+#define GO_EXPORT(def) export_{{ $fqdn }}_ ## def
+#define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
+
+#include "_cgo_export.h"
+
+{{ .PreludeBeforeHeaders }}// include headers (types only; no .cc bodies)
+{{- range .Headers }}
+#include "{{ . }}"
+{{- end }}
+
+#include "bridge.h"
+
+#include "bridge_cc.inc"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+#include "bridge.inc"
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* {{ .FQDN }}_bind_cc */

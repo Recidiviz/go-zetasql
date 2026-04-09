@@ -51,6 +51,7 @@ DOCKER_DEV_VOLUMES := \
 	local/build-prebuilt-googlesql-unified \
 	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified \
 	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified smoke-link-googlesql-unified \
+	verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy sync-protobuf-vendor-from-bazel regenerate-googlesql-cpp-protos \
 	profile-bottleneck extract-protobuf-lib extract-absl-lib extract-googlesql-unified-lib \
 	test test/linux test-docker
 
@@ -87,7 +88,7 @@ CGO_CXXFLAGS_TIER_B ?= -stdlib=libc++
 # Example: make local/build BUILDPKG=./internal/ccall/go-googlesql
 local/build: cache-dirs
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
@@ -100,7 +101,7 @@ local/build: cache-dirs
 # Same toolchain as local/build; mirrors test/linux but runs on the host (no -race unless you add it).
 local/test: cache-dirs
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
@@ -138,11 +139,26 @@ prebuilt-libs: extract-protobuf-lib
 verify-prebuilt-protobuf:
 	bash scripts/verify-prebuilt-protobuf.sh
 
+# Warn if vendored protobuf runtime is below Bazel 29.x-era macros (Tier B needs alignment). Strict: VERIFY_PROTOBUF_TIER_B_STRICT=1
+verify-protobuf-tier-b-alignment:
+	bash scripts/verify-protobuf-tier-b-alignment.sh
+
+# Print supported googlesql_tier_b / googlesql_tier_b_absl tag combinations (see docs/prebuilt-absl-overlap.md).
+verify-tier-b-cgo-policy:
+	bash scripts/verify-tier-b-cgo-tag-policy.sh
+
+# Refresh internal/ccall/protobuf/google/protobuf from Bazel external @com_google_protobuf (then vendorpatch + regenerate protos).
+sync-protobuf-vendor-from-bazel:
+	bash scripts/sync-protobuf-cpp-runtime-from-bazel.sh
+
+regenerate-googlesql-cpp-protos:
+	bash scripts/regenerate-googlesql-cpp-protos.sh
+
 # Prebuilt Tier B: requires `make prebuilt-libs` first. Fails fast if libprotobuf_cgo.a is missing.
 local/build-prebuilt: cache-dirs verify-prebuilt-protobuf
 	CGO_ENABLED=1 \
 	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
@@ -155,7 +171,7 @@ local/build-prebuilt: cache-dirs verify-prebuilt-protobuf
 local/test-prebuilt: cache-dirs verify-prebuilt-protobuf
 	CGO_ENABLED=1 \
 	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
@@ -177,7 +193,7 @@ verify-prebuilt-absl:
 # Tier B Abseil: migrated packages below (expand TESTPKG_PREBUILT_ABSL / BUILDPKG_ABSL as you add more).
 local/build-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
@@ -193,7 +209,7 @@ TESTPKG_PREBUILT_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/ ./internal/c
 
 local/test-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
@@ -214,7 +230,7 @@ verify-prebuilt-googlesql-unified:
 
 local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-unified
 	CGO_ENABLED=1 \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \
@@ -232,7 +248,7 @@ smoke-link-googlesql-unified:
 local/test-tier-b: cache-dirs
 	CGO_ENABLED=1 \
 	CGO_CXXFLAGS="$(CGO_CXXFLAGS_TIER_B)" \
-	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
+	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group' \
 	CGO_LDFLAGS='-Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)' \
 	CC="$(CGO_CC)" \
 	CXX="$(CGO_CXX)" \

@@ -27,6 +27,18 @@ jobs:
           sudo apt-get install -y --no-install-recommends clang
           go install github.com/bazelbuild/bazelisk@v1.20.0
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Cache Bazel
+        uses: actions/cache@1bd1e32a3bdcfcb76bb0b4f9d2ae9643b0fe58f7 # v4
+        with:
+          path: |
+            ~/.cache/bazel
+          key: ${{ runner.os }}-bazel-tier-b-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-tier-b-
+      - name: Protobuf Tier B alignment check
+        run: make verify-protobuf-tier-b-alignment
+      - name: Tier B tag policy
+        run: make verify-tier-b-cgo-policy
       - name: Build libprotobuf_cgo.a
         run: make prebuilt-libs
         env:

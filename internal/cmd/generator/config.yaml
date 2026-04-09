@@ -406,6 +406,9 @@ protobuf_internal_export_name_files:
   - googlesql/public/proto/wire_format_annotation.pb.h
 
 cclib:
+  # Opt-in: packages (BasePkg/Name) that emit bind_link_only.cc.tmpl instead of amalgamated bind.cc.
+  # Requires prebuilt native code to satisfy bridge symbols — see docs/link-only-cgo-migration.md.
+  link_only_bind_packages: []
   # Unified absl/google: plain namespaces match go-protobuf amalgamation + single include policy.
   global_exclude_replace_names:
     - absl

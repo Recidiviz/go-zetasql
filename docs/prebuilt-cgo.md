@@ -34,6 +34,15 @@ The extract script runs Bazel on **`@com_google_protobuf//:protobuf`** and **`@c
 
 **Protobuf version / codegen alignment:** `libprotobuf_cgo.a` must match the **same** major protobuf and **same** `protoc` codegen conventions as the vendored headers and generated `*.pb.cc` under [`internal/ccall/protobuf`](../internal/ccall/protobuf) and the GoogleSQL amalgamation. Newer protobuf releases changed WKT codegen (for example, out-of-line `Arena::CreateMaybeMessage<google::protobuf::Timestamp>` in `timestamp.pb.cc` may disappear). If Bazel resolves `@com_google_protobuf` to a newer revision than the tree’s vendored protos, Tier-B links can still report undefined `google::protobuf::*` symbols even with a complete archive. Fix by pinning the Bazel module to the repo’s expected protobuf version, refreshing vendored generated code, or treating full `go test` with `googlesql_tier_b` as unsupported until that alignment is intentional.
 
+**Alignment workflow (upgrade path):**
+
+1. `make sync-protobuf-vendor-from-bazel` — copies `google/protobuf` runtime from the Bazel external tree into `internal/ccall/protobuf/`.
+2. `go run ./internal/cmd/vendorpatch` — reapplies amalgamation guards and `patches/*.patch` (rebase patches when upstream drifts).
+3. `make regenerate-googlesql-cpp-protos` — regenerates `internal/ccall/googlesql/**/*.pb.{h,cc}` with Bazel-built `protoc`.
+4. `make verify-protobuf-tier-b-alignment` — optional; set `VERIFY_PROTOBUF_TIER_B_STRICT=1` to fail CI if the vendored `GOOGLE_PROTOBUF_VERSION` is still below the protobuf 5.29 line.
+
+See also [link-only-cgo-migration.md](link-only-cgo-migration.md) for the long-term “no amalgamation” generator path.
+
 Bazel uses **Clang + libc++** for those objects; [`bind_tier_b.go`](../internal/ccall/go-protobuf/protobuf/bind_tier_b.go) links **`-lc++ -lc++abi`** on Linux and searches common **`/usr/lib/llvm-*/lib`** paths so `-lc++` resolves (install **`libc++` / `libc++abi`** from your distro or LLVM if the link still fails with “cannot find -lc++”). If you see undefined **`std::__1::__hash_memory`**, the link is missing libc++ for objects built with `-stdlib=libc++`; ensure **`CGO_CXXFLAGS=-stdlib=libc++`** for all CGO C++ (see below) and that **`-lc++`** appears on the link line after **`-lprotobuf_cgo`**.
 
 **ABI:** Vendored / amalgamated C++ that calls into `google::protobuf` templates must use the **same** standard library as `libprotobuf_cgo.a`. By default, Clang uses **libstdc++** (`std::__cxx11::` mangling); Bazel’s archive uses **libc++** (`std::__1::`). Without alignment you get undefined references to protobuf internals (e.g. `ArenaStringPtr::Set`, `RepeatedPtrFieldBase::AddOutOfLineHelper`). Set for Tier B builds:

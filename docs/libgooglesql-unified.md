@@ -17,7 +17,7 @@ Future versions can add parse/analyzer wrappers once the Bazel closure you need 
 
 ### What is inside `libgooglesql.a`
 
-- Object files from **GoogleSQL Bazel `cc_library` targets** listed in `GOOGLESQL_UNIFIED_BAZEL_TARGETS` (default: five parser-safe `//googlesql/base:*` targets — see [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh)), merged from `*.pic.o` under the Bazel `bazel-bin/googlesql` tree after a successful `bazel build`.
+- Object files from **GoogleSQL Bazel `cc_library` targets** listed in `GOOGLESQL_UNIFIED_BAZEL_TARGETS` (default: several `//googlesql/base:*` targets — arena, strings, stl_util, base, endian, plus the original logging/status/check/ret_check/map_util set — see [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh)), merged from `*.pic.o` under the Bazel `bazel-bin/googlesql` tree after a successful `bazel build`. Parser targets are not included by default (their Bazel graph may require private fetches).
 - The compiled C anchor object and **C++ wrapper** object (version string).
 
 This is intentionally **not** the full `//googlesql/public:analyzer` closure by default: that target may pull generated parser tooling that requires extra network credentials in some environments. Expand `GOOGLESQL_UNIFIED_BAZEL_TARGETS` when your Bazel workspace can analyze those dependencies.

@@ -33,19 +33,19 @@ var (
 )
 
 type Generator struct {
-	buildFileParser               *BuildFileParser
-	cfg                           *Config
-	bridge                        *Bridge
-	importSymbol                  *ImportSymbol
-	libMap                        map[string]*Lib
-	pkgMap                        map[string]Package
-	importSymbolPackageMap        map[string]Package
-	containsConflictSymbolFileMap     map[string][]string
+	buildFileParser                  *BuildFileParser
+	cfg                              *Config
+	bridge                           *Bridge
+	importSymbol                     *ImportSymbol
+	libMap                           map[string]*Lib
+	pkgMap                           map[string]Package
+	importSymbolPackageMap           map[string]Package
+	containsConflictSymbolFileMap    map[string][]string
 	conflictExportSuffixByFileSymbol map[string]map[string]string // file -> symbol -> suffix
-	containsAddSourceFileMap      map[string]SourceConfig
-	pkgToAllDeps                  map[string][]string
-	internalExportNames           []string
-	templates                     embed.FS
+	containsAddSourceFileMap         map[string]SourceConfig
+	pkgToAllDeps                     map[string][]string
+	internalExportNames              []string
+	templates                        embed.FS
 }
 
 func NewGenerator(cfg *Config, bridge *Bridge, importSymbol *ImportSymbol, templates embed.FS) *Generator {
@@ -84,16 +84,16 @@ func NewGenerator(cfg *Config, bridge *Bridge, importSymbol *ImportSymbol, templ
 		pkgMap[pkg.Name] = pkg // merge import symbols to package map
 	}
 	return &Generator{
-		buildFileParser:               NewBuildFileParser(cfg),
-		cfg:                           cfg,
-		bridge:                        bridge,
-		importSymbol:                  importSymbol,
-		templates:                     templates,
-		containsConflictSymbolFileMap:     containsConflictSymbolFileMap,
+		buildFileParser:                  NewBuildFileParser(cfg),
+		cfg:                              cfg,
+		bridge:                           bridge,
+		importSymbol:                     importSymbol,
+		templates:                        templates,
+		containsConflictSymbolFileMap:    containsConflictSymbolFileMap,
 		conflictExportSuffixByFileSymbol: conflictExportSuffixByFileSymbol,
-		containsAddSourceFileMap:      containsAddSourceFileMap,
-		importSymbolPackageMap:        importSymbolPackageMap,
-		pkgMap:                        pkgMap,
+		containsAddSourceFileMap:         containsAddSourceFileMap,
+		importSymbolPackageMap:           importSymbolPackageMap,
+		pkgMap:                           pkgMap,
 	}
 }
 
@@ -394,6 +394,20 @@ func (g *Generator) generateRootBindCC(outputDir string) error {
 }
 
 func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
+	if g.linkOnlyBind(lib) {
+		output, err := g.generateCCSourceByTemplate(
+			"templates/bind_link_only.cc.tmpl",
+			g.createBindCCParam(lib),
+		)
+		if err != nil {
+			return err
+		}
+		output = wrapParserBindTokenDisambiguatorInclude(lib, output)
+		if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), output, 0o600); err != nil {
+			return err
+		}
+		return g.syncExportInc(outputDir, output)
+	}
 	output, err := g.generateCCSourceByTemplate(
 		"templates/bind.cc.tmpl",
 		g.createBindCCParam(lib),
@@ -406,6 +420,19 @@ func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
 		return err
 	}
 	return g.syncExportInc(outputDir, output)
+}
+
+func (g *Generator) linkOnlyBind(lib *Lib) bool {
+	if len(g.cfg.CCLib.LinkOnlyBindPackages) == 0 {
+		return false
+	}
+	key := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	for _, p := range g.cfg.CCLib.LinkOnlyBindPackages {
+		if p == key {
+			return true
+		}
+	}
+	return false
 }
 
 // wrapParserBindTokenDisambiguatorInclude matches exportinc.wrapParserTokenDisambiguatorFlexInclude:

@@ -6,13 +6,13 @@ import (
 
 type Config struct {
 	// EmitTierBAbslGo enables Tier B Abseil link-only bind files for go-absl generator output (see docs/prebuilt-cgo.md).
-	EmitTierBAbslGo bool `yaml:"emit_tier_b_absl_go"`
-	Dependencies    []ThirdPartyDependency `yaml:"dependencies"`
+	EmitTierBAbslGo                 bool                   `yaml:"emit_tier_b_absl_go"`
+	Dependencies                    []ThirdPartyDependency `yaml:"dependencies"`
 	GlobalSymbols                   []string               `yaml:"global_symbols"`
 	TopLevelNamespaces              []string               `yaml:"top_level_namespaces"`
 	ConflictSymbols                 []ConflictSymbol       `yaml:"conflict_symbols"`
 	AddSources                      []SourceConfig         `yaml:"add_sources"`
-	ExcludeGoogleSQLDirs              []string               `yaml:"exclude_googlesql_dirs"`
+	ExcludeGoogleSQLDirs            []string               `yaml:"exclude_googlesql_dirs"`
 	ProtobufInternalExportNameFiles []string               `yaml:"protobuf_internal_export_name_files"`
 	CCLib                           CCLibConfig            `yaml:"cclib"`
 	Protoc                          []ProtocConfig         `yaml:"protoc"`
@@ -99,7 +99,7 @@ type ExcludeReplaceNames struct {
 // OmitDependencyExportIncludes drops go-*/export.inc lines for listed deps on one cc_library
 // (e.g. wire_format is amalgamated inside type_annotation_cc_proto; skip duplicate export.inc).
 type OmitDependencyExportIncludes struct {
-	Pkg  string   `yaml:"pkg"` // e.g. googlesql/public/types/type (BasePkg/Name)
+	Pkg  string   `yaml:"pkg"`  // e.g. googlesql/public/types/type (BasePkg/Name)
 	Deps []string `yaml:"deps"` // dependency package keys, same as libMap keys
 }
 
@@ -107,16 +107,21 @@ type CCLibConfig struct {
 	// GlobalExcludeReplaceNames omits #define lines for these symbol names in every
 	// package (unlike exclude_replace_names which is per-pkg). Used for Tier B +
 	// unified absl/google namespaces — see docs/tier-b-absl-protobuf.md.
-	GlobalExcludeReplaceNames    []string                     `yaml:"global_exclude_replace_names"`
-	Excludes                     []string                     `yaml:"excludes"`
-	ExcludeAmalgamationHeaders   []AmalgamationHeaderExclude  `yaml:"exclude_amalgamation_headers"`
-	ExcludeAmalgamationSources   []AmalgamationSourceExclude  `yaml:"exclude_amalgamation_sources"`
-	BindCCPreludeBeforeHeaders   []BindCCPreludeBeforeHeaders `yaml:"bind_cc_prelude_before_headers"`
-	SymbolDefineOverrides        []SymbolDefineOverride       `yaml:"symbol_define_overrides"`
-	InjectReplaceNames           []InjectReplaceNames         `yaml:"inject_replace_names"`
-	ExtraBindGoImports           []ExtraBindGoImport          `yaml:"extra_bind_go_imports"`
-	ExcludeReplaceNames          []ExcludeReplaceNames        `yaml:"exclude_replace_names"`
+	GlobalExcludeReplaceNames    []string                       `yaml:"global_exclude_replace_names"`
+	Excludes                     []string                       `yaml:"excludes"`
+	ExcludeAmalgamationHeaders   []AmalgamationHeaderExclude    `yaml:"exclude_amalgamation_headers"`
+	ExcludeAmalgamationSources   []AmalgamationSourceExclude    `yaml:"exclude_amalgamation_sources"`
+	BindCCPreludeBeforeHeaders   []BindCCPreludeBeforeHeaders   `yaml:"bind_cc_prelude_before_headers"`
+	SymbolDefineOverrides        []SymbolDefineOverride         `yaml:"symbol_define_overrides"`
+	InjectReplaceNames           []InjectReplaceNames           `yaml:"inject_replace_names"`
+	ExtraBindGoImports           []ExtraBindGoImport            `yaml:"extra_bind_go_imports"`
+	ExcludeReplaceNames          []ExcludeReplaceNames          `yaml:"exclude_replace_names"`
 	OmitDependencyExportIncludes []OmitDependencyExportIncludes `yaml:"omit_dependency_export_includes"`
+	// LinkOnlyBindPackages lists cc_library keys (BasePkg/Name, e.g. googlesql/public/analyzer) for
+	// which bind.cc omits amalgamated .cc includes and dependency export.inc — intended for a future
+	// prebuilt libgooglesql.a / Tier B link-only path (see docs/link-only-cgo-migration.md). Default
+	// empty: no packages use this mode.
+	LinkOnlyBindPackages []string `yaml:"link_only_bind_packages"`
 }
 
 type ProtocConfig struct {

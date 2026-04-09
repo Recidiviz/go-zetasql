@@ -30,8 +30,10 @@ if [[ ! -f "$C_ANCHOR_SRC" ]] || [[ ! -f "$WRAPPER_SRC" ]]; then
   exit 1
 fi
 
-# Space-separated list of Bazel labels (googlesql module). Default: parser-safe //googlesql/base/* shards.
-TARGETS="${GOOGLESQL_UNIFIED_BAZEL_TARGETS:-//googlesql/base:logging //googlesql/base:status //googlesql/base:check //googlesql/base:ret_check //googlesql/base:map_util}"
+# Space-separated list of Bazel labels (googlesql module). Default: expanded //googlesql/base/*
+# shards (no //googlesql/parser/* here: parser graph may require private module fetches — see
+# MODULE.bazel / docs/libgooglesql-unified.md). Override with GOOGLESQL_UNIFIED_BAZEL_TARGETS.
+TARGETS="${GOOGLESQL_UNIFIED_BAZEL_TARGETS:-//googlesql/base:logging //googlesql/base:status //googlesql/base:check //googlesql/base:ret_check //googlesql/base:map_util //googlesql/base:arena //googlesql/base:strings //googlesql/base:stl_util //googlesql/base:base //googlesql/base:endian}"
 
 cd "$GOOGLESQL"
 

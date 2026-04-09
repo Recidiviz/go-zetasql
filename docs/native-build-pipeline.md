@@ -21,8 +21,9 @@ then merges `*.pic.o` from `com_google_protobuf` and `utf8_range` into `libproto
 | 1 | **Protobuf + utf8_range** | Implemented by `make prebuilt-libs` / `bind_tier_b.go`. |
 | 2 | **Abseil** | **`make prebuilt-libs-absl`** → `libabsl_cgo.a`. **Incremental rollout:** [`meta/type_traits`](../internal/ccall/go-absl/meta/type_traits), [`base/config`](../internal/ccall/go-absl/base/config), [`utility/utility`](../internal/ccall/go-absl/utility/utility) use `bind_tier_b_absl.go` + `googlesql_tier_b_absl`. Overlap / multi-package link: [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). Consolidated single-owner option: below. |
 | 3 | **googlesql public / analyzer** | Large `export.inc` bundles; consolidating requires a stable C bridge ABI (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)). |
-| 3b | **Unified `libgooglesql.a` (bootstrap)** | [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) + [`docs/libgooglesql-unified.md`](libgooglesql-unified.md): Bazel `*.pic.o` from configurable targets (default `//googlesql/base:logging`) plus a C anchor; single CGO owner package. Expand targets toward `//googlesql/public:analyzer` when the Bazel graph is available. |
+| 3b | **Unified `libgooglesql.a` (bootstrap)** | [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) + [`docs/libgooglesql-unified.md`](libgooglesql-unified.md): Bazel `*.pic.o` from configurable targets (default several `//googlesql/base:*` libs) plus a C anchor. Expand targets toward `//googlesql/public:analyzer` when the Bazel graph is available. |
 | 4 | **Parser / flex** | Depends on phase 3 includes and generated sources. |
+| 4b | **Generator link-only `bind.cc`** | Opt-in `cclib.link_only_bind_packages` in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) + [`link-only-cgo-migration.md`](link-only-cgo-migration.md). |
 
 Detailed duplicate-symbol inventory: [`protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
 
