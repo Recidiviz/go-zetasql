@@ -1,3 +1,46 @@
+---
+name: Tier B Phase 5 — CI, artifacts, docs, downstream
+overview: Reliable Bazel-backed CI with cache reuse; prebuilt `.a` artifacts and clear build tags for contributors without Bazel; README and prebuilt/native docs positioning amalgamation as legacy; align go-googlesqlite and bigquery-emulator once the Tier B contract is stable.
+todos:
+  - id: phase5-ci-inventory-cache
+    content: Inventory workflows (go.yml, Tier B / unified prebuilt YAMLs, release.yml); document cache keys and cold vs warm CI times for Tier B jobs
+    status: pending
+  - id: phase5-bazel-cache-standardize
+    content: Standardize Bazel cache restore/save (or remote cache) on every Bazel job; document cache failure fallback; optional split analysis vs full build
+    status: pending
+  - id: phase5-prebuilt-artifacts-ci
+    content: Align prebuilt artifact names, triples, layout, and extraction scripts with CI outputs; add SHA256SUMS (or equivalent) for release/nightly sets
+    status: pending
+  - id: phase5-no-bazel-consumer-gate
+    content: Add or extend a CI job — no Bazel, prebuilts in documented paths, go test/build with default prebuilt-oriented tags; decide required vs optional and flip to required when stable
+    status: pending
+  - id: phase5-publishing-channel
+    content: Choose/implement primary channel (e.g. tagged GitHub Release assets per platform); wire release workflow if needed; document URLs in README/prebuilt docs
+    status: pending
+  - id: phase5-readme-ux
+    content: README — quick start (prebuilt-first), build matrix table, links to prebuilt-cgo.md and native-build-pipeline.md
+    status: pending
+  - id: phase5-docs-native-pipeline
+    content: Update docs/native-build-pipeline.md — Bazel to static archives, CGO/single-owner overlap, legacy amalgamation subsection
+    status: pending
+  - id: phase5-docs-prebuilt-cgo
+    content: Update docs/prebuilt-cgo.md — default tags with prebuilts, path without prebuilts, amalgamation as legacy
+    status: pending
+  - id: phase5-docs-cross-cutting
+    content: Cross-cutting docs — troubleshooting (missing .a, arch, mixed tags); version/tarball to git tag mapping
+    status: pending
+  - id: phase5-downstream-googlesqlite
+    content: go-googlesqlite — bump module, align tags/CGO, CI for prebuilt path, sqlite caveats in docs
+    status: pending
+  - id: phase5-downstream-emulator-ui
+    content: bigquery-emulator (and UI if applicable) — same alignment, integration tests vs prebuilts, release notes on contract changes; READMEs point at Phase 5 docs
+    status: pending
+  - id: phase5-exit-criteria
+    content: Verify exit criteria — prebuilt quick path on clean machine, amalgamation gated behind explicit legacy tag, stable contract for downstream PRs (changelog for integrators)
+    status: pending
+isProject: false
+---
+
 # Phase 5 — Tier B (no amalgamation): CI, artifacts, docs, downstream
 
 **Roadmap:** go-googlesql “Tier B without amalgamation”  
