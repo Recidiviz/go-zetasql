@@ -17,7 +17,17 @@ nm internal/ccall/go-protobuf/protobuf/lib/linux_amd64/libprotobuf_cgo.a | grep 
 | `googlesql_tier_b_absl` only | Yes | Use for pilots and Abseil experiments **without** also relying on Tier B protobuf for the same link of duplicate Abseil symbols. |
 | `googlesql_tier_b` **and** `googlesql_tier_b_absl` | Risk of **duplicate Abseil symbols** | Not supported until object-level dedup or a single merged archive is implemented. |
 
-Tier B Abseil is validated with **default** protobuf (no `googlesql_tier_b`). Migrated link-only packages include **`meta/type_traits`**, **`base/config`**, **`utility/utility`** (see [`prebuilt-cgo.md`](prebuilt-cgo.md)).
+Tier B Abseil is validated with **default** protobuf (no `googlesql_tier_b`). Migrated link-only packages include **`meta/type_traits`**, **`base/config`**, **`base/core_headers`**, **`base/endian`**, **`base/errno_saver`**, **`base/prefetch`**, **`utility/utility`** (see [`prebuilt-cgo.md`](prebuilt-cgo.md)).
+
+## If both protobuf Tier B and Abseil Tier B must appear in one link (future)
+
+Today this combination is **unsupported** because `libprotobuf_cgo.a` already contains Abseil object code. When a concrete product needs **both** `googlesql_tier_b` and `googlesql_tier_b_absl` in the same binary, pick one of:
+
+1. **Object-level dedup** — merge archives and strip duplicate ELF sections (fragile; needs a maintained symbol manifest).
+2. **Single merged static archive** — one Bazel target that owns protobuf + Abseil + utf8_range with a single link line (see [`native-build-pipeline.md`](native-build-pipeline.md) “single owner”).
+3. **Single CGO owner package** — one Go package links `-lprotobuf_cgo` (or a renamed unified archive); other packages use `cgo` `// #cgo LDFLAGS:` only if they do not pull a second copy of Abseil.
+
+Defer implementation until there is a real linker failure or CI requirement—not for hypothetical builds.
 
 ## Multiple CGO packages each linking `-labsl_cgo`
 

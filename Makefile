@@ -165,7 +165,7 @@ prebuilt-libs-absl: extract-absl-lib
 verify-prebuilt-absl:
 	bash scripts/verify-prebuilt-absl.sh
 
-# Tier B Abseil: meta/type_traits, base/config, utility/utility (expand TESTPKG_PREBUILT_ABSL as you add packages).
+# Tier B Abseil: migrated packages below (expand TESTPKG_PREBUILT_ABSL / BUILDPKG_ABSL as you add more).
 local/build-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	CGO_ENABLED=1 \
 	CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold' \
@@ -178,9 +178,9 @@ local/build-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_tier_b_absl $(BUILDPKG_ABSL)
 
-# Default: migrated Tier B absl packages (override to widen).
-BUILDPKG_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/ ./internal/ccall/go-absl/base/config/ ./internal/ccall/go-absl/utility/utility/
-TESTPKG_PREBUILT_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/ ./internal/ccall/go-absl/base/config/ ./internal/ccall/go-absl/utility/utility/
+# Default: migrated Tier B absl packages (override to widen, e.g. ./internal/ccall/go-absl/meta/...).
+BUILDPKG_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/ ./internal/ccall/go-absl/base/config/ ./internal/ccall/go-absl/base/core_headers/ ./internal/ccall/go-absl/base/endian/ ./internal/ccall/go-absl/base/errno_saver/ ./internal/ccall/go-absl/base/prefetch/ ./internal/ccall/go-absl/utility/utility/
+TESTPKG_PREBUILT_ABSL ?= ./internal/ccall/go-absl/meta/type_traits/ ./internal/ccall/go-absl/base/config/ ./internal/ccall/go-absl/base/core_headers/ ./internal/ccall/go-absl/base/endian/ ./internal/ccall/go-absl/base/errno_saver/ ./internal/ccall/go-absl/base/prefetch/ ./internal/ccall/go-absl/utility/utility/
 
 local/test-prebuilt-absl: cache-dirs verify-prebuilt-absl
 	CGO_ENABLED=1 \
