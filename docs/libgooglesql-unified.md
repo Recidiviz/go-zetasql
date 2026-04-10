@@ -127,6 +127,26 @@ Package [`internal/ccall/go-googlesql-unified/googlesqlunified`](../internal/cca
 
 **Root `TESTPKG=./`:** use **`make local/compile-root-unified-test`** to **`go test -c`** only (writes **`$(GO_CACHE_ROOT)/googlesql_root_unified.test`**). That validates link + CGO without executing the test harness (startup may still **SIGSEGV** when run; see [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md)). Use **`make local/test-root-unified`** when you need to execute tests after rebuilding **`libprotobuf_cgo.a`** (`extract_protobuf_cgo_lib.sh` filters duplicate Abseil **cctz** members) and the **`civil_time`** / analyzer bridge fixes described there.
 
+### Root unified-prebuilt dependency graph (`go list`)
+
+For **`TESTPKG=./`** with **`-tags googlesql,googlesql_unified_prebuilt`**, the interesting CGO packages are a small set (run locally to refresh):
+
+```bash
+go list -tags googlesql,googlesql_unified_prebuilt -deps -f '{{.ImportPath}}' ./ | rg 'internal/ccall/go-(absl|googlesql|protobuf|googlesql-unified)|utf8_range'
+```
+
+Typical output includes:
+
+- `…/go-absl/time/go_internal/cctz/time_zone` — single-owner IANA **cctz** after `extract_protobuf_cgo_lib.sh` drops duplicate `time_zone_*.pic.o` from `libprotobuf_cgo.a`.
+- `…/go-googlesql-unified/googlesqlunified` — pulls **`libgooglesql.a`** (anchor).
+- `…/go-googlesql` (root) plus `…/go-googlesql/public/analyzer`, `…/parser/parser`, `…/parser/bison_parser_generated_lib` — link-only binds + bridges.
+- `…/go-protobuf/protobuf` — **single** package that links **`libprotobuf_cgo.a`** with **`--whole-archive`** (required so symbols are not dropped).
+- `…/utf8_range_link` — utf8_range closure aligned with libc++ (see investigation doc).
+
+There is **one** import path for **`go-protobuf/protobuf`** in this graph (no duplicate protobuf CGO packages). Blank-import lines in generated `bind_unified_prebuilt_*.go` are sorted by **`go/format`** (alphabetically by import path), so **Go `init` order is not manually controlled** from those lines; C++ static constructors still follow the linker’s `.init_array` order.
+
+**Note:** `scripts/verify-protobuf-tier-b-alignment.sh` checks vendored **`GOOGLE_PROTOBUF_VERSION`** vs `MODULE.bazel`; keep it green when changing `libprotobuf_cgo.a` or vendored headers.
+
 ## CI (GitHub Actions)
 
 Workflow **[`.github/workflows/go-googlesql-unified-prebuilt.yml`](../.github/workflows/go-googlesql-unified-prebuilt.yml)** runs this sequence (matches a green local run):
