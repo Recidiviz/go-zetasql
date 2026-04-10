@@ -661,14 +661,15 @@ func (g *Generator) bindGoParamUnifiedPrebuilt(base *BindGoParam, outputDir, pla
 	rel := unifiedPrebuiltLibDirRel(outputDir)
 	switch platform {
 	case "linux":
-		// Keep flags CGO-whitelist-friendly (avoid comma-separated -Wl groups); match
-		// internal/ccall/go-googlesql-unified/googlesqlunified/bind_unified_prebuilt.go shape.
-		// Link Bazel LLVM libc++ static archives so per-package cgo links do not resolve
-		// -stdlib=libc++ to the host's libc++.so (ABI skew vs libgooglesql.a / libprotobuf_cgo.a).
+		// Link Bazel LLVM libc++ static archives so per-package cgo resolves std::__1:: symbols
+		// consistently with libprotobuf_cgo.a (not the host's libc++.so).
+		//
+		// Do not repeat -L/-lgooglesql/-lz/-ldl/-lpthread here: bindGoParamUnifiedPrebuilt always
+		// appends a blank import of googlesqlunified, whose #cgo LDFLAGS already pull
+		// libgooglesql.a once. Duplicating -lgooglesql on the final link caused redundant archive
+		// scans and undefined behavior at protobuf DescriptorPool static init (startup SIGSEGV).
 		pbRel := protobufPrebuiltLibDirRel(outputDir)
 		p.ExtraLDFlags = []string{
-			"-L${SRCDIR}/" + rel,
-			"-lgooglesql", "-lz", "-ldl", "-lpthread",
 			"-L${SRCDIR}/" + pbRel,
 			"-Wl,--start-group", "-l:libcxx_prebuilt.a", "-l:libcxxabi_prebuilt.a", "-Wl,--end-group",
 		}
@@ -681,6 +682,8 @@ func (g *Generator) bindGoParamUnifiedPrebuilt(base *BindGoParam, outputDir, pla
 	default:
 		p.ExtraLDFlags = []string{"-L${SRCDIR}/" + rel, "-lgooglesql"}
 	}
+	p.ImportGoLibsLinkOrderFirst = []string{goProtobufImportPath}
+	p.ImportGoLibs = removeImportPath(p.ImportGoLibs, goProtobufImportPath)
 	p.ImportGoLibs = appendUniqueGoImport(p.ImportGoLibs, "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql-unified/googlesqlunified")
 	return &p
 }
@@ -1178,6 +1181,22 @@ func appendUniqueGoImport(imports []string, s string) []string {
 	return append(imports, s)
 }
 
+func removeImportPath(imports []string, path string) []string {
+	if path == "" {
+		return imports
+	}
+	// Always allocate a new slice: bindGoParamUnifiedPrebuilt shallow-copies BindGoParam, so the
+	// ImportGoLibs slice header is copied but shares the backing array with the non-unified param.
+	// In-place reuse of that backing array (e.g. out := imports[:0]) would corrupt both.
+	var out []string
+	for _, x := range imports {
+		if x != path {
+			out = append(out, x)
+		}
+	}
+	return out
+}
+
 // libNeedsGoProtobufImport is true when this library's dependency graph includes the
 // synthetic protobuf/protobuf cc_library (needs blank-import when bind.cc omits the protobuf dep chain).
 func (g *Generator) libNeedsGoProtobufImport(lib *Lib) bool {
@@ -1309,8 +1328,13 @@ type BindGoParam struct {
 	// ExtraLDFlags are emitted as extra #cgo LDFLAGS lines (e.g. -L/-lgooglesql).
 	ExtraLDFlags  []string
 	BridgeHeaders []string
-	ImportGoLibs  []string
-	Funcs         []Func
+	// ImportGoLibsLinkOrderFirst, if non-empty, is emitted as a separate import block before
+	// ImportGoLibs. gofmt sorts paths alphabetically within one block, which placed
+	// go-googlesql-unified before go-protobuf and made cmd/link emit -lgooglesql before
+	// -lprotobuf_cgo, breaking C++ static init (DescriptorPool / Abseil hash at startup).
+	ImportGoLibsLinkOrderFirst []string
+	ImportGoLibs               []string
+	Funcs                      []Func
 	ExportFuncs   []ExportFunc
 }
 

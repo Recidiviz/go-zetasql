@@ -49,6 +49,13 @@ package {{ .Pkg }}
 {{- end }}
 */
 import "C"
+{{- if .ImportGoLibsLinkOrderFirst }}
+import (
+	{{- range .ImportGoLibsLinkOrderFirst }}
+	_ "{{ . }}"
+	{{- end }}
+)
+{{- end }}
 import (
 	{{- range .ImportGoLibs }}
 	_ "{{ . }}"

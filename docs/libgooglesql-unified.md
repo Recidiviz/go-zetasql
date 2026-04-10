@@ -196,3 +196,4 @@ GOOGLESQL_UNIFIED_GOPROXY='https://proxy.golang.org,direct' \
 - [ ] `bash scripts/smoke_link_googlesql_unified.sh` passes.
 - [ ] `make local/test-prebuilt-googlesql-unified-root` passes (default analyzer **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT`**).
 - [ ] `make local/compile-root-unified-test` passes (`TESTPKG=./`; link-only — full **`local/test-root-unified`** may still hit startup SIGSEGV until [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md) is fully closed).
+- [ ] **`CGO_CXXFLAGS_PREBUILT`** is not set to an **empty** string in the environment (that skips `-stdlib=libc++` and breaks links against Bazel libc++ prebuilts; the [`Makefile`](../Makefile) treats empty like unset).

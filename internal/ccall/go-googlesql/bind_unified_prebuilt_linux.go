@@ -39,11 +39,6 @@ package googlesql
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-#cgo LDFLAGS: -L${SRCDIR}/../go-googlesql-unified/lib
-#cgo LDFLAGS: -lgooglesql
-#cgo LDFLAGS: -lz
-#cgo LDFLAGS: -ldl
-#cgo LDFLAGS: -lpthread
 #cgo LDFLAGS: -L${SRCDIR}/../go-protobuf/protobuf/lib
 #cgo LDFLAGS: -Wl,--start-group
 #cgo LDFLAGS: -l:libcxx_prebuilt.a
@@ -56,10 +51,12 @@ package googlesql
 */
 import "C"
 import (
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
+)
+import (
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql-unified/googlesqlunified"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/public/analyzer"
-	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/utf8_range_link"
 	"unsafe"
 )

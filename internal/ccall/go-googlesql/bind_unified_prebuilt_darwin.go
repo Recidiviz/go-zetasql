@@ -45,10 +45,12 @@ package googlesql
 */
 import "C"
 import (
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
+)
+import (
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql-unified/googlesqlunified"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/public/analyzer"
-	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/utf8_range_link"
 	"unsafe"
 )

@@ -90,7 +90,11 @@ CGO_CXX ?= clang++
 # Every CGO C++ TU must
 # use the same -stdlib or template instantiations (e.g. ArenaStringPtr with std::string) mangle as
 # std::__cxx11:: vs std::__1:: and the link fails with undefined protobuf internals.
-CGO_CXXFLAGS_PREBUILT ?= -stdlib=libc++
+# `?=` does not apply when the environment sets CGO_CXXFLAGS_PREBUILT to an empty string, which
+# would compile CGO with the wrong stdlib and break links against Bazel libc++ archives.
+ifeq ($(strip $(CGO_CXXFLAGS_PREBUILT)),)
+CGO_CXXFLAGS_PREBUILT := -stdlib=libc++
+endif
 # g++ does not support -stdlib=libc++; keep default clang++ for prebuilts. If you override CXX to g++,
 # clear this only when you have a libstdc++-matched prebuilt (not the default Bazel libc++ archive).
 
