@@ -14,6 +14,11 @@
 # CGO path for the repo. See docs/protobuf-vendoring.md ("Single-owner protobuf") and
 # docs/protobuf-single-owner-inventory.md for why link-only protobuf must align Abseil/macro
 # policy with the rest of go-googlesql.
+#
+# DescriptorPool::Tables: internal/cmd/updater/googlesql/MODULE.bazel patches protobuf 29.0
+# (patches/protobuf_descriptor_googlesql_tables.patch) so descriptor.cc uses std::map / std::unordered_*
+# instead of absl::flat_hash_* for unified-prebuilt + libgooglesql; vendored
+# internal/ccall/protobuf/google/protobuf/descriptor.cc must match that patch.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
@@ -32,7 +37,10 @@ BAZEL="${BAZEL:-$(command -v bazelisk || command -v bazel)}"
 # :protobuf is the core library; WKT (.pb.cc for Any, Timestamp, Duration, wrappers, etc.) live in
 # :cmake_wkt_cc_proto. Without those .pic.o files, prebuilt links miss GetMetadata, descriptor tables,
 # and Cord helpers for well-known types.
-"$BAZEL" build @com_google_protobuf//:protobuf \
+# Build //src/google/protobuf:protobuf explicitly: the repo root :protobuf target is an alias to a
+# layering stub and does not compile descriptor.cc; we need _objs/protobuf/*.pic.o for libprotobuf_cgo.a.
+"$BAZEL" build @com_google_protobuf//src/google/protobuf:protobuf \
+  @com_google_protobuf//:protobuf \
   @com_google_protobuf//src/google/protobuf:cmake_wkt_cc_proto \
   --cxxopt=-std=c++20 --host_cxxopt=-std=c++20 \
   --jobs="${BAZEL_JOBS:-8}"
