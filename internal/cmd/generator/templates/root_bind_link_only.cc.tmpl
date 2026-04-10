@@ -1,0 +1,32 @@
+#ifndef googlesql_bind_cc
+#define googlesql_bind_cc
+
+// Link-only root bind.cc: bridge headers only (no export.inc amalgamation). Implementations
+// come from libgooglesql.a when built with -DGOOGLESQL_LINK_ONLY_BIND. See docs/link-only-cgo-migration.md.
+
+#define GO_EXPORT(def) export_googlesql_ ## def
+#define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
+#include "root_link_only_unified_macros.inc"
+#include "_cgo_export.h"
+{{ .Prelude }}
+{{- range .Libs }}
+#include "go-{{ . }}/bridge.h"
+{{- end }}
+
+{{- range .Libs }}
+#include "go-{{ . }}/bridge_cc.inc"
+{{- end }}
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+{{- range .Libs }}
+#include "go-{{ . }}/bridge.inc"
+{{- end }}
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* googlesql_bind_cc */

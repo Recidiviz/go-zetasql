@@ -602,7 +602,6 @@ class Status final {
   // code, and an empty error message.
   explicit Status(absl::StatusCode code);
 
-  static void UnrefNonInlined(uintptr_t rep);
   static void Ref(uintptr_t rep);
   static void Unref(uintptr_t rep);
 
@@ -613,7 +612,10 @@ class Status final {
   const status_internal::Payloads* GetPayloads() const;
   status_internal::Payloads* GetPayloads();
 
+#ifndef GOOGLESQL_LINK_ONLY_BIND
+  static void UnrefNonInlined(uintptr_t rep);
   static bool EqualsSlow(const absl::Status& a, const absl::Status& b);
+#endif
 
   // MSVC 14.0 limitation requires the const.
   static constexpr const char kMovedFromString[] =
@@ -641,7 +643,11 @@ class Status final {
   static uintptr_t PointerToRep(status_internal::StatusRep* r);
   static status_internal::StatusRep* RepToPointer(uintptr_t r);
 
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  static std::string ToStringSlow(uintptr_t rep, StatusToStringMode mode);
+#else
   std::string ToStringSlow(StatusToStringMode mode) const;
+#endif
 
   // Status supports two different representations.
   //  - When the low bit is off it is an inlined representation.
@@ -803,6 +809,17 @@ inline bool Status::ok() const {
   return rep_ == CodeToInlinedRep(absl::StatusCode::kOk);
 }
 
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+inline absl::StatusCode Status::code() const {
+  return status_internal::MapToLocalCode(raw_code());
+}
+
+inline int Status::raw_code() const {
+  if (IsInlined(rep_)) return static_cast<int>(InlinedRepToCode(rep_));
+  return static_cast<int>(RepToPointer(rep_)->code);
+}
+#endif
+
 inline absl::string_view Status::message() const {
   return !IsInlined(rep_)
              ? RepToPointer(rep_)->message
@@ -811,7 +828,18 @@ inline absl::string_view Status::message() const {
 }
 
 inline bool operator==(const Status& lhs, const Status& rhs) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  if (lhs.rep_ == rhs.rep_) return true;
+  if (Status::IsInlined(lhs.rep_)) return false;
+  if (Status::IsInlined(rhs.rep_)) return false;
+  const auto* lhs_rep = Status::RepToPointer(lhs.rep_);
+  const auto* rhs_rep = Status::RepToPointer(rhs.rep_);
+  if (lhs_rep->message != rhs_rep->message) return false;
+  if (lhs_rep->code != rhs_rep->code) return false;
+  return lhs.GetPayloads() == rhs.GetPayloads();
+#else
   return lhs.rep_ == rhs.rep_ || Status::EqualsSlow(lhs, rhs);
+#endif
 }
 
 inline bool operator!=(const Status& lhs, const Status& rhs) {
@@ -819,7 +847,11 @@ inline bool operator!=(const Status& lhs, const Status& rhs) {
 }
 
 inline std::string Status::ToString(StatusToStringMode mode) const {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  return ok() ? "OK" : ToStringSlow(rep_, mode);
+#else
   return ok() ? "OK" : ToStringSlow(mode);
+#endif
 }
 
 inline void Status::IgnoreError() const {
@@ -839,10 +871,18 @@ inline status_internal::Payloads* Status::GetPayloads() {
   return IsInlined(rep_) ? nullptr : RepToPointer(rep_)->payloads.get();
 }
 
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+inline bool Status::IsInlined(uintptr_t rep) { return (rep & 1) != 0; }
+#else
 inline bool Status::IsInlined(uintptr_t rep) { return (rep & 1) == 0; }
+#endif
 
 inline bool Status::IsMovedFrom(uintptr_t rep) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  return (rep & 2) != 0;
+#else
   return IsInlined(rep) && (rep & 2) != 0;
+#endif
 }
 
 inline uintptr_t Status::MovedFromRep() {
@@ -850,7 +890,11 @@ inline uintptr_t Status::MovedFromRep() {
 }
 
 inline uintptr_t Status::CodeToInlinedRep(absl::StatusCode code) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  return (static_cast<uintptr_t>(code) << 2) + 1;
+#else
   return static_cast<uintptr_t>(code) << 2;
+#endif
 }
 
 inline absl::StatusCode Status::InlinedRepToCode(uintptr_t rep) {
@@ -860,22 +904,42 @@ inline absl::StatusCode Status::InlinedRepToCode(uintptr_t rep) {
 
 inline status_internal::StatusRep* Status::RepToPointer(uintptr_t rep) {
   assert(!IsInlined(rep));
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  return reinterpret_cast<status_internal::StatusRep*>(rep);
+#else
   return reinterpret_cast<status_internal::StatusRep*>(rep - 1);
+#endif
 }
 
 inline uintptr_t Status::PointerToRep(status_internal::StatusRep* rep) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  return reinterpret_cast<uintptr_t>(rep);
+#else
   return reinterpret_cast<uintptr_t>(rep) + 1;
+#endif
 }
 
 inline void Status::Ref(uintptr_t rep) {
   if (!IsInlined(rep)) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
     RepToPointer(rep)->ref.fetch_add(1, std::memory_order_relaxed);
+#else
+    RepToPointer(rep)->ref.fetch_add(1, std::memory_order_relaxed);
+#endif
   }
 }
 
 inline void Status::Unref(uintptr_t rep) {
   if (!IsInlined(rep)) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+    status_internal::StatusRep* r = RepToPointer(rep);
+    if (r->ref.load(std::memory_order_acquire) == 1 ||
+        r->ref.fetch_sub(1, std::memory_order_acq_rel) - 1 == 0) {
+      delete r;
+    }
+#else
     UnrefNonInlined(rep);
+#endif
   }
 }
 

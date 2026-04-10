@@ -69,3 +69,26 @@ go test -tags googlesql,googlesql_unified_prebuilt -c -o /tmp/googlesql_root_pre
 # GDB backtrace at crash
 gdb -q -batch -ex 'run -test.run ^$ -test.v' -ex 'thread apply all bt' /tmp/googlesql_root_prebuilt.test
 ```
+
+## Resolution (2026)
+
+**Root cause:** mixed C++ standard libraries in the same process. `ldd` on the unified-prebuilt
+test binary showed `libstdc++.so.6` while `libprotobuf_cgo.a` and `libgooglesql.a` objects are built
+with **libc++** (`std::__1::`, Bazel LLVM). `internal/ccall/utf8_range_link/bind_linux.go` used
+`-lstdc++`; the external link also defaulted to libstdc++ until `CGO_LDFLAGS_BASE` gained
+`-stdlib=libc++` (see [`Makefile`](../Makefile)). Linking `utf8_range_link` against
+`libcxx_prebuilt.a` / `libcxxabi_prebuilt.a` (same as [`go-protobuf/protobuf/bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go)) removes the extra libstdc++ load.
+
+**Archive hygiene:** [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) now filters out Abseil/protobuf/utf8_range `*.pic.o` paths so
+`libgooglesql.a` does not embed duplicate ELF definitions of the same runtime as
+`libprotobuf_cgo.a` (weak-symbol overlap is expected; **global `T`** overlap should stay zero —
+`make verify-prebuilt-googlesql-unified` checks this when `llvm-nm` and `libprotobuf_cgo.a` exist).
+
+**Unified prebuilt CGO shards:** generated `bind_unified_prebuilt_linux.go` now adds
+`-L.../go-protobuf/protobuf/lib` and `-l:libcxx_prebuilt.a` / `-l:libcxxabi_prebuilt.a` so
+per-package cgo links match the protobuf archive (see `bindGoParamUnifiedPrebuilt` in
+[`internal/cmd/generator/pkg/generator.go`](../internal/cmd/generator/pkg/generator.go)).
+
+**Full repo test `./`:** the top-level [`internal/ccall/go-googlesql/bind.cc`](../internal/ccall/go-googlesql/bind.cc) amalgamation + `export.inc` still hits protobuf static-registration collisions when built as a single TU; the default `make local/test-prebuilt-googlesql-unified-root` target uses
+`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./internal/ccall/go-googlesql/public/analyzer/` until the
+root bind is split for unified the same way as [`base/status`](../internal/ccall/go-base/status/bind_linux.go) (`//go:build !googlesql_unified_prebuilt` + `bind_unified_prebuilt_linux.go`).

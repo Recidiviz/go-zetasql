@@ -412,6 +412,14 @@ cclib:
   # excludes so Bazel libgooglesql.a symbols match; use -tags googlesql,googlesql_unified_prebuilt.
   link_only_bind_packages:
     - base/status
+    # Root package slice: the heavy CGO owners behind analyzer/parser/catalog/formatter APIs.
+    # These packages continue to use the default amalgamation path unless googlesql_unified_prebuilt is set.
+    - googlesql/public/analyzer
+    - googlesql/public/catalog
+    - googlesql/public/simple_catalog
+    - googlesql/public/sql_formatter
+    - googlesql/parser/parser
+    - googlesql/parser/bison_parser_generated_lib
   # Unified absl/google: plain namespaces match go-protobuf amalgamation + single include policy.
   global_exclude_replace_names:
     - absl
@@ -466,6 +474,8 @@ cclib:
         #define GOOGLESQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS
         // flex_prelude uses distinct Legacyalloc symbols from root analyzer (see flex_prelude in add_sources).
         #define GOOGLESQL_GO_FLEX_LEGACY_IN_PARSER_PKG 1
+        // Link-only parser bridge helpers construct ParseResumeLocation directly.
+        #include "googlesql/public/parse_resume_location.h"
     - pkg: googlesql/public/parse_helpers
       lines: |
         // parse_helpers.h includes parser.h → flex_tokenizer.h before parser/export.inc runs.
@@ -533,10 +543,37 @@ cclib:
     - pkg: googlesql/public/types/type
       deps:
         - googlesql/public/proto/wire_format_annotation_cc_proto
-  # Renaming `google` breaks protobuf headers (namespace google::protobuf) vs go-protobuf amalgamation.
+  # Link-only + libgooglesql.a: use upstream namespaces (Bazel *.pic.o) for the GOOGLESQL_LINK_ONLY_BIND branch only.
   exclude_replace_names:
-    # Link-only + libgooglesql.a: use upstream namespaces (Bazel *.pic.o) for this package only.
     - pkg: base/status
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
+    - pkg: googlesql/public/analyzer
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
+    - pkg: googlesql/public/catalog
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
+    - pkg: googlesql/public/simple_catalog
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
+    - pkg: googlesql/public/sql_formatter
       names:
         - googlesql
         - googlesql_base
@@ -545,16 +582,18 @@ cclib:
         - differential_privacy
     - pkg: googlesql/parser/bison_parser_generated_lib
       names:
-        - google
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
     - pkg: googlesql/parser/parser
       names:
-        - google
-    - pkg: googlesql/public/analyzer
-      names:
-        - google
-    - pkg: googlesql/public/catalog
-      names:
-        - google
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
 
 protoc:
   - name: googlesql/resolved_ast/serialization_cc_proto

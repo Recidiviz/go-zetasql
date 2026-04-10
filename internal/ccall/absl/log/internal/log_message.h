@@ -219,10 +219,17 @@ class LogMessage {
     kLiteral,
     kNotLiteral,
   };
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  template <StringType str_type>
+  void CopyToEncodedBuffer(absl::string_view str) ABSL_ATTRIBUTE_NOINLINE;
+  template <StringType str_type>
+  void CopyToEncodedBuffer(char ch, size_t num) ABSL_ATTRIBUTE_NOINLINE;
+#else
   void CopyToEncodedBuffer(absl::string_view str,
                            StringType str_type) ABSL_ATTRIBUTE_NOINLINE;
   void CopyToEncodedBuffer(char ch, size_t num,
                            StringType str_type) ABSL_ATTRIBUTE_NOINLINE;
+#endif
 
   // Returns `true` if the message is fatal or enabled debug-fatal.
   bool IsFatal() const;
@@ -252,12 +259,20 @@ class StringifySink final {
   explicit StringifySink(LogMessage& message) : message_(message) {}
 
   void Append(size_t count, char ch) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+    message_.CopyToEncodedBuffer<LogMessage::StringType::kNotLiteral>(ch, count);
+#else
     message_.CopyToEncodedBuffer(ch, count,
                                  LogMessage::StringType::kNotLiteral);
+#endif
   }
 
   void Append(absl::string_view v) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+    message_.CopyToEncodedBuffer<LogMessage::StringType::kNotLiteral>(v);
+#else
     message_.CopyToEncodedBuffer(v, LogMessage::StringType::kNotLiteral);
+#endif
   }
 
   // For types that implement `AbslStringify` using `absl::Format()`.
@@ -292,14 +307,22 @@ LogMessage& LogMessage::operator<<(const T& v) {
 
 template <int SIZE>
 LogMessage& LogMessage::operator<<(const char (&buf)[SIZE]) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  CopyToEncodedBuffer<StringType::kLiteral>(buf);
+#else
   CopyToEncodedBuffer(buf, StringType::kLiteral);
+#endif
   return *this;
 }
 
 // Note: the following is declared `ABSL_ATTRIBUTE_NOINLINE`
 template <int SIZE>
 LogMessage& LogMessage::operator<<(char (&buf)[SIZE]) {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  CopyToEncodedBuffer<StringType::kNotLiteral>(buf);
+#else
   CopyToEncodedBuffer(buf, StringType::kNotLiteral);
+#endif
   return *this;
 }
 // We instantiate these specializations in the library's TU to save space in

@@ -49,7 +49,7 @@ Generated CGO `bind.cc` translation units normally apply **per-package rename ma
 
 **Global** `global_exclude_replace_names: [absl, google]` already keeps Abseil and `google::protobuf` consistent with Tier B; Strategy D extends that idea to **googlesql\*** / **re2** / **differential_privacy** for selected packages.
 
-**Phase 4 status:** Generator support (`bind_link_only.cc.tmpl`, merged `bind.cc`, `bind_unified_prebuilt_*_go.go`, `link_only_bind_packages`) and unified C ABI extensions ([`googlesql_unified_capabilities`](../internal/ccall/go-googlesql-unified/include/googlesql_unified.h)) are in place. The first production opt-in is **`base/status`** using Strategy D; additional `googlesql/public/*` shards remain gated until the same alignment pattern is validated or Strategy A/B is implemented.
+**Phase 4 status:** Generator support (`bind_link_only.cc.tmpl`, merged `bind.cc`, `bind_unified_prebuilt_*_go.go`, `link_only_bind_packages`) and unified C ABI extensions ([`googlesql_unified_capabilities`](../internal/ccall/go-googlesql-unified/include/googlesql_unified.h)) are in place. The first production opt-in was **`base/status`** using Strategy D; the next root-package slice extends the same pattern to **`googlesql/public/analyzer`**, **`googlesql/public/catalog`**, **`googlesql/public/simple_catalog`**, **`googlesql/public/sql_formatter`**, **`googlesql/parser/parser`**, and **`googlesql/parser/bison_parser_generated_lib`** under `-tags googlesql,googlesql_unified_prebuilt`.
 
 ## Rollout
 

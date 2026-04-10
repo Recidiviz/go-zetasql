@@ -1,3 +1,6 @@
+#ifndef googlesql_bind_cc
+#define googlesql_bind_cc
+
 #define GO_EXPORT(def) export_googlesql_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 // Apply namespace macros before _cgo_export.h: the generated header can pull
@@ -30,3 +33,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+
+#endif /* googlesql_bind_cc */

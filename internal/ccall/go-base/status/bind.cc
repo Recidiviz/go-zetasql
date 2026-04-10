@@ -4,6 +4,11 @@
 #ifndef GOOGLESQL_LINK_ONLY_BIND
 
 // switch namespace
+#define differential_privacy base_status_differential_privacy
+#define googlesql base_status_googlesql
+#define googlesql_base base_status_googlesql_base
+#define googlesql_bison_parser base_status_googlesql_bison_parser
+#define re2 base_status_re2
 #define AbslInternalSleepFor base_status_AbslInternalSleepFor
 #define AbslInternalReportFatalUsageError base_status_AbslInternalReportFatalUsageError
 #define AbslInternalMutexYield base_status_AbslInternalMutexYield

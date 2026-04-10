@@ -50,7 +50,7 @@ DOCKER_DEV_VOLUMES := \
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache cache-clean-cgo \
 	local/build local/test local/test-fresh \
 	local/test-prebuilt-absl local/build-prebuilt-absl \
-	local/build-prebuilt-googlesql-unified \
+	local/build-prebuilt-googlesql-unified local/build-prebuilt-googlesql-unified-root local/test-prebuilt-googlesql-unified-root local/test-root-unified \
 	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified package-protobuf-prebuilt-tarball \
 	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified smoke-link-googlesql-unified \
 	verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy sync-protobuf-vendor-from-bazel regenerate-googlesql-cpp-protos \
@@ -100,8 +100,11 @@ CGO_CXXFLAGS_PREBUILT ?= -stdlib=libc++
 #
 # Go rejects non-allowlisted #cgo LDFLAGS; bind_linux.go uses -Wl,--whole-archive etc. This list
 # must stay in sync with internal/ccall/go-protobuf/protobuf/bind_*.go.
-CGO_LDFLAGS_ALLOW_LIST := -Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group
-CGO_LDFLAGS_BASE := -Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD)
+# -stdlib=libc++: without this, cmd/link invokes the external linker with GCC/C++ defaults and
+# pulls libstdc++.so alongside Bazel-built libc++ prebuilts → mixed std:: ABI and startup SIGSEGV
+# in protobuf/Abseil (see docs/unified-prebuilt-root-segfault-investigation.md).
+CGO_LDFLAGS_ALLOW_LIST := -Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group|-stdlib=libc\+\+
+CGO_LDFLAGS_BASE := -Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD) -stdlib=libc++
 
 # Example: make local/build BUILDPKG=./internal/ccall/go-googlesql
 local/build: cache-dirs verify-prebuilt-protobuf
@@ -230,8 +233,17 @@ prebuilt-libs-googlesql-unified: extract-googlesql-unified-lib
 verify-prebuilt-googlesql-unified:
 	bash scripts/verify-prebuilt-googlesql-unified.sh
 
+# Root package slice that swaps the largest public/parser CGO shards to link-only bind.cc under
+# googlesql_unified_prebuilt while still pulling libprotobuf_cgo.a via the normal go-protobuf package.
+BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT ?= ./
+# Default gate: analyzer CGO shard (startup-safe unified link). Full repo `./` also needs
+# internal/ccall/go-googlesql/bind.cc split for unified like base/status (bind_linux !unified +
+# bind_unified_prebuilt_*); until then override: TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./
+TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT ?= ./internal/ccall/go-googlesql/public/analyzer/
+
 local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-unified
 	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
 	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
 	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
 	CC="$(CGO_CC)" \
@@ -241,6 +253,51 @@ local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-uni
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt ./internal/ccall/go-googlesql-unified/googlesqlunified/
+
+local/build-prebuilt-googlesql-unified-root: cache-dirs verify-prebuilt-protobuf verify-prebuilt-googlesql-unified
+	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt $(BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT)
+
+# Default package is the analyzer CGO shard (see TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT). CI runs
+# this target after local/build-prebuilt-googlesql-unified-root (see go-googlesql-unified-prebuilt.yml).
+local/test-prebuilt-googlesql-unified-root: cache-dirs verify-prebuilt-protobuf verify-prebuilt-googlesql-unified
+	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt -v $(TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT) -count=1
+
+# Root module tests (default TESTPKG=./) with unified prebuilt link-only root bind.cc + libgooglesql.a.
+# Requires the same prebuilts as local/test-prebuilt-googlesql-unified-root. Startup may still
+# SIGSEGV if protobuf/Abseil ownership across archives is inconsistent; see
+# docs/unified-prebuilt-root-segfault-investigation.md.
+local/test-root-unified: cache-dirs verify-prebuilt-protobuf verify-prebuilt-googlesql-unified
+	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt -v $(TESTPKG) -count=1 $(GO_TEST_FLAGS)
 
 smoke-link-googlesql-unified:
 	bash scripts/smoke_link_googlesql_unified.sh

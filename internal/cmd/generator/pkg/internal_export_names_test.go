@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-
 func TestBuildReplaceNameEntriesOmitsDescriptorTablesExceptProtobuf(t *testing.T) {
 	_, thisFile, _, _ := runtime.Caller(0)
 	pkgDir := filepath.Dir(thisFile)
@@ -27,13 +26,13 @@ func TestBuildReplaceNameEntriesOmitsDescriptorTablesExceptProtobuf(t *testing.T
 		"descriptor_table_google_2fprotobuf_2ftimestamp_2eproto",
 		"TableStruct_google_2fprotobuf_2ftimestamp_2eproto",
 	}
-	leaf := g.buildReplaceNameEntries("googlesql/parser/location")
+	leaf := g.buildReplaceNameEntries("googlesql/parser/location", false)
 	for _, e := range leaf {
 		if strings.HasPrefix(e.Name, "descriptor_table_google_2fprotobuf") {
 			t.Fatalf("leaf package should not get google well-known descriptor renames: %q", e.Name)
 		}
 	}
-	proto := g.buildReplaceNameEntries(goProtobufCCLibPkgKey)
+	proto := g.buildReplaceNameEntries(goProtobufCCLibPkgKey, false)
 	var saw bool
 	for _, e := range proto {
 		if e.Name == "descriptor_table_google_2fprotobuf_2ftimestamp_2eproto" {

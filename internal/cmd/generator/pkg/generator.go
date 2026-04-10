@@ -383,35 +383,72 @@ func (g *Generator) rootGoogleSQLAmalgamationLibs() []string {
 	return libs
 }
 
+// rootLinkOnlyPrelude returns #include lines for primary headers (same as per-package
+// bind_link_only.cc.tmpl) so bridge_cc.inc sees C++ STL and API types before templates.
+func (g *Generator) rootLinkOnlyPrelude(libs []string) string {
+	seen := map[string]struct{}{}
+	var sb strings.Builder
+	for _, name := range libs {
+		lib, ok := g.libMap[name]
+		if !ok || !g.linkOnlyBind(lib) {
+			continue
+		}
+		p := g.createBindCCParam(lib, true)
+		for _, h := range p.Headers {
+			if _, dup := seen[h]; dup {
+				continue
+			}
+			seen[h] = struct{}{}
+			sb.WriteString(fmt.Sprintf("#include \"%s\"\n", h))
+		}
+	}
+	return sb.String()
+}
+
 func (g *Generator) generateRootBindCC(outputDir string) error {
 	libs := g.rootGoogleSQLAmalgamationLibs()
-	output, err := g.generateCCSourceByTemplate(
+	amalg, err := g.generateCCSourceByTemplate(
 		"templates/root_bind.cc.tmpl",
 		libs,
 	)
 	if err != nil {
 		return err
 	}
-	if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), output, 0o600); err != nil {
+	thin, err := g.generateCCSourceByTemplate(
+		"templates/root_bind_link_only.cc.tmpl",
+		struct {
+			Libs    []string
+			Prelude string
+		}{
+			Libs:    libs,
+			Prelude: g.rootLinkOnlyPrelude(libs),
+		},
+	)
+	if err != nil {
+		return err
+	}
+	merged := g.mergeLinkOnlyBindCC("googlesql", amalg, thin)
+	if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), merged, 0o600); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
-	param := g.createBindCCParam(lib)
+	param := g.createBindCCParam(lib, false)
 	if g.linkOnlyBind(lib) {
 		amalg, err := g.generateCCSourceByTemplate("templates/bind.cc.tmpl", param)
 		if err != nil {
 			return err
 		}
 		amalg = wrapParserBindTokenDisambiguatorInclude(lib, amalg)
-		thin, err := g.generateCCSourceByTemplate("templates/bind_link_only.cc.tmpl", param)
+		linkOnlyParam := g.createBindCCParam(lib, true)
+		thin, err := g.generateCCSourceByTemplate("templates/bind_link_only.cc.tmpl", linkOnlyParam)
 		if err != nil {
 			return err
 		}
 		thin = wrapParserBindTokenDisambiguatorInclude(lib, thin)
-		merged := g.mergeLinkOnlyBindCC(param.FQDN, amalg, thin)
+		merged := g.mergeLinkOnlyBindCC(linkOnlyParam.FQDN, amalg, thin)
 		if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), merged, 0o600); err != nil {
 			return err
 		}
@@ -536,7 +573,7 @@ func (g *Generator) generateRootBridgeH(outputDir string) error {
 func (g *Generator) generateBridgeH(outputDir string, lib *Lib) error {
 	output, err := g.generateCCSourceByTemplate(
 		"templates/bridge.h.tmpl",
-		g.createBindCCParam(lib),
+		g.createBindCCParam(lib, false),
 	)
 	if err != nil {
 		return err
@@ -607,6 +644,17 @@ func unifiedPrebuiltLibDirRel(outputDir string) string {
 	return filepath.ToSlash(rel)
 }
 
+// protobufPrebuiltLibDirRel returns a ${SRCDIR}-relative path to .../go-protobuf/protobuf/lib
+// (libcxx_prebuilt.a / libcxxabi_prebuilt.a: same LLVM as libprotobuf_cgo.a and Bazel GoogleSQL .o).
+func protobufPrebuiltLibDirRel(outputDir string) string {
+	libDir := filepath.Join(ccallDir(), "go-protobuf", "protobuf", "lib")
+	rel, err := filepath.Rel(outputDir, libDir)
+	if err != nil {
+		return filepath.ToSlash(filepath.Join("..", "..", "..", "go-protobuf", "protobuf", "lib"))
+	}
+	return filepath.ToSlash(rel)
+}
+
 func (g *Generator) bindGoParamUnifiedPrebuilt(base *BindGoParam, outputDir, platform string) *BindGoParam {
 	p := *base
 	p.ExtraCXXFlags = []string{"-DGOOGLESQL_LINK_ONLY_BIND"}
@@ -615,9 +663,14 @@ func (g *Generator) bindGoParamUnifiedPrebuilt(base *BindGoParam, outputDir, pla
 	case "linux":
 		// Keep flags CGO-whitelist-friendly (avoid comma-separated -Wl groups); match
 		// internal/ccall/go-googlesql-unified/googlesqlunified/bind_unified_prebuilt.go shape.
+		// Link Bazel LLVM libc++ static archives so per-package cgo links do not resolve
+		// -stdlib=libc++ to the host's libc++.so (ABI skew vs libgooglesql.a / libprotobuf_cgo.a).
+		pbRel := protobufPrebuiltLibDirRel(outputDir)
 		p.ExtraLDFlags = []string{
 			"-L${SRCDIR}/" + rel,
-			"-lgooglesql", "-lz", "-lstdc++", "-ldl", "-lpthread",
+			"-lgooglesql", "-lz", "-ldl", "-lpthread",
+			"-L${SRCDIR}/" + pbRel,
+			"-Wl,--start-group", "-l:libcxx_prebuilt.a", "-l:libcxxabi_prebuilt.a", "-Wl,--end-group",
 		}
 	case "darwin":
 		p.ExtraLDFlags = []string{
@@ -723,8 +776,12 @@ func (g *Generator) applyTierBAbslGo(outputDir string, lib *Lib, darwinBytes, li
 	prefix := []byte("//go:build !googlesql_tier_b_absl\n\n")
 	darwinOut := append(prefix, darwinBytes...)
 	linuxOut := append(prefix, linuxBytes...)
+	pkgName := "googlesql"
+	if lib != nil {
+		pkgName = g.goPkgName(lib)
+	}
 	param := tierBAbslBindParam{
-		Package:      g.goPkgName(lib),
+		Package:      pkgName,
 		IncludeRel:   includeRel,
 		LibRel:       libRel,
 		AnchorSuffix: anchorSuffix,
@@ -740,28 +797,68 @@ func (g *Generator) applyTierBAbslGo(outputDir string, lib *Lib, darwinBytes, li
 }
 
 func (g *Generator) generateRootBindGO(outputDir string) error {
-	{
-		// for darwin ( currently windows not supported )
-		output, err := g.generateGoSourceByTemplate(
-			"templates/bind.go.tmpl",
-			g.createRootBindGoParamDarwin(),
-		)
-		if err != nil {
-			return err
+	linuxBase := g.createRootBindGoParamLinux()
+	darwinBase := g.createRootBindGoParamDarwin()
+	linuxUnified := g.bindGoParamUnifiedPrebuilt(linuxBase, outputDir, "linux")
+	darwinUnified := g.bindGoParamUnifiedPrebuilt(darwinBase, outputDir, "darwin")
+
+	linuxBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", linuxBase)
+	if err != nil {
+		return err
+	}
+	darwinBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", darwinBase)
+	if err != nil {
+		return err
+	}
+	linuxUnifiedBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", linuxUnified)
+	if err != nil {
+		return err
+	}
+	darwinUnifiedBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", darwinUnified)
+	if err != nil {
+		return err
+	}
+
+	uniPre := linkOnlyUnifiedGoBuildPrefix(g.cfg)
+
+	darwinBytes, linuxBytes, err = g.applyTierBAbslGo(outputDir, nil, darwinBytes, linuxBytes)
+	if err != nil {
+		return err
+	}
+	tierBAbSLPrefix := []byte("//go:build !googlesql_tier_b_absl\n\n")
+	combinedTierUni := []byte("//go:build !googlesql_tier_b_absl && !googlesql_unified_prebuilt\n\n")
+	plainNoUni := []byte("//go:build !googlesql_unified_prebuilt\n\n")
+	patchDefaultBuildTags := func(b []byte) []byte {
+		if bytes.HasPrefix(b, tierBAbSLPrefix) {
+			return append(combinedTierUni, bytes.TrimPrefix(b, tierBAbSLPrefix)...)
 		}
-		if err := os.WriteFile(filepath.Join(outputDir, "bind_darwin.go"), output, 0o600); err != nil {
+		return append(plainNoUni, b...)
+	}
+	darwinBytes = patchDefaultBuildTags(darwinBytes)
+	linuxBytes = patchDefaultBuildTags(linuxBytes)
+
+	darwinUnifiedBytes = append(uniPre, darwinUnifiedBytes...)
+	linuxUnifiedBytes = append(uniPre, linuxUnifiedBytes...)
+
+	if err := os.WriteFile(filepath.Join(outputDir, "bind_darwin.go"), darwinBytes, 0o600); err != nil {
+		return err
+	}
+	if err := os.WriteFile(filepath.Join(outputDir, "bind_linux.go"), linuxBytes, 0o600); err != nil {
+		return err
+	}
+	if err := os.WriteFile(filepath.Join(outputDir, "bind_unified_prebuilt_darwin.go"), darwinUnifiedBytes, 0o600); err != nil {
+		return err
+	}
+	if err := os.WriteFile(filepath.Join(outputDir, "bind_unified_prebuilt_linux.go"), linuxUnifiedBytes, 0o600); err != nil {
+		return err
+	}
+	if existsFile(filepath.Join(outputDir, "bind.go")) {
+		if err := os.Remove(filepath.Join(outputDir, "bind.go")); err != nil {
 			return err
 		}
 	}
-	{
-		output, err := g.generateGoSourceByTemplate(
-			"templates/bind.go.tmpl",
-			g.createRootBindGoParamLinux(),
-		)
-		if err != nil {
-			return err
-		}
-		if err := os.WriteFile(filepath.Join(outputDir, "bind_linux.go"), output, 0o600); err != nil {
+	if existsFile(filepath.Join(outputDir, "bind_unified_prebuilt.go")) {
+		if err := os.Remove(filepath.Join(outputDir, "bind_unified_prebuilt.go")); err != nil {
 			return err
 		}
 	}
@@ -946,7 +1043,7 @@ func bindCCPreludeBeforeHeaders(cfg *Config, lib *Lib) string {
 	return ""
 }
 
-func (g *Generator) buildReplaceNameEntries(pkgKey string) []ReplaceNameEntry {
+func (g *Generator) buildReplaceNameEntries(pkgKey string, linkOnly bool) []ReplaceNameEntry {
 	names := append(
 		append([]string{}, g.cfg.TopLevelNamespaces...),
 		g.cfg.GlobalSymbols...,
@@ -983,16 +1080,28 @@ func (g *Generator) buildReplaceNameEntries(pkgKey string) []ReplaceNameEntry {
 		}
 		overrideBySymbol[o.Symbol] = o
 	}
+	if linkOnly {
+		if pkgKey == "googlesql/public/analyzer" {
+			overrideBySymbol["zetasql"] = SymbolDefineOverride{
+				Pkg:         pkgKey,
+				Symbol:      "zetasql",
+				Replacement: "googlesql",
+				Comment:     "Bridge code still uses zetasql:: while Bazel libgooglesql.a exports googlesql::.",
+			}
+		}
+	}
 	excluded := map[string]struct{}{}
 	for _, n := range g.cfg.CCLib.GlobalExcludeReplaceNames {
 		excluded[n] = struct{}{}
 	}
-	for _, e := range g.cfg.CCLib.ExcludeReplaceNames {
-		if e.Pkg != pkgKey {
-			continue
-		}
-		for _, n := range e.Names {
-			excluded[n] = struct{}{}
+	if linkOnly {
+		for _, e := range g.cfg.CCLib.ExcludeReplaceNames {
+			if e.Pkg != pkgKey {
+				continue
+			}
+			for _, n := range e.Names {
+				excluded[n] = struct{}{}
+			}
 		}
 	}
 	out := make([]ReplaceNameEntry, 0, len(names))
@@ -1096,14 +1205,14 @@ func (g *Generator) libNeedsGoProtobufImport(lib *Lib) bool {
 	return walk(lib)
 }
 
-func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
+func (g *Generator) createBindCCParam(lib *Lib, linkOnly bool) *BindCCParam {
 	param := &BindCCParam{}
 
 	basePrefix := sanitizeIdentifier(strings.ReplaceAll(lib.BasePkg, "/", "_"))
 	param.FQDN = fmt.Sprintf("%s_%s", basePrefix, sanitizeIdentifier(lib.Name))
 	param.PkgPath = lib.BasePkg
 	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
-	param.ReplaceNameEntries = g.buildReplaceNameEntries(pkgKey)
+	param.ReplaceNameEntries = g.buildReplaceNameEntries(pkgKey, linkOnly)
 	param.PreludeBeforeHeaders = bindCCPreludeBeforeHeaders(g.cfg, lib)
 	if strings.HasPrefix(lib.BasePkg, "googlesql") {
 		param.PreludeBeforeHeaders += optionsPublicDescriptorMacrosPrelude
@@ -1153,6 +1262,11 @@ func (g *Generator) createBindCCParam(lib *Lib) *BindCCParam {
 		sources = append(sources, sourceParam)
 	}
 	param.Sources = sources
+	// bridge.inc may reference types only forward-declared in catalog.h (e.g. Conversion); link-only
+	// TUs need the full definitions without amalgamated .cc bodies.
+	if linkOnly && pkgKey == "googlesql/public/catalog" {
+		param.Headers = append(param.Headers, "googlesql/public/cast.h")
+	}
 	deps := make([]string, 0, len(lib.Deps))
 	for _, dep := range lib.Deps {
 		// Parser amalgamation inlines flex_tokenizer.{h,flex.cc,cc}; including

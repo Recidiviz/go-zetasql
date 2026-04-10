@@ -489,6 +489,9 @@ class ABSL_LOCKABLE Mutex {
   void Block(base_internal::PerThreadSynch *s);
   // Wake a thread; return successor.
   base_internal::PerThreadSynch *Wakeup(base_internal::PerThreadSynch *w);
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+  void Dtor();
+#endif
 
   friend class CondVar;   // for access to Trans()/Fer().
   void Trans(MuHow how);  // used for CondVar->Mutex transfer
@@ -977,6 +980,18 @@ inline Mutex::Mutex() : mu_(0) {
 }
 
 inline constexpr Mutex::Mutex(absl::ConstInitType) : mu_(0) {}
+
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+#if !defined(__APPLE__) && !defined(ABSL_BUILD_DLL)
+ABSL_ATTRIBUTE_ALWAYS_INLINE
+inline Mutex::~Mutex() { Dtor(); }
+#endif
+
+#if defined(NDEBUG) && !defined(ABSL_HAVE_THREAD_SANITIZER)
+ABSL_ATTRIBUTE_ALWAYS_INLINE
+inline void Mutex::Dtor() {}
+#endif
+#endif
 
 inline CondVar::CondVar() : cv_(0) {}
 

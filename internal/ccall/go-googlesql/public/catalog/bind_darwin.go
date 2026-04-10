@@ -1,3 +1,5 @@
+//go:build !googlesql_unified_prebuilt
+
 package catalog
 
 /*

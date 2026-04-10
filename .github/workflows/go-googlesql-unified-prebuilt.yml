@@ -11,6 +11,9 @@ jobs:
     name: prebuilt-libs-googlesql-unified + go build (ubuntu)
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    env:
+      CC: clang
+      CXX: clang++
     steps:
       - name: checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -22,10 +25,10 @@ jobs:
           go-version: "1.24"
           cache: true
           cache-dependency-path: go.sum
-      - name: Install clang and bazelisk
+      - name: Install clang, llvm (llvm-nm), and bazelisk
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends clang
+          sudo apt-get install -y --no-install-recommends clang llvm
           go install github.com/bazelbuild/bazelisk@v1.20.0
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - name: Cache Bazel
@@ -36,23 +39,28 @@ jobs:
           key: ${{ runner.os }}-bazel-googlesql-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock', 'internal/cmd/updater/googlesql/.bazelversion') }}
           restore-keys: |
             ${{ runner.os }}-bazel-googlesql-
+      # Root unified-prebuilt CGO links libprotobuf_cgo.a (gitignored); build it before any verify/build that pulls go-protobuf.
+      - name: Build libprotobuf_cgo.a
+        run: make prebuilt-libs
+        env:
+          BAZEL_JOBS: "4"
       - name: Build libgooglesql.a
         run: make prebuilt-libs-googlesql-unified
         env:
-          CC: clang
-          CXX: clang++
           BAZEL_JOBS: "4"
-      - name: Verify archive
+      - name: Verify archives
         run: make verify-prebuilt-googlesql-unified
       - name: CGO smoke build (googlesqlunified)
         run: make local/build-prebuilt-googlesql-unified
         env:
-          CC: clang
-          CXX: clang++
           CGO_ENABLED: "1"
-          CGO_LDFLAGS_ALLOW: "-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold"
-          CGO_LDFLAGS: "-Wl,--no-gc-sections -Wl,--allow-multiple-definition"
+      - name: Root package build (unified root slice)
+        run: make local/build-prebuilt-googlesql-unified-root
+        env:
+          CGO_ENABLED: "1"
+      - name: Root unified-prebuilt test gate (default analyzer shard)
+        run: make local/test-prebuilt-googlesql-unified-root
+        env:
+          CGO_ENABLED: "1"
       - name: Native C link smoke
         run: bash scripts/smoke_link_googlesql_unified.sh
-        env:
-          CC: clang

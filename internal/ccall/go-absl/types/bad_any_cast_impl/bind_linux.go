@@ -1,5 +1,3 @@
-//go:build !googlesql_tier_b_absl
-
 package bad_any_cast_impl
 
 /*

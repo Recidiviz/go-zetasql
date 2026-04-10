@@ -1,5 +1,3 @@
-//go:build !googlesql_tier_b_absl
-
 package errno_saver
 
 /*

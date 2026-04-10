@@ -3,11 +3,7 @@
 
 #include "googlesql/proto/internal_fix_suggestion.pb.h"
 // include sources
-#define schemas googlesql_proto_internal_fix_suggestion_schemas
-#define file_default_instances googlesql_proto_internal_fix_suggestion_file_default_instances
 #include "googlesql/proto/internal_fix_suggestion.pb.cc"
-#undef file_default_instances
-#undef schemas
 // include dependencies
 
 #endif

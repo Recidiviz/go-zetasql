@@ -42,9 +42,13 @@ package status
 #cgo LDFLAGS: -L${SRCDIR}/../../go-googlesql-unified/lib
 #cgo LDFLAGS: -lgooglesql
 #cgo LDFLAGS: -lz
-#cgo LDFLAGS: -lstdc++
 #cgo LDFLAGS: -ldl
 #cgo LDFLAGS: -lpthread
+#cgo LDFLAGS: -L${SRCDIR}/../../go-protobuf/protobuf/lib
+#cgo LDFLAGS: -Wl,--start-group
+#cgo LDFLAGS: -l:libcxx_prebuilt.a
+#cgo LDFLAGS: -l:libcxxabi_prebuilt.a
+#cgo LDFLAGS: -Wl,--end-group
 
 #define GO_EXPORT(API) export_base_status_ ## API
 #include "bridge.h"

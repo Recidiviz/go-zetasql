@@ -17,7 +17,7 @@ The naive “drop `#include` of the amalgamation and blank-import `go-protobuf`�
 - **Preflight:** `make verify-tier-b-cgo-policy` ([`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh))
 - **CI:** default workflow [`.github/workflows/go.yml`](../.github/workflows/go.yml) and manual workflows [`.github/workflows/go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) (focused protobuf prebuilt verification) plus [`.github/workflows/go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml) (Abseil pilot) run the same preflight policy before native builds.
 
-Generator / bind files: [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go), [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go), [`templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl) — cross-check edits against `prebuilt-absl-overlap.md`.
+Generator / bind files: [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go), [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go), [`templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl) — cross-check edits against `prebuilt-absl-overlap.md`. The longer-term single-owner direction for the main `googlesql` path is now the unified archive [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/).
 
 ## Phase 0 — Tooling in this repo (done / ongoing)
 
@@ -26,6 +26,7 @@ Generator / bind files: [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf
 | [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) | Builds `lib/$GOOS_$GOARCH/libprotobuf_cgo.a` and symlinks `lib/libprotobuf_cgo.a`. |
 | [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) | Default protobuf CGO bind files: link `libprotobuf_cgo.a` only (no amalgamated protobuf sources in this package). |
 | Generator [`global_exclude_replace_names`](../internal/cmd/generator/config.yaml) under `cclib` | Set to **`[absl, google]`** so generated `bind.cc` omits per-shard `#define absl` / `#define google` where the generator applies global excludes (run `go run .` in `internal/cmd/generator` after edits). |
+| [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt) + [`link_only_bind_packages`](../internal/cmd/generator/config.yaml) | First unified root slice: build parser/analyzer/catalog/sql_formatter objects into `libgooglesql.a`, then use thin link-only `bind.cc` stubs under `googlesql_unified_prebuilt`. |
 
 ## Phase 1 — Build the Bazel archive locally
 
@@ -70,6 +71,28 @@ After the link is stable, revisit vendored edits under [`internal/ccall/protobuf
 ## Phase 5 — Downstream
 
 Align [`go-googlesqlite`](https://github.com/vantaboard/go-googlesqlite) and [`bigquery-emulator`](https://github.com/goccy/bigquery-emulator) `CGO_LDFLAGS` and tags once go-googlesql’s default or documented path is fixed.
+
+## Current root-slice rollout
+
+The first prebuilt-heavy slice now targets the **root Go package** (`TESTPKG=./`) by moving the largest public/parser CGO owners to a link-only path under `googlesql_unified_prebuilt`:
+
+- `googlesql/public/analyzer`
+- `googlesql/public/catalog`
+- `googlesql/public/simple_catalog`
+- `googlesql/public/sql_formatter`
+- `googlesql/parser/parser`
+- `googlesql/parser/bison_parser_generated_lib`
+
+Use this slice with:
+
+```bash
+make prebuilt-libs verify-prebuilt-protobuf
+make prebuilt-libs-googlesql-unified verify-prebuilt-googlesql-unified
+make local/build-prebuilt-googlesql-unified-root
+make local/test-prebuilt-googlesql-unified-root
+```
+
+The default `-tags googlesql` path remains unchanged and still uses the historical amalgamated `bind.cc` files unless `googlesql_unified_prebuilt` is set.
 
 ## Related tooling (repo root)
 

@@ -1,5 +1,3 @@
-//go:build !googlesql_tier_b_absl
-
 package core_headers
 
 /*

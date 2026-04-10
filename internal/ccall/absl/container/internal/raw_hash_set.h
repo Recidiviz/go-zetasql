@@ -1375,8 +1375,17 @@ struct PolicyFunctions {
 // ClearBackingArray clears the backing array, either modifying it in place,
 // or creating a new one based on the value of "reuse".
 // REQUIRES: c.capacity > 0
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+void ClearBackingArray(CommonFields& c, const PolicyFunctions& policy,
+                       bool reuse, bool soo_enabled);
+inline void ClearBackingArray(CommonFields& c, const PolicyFunctions& policy,
+                              bool reuse) {
+  ClearBackingArray(c, policy, reuse, /*soo_enabled=*/false);
+}
+#else
 void ClearBackingArray(CommonFields& c, const PolicyFunctions& policy,
                        bool reuse);
+#endif
 
 // Type-erased version of raw_hash_set::erase_meta_only.
 void EraseMetaOnly(CommonFields& c, ctrl_t* it, size_t slot_size);
@@ -1407,8 +1416,19 @@ ABSL_ATTRIBUTE_NOINLINE void TransferRelocatable(void*, void* dst, void* src) {
 }
 
 // Type-erased version of raw_hash_set::drop_deletes_without_resize.
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+void DropDeletesWithoutResize(CommonFields& common,
+                              const PolicyFunctions& policy);
+inline void DropDeletesWithoutResize(CommonFields& common,
+                                     const PolicyFunctions& policy,
+                                     void* tmp_space) {
+  (void)tmp_space;
+  DropDeletesWithoutResize(common, policy);
+}
+#else
 void DropDeletesWithoutResize(CommonFields& common,
                               const PolicyFunctions& policy, void* tmp_space);
+#endif
 
 // A SwissTable.
 //
@@ -2443,9 +2463,17 @@ class raw_hash_set {
   //
   // See the comment on `rehash_and_grow_if_necessary()`.
   inline void drop_deletes_without_resize() {
+#ifdef GOOGLESQL_LINK_ONLY_BIND
+    // The Bazel Abseil runtime used by unified-prebuilt hides its in-place
+    // tombstone compaction helper in an anonymous namespace. Fall back to a
+    // regular same-capacity rehash so link-only TUs do not depend on that
+    // private symbol shape.
+    resize(capacity());
+#else
     // Stack-allocate space for swapping elements.
     alignas(slot_type) unsigned char tmp[sizeof(slot_type)];
     DropDeletesWithoutResize(common(), GetPolicyFunctions(), tmp);
+#endif
   }
 
   // Called whenever the table *might* need to conditionally grow.

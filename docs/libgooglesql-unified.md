@@ -11,17 +11,18 @@ This document describes the **unified prebuilt** archive layout and C ABI. It co
 | Symbol | Purpose |
 |--------|---------|
 | `void googlesql_unified_anchor(void)` | Link / smoke anchor ([`c/googlesql_unified_anchor.c`](../internal/ccall/go-googlesql-unified/c/googlesql_unified_anchor.c)). |
-| `const char* googlesql_unified_version_string(void)` | Human-readable label ([`cxx/googlesql_unified_wrapper.cc`](../internal/ccall/go-googlesql-unified/cxx/googlesql_unified_wrapper.cc)). Returns `0.3.0-unified+analyzer` when the archive was built with `//googlesql/public:analyzer` in the Bazel target list (see below). |
-| `const char* googlesql_unified_capabilities(void)` | Comma-separated tags describing what was linked into the archive (`proto,base,resolved_ast` by default; adds `analyzer` when `GOOGLESQL_UNIFIED_INCLUDES_ANALYZER` was set during wrapper compile — i.e. `//googlesql/public:analyzer` appears in `GOOGLESQL_UNIFIED_BAZEL_TARGETS` or the default list). |
+| `const char* googlesql_unified_version_string(void)` | Human-readable label ([`cxx/googlesql_unified_wrapper.cc`](../internal/ccall/go-googlesql-unified/cxx/googlesql_unified_wrapper.cc)). Returns `0.4.0-unified+root-api` when the archive was built with the root slice (`//googlesql/public:analyzer` in the Bazel target list; see below). |
+| `const char* googlesql_unified_capabilities(void)` | Comma-separated tags describing what was linked into the archive (`proto,base,resolved_ast` by default; adds `analyzer,parser,catalog,simple_catalog,sql_formatter` when `GOOGLESQL_UNIFIED_INCLUDES_ANALYZER` was set during wrapper compile — i.e. `//googlesql/public:analyzer` appears in `GOOGLESQL_UNIFIED_BAZEL_TARGETS` or the default list). |
 
 Future versions can add parse/analyzer-specific C entry points once a **namespace-aligned** link story exists for CGO (see [link-only-cgo-migration.md](link-only-cgo-migration.md) **Namespace alignment**). The **North-star analyzer build** and optional target override below remain the path to a larger `libgooglesql.a`.
 
 ### What is inside `libgooglesql.a`
 
 - Object files from **GoogleSQL Bazel `cc_library` / `cc_proto_library` targets** listed in [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt) (comments and blank lines ignored), merged from `*.pic.o` under the Bazel `bazel-bin/googlesql` tree after a successful `bazel build`. The extract script [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) reads that file unless **`GOOGLESQL_UNIFIED_BAZEL_TARGETS`** is set.
+- The extract script also pulls the small non-protobuf external closure that the root slice now expects `libgooglesql.a` to own: RE2 `*.pic.o`, Google APIs proto objects for `google/type:{date,timeofday}` and `google/rpc:status`, plus ICU objects extracted from Bazel's `libicuuc.a`, `libicui18n.a`, and `libicudata.a`.
 - The compiled C anchor object and **C++ wrapper** object (version string).
 
-The **default list** is intentionally **not** the full `//googlesql/public:analyzer` link closure: in many environments the analyzer depends on **parser codegen** that pulls **`com_github_inspirer_textmapper`** (see **Textmapper / module fetch**). The default closure instead covers **Layer A** (`//googlesql/base:*` infrastructure) plus **all `cc_proto_library` targets** under `//googlesql/public/...`, `//googlesql/proto/...`, and `//googlesql/resolved_ast/...` — i.e. protobuf-backed types on the road to AST and analyzer, without loading `//googlesql/parser:*`.
+The **default list** now includes the first **root API slice** in addition to the proto/base closure: `//googlesql/public:analyzer`, `//googlesql/public:catalog`, `//googlesql/public:simple_catalog`, `//googlesql/public:sql_formatter`, `//googlesql/parser:parser`, and `//googlesql/parser:bison_parser_generated_lib`. That is enough to support the top-level Go package under `-tags googlesql,googlesql_unified_prebuilt` once the corresponding CGO packages are emitted as link-only stubs. These labels still depend on **parser codegen** that pulls **`com_github_inspirer_textmapper`** (see **Textmapper / module fetch**), so environments without access to that module may need to override `GOOGLESQL_UNIFIED_BAZEL_TARGETS` back down to the proto/base closure.
 
 ### Phase 3 — Bazel target list (layers)
 
@@ -35,7 +36,7 @@ GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging …' make prebuilt-lib
 |-------|---------|------------------|
 | **A** | `//googlesql/base:*` core (logging, status, check, arena, strings, stl_util, base, endian, …) | Yes — first block in `default_bazel_targets.txt` |
 | **B–D (proto)** | `cc_proto_library` for public protos, internal `//googlesql/proto:*`, function enums, `information_schema`, `public/proto`, and **`//googlesql/resolved_ast:*_cc_proto`** | Yes — remainder of the file |
-| **E (optional monolith)** | `//googlesql/public:analyzer` as a single label | **No** in the committed default list (keeps CI extract time predictable). Add via `GOOGLESQL_UNIFIED_BAZEL_TARGETS` when your workspace resolves Textmapper/parser gen (see below). When this label is built, the extract script sets `GOOGLESQL_UNIFIED_INCLUDES_ANALYZER` for the wrapper so `googlesql_unified_version_string` / `googlesql_unified_capabilities` report the expanded archive. **Link-only CGO** for generated packages still requires [namespace-aligned objects](link-only-cgo-migration.md#namespace-alignment-required-for-real-opt-in), not raw Bazel `*.pic.o` alone. |
+| **E (root API slice)** | `//googlesql/public:analyzer` plus parser/catalog/simple_catalog/sql_formatter labels | **Yes** in the committed default list. This is the first slice used for prebuilt-heavy Go builds of `TESTPKG=./`. When `//googlesql/public:analyzer` is built, the extract script sets `GOOGLESQL_UNIFIED_INCLUDES_ANALYZER` for the wrapper so `googlesql_unified_version_string` / `googlesql_unified_capabilities` report the expanded archive. **Link-only CGO** for generated packages still requires [namespace-aligned objects](link-only-cgo-migration.md#namespace-alignment-required-for-real-opt-in), not raw Bazel `*.pic.o` alone. |
 
 **North-star analyzer build:** From `internal/cmd/updater/googlesql`, the intended check is:
 
@@ -52,12 +53,13 @@ bazel query 'kind(cc_library, deps(//googlesql/public:analyzer))' --output=label
 bazel query 'deps(//googlesql/public:analyzer, 1)' --output=label
 ```
 
-Use the output to justify expanding `GOOGLESQL_UNIFIED_BAZEL_TARGETS` toward parser and analyzer `cc_library` targets once Textmapper is available.
+Use the output to justify widening beyond the root API slice once Textmapper is available and the current link-only package set is stable.
 
 ### Textmapper / `go_deps` (401 and other fetch failures)
 
 - **Module:** `com_github_inspirer_textmapper` is declared in [`internal/cmd/updater/googlesql/MODULE.bazel`](../internal/cmd/updater/googlesql/MODULE.bazel) via Gazelle `go_deps`. The parser’s **Textmapper** genrule needs the **`textmapper`** binary from that module.
 - **Symptom:** Bazel reports **`401 Unauthorized`** (or timeouts) while fetching `github.com/inspirer/textmapper@…` through a **private** Go module proxy (e.g. Artifact Registry). The Go toolchain may suggest adding the registry host to **`GONOPROXY`** / **`GOPRIVATE`** and using credential helpers.
+- **Default extractor behavior:** [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) now passes `--repo_env=GOPROXY=https://proxy.golang.org,direct` by default for the unified archive build so public Textmapper fetches do not depend on the host’s private proxy configuration. Override with **`GOOGLESQL_UNIFIED_GOPROXY`** if your environment needs something different.
 - **Mitigations (pick what matches org policy):** configure **`GOPROXY` / `GONOPROXY`** so public modules resolve from `proxy.golang.org` or direct VCS; use **`artifact-registry-go-tools`** or org credential helpers for private mirrors; **vendor** the module; populate **Bazel / module cache** on an online machine and reuse offline; run builds on a host or VPN that can reach the registry.
 
 ### Relationship to protobuf / Abseil prebuilts
@@ -105,6 +107,8 @@ GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging //googlesql/base:statu
 make verify-prebuilt-googlesql-unified
 ```
 
+The verification script does a small `nm -C` spot check in addition to confirming the archive exists. It checks representative ownership symbols for ICU, RE2, Google APIs date/time protos, `googlesql::reflection::*`, and parser AST enums so archive-boundary regressions fail fast. When **`llvm-nm`** is on `PATH` and **`libprotobuf_cgo.a`** exists (run **`make prebuilt-libs`** first), it also asserts **zero** overlapping **global (`T`)** symbol names between `libgooglesql.a` and `libprotobuf_cgo.a` — duplicate globals plus **`-Wl,--allow-multiple-definition`** risk undefined behavior at startup (see [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md)).
+
 ## Native C link smoke
 
 After the archive exists:
@@ -117,22 +121,54 @@ Compiles [`smoke/smoke_main.c`](../internal/ccall/go-googlesql-unified/smoke/smo
 
 ## Go build tag `googlesql_unified_prebuilt`
 
-Package [`internal/ccall/go-googlesql-unified/googlesqlunified`](../internal/ccall/go-googlesql-unified/googlesqlunified) links `libgooglesql.a` when the archive exists. Use with `-tags googlesql,googlesql_unified_prebuilt` for smoke tests.
+Package [`internal/ccall/go-googlesql-unified/googlesqlunified`](../internal/ccall/go-googlesql-unified/googlesqlunified) links `libgooglesql.a` when the archive exists. Use with `-tags googlesql,googlesql_unified_prebuilt` for smoke tests and the first root-package slice.
 
-[`Makefile`](../Makefile) target **`local/build-prebuilt-googlesql-unified`** matches what CI runs for the Go step (with `CGO_LDFLAGS_ALLOW` / `CGO_LDFLAGS` for mold-compatible links on Linux).
+[`Makefile`](../Makefile) target **`local/build-prebuilt-googlesql-unified`** remains the archive smoke build for package `googlesqlunified`. Use **`local/build-prebuilt-googlesql-unified-root`** for the full-repo build slice (default **`BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`**). **`local/test-prebuilt-googlesql-unified-root`** defaults to the **`public/analyzer`** package so the process exercises unified-prebuilt CGO + `libprotobuf_cgo.a` without requiring a root **`bind.cc`** split; override **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`** only after that split lands (same pattern as [`base/status`](../internal/ccall/go-base/status/bind_linux.go)). The Makefile sets **`CGO_CXXFLAGS_PREBUILT`**, **`CGO_LDFLAGS_ALLOW`**, and **`CGO_LDFLAGS`** (including **`-stdlib=libc++`**) for Bazel **libc++** / mold-compatible links on Linux.
 
 ## CI (GitHub Actions)
 
-Workflow **[`.github/workflows/go-googlesql-unified-prebuilt.yml`](../.github/workflows/go-googlesql-unified-prebuilt.yml)** runs **`make prebuilt-libs-googlesql-unified`** (using the **default** [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt)), **`make verify-prebuilt-googlesql-unified`**, **`make local/build-prebuilt-googlesql-unified`**, and **`scripts/smoke_link_googlesql_unified.sh`**.
+Workflow **[`.github/workflows/go-googlesql-unified-prebuilt.yml`](../.github/workflows/go-googlesql-unified-prebuilt.yml)** runs this sequence (matches a green local run):
+
+1. **`make prebuilt-libs`** — produces **`libprotobuf_cgo.a`** (required for any unified-prebuilt link that imports **`go-protobuf`**; not committed).
+2. **`make prebuilt-libs-googlesql-unified`** using the committed default [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt)
+3. **`make verify-prebuilt-googlesql-unified`** (install **`llvm`** on the runner so **`llvm-nm`** can enforce the duplicate-**`T`** check when both archives exist)
+4. **`make local/build-prebuilt-googlesql-unified`**
+5. **`make local/build-prebuilt-googlesql-unified-root`**
+6. **`make local/test-prebuilt-googlesql-unified-root`** (default analyzer shard)
+7. **`bash scripts/smoke_link_googlesql_unified.sh`**
 
 - **Triggers:** `workflow_dispatch` (manual) and a **weekly** `schedule` cron for regression signal and cache warmth. Forks may disable scheduled workflows unless enabled in repository settings.
 - **Full analyzer closure** (e.g. after fixing Textmapper fetch) is **not** the default CI graph; run a manual workflow or override **`GOOGLESQL_UNIFIED_BAZEL_TARGETS`** locally when expanding toward `//googlesql/public:analyzer`.
 - Requires **`submodules: recursive`** checkout so [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) is present.
+
+## Local overrides
+
+The unified-prebuilt flow has two main operator knobs for reproducible experiments:
+
+- **`GOOGLESQL_UNIFIED_BAZEL_TARGETS`** overrides the Bazel label list used to build `libgooglesql.a`. Leave it unset to match CI exactly.
+- **`GOOGLESQL_UNIFIED_GOPROXY`** overrides the extractor's Bazel `--repo_env=GOPROXY=...` value. Leave it unset to use `https://proxy.golang.org,direct`, which is what the extract script uses by default.
+
+Examples:
+
+```bash
+# Match CI exactly.
+make prebuilt-libs-googlesql-unified
+
+# Narrow the archive to a smaller experiment without changing the committed default list.
+GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging //googlesql/base:status' \
+  make prebuilt-libs-googlesql-unified
+
+# Reproduce the same build with a different module proxy configuration.
+GOOGLESQL_UNIFIED_GOPROXY='https://proxy.golang.org,direct' \
+  make prebuilt-libs-googlesql-unified
+```
 
 ## Quick verification checklist
 
 - [ ] `bazel build` of the labels in `default_bazel_targets.txt` succeeds in `internal/cmd/updater/googlesql`.
 - [ ] `make prebuilt-libs-googlesql-unified` produces `internal/ccall/go-googlesql-unified/lib/$(go env GOOS)_$(go env GOARCH)/libgooglesql.a`.
 - [ ] `make verify-prebuilt-googlesql-unified` passes.
-- [ ] `bash scripts/smoke_link_googlesql_unified.sh` passes.
 - [ ] `make local/build-prebuilt-googlesql-unified` passes with unified prebuilt tags.
+- [ ] `make local/build-prebuilt-googlesql-unified-root` passes (default **`BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`**).
+- [ ] `bash scripts/smoke_link_googlesql_unified.sh` passes.
+- [ ] `make local/test-prebuilt-googlesql-unified-root` passes (default analyzer **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT`**; full repo **`./`** remains blocked on root **`bind.cc`** / unified split).

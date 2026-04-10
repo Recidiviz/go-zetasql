@@ -3,11 +3,7 @@
 
 #include "googlesql/public/simple_token_list.pb.h"
 // include sources
-#define schemas googlesql_public_simple_token_list_schemas
-#define file_default_instances googlesql_public_simple_token_list_file_default_instances
 #include "googlesql/public/simple_token_list.pb.cc"
-#undef file_default_instances
-#undef schemas
 // include dependencies
 
 #endif

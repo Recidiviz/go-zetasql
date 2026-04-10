@@ -7,7 +7,7 @@ package googlesqlunified
 
 /*
 #cgo CFLAGS: -std=c11
-#cgo linux LDFLAGS: -L${SRCDIR}/../lib -lgooglesql -lz -lstdc++ -ldl -lpthread
+#cgo linux LDFLAGS: -L${SRCDIR}/../lib -lgooglesql -lz -ldl -lpthread
 #cgo darwin LDFLAGS: -L${SRCDIR}/../lib -lgooglesql -lz -lc++
 
 void googlesql_unified_anchor(void);

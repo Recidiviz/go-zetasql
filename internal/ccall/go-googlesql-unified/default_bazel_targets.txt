@@ -20,6 +20,7 @@
 //googlesql/proto:script_exception_cc_proto
 //googlesql/proto:simple_catalog_cc_proto
 //googlesql/proto:simple_property_graph_cc_proto
+//googlesql/common:reflection_cc_proto
 //googlesql/public:annotation_cc_proto
 //googlesql/public:builtin_function_cc_proto
 //googlesql/public:collation_cc_proto
@@ -63,3 +64,11 @@
 //googlesql/resolved_ast:resolved_ast_enums_cc_proto
 //googlesql/resolved_ast:resolved_node_kind_cc_proto
 //googlesql/resolved_ast:serialization_cc_proto
+# Layer E — root API slice (parser + analyzer + catalog/formatter helpers)
+//googlesql/parser:bison_parser_generated_lib
+//googlesql/parser:ast_enums_cc_proto
+//googlesql/parser:parser
+//googlesql/public:analyzer
+//googlesql/public:catalog
+//googlesql/public:simple_catalog
+//googlesql/public:sql_formatter
