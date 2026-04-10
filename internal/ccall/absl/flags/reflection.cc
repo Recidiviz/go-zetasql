@@ -19,8 +19,11 @@
 
 #include <atomic>
 #include <string>
+#include <string_view>
+#include <unordered_map>
 
 #include "absl/base/config.h"
+#include "absl/base/no_destructor.h"
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/commandlineflag.h"
@@ -68,7 +71,8 @@ class FlagRegistry {
   friend void FinalizeRegistry();
 
   // The map from name to flag, for FindFlag().
-  using FlagMap = absl::flat_hash_map<absl::string_view, CommandLineFlag*>;
+  // std::unordered_map: avoid SwissTable static-init issues under unified prebuilt.
+  using FlagMap = std::unordered_map<std::string_view, CommandLineFlag*>;
   using FlagIterator = FlagMap::iterator;
   using FlagConstIterator = FlagMap::const_iterator;
   FlagMap flags_;
@@ -169,7 +173,7 @@ void FlagRegistry::RegisterFlag(CommandLineFlag& flag, const char* filename) {
 }
 
 FlagRegistry& FlagRegistry::GlobalRegistry() {
-  static FlagRegistry* global_registry = new FlagRegistry;
+  static absl::NoDestructor<FlagRegistry> global_registry;
   return *global_registry;
 }
 
@@ -216,6 +220,13 @@ void FinalizeRegistry() {
 
 namespace {
 
+// These are only used as constexpr global objects.
+// They do not use a virtual destructor to simplify their implementation.
+// They are not destroyed except at program exit, so leaks do not matter.
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#endif
 class RetiredFlagObj final : public CommandLineFlag {
  public:
   constexpr RetiredFlagObj(const char* name, FlagFastTypeId type_id)
@@ -275,6 +286,9 @@ class RetiredFlagObj final : public CommandLineFlag {
   const char* const name_;
   const FlagFastTypeId type_id_;
 };
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 }  // namespace
 

@@ -107,6 +107,8 @@ After these changes, `go test -tags googlesql,googlesql_unified_prebuilt -c ./` 
 
 **Update (2026-04, GDB detail):** On `GroupSse2Impl::GroupSse2Impl`, **`rcx` is `0`** at the faulting `movdqu (%rcx)` — the SwissTable control pointer is null while `DescriptorPool::Tables::Tables()` runs the `well_known_types_.insert({…})` initializer list (see `descriptor.cc` in the vendored tree around `Tables::Tables`). `make verify-prebuilt-googlesql-unified` stays green (zero duplicate global **`T`** vs `libprotobuf_cgo.a`); **`ldd`** shows **libc++** and no **libstdc++**. Linking with **mold**, **bfd**, or **without** `--allow-multiple-definition` still crashes at run time. **Target bisection** (`GOOGLESQL_UNIFIED_BAZEL_TARGETS`) is still a valid next step if a duplicate `google::protobuf` / Abseil object hypothesis resurfaces after further vendor alignment.
 
+**Update (2026-04, `CapacityToGrowth` / `IsValidCapacity` abort):** Under `types.init` → `Int64ArrayType`, GDB can show `CapacityToGrowth` asserting on a “capacity” that is actually another field (for example a `slots_` pointer), i.e. **`CommonFields` / SwissTable layout skew** between translation units. That happens when **vendored** [`internal/ccall/absl`](../internal/ccall/absl) drifts from the Abseil revision used to build `libgooglesql.a` and `libprotobuf_cgo.a` (Bazel `external/abseil-cpp~` in the GoogleSQL submodule). **Fix:** refresh the tree from that Bazel Abseil export; **leave** [`internal/ccall/absl/time`](../internal/ccall/absl/time) unchanged so the existing `go-absl` cctz bridge keeps compiling. With aligned headers, `make local/test-root-unified GO_TEST_FLAGS='-run ^$'` can start the process without aborting.
+
 ## Hypotheses tested (2026-04)
 
 | Hypothesis | Result |
