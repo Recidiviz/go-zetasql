@@ -6665,10 +6665,10 @@ void GO_EXPORT(ResolvedCreateTableFunctionStmt_new)(void * arg0,int arg1,int arg
   UNIQUE_PTR_LIST_TO_VEC(output_column_list_ref, ResolvedOutputColumn, arg10);
 
   *(std::unique_ptr<zetasql::ResolvedCreateTableFunctionStmt> *)arg13 = zetasql::MakeResolvedCreateTableFunctionStmt(
-    slice_to_strs(arg0),
+    googlesql_public_analyzer_bridge_slice_to_strs(arg0),
     (zetasql::ResolvedCreateStatementEnums::CreateScope)arg1,
     (zetasql::ResolvedCreateStatementEnums::CreateMode)arg2,
-    slice_to_strs(arg3),
+    googlesql_public_analyzer_bridge_slice_to_strs(arg3),
     *(zetasql::FunctionSignature *)arg4,
     arg5,
     std::move(option_list),

@@ -62,5 +62,9 @@ jobs:
         run: make local/test-prebuilt-googlesql-unified-root
         env:
           CGO_ENABLED: "1"
+      - name: Root module compile-only (go test -c ./, unified prebuilt)
+        run: make local/compile-root-unified-test TESTPKG=./
+        env:
+          CGO_ENABLED: "1"
       - name: Native C link smoke
         run: bash scripts/smoke_link_googlesql_unified.sh

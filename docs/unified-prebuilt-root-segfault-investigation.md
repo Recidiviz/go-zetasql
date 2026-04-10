@@ -92,3 +92,15 @@ per-package cgo links match the protobuf archive (see `bindGoParamUnifiedPrebuil
 **Full repo test `./`:** the top-level [`internal/ccall/go-googlesql/bind.cc`](../internal/ccall/go-googlesql/bind.cc) amalgamation + `export.inc` still hits protobuf static-registration collisions when built as a single TU; the default `make local/test-prebuilt-googlesql-unified-root` target uses
 `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./internal/ccall/go-googlesql/public/analyzer/` until the
 root bind is split for unified the same way as [`base/status`](../internal/ccall/go-base/status/bind_linux.go) (`//go:build !googlesql_unified_prebuilt` + `bind_unified_prebuilt_linux.go`).
+
+**Update (2026-04):** On a Linux host with `Makefile` `CGO_CXXFLAGS_PREBUILT` / `CGO_LDFLAGS_BASE` (`-stdlib=libc++`), `ldd` on the unified-prebuilt test binary shows **libc++.so.1** and **no libstdc++.so** — so mixed GNU/libstdc++ vs LLVM/libc++ is not the only failure mode.
+
+**Duplicate Abseil cctz / `civil_time_detail` vs `libprotobuf_cgo.a`:** `libprotobuf_cgo.a` merges Abseil `*.pic.o` from Bazel. The same **IANA time_zone** object files and **`civil_time_detail.cc`** body also appear in Go CGO TUs (`internal/ccall/go-absl/time/.../cctz/time_zone`, `civil_time/export.inc`, etc.). With `-Wl,--allow-multiple-definition`, the linker can merge incompatible copies and the process still crashes in `DescriptorPool::Tables` / `GroupSse2Impl` at startup.
+
+Mitigations in-tree:
+
+- [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) **drops** Abseil members `time_zone_*.pic.o` and `zone_info_source.pic.o` from the merged `libprotobuf_cgo.a` so the **Go `cctz/time_zone` shard** is the single owner of that implementation.
+- [`civil_time/export.inc`](../internal/ccall/go-absl/time/go_internal/cctz/civil_time/export.inc) no longer `#include`s `civil_time_detail.cc`; that TU stays in `libprotobuf_cgo.a` only. The `civil_time` CGO package [blank-imports `go-protobuf/protobuf`](../internal/ccall/go-absl/time/go_internal/cctz/civil_time/bind_linux.go) so out-of-line symbols resolve.
+- [`public/analyzer/bridge_cc.inc`](../internal/ccall/go-googlesql/public/analyzer/bridge_cc.inc) uses a uniquely named helper `googlesql_public_analyzer_bridge_slice_to_strs` so link-only root + analyzer shards do not emit two globals named `slice_to_strs` when building **without** `--allow-multiple-definition`.
+
+After these changes, `go test -tags googlesql,googlesql_unified_prebuilt -c ./` can link with **only** `-Wl,--no-gc-sections -fuse-ld=mold -stdlib=libc++` on `CGO_LDFLAGS` (no `--allow-multiple-definition`). **Running** the binary can still **SIGSEGV** at startup with the same GDB shape as above — so duplicate weak/local merging is not the only remaining hypothesis; further work may target descriptor registration / archive skew beyond global `T` overlap.

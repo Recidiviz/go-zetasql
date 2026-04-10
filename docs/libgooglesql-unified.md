@@ -125,6 +125,8 @@ Package [`internal/ccall/go-googlesql-unified/googlesqlunified`](../internal/cca
 
 [`Makefile`](../Makefile) target **`local/build-prebuilt-googlesql-unified`** remains the archive smoke build for package `googlesqlunified`. Use **`local/build-prebuilt-googlesql-unified-root`** for the full-repo build slice (default **`BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`**). **`local/test-prebuilt-googlesql-unified-root`** defaults to the **`public/analyzer`** package so the process exercises unified-prebuilt CGO + `libprotobuf_cgo.a` without requiring a root **`bind.cc`** split; override **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`** only after that split lands (same pattern as [`base/status`](../internal/ccall/go-base/status/bind_linux.go)). The Makefile sets **`CGO_CXXFLAGS_PREBUILT`**, **`CGO_LDFLAGS_ALLOW`**, and **`CGO_LDFLAGS`** (including **`-stdlib=libc++`**) for Bazel **libc++** / mold-compatible links on Linux.
 
+**Root `TESTPKG=./`:** use **`make local/compile-root-unified-test`** to **`go test -c`** only (writes **`$(GO_CACHE_ROOT)/googlesql_root_unified.test`**). That validates link + CGO without executing the test harness (startup may still **SIGSEGV** when run; see [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md)). Use **`make local/test-root-unified`** when you need to execute tests after rebuilding **`libprotobuf_cgo.a`** (`extract_protobuf_cgo_lib.sh` filters duplicate Abseil **cctz** members) and the **`civil_time`** / analyzer bridge fixes described there.
+
 ## CI (GitHub Actions)
 
 Workflow **[`.github/workflows/go-googlesql-unified-prebuilt.yml`](../.github/workflows/go-googlesql-unified-prebuilt.yml)** runs this sequence (matches a green local run):
@@ -135,7 +137,8 @@ Workflow **[`.github/workflows/go-googlesql-unified-prebuilt.yml`](../.github/wo
 4. **`make local/build-prebuilt-googlesql-unified`**
 5. **`make local/build-prebuilt-googlesql-unified-root`**
 6. **`make local/test-prebuilt-googlesql-unified-root`** (default analyzer shard)
-7. **`bash scripts/smoke_link_googlesql_unified.sh`**
+7. **`make local/compile-root-unified-test`** — link-only **`go test -c ./`** for the full root module (no test execution; safe CI signal while runtime startup is still triaged)
+8. **`bash scripts/smoke_link_googlesql_unified.sh`**
 
 - **Triggers:** `workflow_dispatch` (manual) and a **weekly** `schedule` cron for regression signal and cache warmth. Forks may disable scheduled workflows unless enabled in repository settings.
 - **Full analyzer closure** (e.g. after fixing Textmapper fetch) is **not** the default CI graph; run a manual workflow or override **`GOOGLESQL_UNIFIED_BAZEL_TARGETS`** locally when expanding toward `//googlesql/public:analyzer`.
@@ -171,4 +174,5 @@ GOOGLESQL_UNIFIED_GOPROXY='https://proxy.golang.org,direct' \
 - [ ] `make local/build-prebuilt-googlesql-unified` passes with unified prebuilt tags.
 - [ ] `make local/build-prebuilt-googlesql-unified-root` passes (default **`BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`**).
 - [ ] `bash scripts/smoke_link_googlesql_unified.sh` passes.
-- [ ] `make local/test-prebuilt-googlesql-unified-root` passes (default analyzer **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT`**; full repo **`./`** remains blocked on root **`bind.cc`** / unified split).
+- [ ] `make local/test-prebuilt-googlesql-unified-root` passes (default analyzer **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT`**).
+- [ ] `make local/compile-root-unified-test` passes (`TESTPKG=./`; link-only — full **`local/test-root-unified`** may still hit startup SIGSEGV until [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md) is fully closed).

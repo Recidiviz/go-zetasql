@@ -50,7 +50,7 @@ DOCKER_DEV_VOLUMES := \
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache cache-clean-cgo \
 	local/build local/test local/test-fresh \
 	local/test-prebuilt-absl local/build-prebuilt-absl \
-	local/build-prebuilt-googlesql-unified local/build-prebuilt-googlesql-unified-root local/test-prebuilt-googlesql-unified-root local/test-root-unified \
+	local/build-prebuilt-googlesql-unified local/build-prebuilt-googlesql-unified-root local/test-prebuilt-googlesql-unified-root local/test-root-unified local/compile-root-unified-test \
 	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified package-protobuf-prebuilt-tarball \
 	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified smoke-link-googlesql-unified \
 	verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy sync-protobuf-vendor-from-bazel regenerate-googlesql-cpp-protos \
@@ -298,6 +298,22 @@ local/test-root-unified: cache-dirs verify-prebuilt-protobuf verify-prebuilt-goo
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
 	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt -v $(TESTPKG) -count=1 $(GO_TEST_FLAGS)
+
+# Link-only: compile the root unified-prebuilt test binary without running it (no startup SIGSEGV).
+# Confirms CGO + duplicate-symbol posture after extract_protobuf_cgo_lib / bridge edits; see
+# docs/unified-prebuilt-root-segfault-investigation.md.
+local/compile-root-unified-test: cache-dirs verify-prebuilt-protobuf verify-prebuilt-googlesql-unified
+	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt -c -o "$(GO_CACHE_ROOT)/googlesql_root_unified.test" $(TESTPKG)
 
 smoke-link-googlesql-unified:
 	bash scripts/smoke_link_googlesql_unified.sh

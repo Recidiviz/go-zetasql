@@ -59,9 +59,6 @@
 #include "absl/time/internal/cctz/include/cctz/civil_time.h"
 //#undef private
 
-// include sources
-#include "absl/time/internal/cctz/src/civil_time_detail.cc"
-
 // include dependencies
 #include "go-absl/base/config/export.inc"
 

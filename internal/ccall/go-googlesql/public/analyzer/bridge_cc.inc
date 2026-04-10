@@ -86,7 +86,9 @@ template<typename T> std::vector<T> slice_to_vec(void *slice)
   return vec;
 }
 
-std::vector<std::string> slice_to_strs(void *slice)
+// Distinct name: root googlesql/bind.cc and public/analyzer/bind.cc both include this header; two
+// globals named slice_to_strs would duplicate at link time without -Wl,--allow-multiple-definition.
+inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(void *slice)
 {
   GoSlice *goslice = (GoSlice *)slice;
   char **data = (char **)goslice->data;
