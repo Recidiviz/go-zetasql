@@ -89,8 +89,22 @@ fi
 OUT="$REPO_ROOT/internal/ccall/go-protobuf/protobuf/lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a"
 mkdir -p "$(dirname "$OUT")"
 rm -f "$OUT"
+# ar stores only member basenames. Bazel outputs multiple distinct paths whose basename is
+# identical (e.g. absl/flags/_objs/commandlineflag{,_internal}/commandlineflag.pic.o). Merging
+# those into one archive yields duplicate member names; the linker can resolve the wrong object
+# under -Wl,--whole-archive and Abseil flag / SwissTable state becomes inconsistent (SIGSEGV in
+# absl::flags_internal::FlagRegistry::RegisterFlag). Stage each .o with a unique filename first.
+STAGE="$(mktemp -d "${TMPDIR:-/tmp}/libprotobuf_cgo_objs.XXXXXX")"
+trap 'rm -rf "$STAGE"' EXIT
+i=0
+for obj in ${OBJS}; do
+  i=$((i + 1))
+  base="$(basename "$obj")"
+  parent="$(basename "$(dirname "$obj")")"
+  cp -f "$obj" "$STAGE/${i}_${parent}_${base}"
+done
 # shellcheck disable=SC2086
-ar crs "$OUT" ${OBJS}
+ar crs "$OUT" "$STAGE"/*.o
 echo "Wrote $OUT ($(ls -lh "$OUT" | awk '{print $5}'))"
 
 # Stable -L path for the default protobuf bind files: -L ${SRCDIR}/lib -lprotobuf_cgo

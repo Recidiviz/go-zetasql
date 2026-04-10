@@ -16,6 +16,8 @@
 
 #include "googlesql/analyzer/analyzer_impl.h"
 
+#include <cstdlib>
+
 #include <iostream>
 #include <memory>
 #include <ostream>
@@ -42,17 +44,19 @@
 #include "googlesql/public/types/type_factory.h"
 #include "googlesql/resolved_ast/resolved_ast.h"
 #include "googlesql/resolved_ast/validator.h"
-#include "absl/flags/flag.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 #include "googlesql/base/status_macros.h"
 
-// This provides a way to extract and look at the googlesql resolved AST
-// from within some other test or tool.  It prints to cout rather than logging
-// because the output is often too big to log without truncating.
-ABSL_FLAG(bool, googlesql_print_resolved_ast, false,
-          "Print resolved AST to stdout after resolving (for debugging)");
+// Debug printing without ABSL_FLAG: static registration runs during libc startup
+// before Abseil's FlagRegistry is safe when libgooglesql.a links beside
+// libprotobuf_cgo.a (unified prebuilt). Use GOOGLESQL_PRINT_RESOLVED_AST=1 instead
+// of --googlesql_print_resolved_ast.
+static bool GooglesqlPrintResolvedAst() {
+  const char* v = std::getenv("GOOGLESQL_PRINT_RESOLVED_AST");
+  return v != nullptr && v[0] != '\0' && v[0] != '0';
+}
 
 namespace googlesql {
 
@@ -154,7 +158,7 @@ absl::Status InternalAnalyzeExpressionFromParserAST(
           validator.ValidateStandaloneResolvedExpr(resolved_expr.get()));
     }
 
-    if (absl::GetFlag(FLAGS_googlesql_print_resolved_ast)) {
+    if (GooglesqlPrintResolvedAst()) {
       std::cout << "Resolved AST from thread "
                 << std::this_thread::get_id()
                 << ":" << '\n'

@@ -59,6 +59,8 @@
 #include "absl/time/internal/cctz/include/cctz/civil_time.h"
 //#undef private
 
+// civil_time_detail.cc: single-owned in libprotobuf_cgo.a (see export.inc).
+
 // include dependencies
 #include "go-absl/base/config/export.inc"
 
