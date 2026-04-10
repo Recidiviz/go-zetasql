@@ -15,6 +15,7 @@ package parser
 #cgo CXXFLAGS: -I../../../boringssl
 #cgo CXXFLAGS: -I../../../flex/src
 #cgo CXXFLAGS: -DGOOGLESQL_LINK_ONLY_BIND
+#cgo CXXFLAGS: -DGOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC
 #cgo CXXFLAGS: -Wno-char-subscripts
 #cgo CXXFLAGS: -Wno-sign-compare
 #cgo CXXFLAGS: -Wno-switch

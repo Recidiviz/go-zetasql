@@ -1,7 +1,7 @@
 #ifndef googlesql_parser_parser_bind_cc
 #define googlesql_parser_parser_bind_cc
 
-#ifndef GOOGLESQL_LINK_ONLY_BIND
+#if !defined(GOOGLESQL_LINK_ONLY_BIND) && !defined(GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC)
 
 // switch namespace
 #define differential_privacy googlesql_parser_parser_differential_privacy
@@ -179,7 +179,7 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#else /* GOOGLESQL_LINK_ONLY_BIND */
+#else /* GOOGLESQL_LINK_ONLY_BIND || GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC */
 
 // Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
 // archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
@@ -284,6 +284,6 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* GOOGLESQL_LINK_ONLY_BIND */
+#endif /* fat vs thin bind.cc */
 
 #endif /* googlesql_parser_parser_bind_cc */

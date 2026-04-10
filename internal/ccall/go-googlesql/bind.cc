@@ -1,7 +1,7 @@
 #ifndef googlesql_bind_cc
 #define googlesql_bind_cc
 
-#ifndef GOOGLESQL_LINK_ONLY_BIND
+#if !defined(GOOGLESQL_LINK_ONLY_BIND) && !defined(GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC)
 
 #define GO_EXPORT(def) export_googlesql_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
@@ -36,7 +36,7 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#else /* GOOGLESQL_LINK_ONLY_BIND */
+#else /* GOOGLESQL_LINK_ONLY_BIND || GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC */
 
 // Link-only root bind.cc: bridge headers only (no export.inc amalgamation). Implementations
 // come from libgooglesql.a when built with -DGOOGLESQL_LINK_ONLY_BIND. See docs/link-only-cgo-migration.md.
@@ -76,6 +76,6 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* GOOGLESQL_LINK_ONLY_BIND */
+#endif /* fat vs thin bind.cc */
 
 #endif /* googlesql_bind_cc */

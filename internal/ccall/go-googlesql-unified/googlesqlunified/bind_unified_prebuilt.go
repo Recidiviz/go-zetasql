@@ -16,6 +16,15 @@ char* googlesql_unified_capabilities(void);
 */
 import "C"
 
+import (
+	// Ensure libprotobuf_cgo.a C++ runtime initializes before libgooglesql.a static
+	// constructors (descriptor registration / DescriptorPool::Tables). Without this edge,
+	// Go package init order vs sibling imports is undefined and we observed startup SIGSEGV in
+	// absl::raw_hash_set during DescriptorPool::Tables construction (see
+	// docs/unified-prebuilt-root-segfault-investigation.md).
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
+)
+
 // Link ensures the archive is pulled into the final link.
 var _ = C.googlesql_unified_anchor
 var _ = C.googlesql_unified_version_string

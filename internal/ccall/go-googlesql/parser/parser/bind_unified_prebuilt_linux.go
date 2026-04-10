@@ -19,6 +19,7 @@ package parser
 #cgo CXXFLAGS: -Wno-deprecated-enum-enum-conversion
 #cgo CXXFLAGS: -Wno-deprecated-anon-enum-enum-conversion
 #cgo CXXFLAGS: -DGOOGLESQL_LINK_ONLY_BIND
+#cgo CXXFLAGS: -DGOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC
 #cgo CXXFLAGS: -Wno-char-subscripts
 #cgo CXXFLAGS: -Wno-sign-compare
 #cgo CXXFLAGS: -Wno-switch

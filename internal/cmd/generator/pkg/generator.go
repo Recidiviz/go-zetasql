@@ -487,11 +487,11 @@ func (g *Generator) mergeLinkOnlyBindCC(fqdn string, amalg, thin []byte) []byte 
 	ti := stripBindCCInner(fqdn, thin)
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("#ifndef %s_bind_cc\n#define %s_bind_cc\n\n", fqdn, fqdn))
-	sb.WriteString("#ifndef GOOGLESQL_LINK_ONLY_BIND\n\n")
+	sb.WriteString("#if !defined(GOOGLESQL_LINK_ONLY_BIND) && !defined(GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC)\n\n")
 	sb.Write(ai)
-	sb.WriteString("\n\n#else /* GOOGLESQL_LINK_ONLY_BIND */\n\n")
+	sb.WriteString("\n\n#else /* GOOGLESQL_LINK_ONLY_BIND || GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC */\n\n")
 	sb.Write(ti)
-	sb.WriteString(fmt.Sprintf("\n\n#endif /* GOOGLESQL_LINK_ONLY_BIND */\n\n#endif /* %s_bind_cc */\n", fqdn))
+	sb.WriteString(fmt.Sprintf("\n\n#endif /* fat vs thin bind.cc */\n\n#endif /* %s_bind_cc */\n", fqdn))
 	return []byte(sb.String())
 }
 
@@ -657,7 +657,14 @@ func protobufPrebuiltLibDirRel(outputDir string) string {
 
 func (g *Generator) bindGoParamUnifiedPrebuilt(base *BindGoParam, outputDir, platform string) *BindGoParam {
 	p := *base
-	p.ExtraCXXFlags = []string{"-DGOOGLESQL_LINK_ONLY_BIND"}
+	// GOOGLESQL_LINK_ONLY_BIND: required by vendored absl (status, mutex, log, raw_hash_set, …)
+	// so thin CGO + libprotobuf_cgo.a resolve the same symbols as legacy link-only.
+	// GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC: selects the thin bind.cc branch from mergeLinkOnlyBindCC
+	// while the former macro alone meant "thin" — we need both predicates in #if for fat vs thin.
+	p.ExtraCXXFlags = []string{
+		"-DGOOGLESQL_LINK_ONLY_BIND",
+		"-DGOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC",
+	}
 	rel := unifiedPrebuiltLibDirRel(outputDir)
 	switch platform {
 	case "linux":
