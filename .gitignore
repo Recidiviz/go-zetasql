@@ -10,6 +10,8 @@
 *.py
 # Cursor agent shell hook (repo-owned; permissive default — see file docstring)
 !.cursor/hooks/before-shell-execution.py
+# Repo maintenance helper (BUILD/orphan audit)
+!scripts/ccall-build-orphan-check.py
 *.template
 *.textproto
 *.a
