@@ -19,6 +19,7 @@ The Git submodule at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/
 
 ## Related
 
+- Bridge generator regen, orphan `go-googlesql` dirs, and `bridge.yaml` updates: [bridge-generator-upgrades.md](bridge-generator-upgrades.md)
 - Stack upgrade runbook: [`.cursor/commands/googlesql-stack-upgrade.md`](../.cursor/commands/googlesql-stack-upgrade.md)
 - Debug and test discipline: [`.cursor/skills/googlesql-stack-debug/SKILL.md`](../.cursor/skills/googlesql-stack-debug/SKILL.md)
 - Protobuf / vendor layering: [`protobuf-vendoring.md`](protobuf-vendoring.md)

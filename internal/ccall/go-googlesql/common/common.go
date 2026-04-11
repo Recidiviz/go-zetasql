@@ -7,7 +7,6 @@ import (
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/common/evaluator_registration_utils"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/common/float_margin"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/common/initialize_required_fields"
-	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/common/int_ops_util"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/common/internal_value"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/common/json_parser"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/common/json_util"

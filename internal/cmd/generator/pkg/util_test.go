@@ -2,6 +2,15 @@ package pkg
 
 import "testing"
 
+func TestLibPkgKey(t *testing.T) {
+	if got := LibPkgKey("zetasql/base", "refcount"); got != "googlesql/base/refcount" {
+		t.Fatalf("LibPkgKey zetasql/base: got %q", got)
+	}
+	if got := LibPkgKey("googlesql/parser", "keywords"); got != "googlesql/parser/keywords" {
+		t.Fatalf("LibPkgKey googlesql/parser: got %q", got)
+	}
+}
+
 func TestTierBAbslRelPaths(t *testing.T) {
 	inc, lib, anchor, ok := tierBAbslRelPaths("/home/x/internal/ccall/go-absl/base/config")
 	if !ok {

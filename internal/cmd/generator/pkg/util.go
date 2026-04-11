@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -56,6 +57,12 @@ func mapBazelRootToCcallPath(path string) string {
 	default:
 		return path
 	}
+}
+
+// LibPkgKey returns the canonical config key for a cc_library (googlesql/...), mapping legacy
+// zetasql/ BUILD roots to googlesql/ for inject_replace_names and related YAML.
+func LibPkgKey(basePkg, name string) string {
+	return fmt.Sprintf("%s/%s", mapBazelRootToCcallPath(basePkg), name)
 }
 
 func goPkgPath(base, pkg string) string {

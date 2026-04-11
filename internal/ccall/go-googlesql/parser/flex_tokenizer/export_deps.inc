@@ -4,8 +4,6 @@
 // Dependency-only slice of flex_tokenizer/export.inc (omit .cc) for parser
 // amalgamation, which already includes flex_tokenizer.cc inline.
 #include "go-googlesql/parser/bison_parser_generated_lib/export.inc"
-#include "go-googlesql/parser/bison_parser_mode/export.inc"
-#include "go-googlesql/parser/bison_token_codes/export.inc"
 #include "go-googlesql/parser/flex_istream/export.inc"
 #include "go-googlesql/parser/keywords/export.inc"
 #include "go-googlesql/base/check/export.inc"

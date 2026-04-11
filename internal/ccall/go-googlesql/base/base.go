@@ -22,7 +22,6 @@ import (
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/base/mathutil"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/base/no_destructor"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/base/path"
-	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/base/refcount"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/base/ret_check"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/base/source_location"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/base/status"

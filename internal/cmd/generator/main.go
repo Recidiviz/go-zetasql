@@ -2,6 +2,8 @@ package main
 
 import (
 	"embed"
+	"flag"
+	"fmt"
 	"log"
 
 	"github.com/vantaboard/go-googlesql/internal/cmd/generator/pkg"
@@ -20,12 +22,17 @@ var bridgeYAML []byte
 var importYAML []byte
 
 func main() {
-	if err := run(); err != nil {
+	listPackages := flag.Bool("list-packages", false, "print go-googlesql output dirs from BUILD scan and exit")
+	orphanDirs := flag.Bool("orphan-dirs", false, "print stale go-googlesql package dirs (have bind.cc but not in BUILD scan) and exit")
+	verifyFQDN := flag.Bool("verify-zetasql-fqdn", false, "fail if any stale zetasql_* FQDN include guards remain under go-googlesql")
+	flag.Parse()
+
+	if err := run(*listPackages, *orphanDirs, *verifyFQDN); err != nil {
 		log.Fatalf("%+v\n", err)
 	}
 }
 
-func run() error {
+func run(listPackages, orphanDirs, verifyFQDN bool) error {
 	cfg, err := pkg.LoadConfig(configYAML)
 	if err != nil {
 		return err
@@ -39,5 +46,40 @@ func run() error {
 		return err
 	}
 	generator := pkg.NewGenerator(cfg, bridge, importSymbols, templates)
-	return generator.Generate()
+
+	if listPackages {
+		dirs, err := generator.EnumerateGooglesqlOutputDirs()
+		if err != nil {
+			return err
+		}
+		for _, d := range dirs {
+			fmt.Println(d)
+		}
+		return nil
+	}
+	if orphanDirs {
+		orphans, err := generator.OrphanGooglesqlPackageDirs()
+		if err != nil {
+			return err
+		}
+		for _, o := range orphans {
+			fmt.Println(o)
+		}
+		return nil
+	}
+	if verifyFQDN {
+		if err := pkg.VerifyNoStaleZetasqlFQDNGuards(); err != nil {
+			return err
+		}
+		fmt.Println("ok: no stale zetasql_* FQDN guards under go-googlesql")
+		return nil
+	}
+
+	if err := generator.Generate(); err != nil {
+		return err
+	}
+	if err := pkg.VerifyNoStaleZetasqlFQDNGuards(); err != nil {
+		return fmt.Errorf("generator produced stale zetasql_* FQDN guards: %w", err)
+	}
+	return nil
 }

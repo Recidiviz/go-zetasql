@@ -176,8 +176,12 @@ func (g *Generator) createLibMap(parsedFiles []*ParsedFile) map[string]*Lib {
 	cclibMap := map[string]*Lib{}
 	for _, parsedFile := range parsedFiles {
 		for _, cclib := range parsedFile.cclibs {
-			srcPkgName := fmt.Sprintf("%s/%s", cclib.BasePkg, cclib.Name)
+			srcPkgName := LibPkgKey(cclib.BasePkg, cclib.Name)
 			cclibMap[srcPkgName] = cclib
+		}
+		for _, ccp := range parsedFile.ccprotos {
+			k := LibPkgKey(ccp.BasePkg, ccp.Name)
+			cclibMap[k] = ccp
 		}
 	}
 	for _, dep := range g.cfg.Dependencies {
@@ -188,7 +192,7 @@ func (g *Generator) createLibMap(parsedFiles []*ParsedFile) map[string]*Lib {
 				Pkg:     d.Pkg,
 			})
 		}
-		cclibMap[fmt.Sprintf("%s/%s", dep.Name, dep.Name)] = &Lib{
+		cclibMap[LibPkgKey(dep.Name, dep.Name)] = &Lib{
 			BasePkg: dep.Name,
 			Name:    dep.Name,
 			Deps:    cclibdeps,
@@ -221,10 +225,10 @@ func (g *Generator) createAllDependencyMap(parsedFiles []*ParsedFile) (map[strin
 }
 
 func (g *Generator) resolveDeps(pkgMap map[string]struct{}, lib *Lib) error {
-	pkgName := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	pkgName := LibPkgKey(lib.BasePkg, lib.Name)
 	for _, dep := range lib.Deps {
 		dep := dep
-		depPkgName := fmt.Sprintf("%s/%s", dep.BasePkg, dep.Pkg)
+		depPkgName := LibPkgKey(dep.BasePkg, dep.Pkg)
 		if _, exists := pkgMap[depPkgName]; exists {
 			continue
 		}
@@ -460,8 +464,8 @@ func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
 func (g *Generator) linkOnlyBind(lib *Lib) bool {
 	// All googlesql/* cc_library shards use link-only bind.cc (thin TU + libgooglesql.a).
 	// Additional packages (e.g. base/status) are listed in cclib.link_only_bind_packages.
-	key := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
-	if strings.HasPrefix(lib.BasePkg, "googlesql") {
+	key := LibPkgKey(lib.BasePkg, lib.Name)
+	if strings.HasPrefix(mapBazelRootToCcallPath(lib.BasePkg), "googlesql") {
 		return true
 	}
 	for _, p := range g.cfg.CCLib.LinkOnlyBindPackages {
@@ -890,7 +894,7 @@ type SourceParam struct {
 // Bazel lib (BasePkg/Name). Applies to both hdrs and srcs (e.g. .h listed only
 // in srcs for optional).
 func (g *Generator) amalgamationExcludePaths(lib *Lib) map[string]struct{} {
-	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	pkgKey := LibPkgKey(lib.BasePkg, lib.Name)
 	var exclude map[string]struct{}
 	for _, ex := range g.cfg.CCLib.ExcludeAmalgamationHeaders {
 		if ex.Pkg != pkgKey {
@@ -908,7 +912,7 @@ func (g *Generator) amalgamationExcludePaths(lib *Lib) map[string]struct{} {
 
 // amalgamationExcludeSourcePaths returns source paths to omit from bind.cc for a Bazel lib.
 func (g *Generator) amalgamationExcludeSourcePaths(lib *Lib) map[string]struct{} {
-	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	pkgKey := LibPkgKey(lib.BasePkg, lib.Name)
 	var exclude map[string]struct{}
 	for _, ex := range g.cfg.CCLib.ExcludeAmalgamationSources {
 		if ex.Pkg != pkgKey {
@@ -991,7 +995,7 @@ func (g *Generator) appendConflictWrappedInclude(sb *strings.Builder, incPath st
 }
 
 func bindCCPreludeBeforeHeaders(cfg *Config, lib *Lib) string {
-	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	pkgKey := LibPkgKey(lib.BasePkg, lib.Name)
 	for _, ph := range cfg.CCLib.BindCCPreludeBeforeHeaders {
 		if ph.Pkg != pkgKey {
 			continue
@@ -1103,8 +1107,9 @@ func filterStrings(paths []string, exclude map[string]struct{}) []string {
 // path is also a Bazel src (tm_parser lists tm_parser.cc under both hdrs and srcs).
 func dropCCHeadersDuplicatedInSources(headers []string, lib *Lib) []string {
 	src := make(map[string]struct{}, len(lib.Sources))
+	nb := mapBazelRootToCcallPath(lib.BasePkg)
 	for _, s := range lib.Sources {
-		src[fmt.Sprintf("%s/%s", lib.BasePkg, s)] = struct{}{}
+		src[fmt.Sprintf("%s/%s", nb, s)] = struct{}{}
 	}
 	out := make([]string, 0, len(headers))
 	for _, h := range headers {
@@ -1163,7 +1168,7 @@ func (g *Generator) libNeedsGoProtobufImport(lib *Lib) bool {
 	seen := map[string]bool{}
 	var walk func(*Lib) bool
 	walk = func(l *Lib) bool {
-		pn := fmt.Sprintf("%s/%s", l.BasePkg, l.Name)
+		pn := LibPkgKey(l.BasePkg, l.Name)
 		if seen[pn] {
 			return false
 		}
@@ -1172,7 +1177,7 @@ func (g *Generator) libNeedsGoProtobufImport(lib *Lib) bool {
 			if d.BasePkg == "protobuf" && d.Pkg == "protobuf" {
 				return true
 			}
-			dpn := fmt.Sprintf("%s/%s", d.BasePkg, d.Pkg)
+			dpn := LibPkgKey(d.BasePkg, d.Pkg)
 			if child, ok := g.libMap[dpn]; ok {
 				if walk(child) {
 					return true
@@ -1187,13 +1192,14 @@ func (g *Generator) libNeedsGoProtobufImport(lib *Lib) bool {
 func (g *Generator) createBindCCParam(lib *Lib, linkOnly bool) *BindCCParam {
 	param := &BindCCParam{}
 
-	basePrefix := sanitizeIdentifier(strings.ReplaceAll(lib.BasePkg, "/", "_"))
+	normalizedBase := mapBazelRootToCcallPath(lib.BasePkg)
+	basePrefix := sanitizeIdentifier(strings.ReplaceAll(normalizedBase, "/", "_"))
 	param.FQDN = fmt.Sprintf("%s_%s", basePrefix, sanitizeIdentifier(lib.Name))
 	param.PkgPath = lib.BasePkg
-	pkgKey := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	pkgKey := LibPkgKey(lib.BasePkg, lib.Name)
 	param.ReplaceNameEntries = g.buildReplaceNameEntries(pkgKey, linkOnly)
 	param.PreludeBeforeHeaders = bindCCPreludeBeforeHeaders(g.cfg, lib)
-	if strings.HasPrefix(lib.BasePkg, "googlesql") {
+	if strings.HasPrefix(normalizedBase, "googlesql") {
 		param.PreludeBeforeHeaders += optionsPublicDescriptorMacrosPrelude
 	}
 	excludeAmalg := g.amalgamationExcludePaths(lib)
@@ -1477,15 +1483,16 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 	param.Compiler = g.cgoCompiler(lib)
 	param.CXXFlags = cxxflags
 	param.LDFlags = ldflags
-	prefix := sanitizeIdentifier(strings.ReplaceAll(lib.BasePkg, "/", "_"))
+	nb := mapBazelRootToCcallPath(lib.BasePkg)
+	prefix := sanitizeIdentifier(strings.ReplaceAll(nb, "/", "_"))
 	param.FQDN = fmt.Sprintf("%s_%s", prefix, sanitizeIdentifier(lib.Name))
-	ccallDir := strings.Repeat("../", len(strings.Split(lib.BasePkg, "/"))+1)
+	ccallDir := strings.Repeat("../", len(strings.Split(nb, "/"))+1)
 	includePaths := []string{ccallDir}
 	for _, includeDir := range includeDirs {
 		includePaths = append(includePaths, filepath.Join(ccallDir, includeDir))
 	}
 	param.IncludePaths = includePaths
-	pkgName := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	pkgName := LibPkgKey(lib.BasePkg, lib.Name)
 	exportFuncs := []ExportFunc{}
 	bridgeHeaders := []string{}
 	importGoLibs := []string{}
@@ -1600,7 +1607,7 @@ func (g *Generator) pkgMethodToFunc(pkgName string, method *Method) (Func, bool)
 
 func (g *Generator) createBridgeExternParam(lib *Lib) *BridgeExternParam {
 	param := &BridgeExternParam{}
-	pkgName := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	pkgName := LibPkgKey(lib.BasePkg, lib.Name)
 	if pkg, exists := g.pkgMap[pkgName]; exists {
 		funcs := make([]Func, 0, len(pkg.Methods))
 		for _, method := range pkg.Methods {

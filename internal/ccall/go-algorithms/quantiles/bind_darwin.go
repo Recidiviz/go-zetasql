@@ -39,6 +39,7 @@ package quantiles
 import "C"
 import (
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
 	"unsafe"
 )
 
