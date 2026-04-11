@@ -1,5 +1,5 @@
 ---
-description: CGO build policy — prebuilt archives and link-only binds are the supported direction; non-unified amalgamation is deprecated.
+description: CGO build policy — prebuilt archives and link-only binds; single supported path.
 alwaysApply: true
 ---
 
@@ -7,19 +7,14 @@ alwaysApply: true
 
 ## Supported direction (project goal)
 
-- Prefer **`googlesql` + `googlesql_unified_prebuilt`**, Bazel-built **`libgooglesql.a`** and **`libprotobuf_cgo.a`** (paths and env vars in [`docs/prebuilt-cgo.md`](../../docs/prebuilt-cgo.md) and the [`Makefile`](../../Makefile)), and **link-only** generated `bind.cc` where enabled in the generator.
-- Aim for **small CGO surface**: thin translation units that bridge to prebuilt static libraries, not monolithic single-TU amalgamation of hundreds of `.cc` files.
-
-## Deprecated build path
-
-- The non-unified path (`//go:build !googlesql_unified_prebuilt`, fat amalgamation / huge `bind.cc` include graphs) is **deprecated**. It exists until removed; **do not** treat keeping it green as a long-term parallel product requirement alongside the unified prebuilt path.
-- **CI** may still run legacy `make local/test` without unified tags during transition — that does not change the **stated project priority**.
+- Use **`googlesql` + `googlesql_unified_prebuilt`**, Bazel-built **`libgooglesql.a`** and **`libprotobuf_cgo.a`** (paths and env vars in [`docs/prebuilt-cgo.md`](../../docs/prebuilt-cgo.md) and the [`Makefile`](../../Makefile)), and **link-only** generated `bind.cc` for GoogleSQL shards.
+- Aim for **small CGO surface**: thin translation units that bridge to prebuilt static libraries, not monolithic single-TU include graphs of hundreds of `.cc` files.
 
 ## Verification (prefer these)
 
-- **`make local/test-root-unified`**, **`make local/compile-root-unified-test`**, **`make local/test-prebuilt-googlesql-unified-root`** as appropriate; narrow with `TESTPKG` and `GO_TEST_FLAGS` per [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md).
-- Low RAM: `GO_BUILD_P_MAX=1`, `GOMAXPROCS=1`, [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh) — these address **parallelism and memory**, not a return to fat amalgamation as policy.
+- **`make local/test`** / **`make local/test-root-unified`**, **`make local/compile-root-unified-test`**, **`make local/test-prebuilt-googlesql-unified-root`** as appropriate; narrow with `TESTPKG` and `GO_TEST_FLAGS` per [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md).
+- Low RAM: `GO_BUILD_P_MAX=1`, `GOMAXPROCS=1`, [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh).
 
 ## Wording
 
-- **Technical** “amalgamation” in comments (single-TU include style, descriptor blocks) is different from **build policy**. When describing *what to ship*, say **deprecated non-unified** / **legacy** vs **unified prebuilt + link-only**.
+- **Technical** “amalgamation” in comments (e.g. protobuf vendorpatch guards, single-TU include style) is different from **historical** vendored single-TU protobuf bundles. The **default GoogleSQL CGO path** is **unified prebuilt + link-only** only.

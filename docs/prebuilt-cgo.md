@@ -23,7 +23,7 @@ Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Makefile`](../Makefile) `CGO
 - You want the repository’s **default protobuf build path** to come from **Bazel + `ar` archives** under `internal/ccall/go-protobuf/protobuf/lib/`, with Go doing **link-only** for the protobuf shard in the normal platform bind files.
 - You are working on the broader “single owner” prebuilt migration and need the protobuf hub to stay aligned with unified/prebuilt GoogleSQL work.
 
-**Default:** use `-tags googlesql` with prebuilts present. `googlesql_tier_b` remains a deprecated compatibility alias for older scripts, but it no longer selects a different protobuf implementation.
+**Default GoogleSQL CGO:** use `-tags googlesql,googlesql_unified_prebuilt` with both archives built (`make prebuilt-libs` and `make prebuilt-libs-googlesql-unified`). `googlesql_tier_b` remains a deprecated compatibility alias for older scripts; it does not select a different protobuf implementation.
 
 ## Prerequisites
 

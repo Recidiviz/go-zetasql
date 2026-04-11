@@ -44,7 +44,7 @@ Also, the compiler recommends `clang++`. Please set `CXX=clang++` to install.
 
 ## Build modes (quick reference)
 
-**Supported direction:** **`googlesql` + `googlesql_unified_prebuilt`**, Bazel-built **`libgooglesql.a`** + **`libprotobuf_cgo.a`**, and **link-only** CGO binds — minimal native linkage, not fat single-TU amalgamation. See [`docs/link-only-cgo-migration.md`](docs/link-only-cgo-migration.md).
+**Supported direction:** **`googlesql` + `googlesql_unified_prebuilt`**, Bazel-built **`libgooglesql.a`** + **`libprotobuf_cgo.a`**, and **link-only** CGO binds (no vendored single-TU protobuf amalgamation). See [`docs/link-only-cgo-migration.md`](docs/link-only-cgo-migration.md).
 
 | Mode | Build tags | Bazel needed? | Notes |
 |------|------------|---------------|--------|

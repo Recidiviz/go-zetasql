@@ -1,10 +1,10 @@
 ---
-description: Do not plan or document indefinite dual maintenance of fat amalgamation vs unified prebuilt CGO.
+description: Single supported CGO mode — unified prebuilt + link-only; no parallel fat-amalgamation maintenance.
 alwaysApply: true
 ---
 
 # No dual-maintained CGO modes
 
-- Do **not** suggest exit criteria, rollouts, or ongoing work that requires **both** the deprecated non-unified amalgamation path and the unified prebuilt path to stay healthy forever.
-- One **supported** direction: **link-only CGO + prebuilt libraries** (`googlesql_unified_prebuilt`). Legacy gates are **transitional** until code and CI can drop the old tag path.
-- If docs or tasks mention “optional parallel” amalgamation maintenance, reframe as **deprecated** or **legacy only until removal**.
+- Do **not** suggest exit criteria or ongoing work that requires **both** a removed fat-amalgamation GoogleSQL CGO path and the unified prebuilt path.
+- One **supported** direction: **link-only CGO + prebuilt libraries** with **`googlesql` + `googlesql_unified_prebuilt`**.
+- If older docs or tasks still mention a second “legacy” GoogleSQL amalgamation build, update them to match [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md).

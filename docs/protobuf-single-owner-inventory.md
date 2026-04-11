@@ -4,7 +4,7 @@ This doc captures **inventory** from the protobuf CGO consolidation effort and t
 
 ## Scale (current generator output)
 
-- Generator policy and [`internal/exportinc`](../internal/exportinc/exportinc.go) **strip** any legacy `#include "go-protobuf/protobuf/export.inc"` line from `export.inc` preludes outside `go-protobuf/protobuf`; the **file itself is removed** — default protobuf comes from Bazel **`libprotobuf_cgo.a`** linked in [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go).
+- Generator policy and [`internal/exportinc`](../internal/exportinc/exportinc.go) **strip** any stray `#include "go-protobuf/protobuf/export.inc"` line from `export.inc` preludes outside `go-protobuf/protobuf`; the **file itself is removed** — default protobuf comes from Bazel **`libprotobuf_cgo.a`** linked in [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go).
 - **780+** `bind.cc` files under `internal/ccall/go-googlesql/`.
 - Each **separate** Go CGO package with its own `bind.cc` is a **separate
   translation unit**; cross-package protobuf symbols are satisfied by the shared prebuilt archive plus consistent `#define` policy (see [`tier-b-absl-protobuf.md`](tier-b-absl-protobuf.md)).
@@ -48,7 +48,7 @@ boundary.
 
 ## Verification (when changing layout)
 
-- `make local/test-root-unified` (root package) when exercising the **supported** unified path, or transitional `make local/test` if matching legacy CI; then go-googlesqlite / bigquery-emulator with
+- `make local/test` (or `make local/test-root-unified`, same recipe) with `TESTPKG=./` when exercising the root package; then go-googlesqlite / bigquery-emulator with
   shared `GOCACHE` per the googlesql-stack-debug skill.
 - On link errors involving `…_absl::` vs `absl::`, suspect **macro / ABI
   mismatch** before chasing “missing patch” in vendored protobuf.

@@ -29,4 +29,4 @@ The **Go module** remains **`github.com/vantaboard/go-googlesql`** (no rename).
 
 ## Verification
 
-Sequential: **`make local/test`** (go-googlesql) → **`go test -tags googlesql -p 1`** (zetasqlite) → **emulator** last.
+Sequential: **`make local/test`** (go-googlesql, `googlesql,googlesql_unified_prebuilt`) → **`go test -tags googlesql,googlesql_unified_prebuilt -p 1`** (zetasqlite) → **emulator** last.

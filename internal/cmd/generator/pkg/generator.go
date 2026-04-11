@@ -622,9 +622,9 @@ func protobufPrebuiltLibDirRel(outputDir string) string {
 func (g *Generator) bindGoParamUnifiedPrebuilt(base *BindGoParam, outputDir, platform string) *BindGoParam {
 	p := *base
 	// GOOGLESQL_LINK_ONLY_BIND: required by vendored absl (status, mutex, log, raw_hash_set, …)
-	// so thin CGO + libprotobuf_cgo.a resolve the same symbols as legacy link-only.
-	// GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC: legacy name kept for libc++ / link flags parity;
-	// GoogleSQL bind.cc is always the thin link-only TU when unified prebuilt is enabled.
+	// so thin CGO + libprotobuf_cgo.a resolve the same symbols as the shared prebuilt archive.
+	// GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC: kept for libc++ / link flags parity with existing
+	// #cgo LDFLAGS allowlists. GoogleSQL bind.cc is always the thin link-only TU when unified prebuilt is enabled.
 	p.ExtraCXXFlags = []string{
 		"-DGOOGLESQL_LINK_ONLY_BIND",
 		"-DGOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC",
