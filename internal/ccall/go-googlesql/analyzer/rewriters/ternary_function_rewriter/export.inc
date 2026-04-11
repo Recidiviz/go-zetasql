@@ -5,7 +5,6 @@
 // include sources
 #include "googlesql/analyzer/rewriters/ternary_function_rewriter.cc"
 // include dependencies
-#include "go-googlesql/analyzer/rewriters/rewriter_interface/export.inc"
 #include "go-googlesql/analyzer/substitute/export.inc"
 #include "go-googlesql/base/ret_check/export.inc"
 #include "go-googlesql/base/status/export.inc"
@@ -13,13 +12,18 @@
 #include "go-googlesql/public/analyzer_output_properties/export.inc"
 #include "go-googlesql/public/builtin_function_cc_proto/export.inc"
 #include "go-googlesql/public/catalog/export.inc"
-#include "go-googlesql/public/function_headers/export.inc"
+#include "go-googlesql/public/function/export.inc"
 #include "go-googlesql/public/options_cc_proto/export.inc"
+#include "go-googlesql/public/rewriter_interface/export.inc"
 #include "go-googlesql/public/types/types/export.inc"
 #include "go-googlesql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_deep_copy_visitor/export.inc"
+#include "go-googlesql/resolved_ast/resolved_node/export.inc"
 #include "go-googlesql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/strings/substitute/export.inc"
+#include "go-absl/types/span/export.inc"
 
 #endif

@@ -2,11 +2,14 @@
 #define INTERNAL_CCALL_GO_GOOGLESQL_PARSER_TOKEN_DISAMBIGUATOR_EXPORT_H
 
 #include "googlesql/parser/token_disambiguator.h"
+#include "googlesql/parser/bison_parser_mode.h"
+#include "googlesql/parser/bison_token_codes.h"
 // include sources
 #include "googlesql/parser/token_disambiguator.cc"
 // include dependencies
-#include "go-googlesql/parser/bison_parser_mode/export.inc"
-#include "go-googlesql/parser/bison_token_codes/export.inc"
+#include "go-googlesql/parser/parser_mode/export.inc"
+#include "go-googlesql/parser/token/export.inc"
+#include "go-googlesql/parser/token_with_location/export.inc"
 #include "go-googlesql/base/arena/export.inc"
 #include "go-googlesql/base/check/export.inc"
 #include "go-googlesql/base/ret_check/export.inc"
@@ -15,7 +18,6 @@
 #include "go-googlesql/parser/macros/flex_token_provider/export.inc"
 #include "go-googlesql/parser/macros/macro_catalog/export.inc"
 #include "go-googlesql/parser/macros/macro_expander/export.inc"
-#include "go-googlesql/parser/macros/token_with_location/export.inc"
 #include "go-googlesql/public/error_helpers/export.inc"
 #include "go-googlesql/public/language_options/export.inc"
 #include "go-googlesql/public/parse_location/export.inc"

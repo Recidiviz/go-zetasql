@@ -92,7 +92,7 @@ absl::StatusOr<TokenWithLocation> FlexTokenProvider::GetFlexToken() {
     last_token_end_offset = start_offset();
   }
 
-  ZETASQL_ASSIGN_OR_RETURN(Token token_kind, tokenizer_->GetNextToken(&location_));
+  GOOGLESQL_ASSIGN_OR_RETURN(Token token_kind, tokenizer_->GetNextToken(&location_));
 
   absl::string_view prev_whitespaces;
   prev_whitespaces = FlexGetTextBetween(input(), last_token_end_offset,

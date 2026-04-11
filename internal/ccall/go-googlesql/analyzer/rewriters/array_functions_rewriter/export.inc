@@ -17,10 +17,12 @@
 #include "go-googlesql/public/rewriter_interface/export.inc"
 #include "go-googlesql/public/types/types/export.inc"
 #include "go-googlesql/resolved_ast/resolved_ast/export.inc"
+#include "go-googlesql/resolved_ast/resolved_ast_deep_copy_visitor/export.inc"
 #include "go-googlesql/resolved_ast/rewrite_utils/export.inc"
 #include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/status/status/export.inc"
 #include "go-absl/status/statusor/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/strings/str_format/export.inc"
 
 #endif

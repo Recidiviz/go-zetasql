@@ -40,7 +40,7 @@
 #include "googlesql/base/ret_check.h"
 #include "googlesql/base/status_macros.h"
 
-namespace zetasql {
+namespace googlesql {
 namespace {
 
 // There are currently separate flags for rewriting FILTER/TRANSFORM vs
@@ -272,4 +272,4 @@ const Rewriter* GetArrayIncludesRewriter() {
   return kRewriter;
 }
 
-}  // namespace zetasql
+}  // namespace googlesql

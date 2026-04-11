@@ -26,7 +26,7 @@
 #include "googlesql/resolved_ast/resolved_ast_rewrite_visitor.h"
 #include "googlesql/resolved_ast/rewrite_utils.h"
 
-namespace zetasql {
+namespace googlesql {
 namespace {
 
 bool NeedsProjectScanForByPosition(const ResolvedSetOperationItem& item) {
@@ -90,4 +90,4 @@ const Rewriter* GetSetOperationCorrespondingRewriter() {
   return kRewriter;
 }
 
-}  // namespace zetasql
+}  // namespace googlesql

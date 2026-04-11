@@ -18,7 +18,7 @@
 #include <string>
 #include <utility>
 
-#include "googlesql/analyzer/rewriters/rewriter_interface.h"
+#include "googlesql/public/rewriter_interface.h"
 #include "googlesql/analyzer/substitute.h"
 #include "googlesql/public/analyzer_options.h"
 #include "googlesql/public/analyzer_output_properties.h"
@@ -38,7 +38,7 @@
 #include "googlesql/base/ret_check.h"
 #include "googlesql/base/status_macros.h"
 
-namespace zetasql {
+namespace googlesql {
 namespace {
 
 // The rewriter visitor for unary scalar functions.
@@ -146,4 +146,4 @@ const Rewriter* GetTernaryFunctionRewriter() {
   return kRewriter;
 }
 
-}  // namespace zetasql
+}  // namespace googlesql

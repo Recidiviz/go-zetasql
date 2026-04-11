@@ -79,9 +79,14 @@ For each **B** candidate:
 
 **Status:** The stale duplicate package `internal/ccall/go-googlesql/public/timestamp_pico_value` (legacy `zetasql_*` amalgamation; no matching `cc_library` in `googlesql/public/BUILD`) was removed; the supported CGO shard is `internal/ccall/go-googlesql/public/timestamp_picos_value` (link-only + unified prebuilt). Use this checklist for further PRs.
 
-**Example B candidates** (non-exhaustive; still use legacy `zetasql_*` guards or `#include "*.cc"` in `bind.cc` — regenerate to link-only before removal): `internal/ccall/go-googlesql/analyzer/rewriters/*`, `parser/flex_tokenizer`, and similar paths from `./scripts/cgo-shard-inventory.sh --list` filtered to `go-googlesql`.
+**Example B candidates** (non-exhaustive): remaining `analyzer/rewriters/*` shards and any `--list` paths that still look like legacy amalgamation — use Phase 4 before changing `bind_unified_prebuilt_*` imports.
 
 **Done (link-only + generator):** `googlesql/public/range_value` is now a normal `cc_library` in [`internal/ccall/googlesql/public/BUILD`](../internal/ccall/googlesql/public/BUILD) and regenerated like other `googlesql/public/*` shards (`bind_link_only.cc.tmpl`, `zetasql`/`zetasql_base` namespace overrides and status-macro prelude in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml)).
+
+- **`googlesql/parser/flex_istream`:** `cc_library` in [`internal/ccall/googlesql/parser/BUILD`](../internal/ccall/googlesql/parser/BUILD), link-only `bind.cc` (avoids pulling the full `go-absl/strings` amalgamation into the TU, which duplicated `absl::strings` stringify headers). `flex_tokenizer` depends on `:flex_istream`.
+- **`googlesql/parser/macros/flex_token_provider`:** `inject_replace_names` / `symbol_define_overrides` for `zetasql` + `exclude_replace_names` (same idea as `base/status`) so `GOOGLESQL_*` status macros are not broken by namespace `#define`s; sources use `GOOGLESQL_ASSIGN_OR_RETURN` in the inline/header path.
+- **GMock-only `cc_library` targets** (`optional_ref_matchers`, `edge_matchers`, `nfa_matchers`) are listed under `cclib.excludes` so the generator does not emit CGO packages that require `gmock/gmock.h` in default CI headers.
+- Removed the orphan **`go-googlesql/parser/token_codes`** CGO directory (headers remain owned by `flex_tokenizer` / includes).
 
 ## Phase 5 — CI and downstream
 

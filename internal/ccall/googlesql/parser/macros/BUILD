@@ -89,6 +89,22 @@ cc_library(
 )
 
 cc_library(
+    name = "flex_token_provider",
+    srcs = ["flex_token_provider.cc"],
+    hdrs = ["flex_token_provider.h"],
+    deps = [
+        ":token_provider_base",
+        "//googlesql/parser:flex_tokenizer",
+        "//googlesql/parser:token_with_location",
+        "//googlesql/public:parse_location",
+        "//googlesql/base:check",
+        "//googlesql/base:status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_library(
     name = "token_provider",
     srcs = ["token_provider.cc"],
     hdrs = ["token_provider.h"],

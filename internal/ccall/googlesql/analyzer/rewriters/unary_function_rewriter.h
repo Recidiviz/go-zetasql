@@ -14,17 +14,17 @@
 // limitations under the License.
 //
 
-#ifndef ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_H_
-#define ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_H_
+#ifndef GOOGLESQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_H_
+#define GOOGLESQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_H_
 
-#include "googlesql/analyzer/rewriters/rewriter_interface.h"
+#include "googlesql/public/rewriter_interface.h"
 
-namespace zetasql {
+namespace googlesql {
 
 // Gets a pointer to scalar functions rewriter.
 // This is currently in use for functions: ARRAY_FIRST and ARRAY_LAST.
 const Rewriter* GetUnaryFunctionRewriter();
 
-}  // namespace zetasql
+}  // namespace googlesql
 
-#endif  // ZETASQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_H_
+#endif  // GOOGLESQL_ANALYZER_REWRITERS_UNARY_FUNCTION_REWRITER_H_

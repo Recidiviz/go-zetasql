@@ -53,7 +53,7 @@ class FlexTokenProvider : public TokenProviderBase {
   // Peeks the next token, but does not consume it.
   absl::StatusOr<TokenWithLocation> PeekNextToken() override {
     if (input_token_buffer_.empty()) {
-      ZETASQL_ASSIGN_OR_RETURN(TokenWithLocation next_token, GetFlexToken());
+      GOOGLESQL_ASSIGN_OR_RETURN(TokenWithLocation next_token, GetFlexToken());
       input_token_buffer_.push(next_token);
       return next_token;
     }

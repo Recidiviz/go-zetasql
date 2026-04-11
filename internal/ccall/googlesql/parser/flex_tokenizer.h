@@ -83,10 +83,10 @@ class LegacyFlexTokenizer final : public GoogleSqlFlexTokenizerBase {
 };
 
 // A wrapper class for the generated TextMapper lexer class with access to
-// the private fields of `TmGeneratedLexer`.
-// TODO: b/322871843: Find a way to use the `TmGeneratedLexer` class directly, maybe by
+// the private fields of `TmScanLexer`.
+// TODO: b/322871843: Find a way to use the `TmScanLexer` class directly, maybe by
 // updating the TextMapper template.
-class TextMapperTokenizer final : TmGeneratedLexer {
+class TextMapperTokenizer final : TmScanLexer {
  public:
   TextMapperTokenizer(absl::string_view filename, absl::string_view input,
                       int start_offset);

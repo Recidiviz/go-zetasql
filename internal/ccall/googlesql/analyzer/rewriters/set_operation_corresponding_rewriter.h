@@ -14,16 +14,16 @@
 // limitations under the License.
 //
 
-#ifndef ZETASQL_ANALYZER_REWRITERS_SET_OPERATION_CORRESPONDING_REWRITER_H_
-#define ZETASQL_ANALYZER_REWRITERS_SET_OPERATION_CORRESPONDING_REWRITER_H_
+#ifndef GOOGLESQL_ANALYZER_REWRITERS_SET_OPERATION_CORRESPONDING_REWRITER_H_
+#define GOOGLESQL_ANALYZER_REWRITERS_SET_OPERATION_CORRESPONDING_REWRITER_H_
 
 #include "googlesql/public/rewriter_interface.h"
 
-namespace zetasql {
+namespace googlesql {
 
 // Gets a pointer to the singleton SetOperationCorresponding rewriter.
 const Rewriter* GetSetOperationCorrespondingRewriter();
 
-}  // namespace zetasql
+}  // namespace googlesql
 
-#endif  // ZETASQL_ANALYZER_REWRITERS_SET_OPERATION_CORRESPONDING_REWRITER_H_
+#endif  // GOOGLESQL_ANALYZER_REWRITERS_SET_OPERATION_CORRESPONDING_REWRITER_H_

@@ -11,7 +11,7 @@
 #include "go-googlesql/base/check/export.inc"
 #include "go-googlesql/base/status/export.inc"
 #include "go-googlesql/common/errors/export.inc"
-#include "go-googlesql/parser/macros/token_with_location/export.inc"
+#include "go-googlesql/parser/token_with_location/export.inc"
 #include "go-googlesql/public/language_options/export.inc"
 #include "go-googlesql/public/parse_location/export.inc"
 #include "go-absl/flags/flag/export.inc"

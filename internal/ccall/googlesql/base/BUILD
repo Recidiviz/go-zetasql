@@ -147,6 +147,12 @@ cc_test(
 )
 
 cc_library(
+    name = "mathlimits",
+    srcs = ["mathlimits.cc"],
+    hdrs = ["mathlimits.h"],
+)
+
+cc_library(
     name = "endian",
     hdrs = [
         "endian.h",

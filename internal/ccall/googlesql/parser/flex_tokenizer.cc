@@ -96,10 +96,10 @@ absl::StatusOr<Token> TextMapperTokenizer::GetNextToken(
 TextMapperTokenizer::TextMapperTokenizer(absl::string_view filename,
                                          absl::string_view input,
                                          int start_offset)
-    // We do not use TmGeneratedLexer::Rewind() because its time complexity is
-    // O(start_offset). See the comment for `TmGeneratedLexer::start_offset_` in
+    // We do not use TmScanLexer::Rewind() because its time complexity is
+    // O(start_offset). See the comment for `TmScanLexer::start_offset_` in
     // googlesql.tm for more information.
-    : TmGeneratedLexer(absl::ClippedSubstr(input, start_offset)) {
+    : TmScanLexer(absl::ClippedSubstr(input, start_offset)) {
   filename_ = filename;
   start_offset_ = start_offset;
 }
