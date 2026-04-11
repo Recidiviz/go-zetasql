@@ -320,7 +320,7 @@ using zetasql_bison_parser::BisonParserImpl;
 
 #undef YY_DECL
 #define YY_DECL \
-    int zetasql::parser::LegacyFlexTokenizer::GetNextTokenFlexImpl( \
+    int googlesql::parser::LegacyFlexTokenizer::GetNextTokenFlexImpl( \
         zetasql_bison_parser::location* yylloc)
 
 // This action is executed for every token that is matched, before the defined
@@ -345,7 +345,7 @@ using zetasql_bison_parser::BisonParserImpl;
     yylloc->end.column = yylloc->begin.column + prefix_length_result; \
   } while (0)
 
-constexpr char ::zetasql::parser::LegacyFlexTokenizer::kEofSentinelInput[];
+constexpr char ::googlesql::parser::LegacyFlexTokenizer::kEofSentinelInput[];
 
 #line 3153 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
 /* These are some basic regex definitions that are used in the lexer rules

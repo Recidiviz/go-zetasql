@@ -26,11 +26,11 @@
 #include "absl/strings/str_format.h"      
 #include "absl/strings/string_view.h"     
 
-using Tokens = zetasql::parser::TokenKinds;
+using Tokens = googlesql::parser::TokenKinds;
 
 #undef YY_DECL
 #define YY_DECL                                                        \
-  Tokens zetasql::parser::LegacyFlexTokenizer::GetNextTokenFlexImpl( \
+  Tokens googlesql::parser::LegacyFlexTokenizer::GetNextTokenFlexImpl( \
       ParseLocationRange* location)
 
 #define yyterminate() return Tokens::EOI;

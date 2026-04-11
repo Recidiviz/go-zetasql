@@ -100,20 +100,20 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
 }
 
 #define UNIQUE_PTR_LIST_TO_VEC(vecptr, T, v) do {                   \
-    std::vector<std::unique_ptr<const zetasql::T>> vec;             \
+    std::vector<std::unique_ptr<const googlesql::T>> vec;             \
     GoSlice *goslice = (GoSlice *)v;                                \
-    zetasql::T **data = (zetasql::T **)goslice->data;               \
+    googlesql::T **data = (googlesql::T **)goslice->data;               \
     for (int i = 0; i < goslice->len; i++) {                        \
-      auto p = zetasql::Make ## T();                                \
-      memcpy((void *)p.get(), (void *)data[i], sizeof(zetasql::T)); \
+      auto p = googlesql::Make ## T();                                \
+      memcpy((void *)p.get(), (void *)data[i], sizeof(googlesql::T)); \
       vec.push_back(std::move(p));                                  \
     }                                                               \
     *vecptr = std::move(vec);                                       \
   } while (0)
 
 #define SET_UNIQUE_PTR(setter, T, v) do {                   \
-    auto p = zetasql::Make ## T();                          \
-    memcpy((void *)p.get(), (void *)v, sizeof(zetasql::T)); \
+    auto p = googlesql::Make ## T();                          \
+    memcpy((void *)p.get(), (void *)v, sizeof(googlesql::T)); \
     setter(std::move(p));                                   \
   } while (0)
 
@@ -138,12 +138,12 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
   } while (0)
 
 #define SET_UNIQUE_PTR_LIST(list, T, v) do {                        \
-    std::vector<std::unique_ptr<const zetasql::T>> vec;             \
+    std::vector<std::unique_ptr<const googlesql::T>> vec;             \
     GoSlice *goslice = (GoSlice *)v;                                \
-    zetasql::T **data = (zetasql::T **)goslice->data;               \
+    googlesql::T **data = (googlesql::T **)goslice->data;               \
     for (int i = 0; i < goslice->len; i++) {                        \
-      auto p = zetasql::Make ## T();                                \
-      memcpy((void *)p.get(), (void *)data[i], sizeof(zetasql::T)); \
+      auto p = googlesql::Make ## T();                                \
+      memcpy((void *)p.get(), (void *)data[i], sizeof(googlesql::T)); \
       vec.push_back(std::move(p));                                  \
     }                                                               \
     list(std::move(vec));                                           \
@@ -152,17 +152,17 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
 // ResolvedAggregateScanBase::aggregate_list uses ResolvedComputedColumnBase (subclasses include
 // ResolvedComputedColumn and ResolvedDeferredComputedColumn).
 #define SET_UNIQUE_PTR_COMPUTED_COLUMN_BASE_LIST(list, v) do {              \
-    std::vector<std::unique_ptr<const zetasql::ResolvedComputedColumn>> vec; \
+    std::vector<std::unique_ptr<const googlesql::ResolvedComputedColumn>> vec; \
     GoSlice *goslice = (GoSlice *)v;                                          \
-    zetasql::ResolvedComputedColumn **data =                                \
-        (zetasql::ResolvedComputedColumn **)goslice->data;                  \
+    googlesql::ResolvedComputedColumn **data =                                \
+        (googlesql::ResolvedComputedColumn **)goslice->data;                  \
     for (int i = 0; i < goslice->len; i++) {                                \
-      auto p = zetasql::MakeResolvedComputedColumn();                       \
+      auto p = googlesql::MakeResolvedComputedColumn();                       \
       memcpy((void *)p.get(), (void *)data[i],                              \
-             sizeof(zetasql::ResolvedComputedColumn));                      \
+             sizeof(googlesql::ResolvedComputedColumn));                      \
       vec.push_back(std::move(p));                                          \
     }                                                                       \
-    std::vector<std::unique_ptr<const zetasql::ResolvedComputedColumnBase>> base_vec; \
+    std::vector<std::unique_ptr<const googlesql::ResolvedComputedColumnBase>> base_vec; \
     base_vec.reserve(vec.size());                                           \
     for (size_t i = 0; i < vec.size(); i++) {                               \
       base_vec.push_back(std::move(vec[i]));                                \
@@ -172,17 +172,17 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
 
 // ResolvedAggregateScan stores grouping_set_list as unique_ptr<const ResolvedGroupingSetBase>.
 #define SET_UNIQUE_PTR_GROUPING_SET_LIST(list, v) do {              \
-    std::vector<std::unique_ptr<const zetasql::ResolvedGroupingSet>> vec; \
+    std::vector<std::unique_ptr<const googlesql::ResolvedGroupingSet>> vec; \
     GoSlice *goslice = (GoSlice *)v;                                \
-    zetasql::ResolvedGroupingSet **data =                           \
-        (zetasql::ResolvedGroupingSet **)goslice->data;             \
+    googlesql::ResolvedGroupingSet **data =                           \
+        (googlesql::ResolvedGroupingSet **)goslice->data;             \
     for (int i = 0; i < goslice->len; i++) {                        \
-      auto p = zetasql::MakeResolvedGroupingSet();                  \
+      auto p = googlesql::MakeResolvedGroupingSet();                  \
       memcpy((void *)p.get(), (void *)data[i],                      \
-             sizeof(zetasql::ResolvedGroupingSet));                 \
+             sizeof(googlesql::ResolvedGroupingSet));                 \
       vec.push_back(std::move(p));                                  \
     }                                                               \
-    std::vector<std::unique_ptr<const zetasql::ResolvedGroupingSetBase>> base_vec; \
+    std::vector<std::unique_ptr<const googlesql::ResolvedGroupingSetBase>> base_vec; \
     base_vec.reserve(vec.size());                                   \
     for (size_t i = 0; i < vec.size(); i++) {                       \
       base_vec.push_back(std::move(vec[i]));                        \
@@ -191,7 +191,7 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
   } while (0)
 
 #define SET_UNIQUE_PTR_EXPR_LIST(list, v) do {                      \
-    std::vector<std::unique_ptr<const zetasql::ResolvedExpr>> vec;  \
+    std::vector<std::unique_ptr<const googlesql::ResolvedExpr>> vec;  \
     GoSlice *goslice = (GoSlice *)v;                                \
     void **data = (void **)goslice->data;                           \
     for (int i = 0; i < goslice->len; i++) {                        \
@@ -201,7 +201,7 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
   } while (0)
 
 #define SET_UNIQUE_PTR_ACTION_LIST(list, v) do {                    \
-    std::vector<std::unique_ptr<const zetasql::ResolvedAlterAction>> vec; \
+    std::vector<std::unique_ptr<const googlesql::ResolvedAlterAction>> vec; \
     GoSlice *goslice = (GoSlice *)v;                                \
     void **data = (void **)goslice->data;                           \
     for (int i = 0; i < goslice->len; i++) {                        \
@@ -211,7 +211,7 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
   } while (0)
 
 #define SET_UNIQUE_PTR_CONSTRAINT_LIST(list, v) do {                    \
-    std::vector<std::unique_ptr<const zetasql::ResolvedConstraint>> vec; \
+    std::vector<std::unique_ptr<const googlesql::ResolvedConstraint>> vec; \
     GoSlice *goslice = (GoSlice *)v;                                    \
     void **data = (void **)goslice->data;                               \
     for (int i = 0; i < goslice->len; i++) {                            \
@@ -221,7 +221,7 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
   } while (0)
 
 #define SET_UNIQUE_PTR_SCAN_LIST(list, v) do {                      \
-    std::vector<std::unique_ptr<const zetasql::ResolvedExpr>> vec;  \
+    std::vector<std::unique_ptr<const googlesql::ResolvedExpr>> vec;  \
     GoSlice *goslice = (GoSlice *)v;                                \
     void **data = (void **)goslice->data;                           \
     for (int i = 0; i < goslice->len; i++) {                        \
@@ -231,15 +231,15 @@ inline std::vector<std::string> googlesql_public_analyzer_bridge_slice_to_strs(v
   } while (0)
 
 #define ADD_UNIQUE_PTR_LIST(list, T, v) do {                \
-    auto p = zetasql::Make ## T();                          \
-    memcpy((void *)p.get(), (void *)v, sizeof(zetasql::T)); \
+    auto p = googlesql::Make ## T();                          \
+    memcpy((void *)p.get(), (void *)v, sizeof(googlesql::T)); \
     list(std::move(p));                                     \
   } while (0)
 
 #define ADD_UNIQUE_PTR_GROUPING_SET_LIST(list, v) do {      \
-    auto p = zetasql::MakeResolvedGroupingSet();            \
+    auto p = googlesql::MakeResolvedGroupingSet();            \
     memcpy((void *)p.get(), (void *)v,                      \
-           sizeof(zetasql::ResolvedGroupingSet));           \
+           sizeof(googlesql::ResolvedGroupingSet));           \
     list(std::move(p));                                     \
   } while (0)
 
