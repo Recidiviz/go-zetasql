@@ -14,6 +14,10 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: recursive
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
       - name: setup Go
         uses: actions/setup-go@7b8cf10d4e4a01d4992d18a89f4d7dc5a3e6d6f4 # v4
         with:
@@ -35,22 +39,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-bazel-googlesql-
       - name: Tier B tag policy
-        run: make verify-tier-b-cgo-policy
+        run: task verify:tier-b-cgo-policy
       - name: Build libabsl_cgo.a
-        run: make prebuilt-libs-absl
+        run: task prebuilt:absl
         env:
           CC: clang
           CXX: clang++
           BAZEL_JOBS: "4"
       - name: Verify archive
-        run: make verify-prebuilt-absl
+        run: task verify:prebuilt-absl
       - name: Test Abseil Tier B pilot package
-        run: make local/test-prebuilt-absl
+        run: task test:tier-b-absl
         env:
           CC: clang
           CXX: clang++
       - name: Build widened go-absl patterns (meta + types + base)
-        run: make local/build-prebuilt-absl BUILDPKG_ABSL='./internal/ccall/go-absl/meta/... ./internal/ccall/go-absl/types/... ./internal/ccall/go-absl/base/...'
+        run: task build:tier-b-absl BUILDPKG_ABSL='./internal/ccall/go-absl/meta/... ./internal/ccall/go-absl/types/... ./internal/ccall/go-absl/base/...'
         env:
           CC: clang
           CXX: clang++

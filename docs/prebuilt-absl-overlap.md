@@ -13,11 +13,11 @@
 | `googlesql_unified_prebuilt` | N/A (partial stack) | N/A | **Supported** with constraints; see below and [`libgooglesql-unified.md`](libgooglesql-unified.md). |
 | `googlesql_unified_prebuilt` **+** `googlesql_tier_b` and/or careless overlap with Tier B Abseil archives | Risk of duplicate / inconsistent native objects | — | **Unsupported** without an audited single-owner plan. |
 
-CI / local preflight: `make verify-tier-b-cgo-policy` (prints this policy; [`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh)). Optional future **enforcement** (fail the job if forbidden combinations appear in scripts) may be gated behind `VERIFY_TIER_B_CGO_POLICY_ENFORCE=1` when implemented.
+CI / local preflight: `task verify:tier-b-cgo-policy` (prints this policy; [`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh)). Optional future **enforcement** (fail the job if forbidden combinations appear in scripts) may be gated behind `VERIFY_TIER_B_CGO_POLICY_ENFORCE=1` when implemented.
 
 ## Finding
 
-`libprotobuf_cgo.a` (from `make prebuilt-libs`) merges Bazel-built protobuf and utf8_range object files. Those objects **include Abseil code** linked into the archive (e.g. `absl::log_internal::*`, `absl::container_internal::*`). A quick check:
+`libprotobuf_cgo.a` (from `task prebuilt:protobuf`) merges Bazel-built protobuf and utf8_range object files. Those objects **include Abseil code** linked into the archive (e.g. `absl::log_internal::*`, `absl::container_internal::*`). A quick check:
 
 ```bash
 nm internal/ccall/go-protobuf/protobuf/lib/linux_amd64/libprotobuf_cgo.a | grep -E '^[0-9a-f]+ [TtW] _ZN4absl' | head
@@ -60,7 +60,7 @@ v1 **`libgooglesql.a`** contains GoogleSQL-owned object code from selected Bazel
 
 ## Multiple CGO packages each linking `-labsl_cgo`
 
-Each migrated package passes **`-L…/go-absl/lib -labsl_cgo`** in its `bind_tier_b_absl.go`. The final link may pull the same static archive more than once; [`Makefile`](../Makefile) uses **`-Wl,--allow-multiple-definition`** while this is rolled out. If you see link failures or unexpected duplication, prefer Option B (single `prebuilt` owner) in [`native-build-pipeline.md`](native-build-pipeline.md), or the unified `libgooglesql.a` path once it covers your symbol closure.
+Each migrated package passes **`-L…/go-absl/lib -labsl_cgo`** in its `bind_tier_b_absl.go`. The final link may pull the same static archive more than once; [`Taskfile.yml`](../Taskfile.yml) uses **`-Wl,--allow-multiple-definition`** while this is rolled out. If you see link failures or unexpected duplication, prefer Option B (single `prebuilt` owner) in [`native-build-pipeline.md`](native-build-pipeline.md), or the unified `libgooglesql.a` path once it covers your symbol closure.
 
 ## Bazel pin
 

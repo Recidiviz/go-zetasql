@@ -6,7 +6,7 @@ This document describes the **unified prebuilt** archive layout and C ABI. It co
 
 **Goal:** A reproducible **`libgooglesql.a`** output path, verification scripts, **public C header** ([`include/googlesql_unified.h`](../internal/ccall/go-googlesql-unified/include/googlesql_unified.h)), pkg-config shape, and a **single CGO owner** package so the repo can grow toward a full GoogleSQL static library.
 
-**Policy:** **Link-only CGO + these prebuilt archives** is the only supported direction for GoogleSQL (see [link-only-cgo-migration.md](link-only-cgo-migration.md)). The non-unified amalgamation bind path has been removed from the generator and Makefiles.
+**Policy:** **Link-only CGO + these prebuilt archives** is the only supported direction for GoogleSQL (see [link-only-cgo-migration.md](link-only-cgo-migration.md)). The non-unified amalgamation bind path has been removed from the generator; local automation uses [`Taskfile.yml`](../Taskfile.yml).
 
 ### C ABI (stable symbols)
 
@@ -31,7 +31,7 @@ The **default list** now includes the first **root API slice** in addition to th
 Targets are **explicit, sorted labels** in [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt). Override for experiments:
 
 ```bash
-GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging …' make prebuilt-libs-googlesql-unified
+GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging …' task prebuilt:googlesql-unified
 ```
 
 | Layer | Purpose | In default file? |
@@ -76,7 +76,7 @@ For a binary that uses both GoogleSQL protos and the default protobuf prebuilt a
 
 1. **Single owner for protobuf + Abseil** — Prefer linking **`libprotobuf_cgo.a`** once (default protobuf prebuilt path) so protobuf and embedded Abseil objects come from one Bazel-built archive; **`libgooglesql.a`** adds GoogleSQL `.o` files that **call into** that runtime.
 2. **Order** — Depend on package / linker order documented in [`prebuilt-cgo.md`](prebuilt-cgo.md). If the linker reports **duplicate symbol** errors for `absl::` or `google::protobuf::`, compare **`nm …/libgooglesql.a`** vs **`nm …/libprotobuf_cgo.a`** and follow [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md) (avoid mixed Tier B tags; adjust `-l` order before using **`--allow-multiple-definition`** as a crutch).
-3. **Smoke-only unified tag** — `googlesql_unified_prebuilt` builds in CI link with flags similar to **`Makefile`** `local/build-prebuilt-googlesql-unified` (see below); they do **not** pull `libprotobuf_cgo.a` unless you add a second CGO package that does.
+3. **Smoke-only unified tag** — `googlesql_unified_prebuilt` builds in CI link with flags similar to **`task build:googlesql-unified`** (see below); they do **not** pull `libprotobuf_cgo.a` unless you add a second CGO package that does.
 
 Spot-check (after building both archives):
 
@@ -92,7 +92,7 @@ Expect overlap in **symbol names** only where both archives define or reference 
 From the repository root:
 
 ```bash
-make prebuilt-libs-googlesql-unified
+task prebuilt:googlesql-unified
 ```
 
 Requires **bazelisk** or **bazel**, **clang** / **clang++**, and the populated submodule at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql).
@@ -100,16 +100,16 @@ Requires **bazelisk** or **bazel**, **clang** / **clang++**, and the populated s
 Override targets (space-separated):
 
 ```bash
-GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging //googlesql/base:status' make prebuilt-libs-googlesql-unified
+GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging //googlesql/base:status' task prebuilt:googlesql-unified
 ```
 
 ## Verify
 
 ```bash
-make verify-prebuilt-googlesql-unified
+task verify:prebuilt-googlesql-unified
 ```
 
-The verification script does a small `nm -C` spot check in addition to confirming the archive exists. It checks representative ownership symbols for ICU, RE2, Google APIs date/time protos, `googlesql::reflection::*`, and parser AST enums so archive-boundary regressions fail fast. When **`llvm-nm`** is on `PATH` and **`libprotobuf_cgo.a`** exists (run **`make prebuilt-libs`** first), it also asserts **zero** overlapping **global (`T`)** symbol names between `libgooglesql.a` and `libprotobuf_cgo.a` — duplicate globals plus **`-Wl,--allow-multiple-definition`** risk undefined behavior at startup (see [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md)).
+The verification script does a small `nm -C` spot check in addition to confirming the archive exists. It checks representative ownership symbols for ICU, RE2, Google APIs date/time protos, `googlesql::reflection::*`, and parser AST enums so archive-boundary regressions fail fast. When **`llvm-nm`** is on `PATH` and **`libprotobuf_cgo.a`** exists (run **`task prebuilt:protobuf`** first), it also asserts **zero** overlapping **global (`T`)** symbol names between `libgooglesql.a` and `libprotobuf_cgo.a` — duplicate globals plus **`-Wl,--allow-multiple-definition`** risk undefined behavior at startup (see [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md)).
 
 ## Native C link smoke
 
@@ -125,9 +125,9 @@ Compiles [`smoke/smoke_main.c`](../internal/ccall/go-googlesql-unified/smoke/smo
 
 Package [`internal/ccall/go-googlesql-unified/googlesqlunified`](../internal/ccall/go-googlesql-unified/googlesqlunified) links `libgooglesql.a` when the archive exists. Use with `-tags googlesql,googlesql_unified_prebuilt` for smoke tests and the first root-package slice.
 
-[`Makefile`](../Makefile) target **`local/build-prebuilt-googlesql-unified`** remains the archive smoke build for package `googlesqlunified`. Use **`local/build-prebuilt-googlesql-unified-root`** for the full-repo build slice (default **`BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`**). **`local/test-prebuilt-googlesql-unified-root`** defaults to the **`public/analyzer`** package so the process exercises unified-prebuilt CGO + `libprotobuf_cgo.a` without requiring a root **`bind.cc`** split; override **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`** only after that split lands (same pattern as [`base/status`](../internal/ccall/go-base/status/bind_linux.go)). The Makefile sets **`CGO_CXXFLAGS_PREBUILT`**, **`CGO_LDFLAGS_ALLOW`**, and **`CGO_LDFLAGS`** (including **`-stdlib=libc++`**) for Bazel **libc++** / mold-compatible links on Linux.
+[`Taskfile.yml`](../Taskfile.yml) task **`build:googlesql-unified`** remains the archive smoke build for package `googlesqlunified`. Use **`build:googlesql-unified-root`** for the full-repo build slice (default **`BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`**). **`test:googlesql-unified-root`** defaults to the **`public/analyzer`** package so the process exercises unified-prebuilt CGO + `libprotobuf_cgo.a` without requiring a root **`bind.cc`** split; override **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`** only after that split lands (same pattern as [`base/status`](../internal/ccall/go-base/status/bind_linux.go)). [`scripts/task-env.sh`](../scripts/task-env.sh) (sourced by tasks) sets **`CGO_CXXFLAGS_PREBUILT`**, **`CGO_LDFLAGS_ALLOW`**, and **`CGO_LDFLAGS`** (including **`-stdlib=libc++`**) for Bazel **libc++** / mold-compatible links on Linux.
 
-**Root `TESTPKG=./`:** use **`make local/compile-root-unified-test`** to **`go test -c`** only (writes **`$(GO_CACHE_ROOT)/googlesql_root_unified.test`**). That validates link + CGO without executing the test harness (startup may still **SIGSEGV** when run; see [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md)). Use **`make local/test-root-unified`** when you need to execute tests after rebuilding **`libprotobuf_cgo.a`** (`extract_protobuf_cgo_lib.sh` filters duplicate Abseil **cctz** members) and the **`civil_time`** / analyzer bridge fixes described there.
+**Root `TESTPKG=./`:** use **`task test:compile-root-unified`** to **`go test -c`** only (writes **`$(GO_CACHE_ROOT)/googlesql_root_unified.test`**). That validates link + CGO without executing the test harness (startup may still **SIGSEGV** when run; see [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md)). Use **`task test:local`** when you need to execute tests after rebuilding **`libprotobuf_cgo.a`** (`extract_protobuf_cgo_lib.sh` filters duplicate Abseil **cctz** members) and the **`civil_time`** / analyzer bridge fixes described there.
 
 ### Root unified-prebuilt dependency graph (`go list`)
 
@@ -153,13 +153,13 @@ There is **one** import path for **`go-protobuf/protobuf`** in this graph (no du
 
 Workflow **[`.github/workflows/go-googlesql-unified-prebuilt.yml`](../.github/workflows/go-googlesql-unified-prebuilt.yml)** runs this sequence (matches a green local run):
 
-1. **`make prebuilt-libs`** — produces **`libprotobuf_cgo.a`** (required for any unified-prebuilt link that imports **`go-protobuf`**; not committed).
-2. **`make prebuilt-libs-googlesql-unified`** using the committed default [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt)
-3. **`make verify-prebuilt-googlesql-unified`** (install **`llvm`** on the runner so **`llvm-nm`** can enforce the duplicate-**`T`** check when both archives exist)
-4. **`make local/build-prebuilt-googlesql-unified`**
-5. **`make local/build-prebuilt-googlesql-unified-root`**
-6. **`make local/test-prebuilt-googlesql-unified-root`** (default analyzer shard)
-7. **`make local/compile-root-unified-test`** — link-only **`go test -c ./`** for the full root module (no test execution; safe CI signal while runtime startup is still triaged)
+1. **`task prebuilt:protobuf`** — produces **`libprotobuf_cgo.a`** (required for any unified-prebuilt link that imports **`go-protobuf`**; not committed).
+2. **`task prebuilt:googlesql-unified`** using the committed default [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt)
+3. **`task verify:prebuilt-googlesql-unified`** (install **`llvm`** on the runner so **`llvm-nm`** can enforce the duplicate-**`T`** check when both archives exist)
+4. **`task build:googlesql-unified`**
+5. **`task build:googlesql-unified-root`**
+6. **`task test:googlesql-unified-root`** (default analyzer shard)
+7. **`task test:compile-root-unified`** — link-only **`go test -c ./`** for the full root module (no test execution; safe CI signal while runtime startup is still triaged)
 8. **`bash scripts/smoke_link_googlesql_unified.sh`**
 
 - **Triggers:** `workflow_dispatch` (manual) and a **weekly** `schedule` cron for regression signal and cache warmth. Forks may disable scheduled workflows unless enabled in repository settings.
@@ -177,25 +177,25 @@ Examples:
 
 ```bash
 # Match CI exactly.
-make prebuilt-libs-googlesql-unified
+task prebuilt:googlesql-unified
 
 # Narrow the archive to a smaller experiment without changing the committed default list.
 GOOGLESQL_UNIFIED_BAZEL_TARGETS='//googlesql/base:logging //googlesql/base:status' \
-  make prebuilt-libs-googlesql-unified
+  task prebuilt:googlesql-unified
 
 # Reproduce the same build with a different module proxy configuration.
 GOOGLESQL_UNIFIED_GOPROXY='https://proxy.golang.org,direct' \
-  make prebuilt-libs-googlesql-unified
+  task prebuilt:googlesql-unified
 ```
 
 ## Quick verification checklist
 
 - [ ] `bazel build` of the labels in `default_bazel_targets.txt` succeeds in `internal/cmd/updater/googlesql`.
-- [ ] `make prebuilt-libs-googlesql-unified` produces `internal/ccall/go-googlesql-unified/lib/$(go env GOOS)_$(go env GOARCH)/libgooglesql.a`.
-- [ ] `make verify-prebuilt-googlesql-unified` passes.
-- [ ] `make local/build-prebuilt-googlesql-unified` passes with unified prebuilt tags.
-- [ ] `make local/build-prebuilt-googlesql-unified-root` passes (default **`BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`**).
+- [ ] `task prebuilt:googlesql-unified` produces `internal/ccall/go-googlesql-unified/lib/$(go env GOOS)_$(go env GOARCH)/libgooglesql.a`.
+- [ ] `task verify:prebuilt-googlesql-unified` passes.
+- [ ] `task build:googlesql-unified` passes with unified prebuilt tags.
+- [ ] `task build:googlesql-unified-root` passes (default **`BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./`**).
 - [ ] `bash scripts/smoke_link_googlesql_unified.sh` passes.
-- [ ] `make local/test-prebuilt-googlesql-unified-root` passes (default analyzer **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT`**).
-- [ ] `make local/compile-root-unified-test` passes (`TESTPKG=./`; link-only — full **`local/test-root-unified`** may still hit startup SIGSEGV until [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md) is fully closed).
-- [ ] **`CGO_CXXFLAGS_PREBUILT`** is not set to an **empty** string in the environment (that skips `-stdlib=libc++` and breaks links against Bazel libc++ prebuilts; the [`Makefile`](../Makefile) treats empty like unset).
+- [ ] `task test:googlesql-unified-root` passes (default analyzer **`TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT`**).
+- [ ] `task test:compile-root-unified` passes (`TESTPKG=./`; link-only — full **`local/test-root-unified`** may still hit startup SIGSEGV until [`unified-prebuilt-root-segfault-investigation.md`](unified-prebuilt-root-segfault-investigation.md) is fully closed).
+- [ ] **`CGO_CXXFLAGS_PREBUILT`** is not set to an **empty** string in the environment (that skips `-stdlib=libc++` and breaks links against Bazel libc++ prebuilts; the [`Taskfile.yml`](../Taskfile.yml) treats empty like unset).

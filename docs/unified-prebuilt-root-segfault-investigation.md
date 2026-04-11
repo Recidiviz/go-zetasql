@@ -1,13 +1,13 @@
 # Unified-prebuilt root runtime segfault — investigation notes
 
 This document records the staged repro and GDB classification for
-`make local/test-prebuilt-googlesql-unified-root` after Abseil **link** issues were resolved.
+`task test:googlesql-unified-root` after Abseil **link** issues were resolved.
 The failure mode is **runtime SIGSEGV**, not missing symbols at link time.
 
 ## Staged repro (link vs execute)
 
 With the same toolchain as
-[`Makefile`](../Makefile) `local/test-prebuilt-googlesql-unified-root` (`CGO_CXXFLAGS_PREBUILT`,
+[`Taskfile.yml`](../Taskfile.yml) task `test:googlesql-unified-root` (`CGO_CXXFLAGS_PREBUILT`,
 `CGO_LDFLAGS_BASE`, `CC`/`CXX`, `GOCACHE`/`GOMODCACHE`):
 
 | Step | Command | Result |
@@ -76,22 +76,22 @@ gdb -q -batch -ex 'run -test.run ^$ -test.v' -ex 'thread apply all bt' /tmp/goog
 test binary showed `libstdc++.so.6` while `libprotobuf_cgo.a` and `libgooglesql.a` objects are built
 with **libc++** (`std::__1::`, Bazel LLVM). `internal/ccall/utf8_range_link/bind_linux.go` used
 `-lstdc++`; the external link also defaulted to libstdc++ until `CGO_LDFLAGS_BASE` gained
-`-stdlib=libc++` (see [`Makefile`](../Makefile)). Linking `utf8_range_link` against
+`-stdlib=libc++` (see [`Taskfile.yml`](../Taskfile.yml)). Linking `utf8_range_link` against
 `libcxx_prebuilt.a` / `libcxxabi_prebuilt.a` (same as [`go-protobuf/protobuf/bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go)) removes the extra libstdc++ load.
 
 **Archive hygiene:** [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) now filters out Abseil/protobuf/utf8_range `*.pic.o` paths so
 `libgooglesql.a` does not embed duplicate ELF definitions of the same runtime as
 `libprotobuf_cgo.a` (weak-symbol overlap is expected; **global `T`** overlap should stay zero —
-`make verify-prebuilt-googlesql-unified` checks this when `llvm-nm` and `libprotobuf_cgo.a` exist).
+`task verify:prebuilt-googlesql-unified` checks this when `llvm-nm` and `libprotobuf_cgo.a` exist).
 
 **Unified prebuilt CGO shards:** generated `bind_unified_prebuilt_linux.go` now adds
 `-L.../go-protobuf/protobuf/lib` and `-l:libcxx_prebuilt.a` / `-l:libcxxabi_prebuilt.a` so
 per-package cgo links match the protobuf archive (see `bindGoParamUnifiedPrebuilt` in
 [`internal/cmd/generator/pkg/generator.go`](../internal/cmd/generator/pkg/generator.go)).
 
-**Full repo test `./`:** the top-level [`internal/ccall/go-googlesql/bind.cc`](../internal/ccall/go-googlesql/bind.cc) is **link-only** (bridge headers + `libgooglesql.a`; no `export.inc` body amalgamation). Narrowing `make local/test-prebuilt-googlesql-unified-root` to `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./internal/ccall/go-googlesql/public/analyzer/` remains a useful startup-safe gate when debugging root-level link or init issues.
+**Full repo test `./`:** the top-level [`internal/ccall/go-googlesql/bind.cc`](../internal/ccall/go-googlesql/bind.cc) is **link-only** (bridge headers + `libgooglesql.a`; no `export.inc` body amalgamation). Narrowing `task test:googlesql-unified-root` to `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./internal/ccall/go-googlesql/public/analyzer/` remains a useful startup-safe gate when debugging root-level link or init issues.
 
-**Update (2026-04):** On a Linux host with `Makefile` `CGO_CXXFLAGS_PREBUILT` / `CGO_LDFLAGS_BASE` (`-stdlib=libc++`), `ldd` on the unified-prebuilt test binary shows **libc++.so.1** and **no libstdc++.so** — so mixed GNU/libstdc++ vs LLVM/libc++ is not the only failure mode.
+**Update (2026-04):** On a Linux host with the same `CGO_CXXFLAGS_PREBUILT` / `CGO_LDFLAGS_BASE` as [`scripts/task-env.sh`](../scripts/task-env.sh) (default `-stdlib=libc++`), `ldd` on the unified-prebuilt test binary shows **libc++.so.1** and **no libstdc++.so** — so mixed GNU/libstdc++ vs LLVM/libc++ is not the only failure mode.
 
 **Duplicate Abseil cctz / `civil_time_detail` vs `libprotobuf_cgo.a`:** `libprotobuf_cgo.a` merges Abseil `*.pic.o` from Bazel. The same **IANA time_zone** object files and **`civil_time_detail.cc`** body also appear in Go CGO TUs (`internal/ccall/go-absl/time/.../cctz/time_zone`, `civil_time/export.inc`, etc.). With `-Wl,--allow-multiple-definition`, the linker can merge incompatible copies and the process still crashes in `DescriptorPool::Tables` / `GroupSse2Impl` at startup.
 
@@ -103,9 +103,9 @@ Mitigations in-tree:
 
 After these changes, `go test -tags googlesql,googlesql_unified_prebuilt -c ./` can link with **only** `-Wl,--no-gc-sections -fuse-ld=mold -stdlib=libc++` on `CGO_LDFLAGS` (no `--allow-multiple-definition`). **Running** the binary can still **SIGSEGV** at startup with the same GDB shape as above — so duplicate weak/local merging is not the only remaining hypothesis; further work may target descriptor registration / archive skew beyond global `T` overlap.
 
-**Update (2026-04, GDB detail):** On `GroupSse2Impl::GroupSse2Impl`, **`rcx` is `0`** at the faulting `movdqu (%rcx)` — the SwissTable control pointer is null while `DescriptorPool::Tables::Tables()` runs the `well_known_types_.insert({…})` initializer list (see `descriptor.cc` in the vendored tree around `Tables::Tables`). `make verify-prebuilt-googlesql-unified` stays green (zero duplicate global **`T`** vs `libprotobuf_cgo.a`); **`ldd`** shows **libc++** and no **libstdc++**. Linking with **mold**, **bfd**, or **without** `--allow-multiple-definition` still crashes at run time. **Target bisection** (`GOOGLESQL_UNIFIED_BAZEL_TARGETS`) is still a valid next step if a duplicate `google::protobuf` / Abseil object hypothesis resurfaces after further vendor alignment.
+**Update (2026-04, GDB detail):** On `GroupSse2Impl::GroupSse2Impl`, **`rcx` is `0`** at the faulting `movdqu (%rcx)` — the SwissTable control pointer is null while `DescriptorPool::Tables::Tables()` runs the `well_known_types_.insert({…})` initializer list (see `descriptor.cc` in the vendored tree around `Tables::Tables`). `task verify:prebuilt-googlesql-unified` stays green (zero duplicate global **`T`** vs `libprotobuf_cgo.a`); **`ldd`** shows **libc++** and no **libstdc++**. Linking with **mold**, **bfd**, or **without** `--allow-multiple-definition` still crashes at run time. **Target bisection** (`GOOGLESQL_UNIFIED_BAZEL_TARGETS`) is still a valid next step if a duplicate `google::protobuf` / Abseil object hypothesis resurfaces after further vendor alignment.
 
-**Update (2026-04, `CapacityToGrowth` / `IsValidCapacity` abort):** Under `types.init` → `Int64ArrayType`, GDB can show `CapacityToGrowth` asserting on a “capacity” that is actually another field (for example a `slots_` pointer), i.e. **`CommonFields` / SwissTable layout skew** between translation units. That happens when **vendored** [`internal/ccall/absl`](../internal/ccall/absl) drifts from the Abseil revision used to build `libgooglesql.a` and `libprotobuf_cgo.a` (Bazel `external/abseil-cpp~` in the GoogleSQL submodule). **Fix:** refresh the tree from that Bazel Abseil export; **leave** [`internal/ccall/absl/time`](../internal/ccall/absl/time) unchanged so the existing `go-absl` cctz bridge keeps compiling. With aligned headers, `make local/test-root-unified GO_TEST_FLAGS='-run ^$'` can start the process without aborting.
+**Update (2026-04, `CapacityToGrowth` / `IsValidCapacity` abort):** Under `types.init` → `Int64ArrayType`, GDB can show `CapacityToGrowth` asserting on a “capacity” that is actually another field (for example a `slots_` pointer), i.e. **`CommonFields` / SwissTable layout skew** between translation units. That happens when **vendored** [`internal/ccall/absl`](../internal/ccall/absl) drifts from the Abseil revision used to build `libgooglesql.a` and `libprotobuf_cgo.a` (Bazel `external/abseil-cpp~` in the GoogleSQL submodule). **Fix:** refresh the tree from that Bazel Abseil export; **leave** [`internal/ccall/absl/time`](../internal/ccall/absl/time) unchanged so the existing `go-absl` cctz bridge keeps compiling. With aligned headers, `task test:local GO_TEST_FLAGS='-run ^$'` can start the process without aborting.
 
 **Historical note (pre–link-only default):** When multiple CGO packages still pulled overlapping `export.inc` / `.cc` graphs into separate TUs, Abseil could report **duplicate `ABSL_FLAG` registration** at startup. The tree used preprocessor guards and single-owner rules around duplicated sources and flags. **Current default (link-only + unified prebuilt):** thin `bind.cc` does not compile those `export.inc` bodies; implementations live in `libgooglesql.a` with one `ABSL_FLAG` definition per flag. Background on the migration is in [link-only-cgo-migration.md](link-only-cgo-migration.md).
 
@@ -113,9 +113,9 @@ After these changes, `go test -tags googlesql,googlesql_unified_prebuilt -c ./` 
 
 | Hypothesis | Result |
 |------------|--------|
-| **`CGO_CXXFLAGS` empty** — environment `CGO_CXXFLAGS_PREBUILT=` defeats `?=` so CGO compiles without `-stdlib=libc++`, producing `std::__cxx11::` (libstdc++) symbols against Bazel **libc++** archives | **Confirmed** as a real footgun: link fails with undefined `std::__cxx11::` symbols. **Fix:** [`Makefile`](../Makefile) treats empty `CGO_CXXFLAGS_PREBUILT` like unset (`ifeq ($(strip …),)`) so `make local/*` always passes `-stdlib=libc++`. |
-| **gofmt import order vs link order** — a single `import` block is sorted so `go-googlesql-unified` precedes `go-protobuf`, affecting cmd/link cgo LDFLAGS order | **Mitigation added:** generator emits **two** import blocks with `go-protobuf/protobuf` first ([`templates/bind.go.tmpl`](../internal/cmd/generator/templates/bind.go.tmpl), `ImportGoLibsLinkOrderFirst`). **Did not** eliminate startup SIGSEGV on `make local/test-root-unified` in the tested environment. |
-| **`-lgooglesql` before `-lprotobuf_cgo`** — move `-lgooglesql` to tail of `CGO_LDFLAGS` only | **Tried** (then reverted): appending `-lgooglesql` via `Makefile` and/or stripping `#cgo` `-lgooglesql` from `googlesqlunified` did **not** stop the crash; restoring the original `googlesqlunified` `#cgo` LDFLAGS. |
+| **`CGO_CXXFLAGS` empty** — environment `CGO_CXXFLAGS_PREBUILT=` skips the default so CGO compiles without `-stdlib=libc++`, producing `std::__cxx11::` (libstdc++) symbols against Bazel **libc++** archives | **Confirmed** as a real footgun: link fails with undefined `std::__cxx11::` symbols. **Fix:** [`scripts/task-env.sh`](../scripts/task-env.sh) treats empty `CGO_CXXFLAGS_PREBUILT` like unset so `task test:local` / `task build:local` always pass `-stdlib=libc++`. |
+| **gofmt import order vs link order** — a single `import` block is sorted so `go-googlesql-unified` precedes `go-protobuf`, affecting cmd/link cgo LDFLAGS order | **Mitigation added:** generator emits **two** import blocks with `go-protobuf/protobuf` first ([`templates/bind.go.tmpl`](../internal/cmd/generator/templates/bind.go.tmpl), `ImportGoLibsLinkOrderFirst`). **Did not** eliminate startup SIGSEGV on `task test:local` in the tested environment. |
+| **`-lgooglesql` before `-lprotobuf_cgo`** — move `-lgooglesql` to tail of `CGO_LDFLAGS` only | **Tried** (then reverted): appending `-lgooglesql` via [`Taskfile.yml`](../Taskfile.yml) and/or stripping `#cgo` `-lgooglesql` from `googlesqlunified` did **not** stop the crash; restoring the original `googlesqlunified` `#cgo` LDFLAGS. |
 | **`llvm-nm` on `.test`** | `DescriptorPool::Tables::Tables` appears as **local** `t` (duplicate lines at same address from COMDAT); no obvious second **global** `T` definition for the pool in the final binary beyond the archive-level check. |
 | **Abseil `lts` tag mismatch** between `libgooglesql.a` and `libprotobuf_cgo.a` | **Strings** show **`lts_20240722`** in both — no obvious mixed Abseil era. |
 

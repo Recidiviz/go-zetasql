@@ -127,8 +127,8 @@ After go-googlesql is green:
 
 ### CI vs `libprotobuf_cgo.a`
 
-- **Default build:** [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) link **`libprotobuf_cgo.a`** (see **`make prebuilt-libs`** / **`make verify-prebuilt-protobuf`**). CI bootstraps the archive in [`.github/workflows/go.yml`](../.github/workflows/go.yml) before **`go test`**.
-- **Archive build:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) produces **`lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a`** using Bazel in the GoogleSQL submodule. From the repo root: **`make extract-protobuf-lib`**.
+- **Default build:** [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) link **`libprotobuf_cgo.a`** (see **`task prebuilt:protobuf`** / **`task verify:prebuilt-protobuf`**). CI bootstraps the archive in [`.github/workflows/go.yml`](../.github/workflows/go.yml) before **`go test`**.
+- **Archive build:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) produces **`lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a`** using Bazel in the GoogleSQL submodule. From the repo root: **`task prebuilt:protobuf`**.
 - **Stray artifacts:** `*.a` is gitignored globally; local `lib/` trees from the extract script need not be committed.
 
 ### Single-owner protobuf / shard macros (design constraint)
@@ -185,7 +185,7 @@ cd ../generator
 go run .
 ```
 
-After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_undef.inc` amalgamation guards** are present (the updater or `go run ./internal/cmd/vendorpatch` applies them), then re-run **`make verify-prebuilt-protobuf`** / alignment checks if you changed protobuf sources.
+After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_undef.inc` amalgamation guards** are present (the updater or `go run ./internal/cmd/vendorpatch` applies them), then re-run **`task verify:prebuilt-protobuf`** / alignment checks if you changed protobuf sources.
 
 **Historical note:** the old `go-protobuf/protobuf/export.inc` single-TU bundle is **removed**; if you maintain a fork that still uses a mega-TU for protobuf, ensure `port_undef` does not leave `GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF` set across later includes (see port_def guard notes above).
 

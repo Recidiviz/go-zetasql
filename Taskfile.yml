@@ -1,0 +1,323 @@
+version: "3"
+
+# https://taskfile.dev — install: https://taskfile.dev/installation/
+# Replaces the former Makefile. All GoogleSQL CGO uses link-only + unified prebuilt tags unless noted.
+
+vars:
+  DOCKER_IMAGE: go-googlesql
+  DOCKER_DEV_IMAGE: go-googlesql:dev
+  TESTPKG: "./"
+  GO_TEST_FLAGS: ""
+  BUILDPKG: "./..."
+  BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT: "./"
+  TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT: "./"
+  BUILDPKG_ABSL: "./internal/ccall/go-absl/meta/type_traits/ ./internal/ccall/go-absl/types/any/ ./internal/ccall/go-absl/types/bad_any_cast/ ./internal/ccall/go-absl/types/bad_any_cast_impl/ ./internal/ccall/go-absl/types/bad_optional_access/ ./internal/ccall/go-absl/types/bad_variant_access/ ./internal/ccall/go-absl/types/compare/ ./internal/ccall/go-absl/types/optional/ ./internal/ccall/go-absl/types/span/ ./internal/ccall/go-absl/types/variant/ ./internal/ccall/go-absl/base/config/ ./internal/ccall/go-absl/base/core_headers/ ./internal/ccall/go-absl/base/endian/ ./internal/ccall/go-absl/base/errno_saver/ ./internal/ccall/go-absl/base/prefetch/ ./internal/ccall/go-absl/utility/utility/"
+  TESTPKG_PREBUILT_ABSL: "./internal/ccall/go-absl/meta/type_traits/ ./internal/ccall/go-absl/types/any/ ./internal/ccall/go-absl/types/bad_any_cast/ ./internal/ccall/go-absl/types/bad_any_cast_impl/ ./internal/ccall/go-absl/types/bad_optional_access/ ./internal/ccall/go-absl/types/bad_variant_access/ ./internal/ccall/go-absl/types/compare/ ./internal/ccall/go-absl/types/optional/ ./internal/ccall/go-absl/types/span/ ./internal/ccall/go-absl/types/variant/ ./internal/ccall/go-absl/base/config/ ./internal/ccall/go-absl/base/core_headers/ ./internal/ccall/go-absl/base/endian/ ./internal/ccall/go-absl/base/errno_saver/ ./internal/ccall/go-absl/base/prefetch/ ./internal/ccall/go-absl/utility/utility/"
+
+tasks:
+  default:
+    desc: Show common tasks (full list task --list-all)
+    cmds:
+      - |
+        echo "go-googlesql — use https://taskfile.dev (task --list-all)"
+        echo "Common: task test:local | task build:local | task prebuilt:protobuf prebuilt:googlesql-unified"
+
+  cache:dirs:
+    desc: Create GOCACHE / GOMODCACHE / ccache dirs under GO_CACHE_ROOT
+    cmds:
+      - bash -c 'source scripts/task-env.sh && task_env_export && mkdir -p "$GO_CACHE_ROOT/gocache" "$GO_CACHE_ROOT/gomodcache" "$GO_CACHE_ROOT/ccache"'
+
+  cache:clean-cgo:
+    desc: Remove stale gocache and ccache objects (after OOM or bad SIGSEGV)
+    cmds:
+      - bash -c 'source scripts/task-env.sh && task_env_export && rm -rf "$GO_CACHE_ROOT/gocache"/* "$GO_CACHE_ROOT/ccache"/*'
+
+  verify:prebuilt-protobuf:
+    cmds:
+      - bash scripts/verify-prebuilt-protobuf.sh
+
+  verify:prebuilt-googlesql-unified:
+    cmds:
+      - bash scripts/verify-prebuilt-googlesql-unified.sh
+
+  verify:prebuilt-absl:
+    cmds:
+      - bash scripts/verify-prebuilt-absl.sh
+
+  verify:protobuf-tier-b:
+    cmds:
+      - bash scripts/verify-protobuf-tier-b-alignment.sh
+
+  verify:tier-b-cgo-policy:
+    cmds:
+      - bash scripts/verify-tier-b-cgo-tag-policy.sh
+
+  prebuilt:protobuf:
+    aliases: [extract:protobuf]
+    desc: Build libprotobuf_cgo.a via Bazel (extract_protobuf_cgo_lib.sh)
+    cmds:
+      - bash internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh
+
+  prebuilt:absl:
+    aliases: [extract:absl]
+    desc: Build libabsl_cgo.a (Tier B pilot)
+    cmds:
+      - bash internal/ccall/go-absl/extract_absl_cgo_lib.sh
+
+  prebuilt:googlesql-unified:
+    aliases: [extract:googlesql-unified]
+    desc: Build libgooglesql.a from GoogleSQL Bazel targets
+    cmds:
+      - bash internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh
+
+  package:protobuf-prebuilt-tarball:
+    deps: [verify:prebuilt-protobuf]
+    cmds:
+      - bash scripts/package-protobuf-prebuilt.sh
+
+  sync:protobuf-vendor-from-bazel:
+    cmds:
+      - bash scripts/sync-protobuf-cpp-runtime-from-bazel.sh
+
+  regenerate:googlesql-cpp-protos:
+    cmds:
+      - bash scripts/regenerate-googlesql-cpp-protos.sh
+
+  build:local:
+    deps: [cache:dirs, verify:prebuilt-protobuf, verify:prebuilt-googlesql-unified]
+    desc: go build with googlesql,googlesql_unified_prebuilt (BUILDPKG)
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go build -p "$GO_BUILD_P" -tags "$GOOGLESQL_BUILD_TAGS" {{.BUILDPKG}}
+
+  build:tier-b-absl:
+    deps: [cache:dirs, verify:prebuilt-absl]
+    desc: go build Tier B Abseil pilot packages (BUILDPKG_ABSL)
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go build -p "$GO_BUILD_P" -tags googlesql,googlesql_tier_b_absl {{.BUILDPKG_ABSL}}
+
+  build:googlesql-unified:
+    deps: [cache:dirs, verify:prebuilt-googlesql-unified]
+    desc: Smoke-build googlesqlunified package
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go build -p "$GO_BUILD_P" -tags "$GOOGLESQL_BUILD_TAGS" ./internal/ccall/go-googlesql-unified/googlesqlunified/
+
+  build:googlesql-unified-root:
+    deps: [cache:dirs, verify:prebuilt-protobuf, verify:prebuilt-googlesql-unified]
+    desc: go build root slice (BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT)
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go build -p "$GO_BUILD_P" -tags "$GOOGLESQL_BUILD_TAGS" {{.BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT}}
+
+  test:local:
+    deps: [cache:dirs, verify:prebuilt-protobuf, verify:prebuilt-googlesql-unified]
+    desc: go test unified prebuilt (TESTPKG, GO_TEST_FLAGS); same recipe as former local/test-root-unified
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go test -p "$GO_BUILD_P" -tags "$GOOGLESQL_BUILD_TAGS" -v {{.TESTPKG}} -count=1 {{.GO_TEST_FLAGS}}
+
+  test:fresh:
+    desc: Like test:local but forces rebuild (-a)
+    cmds:
+      - task: test:local
+        vars:
+          GO_TEST_FLAGS: "-a"
+
+  test:protobuf-cgo:
+    deps: [cache:dirs, verify:prebuilt-protobuf]
+    desc: Test go-protobuf/protobuf only (no libgooglesql.a)
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go test -p "$GO_BUILD_P" -tags "$GOOGLESQL_BUILD_TAGS" -v ./internal/ccall/go-protobuf/protobuf/ -count=1 {{.GO_TEST_FLAGS}}
+
+  test:tier-b-absl:
+    deps: [cache:dirs, verify:prebuilt-absl]
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go test -p "$GO_BUILD_P" -tags googlesql,googlesql_tier_b_absl -v {{.TESTPKG_PREBUILT_ABSL}} -count=1
+
+  test:googlesql-unified-root:
+    deps: [cache:dirs, verify:prebuilt-protobuf, verify:prebuilt-googlesql-unified]
+    desc: go test with TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT (default ./)
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go test -p "$GO_BUILD_P" -tags "$GOOGLESQL_BUILD_TAGS" -v {{.TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT}} -count=1
+
+  test:compile-root-unified:
+    deps: [cache:dirs, verify:prebuilt-protobuf, verify:prebuilt-googlesql-unified]
+    desc: go test -c only; writes $GO_CACHE_ROOT/googlesql_root_unified.test
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="$CC" CXX="$CXX" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go test -p "$GO_BUILD_P" -tags "$GOOGLESQL_BUILD_TAGS" -c -o "$GO_CACHE_ROOT/googlesql_root_unified.test" {{.TESTPKG}}
+
+  profile:bottleneck:
+    deps: [cache:dirs, verify:prebuilt-protobuf, verify:prebuilt-googlesql-unified]
+    desc: Cold vs warm go test -c timing + ccache stats
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        echo "=== ccache stats (before) ==="; ccache -s 2>/dev/null || echo "(install ccache for stats)"
+        echo "=== cold: zero ccache counters ==="; ccache -z 2>/dev/null || true
+        echo "=== cold: compile test binary ==="
+        time env CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="ccache clang" CXX="ccache clang++" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go test -count=1 -c -o /dev/null -tags "$GOOGLESQL_BUILD_TAGS" {{.TESTPKG}}
+        echo "=== warm: compile again ==="
+        time env CGO_ENABLED=1 \
+        CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
+        CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
+        CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
+        CC="ccache clang" CXX="ccache clang++" \
+        CCACHE_DIR="$CCACHE_DIR" CCACHE_COMPRESS=1 \
+        GOCACHE="$GOCACHE" GOMODCACHE="$GOMODCACHE" \
+        go test -count=1 -c -o /dev/null -tags "$GOOGLESQL_BUILD_TAGS" {{.TESTPKG}}
+        echo "=== ccache stats (after) ==="; ccache -s 2>/dev/null || true
+
+  smoke:googlesql-unified:
+    cmds:
+      - bash scripts/smoke_link_googlesql_unified.sh
+
+  docker:build:
+    cmds:
+      - docker build -t {{.DOCKER_IMAGE}} .
+
+  docker:build-dev:
+    deps: [cache:dirs]
+    cmds:
+      - docker build -t {{.DOCKER_DEV_IMAGE}} --target dev .
+
+  docker:warm-cache:
+    deps: [docker:build-dev]
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        docker run --rm \
+          -e CGO_ENABLED=1 -e CC=clang -e CXX=clang++ \
+          -e CCACHE_DIR=/root/.ccache -e CCACHE_COMPRESS=1 \
+          -v "$PWD":/go-googlesql \
+          -v "$GO_CACHE_ROOT/gocache":/root/.cache/go-build \
+          -v "$GO_CACHE_ROOT/gomodcache":/go/pkg/mod \
+          -v "$GO_CACHE_ROOT/ccache":/root/.ccache \
+          -w /go-googlesql \
+          {{.DOCKER_DEV_IMAGE}} \
+          bash -c "set -e; bash scripts/verify-prebuilt-protobuf.sh; bash scripts/verify-prebuilt-googlesql-unified.sh; \
+          export CGO_CXXFLAGS=\"$CGO_CXXFLAGS_PREBUILT\"; \
+          export CGO_LDFLAGS_ALLOW=\"$CGO_LDFLAGS_ALLOW_LIST\"; \
+          export CGO_LDFLAGS=\"$CGO_LDFLAGS_BASE\"; \
+          go test -race -p \"$GO_BUILD_P\" -tags \"$GOOGLESQL_BUILD_TAGS\" {{.TESTPKG}} -count=1 -run '^$' -exec /bin/true"
+
+  test:linux:
+    aliases: [test-docker]
+    deps: [docker:build-dev]
+    desc: Run go test -race in dev container (shared GO_CACHE_ROOT)
+    cmds:
+      - |
+        set -euo pipefail
+        source scripts/task-env.sh && task_env_export
+        docker run --rm \
+          -e CGO_ENABLED=1 -e CC=clang -e CXX=clang++ \
+          -e CCACHE_DIR=/root/.ccache -e CCACHE_COMPRESS=1 \
+          -v "$PWD":/go-googlesql \
+          -v "$GO_CACHE_ROOT/gocache":/root/.cache/go-build \
+          -v "$GO_CACHE_ROOT/gomodcache":/go/pkg/mod \
+          -v "$GO_CACHE_ROOT/ccache":/root/.ccache \
+          -w /go-googlesql \
+          {{.DOCKER_DEV_IMAGE}} \
+          bash -c "set -e; bash scripts/verify-prebuilt-protobuf.sh; bash scripts/verify-prebuilt-googlesql-unified.sh; \
+          export CGO_CXXFLAGS=\"$CGO_CXXFLAGS_PREBUILT\"; \
+          export CGO_LDFLAGS_ALLOW=\"$CGO_LDFLAGS_ALLOW_LIST\"; \
+          export CGO_LDFLAGS=\"$CGO_LDFLAGS_BASE\"; \
+          go test -race -p \"$GO_BUILD_P\" -tags \"$GOOGLESQL_BUILD_TAGS\" -v {{.TESTPKG}} -count=1"
+
+  test:
+    desc: Alias for test:linux
+    cmds:
+      - task: test:linux

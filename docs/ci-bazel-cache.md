@@ -6,8 +6,8 @@ This document is the **single inventory** for GitHub Actions caching related to 
 
 | Workflow | Trigger | Bazel | `actions/cache` (Bazel) | `actions/cache` (ccache) | Notes |
 |----------|---------|-------|---------------------------|---------------------------|--------|
-| [`go.yml`](../.github/workflows/go.yml) | `push` / `pull_request` to `main` | Yes | Yes (`~/.cache/bazel`) | Yes (`.ccache`, key from `go.sum` / `go.mod`) | Default protobuf prebuilt path: `make prebuilt-libs` → `make local/test`. |
-| [`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) | `workflow_dispatch` | Yes | Yes (`~/.cache/bazel`) | No | Focused default protobuf prebuilt verification: `make prebuilt-libs` → `make local/test TESTPKG=./internal/ccall/go-protobuf/protobuf/`. |
+| [`go.yml`](../.github/workflows/go.yml) | `push` / `pull_request` to `main` | Yes | Yes (`~/.cache/bazel`) | Yes (`.ccache`, key from `go.sum` / `go.mod`) | Default protobuf prebuilt path: `task prebuilt:protobuf` → `task test:local`. |
+| [`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) | `workflow_dispatch` | Yes | Yes (`~/.cache/bazel`) | No | Focused default protobuf prebuilt verification: `task prebuilt:protobuf` → `task test:local TESTPKG=./internal/ccall/go-protobuf/protobuf/`. |
 | [`go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml) | `workflow_dispatch` | Yes | Yes (`~/.cache/bazel`) | No | Abseil Tier B pilot. |
 | [`go-googlesql-unified-prebuilt.yml`](../.github/workflows/go-googlesql-unified-prebuilt.yml) | `workflow_dispatch`, weekly cron | Yes | Yes (`~/.cache/bazel`) | No | Unified `libgooglesql.a` smoke build. |
 | [`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml) | `workflow_dispatch`, weekly cron | **No** on consumer job | — | No | Validates **prebuilts without Bazel** (artifact from producer job). |
@@ -48,7 +48,7 @@ Exact times depend on GitHub-hosted runner load and cache hit rate.
 | Job type | Cold (no or partial Bazel cache) | Warm (full Bazel + action cache hit) |
 |----------|-----------------------------------|----------------------------------------|
 | `go.yml` Test | Several minutes (first full CGO + ccache cold) | Often faster; ccache + Go cache hot |
-| Tier B `make prebuilt-libs` | **Tens of minutes to ~2h** (first Bazel analysis + C++ builds) | Much faster; dominated by invalidation scope |
+| Tier B `task prebuilt:protobuf` | **Tens of minutes to ~2h** (first Bazel analysis + C++ builds) | Much faster; dominated by invalidation scope |
 | Unified prebuilt smoke | Similar to Tier B for first Bazel graph | Similar improvement when cache hits |
 
 Use **`workflow_dispatch`** on Tier B workflows before releases or after changing extract scripts. Weekly **cron** on unified (and consumer) workflows keeps the **Bazel** cache warm for the submodule graph.

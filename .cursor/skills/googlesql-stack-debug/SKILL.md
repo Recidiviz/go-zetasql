@@ -22,8 +22,8 @@ description: >-
 
 ## Canonical verification (go-googlesql)
 
-- **Primary gate:** **`make local/test`** / **`make local/test-root-unified`** (or `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same prebuilts as the Makefile). Use **`make local/compile-root-unified-test`** or **`make local/test-prebuilt-googlesql-unified-root`** when a narrower check fits. See [`docs/link-only-cgo-migration.md`](../../../docs/link-only-cgo-migration.md).
-- **Narrow iteration:** `TESTPKG=./path/to/pkg make local/test` when iterating.
+- **Primary gate:** **`task test:local`** / **`task test:local-root-unified`** (or `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same prebuilts as the Makefile). Use **`task test:compile-root-unified`** or **`task test:local-prebuilt-googlesql-unified-root`** when a narrower check fits. See [`docs/link-only-cgo-migration.md`](../../../docs/link-only-cgo-migration.md).
+- **Narrow iteration:** `TESTPKG=./path/to/pkg task test:local` when iterating.
 - **Do not** treat `go test ./...` across all `internal/ccall/go-*` packages as the primary signal unless you are deliberately hardening standalone subpackages. Split CGO packages often fail in isolation (`bridge_cc.inc` / `GoSlice`, include order, etc.) while the **root** build is correct.
 
 ## Environment
@@ -55,7 +55,7 @@ description: >-
 | Duplicate symbols, link errors after updater | Full updater vs incremental; protobuf/amalgamation overlap | `docs/protobuf-vendoring.md`, `vendorpatch`, avoid duplicating same `.cc` in multiple CGO shards |
 | `utf8_validity`, protobuf internal errors | Vendored protobuf path / single provider of `utf8_range` | Trace which TU should own the symbol; do not assume every subpackage build is valid |
 | Crash in parse/analyze with OK error paths | Status payload / descriptor init in CGO shards (historical issue class) | Minimal repro; apply fixes under `internal/ccall/googlesql/` or vendorpatch—[`docs/googlesql-submodule-policy.md`](../../../docs/googlesql-submodule-policy.md); not in the submodule |
-| Pass root tests, fail obscure subpackages only | Unsupported isolated compile of split packages | Confirm with **`make local/test`** / CI matrix |
+| Pass root tests, fail obscure subpackages only | Unsupported isolated compile of split packages | Confirm with **`task test:local`** / CI matrix |
 | OOM | Parallel heavy CGO | One repo at a time; `-p 1`; `cgo-go.sh` |
 | Long compile, “cache not working” | `-a`, pipe to `tail`, or protobuf-wide invalidation | Drop `-a`; check `GOCACHE` mtime/size; see **Build cache and incremental CGO** |
 | Link: `undefined … google::protobuf` / `AssignDescriptors(…, *_absl::once_flag*, …)` | Shard compiles protobuf-facing code with **renamed** `absl`; separate `go-protobuf` TU uses plain `absl::` | Not a missing `.o` from cache—**ABI/macro mismatch**; see **Protobuf vs per-shard absl rename** and docs above |

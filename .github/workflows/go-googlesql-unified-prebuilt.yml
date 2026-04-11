@@ -19,6 +19,10 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: recursive
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
       - name: setup Go
         uses: actions/setup-go@7b8cf10d4e4a01d4992d18a89f4d7dc5a3e6d6f4 # v4
         with:
@@ -41,29 +45,29 @@ jobs:
             ${{ runner.os }}-bazel-googlesql-
       # Root unified-prebuilt CGO links libprotobuf_cgo.a (gitignored); build it before any verify/build that pulls go-protobuf.
       - name: Build libprotobuf_cgo.a
-        run: make prebuilt-libs
+        run: task prebuilt:protobuf
         env:
           BAZEL_JOBS: "4"
       - name: Build libgooglesql.a
-        run: make prebuilt-libs-googlesql-unified
+        run: task prebuilt:googlesql-unified
         env:
           BAZEL_JOBS: "4"
       - name: Verify archives
-        run: make verify-prebuilt-googlesql-unified
+        run: task verify:prebuilt-googlesql-unified
       - name: CGO smoke build (googlesqlunified)
-        run: make local/build-prebuilt-googlesql-unified
+        run: task build:googlesql-unified
         env:
           CGO_ENABLED: "1"
       - name: Root package build (unified root slice)
-        run: make local/build-prebuilt-googlesql-unified-root
+        run: task build:googlesql-unified-root
         env:
           CGO_ENABLED: "1"
       - name: Root unified-prebuilt test gate (default analyzer shard)
-        run: make local/test-prebuilt-googlesql-unified-root
+        run: task test:googlesql-unified-root
         env:
           CGO_ENABLED: "1"
       - name: Root module compile-only (go test -c ./, unified prebuilt)
-        run: make local/compile-root-unified-test TESTPKG=./
+        run: task test:compile-root-unified TESTPKG=./
         env:
           CGO_ENABLED: "1"
       - name: Native C link smoke

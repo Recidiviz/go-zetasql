@@ -14,7 +14,7 @@ The naive “drop `#include` of the amalgamation and blank-import `go-protobuf`�
 **Rule:** the default protobuf prebuilt owner (with or without the deprecated `googlesql_tier_b` alias) and `googlesql_tier_b_absl` (link `libabsl_cgo.a`) must **not** both appear in the same binary — `libprotobuf_cgo.a` already embeds Abseil objects. Use **either** default protobuf prebuilts **or** the Abseil pilot in an isolated link.
 
 - **Canonical matrix:** [`docs/prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md)
-- **Preflight:** `make verify-tier-b-cgo-policy` ([`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh))
+- **Preflight:** `task verify:tier-b-cgo-policy` ([`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh))
 - **CI:** default workflow [`.github/workflows/go.yml`](../.github/workflows/go.yml) and manual workflows [`.github/workflows/go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml) (focused protobuf prebuilt verification) plus [`.github/workflows/go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml) (Abseil pilot) run the same preflight policy before native builds.
 
 Generator / bind files: [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go), [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go), [`templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl) — cross-check edits against `prebuilt-absl-overlap.md`. The longer-term single-owner direction for the main `googlesql` path is now the unified archive [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/).
@@ -32,8 +32,8 @@ Generator / bind files: [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf
 
 ```bash
 # From go-googlesql repo root; requires bazelisk/bazel and populated submodule / cache per updater docs.
-make prebuilt-libs
-# (same as make extract-protobuf-lib)
+task prebuilt:protobuf
+# (task alias: extract:protobuf)
 ```
 
 Confirm `internal/ccall/go-protobuf/protobuf/lib/libprotobuf_cgo.a` exists (symlink to `linux_amd64/libprotobuf_cgo.a` or similar).
@@ -62,7 +62,7 @@ Expect link errors until Phases 3–4 align symbols (no `export_protobuf_*` from
 **Risk:** omitting `absl` rename can surface **duplicate Abseil symbols** across CGO packages that each still compile pieces of Abseil. Mitigations:
 
 - Prefer **not** compiling Abseil `.cc` in every shard; link **one** `libabsl` (Bazel-built, matching protobuf’s Abseil) similarly to protobuf.
-- Or keep **`--allow-multiple-definition`** only while migrating (already in [`Makefile`](../Makefile)).
+- Or keep **`--allow-multiple-definition`** only while migrating (already in [`Taskfile.yml`](../Taskfile.yml)).
 
 ## Phase 4 — Descriptor / runtime patches
 
@@ -86,22 +86,22 @@ The first prebuilt-heavy slice now targets the **root Go package** (`TESTPKG=./`
 Use this slice with:
 
 ```bash
-make prebuilt-libs verify-prebuilt-protobuf
-make prebuilt-libs-googlesql-unified verify-prebuilt-googlesql-unified
-make local/build-prebuilt-googlesql-unified-root
-make local/test-prebuilt-googlesql-unified-root
+task prebuilt:protobuf verify-prebuilt-protobuf
+task prebuilt:googlesql-unified verify-prebuilt-googlesql-unified
+task build:googlesql-unified-root
+task test:googlesql-unified-root
 ```
 
 GoogleSQL CGO uses **`googlesql` + `googlesql_unified_prebuilt`** with prebuilt archives and link-only binds — see [link-only-cgo-migration.md](link-only-cgo-migration.md).
 
 ## Related tooling (repo root)
 
-| Makefile / script | Purpose |
+| Taskfile / script | Purpose |
 |-------------------|---------|
-| `make verify-protobuf-tier-b-alignment` | Warn if vendored protobuf is below Bazel 29.x-era macros; strict mode: `VERIFY_PROTOBUF_TIER_B_STRICT=1` |
-| `make sync-protobuf-vendor-from-bazel` | Copy Bazel `@com_google_protobuf` sources into `internal/ccall/protobuf/` (then `go run ./internal/cmd/vendorpatch`) |
-| `make regenerate-googlesql-cpp-protos` | Regenerate `internal/ccall/googlesql/**/*.pb.{h,cc}` with Bazel-built `protoc` |
-| `make verify-tier-b-cgo-policy` | Print supported / unsupported tag combinations |
+| `task verify:protobuf-tier-b` | Warn if vendored protobuf is below Bazel 29.x-era macros; strict mode: `VERIFY_PROTOBUF_TIER_B_STRICT=1` |
+| `task sync:protobuf-vendor-from-bazel` | Copy Bazel `@com_google_protobuf` sources into `internal/ccall/protobuf/` (then `go run ./internal/cmd/vendorpatch`) |
+| `task regenerate:googlesql-cpp-protos` | Regenerate `internal/ccall/googlesql/**/*.pb.{h,cc}` with Bazel-built `protoc` |
+| `task verify:tier-b-cgo-policy` | Print supported / unsupported tag combinations |
 | [link-only-cgo-migration.md](link-only-cgo-migration.md) | Generator opt-in `cclib.link_only_bind_packages` for thin `bind.cc` |
 
 ## Build tags summary

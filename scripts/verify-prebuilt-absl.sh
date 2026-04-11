@@ -7,7 +7,7 @@ GOOS_GOARCH="$(go env GOOS)_$(go env GOARCH)"
 LIB="$REPO_ROOT/internal/ccall/go-absl/lib/${GOOS_GOARCH}/libabsl_cgo.a"
 if [[ ! -f "$LIB" ]]; then
 	echo "prebuilt Abseil archive not found: $LIB" >&2
-	echo "Build it with: make prebuilt-libs-absl  (requires bazelisk/bazel and a populated submodule)" >&2
+	echo "Build it with: task prebuilt:absl  (requires bazelisk/bazel and a populated submodule)" >&2
 	exit 1
 fi
 echo "ok: $LIB"

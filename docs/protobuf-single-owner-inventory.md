@@ -42,13 +42,13 @@ boundary.
 2. **Reduce duplicates inside one macro island** — e.g. merge includes so fewer
    TUs repeat the same amalgamation **without** crossing absl rename boundaries.
 
-3. **Keep** [`Makefile`](../Makefile) `CGO_LDFLAGS` using
+3. **Keep** [`Taskfile.yml`](../Taskfile.yml) / [`scripts/task-env.sh`](../scripts/task-env.sh) `CGO_LDFLAGS` using
    `-Wl,--allow-multiple-definition` until duplicate protobuf objects are
    actually eliminated by design—not by accident.
 
 ## Verification (when changing layout)
 
-- `make local/test` (or `make local/test-root-unified`, same recipe) with `TESTPKG=./` when exercising the root package; then go-googlesqlite / bigquery-emulator with
+- `task test:local` with `TESTPKG=./` when exercising the root package; then go-googlesqlite / bigquery-emulator with
   shared `GOCACHE` per the googlesql-stack-debug skill.
 - On link errors involving `…_absl::` vs `absl::`, suspect **macro / ABI
   mismatch** before chasing “missing patch” in vendored protobuf.

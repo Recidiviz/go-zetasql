@@ -37,16 +37,16 @@ Generated CGO normally applies **per-package rename macros** so multiple CGO pac
 
 **After every `config.yaml` change:** regenerate (`go run .` from [`internal/cmd/generator`](../internal/cmd/generator)).
 
-**Primary gate:** **`make local/test`** / **`make local/test-root-unified`** (same tags and prebuilts: `verify-prebuilt-protobuf` + `verify-prebuilt-googlesql-unified`) or `go test -tags googlesql,googlesql_unified_prebuilt` with the same toolchain as the [`Makefile`](../Makefile).
+**Primary gate:** **`task test:local`** (same tags and prebuilts: `verify-prebuilt-protobuf` + `verify-prebuilt-googlesql-unified`) or `go test -tags googlesql,googlesql_unified_prebuilt` with the same toolchain as the [`Taskfile.yml`](../Taskfile.yml).
 
-**Protobuf-only CI (no `libgooglesql.a`):** `make local/test-protobuf-cgo` — verifies protobuf prebuilts and tests [`internal/ccall/go-protobuf/protobuf/`](../internal/ccall/go-protobuf/protobuf/) only.
+**Protobuf-only CI (no `libgooglesql.a`):** `task test:protobuf-cgo` — verifies protobuf prebuilts and tests [`internal/ccall/go-protobuf/protobuf/`](../internal/ccall/go-protobuf/protobuf/) only.
 
 **Verification commands**
 
-1. **Full tree / narrowed package:** `make local/test` with `TESTPKG` and optional `GO_TEST_FLAGS='-run ^$'` for compile-only smoke.
-2. **Shard gate:** `make local/test-prebuilt-googlesql-unified-root` (see `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT` in the Makefile).
+1. **Full tree / narrowed package:** `task test:local` with `TESTPKG` and optional `GO_TEST_FLAGS='-run ^$'` for compile-only smoke.
+2. **Shard gate:** `task test:googlesql-unified-root` (see `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT` in [`Taskfile.yml`](../Taskfile.yml)).
 3. **Prebuilts:** `bash scripts/verify-prebuilt-googlesql-unified.sh` and `bash scripts/verify-prebuilt-protobuf.sh`.
 
-**Low memory (avoid OOM during `clang++`):** `GO_BUILD_P_MAX=1`, `GOMAXPROCS=1`, [`scripts/cgo-go.sh`](../scripts/cgo-go.sh). Narrow compile: `make local/compile-root-unified-test` or `make local/test GO_TEST_FLAGS='-run ^$'`.
+**Low memory (avoid OOM during `clang++`):** `GO_BUILD_P_MAX=1`, `GOMAXPROCS=1`, [`scripts/cgo-go.sh`](../scripts/cgo-go.sh). Narrow compile: `task test:compile-root-unified` or `task test:local GO_TEST_FLAGS='-run ^$'`.
 
 **Triage:** Unresolved symbols → extend [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt) and re-run [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh); duplicate `ABSL_FLAG` / static init → [prebuilt-absl-overlap.md](prebuilt-absl-overlap.md) and [unified-prebuilt-root-segfault-investigation.md](unified-prebuilt-root-segfault-investigation.md).

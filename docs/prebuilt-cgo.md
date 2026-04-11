@@ -8,13 +8,13 @@ This document describes the **default protobuf path**: link a **Bazel-built** `l
 |------|------|----------------|
 | **GoogleSQL CGO (default)** | `-tags googlesql,googlesql_unified_prebuilt` | `libprotobuf_cgo.a` and `libgooglesql.a` (see [`libgooglesql-unified.md`](libgooglesql-unified.md)) |
 | **Tier B Abseil (pilot)** | `-tags googlesql,googlesql_tier_b_absl` | `libabsl_cgo.a` under `internal/ccall/go-absl/lib/` — **not** combined with `googlesql_tier_b` |
-| **Protobuf package only (CI)** | `-tags googlesql,googlesql_unified_prebuilt` | `libprotobuf_cgo.a` only — `make local/test-protobuf-cgo` |
+| **Protobuf package only (CI)** | `-tags googlesql,googlesql_unified_prebuilt` | `libprotobuf_cgo.a` only — `task test:protobuf-cgo` |
 
 **Full GoogleSQL CGO:** **Unified prebuilt + link-only** binds — see [`link-only-cgo-migration.md`](link-only-cgo-migration.md).
 
-Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Makefile`](../Makefile) `CGO_CXXFLAGS_PREBUILT` for unified / local test targets) so the C++ standard library matches the Bazel-built archive.
+Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Taskfile.yml`](../Taskfile.yml) `CGO_CXXFLAGS_PREBUILT` for unified / local test targets) so the C++ standard library matches the Bazel-built archive.
 
-**Without prebuilts / first-time setup:** run `make prebuilt-libs` (requires Bazelisk, populated submodule, and time for a cold Bazel build—often tens of minutes). Alternatively download a **release tarball** (below) and extract into the repo root. Full native pipeline: [`native-build-pipeline.md`](native-build-pipeline.md).
+**Without prebuilts / first-time setup:** run `task prebuilt:protobuf` (requires Bazelisk, populated submodule, and time for a cold Bazel build—often tens of minutes). Alternatively download a **release tarball** (below) and extract into the repo root. Full native pipeline: [`native-build-pipeline.md`](native-build-pipeline.md).
 
 **Removed path:** protobuf amalgamation is no longer the supported default. The normal `bind_linux.go` / `bind_darwin.go` files now link the prebuilt archive directly.
 
@@ -23,7 +23,7 @@ Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Makefile`](../Makefile) `CGO
 - You want the repository’s **default protobuf build path** to come from **Bazel + `ar` archives** under `internal/ccall/go-protobuf/protobuf/lib/`, with Go doing **link-only** for the protobuf shard in the normal platform bind files.
 - You are working on the broader “single owner” prebuilt migration and need the protobuf hub to stay aligned with unified/prebuilt GoogleSQL work.
 
-**Default GoogleSQL CGO:** use `-tags googlesql,googlesql_unified_prebuilt` with both archives built (`make prebuilt-libs` and `make prebuilt-libs-googlesql-unified`). `googlesql_tier_b` remains a deprecated compatibility alias for older scripts; it does not select a different protobuf implementation.
+**Default GoogleSQL CGO:** use `-tags googlesql,googlesql_unified_prebuilt` with both archives built (`task prebuilt:protobuf` and `task prebuilt:googlesql-unified`). `googlesql_tier_b` remains a deprecated compatibility alias for older scripts; it does not select a different protobuf implementation.
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Makefile`](../Makefile) `CGO
 From the repository root:
 
 ```bash
-make prebuilt-libs
+task prebuilt:protobuf
 ```
 
 This runs [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) and writes:
@@ -53,10 +53,10 @@ The extract script runs Bazel on **`@com_google_protobuf//:protobuf`** and **`@c
 
 **Alignment workflow (upgrade path):**
 
-1. `make sync-protobuf-vendor-from-bazel` — copies `google/protobuf` runtime from the Bazel external tree into `internal/ccall/protobuf/`.
+1. `task sync:protobuf-vendor-from-bazel` — copies `google/protobuf` runtime from the Bazel external tree into `internal/ccall/protobuf/`.
 2. `go run ./internal/cmd/vendorpatch` — reapplies amalgamation guards and `patches/*.patch` (rebase patches when upstream drifts).
-3. `make regenerate-googlesql-cpp-protos` — regenerates `internal/ccall/googlesql/**/*.pb.{h,cc}` with Bazel-built `protoc`.
-4. `make verify-protobuf-tier-b-alignment` — optional; set `VERIFY_PROTOBUF_TIER_B_STRICT=1` to fail CI if the vendored `GOOGLE_PROTOBUF_VERSION` is still below the protobuf 5.29 line.
+3. `task regenerate:googlesql-cpp-protos` — regenerates `internal/ccall/googlesql/**/*.pb.{h,cc}` with Bazel-built `protoc`.
+4. `task verify:protobuf-tier-b` — optional; set `VERIFY_PROTOBUF_TIER_B_STRICT=1` to fail CI if the vendored `GOOGLE_PROTOBUF_VERSION` is still below the protobuf 5.29 line.
 
 See also [link-only-cgo-migration.md](link-only-cgo-migration.md) for the long-term “no amalgamation” generator path.
 
@@ -70,12 +70,12 @@ Bazel uses **Clang + libc++** for those objects. On **Linux**, the default proto
 export CGO_CXXFLAGS=-stdlib=libc++
 ```
 
-[`Makefile`](../Makefile) **`local/test`** and **`local/build`** set **`CGO_CXXFLAGS_PREBUILT`** (default `-stdlib=libc++`) automatically. Override only if you know your Bazel archive was built with a different `-stdlib`.
+[`Taskfile.yml`](../Taskfile.yml) **`local/test`** and **`local/build`** set **`CGO_CXXFLAGS_PREBUILT`** (default `-stdlib=libc++`) automatically. Override only if you know your Bazel archive was built with a different `-stdlib`.
 
 ## Verify before testing
 
 ```bash
-make verify-prebuilt-protobuf
+task verify:prebuilt-protobuf
 ```
 
 Or: `bash scripts/verify-prebuilt-protobuf.sh`
@@ -85,7 +85,7 @@ Or: `bash scripts/verify-prebuilt-protobuf.sh`
 Build a merged Bazel `*.pic.o` archive for **`@com_google_absl`** (same submodule as protobuf extract):
 
 ```bash
-make prebuilt-libs-absl
+task prebuilt:absl
 ```
 
 Writes:
@@ -96,10 +96,10 @@ Writes:
 Verify:
 
 ```bash
-make verify-prebuilt-absl
+task verify:prebuilt-absl
 ```
 
-**Build tag `googlesql_tier_b_absl`** — link-only CGO for packages that ship `bind_tier_b_absl.go`. **Migrated packages (expand over time):** [`meta/type_traits`](../internal/ccall/go-absl/meta/type_traits); [`types/any`](../internal/ccall/go-absl/types/any), [`types/bad_any_cast`](../internal/ccall/go-absl/types/bad_any_cast), [`types/bad_any_cast_impl`](../internal/ccall/go-absl/types/bad_any_cast_impl), [`types/bad_optional_access`](../internal/ccall/go-absl/types/bad_optional_access), [`types/bad_variant_access`](../internal/ccall/go-absl/types/bad_variant_access), [`types/compare`](../internal/ccall/go-absl/types/compare), [`types/optional`](../internal/ccall/go-absl/types/optional), [`types/span`](../internal/ccall/go-absl/types/span), [`types/variant`](../internal/ccall/go-absl/types/variant); [`base/config`](../internal/ccall/go-absl/base/config), [`base/core_headers`](../internal/ccall/go-absl/base/core_headers), [`base/endian`](../internal/ccall/go-absl/base/endian), [`base/errno_saver`](../internal/ccall/go-absl/base/errno_saver), [`base/prefetch`](../internal/ccall/go-absl/base/prefetch); [`utility/utility`](../internal/ccall/go-absl/utility/utility). Use **`make local/test-prebuilt-absl`** / **`make local/build-prebuilt-absl`** (defaults list all migrated paths; override `TESTPKG_PREBUILT_ABSL` / `BUILDPKG_ABSL`).
+**Build tag `googlesql_tier_b_absl`** — link-only CGO for packages that ship `bind_tier_b_absl.go`. **Migrated packages (expand over time):** [`meta/type_traits`](../internal/ccall/go-absl/meta/type_traits); [`types/any`](../internal/ccall/go-absl/types/any), [`types/bad_any_cast`](../internal/ccall/go-absl/types/bad_any_cast), [`types/bad_any_cast_impl`](../internal/ccall/go-absl/types/bad_any_cast_impl), [`types/bad_optional_access`](../internal/ccall/go-absl/types/bad_optional_access), [`types/bad_variant_access`](../internal/ccall/go-absl/types/bad_variant_access), [`types/compare`](../internal/ccall/go-absl/types/compare), [`types/optional`](../internal/ccall/go-absl/types/optional), [`types/span`](../internal/ccall/go-absl/types/span), [`types/variant`](../internal/ccall/go-absl/types/variant); [`base/config`](../internal/ccall/go-absl/base/config), [`base/core_headers`](../internal/ccall/go-absl/base/core_headers), [`base/endian`](../internal/ccall/go-absl/base/endian), [`base/errno_saver`](../internal/ccall/go-absl/base/errno_saver), [`base/prefetch`](../internal/ccall/go-absl/base/prefetch); [`utility/utility`](../internal/ccall/go-absl/utility/utility). Use **`task test:tier-b-absl`** / **`task build:tier-b-absl`** (defaults list all migrated paths; override `TESTPKG_PREBUILT_ABSL` / `BUILDPKG_ABSL`).
 
 ### Stress build notes (widening `BUILDPKG_ABSL`)
 
@@ -119,7 +119,7 @@ Local checks used:
 
 **Overlap with default protobuf prebuilts:** `libprotobuf_cgo.a` already embeds Abseil object code. Do **not** combine the default protobuf owner (with or without the deprecated `googlesql_tier_b` alias) and `googlesql_tier_b_absl` in one link without a dedup policy—see [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md).
 
-**Tag policy preflight:** `make verify-tier-b-cgo-policy` prints supported and unsupported tag combinations ([`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh)); the canonical table lives in **`prebuilt-absl-overlap.md`**. Run it before local Tier B builds or when changing CI workflows.
+**Tag policy preflight:** `task verify:tier-b-cgo-policy` prints supported and unsupported tag combinations ([`scripts/verify-tier-b-cgo-tag-policy.sh`](../scripts/verify-tier-b-cgo-tag-policy.sh)); the canonical table lives in **`prebuilt-absl-overlap.md`**. Run it before local Tier B builds or when changing CI workflows.
 
 ### Adding another `go-absl/...` package (manual)
 
@@ -145,7 +145,7 @@ import "C"
 ```
 
 3. If depth under `go-absl/` differs, adjust `${SRCDIR}/..` segments so `${SRCDIR}/../../lib` resolves to [`internal/ccall/go-absl/lib`](../internal/ccall/go-absl/lib).
-4. Append the package path to **`TESTPKG_PREBUILT_ABSL`** / **`BUILDPKG_ABSL`** in the [`Makefile`](../Makefile).
+4. Append the package path to **`TESTPKG_PREBUILT_ABSL`** / **`BUILDPKG_ABSL`** in [`Taskfile.yml`](../Taskfile.yml) (`vars`).
 
 A parameterized template lives at [`internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl`](../internal/cmd/generator/templates/bind_tier_b_absl.go.tmpl). Fields: **`Package`** (Go package name), **`AnchorSuffix`** (unique identifier, e.g. `base_config`), **`IncludeRel`** (path segments from the package dir to `internal/ccall/`, e.g. `../../../`), **`LibRel`** (to [`go-absl/lib`](../internal/ccall/go-absl/lib), e.g. `../../lib`). Render with `text/template` or copy an existing migrated `bind_tier_b_absl.go` and adjust.
 
@@ -158,29 +158,29 @@ A parameterized template lives at [`internal/cmd/generator/templates/bind_tier_b
 | `GOOGLESQL_PREBUILT_PREFIX` | Optional install root for future consolidated headers/libs (see [`contrib/googlesql.pc.example`](../contrib/googlesql.pc.example)). Default protobuf prebuilts today use **fixed paths** under `internal/ccall/go-protobuf/protobuf/lib/`. |
 | `PKG_CONFIG_PATH` | When using **pkg-config** for a consolidated layout, prepend the directory containing `googlesql.pc`. |
 
-For **mold** (Linux), match [`Makefile`](../Makefile) `local/test` and set if the linker rejects unknown flags:
+For **mold** (Linux), match [`Taskfile.yml`](../Taskfile.yml) `test:local` and set if the linker rejects unknown flags:
 
 ```bash
 export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold'
 ```
 
-## Makefile targets
+## Taskfile targets
 
-| Target | Purpose |
-|--------|---------|
-| `make prebuilt-libs` | Build `libprotobuf_cgo.a` via Bazel + `ar` (same as `extract-protobuf-lib`) |
-| `make verify-prebuilt-protobuf` | Fail fast if the archive for the current `GOOS_GOARCH` is missing |
-| `make local/build` | `go build` with `googlesql,googlesql_unified_prebuilt` after protobuf + unified prebuilt verify |
-| `make local/test` / `make local/test-root-unified` | Full-module `go test` (same tags and verifies; `TESTPKG` / `GO_TEST_FLAGS` supported) |
-| `make local/test-protobuf-cgo` | Protobuf shard only: verify protobuf prebuilt, test `internal/ccall/go-protobuf/protobuf/` (no `libgooglesql.a` required) |
-| `make prebuilt-libs-absl` | Build `libabsl_cgo.a` (same as `extract-absl-lib`) |
-| `make verify-prebuilt-absl` | Fail fast if `libabsl_cgo.a` for current `GOOS_GOARCH` is missing |
-| `make local/build-prebuilt-absl` | `go build` with `-tags googlesql,googlesql_tier_b_absl` (pilot path by default) |
-| `make local/test-prebuilt-absl` | `go test` with Abseil Tier B tags (pilot path: `TESTPKG_PREBUILT_ABSL`) |
-| `make prebuilt-libs-googlesql-unified` | Build [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/lib) from GoogleSQL Bazel targets + C anchor (see [`libgooglesql-unified.md`](libgooglesql-unified.md)) |
-| `make verify-prebuilt-googlesql-unified` | Fail fast if `libgooglesql.a` for current `GOOS_GOARCH` is missing |
-| `make local/build-prebuilt-googlesql-unified` | `go build` with `-tags googlesql,googlesql_unified_prebuilt` on the unified CGO owner package (after verify) |
-| `make smoke-link-googlesql-unified` | Compile and run [`smoke/smoke_main.c`](../internal/ccall/go-googlesql-unified/smoke/smoke_main.c) against `libgooglesql.a` (after verify) |
+| Task | Purpose |
+|------|---------|
+| `task prebuilt:protobuf` | Build `libprotobuf_cgo.a` via Bazel + `ar` (same as `extract-protobuf-lib`) |
+| `task verify:prebuilt-protobuf` | Fail fast if the archive for the current `GOOS_GOARCH` is missing |
+| `task build:local` | `go build` with `googlesql,googlesql_unified_prebuilt` after protobuf + unified prebuilt verify |
+| `task test:local` | Full-module `go test` (same tags and verifies; `TESTPKG` / `GO_TEST_FLAGS` supported) |
+| `task test:protobuf-cgo` | Protobuf shard only: verify protobuf prebuilt, test `internal/ccall/go-protobuf/protobuf/` (no `libgooglesql.a` required) |
+| `task prebuilt:absl` | Build `libabsl_cgo.a` (same as `extract-absl-lib`) |
+| `task verify:prebuilt-absl` | Fail fast if `libabsl_cgo.a` for current `GOOS_GOARCH` is missing |
+| `task build:tier-b-absl` | `go build` with `-tags googlesql,googlesql_tier_b_absl` (pilot path by default) |
+| `task test:tier-b-absl` | `go test` with Abseil Tier B tags (pilot path: `TESTPKG_PREBUILT_ABSL`) |
+| `task prebuilt:googlesql-unified` | Build [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/lib) from GoogleSQL Bazel targets + C anchor (see [`libgooglesql-unified.md`](libgooglesql-unified.md)) |
+| `task verify:prebuilt-googlesql-unified` | Fail fast if `libgooglesql.a` for current `GOOS_GOARCH` is missing |
+| `task build:googlesql-unified` | `go build` with `-tags googlesql,googlesql_unified_prebuilt` on the unified CGO owner package (after verify) |
+| `task smoke:googlesql-unified` | Compile and run [`smoke/smoke_main.c`](../internal/ccall/go-googlesql-unified/smoke/smoke_main.c) against `libgooglesql.a` (after verify) |
 
 ## Generator: unified `absl` / `google`
 
@@ -192,8 +192,8 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 
 1. Use the **same** `replace` path or version of `github.com/vantaboard/go-googlesql`.
 2. Build with **identical** tags: `-tags googlesql,googlesql_unified_prebuilt` for the default GoogleSQL CGO path.
-3. Run **`make prebuilt-libs`** (or copy the resulting `lib/` tree) in the **go-googlesql** checkout that `replace` points to—downstream does **not** build `libprotobuf_cgo.a` for you.
-4. Align **`CGO_CFLAGS`**, **`CGO_LDFLAGS`**, and **`CGO_LDFLAGS_ALLOW`** with this repo’s [`Makefile`](../Makefile) when running `go test` / `go build` outside Make.
+3. Run **`task prebuilt:protobuf`** (or copy the resulting `lib/` tree) in the **go-googlesql** checkout that `replace` points to—downstream does **not** build `libprotobuf_cgo.a` for you.
+4. Align **`CGO_CFLAGS`**, **`CGO_LDFLAGS`**, and **`CGO_LDFLAGS_ALLOW`** with this repo’s [`Taskfile.yml`](../Taskfile.yml) when running `go test` / `go build` outside Task.
 
 ### Phase 5 checklist (dependent repos)
 
@@ -201,7 +201,7 @@ Use this when aligning **go-googlesqlite**, **bigquery-emulator**, or **bigquery
 
 - [ ] Bump / pin the `go-googlesql` module to a version that matches your **release prebuilts** or source tree.
 - [ ] Mirror **build tags** and **`CGO_CXXFLAGS`** / **`CGO_LDFLAGS`** / **`CGO_LDFLAGS_ALLOW`** with this repo’s default protobuf prebuilt settings.
-- [ ] Add CI that either runs **`make prebuilt-libs`** (Bazel available) or **downloads and extracts** the matching `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` before `go test`.
+- [ ] Add CI that either runs **`task prebuilt:protobuf`** (Bazel available) or **downloads and extracts** the matching `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` before `go test`.
 - [ ] Document **sqlite- or product-specific** caveats (linker, single archive owner) in the downstream README and link here—avoid duplicating the full pipeline; open issues only for **gaps** (extra platform, etc.).
 - [ ] For user-visible native contract changes, add **release notes** pointing at this repository’s tag and [`CHANGELOG.md`](../CHANGELOG.md).
 
@@ -218,11 +218,11 @@ Tagged releases can ship a **default protobuf prebuilt** archive alongside the m
 ```bash
 # From repo root after verifying SHA256SUMS
 tar -xzf go-googlesql-prebuilts-protobuf-linux_amd64-vX.Y.Z.tar.gz
-make verify-prebuilt-protobuf
-make local/test-protobuf-cgo
+task verify:prebuilt-protobuf
+task test:protobuf-cgo
 ```
 
-The tarball contains `internal/ccall/go-protobuf/protobuf/lib/` with the same layout as `make prebuilt-libs`.
+The tarball contains `internal/ccall/go-protobuf/protobuf/lib/` with the same layout as `task prebuilt:protobuf`.
 
 ## Versioning (tarball ↔ git ↔ module)
 
@@ -232,18 +232,18 @@ The tarball contains `internal/ccall/go-protobuf/protobuf/lib/` with the same la
 | Go module version | `go.mod` / `github.com/vantaboard/go-googlesql` **semver** matching the tag you depend on in `require` |
 | Prebuilt archive bytes | Built from that tag’s tree; **verify** `SHA256SUMS` when downloading |
 
-Downstream apps should pin the **same** module version and unpack the matching release asset (or rebuild with `make prebuilt-libs` on that checkout).
+Downstream apps should pin the **same** module version and unpack the matching release asset (or rebuild with `task prebuilt:protobuf` on that checkout).
 
 ## Artifact matrix (CI vs local)
 
 | Context | Prebuilt `libprotobuf_cgo.a` | Tags |
 |---------|------------------------------|------|
-| Default **GitHub Actions** ([`go.yml`](../.github/workflows/go.yml)) | Protobuf + `libgooglesql.a` built on the runner, then `make local/test` | `googlesql,googlesql_unified_prebuilt` |
-| **Manual default-prebuilt workflow** ([`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml)) | Built on the runner with Bazel, then `make local/test` | `googlesql,googlesql_unified_prebuilt` |
-| **Manual Abseil Tier B** ([`go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml)) | Builds `libabsl_cgo.a`, then `make local/test-prebuilt-absl` | `googlesql,googlesql_tier_b_absl` |
-| **Consumer gate (no Bazel)** ([`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml)) | Protobuf artifact; extract then `make local/test-protobuf-cgo` | `googlesql,googlesql_unified_prebuilt` |
+| Default **GitHub Actions** ([`go.yml`](../.github/workflows/go.yml)) | Protobuf + `libgooglesql.a` built on the runner, then `task test:local` | `googlesql,googlesql_unified_prebuilt` |
+| **Manual default-prebuilt workflow** ([`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml)) | Built on the runner with Bazel, then `task test:protobuf-cgo` | `googlesql,googlesql_unified_prebuilt` |
+| **Manual Abseil Tier B** ([`go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml)) | Builds `libabsl_cgo.a`, then `task test:tier-b-absl` | `googlesql,googlesql_tier_b_absl` |
+| **Consumer gate (no Bazel)** ([`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml)) | Protobuf artifact; extract then `task test:protobuf-cgo` | `googlesql,googlesql_unified_prebuilt` |
 | **GitHub Release** ([`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml)) | Published tarball per `v*` tag | N/A (download + extract) |
-| **Local dev** | Run `make prebuilt-libs` + `make prebuilt-libs-googlesql-unified` (and `make prebuilt-libs-absl` for Tier B) | `googlesql,googlesql_unified_prebuilt` or pilot tags |
+| **Local dev** | Run `task prebuilt:protobuf` + `task prebuilt:googlesql-unified` (and `task prebuilt:absl` for Tier B) | `googlesql,googlesql_unified_prebuilt` or pilot tags |
 
 Static `.a` files remain **gitignored**; published **tarballs** are optional release assets, not part of the Go module zip.
 
@@ -251,8 +251,8 @@ Static `.a` files remain **gitignored**; published **tarballs** are optional rel
 
 | Symptom | What to check |
 |---------|----------------|
-| `prebuilt protobuf archive not found` | Run `make prebuilt-libs` or extract release tarball so `internal/ccall/go-protobuf/protobuf/lib/<GOOS_GOARCH>/libprotobuf_cgo.a` exists. |
-| `prebuilt libc++ copy missing` / `libcxx_prebuilt.a` (Linux) | Re-run `make prebuilt-libs`; the extract script copies Bazel **llvm_toolchain** `libc++.a` / `libc++abi.a` next to `libprotobuf_cgo.a`. Release tarballs include the whole `lib/` tree. |
+| `prebuilt protobuf archive not found` | Run `task prebuilt:protobuf` or extract release tarball so `internal/ccall/go-protobuf/protobuf/lib/<GOOS_GOARCH>/libprotobuf_cgo.a` exists. |
+| `prebuilt libc++ copy missing` / `libcxx_prebuilt.a` (Linux) | Re-run `task prebuilt:protobuf`; the extract script copies Bazel **llvm_toolchain** `libc++.a` / `libc++abi.a` next to `libprotobuf_cgo.a`. Release tarballs include the whole `lib/` tree. |
 | Wrong architecture | Archive is built for the machine that ran Bazel (`go env GOOS GOARCH`). Do not use a `linux_amd64` `.a` on `darwin_arm64`. |
 | Link errors after enabling `googlesql_tier_b_absl` in a binary that also uses default protobuf | The default protobuf owner already links `libprotobuf_cgo.a` and embeds Abseil; do not mix that with `googlesql_tier_b_absl` unless the final link is known not to import `go-protobuf`. See [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). |
 | Undefined `std::__1::` vs `std::__cxx11::` | Set `CGO_CXXFLAGS=-stdlib=libc++` for the default protobuf prebuilt path (Bazel uses libc++). |
@@ -260,7 +260,7 @@ Static `.a` files remain **gitignored**; published **tarballs** are optional rel
 | Undefined Cord / `MessageLite::*Cord` while `llvm-nm` shows them **`T`** in `libprotobuf_cgo.a` | Often **Abseil inline namespace** mismatch (`absl::Cord` vs `absl::lts_20240722::Cord`). Align [`internal/ccall/absl/base/options.h`](../internal/ccall/absl/base/options.h) with BCR abseil-cpp (see **Abseil inline namespace** above). |
 | Undefined `google::protobuf::File::ReadFileToString` from archive members like **`crate_mapping.pic.o`** | The extract `find` was too broad; **`google/protobuf/compiler/**`** objects must not be merged (protoc backends). Current script excludes that path; rebuild **`libprotobuf_cgo.a`**. |
 | `nm` / `llvm-nm` spot checks | `llvm-nm -C internal/ccall/go-protobuf/protobuf/lib/<GOOS_GOARCH>/libprotobuf_cgo.a \| rg 'ParseFromCord\|crate_mapping\|compiler/'`. Optional: `VERIFY_LIBPROTOBUF_CGO_SYMBOLS=1 bash scripts/verify-libprotobuf-cgo-symbols.sh`. |
-| Drift between Bazel protobuf and vendored headers | Run `make verify-protobuf-tier-b-alignment`; follow alignment steps in **Protobuf version / codegen alignment** above. |
+| Drift between Bazel protobuf and vendored headers | Run `task verify:protobuf-tier-b`; follow alignment steps in **Protobuf version / codegen alignment** above. |
 
 ## Related files
 

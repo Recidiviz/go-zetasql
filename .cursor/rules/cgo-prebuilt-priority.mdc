@@ -7,12 +7,12 @@ alwaysApply: true
 
 ## Supported direction (project goal)
 
-- Use **`googlesql` + `googlesql_unified_prebuilt`**, Bazel-built **`libgooglesql.a`** and **`libprotobuf_cgo.a`** (paths and env vars in [`docs/prebuilt-cgo.md`](../../docs/prebuilt-cgo.md) and the [`Makefile`](../../Makefile)), and **link-only** generated `bind.cc` for GoogleSQL shards.
+- Use **`googlesql` + `googlesql_unified_prebuilt`**, Bazel-built **`libgooglesql.a`** and **`libprotobuf_cgo.a`** (paths and env vars in [`docs/prebuilt-cgo.md`](../../docs/prebuilt-cgo.md) and [`Taskfile.yml`](../../Taskfile.yml)), and **link-only** generated `bind.cc` for GoogleSQL shards.
 - Aim for **small CGO surface**: thin translation units that bridge to prebuilt static libraries, not monolithic single-TU include graphs of hundreds of `.cc` files.
 
 ## Verification (prefer these)
 
-- **`make local/test`** / **`make local/test-root-unified`**, **`make local/compile-root-unified-test`**, **`make local/test-prebuilt-googlesql-unified-root`** as appropriate; narrow with `TESTPKG` and `GO_TEST_FLAGS` per [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md).
+- **`task test:local`**, **`task test:compile-root-unified`**, **`task test:googlesql-unified-root`** as appropriate; narrow with `TESTPKG` and `GO_TEST_FLAGS` per [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md).
 - Low RAM: `GO_BUILD_P_MAX=1`, `GOMAXPROCS=1`, [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh).
 
 ## Wording

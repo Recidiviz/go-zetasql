@@ -4,10 +4,14 @@ All notable changes to this project are documented here. The format is loosely b
 
 ## [Unreleased]
 
+### Tooling
+
+- **Build automation:** root `Makefile` removed in favor of [`Taskfile.yml`](Taskfile.yml) ([Task](https://taskfile.dev/)); shared CGO env in [`scripts/task-env.sh`](scripts/task-env.sh). CI workflows install Task via `arduino/setup-task@v2`.
+
 ### Tier B / Phase 5 (CI, artifacts, docs)
 
 - **CI:** Shared Bazel disk cache key across default protobuf prebuilts, Tier B Abseil, unified prebuilt, release prebuilts, and consumer workflows (`internal/cmd/updater/googlesql/MODULE.bazel`, `MODULE.bazel.lock`, `.bazelversion`). Inventory: [`docs/ci-bazel-cache.md`](docs/ci-bazel-cache.md).
-- **Artifacts:** Tagged releases may include `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` and `SHA256SUMS` (workflow: `.github/workflows/release-prebuilts.yml`). Packaging script: `scripts/package-protobuf-prebuilt.sh`; Make target: `make package-protobuf-prebuilt-tarball`.
+- **Artifacts:** Tagged releases may include `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` and `SHA256SUMS` (workflow: `.github/workflows/release-prebuilts.yml`). Packaging script: `scripts/package-protobuf-prebuilt.sh`; Task: `task package:protobuf-prebuilt-tarball`.
 - **Consumer validation:** `.github/workflows/go-prebuilt-consumer.yml` runs a **no-Bazel** job that tests with prebuilts only.
 - **Docs:** README build matrix; expanded [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md), [`docs/native-build-pipeline.md`](docs/native-build-pipeline.md).
 

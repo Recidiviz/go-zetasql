@@ -7,13 +7,13 @@ This workflow upgrades **go-googlesql**, **go-googlesqlite**, and **bigquery-emu
 ## Slash command vs skill
 
 - **This file (`/googlesql-stack-upgrade`)** — End-to-end *phases*: workspace prep, upstream delta, submodule, regeneration order, verification sequence, branch naming, Plan mode. Use for the upgrade *runbook*.
-- **Skill `googlesql-stack-debug`** — [`.cursor/skills/googlesql-stack-debug/SKILL.md`](../skills/googlesql-stack-debug/SKILL.md) — Reusable *debugging and testing* rules: classify failures (sync vs link vs codegen vs semantics), **`make local/test`** / **`local/test-root-unified`** (unified prebuilt + link-only CGO), misleading `go test ./...` on `internal/ccall`, CGO cache, memory (`-p 1`, `scripts/cgo-go.sh`), symptom→cause triage. **Apply this skill whenever builds fail during an upgrade** or when triaging CGO/stack issues; it complements this command rather than replacing it.
+- **Skill `googlesql-stack-debug`** — [`.cursor/skills/googlesql-stack-debug/SKILL.md`](../skills/googlesql-stack-debug/SKILL.md) — Reusable *debugging and testing* rules: classify failures (sync vs link vs codegen vs semantics), **`task test:local`** / **`local/test-root-unified`** (unified prebuilt + link-only CGO), misleading `go test ./...` on `internal/ccall`, CGO cache, memory (`-p 1`, `scripts/cgo-go.sh`), symptom→cause triage. **Apply this skill whenever builds fail during an upgrade** or when triaging CGO/stack issues; it complements this command rather than replacing it.
 
 ## Methodology (avoid brute-force loops)
 
 1. **Delta before mechanics** — Complete Phase 1 (upstream diff) and draft or update `docs/googlesql-upgrade-delta-<from>-to-<to>.md` *before* chasing unrelated test failures. Prior edits should follow known proto/builtin/`resolved_ast` themes.
 2. **Regeneration pipeline** — **Upstream submodule tag only** ([`docs/googlesql-submodule-policy.md`](../../docs/googlesql-submodule-policy.md)) → updater (incremental; document flags like `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1`) → vendorpatch → **sync `*.proto` into `internal/ccall` if needed** (updater `Skip` rules may **omit `.proto`** — stale `options.proto` / enums cause confusing failures) → **protoc** / `gen_parse_tree` / `gen_resolved_ast` (order per [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md) and your delta doc) → **`go run` generator** → tests. If C++ or bindings look inconsistent, assume a skipped step before deep debugging.
-3. **Canonical green definition** — **go-googlesql:** **`make local/test`** / **`make local/test-root-unified`** (and related prebuilt targets in the README / [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md)): **`googlesql` + `googlesql_unified_prebuilt`**, prebuilt archives, link-only CGO (`TESTPKG` defaults to `./`). Do not treat failures from `go test ./...` across every `internal/ccall/...` shard as blocking unless that scope is explicitly in scope (see skill).
+3. **Canonical green definition** — **go-googlesql:** **`task test:local`** / **`task test:local-root-unified`** (and related prebuilt targets in the README / [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md)): **`googlesql` + `googlesql_unified_prebuilt`**, prebuilt archives, link-only CGO (`TESTPKG` defaults to `./`). Do not treat failures from `go test ./...` across every `internal/ccall/...` shard as blocking unless that scope is explicitly in scope (see skill).
 4. **Classify the failure** — Sync drift, linker/amalgamation, protobuf vendoring, or runtime/semantic (parser, language features, emulator path). Fix the matching layer; avoid alternating random edits with full tree rebuilds.
 5. **Generator and exportinc** — Manual edits to `bind.cc` templates, `export.inc`, or [`internal/cmd/generator`](../../internal/cmd/generator) / `exportinc` can be **overwritten** on the next generate pass. If a fix “comes back” after regeneration, change the **generator or policy** (e.g. flex suppress flags), not only the generated file.
 6. **Resume after OOM or agent crash** — Re-read `git status` in each repo; do not assume partial work was saved. Continue with **one repo**, `go test -p 1` / `GOMAXPROCS=1`, and narrowed `TESTPKG` before broad suites.
@@ -74,7 +74,7 @@ Before large mechanical edits, understand what changed between **`from`** and **
    - After copying protobuf or vendor trees, run **`go run ./internal/cmd/vendorpatch`** or **`scripts/apply-vendor-patches.sh`** so amalgamation and git patches apply.
    - **Go AST / bridge parity:** New syntax or nodes (e.g. `GROUP BY ALL`) may need updates to [`internal/cmd/generator/bridge.yaml`](../../internal/cmd/generator/bridge.yaml), **`bridge.inc` by hand** (generator may not overwrite existing file), **[`enum.go`](../../enum.go)** (`LanguageFeature` values), and **[`ast/node.go`](../../ast/node.go)**, plus a **parser test** that enables the feature. Not every upgrade needs this — follow upstream delta and user-facing API gaps.
 3. **Documentation:** Add `docs/googlesql-upgrade-delta-<from>-to-<to>.md` (match existing naming) summarizing upstream changes and how this repo addresses them.
-4. **Tests:** `CGO_ENABLED=1` with `CXX=clang++` (and ccache/mold on Linux per README). Prefer **`make local/test`** / **`make local/test-root-unified`** / **`make local/compile-root-unified-test`** / **`make local/build`** / **`make test/linux`** with `TESTPKG` narrowed when iterating. Prefer the **root** package gate (`TESTPKG` unset or `./`); see **Failure triage** and skill `googlesql-stack-debug` before interpreting `go test ./...` failures under `internal/ccall`. Do **not** run the heaviest suites in parallel with downstream repos. For memory-constrained machines, use `go test -p 1` and optionally [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh).
+4. **Tests:** `CGO_ENABLED=1` with `CXX=clang++` (and ccache/mold on Linux per README). Prefer **`task test:local`** / **`task test:local-root-unified`** / **`task test:compile-root-unified`** / **`task build:local`** / **`task test:linux`** with `TESTPKG` narrowed when iterating. Prefer the **root** package gate (`TESTPKG` unset or `./`); see **Failure triage** and skill `googlesql-stack-debug` before interpreting `go test ./...` failures under `internal/ccall`. Do **not** run the heaviest suites in parallel with downstream repos. For memory-constrained machines, use `go test -p 1` and optionally [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh).
 
 **Pointers:** [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), [internal/cmd/updater/main.go](../../internal/cmd/updater/main.go).
 
@@ -99,7 +99,7 @@ go-googlesql  →  go-googlesqlite  →  bigquery-emulator
 ```
 
 - **Never** run full `go test` across all three repos **simultaneously** on one machine (OOM risk).
-- Reuse **shared** `GOCACHE` and `GOMODCACHE` (and `GO_CACHE_ROOT` / `make test/linux` as documented in the three READMEs) so CGO artifacts are not rebuilt from scratch each step.
+- Reuse **shared** `GOCACHE` and `GOMODCACHE` (and `GO_CACHE_ROOT` / `task test:linux` as documented in the three READMEs) so CGO artifacts are not rebuilt from scratch each step.
 
 ## Failure triage
 
@@ -107,7 +107,7 @@ Use [`.cursor/skills/googlesql-stack-debug/SKILL.md`](../skills/googlesql-stack-
 
 | Symptom | Where to look |
 |---------|---------------|
-| Many failures only under `go test ./...` / isolated `internal/ccall` packages; root **`make local/test`** passes | Often **unsupported** standalone shard builds — confirm CI/Makefile default (`TESTPKG=./`) before “fixing” |
+| Many failures only under `go test ./...` / isolated `internal/ccall` packages; root **`task test:local`** passes | Often **unsupported** standalone shard builds — confirm CI/Taskfile.yml default (`TESTPKG=./`) before “fixing” |
 | Duplicate symbols / link failures after updater | [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), `vendorpatch`, partial vs full updater run; which TU owns shared `.cc` (e.g. `utf8_validity` / `utf8_range` — avoid linking the same `.cc` in multiple CGO packages). **Do not** “fix” with `-Wl,--allow-multiple-definition` — it can **crash at runtime**; fix ownership instead (see skill). |
 | Undefined `yywrap` / duplicate flex globals / parser segfaults | Multiple TUs compiling the same flex/bison stack; `YY_DECL` / tokenizer name drift; `GOOGLESQL_PARSER_FLEX_TOKENIZER_SUPPRESS_FLEXLEXER_STUBS` interaction with [`flex_tokenizer`](../../internal/ccall/googlesql/parser/flex_tokenizer.h); namespace macros must match between root and parser/analyzer bind graphs — use **googlesql-stack-debug** before large structural experiments (e.g. “header-only” parser binds can duplicate ICU). |
 | Protobuf version / `port_def` errors | Amalgamation guards, `go run ./internal/cmd/vendorpatch` |
@@ -227,9 +227,9 @@ export CXX=clang++
 
 ```bash
 cd "$GO_GOOGLESQL_ROOT"
-make local/test
-# or: make test/linux
-# narrow: TESTPKG=./internal/... make local/test
+task test:local
+# or: task test:linux
+# narrow: TESTPKG=./internal/... task test:local
 # After OOM: narrow TESTPKG, use go test -p 1, optional GOMAXPROCS=1 (see Phase 2 and googlesql-stack-debug)
 ```
 
