@@ -3111,6 +3111,12 @@ cc_library(
 )
 
 cc_library(
+    name = "token_list",
+    hdrs = ["token_list.h"],
+    deps = [":simple_token_list"],
+)
+
+cc_library(
     name = "token_list_util",
     srcs = ["token_list_util.cc"],
     hdrs = ["token_list_util.h"],
