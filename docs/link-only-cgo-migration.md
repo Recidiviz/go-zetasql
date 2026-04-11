@@ -54,3 +54,24 @@ Generated CGO `bind.cc` translation units normally apply **per-package rename ma
 ## Rollout
 
 Enable **one** package at a time, run `go test` for packages that depend on it, then widen. Parser and flex amalgamation have extra generator hooks; treat them as late-stage migrations. **Do not** enable `link_only_bind_packages` for a `googlesql/public/*` library until the namespace alignment issue above is resolved for that library’s bridge symbols (unless using Strategy A/B).
+
+## Operational rollout
+
+`cclib.link_only_bind_packages` in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) is a **single global list**. The intended production order matches Strategy D opt-ins:
+
+`base/status` → `googlesql/public/analyzer` → `googlesql/public/catalog` → `googlesql/public/simple_catalog` → `googlesql/public/sql_formatter` → `googlesql/parser/parser` → `googlesql/parser/bison_parser_generated_lib`.
+
+**Staged trimming (when debugging):** If link failures or duplicate symbols involve several thin binds at once, temporarily reduce `link_only_bind_packages` to `base/status` plus only the **prefix** of that list up to the slice you are fixing (for example `base/status` and `googlesql/public/analyzer` only). Regenerate binds (`go run .` from [`internal/cmd/generator`](../internal/cmd/generator)), re-run tests, then add the next package and repeat. Restore the **full** list once the whole chain passes under unified prebuilt.
+
+**After every `config.yaml` change:** regenerate so merged [`bind.cc`](../internal/cmd/generator/pkg/generator.go) (amalgamation vs `-DGOOGLESQL_LINK_ONLY_BIND`) stays in sync.
+
+**Verification commands** (same toolchain as [`Makefile`](../Makefile) `local/test` / `local/test-root-unified`):
+
+1. **Default path (must stay green):** `make local/test` — exercises `-tags googlesql` without `googlesql_unified_prebuilt` (fat amalgamation branch).
+2. **Unified prebuilt link-only:** `make local/test-root-unified` with `GO_TEST_FLAGS='-run ^$'` for compile/link/startup smoke, then widen `-run` or use `TESTPKG` to narrow scope.
+3. **Analyzer shard gate (optional):** `make local/test-prebuilt-googlesql-unified-root` (see `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT` in the Makefile).
+4. **Prebuilts:** `bash scripts/verify-prebuilt-googlesql-unified.sh` and `bash scripts/verify-prebuilt-protobuf.sh` before trusting archive-boundary changes.
+
+**Low memory (avoid OOM during `clang++`):** Prefer serialized package builds: `GO_BUILD_P_MAX=1`, `GOMAXPROCS=1`, and a high `GO_BUILD_MEM_PER_JOB_KB` (see [`Makefile`](../Makefile)) so the Makefile’s `-p` heuristic stays at 1. For a narrow compile gate without running tests: `make local/compile-root-unified-test` or `make local/test-root-unified GO_TEST_FLAGS='-run ^$'`. [`scripts/cgo-go.sh`](../scripts/cgo-go.sh) wraps `go test`/`go build` with `-p 1` and optional `systemd-run` memory limits. Avoid `go test -a` unless you need a clean rebuild; it defeats the build cache and increases peak RAM.
+
+**Triage:** Unresolved symbols → extend [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt) and re-run [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh); duplicate `ABSL_FLAG` / static init → [prebuilt-absl-overlap.md](prebuilt-absl-overlap.md) and [unified-prebuilt-root-segfault-investigation.md](unified-prebuilt-root-segfault-investigation.md).
