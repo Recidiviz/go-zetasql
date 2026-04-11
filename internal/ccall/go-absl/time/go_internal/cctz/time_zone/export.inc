@@ -16,7 +16,7 @@
 #include "absl/time/internal/cctz/src/time_zone_libc.cc"
 #include "absl/time/internal/cctz/src/time_zone_libc.h"
 #include "absl/time/internal/cctz/src/time_zone_lookup.cc"
-#define kDigits absl_time_internal_cctz_time_zone_kDigits
+#define kDigits absl_time_internal_cctz_time_zone_absl_time_internal_cctz_src_time_zone_posix_kDigits
 #include "absl/time/internal/cctz/src/time_zone_posix.cc"
 #undef kDigits
 #include "absl/time/internal/cctz/src/time_zone_posix.h"

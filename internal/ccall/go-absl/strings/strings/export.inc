@@ -33,7 +33,7 @@
 #include "absl/strings/internal/stringify_sink.cc"
 #include "absl/strings/internal/stringify_sink.h"
 #include "absl/strings/match.cc"
-#define kAsciiToInt absl_strings_strings_kAsciiToInt
+#define kAsciiToInt absl_strings_strings_absl_strings_numbers_kAsciiToInt
 #include "absl/strings/numbers.cc"
 #undef kAsciiToInt
 #include "absl/strings/str_cat.cc"

@@ -60,8 +60,8 @@
 //#undef private
 
 // include sources
-#define schemas proto_confidence_interval_cc_proto_schemas
-#define file_default_instances proto_confidence_interval_cc_proto_file_default_instances
+#define schemas proto_confidence_interval_cc_proto_proto_confidence_interval_pb_schemas
+#define file_default_instances proto_confidence_interval_cc_proto_proto_confidence_interval_pb_file_default_instances
 #include "proto/confidence-interval.pb.cc"
 #undef file_default_instances
 #undef schemas

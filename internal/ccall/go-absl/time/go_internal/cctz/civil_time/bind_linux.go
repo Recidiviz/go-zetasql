@@ -41,6 +41,4 @@ package civil_time
 #include "bridge.h"
 */
 import "C"
-import (
-	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
-)
+import ()

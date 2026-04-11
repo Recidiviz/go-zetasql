@@ -66,7 +66,7 @@
 #include "absl/time/clock.cc"
 #include "absl/time/duration.cc"
 #include "absl/time/format.cc"
-#define unix_epoch absl_time_time_unix_epoch
+#define unix_epoch absl_time_time_absl_time_time_unix_epoch
 #include "absl/time/time.cc"
 #undef unix_epoch
 

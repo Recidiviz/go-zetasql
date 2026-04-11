@@ -60,8 +60,8 @@
 //#undef private
 
 // include sources
-#define schemas proto_summary_cc_proto_schemas
-#define file_default_instances proto_summary_cc_proto_file_default_instances
+#define schemas proto_summary_cc_proto_proto_summary_pb_schemas
+#define file_default_instances proto_summary_cc_proto_proto_summary_pb_file_default_instances
 #include "proto/summary.pb.cc"
 #undef file_default_instances
 #undef schemas
