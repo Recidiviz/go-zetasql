@@ -316,12 +316,14 @@ int yyFlexLexer::yylex()
 #include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
 
-using zetasql_bison_parser::BisonParserImpl;
+namespace googlesql_bison_parser = zetasql_bison_parser;
+
+using googlesql_bison_parser::BisonParserImpl;
 
 #undef YY_DECL
 #define YY_DECL \
     int googlesql::parser::LegacyFlexTokenizer::GetNextTokenFlexImpl( \
-        zetasql_bison_parser::location* yylloc)
+        googlesql_bison_parser::location* yylloc)
 
 // This action is executed for every token that is matched, before the defined
 // actions are executed. We use this to:
@@ -347,7 +349,7 @@ using zetasql_bison_parser::BisonParserImpl;
 
 constexpr char ::googlesql::parser::LegacyFlexTokenizer::kEofSentinelInput[];
 
-#line 3153 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 3153 "bazel-out/darwin-fastbuild/bin/googlesql/parser/flex_tokenizer.flex.cc"
 /* These are some basic regex definitions that are used in the lexer rules
    below.
 */
@@ -409,11 +411,11 @@ constexpr char ::googlesql::parser::LegacyFlexTokenizer::kEofSentinelInput[];
 /* Requiring a newline at the end of dash_coment and pound_comment does not
    cause an error even if the comment comes in the last line of a query,
    thanks to the newline sentinel input (See:
-   https://github.com/google/googlesql/blob/master/zetasql/parser/flex_tokenizer.h?l=128).
+   https://github.com/google/googlesql/blob/master/googlesql/parser/flex_tokenizer.h?l=128).
 */
 /* Dash comments using -- */
 /* # comment ignores anything from # to the end of the line. */
-#line 3219 "bazel-out/darwin-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 3219 "bazel-out/darwin-fastbuild/bin/googlesql/parser/flex_tokenizer.flex.cc"
 
 #define INITIAL 0
 #define DOT_IDENTIFIER 1

@@ -203,7 +203,7 @@
 
 // include headers
 //#define private public
-#include "zetasql/parser/location.hh"
+#include "googlesql/parser/location.hh"
 //#undef private
 
 // include sources
