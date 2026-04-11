@@ -17,7 +17,7 @@
 
 licenses(["notice"])  # Apache v2.0
 
-package(default_visibility = ["//zetasql/base:zetasql_implementation"])
+package(default_visibility = ["//googlesql/base:googlesql_implementation"])
 
 cc_library(
     name = "jni",
