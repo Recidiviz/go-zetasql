@@ -3,7 +3,7 @@
 #   - GOMAXPROCS (default 2) limits concurrent Go workers
 #   - go -p 1 serializes package builds (big win for CGO / huge bind.cc units)
 #   - optional systemd scope MemoryMax (default 22G) when systemd-run works
-#     (env: GOOGLESQL_CGO_MEMORY_MAX; formerly ZETASQL_CGO_MEMORY_MAX)
+#     (env: GOOGLESQL_CGO_MEMORY_MAX)
 #
 # Tune for your machine:
 #   GOOGLESQL_CGO_MEMORY_MAX=20G ./scripts/cgo-go.sh test ./...
