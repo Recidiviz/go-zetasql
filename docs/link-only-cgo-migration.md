@@ -65,12 +65,15 @@ Enable **one** package at a time, run `go test` for packages that depend on it, 
 
 **After every `config.yaml` change:** regenerate so merged [`bind.cc`](../internal/cmd/generator/pkg/generator.go) (amalgamation vs `-DGOOGLESQL_LINK_ONLY_BIND`) stays in sync.
 
+**Primary supported path (link-only + prebuilt):** For ongoing development and rollout exit criteria, treat **`make local/test-root-unified`** (or `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same prebuilts as the Makefile) as the **main** gate. Maintaining the fat amalgamation branch (`//go:build !googlesql_unified_prebuilt`) in parallel is **optional** — you can standardize on prebuilt-only to avoid two CGO modes.
+
 **Verification commands** (same toolchain as [`Makefile`](../Makefile) `local/test` / `local/test-root-unified`):
 
-1. **Default path (must stay green):** `make local/test` — exercises `-tags googlesql` without `googlesql_unified_prebuilt` (fat amalgamation branch).
-2. **Unified prebuilt link-only:** `make local/test-root-unified` with `GO_TEST_FLAGS='-run ^$'` for compile/link/startup smoke, then widen `-run` or use `TESTPKG` to narrow scope.
+1. **Unified prebuilt link-only (primary):** `make local/test-root-unified` with `GO_TEST_FLAGS='-run ^$'` for compile/link/startup smoke, then widen `-run` or use `TESTPKG` to narrow scope.
+2. **Legacy fat amalgamation (optional):** `make local/test` — `-tags googlesql` without `googlesql_unified_prebuilt`; useful during migration or comparison, not required for a prebuilt-only policy.
 3. **Analyzer shard gate (optional):** `make local/test-prebuilt-googlesql-unified-root` (see `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT` in the Makefile).
 4. **Prebuilts:** `bash scripts/verify-prebuilt-googlesql-unified.sh` and `bash scripts/verify-prebuilt-protobuf.sh` before trusting archive-boundary changes.
+
 
 **Low memory (avoid OOM during `clang++`):** Prefer serialized package builds: `GO_BUILD_P_MAX=1`, `GOMAXPROCS=1`, and a high `GO_BUILD_MEM_PER_JOB_KB` (see [`Makefile`](../Makefile)) so the Makefile’s `-p` heuristic stays at 1. For a narrow compile gate without running tests: `make local/compile-root-unified-test` or `make local/test-root-unified GO_TEST_FLAGS='-run ^$'`. [`scripts/cgo-go.sh`](../scripts/cgo-go.sh) wraps `go test`/`go build` with `-p 1` and optional `systemd-run` memory limits. Avoid `go test -a` unless you need a clean rebuild; it defeats the build cache and increases peak RAM.
 
