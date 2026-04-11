@@ -96,7 +96,7 @@ jobs:
       - name: Verify and test default prebuilts
         run: |
           make verify-prebuilt-protobuf
-          make local/test TESTPKG=./internal/ccall/go-protobuf/protobuf/
+          make local/test-protobuf-cgo
         env:
           CC: clang
           CXX: clang++

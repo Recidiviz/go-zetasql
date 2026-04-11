@@ -2,7 +2,10 @@
 #ifndef googlesql_public_strings_bind_cc
 #define googlesql_public_strings_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_public_strings_differential_privacy
 #define googlesql googlesql_public_strings_googlesql
 #define googlesql_base googlesql_public_strings_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_public_strings_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,35 +73,8 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/public/strings.h"
-//#undef private
-
-// include sources
-#include "googlesql/public/strings.cc"
-
-// include dependencies
-#include "go-googlesql/public/id_string/export.inc"
-#include "go-googlesql/public/language_options/export.inc"
-#include "go-googlesql/public/options_cc_proto/export.inc"
-#include "go-googlesql/base/case/export.inc"
-#include "go-googlesql/base/check/export.inc"
-#include "go-googlesql/base/map_util/export.inc"
-#include "go-googlesql/base/ret_check/export.inc"
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/common/errors/export.inc"
-#include "go-googlesql/common/utf_util/export.inc"
-#include "go-googlesql/parser/keywords/export.inc"
-#include "go-absl/algorithm/container/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/base/no_destructor/export.inc"
-#include "go-absl/container/flat_hash_set/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/span/export.inc"
-#include "go-icu/icu/export.inc"
 
 #include "bridge.h"
 

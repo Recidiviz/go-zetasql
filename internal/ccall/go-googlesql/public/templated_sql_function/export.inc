@@ -3,7 +3,7 @@
 
 #include "googlesql/public/templated_sql_function.h"
 // include sources
-#define module_initialization_complete googlesql_public_templated_sql_function_module_initialization_complete
+#define module_initialization_complete googlesql_public_templated_sql_function_googlesql_public_templated_sql_function_module_initialization_complete
 #include "googlesql/public/templated_sql_function.cc"
 #undef module_initialization_complete
 // include dependencies

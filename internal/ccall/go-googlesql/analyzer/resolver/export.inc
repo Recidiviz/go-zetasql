@@ -29,7 +29,7 @@
 #include "googlesql/analyzer/resolver_common_inl.h"
 #include "googlesql/analyzer/resolver_dml.cc"
 #define kOrderById googlesql_analyzer_resolver_expr_kOrderById
-#define kIsNullFnName googlesql_analyzer_resolver_kIsNullFnName
+#define kIsNullFnName googlesql_analyzer_resolver_googlesql_analyzer_resolver_expr_kIsNullFnName
 #include "googlesql/analyzer/resolver_expr.cc"
 #undef kIsNullFnName
 #undef kOrderById

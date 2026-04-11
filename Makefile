@@ -10,7 +10,7 @@ GO_TEST_FLAGS ?=
 # For local/build: package pattern passed to go build (default all modules under repo root).
 BUILDPKG ?= ./...
 
-# Parallel go build/test workers (-p). CGO + GoogleSQL C++ amalgamation is very memory-heavy; each
+# Parallel go build/test workers (-p). CGO + GoogleSQL link-only bind.cc is memory-heavy; each
 # concurrent job can peak at multiple GiB. Default: estimate jobs from ~80% MemAvailable /
 # GO_BUILD_MEM_PER_JOB_KB, cap by CPU, then cap again by GO_BUILD_P_MAX (default 2) so IDEs do not OOM.
 # Override examples: make local/build GO_BUILD_P=6
@@ -50,7 +50,7 @@ DOCKER_DEV_VOLUMES := \
 .PHONY: docker/build docker/build-dev cache-dirs docker/warm-cache cache-clean-cgo \
 	local/build local/test local/test-fresh \
 	local/test-prebuilt-absl local/build-prebuilt-absl \
-	local/build-prebuilt-googlesql-unified local/build-prebuilt-googlesql-unified-root local/test-prebuilt-googlesql-unified-root local/test-root-unified local/compile-root-unified-test \
+	local/build-prebuilt-googlesql-unified local/build-prebuilt-googlesql-unified-root local/test-prebuilt-googlesql-unified-root local/test-root-unified local/compile-root-unified-test local/test-protobuf-cgo \
 	prebuilt-libs prebuilt-libs-absl prebuilt-libs-googlesql-unified package-protobuf-prebuilt-tarball \
 	verify-prebuilt-protobuf verify-prebuilt-absl verify-prebuilt-googlesql-unified smoke-link-googlesql-unified \
 	verify-protobuf-tier-b-alignment verify-tier-b-cgo-policy sync-protobuf-vendor-from-bazel regenerate-googlesql-cpp-protos \
@@ -102,7 +102,7 @@ endif
 # protobuf amalgamation). Removing it requires a single macro/link domain for protobuf+absl;
 # see docs/protobuf-vendoring.md "Single-owner protobuf".
 #
-# Go rejects non-allowlisted #cgo LDFLAGS; bind_linux.go uses -Wl,--whole-archive etc. This list
+# Go rejects non-allowlisted #cgo LDFLAGS; bind_unified_prebuilt_*.go uses -Wl,--whole-archive etc. This list
 # must stay in sync with internal/ccall/go-protobuf/protobuf/bind_*.go.
 # -stdlib=libc++: without this, cmd/link invokes the external linker with GCC/C++ defaults and
 # pulls libstdc++.so alongside Bazel-built libc++ prebuilts → mixed std:: ABI and startup SIGSEGV
@@ -110,8 +110,11 @@ endif
 CGO_LDFLAGS_ALLOW_LIST := -Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group|-stdlib=libc\+\+
 CGO_LDFLAGS_BASE := -Wl,--no-gc-sections -Wl,--allow-multiple-definition $(MOLD_LD) -stdlib=libc++
 
+# All GoogleSQL CGO targets use unified prebuilt libgooglesql.a + link-only bind.cc (see docs/link-only-cgo-migration.md).
+GOOGLESQL_BUILD_TAGS := googlesql,googlesql_unified_prebuilt
+
 # Example: make local/build BUILDPKG=./internal/ccall/go-googlesql
-local/build: cache-dirs verify-prebuilt-protobuf
+local/build: cache-dirs verify-prebuilt-protobuf verify-prebuilt-googlesql-unified
 	CGO_ENABLED=1 \
 	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
 	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
@@ -122,10 +125,10 @@ local/build: cache-dirs verify-prebuilt-protobuf
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go build -p "$(GO_BUILD_P)" -tags googlesql $(BUILDPKG)
+	go build -p "$(GO_BUILD_P)" -tags $(GOOGLESQL_BUILD_TAGS) $(BUILDPKG)
 
 # Same toolchain as local/build; mirrors test/linux but runs on the host (no -race unless you add it).
-local/test: cache-dirs verify-prebuilt-protobuf
+local/test: cache-dirs verify-prebuilt-protobuf verify-prebuilt-googlesql-unified
 	CGO_ENABLED=1 \
 	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
 	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
@@ -136,28 +139,48 @@ local/test: cache-dirs verify-prebuilt-protobuf
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags googlesql -v $(TESTPKG) -count=1 $(GO_TEST_FLAGS)
+	go test -p "$(GO_BUILD_P)" -tags $(GOOGLESQL_BUILD_TAGS) -v $(TESTPKG) -count=1 $(GO_TEST_FLAGS)
 
 # Like local/test but forces rebuilding every package (-a). Use after cache-clean-cgo or toolchain bumps.
 local/test-fresh:
 	$(MAKE) local/test GO_TEST_FLAGS=-a
 
+# Protobuf CGO package only (no verify-prebuilt-googlesql-unified). For CI jobs that ship protobuf prebuilts without libgooglesql.a.
+local/test-protobuf-cgo: cache-dirs verify-prebuilt-protobuf
+	CGO_ENABLED=1 \
+	CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+	CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+	CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
+	CC="$(CGO_CC)" \
+	CXX="$(CGO_CXX)" \
+	CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" \
+	CCACHE_COMPRESS=1 \
+	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
+	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
+	go test -p "$(GO_BUILD_P)" -tags $(GOOGLESQL_BUILD_TAGS) -v ./internal/ccall/go-protobuf/protobuf/ -count=1 $(GO_TEST_FLAGS)
+
 # Rough cold vs warm timing + ccache stats. Uses TESTPKG (default ./). Requires ccache + clang on PATH.
-profile-bottleneck: cache-dirs
+profile-bottleneck: cache-dirs verify-prebuilt-protobuf verify-prebuilt-googlesql-unified
 	@echo "=== ccache stats (before) ==="; ccache -s 2>/dev/null || echo "(install ccache for stats)"
 	@echo "=== cold: zero ccache counters ==="; ccache -z 2>/dev/null || true
 	@echo "=== cold: compile test binary ==="; \
-		time env CGO_ENABLED=1 $(if $(MOLD_LD),CGO_LDFLAGS=$(MOLD_LD),) \
+		time env CGO_ENABLED=1 \
+		CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+		CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+		CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
 		CC="ccache clang" CXX="ccache clang++" \
 		CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" CCACHE_COMPRESS=1 \
 		GOCACHE="$(GO_CACHE_ROOT)/gocache" GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-		go test -count=1 -c -o /dev/null $(TESTPKG)
+		go test -count=1 -c -o /dev/null -tags $(GOOGLESQL_BUILD_TAGS) $(TESTPKG)
 	@echo "=== warm: compile again ==="; \
-		time env CGO_ENABLED=1 $(if $(MOLD_LD),CGO_LDFLAGS=$(MOLD_LD),) \
+		time env CGO_ENABLED=1 \
+		CGO_CXXFLAGS="$(CGO_CXXFLAGS_PREBUILT)" \
+		CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)' \
+		CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)' \
 		CC="ccache clang" CXX="ccache clang++" \
 		CCACHE_DIR="$(GO_CACHE_ROOT)/ccache" CCACHE_COMPRESS=1 \
 		GOCACHE="$(GO_CACHE_ROOT)/gocache" GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-		go test -count=1 -c -o /dev/null $(TESTPKG)
+		go test -count=1 -c -o /dev/null -tags $(GOOGLESQL_BUILD_TAGS) $(TESTPKG)
 	@echo "=== ccache stats (after) ==="; ccache -s 2>/dev/null || true
 
 # Build the default protobuf prebuilt archive via Bazel (Linux/macOS).
@@ -237,13 +260,10 @@ prebuilt-libs-googlesql-unified: extract-googlesql-unified-lib
 verify-prebuilt-googlesql-unified:
 	bash scripts/verify-prebuilt-googlesql-unified.sh
 
-# Root package slice that swaps the largest public/parser CGO shards to link-only bind.cc under
-# googlesql_unified_prebuilt while still pulling libprotobuf_cgo.a via the normal go-protobuf package.
+# Root package slice: link-only bind.cc + libgooglesql.a (googlesql_unified_prebuilt).
 BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT ?= ./
-# Default gate: analyzer CGO shard (startup-safe unified link). Full repo `./` also needs
-# internal/ccall/go-googlesql/bind.cc split for unified like base/status (bind_linux !unified +
-# bind_unified_prebuilt_*); until then override: TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT=./
-TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT ?= ./internal/ccall/go-googlesql/public/analyzer/
+# Default: full root tests; override to e.g. ./internal/ccall/go-googlesql/public/analyzer/ for a narrow gate.
+TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT ?= ./
 
 local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-unified
 	CGO_ENABLED=1 \
@@ -256,7 +276,7 @@ local/build-prebuilt-googlesql-unified: cache-dirs verify-prebuilt-googlesql-uni
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt ./internal/ccall/go-googlesql-unified/googlesqlunified/
+	go build -p "$(GO_BUILD_P)" -tags $(GOOGLESQL_BUILD_TAGS) ./internal/ccall/go-googlesql-unified/googlesqlunified/
 
 local/build-prebuilt-googlesql-unified-root: cache-dirs verify-prebuilt-protobuf verify-prebuilt-googlesql-unified
 	CGO_ENABLED=1 \
@@ -269,7 +289,7 @@ local/build-prebuilt-googlesql-unified-root: cache-dirs verify-prebuilt-protobuf
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go build -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt $(BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT)
+	go build -p "$(GO_BUILD_P)" -tags $(GOOGLESQL_BUILD_TAGS) $(BUILDPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT)
 
 # Default package is the analyzer CGO shard (see TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT). CI runs
 # this target after local/build-prebuilt-googlesql-unified-root (see go-googlesql-unified-prebuilt.yml).
@@ -284,7 +304,7 @@ local/test-prebuilt-googlesql-unified-root: cache-dirs verify-prebuilt-protobuf 
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt -v $(TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT) -count=1
+	go test -p "$(GO_BUILD_P)" -tags $(GOOGLESQL_BUILD_TAGS) -v $(TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT) -count=1
 
 # Root module tests (default TESTPKG=./) with unified prebuilt link-only root bind.cc + libgooglesql.a.
 # Requires the same prebuilts as local/test-prebuilt-googlesql-unified-root. Startup may still
@@ -301,7 +321,7 @@ local/test-root-unified: cache-dirs verify-prebuilt-protobuf verify-prebuilt-goo
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt -v $(TESTPKG) -count=1 $(GO_TEST_FLAGS)
+	go test -p "$(GO_BUILD_P)" -tags $(GOOGLESQL_BUILD_TAGS) -v $(TESTPKG) -count=1 $(GO_TEST_FLAGS)
 
 # Link-only: compile the root unified-prebuilt test binary without running it (no startup SIGSEGV).
 # Confirms CGO + duplicate-symbol posture after extract_protobuf_cgo_lib / bridge edits; see
@@ -317,7 +337,7 @@ local/compile-root-unified-test: cache-dirs verify-prebuilt-protobuf verify-preb
 	CCACHE_COMPRESS=1 \
 	GOCACHE="$(GO_CACHE_ROOT)/gocache" \
 	GOMODCACHE="$(GO_CACHE_ROOT)/gomodcache" \
-	go test -p "$(GO_BUILD_P)" -tags googlesql,googlesql_unified_prebuilt -c -o "$(GO_CACHE_ROOT)/googlesql_root_unified.test" $(TESTPKG)
+	go test -p "$(GO_BUILD_P)" -tags $(GOOGLESQL_BUILD_TAGS) -c -o "$(GO_CACHE_ROOT)/googlesql_root_unified.test" $(TESTPKG)
 
 smoke-link-googlesql-unified:
 	bash scripts/smoke_link_googlesql_unified.sh
@@ -329,11 +349,11 @@ docker/warm-cache: docker/build-dev
 	docker run --rm $(DOCKER_DEV_ENV) $(DOCKER_DEV_VOLUMES) \
 		-w /go-googlesql \
 		$(DOCKER_DEV_IMAGE) \
-		bash -c "set -e; bash scripts/verify-prebuilt-protobuf.sh; \
+		bash -c "set -e; bash scripts/verify-prebuilt-protobuf.sh; bash scripts/verify-prebuilt-googlesql-unified.sh; \
 		export CGO_CXXFLAGS='$(CGO_CXXFLAGS_PREBUILT)'; \
 		export CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)'; \
 		export CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)'; \
-		go test -race -p $(GO_BUILD_P) -tags googlesql $(TESTPKG) -count=1 -run '^$$' -exec /bin/true"
+		go test -race -p $(GO_BUILD_P) -tags $(GOOGLESQL_BUILD_TAGS) $(TESTPKG) -count=1 -run '^$$' -exec /bin/true"
 
 # Preferred path for GoogleSQL upgrades and local CI parity: tests run inside $(DOCKER_DEV_IMAGE)
 # with the working tree mounted and shared host paths for GOCACHE/GOMODCACHE.
@@ -345,8 +365,8 @@ test/linux: docker/build-dev
 	docker run --rm $(DOCKER_DEV_ENV) $(DOCKER_DEV_VOLUMES) \
 		-w /go-googlesql \
 		$(DOCKER_DEV_IMAGE) \
-		bash -c "set -e; bash scripts/verify-prebuilt-protobuf.sh; \
+		bash -c "set -e; bash scripts/verify-prebuilt-protobuf.sh; bash scripts/verify-prebuilt-googlesql-unified.sh; \
 		export CGO_CXXFLAGS='$(CGO_CXXFLAGS_PREBUILT)'; \
 		export CGO_LDFLAGS_ALLOW='$(CGO_LDFLAGS_ALLOW_LIST)'; \
 		export CGO_LDFLAGS='$(CGO_LDFLAGS_BASE)'; \
-		go test -race -p $(GO_BUILD_P) -tags googlesql -v $(TESTPKG) -count=1"
+		go test -race -p $(GO_BUILD_P) -tags $(GOOGLESQL_BUILD_TAGS) -v $(TESTPKG) -count=1"

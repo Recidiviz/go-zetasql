@@ -2,7 +2,10 @@
 #ifndef googlesql_public_modules_bind_cc
 #define googlesql_public_modules_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_public_modules_differential_privacy
 #define googlesql googlesql_public_modules_googlesql
 #define googlesql_base googlesql_public_modules_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_public_modules_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,60 +73,9 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/public/module_factory.h"
 #include "googlesql/public/modules.h"
-//#undef private
-
-// include sources
-#include "googlesql/public/module_factory.cc"
-#include "googlesql/public/modules.cc"
-
-// include dependencies
-#include "go-googlesql/public/analyzer/export.inc"
-#include "go-googlesql/public/analyzer_options/export.inc"
-#include "go-googlesql/public/analyzer_output/export.inc"
-#include "go-googlesql/public/catalog/export.inc"
-#include "go-googlesql/public/constant/export.inc"
-#include "go-googlesql/public/constant_evaluator/export.inc"
-#include "go-googlesql/public/cycle_detector/export.inc"
-#include "go-googlesql/public/error_helpers/export.inc"
-#include "go-googlesql/public/function/export.inc"
-#include "go-googlesql/public/function_cc_proto/export.inc"
-#include "go-googlesql/public/module_contents_fetcher/export.inc"
-#include "go-googlesql/public/module_details/export.inc"
-#include "go-googlesql/public/multi_catalog/export.inc"
-#include "go-googlesql/public/options_cc_proto/export.inc"
-#include "go-googlesql/public/parse_location/export.inc"
-#include "go-googlesql/public/parse_resume_location/export.inc"
-#include "go-googlesql/public/remote_tvf_factory/export.inc"
-#include "go-googlesql/public/simple_catalog/export.inc"
-#include "go-googlesql/public/sql_constant/export.inc"
-#include "go-googlesql/public/type/export.inc"
-#include "go-googlesql/public/value/export.inc"
-#include "go-googlesql/base/base/export.inc"
-#include "go-googlesql/base/map_util/export.inc"
-#include "go-googlesql/base/ret_check/export.inc"
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/base/stl_util/export.inc"
-#include "go-googlesql/base/strings/export.inc"
-#include "go-googlesql/common/errors/export.inc"
-#include "go-googlesql/common/lazy_resolution_catalog/export.inc"
-#include "go-googlesql/common/resolution_scope/export.inc"
-#include "go-googlesql/common/scope_error_catalog/export.inc"
-#include "go-googlesql/parser/parser/export.inc"
-#include "go-googlesql/proto/module_options_cc_proto/export.inc"
-#include "go-googlesql/public/types/types/export.inc"
-#include "go-googlesql/resolved_ast/resolved_ast/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/cleanup/cleanup/export.inc"
-#include "go-absl/container/btree/export.inc"
-#include "go-absl/functional/bind_front/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 

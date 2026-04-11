@@ -2,7 +2,10 @@
 #ifndef googlesql_public_proto_type_annotation_cc_proto_bind_cc
 #define googlesql_public_proto_type_annotation_cc_proto_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_public_proto_type_annotation_cc_proto_differential_privacy
 #define googlesql googlesql_public_proto_type_annotation_cc_proto_googlesql
 #define googlesql_base googlesql_public_proto_type_annotation_cc_proto_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_public_proto_type_annotation_cc_proto_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,15 +73,9 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/public/proto/type_annotation.pb.h"
 #include "googlesql/public/proto/wire_format_annotation.pb.h"
-//#undef private
-
-// include sources
-
-// include dependencies
 
 #include "bridge.h"
 

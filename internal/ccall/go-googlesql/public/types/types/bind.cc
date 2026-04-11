@@ -2,7 +2,10 @@
 #ifndef googlesql_public_types_types_bind_cc
 #define googlesql_public_types_types_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_public_types_types_differential_privacy
 #define googlesql googlesql_public_types_types_googlesql
 #define googlesql_base googlesql_public_types_types_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_public_types_types_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,8 +73,7 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/public/types/enum_type.h"
 #include "googlesql/public/types/graph_element_type.h"
 #include "googlesql/public/types/graph_path_type.h"
@@ -97,50 +98,6 @@
 #include "googlesql/public/types/type_modifiers.h"
 #include "googlesql/public/types/type_parameters.h"
 #include "googlesql/public/types/value_equality_check_options.h"
-//#undef private
-
-// include sources
-
-// include dependencies
-#include "go-googlesql/public/types/timestamp_util/export.inc"
-#include "go-googlesql/public/types/type/export.inc"
-#include "go-googlesql/public/types/type_factory/export.inc"
-#include "go-googlesql/public/types/value_representations/export.inc"
-#include "go-googlesql/base/base/export.inc"
-#include "go-googlesql/base/case/export.inc"
-#include "go-googlesql/base/check/export.inc"
-#include "go-googlesql/base/map_util/export.inc"
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/common/errors/export.inc"
-#include "go-googlesql/common/float_margin/export.inc"
-#include "go-googlesql/common/thread_stack/export.inc"
-#include "go-googlesql/public/annotation_cc_proto/export.inc"
-#include "go-googlesql/public/civil_time/export.inc"
-#include "go-googlesql/public/collation_cc_proto/export.inc"
-#include "go-googlesql/public/language_options/export.inc"
-#include "go-googlesql/public/options_cc_proto/export.inc"
-#include "go-googlesql/public/simple_value_cc_proto/export.inc"
-#include "go-googlesql/public/type_annotation_cc_proto/export.inc"
-#include "go-googlesql/public/type_cc_proto/export.inc"
-#include "go-googlesql/public/type_modifiers_cc_proto/export.inc"
-#include "go-googlesql/public/type_parameters_cc_proto/export.inc"
-#include "go-googlesql/public/proto/type_annotation_cc_proto/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/base/nullability/export.inc"
-#include "go-absl/container/flat_hash_map/export.inc"
-#include "go-absl/container/flat_hash_set/export.inc"
-#include "go-absl/container/inlined_vector/export.inc"
-#include "go-absl/container/node_hash_map/export.inc"
-#include "go-absl/flags/flag/export.inc"
-#include "go-absl/hash/hash/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/synchronization/synchronization/export.inc"
-#include "go-absl/time/time/export.inc"
-#include "go-absl/types/optional/export.inc"
-#include "go-absl/types/span/export.inc"
-#include "go-absl/types/variant/export.inc"
 
 #include "bridge.h"
 

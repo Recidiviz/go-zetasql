@@ -48,7 +48,7 @@ jobs:
       - name: Verify archive
         run: make verify-prebuilt-protobuf
       - name: Test default prebuilt protobuf package
-        run: make local/test TESTPKG=./internal/ccall/go-protobuf/protobuf/
+        run: make local/test-protobuf-cgo
         env:
           CC: clang
           CXX: clang++

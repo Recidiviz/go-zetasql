@@ -2,7 +2,10 @@
 #ifndef googlesql_public_value_bind_cc
 #define googlesql_public_value_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_public_value_differential_privacy
 #define googlesql googlesql_public_value_googlesql
 #define googlesql_base googlesql_public_value_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_public_value_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,69 +73,9 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/public/proto_util.h"
 #include "googlesql/public/value.h"
-//#undef private
-
-// include sources
-#include "googlesql/public/proto_util.cc"
-#include "googlesql/public/value.cc"
-#include "googlesql/public/value_inl.h"
-
-// include dependencies
-#include "go-googlesql/public/civil_time/export.inc"
-#include "go-googlesql/public/interval_value/export.inc"
-#include "go-googlesql/public/json_value/export.inc"
-#include "go-googlesql/public/language_options/export.inc"
-#include "go-googlesql/public/numeric_value/export.inc"
-#include "go-googlesql/public/options_cc_proto/export.inc"
-#include "go-googlesql/public/simple_token_list/export.inc"
-#include "go-googlesql/public/timestamp_picos_value/export.inc"
-#include "go-googlesql/public/type/export.inc"
-#include "go-googlesql/public/type_cc_proto/export.inc"
-#include "go-googlesql/public/uuid_value/export.inc"
-#include "go-googlesql/public/value_cc_proto/export.inc"
-#include "go-googlesql/public/value_content/export.inc"
-#include "go-googlesql/base/base/export.inc"
-#include "go-googlesql/base/check/export.inc"
-#include "go-googlesql/base/compact_reference_counted/export.inc"
-#include "go-googlesql/base/map_util/export.inc"
-#include "go-googlesql/base/map_view/export.inc"
-#include "go-googlesql/base/ret_check/export.inc"
-#include "go-googlesql/base/source_location/export.inc"
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/base/strings/export.inc"
-#include "go-googlesql/common/errors/export.inc"
-#include "go-googlesql/common/thread_stack/export.inc"
-#include "go-googlesql/public/functions/arithmetics/export.inc"
-#include "go-googlesql/public/functions/comparison/export.inc"
-#include "go-googlesql/public/functions/convert_string/export.inc"
-#include "go-googlesql/public/functions/date_time_util/export.inc"
-#include "go-googlesql/public/proto/type_annotation_cc_proto/export.inc"
-#include "go-googlesql/public/types/types/export.inc"
-#include "go-googlesql/public/types/timestamp_util/export.inc"
-#include "go-googlesql/public/types/value_representations/export.inc"
-#include "go-absl/algorithm/container/export.inc"
-#include "go-absl/base/base/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/container/btree/export.inc"
-#include "go-absl/container/flat_hash_map/export.inc"
-#include "go-absl/container/flat_hash_set/export.inc"
-#include "go-absl/container/inlined_vector/export.inc"
-#include "go-absl/flags/flag/export.inc"
-#include "go-absl/hash/hash/export.inc"
-#include "go-absl/log/log/export.inc"
-#include "go-absl/memory/memory/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/strings/cord/export.inc"
-#include "go-absl/strings/str_format/export.inc"
-#include "go-absl/time/time/export.inc"
-#include "go-absl/types/span/export.inc"
-#include "go-googletest/googletest/export.inc"
 
 #include "bridge.h"
 

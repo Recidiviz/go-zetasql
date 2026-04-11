@@ -28,7 +28,7 @@
 #include "googlesql/public/types/measure_type.cc"
 #include "googlesql/public/types/range_type.cc"
 #include "googlesql/public/types/row_type.cc"
-#define TypeKindInfo googlesql_public_types_type_TypeKindInfo
+#define TypeKindInfo googlesql_public_types_type_googlesql_public_types_simple_type_TypeKindInfo
 #include "googlesql/public/types/simple_type.cc"
 #undef TypeKindInfo
 #include "googlesql/public/types/simple_value.cc"

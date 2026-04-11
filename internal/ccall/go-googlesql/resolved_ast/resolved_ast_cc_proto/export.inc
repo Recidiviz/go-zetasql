@@ -3,8 +3,8 @@
 
 #include "googlesql/resolved_ast/resolved_ast.pb.h"
 // include sources
-#define schemas googlesql_resolved_ast_resolved_ast_cc_proto_schemas
-#define file_default_instances googlesql_resolved_ast_resolved_ast_cc_proto_file_default_instances
+#define schemas googlesql_resolved_ast_resolved_ast_cc_proto_googlesql_resolved_ast_resolved_ast_pb_schemas
+#define file_default_instances googlesql_resolved_ast_resolved_ast_cc_proto_googlesql_resolved_ast_resolved_ast_pb_file_default_instances
 #include "googlesql/resolved_ast/resolved_ast.pb.cc"
 #undef file_default_instances
 #undef schemas

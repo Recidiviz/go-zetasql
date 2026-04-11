@@ -2,7 +2,10 @@
 #ifndef googlesql_common_reflection_helper_bind_cc
 #define googlesql_common_reflection_helper_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_common_reflection_helper_differential_privacy
 #define googlesql googlesql_common_reflection_helper_googlesql
 #define googlesql_base googlesql_common_reflection_helper_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_common_reflection_helper_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,20 +73,8 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/common/reflection_helper.h"
-//#undef private
-
-// include sources
-#include "googlesql/common/reflection_helper.cc"
-
-// include dependencies
-#include "go-googlesql/common/reflection_cc_proto/export.inc"
-#include "go-googlesql/public/strings/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/strings/str_format/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 

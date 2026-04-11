@@ -6,11 +6,11 @@ This document describes the **default protobuf path**: link a **Bazel-built** `l
 
 | Goal | Tags | Preconditions |
 |------|------|----------------|
-| **Default protobuf prebuilt (this doc)** | `-tags googlesql` | `libprotobuf_cgo.a` for your `GOOS_GOARCH` under `internal/ccall/go-protobuf/protobuf/lib/` |
+| **GoogleSQL CGO (default)** | `-tags googlesql,googlesql_unified_prebuilt` | `libprotobuf_cgo.a` and `libgooglesql.a` (see [`libgooglesql-unified.md`](libgooglesql-unified.md)) |
 | **Tier B Abseil (pilot)** | `-tags googlesql,googlesql_tier_b_absl` | `libabsl_cgo.a` under `internal/ccall/go-absl/lib/` — **not** combined with `googlesql_tier_b` |
-| **Unified prebuilt** | `-tags googlesql,googlesql_unified_prebuilt` | `libgooglesql.a` per [`libgooglesql-unified.md`](libgooglesql-unified.md) |
+| **Protobuf package only (CI)** | `-tags googlesql,googlesql_unified_prebuilt` | `libprotobuf_cgo.a` only — `make local/test-protobuf-cgo` |
 
-**Full GoogleSQL CGO:** The repository’s **supported** direction is **unified prebuilt + link-only** binds — see [`link-only-cgo-migration.md`](link-only-cgo-migration.md). Tags with `googlesql` alone (no `googlesql_unified_prebuilt`) still select the **deprecated** fat-amalgamation path for GoogleSQL-owned packages until that code is removed.
+**Full GoogleSQL CGO:** **Unified prebuilt + link-only** binds — see [`link-only-cgo-migration.md`](link-only-cgo-migration.md).
 
 Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Makefile`](../Makefile) `CGO_CXXFLAGS_PREBUILT` for unified / local test targets) so the C++ standard library matches the Bazel-built archive.
 
@@ -170,9 +170,9 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 |--------|---------|
 | `make prebuilt-libs` | Build `libprotobuf_cgo.a` via Bazel + `ar` (same as `extract-protobuf-lib`) |
 | `make verify-prebuilt-protobuf` | Fail fast if the archive for the current `GOOS_GOARCH` is missing |
-| `make local/build` | Default `go build` with the protobuf prebuilt path (after verify) |
-| `make local/test-root-unified` | **Preferred** full-module check: `googlesql` + `googlesql_unified_prebuilt`, prebuilt archives, link-only path (see [`link-only-cgo-migration.md`](link-only-cgo-migration.md)) |
-| `make local/test` | **Deprecated** for long-term full-stack work: `go test` without unified prebuilt (fat amalgamation for GoogleSQL shards). May still match transitional CI. Respects `TESTPKG` |
+| `make local/build` | `go build` with `googlesql,googlesql_unified_prebuilt` after protobuf + unified prebuilt verify |
+| `make local/test` / `make local/test-root-unified` | Full-module `go test` (same tags and verifies; `TESTPKG` / `GO_TEST_FLAGS` supported) |
+| `make local/test-protobuf-cgo` | Protobuf shard only: verify protobuf prebuilt, test `internal/ccall/go-protobuf/protobuf/` (no `libgooglesql.a` required) |
 | `make prebuilt-libs-absl` | Build `libabsl_cgo.a` (same as `extract-absl-lib`) |
 | `make verify-prebuilt-absl` | Fail fast if `libabsl_cgo.a` for current `GOOS_GOARCH` is missing |
 | `make local/build-prebuilt-absl` | `go build` with `-tags googlesql,googlesql_tier_b_absl` (pilot path by default) |
@@ -191,7 +191,7 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 **go-googlesqlite** and **bigquery-emulator** depend on this module via `require` + `replace`. If you enable Tier B here:
 
 1. Use the **same** `replace` path or version of `github.com/vantaboard/go-googlesql`.
-2. Build with **identical** tags: `-tags googlesql` for the default protobuf prebuilt path.
+2. Build with **identical** tags: `-tags googlesql,googlesql_unified_prebuilt` for the default GoogleSQL CGO path.
 3. Run **`make prebuilt-libs`** (or copy the resulting `lib/` tree) in the **go-googlesql** checkout that `replace` points to—downstream does **not** build `libprotobuf_cgo.a` for you.
 4. Align **`CGO_CFLAGS`**, **`CGO_LDFLAGS`**, and **`CGO_LDFLAGS_ALLOW`** with this repo’s [`Makefile`](../Makefile) when running `go test` / `go build` outside Make.
 
@@ -219,7 +219,7 @@ Tagged releases can ship a **default protobuf prebuilt** archive alongside the m
 # From repo root after verifying SHA256SUMS
 tar -xzf go-googlesql-prebuilts-protobuf-linux_amd64-vX.Y.Z.tar.gz
 make verify-prebuilt-protobuf
-make local/test TESTPKG=./internal/ccall/go-protobuf/protobuf/
+make local/test-protobuf-cgo
 ```
 
 The tarball contains `internal/ccall/go-protobuf/protobuf/lib/` with the same layout as `make prebuilt-libs`.
@@ -238,12 +238,12 @@ Downstream apps should pin the **same** module version and unpack the matching r
 
 | Context | Prebuilt `libprotobuf_cgo.a` | Tags |
 |---------|------------------------------|------|
-| Default **GitHub Actions** ([`go.yml`](../.github/workflows/go.yml)) | Built on the runner with Bazel, then used by the default test path | `googlesql` |
-| **Manual default-prebuilt workflow** ([`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml)) | Built on the runner with Bazel, then `make local/test` | `googlesql` |
+| Default **GitHub Actions** ([`go.yml`](../.github/workflows/go.yml)) | Protobuf + `libgooglesql.a` built on the runner, then `make local/test` | `googlesql,googlesql_unified_prebuilt` |
+| **Manual default-prebuilt workflow** ([`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml)) | Built on the runner with Bazel, then `make local/test` | `googlesql,googlesql_unified_prebuilt` |
 | **Manual Abseil Tier B** ([`go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml)) | Builds `libabsl_cgo.a`, then `make local/test-prebuilt-absl` | `googlesql,googlesql_tier_b_absl` |
-| **Consumer gate (no Bazel)** ([`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml)) | Artifact from producer job; extract then test | `googlesql` |
+| **Consumer gate (no Bazel)** ([`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml)) | Protobuf artifact; extract then `make local/test-protobuf-cgo` | `googlesql,googlesql_unified_prebuilt` |
 | **GitHub Release** ([`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml)) | Published tarball per `v*` tag | N/A (download + extract) |
-| **Local dev** | Run `make prebuilt-libs` / `make prebuilt-libs-absl` per `GOOS_GOARCH` when preparing a checkout | default `googlesql` path or pilot tags |
+| **Local dev** | Run `make prebuilt-libs` + `make prebuilt-libs-googlesql-unified` (and `make prebuilt-libs-absl` for Tier B) | `googlesql,googlesql_unified_prebuilt` or pilot tags |
 
 Static `.a` files remain **gitignored**; published **tarballs** are optional release assets, not part of the Go module zip.
 

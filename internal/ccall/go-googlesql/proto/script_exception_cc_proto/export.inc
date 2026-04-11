@@ -3,8 +3,8 @@
 
 #include "googlesql/proto/script_exception.pb.h"
 // include sources
-#define schemas googlesql_proto_script_exception_cc_proto_schemas
-#define file_default_instances googlesql_proto_script_exception_cc_proto_file_default_instances
+#define schemas googlesql_proto_script_exception_cc_proto_googlesql_proto_script_exception_pb_schemas
+#define file_default_instances googlesql_proto_script_exception_cc_proto_googlesql_proto_script_exception_pb_file_default_instances
 #include "googlesql/proto/script_exception.pb.cc"
 #undef file_default_instances
 #undef schemas

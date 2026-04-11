@@ -2,7 +2,10 @@
 #ifndef googlesql_public_functions_uuid_bind_cc
 #define googlesql_public_functions_uuid_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_public_functions_uuid_differential_privacy
 #define googlesql googlesql_public_functions_uuid_googlesql
 #define googlesql_base googlesql_public_functions_uuid_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_public_functions_uuid_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,21 +73,8 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/public/functions/uuid.h"
-//#undef private
-
-// include sources
-#include "googlesql/public/functions/uuid.cc"
-
-// include dependencies
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/public/uuid_value/export.inc"
-#include "go-absl/random/random/export.inc"
-#include "go-absl/random/bit_gen_ref/export.inc"
-#include "go-absl/random/distributions/export.inc"
-#include "go-absl/strings/string_view/export.inc"
 
 #include "bridge.h"
 

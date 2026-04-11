@@ -2,7 +2,10 @@
 #ifndef googlesql_common_multiprecision_int_bind_cc
 #define googlesql_common_multiprecision_int_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_common_multiprecision_int_differential_privacy
 #define googlesql googlesql_common_multiprecision_int_googlesql
 #define googlesql_base googlesql_common_multiprecision_int_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_common_multiprecision_int_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,25 +73,9 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/common/multiprecision_int.h"
 #include "googlesql/common/multiprecision_int_impl.h"
-//#undef private
-
-// include sources
-#include "googlesql/common/multiprecision_int.cc"
-#include "googlesql/common/multiprecision_int_impl.cc"
-
-// include dependencies
-#include "go-googlesql/base/base/export.inc"
-#include "go-googlesql/base/bits/export.inc"
-#include "go-googlesql/base/endian/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/numeric/bits/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/compare/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 

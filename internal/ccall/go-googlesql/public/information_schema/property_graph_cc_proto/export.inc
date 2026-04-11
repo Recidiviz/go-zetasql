@@ -3,7 +3,11 @@
 
 #include "googlesql/public/information_schema/property_graph.pb.h"
 // include sources
+#define schemas googlesql_public_information_schema_property_graph_cc_proto_googlesql_public_information_schema_property_graph_pb_schemas
+#define file_default_instances googlesql_public_information_schema_property_graph_cc_proto_googlesql_public_information_schema_property_graph_pb_file_default_instances
 #include "googlesql/public/information_schema/property_graph.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

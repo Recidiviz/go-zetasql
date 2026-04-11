@@ -11,7 +11,9 @@
 #include "googlesql/parser/visit_result.h"
 // include sources
 #include "googlesql/parser/ast_node_internal.h"
+#ifndef GOOGLESQL_OMIT_PARSER_PACKAGE_DUPLICATE_CC
 #include "googlesql/parser/parse_tree.cc"
+#endif
 #include "googlesql/parser/parse_tree_errors.cc"
 #include "googlesql/parser/parse_tree_generated.cc"
 // include dependencies

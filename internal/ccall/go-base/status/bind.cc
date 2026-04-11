@@ -1,90 +1,6 @@
+
 #ifndef base_status_bind_cc
 #define base_status_bind_cc
-
-#if !defined(GOOGLESQL_LINK_ONLY_BIND) && !defined(GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC)
-
-// switch namespace
-#define differential_privacy base_status_differential_privacy
-#define googlesql base_status_googlesql
-#define googlesql_base base_status_googlesql_base
-#define googlesql_bison_parser base_status_googlesql_bison_parser
-#define re2 base_status_re2
-#define AbslInternalSleepFor base_status_AbslInternalSleepFor
-#define AbslInternalReportFatalUsageError base_status_AbslInternalReportFatalUsageError
-#define AbslInternalMutexYield base_status_AbslInternalMutexYield
-#define AbslInternalPerThreadSemPost base_status_AbslInternalPerThreadSemPost
-#define AbslInternalPerThreadSemWait base_status_AbslInternalPerThreadSemWait
-#define AbslContainerInternalSampleEverything base_status_AbslContainerInternalSampleEverything
-#define AbslInternalSpinLockDelay base_status_AbslInternalSpinLockDelay
-#define AbslInternalSpinLockWake base_status_AbslInternalSpinLockWake
-#define AbslInternalAnnotateIgnoreReadsBegin base_status_AbslInternalAnnotateIgnoreReadsBegin
-#define AbslInternalAnnotateIgnoreReadsEnd base_status_AbslInternalAnnotateIgnoreReadsEnd
-#define AbslInternalGetFileMappingHint base_status_AbslInternalGetFileMappingHint
-#define GoogleSqlalloc base_status_GoogleSqlalloc
-#define GoogleSqlfree base_status_GoogleSqlfree
-#define GoogleSqlrealloc base_status_GoogleSqlrealloc
-#define FLAGS_nooutput_asc_explicitly base_status_FLAGS_nooutput_asc_explicitly
-#define FLAGS_nogooglesql_use_customized_flex_istream base_status_FLAGS_nogooglesql_use_customized_flex_istream
-#define FLAGS_output_asc_explicitly base_status_FLAGS_output_asc_explicitly
-#define FLAGS_googlesql_use_customized_flex_istream base_status_FLAGS_googlesql_use_customized_flex_istream
-#define FLAGS_googlesql_type_factory_nesting_depth_limit base_status_FLAGS_googlesql_type_factory_nesting_depth_limit
-#define FLAGS_googlesql_read_proto_field_optimized_path base_status_FLAGS_googlesql_read_proto_field_optimized_path
-#define FLAGS_googlesql_format_max_output_width base_status_FLAGS_googlesql_format_max_output_width
-#define FLAGS_googlesql_min_length_required_for_edit_distance base_status_FLAGS_googlesql_min_length_required_for_edit_distance
-#define FLAGS_googlesql_simple_iterator_call_time_now_rows_period base_status_FLAGS_googlesql_simple_iterator_call_time_now_rows_period
-#define FLAGS_nogooglesql_type_factory_nesting_depth_limit base_status_FLAGS_nogooglesql_type_factory_nesting_depth_limit
-#define FLAGS_nogooglesql_read_proto_field_optimized_path base_status_FLAGS_nogooglesql_read_proto_field_optimized_path
-#define FLAGS_nogooglesql_format_max_output_width base_status_FLAGS_nogooglesql_format_max_output_width
-#define FLAGS_nogooglesql_min_length_required_for_edit_distance base_status_FLAGS_nogooglesql_min_length_required_for_edit_distance
-#define FLAGS_nogooglesql_simple_iterator_call_time_now_rows_period base_status_FLAGS_nogooglesql_simple_iterator_call_time_now_rows_period
-#define FLAGS_googlesql_enough_stack_bytes base_status_FLAGS_googlesql_enough_stack_bytes
-#define FLAGS_nogooglesql_enough_stack_bytes base_status_FLAGS_nogooglesql_enough_stack_bytes
-#define FLAGS_googlesql_canonicalize_signed_zero_to_string base_status_FLAGS_googlesql_canonicalize_signed_zero_to_string
-#define FLAGS_nogooglesql_canonicalize_signed_zero_to_string base_status_FLAGS_nogooglesql_canonicalize_signed_zero_to_string
-#define FLAGS_googlesql_default_error_message_stability base_status_FLAGS_googlesql_default_error_message_stability
-#define FLAGS_nogooglesql_default_error_message_stability base_status_FLAGS_nogooglesql_default_error_message_stability
-#define FLAGS_googlesql_redact_error_messages_for_tests base_status_FLAGS_googlesql_redact_error_messages_for_tests
-#define FLAGS_nogooglesql_redact_error_messages_for_tests base_status_FLAGS_nogooglesql_redact_error_messages_for_tests
-#define GoogleSqlFlexTokenizerBase base_status_GoogleSqlFlexTokenizerBase
-#define GoogleSqlFlexLexer base_status_GoogleSqlFlexLexer
-#define UCaseMap base_status_UCaseMap
-
-#define GO_EXPORT(def) export_base_status_ ## def
-#define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
-
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
-#include "_cgo_export.h"
-
-// include headers
-//#define private public
-#include "base/status.h"
-#include "base/status_macros.h"
-//#undef private
-
-// include sources
-
-// include dependencies
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/container/node_hash_map/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/optional/export.inc"
-
-#include "bridge.h"
-
-#include "bridge_cc.inc"
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-#include "bridge.inc"
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#else /* GOOGLESQL_LINK_ONLY_BIND || GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC */
 
 // Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
 // archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
@@ -152,7 +68,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* fat vs thin bind.cc */
 
 #endif /* base_status_bind_cc */

@@ -3,8 +3,8 @@
 
 #include "googlesql/scripting/procedure_extension.pb.h"
 // include sources
-#define schemas googlesql_scripting_procedure_extension_cc_proto_schemas
-#define file_default_instances googlesql_scripting_procedure_extension_cc_proto_file_default_instances
+#define schemas googlesql_scripting_procedure_extension_cc_proto_googlesql_scripting_procedure_extension_pb_schemas
+#define file_default_instances googlesql_scripting_procedure_extension_cc_proto_googlesql_scripting_procedure_extension_pb_file_default_instances
 #include "googlesql/scripting/procedure_extension.pb.cc"
 #undef file_default_instances
 #undef schemas

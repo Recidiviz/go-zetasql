@@ -10,7 +10,7 @@
 #include "googlesql/reference_impl/aggregate_op.cc"
 #include "googlesql/reference_impl/analytic_op.cc"
 #include "googlesql/reference_impl/evaluation.cc"
-#define FCT googlesql_reference_impl_evaluation_FCT
+#define FCT googlesql_reference_impl_evaluation_googlesql_reference_impl_function_FCT
 #include "googlesql/reference_impl/function.cc"
 #undef FCT
 #include "googlesql/reference_impl/operator.cc"

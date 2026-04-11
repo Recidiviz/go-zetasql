@@ -3,8 +3,8 @@
 
 #include "googlesql/proto/simple_catalog.pb.h"
 // include sources
-#define schemas googlesql_proto_simple_catalog_cc_proto_schemas
-#define file_default_instances googlesql_proto_simple_catalog_cc_proto_file_default_instances
+#define schemas googlesql_proto_simple_catalog_cc_proto_googlesql_proto_simple_catalog_pb_schemas
+#define file_default_instances googlesql_proto_simple_catalog_cc_proto_googlesql_proto_simple_catalog_pb_file_default_instances
 #include "googlesql/proto/simple_catalog.pb.cc"
 #undef file_default_instances
 #undef schemas

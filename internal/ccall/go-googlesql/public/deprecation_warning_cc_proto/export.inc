@@ -3,8 +3,8 @@
 
 #include "googlesql/public/deprecation_warning.pb.h"
 // include sources
-#define schemas googlesql_public_deprecation_warning_cc_proto_schemas
-#define file_default_instances googlesql_public_deprecation_warning_cc_proto_file_default_instances
+#define schemas googlesql_public_deprecation_warning_cc_proto_googlesql_public_deprecation_warning_pb_schemas
+#define file_default_instances googlesql_public_deprecation_warning_cc_proto_googlesql_public_deprecation_warning_pb_file_default_instances
 #include "googlesql/public/deprecation_warning.pb.cc"
 #undef file_default_instances
 #undef schemas

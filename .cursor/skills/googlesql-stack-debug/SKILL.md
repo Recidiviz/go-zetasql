@@ -3,7 +3,7 @@ name: googlesql-stack-debug
 description: >-
   Debugs and tests the go-googlesql / go-googlesqlite / bigquery-emulator GoogleSQL
   stack after submodule bumps or CGO failures. Covers unified-prebuilt primary
-  gates vs legacy local/test, full-tree builds, CGO memory and cache pitfalls,
+  unified-prebuilt gates, full-tree builds, CGO memory and cache pitfalls,
   and symptom-to-cause triage.
   Use when upgrading GoogleSQL, when tests fail in internal/ccall, on linker or
   protobuf errors, OOM during go test, or when the user mentions stack
@@ -14,7 +14,7 @@ description: >-
 
 ## Principles
 
-1. **Classify before fixing** — Decide whether the failure is *sync drift* (updater/generator/vendorpatch not run), *link/amalgamation* (duplicate or missing symbols), *codegen* (missing `resolved_ast` / protos), or *runtime/semantic* (parser, status payloads, language features). Do not treat every red build as a random code bug. **Policy:** the supported end state is **prebuilt libs + link-only CGO** (`googlesql_unified_prebuilt`); fat amalgamation link issues are still a useful *symptom class* until that path is deleted.
+1. **Classify before fixing** — Decide whether the failure is *sync drift* (updater/generator/vendorpatch not run), *link* (duplicate or missing symbols), *codegen* (missing `resolved_ast` / protos), or *runtime/semantic* (parser, status payloads, language features). Do not treat every red build as a random code bug. **Policy:** **prebuilt libs + link-only CGO** (`googlesql` + `googlesql_unified_prebuilt`).
 2. **Delta-first** — Read or write `docs/googlesql-upgrade-delta-<from>-to-<to>.md` and skim upstream `git log`/`diff` between tags for protos, builtins, and `resolved_ast` churn before deep edits.
 3. **Submodule is read-only upstream** — The checkout under `internal/cmd/updater/googlesql` must be an **upstream release tag only**; do not add commits inside the submodule. CGO-specific fixes belong in `internal/ccall/` (after the updater), `vendorpatch`, or documented overlays—see [`docs/googlesql-submodule-policy.md`](../../../docs/googlesql-submodule-policy.md).
 4. **Pipeline order** — Submodule tag checkout → `internal/cmd/updater` (incremental; know what ran) → `go run ./internal/cmd/vendorpatch` or `scripts/apply-vendor-patches.sh` as needed → `go run ./internal/cmd/generator` → **then** tests. If C++ or Go bindings look impossible, suspect skipped steps.
@@ -22,15 +22,14 @@ description: >-
 
 ## Canonical verification (go-googlesql)
 
-- **Primary gate (project direction):** **`make local/test-root-unified`** (or equivalent `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same prebuilts as the Makefile). Use **`make local/compile-root-unified-test`** or **`make local/test-prebuilt-googlesql-unified-root`** when a narrower or analyzer-scoped check fits. See [`docs/link-only-cgo-migration.md`](../../../docs/link-only-cgo-migration.md).
-- **Legacy / deprecated gate:** `make local/test` without `googlesql_unified_prebuilt` may still run in CI during transition; it is **not** the long-term north star. Do not treat keeping the fat amalgamation (`//go:build !googlesql_unified_prebuilt`) path green as a parallel maintenance obligation.
-- **Narrow iteration:** `TESTPKG=./path/to/pkg make local/test-root-unified` (or the legacy target only if you must match old CI) when iterating.
+- **Primary gate:** **`make local/test`** / **`make local/test-root-unified`** (or `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same prebuilts as the Makefile). Use **`make local/compile-root-unified-test`** or **`make local/test-prebuilt-googlesql-unified-root`** when a narrower check fits. See [`docs/link-only-cgo-migration.md`](../../../docs/link-only-cgo-migration.md).
+- **Narrow iteration:** `TESTPKG=./path/to/pkg make local/test` when iterating.
 - **Do not** treat `go test ./...` across all `internal/ccall/go-*` packages as the primary signal unless you are deliberately hardening standalone subpackages. Split CGO packages often fail in isolation (`bridge_cc.inc` / `GoSlice`, include order, etc.) while the **root** build is correct.
 
 ## Environment
 
 - `CGO_ENABLED=1`, `CXX=clang++` (per README). Reuse `GOCACHE` / `GOMODCACHE` across repos to avoid redundant CGO rebuilds.
-- **Low memory / large TUs:** `GOMAXPROCS=2` (or `1`), `go test -tags googlesql -p 1 -count=1 ...`. Optional: `scripts/cgo-go.sh` for serialized packages and optional memory scope.
+- **Low memory / large TUs:** `GOMAXPROCS=2` (or `1`), `go test -tags googlesql,googlesql_unified_prebuilt -p 1 -count=1 ...`. Optional: `scripts/cgo-go.sh` for serialized packages and optional memory scope.
 - **Stale CGO objects:** cgo may not rebuild when only nested C++ headers change. If behavior looks impossible after a header fix, force rebuild (e.g. touch relevant `bind.cc`, clean cache for that test, or documented project workaround).
 
 ## Build cache and incremental CGO
@@ -45,7 +44,7 @@ description: >-
 
 ## Downstream
 
-- **go-googlesqlite:** `go test -tags googlesql` (often `-p 1` for safety). Align `LanguageFeature` / analyzer / builtins with the delta doc; add targeted query tests for new surface.
+- **go-googlesqlite:** `go test -tags googlesql,googlesql_unified_prebuilt` (often `-p 1` for safety). Align `LanguageFeature` / analyzer / builtins with the delta doc; add targeted query tests for new surface.
 - **bigquery-emulator:** After googlesql + googlesqlite are green locally with `replace` deps. Integration tests last.
 
 ## Symptom → look here
@@ -56,7 +55,7 @@ description: >-
 | Duplicate symbols, link errors after updater | Full updater vs incremental; protobuf/amalgamation overlap | `docs/protobuf-vendoring.md`, `vendorpatch`, avoid duplicating same `.cc` in multiple CGO shards |
 | `utf8_validity`, protobuf internal errors | Vendored protobuf path / single provider of `utf8_range` | Trace which TU should own the symbol; do not assume every subpackage build is valid |
 | Crash in parse/analyze with OK error paths | Status payload / descriptor init in CGO shards (historical issue class) | Minimal repro; apply fixes under `internal/ccall/googlesql/` or vendorpatch—[`docs/googlesql-submodule-policy.md`](../../../docs/googlesql-submodule-policy.md); not in the submodule |
-| Pass root tests, fail obscure subpackages only | Unsupported isolated compile of split packages | Confirm with **`make local/test-root-unified`** (or legacy `make local/test` if matching transitional CI) / CI matrix |
+| Pass root tests, fail obscure subpackages only | Unsupported isolated compile of split packages | Confirm with **`make local/test`** / CI matrix |
 | OOM | Parallel heavy CGO | One repo at a time; `-p 1`; `cgo-go.sh` |
 | Long compile, “cache not working” | `-a`, pipe to `tail`, or protobuf-wide invalidation | Drop `-a`; check `GOCACHE` mtime/size; see **Build cache and incremental CGO** |
 | Link: `undefined … google::protobuf` / `AssignDescriptors(…, *_absl::once_flag*, …)` | Shard compiles protobuf-facing code with **renamed** `absl`; separate `go-protobuf` TU uses plain `absl::` | Not a missing `.o` from cache—**ABI/macro mismatch**; see **Protobuf vs per-shard absl rename** and docs above |

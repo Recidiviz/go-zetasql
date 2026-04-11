@@ -2,7 +2,10 @@
 #ifndef googlesql_common_match_recognize_edge_tracker_bind_cc
 #define googlesql_common_match_recognize_edge_tracker_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_common_match_recognize_edge_tracker_differential_privacy
 #define googlesql googlesql_common_match_recognize_edge_tracker_googlesql
 #define googlesql_base googlesql_common_match_recognize_edge_tracker_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_common_match_recognize_edge_tracker_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,19 +73,8 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/common/match_recognize/edge_tracker.h"
-//#undef private
-
-// include sources
-#include "googlesql/common/match_recognize/edge_tracker.cc"
-
-// include dependencies
-#include "go-googlesql/common/match_recognize/compiled_nfa/export.inc"
-#include "go-googlesql/common/match_recognize/nfa/export.inc"
-#include "go-googlesql/common/match_recognize/row_edge_list/export.inc"
-#include "go-absl/functional/any_invocable/export.inc"
 
 #include "bridge.h"
 

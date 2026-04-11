@@ -3,8 +3,8 @@
 
 #include "googlesql/proto/anon_output_with_report.pb.h"
 // include sources
-#define schemas googlesql_proto_anon_output_with_report_cc_proto_schemas
-#define file_default_instances googlesql_proto_anon_output_with_report_cc_proto_file_default_instances
+#define schemas googlesql_proto_anon_output_with_report_cc_proto_googlesql_proto_anon_output_with_report_pb_schemas
+#define file_default_instances googlesql_proto_anon_output_with_report_cc_proto_googlesql_proto_anon_output_with_report_pb_file_default_instances
 #include "googlesql/proto/anon_output_with_report.pb.cc"
 #undef file_default_instances
 #undef schemas

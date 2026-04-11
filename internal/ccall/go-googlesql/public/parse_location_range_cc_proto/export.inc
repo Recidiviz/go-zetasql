@@ -3,8 +3,8 @@
 
 #include "googlesql/public/parse_location_range.pb.h"
 // include sources
-#define schemas googlesql_public_parse_location_range_cc_proto_schemas
-#define file_default_instances googlesql_public_parse_location_range_cc_proto_file_default_instances
+#define schemas googlesql_public_parse_location_range_cc_proto_googlesql_public_parse_location_range_pb_schemas
+#define file_default_instances googlesql_public_parse_location_range_cc_proto_googlesql_public_parse_location_range_pb_file_default_instances
 #include "googlesql/public/parse_location_range.pb.cc"
 #undef file_default_instances
 #undef schemas

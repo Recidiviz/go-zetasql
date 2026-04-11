@@ -2,7 +2,10 @@
 #ifndef googlesql_common_builtin_function_internal_bind_cc
 #define googlesql_common_builtin_function_internal_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_common_builtin_function_internal_differential_privacy
 #define googlesql googlesql_common_builtin_function_internal_googlesql
 #define googlesql_base googlesql_common_builtin_function_internal_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_common_builtin_function_internal_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,79 +73,8 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/common/builtin_function_internal.h"
-//#undef private
-
-// include sources
-#include "googlesql/common/builtin_enum_type.cc"
-#include "googlesql/common/builtin_function_array.cc"
-#include "googlesql/common/builtin_function_comparison.cc"
-#include "googlesql/common/builtin_function_differential_privacy.cc"
-#include "googlesql/common/builtin_function_distance.cc"
-#include "googlesql/common/builtin_function_graph.cc"
-#include "googlesql/common/builtin_function_internal_1.cc"
-#include "googlesql/common/builtin_function_internal_2.cc"
-#include "googlesql/common/builtin_function_internal_3.cc"
-#include "googlesql/common/builtin_function_map.cc"
-#include "googlesql/common/builtin_function_match_recognize.cc"
-#include "googlesql/common/builtin_function_measure.cc"
-#include "googlesql/common/builtin_function_range.cc"
-#include "googlesql/common/builtin_function_sketches.cc"
-#include "googlesql/common/builtin_function_time_series.cc"
-#include "googlesql/common/builtin_tvfs.cc"
-
-// include dependencies
-#include "go-googlesql/common/builtins_output_properties/export.inc"
-#include "go-googlesql/common/errors/export.inc"
-#include "go-googlesql/base/base/export.inc"
-#include "go-googlesql/base/check/export.inc"
-#include "go-googlesql/base/map_util/export.inc"
-#include "go-googlesql/base/no_destructor/export.inc"
-#include "go-googlesql/base/ret_check/export.inc"
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/proto/anon_output_with_report_cc_proto/export.inc"
-#include "go-googlesql/proto/options_cc_proto/export.inc"
-#include "go-googlesql/public/analyzer_options/export.inc"
-#include "go-googlesql/public/anon_function/export.inc"
-#include "go-googlesql/public/builtin_function_cc_proto/export.inc"
-#include "go-googlesql/public/builtin_function_options/export.inc"
-#include "go-googlesql/public/catalog/export.inc"
-#include "go-googlesql/public/coercer/export.inc"
-#include "go-googlesql/public/cycle_detector/export.inc"
-#include "go-googlesql/public/function/export.inc"
-#include "go-googlesql/public/function_cc_proto/export.inc"
-#include "go-googlesql/public/language_options/export.inc"
-#include "go-googlesql/public/options_cc_proto/export.inc"
-#include "go-googlesql/public/strings/export.inc"
-#include "go-googlesql/public/type/export.inc"
-#include "go-googlesql/public/type_cc_proto/export.inc"
-#include "go-googlesql/public/value/export.inc"
-#include "go-googlesql/public/annotation/collation/export.inc"
-#include "go-googlesql/public/functions/array_zip_mode_cc_proto/export.inc"
-#include "go-googlesql/public/functions/bitwise_agg_mode_cc_proto/export.inc"
-#include "go-googlesql/public/functions/date_time_util/export.inc"
-#include "go-googlesql/public/functions/datetime_cc_proto/export.inc"
-#include "go-googlesql/public/functions/differential_privacy_cc_proto/export.inc"
-#include "go-googlesql/public/functions/rank_type_cc_proto/export.inc"
-#include "go-googlesql/public/functions/regexp/export.inc"
-#include "go-googlesql/public/functions/string_format/export.inc"
-#include "go-googlesql/public/functions/unsupported_fields_cc_proto/export.inc"
-#include "go-googlesql/public/types/types/export.inc"
-#include "go-absl/base/nullability/export.inc"
-#include "go-absl/container/flat_hash_map/export.inc"
-#include "go-absl/container/flat_hash_set/export.inc"
-#include "go-absl/functional/bind_front/export.inc"
-#include "go-absl/log/log/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/strings/str_format/export.inc"
-#include "go-absl/time/time/export.inc"
-#include "go-absl/types/span/export.inc"
-#include "go-google/type/date_cc_proto/export.inc"
-#include "go-google/type/timeofday_cc_proto/export.inc"
 
 #include "bridge.h"
 

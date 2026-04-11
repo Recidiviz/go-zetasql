@@ -2,7 +2,10 @@
 #ifndef googlesql_resolved_ast_resolved_ast_bind_cc
 #define googlesql_resolved_ast_resolved_ast_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_resolved_ast_resolved_ast_differential_privacy
 #define googlesql googlesql_resolved_ast_resolved_ast_googlesql
 #define googlesql_base googlesql_resolved_ast_resolved_ast_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_resolved_ast_resolved_ast_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,8 +73,7 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/resolved_ast/resolved_ast.h"
 #include "googlesql/resolved_ast/resolved_ast_deep_copy_visitor.h"
 #include "googlesql/resolved_ast/resolved_ast_helper.h"
@@ -81,56 +82,6 @@
 #include "googlesql/resolved_ast/resolved_column.h"
 #include "googlesql/resolved_ast/resolved_node.h"
 #include "googlesql/resolved_ast/resolved_node_kind.h"
-//#undef private
-
-// include sources
-#include "googlesql/resolved_ast/resolved_ast.cc"
-#include "googlesql/resolved_ast/resolved_ast_deep_copy_visitor.cc"
-#include "googlesql/resolved_ast/resolved_ast_helper.cc"
-#include "googlesql/resolved_ast/resolved_collation.cc"
-#include "googlesql/resolved_ast/resolved_column.cc"
-#include "googlesql/resolved_ast/resolved_node.cc"
-
-// include dependencies
-#include "go-googlesql/resolved_ast/resolved_ast_cc_proto/export.inc"
-#include "go-googlesql/resolved_ast/resolved_ast_enums_cc_proto/export.inc"
-#include "go-googlesql/resolved_ast/resolved_node_kind_cc_proto/export.inc"
-#include "go-googlesql/resolved_ast/serialization_cc_proto/export.inc"
-#include "go-googlesql/base/base/export.inc"
-#include "go-googlesql/base/check/export.inc"
-#include "go-googlesql/base/map_util/export.inc"
-#include "go-googlesql/base/ret_check/export.inc"
-#include "go-googlesql/base/source_location/export.inc"
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/common/box_glyphs/export.inc"
-#include "go-googlesql/common/errors/export.inc"
-#include "go-googlesql/common/thread_stack/export.inc"
-#include "go-googlesql/public/annotation_cc_proto/export.inc"
-#include "go-googlesql/public/catalog/export.inc"
-#include "go-googlesql/public/constant/export.inc"
-#include "go-googlesql/public/function/export.inc"
-#include "go-googlesql/public/function_cc_proto/export.inc"
-#include "go-googlesql/public/id_string/export.inc"
-#include "go-googlesql/public/parse_location/export.inc"
-#include "go-googlesql/public/parse_location_range_cc_proto/export.inc"
-#include "go-googlesql/public/strings/export.inc"
-#include "go-googlesql/public/type/export.inc"
-#include "go-googlesql/public/type_annotation_cc_proto/export.inc"
-#include "go-googlesql/public/type_modifiers_cc_proto/export.inc"
-#include "go-googlesql/public/type_parameters_cc_proto/export.inc"
-#include "go-googlesql/public/value/export.inc"
-#include "go-googlesql/public/proto/type_annotation_cc_proto/export.inc"
-#include "go-googlesql/public/types/types/export.inc"
-#include "go-absl/base/nullability/export.inc"
-#include "go-absl/container/flat_hash_map/export.inc"
-#include "go-absl/container/flat_hash_set/export.inc"
-#include "go-absl/hash/hash/export.inc"
-#include "go-absl/log/log/export.inc"
-#include "go-absl/memory/memory/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 

@@ -2,7 +2,10 @@
 #ifndef googlesql_analyzer_all_rewriters_bind_cc
 #define googlesql_analyzer_all_rewriters_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_analyzer_all_rewriters_differential_privacy
 #define googlesql googlesql_analyzer_all_rewriters_googlesql
 #define googlesql_base googlesql_analyzer_all_rewriters_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_analyzer_all_rewriters_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,46 +73,8 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/analyzer/all_rewriters.h"
-//#undef private
-
-// include sources
-#include "googlesql/analyzer/all_rewriters.cc"
-
-// include dependencies
-#include "go-googlesql/analyzer/rewriters/aggregation_threshold_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/anonymization_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/builtin_function_inliner/export.inc"
-#include "go-googlesql/analyzer/rewriters/flatten_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/generalized_query_stmt_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/grouping_set_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/insert_dml_values_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/is_first_is_last_function_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/like_any_all_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/map_function_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/match_recognize_function_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/measure_type_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/multiway_unnest_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/nulliferror_function_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/order_by_and_limit_in_aggregate_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/pipe_assert_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/pipe_describe_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/pipe_if_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/pivot_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/registration/export.inc"
-#include "go-googlesql/analyzer/rewriters/row_type_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/sql_function_inliner/export.inc"
-#include "go-googlesql/analyzer/rewriters/sql_view_inliner/export.inc"
-#include "go-googlesql/analyzer/rewriters/subpipeline_stmt_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/typeof_function_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/unpivot_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/update_constructor_rewriter/export.inc"
-#include "go-googlesql/analyzer/rewriters/variadic_function_signature_expander/export.inc"
-#include "go-googlesql/analyzer/rewriters/with_expr_rewriter/export.inc"
-#include "go-googlesql/public/options_cc_proto/export.inc"
-#include "go-absl/base/base/export.inc"
 
 #include "bridge.h"
 

@@ -3,8 +3,8 @@
 
 #include "googlesql/public/simple_constant.pb.h"
 // include sources
-#define schemas googlesql_public_simple_constant_cc_proto_schemas
-#define file_default_instances googlesql_public_simple_constant_cc_proto_file_default_instances
+#define schemas googlesql_public_simple_constant_cc_proto_googlesql_public_simple_constant_pb_schemas
+#define file_default_instances googlesql_public_simple_constant_cc_proto_googlesql_public_simple_constant_pb_file_default_instances
 #include "googlesql/public/simple_constant.pb.cc"
 #undef file_default_instances
 #undef schemas

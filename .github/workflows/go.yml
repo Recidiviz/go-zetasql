@@ -60,6 +60,13 @@ jobs:
         CC: clang
         CXX: clang++
         BAZEL_JOBS: "4"
+    - name: Build libgooglesql.a (unified prebuilt)
+      run: |
+        make prebuilt-libs-googlesql-unified verify-prebuilt-googlesql-unified
+      env:
+        CC: clang
+        CXX: clang++
+        BAZEL_JOBS: "4"
     - name: test
       run: make local/test TESTPKG=./
       env:

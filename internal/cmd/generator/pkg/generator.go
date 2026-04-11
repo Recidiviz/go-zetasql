@@ -407,13 +407,6 @@ func (g *Generator) rootLinkOnlyPrelude(libs []string) string {
 
 func (g *Generator) generateRootBindCC(outputDir string) error {
 	libs := g.rootGoogleSQLAmalgamationLibs()
-	amalg, err := g.generateCCSourceByTemplate(
-		"templates/root_bind.cc.tmpl",
-		libs,
-	)
-	if err != nil {
-		return err
-	}
 	thin, err := g.generateCCSourceByTemplate(
 		"templates/root_bind_link_only.cc.tmpl",
 		struct {
@@ -427,8 +420,7 @@ func (g *Generator) generateRootBindCC(outputDir string) error {
 	if err != nil {
 		return err
 	}
-	merged := g.mergeLinkOnlyBindCC("googlesql", amalg, thin)
-	if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), merged, 0o600); err != nil {
+	if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), thin, 0o600); err != nil {
 		return err
 	}
 	return nil
@@ -437,22 +429,22 @@ func (g *Generator) generateRootBindCC(outputDir string) error {
 func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
 	param := g.createBindCCParam(lib, false)
 	if g.linkOnlyBind(lib) {
-		amalg, err := g.generateCCSourceByTemplate("templates/bind.cc.tmpl", param)
-		if err != nil {
-			return err
-		}
-		amalg = wrapParserBindTokenDisambiguatorInclude(lib, amalg)
 		linkOnlyParam := g.createBindCCParam(lib, true)
 		thin, err := g.generateCCSourceByTemplate("templates/bind_link_only.cc.tmpl", linkOnlyParam)
 		if err != nil {
 			return err
 		}
 		thin = wrapParserBindTokenDisambiguatorInclude(lib, thin)
-		merged := g.mergeLinkOnlyBindCC(linkOnlyParam.FQDN, amalg, thin)
-		if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), merged, 0o600); err != nil {
+		if err := os.WriteFile(filepath.Join(outputDir, "bind.cc"), thin, 0o600); err != nil {
 			return err
 		}
-		return g.syncExportInc(outputDir, amalg)
+		// export.inc is still derived from the amalgamation-shaped param for dependency tracking.
+		amalgForExport, err := g.generateCCSourceByTemplate("templates/bind.cc.tmpl", param)
+		if err != nil {
+			return err
+		}
+		amalgForExport = wrapParserBindTokenDisambiguatorInclude(lib, amalgForExport)
+		return g.syncExportInc(outputDir, amalgForExport)
 	}
 	output, err := g.generateCCSourceByTemplate("templates/bind.cc.tmpl", param)
 	if err != nil {
@@ -465,41 +457,13 @@ func (g *Generator) generateBindCC(outputDir string, lib *Lib) error {
 	return g.syncExportInc(outputDir, output)
 }
 
-// stripBindCCInner returns the body of bind.cc.tmpl / bind_link_only.cc.tmpl after the
-// opening #ifndef FQDN_bind_cc / #define lines and before the closing #endif.
-func stripBindCCInner(fqdn string, src []byte) []byte {
-	mark := fmt.Sprintf("#define %s_bind_cc\n", fqdn)
-	i := bytes.Index(src, []byte(mark))
-	if i < 0 {
-		return bytes.TrimSpace(src)
-	}
-	body := src[i+len(mark):]
-	endPat := fmt.Sprintf("#endif /* %s_bind_cc */", fqdn)
-	j := bytes.LastIndex(body, []byte(endPat))
-	if j < 0 {
-		return bytes.TrimSpace(body)
-	}
-	return bytes.TrimSpace(body[:j])
-}
-
-func (g *Generator) mergeLinkOnlyBindCC(fqdn string, amalg, thin []byte) []byte {
-	ai := stripBindCCInner(fqdn, amalg)
-	ti := stripBindCCInner(fqdn, thin)
-	var sb strings.Builder
-	sb.WriteString(fmt.Sprintf("#ifndef %s_bind_cc\n#define %s_bind_cc\n\n", fqdn, fqdn))
-	sb.WriteString("#if !defined(GOOGLESQL_LINK_ONLY_BIND) && !defined(GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC)\n\n")
-	sb.Write(ai)
-	sb.WriteString("\n\n#else /* GOOGLESQL_LINK_ONLY_BIND || GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC */\n\n")
-	sb.Write(ti)
-	sb.WriteString(fmt.Sprintf("\n\n#endif /* fat vs thin bind.cc */\n\n#endif /* %s_bind_cc */\n", fqdn))
-	return []byte(sb.String())
-}
-
 func (g *Generator) linkOnlyBind(lib *Lib) bool {
-	if len(g.cfg.CCLib.LinkOnlyBindPackages) == 0 {
-		return false
-	}
+	// All googlesql/* cc_library shards use link-only bind.cc (thin TU + libgooglesql.a).
+	// Additional packages (e.g. base/status) are listed in cclib.link_only_bind_packages.
 	key := fmt.Sprintf("%s/%s", lib.BasePkg, lib.Name)
+	if strings.HasPrefix(lib.BasePkg, "googlesql") {
+		return true
+	}
 	for _, p := range g.cfg.CCLib.LinkOnlyBindPackages {
 		if p == key {
 			return true
@@ -659,8 +623,8 @@ func (g *Generator) bindGoParamUnifiedPrebuilt(base *BindGoParam, outputDir, pla
 	p := *base
 	// GOOGLESQL_LINK_ONLY_BIND: required by vendored absl (status, mutex, log, raw_hash_set, …)
 	// so thin CGO + libprotobuf_cgo.a resolve the same symbols as legacy link-only.
-	// GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC: selects the thin bind.cc branch from mergeLinkOnlyBindCC
-	// while the former macro alone meant "thin" — we need both predicates in #if for fat vs thin.
+	// GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC: legacy name kept for libc++ / link flags parity;
+	// GoogleSQL bind.cc is always the thin link-only TU when unified prebuilt is enabled.
 	p.ExtraCXXFlags = []string{
 		"-DGOOGLESQL_LINK_ONLY_BIND",
 		"-DGOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC",
@@ -708,14 +672,6 @@ func (g *Generator) generateBindGOLinkOnly(outputDir string, lib *Lib) error {
 	linuxUnified := g.bindGoParamUnifiedPrebuilt(linuxBase, outputDir, "linux")
 	darwinUnified := g.bindGoParamUnifiedPrebuilt(darwinBase, outputDir, "darwin")
 
-	linuxBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", linuxBase)
-	if err != nil {
-		return err
-	}
-	darwinBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", darwinBase)
-	if err != nil {
-		return err
-	}
 	linuxUnifiedBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", linuxUnified)
 	if err != nil {
 		return err
@@ -726,32 +682,20 @@ func (g *Generator) generateBindGOLinkOnly(outputDir string, lib *Lib) error {
 	}
 
 	uniPre := linkOnlyUnifiedGoBuildPrefix(g.cfg)
-
-	// Tier B Abseil pilot: reuse applyTierBAbslGo for the default CGO files only.
-	darwinBytes, linuxBytes, err = g.applyTierBAbslGo(outputDir, lib, darwinBytes, linuxBytes)
-	if err != nil {
+	if err := g.emitTierBAbslBindGoFile(outputDir, lib); err != nil {
 		return err
 	}
-	tierBAbSLPrefix := []byte("//go:build !googlesql_tier_b_absl\n\n")
-	combinedTierUni := []byte("//go:build !googlesql_tier_b_absl && !googlesql_unified_prebuilt\n\n")
-	plainNoUni := []byte("//go:build !googlesql_unified_prebuilt\n\n")
-	patchDefaultBuildTags := func(b []byte) []byte {
-		if bytes.HasPrefix(b, tierBAbSLPrefix) {
-			return append(combinedTierUni, bytes.TrimPrefix(b, tierBAbSLPrefix)...)
-		}
-		return append(plainNoUni, b...)
-	}
-	darwinBytes = patchDefaultBuildTags(darwinBytes)
-	linuxBytes = patchDefaultBuildTags(linuxBytes)
 
 	darwinUnifiedBytes = append(uniPre, darwinUnifiedBytes...)
 	linuxUnifiedBytes = append(uniPre, linuxUnifiedBytes...)
 
-	if err := os.WriteFile(filepath.Join(outputDir, "bind_darwin.go"), darwinBytes, 0o600); err != nil {
-		return err
-	}
-	if err := os.WriteFile(filepath.Join(outputDir, "bind_linux.go"), linuxBytes, 0o600); err != nil {
-		return err
+	for _, name := range []string{"bind_darwin.go", "bind_linux.go"} {
+		p := filepath.Join(outputDir, name)
+		if existsFile(p) {
+			if err := os.Remove(p); err != nil {
+				return err
+			}
+		}
 	}
 	if err := os.WriteFile(filepath.Join(outputDir, "bind_unified_prebuilt_darwin.go"), darwinUnifiedBytes, 0o600); err != nil {
 		return err
@@ -775,17 +719,15 @@ type tierBAbslBindParam struct {
 	AnchorSuffix string
 }
 
-func (g *Generator) applyTierBAbslGo(outputDir string, lib *Lib, darwinBytes, linuxBytes []byte) ([]byte, []byte, error) {
+// emitTierBAbslBindGoFile writes bind_tier_b_absl.go when EmitTierBAbslGo is enabled (optional Tier B path).
+func (g *Generator) emitTierBAbslBindGoFile(outputDir string, lib *Lib) error {
 	if !g.cfg.EmitTierBAbslGo {
-		return darwinBytes, linuxBytes, nil
+		return nil
 	}
 	includeRel, libRel, anchorSuffix, ok := tierBAbslRelPaths(outputDir)
 	if !ok {
-		return darwinBytes, linuxBytes, nil
+		return nil
 	}
-	prefix := []byte("//go:build !googlesql_tier_b_absl\n\n")
-	darwinOut := append(prefix, darwinBytes...)
-	linuxOut := append(prefix, linuxBytes...)
 	pkgName := "googlesql"
 	if lib != nil {
 		pkgName = g.goPkgName(lib)
@@ -798,11 +740,21 @@ func (g *Generator) applyTierBAbslGo(outputDir string, lib *Lib, darwinBytes, li
 	}
 	tierBytes, err := g.generateGoSourceByTemplate("templates/bind_tier_b_absl.go.tmpl", param)
 	if err != nil {
+		return err
+	}
+	return os.WriteFile(filepath.Join(outputDir, "bind_tier_b_absl.go"), tierBytes, 0o600)
+}
+
+func (g *Generator) applyTierBAbslGo(outputDir string, lib *Lib, darwinBytes, linuxBytes []byte) ([]byte, []byte, error) {
+	if !g.cfg.EmitTierBAbslGo {
+		return darwinBytes, linuxBytes, nil
+	}
+	if err := g.emitTierBAbslBindGoFile(outputDir, lib); err != nil {
 		return nil, nil, err
 	}
-	if err := os.WriteFile(filepath.Join(outputDir, "bind_tier_b_absl.go"), tierBytes, 0o600); err != nil {
-		return nil, nil, err
-	}
+	prefix := []byte("//go:build !googlesql_tier_b_absl\n\n")
+	darwinOut := append(prefix, darwinBytes...)
+	linuxOut := append(prefix, linuxBytes...)
 	return darwinOut, linuxOut, nil
 }
 
@@ -812,14 +764,6 @@ func (g *Generator) generateRootBindGO(outputDir string) error {
 	linuxUnified := g.bindGoParamUnifiedPrebuilt(linuxBase, outputDir, "linux")
 	darwinUnified := g.bindGoParamUnifiedPrebuilt(darwinBase, outputDir, "darwin")
 
-	linuxBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", linuxBase)
-	if err != nil {
-		return err
-	}
-	darwinBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", darwinBase)
-	if err != nil {
-		return err
-	}
 	linuxUnifiedBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", linuxUnified)
 	if err != nil {
 		return err
@@ -830,31 +774,20 @@ func (g *Generator) generateRootBindGO(outputDir string) error {
 	}
 
 	uniPre := linkOnlyUnifiedGoBuildPrefix(g.cfg)
-
-	darwinBytes, linuxBytes, err = g.applyTierBAbslGo(outputDir, nil, darwinBytes, linuxBytes)
-	if err != nil {
+	if err := g.emitTierBAbslBindGoFile(outputDir, nil); err != nil {
 		return err
 	}
-	tierBAbSLPrefix := []byte("//go:build !googlesql_tier_b_absl\n\n")
-	combinedTierUni := []byte("//go:build !googlesql_tier_b_absl && !googlesql_unified_prebuilt\n\n")
-	plainNoUni := []byte("//go:build !googlesql_unified_prebuilt\n\n")
-	patchDefaultBuildTags := func(b []byte) []byte {
-		if bytes.HasPrefix(b, tierBAbSLPrefix) {
-			return append(combinedTierUni, bytes.TrimPrefix(b, tierBAbSLPrefix)...)
-		}
-		return append(plainNoUni, b...)
-	}
-	darwinBytes = patchDefaultBuildTags(darwinBytes)
-	linuxBytes = patchDefaultBuildTags(linuxBytes)
 
 	darwinUnifiedBytes = append(uniPre, darwinUnifiedBytes...)
 	linuxUnifiedBytes = append(uniPre, linuxUnifiedBytes...)
 
-	if err := os.WriteFile(filepath.Join(outputDir, "bind_darwin.go"), darwinBytes, 0o600); err != nil {
-		return err
-	}
-	if err := os.WriteFile(filepath.Join(outputDir, "bind_linux.go"), linuxBytes, 0o600); err != nil {
-		return err
+	for _, name := range []string{"bind_darwin.go", "bind_linux.go"} {
+		p := filepath.Join(outputDir, name)
+		if existsFile(p) {
+			if err := os.Remove(p); err != nil {
+				return err
+			}
+		}
 	}
 	if err := os.WriteFile(filepath.Join(outputDir, "bind_unified_prebuilt_darwin.go"), darwinUnifiedBytes, 0o600); err != nil {
 		return err
@@ -1014,18 +947,38 @@ const optionsPublicDescriptorMacrosPrelude = `
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 `
 
+// conflictSymbolRHS builds a unique mangled name for a conflict-prone symbol in one source path.
+// Protobuf 5.x .pb.cc files use file-scope static identifiers (schemas, file_default_instances); when
+// several are amalgamated in one TU, each must map to a distinct name. export_suffixes in config
+// overrides the default path-derived stem (used for resolver_expr kOrderById, etc.).
+func (g *Generator) conflictSymbolRHS(fqdn, srcPath, symbol string) string {
+	if g.conflictExportSuffixByFileSymbol != nil {
+		if suf, ok := g.conflictExportSuffixByFileSymbol[srcPath][symbol]; ok && suf != "" {
+			return fmt.Sprintf("%s_%s_%s", fqdn, suf, symbol)
+		}
+	}
+	stem := conflictFileStem(srcPath)
+	if stem != "" {
+		return fmt.Sprintf("%s_%s_%s", fqdn, stem, symbol)
+	}
+	return fmt.Sprintf("%s_%s", fqdn, symbol)
+}
+
+// conflictFileStem is a stable identifier derived from a cc path (e.g. googlesql_public_options_pb).
+func conflictFileStem(srcPath string) string {
+	s := strings.TrimSuffix(srcPath, ".cc")
+	s = strings.TrimSuffix(s, ".c")
+	s = strings.ReplaceAll(s, "/", "_")
+	return sanitizeIdentifier(s)
+}
+
 // appendConflictWrappedInclude emits #include for a dependency .cc (e.g. add_sources after_includes)
 // with the same #define schemas / file_default_instances wrapping as a primary amalgamation source.
 func (g *Generator) appendConflictWrappedInclude(sb *strings.Builder, incPath string, fqdn string) {
 	symbols, hasConflict := g.containsConflictSymbolFileMap[incPath]
 	if hasConflict {
 		for _, symbol := range symbols {
-			rhs := fmt.Sprintf("%s_%s", fqdn, symbol)
-			if g.conflictExportSuffixByFileSymbol != nil {
-				if suf, ok := g.conflictExportSuffixByFileSymbol[incPath][symbol]; ok && suf != "" {
-					rhs = fmt.Sprintf("%s_%s_%s", fqdn, suf, symbol)
-				}
-			}
+			rhs := g.conflictSymbolRHS(fqdn, incPath, symbol)
 			sb.WriteString(fmt.Sprintf("\n#define %s %s", symbol, rhs))
 		}
 	}
@@ -1262,12 +1215,7 @@ func (g *Generator) createBindCCParam(lib *Lib, linkOnly bool) *BindCCParam {
 		}
 		if symbols, exists := g.containsConflictSymbolFileMap[src]; exists {
 			for _, symbol := range symbols {
-				rhs := fmt.Sprintf("%s_%s", param.FQDN, symbol)
-				if g.conflictExportSuffixByFileSymbol != nil {
-					if suf, ok := g.conflictExportSuffixByFileSymbol[src][symbol]; ok && suf != "" {
-						rhs = fmt.Sprintf("%s_%s_%s", param.FQDN, suf, symbol)
-					}
-				}
+				rhs := g.conflictSymbolRHS(param.FQDN, src, symbol)
 				sourceParam.BeforeIncludeHook += fmt.Sprintf("\n#define %s %s", symbol, rhs)
 			}
 			sourceParam.AfterIncludeHook = "\n"

@@ -3,7 +3,7 @@
 
 #include "googlesql/public/templated_sql_tvf.h"
 // include sources
-#define module_initialization_complete googlesql_public_templated_sql_tvf_module_initialization_complete
+#define module_initialization_complete googlesql_public_templated_sql_tvf_googlesql_public_templated_sql_tvf_module_initialization_complete
 #include "googlesql/public/templated_sql_tvf.cc"
 #undef module_initialization_complete
 // include dependencies

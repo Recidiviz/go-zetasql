@@ -3,7 +3,11 @@
 
 #include "googlesql/public/functions/match_recognize/compiled_pattern.pb.h"
 // include sources
+#define schemas googlesql_public_functions_match_recognize_compiled_pattern_cc_proto_googlesql_public_functions_match_recognize_compiled_pattern_pb_schemas
+#define file_default_instances googlesql_public_functions_match_recognize_compiled_pattern_cc_proto_googlesql_public_functions_match_recognize_compiled_pattern_pb_file_default_instances
 #include "googlesql/public/functions/match_recognize/compiled_pattern.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

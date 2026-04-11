@@ -248,6 +248,15 @@ conflict_symbols:
     symbols:
       - schemas
       - file_default_instances
+  # Same TU can include public + internal fix_suggestion protos (e.g. bison amalgamation).
+  - file:   googlesql/public/fix_suggestion.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/proto/internal_fix_suggestion.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
   - file:   googlesql/proto/anon_output_with_report.pb.cc
     symbols:
       - schemas
@@ -355,6 +364,130 @@ conflict_symbols:
     symbol: module_initialization_complete
   - file:   googlesql/public/templated_sql_tvf.cc
     symbol: module_initialization_complete
+  - file:   googlesql/base/test_payload.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/common/initialize_required_fields_test.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/common/match_recognize/match_test_result.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/common/reflection.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/common/testing/status_payload_matchers_test.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/compliance/compliance_label.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/compliance/known_error.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/compliance/test_driver.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/local_service/local_service.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/parser/parser/parse_tree.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/proto/module_options.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/proto/simple_property_graph.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/constness_level.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/feature_label_dictionary.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/functions/bitwise_agg_mode.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/functions/match_recognize/compiled_pattern.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/functions/rank_type.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/functions/unsupported_fields.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/information_schema/property_graph.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/public/options.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/simple_sequence.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/public/simple_token_list.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/testdata/ambiguous_has.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/testdata/bad_extension_schema.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/testdata/bad_test_schema.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/testdata/packageless.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/testdata/referenced_schema.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/testdata/referencing_schema.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/testdata/test_proto3.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/testdata/test_schema.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
+  - file:   googlesql/tools/execute_query/execute_query.pb.cc
+    symbols:
+      - schemas
+      - file_default_instances
 
 exclude_googlesql_dirs:
   - legacy_zetasql
@@ -406,20 +539,11 @@ protobuf_internal_export_name_files:
   - googlesql/public/proto/wire_format_annotation.pb.h
 
 cclib:
-  # Opt-in: packages (BasePkg/Name) that emit bind_link_only.cc.tmpl instead of amalgamated bind.cc.
-  # Requires prebuilt native code to satisfy bridge symbols — see docs/link-only-cgo-migration.md.
-  # Pilot: base/status uses merged bind.cc (amalgamation vs -DGOOGLESQL_LINK_ONLY_BIND) + namespace
-  # excludes so Bazel libgooglesql.a symbols match; use -tags googlesql,googlesql_unified_prebuilt.
+  # Link-only bind.cc: every googlesql/* cc_library uses thin bind_link_only.cc.tmpl (generator
+  # linkOnlyBind). This list adds non-googlesql packages (e.g. base/status) to the same path.
+  # Requires libgooglesql.a — see docs/link-only-cgo-migration.md.
   link_only_bind_packages:
     - base/status
-    # Root package slice: the heavy CGO owners behind analyzer/parser/catalog/formatter APIs.
-    # These packages continue to use the default amalgamation path unless googlesql_unified_prebuilt is set.
-    - googlesql/public/analyzer
-    - googlesql/public/catalog
-    - googlesql/public/simple_catalog
-    - googlesql/public/sql_formatter
-    - googlesql/parser/parser
-    - googlesql/parser/bison_parser_generated_lib
   # Unified absl/google: plain namespaces match go-protobuf amalgamation + single include policy.
   global_exclude_replace_names:
     - absl

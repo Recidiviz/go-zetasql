@@ -3,7 +3,11 @@
 
 #include "googlesql/public/functions/bitwise_agg_mode.pb.h"
 // include sources
+#define schemas googlesql_public_functions_bitwise_agg_mode_cc_proto_googlesql_public_functions_bitwise_agg_mode_pb_schemas
+#define file_default_instances googlesql_public_functions_bitwise_agg_mode_cc_proto_googlesql_public_functions_bitwise_agg_mode_pb_file_default_instances
 #include "googlesql/public/functions/bitwise_agg_mode.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

@@ -2,7 +2,10 @@
 #ifndef googlesql_parser_macros_standalone_macro_expansion_impl_bind_cc
 #define googlesql_parser_macros_standalone_macro_expansion_impl_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_parser_macros_standalone_macro_expansion_impl_differential_privacy
 #define googlesql googlesql_parser_macros_standalone_macro_expansion_impl_googlesql
 #define googlesql_base googlesql_parser_macros_standalone_macro_expansion_impl_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_parser_macros_standalone_macro_expansion_impl_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,20 +73,8 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/parser/macros/standalone_macro_expansion_impl.h"
-//#undef private
-
-// include sources
-
-// include dependencies
-#include "go-googlesql/parser/macros/macro_catalog/export.inc"
-#include "go-googlesql/parser/macros/macro_expander/export.inc"
-#include "go-googlesql/parser/macros/token_provider/export.inc"
-#include "go-googlesql/public/options_cc_proto/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"
 

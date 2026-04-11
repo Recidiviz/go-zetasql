@@ -2,7 +2,10 @@
 #ifndef googlesql_parser_macros_macro_expander_bind_cc
 #define googlesql_parser_macros_macro_expander_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_parser_macros_macro_expander_differential_privacy
 #define googlesql googlesql_parser_macros_macro_expander_googlesql
 #define googlesql_base googlesql_parser_macros_macro_expander_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_parser_macros_macro_expander_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,42 +73,8 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/parser/macros/macro_expander.h"
-//#undef private
-
-// include sources
-#include "googlesql/parser/macros/macro_expander.cc"
-
-// include dependencies
-#include "go-googlesql/parser/macros/diagnostic/export.inc"
-#include "go-googlesql/parser/macros/macro_catalog/export.inc"
-#include "go-googlesql/parser/macros/quoting/export.inc"
-#include "go-googlesql/parser/macros/standalone_macro_expansion/export.inc"
-#include "go-googlesql/parser/macros/token_provider_base/export.inc"
-#include "go-googlesql/parser/macros/token_splicing_utils/export.inc"
-#include "go-googlesql/base/arena/export.inc"
-#include "go-googlesql/base/arena_allocator/export.inc"
-#include "go-googlesql/base/check/export.inc"
-#include "go-googlesql/base/ret_check/export.inc"
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/base/strings/export.inc"
-#include "go-googlesql/common/thread_stack/export.inc"
-#include "go-googlesql/parser/token/export.inc"
-#include "go-googlesql/parser/token_with_location/export.inc"
-#include "go-googlesql/proto/internal_error_location_cc_proto/export.inc"
-#include "go-googlesql/public/error_helpers/export.inc"
-#include "go-googlesql/public/error_location_cc_proto/export.inc"
-#include "go-googlesql/public/parse_location/export.inc"
-#include "go-absl/base/nullability/export.inc"
-#include "go-absl/container/btree/export.inc"
-#include "go-absl/container/flat_hash_set/export.inc"
-#include "go-absl/memory/memory/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/strings/str_format/export.inc"
 
 #include "bridge.h"
 

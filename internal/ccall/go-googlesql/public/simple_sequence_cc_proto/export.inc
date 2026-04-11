@@ -3,7 +3,11 @@
 
 #include "googlesql/public/simple_sequence.pb.h"
 // include sources
+#define schemas googlesql_public_simple_sequence_cc_proto_googlesql_public_simple_sequence_pb_schemas
+#define file_default_instances googlesql_public_simple_sequence_cc_proto_googlesql_public_simple_sequence_pb_file_default_instances
 #include "googlesql/public/simple_sequence.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

@@ -2,7 +2,10 @@
 #ifndef googlesql_base_status_bind_cc
 #define googlesql_base_status_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_base_status_differential_privacy
 #define googlesql googlesql_base_status_googlesql
 #define googlesql_base googlesql_base_status_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_base_status_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,29 +73,12 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/base/canonical_errors.h"
 #include "googlesql/base/status.h"
 #include "googlesql/base/status_builder.h"
 #include "googlesql/base/status_macros.h"
 #include "googlesql/base/status_payload.h"
-//#undef private
-
-// include sources
-#include "googlesql/base/status_builder.cc"
-#include "googlesql/base/status_payload.cc"
-
-// include dependencies
-#include "go-googlesql/base/logging/export.inc"
-#include "go-googlesql/base/source_location/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/base/log_severity/export.inc"
-#include "go-absl/log/log/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/strings/cord/export.inc"
 
 #include "bridge.h"
 

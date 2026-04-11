@@ -3,9 +3,7 @@
 
 #include "googlesql/analyzer/analyzer_output_mutator.h"
 // include sources
-#ifndef GOOGLESQL_OMIT_ANALYZER_OUTPUT_MUTATOR_CC_FROM_EXPORT
 #include "googlesql/analyzer/analyzer_output_mutator.cc"
-#endif
 // include dependencies
 #include "go-googlesql/base/check/export.inc"
 #include "go-googlesql/base/ret_check/export.inc"

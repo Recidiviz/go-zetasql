@@ -3,8 +3,8 @@
 
 #include "googlesql/proto/placeholder_descriptor.pb.h"
 // include sources
-#define schemas googlesql_proto_placeholder_descriptor_cc_proto_schemas
-#define file_default_instances googlesql_proto_placeholder_descriptor_cc_proto_file_default_instances
+#define schemas googlesql_proto_placeholder_descriptor_cc_proto_googlesql_proto_placeholder_descriptor_pb_schemas
+#define file_default_instances googlesql_proto_placeholder_descriptor_cc_proto_googlesql_proto_placeholder_descriptor_pb_file_default_instances
 #include "googlesql/proto/placeholder_descriptor.pb.cc"
 #undef file_default_instances
 #undef schemas

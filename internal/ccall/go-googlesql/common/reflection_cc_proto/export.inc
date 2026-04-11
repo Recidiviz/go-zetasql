@@ -3,7 +3,11 @@
 
 #include "googlesql/common/reflection.pb.h"
 // include sources
+#define schemas googlesql_common_reflection_cc_proto_googlesql_common_reflection_pb_schemas
+#define file_default_instances googlesql_common_reflection_cc_proto_googlesql_common_reflection_pb_file_default_instances
 #include "googlesql/common/reflection.pb.cc"
+#undef file_default_instances
+#undef schemas
 // include dependencies
 
 #endif

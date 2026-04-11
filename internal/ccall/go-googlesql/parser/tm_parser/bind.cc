@@ -2,7 +2,10 @@
 #ifndef googlesql_parser_tm_parser_bind_cc
 #define googlesql_parser_tm_parser_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_parser_tm_parser_differential_privacy
 #define googlesql googlesql_parser_tm_parser_googlesql
 #define googlesql_base googlesql_parser_tm_parser_googlesql_base
@@ -51,7 +54,6 @@
 #define GO_EXPORT(def) export_googlesql_parser_tm_parser_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
 
@@ -71,8 +73,7 @@
 #define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
 #define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "googlesql/parser/join_processor.h"
 #include "googlesql/parser/parse_tree.h"
 #include "googlesql/parser/parse_tree_decls.h"
@@ -82,56 +83,6 @@
 #include "googlesql/parser/statement_properties.h"
 #include "googlesql/parser/textmapper_lexer_adapter.h"
 #include "googlesql/parser/tm_parser.h"
-//#undef private
-
-// include sources
-#include "googlesql/parser/textmapper_lexer_adapter.cc"
-#include "googlesql/parser/tm_parser.cc"
-
-// include dependencies
-#include "go-googlesql/parser/ast_enums_cc_proto/export.inc"
-#include "go-googlesql/parser/ast_node_factory/export.inc"
-#include "go-googlesql/parser/bison_parser_generated_lib/export.inc"
-#include "go-googlesql/parser/keywords/export.inc"
-#include "go-googlesql/parser/lookahead_transformer/export.inc"
-#include "go-googlesql/parser/parse_tree/export.inc"
-#include "go-googlesql/parser/parser_mode/export.inc"
-#include "go-googlesql/parser/token/export.inc"
-#include "go-googlesql/parser/token_with_location/export.inc"
-#include "go-googlesql/base/base/export.inc"
-#include "go-googlesql/base/arena/export.inc"
-#include "go-googlesql/base/arena_allocator/export.inc"
-#include "go-googlesql/base/check/export.inc"
-#include "go-googlesql/base/ret_check/export.inc"
-#include "go-googlesql/base/status/export.inc"
-#include "go-googlesql/base/strings/export.inc"
-#include "go-googlesql/common/errors/export.inc"
-#include "go-googlesql/common/status_payload_utils/export.inc"
-#include "go-googlesql/common/timer_util/export.inc"
-#include "go-googlesql/common/warning_sink/export.inc"
-#include "go-googlesql/parser/macros/macro_catalog/export.inc"
-#include "go-googlesql/parser/macros/macro_expander/export.inc"
-#include "go-googlesql/public/id_string/export.inc"
-#include "go-googlesql/public/language_options/export.inc"
-#include "go-googlesql/public/options_cc_proto/export.inc"
-#include "go-googlesql/public/parse_location/export.inc"
-#include "go-googlesql/public/strings/export.inc"
-#include "go-googlesql/public/type_cc_proto/export.inc"
-#include "go-googlesql/public/proto/logging_cc_proto/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/base/nullability/export.inc"
-#include "go-absl/container/flat_hash_map/export.inc"
-#include "go-absl/container/inlined_vector/export.inc"
-#include "go-absl/flags/flag/export.inc"
-#include "go-absl/functional/function_ref/export.inc"
-#include "go-absl/log/log/export.inc"
-#include "go-absl/memory/memory/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/strings/str_format/export.inc"
-#include "go-absl/time/time/export.inc"
-#include "go-absl/types/span/export.inc"
 
 #include "bridge.h"
 
