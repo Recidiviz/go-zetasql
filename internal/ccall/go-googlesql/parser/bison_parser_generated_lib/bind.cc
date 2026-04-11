@@ -3,6 +3,18 @@
 
 #if !defined(GOOGLESQL_LINK_ONLY_BIND) && !defined(GOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC)
 
+// Descriptor registration: shared protos are owned by go-googlesql root bind.
+#define GOOGLESQL_OMIT_SHARED_PROTO_PB_CC 1
+// Root go-googlesql/bind.cc amalgamation compiles unicode_utils.cc; omit here (duplicate ABSL_FLAG).
+#define GOOGLESQL_OMIT_UNICODE_UTILS_CC 1
+// googlesql_minimized_error_message_tag: single ABSL_FLAG registration (parser owns); see error_helpers.cc.
+#define GOOGLESQL_OMIT_PUBLIC_ERROR_HELPERS_ABSL_FLAG_DEF 1
+// public/analyzer bind.cc compiles thread_stack.cc; omit here (duplicate ABSL_FLAG).
+#define GOOGLESQL_OMIT_THREAD_STACK_CC_FROM_EXPORT 1
+// parser/parser/bind.cc includes this export.inc and compiles parse_tree.cc via ast_node_factory; omit here
+// (duplicate ABSL_FLAG vs parser package).
+#define GOOGLESQL_OMIT_PARSER_PACKAGE_DUPLICATE_CC 1
+
 // switch namespace
 #define differential_privacy googlesql_parser_bison_parser_generated_lib_differential_privacy
 #define googlesql googlesql_public_analyzer_googlesql
@@ -55,23 +67,7 @@
 // bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
-
-// Descriptor table identifiers for googlesql/public/options.proto (see googlesql/public/analyzer amalgamation).
-#define googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_googlesql_2fpublic_2foptions_2eproto
-#define descriptor_table_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2foptions_2eproto
-#define TableStruct_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2foptions_2eproto
-// Descriptor table identifiers for googlesql/public/type.proto (same single-owner TU as options.pb.cc).
-#define googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_googlesql_2fpublic_2ftype_2eproto
-#define descriptor_table_googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2ftype_2eproto
-#define TableStruct_googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2ftype_2eproto
-// googlesql/public/proto/wire_format_annotation.proto (paired with public/proto/type_annotation in analyzer).
-#define googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
-#define descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
-#define TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
-// googlesql/public/proto/type_annotation.proto (extends google.protobuf.FieldOptions; single-owner TU).
-#define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-#define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-#define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
+#include "../../secondary_cgo_googlesql_descriptor_aliases.inc"
 // include headers
 //#define private public
 #include "googlesql/parser/join_processor.h"
@@ -85,7 +81,7 @@
 // include dependencies
 #include "go-googlesql/parser/ast_node_factory/export.inc"
 #include "go-googlesql/parser/keywords/export.inc"
-#include "go-googlesql/parser/parse_tree/export.inc"
+// parse_tree is already included by ast_node_factory/export.inc (avoid duplicate proto registration).
 #include "go-googlesql/parser/parser_mode/export.inc"
 #include "go-googlesql/parser/token/export.inc"
 #include "go-googlesql/parser/token_with_location/export.inc"
@@ -187,23 +183,7 @@ extern "C" {
 
 #include "_cgo_export.h"
 
-
-// Descriptor table identifiers for googlesql/public/options.proto (see googlesql/public/analyzer amalgamation).
-#define googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_googlesql_2fpublic_2foptions_2eproto
-#define descriptor_table_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2foptions_2eproto
-#define TableStruct_googlesql_2fpublic_2foptions_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2foptions_2eproto
-// Descriptor table identifiers for googlesql/public/type.proto (same single-owner TU as options.pb.cc).
-#define googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_googlesql_2fpublic_2ftype_2eproto
-#define descriptor_table_googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2ftype_2eproto
-#define TableStruct_googlesql_2fpublic_2ftype_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2ftype_2eproto
-// googlesql/public/proto/wire_format_annotation.proto (paired with public/proto/type_annotation in analyzer).
-#define googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
-#define descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
-#define TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
-// googlesql/public/proto/type_annotation.proto (extends google.protobuf.FieldOptions; single-owner TU).
-#define googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-#define descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_descriptor_table_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
-#define TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto googlesql_public_analyzer_TableStruct_googlesql_2fpublic_2fproto_2ftype_5fannotation_2eproto
+#include "../../secondary_cgo_googlesql_descriptor_aliases.inc"
 // include headers (types only; no .cc bodies)
 #include "googlesql/parser/join_processor.h"
 #include "googlesql/parser/parser_internal.h"

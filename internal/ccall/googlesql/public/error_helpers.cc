@@ -54,9 +54,11 @@
 #include "googlesql/base/status_builder.h"
 #include "googlesql/base/status_macros.h"
 
+#ifndef GOOGLESQL_OMIT_PUBLIC_ERROR_HELPERS_ABSL_FLAG_DEF
 ABSL_FLAG(std::string, googlesql_minimized_error_message_tag,
           "(broken link)",
           "Tag to append to minimized error messages.");
+#endif
 
 namespace googlesql {
 

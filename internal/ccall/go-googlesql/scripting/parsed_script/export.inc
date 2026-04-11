@@ -3,7 +3,9 @@
 
 #include "googlesql/scripting/parsed_script.h"
 // include sources
+#ifndef GOOGLESQL_OMIT_PARSED_SCRIPT_CC_FROM_EXPORT
 #include "googlesql/scripting/parsed_script.cc"
+#endif
 // include dependencies
 #include "go-googlesql/scripting/control_flow_graph/export.inc"
 #include "go-googlesql/scripting/error_helpers/export.inc"

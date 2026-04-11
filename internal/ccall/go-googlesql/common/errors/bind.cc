@@ -86,6 +86,8 @@
 #include "go-googlesql/base/status/export.inc"
 #include "go-googlesql/proto/internal_error_location_cc_proto/export.inc"
 #include "go-googlesql/public/deprecation_warning_cc_proto/export.inc"
+// Parser (and other) packages define this flag once; omit duplicate ABSL_FLAG registration here.
+#define GOOGLESQL_OMIT_PUBLIC_ERROR_HELPERS_ABSL_FLAG_DEF 1
 #include "go-googlesql/public/error_helpers/export.inc"
 #include "go-googlesql/public/error_location_cc_proto/export.inc"
 #include "go-googlesql/public/options_cc_proto/export.inc"
