@@ -6,6 +6,8 @@ This document describes the **unified prebuilt** archive layout and C ABI. It co
 
 **Goal:** A reproducible **`libgooglesql.a`** output path, verification scripts, **public C header** ([`include/googlesql_unified.h`](../internal/ccall/go-googlesql-unified/include/googlesql_unified.h)), pkg-config shape, and a **single CGO owner** package so the repo can grow toward a full GoogleSQL static library.
 
+**Policy:** **Link-only CGO + these prebuilt archives** is the supported direction. The older non-unified fat-amalgamation build (`//go:build !googlesql_unified_prebuilt`) is **deprecated** and not a parallel product to maintain long term — see [link-only-cgo-migration.md](link-only-cgo-migration.md).
+
 ### C ABI (stable symbols)
 
 | Symbol | Purpose |

@@ -21,8 +21,8 @@ cclib:
 
 Regenerate with `go run .` from [`internal/cmd/generator`](../internal/cmd/generator). For opted-in libraries, the generator emits a **merged** [`bind.cc`](../internal/cmd/generator/templates/bind_link_only.cc.tmpl):
 
-- **Default** (`bind_linux.go` / `bind_darwin.go` with `//go:build !googlesql_unified_prebuilt`): the **amalgamation** branch (same as historical `bind.cc.tmpl`) so existing `go test` / CI without prebuilts is unchanged.
-- **Unified prebuilt** (`bind_unified_prebuilt_*_go.go` with `//go:build googlesql_unified_prebuilt`): compiles with `-DGOOGLESQL_LINK_ONLY_BIND` and links [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) plus an import of [`googlesqlunified`](../internal/ccall/go-googlesql-unified/googlesqlunified/doc.go) for link order.
+- **Legacy / deprecated — non-unified amalgamation** (`bind_linux.go` / `bind_darwin.go` with `//go:build !googlesql_unified_prebuilt`): the historical fat-amalgamation branch (same as historical `bind.cc.tmpl`). It exists until removed; **do not** treat it as a parallel long-term product to keep green alongside the unified path. Transitional CI may still exercise it.
+- **Unified prebuilt (supported direction)** (`bind_unified_prebuilt_*_go.go` with `//go:build googlesql_unified_prebuilt`): compiles with `-DGOOGLESQL_LINK_ONLY_BIND` and links [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) plus an import of [`googlesqlunified`](../internal/ccall/go-googlesql-unified/googlesqlunified/doc.go) for link order.
 
 **Pilot:** [`base/status`](../internal/ccall/go-base/status) is the first production opt-in, with **per-package** `exclude_replace_names` so `googlesql::` / `re2::` / etc. match Bazel objects in `libgooglesql.a` (see below).
 
@@ -45,7 +45,7 @@ Generated CGO `bind.cc` translation units normally apply **per-package rename ma
 | **A — Bazel-side alignment** | Build GoogleSQL (or a wrapper `cc_library`) with the **same** preprocessor defines the generator uses for that package so `*.pic.o` match amalgamation symbol names. |
 | **B — Single merged archive** | One native archive produced from the same TU model as amalgamation (heavier; overlaps [native-build-pipeline.md](native-build-pipeline.md)). |
 | **C — Pilot outside `googlesql/public/*`** | Lower-risk slices; still subject to rename rules unless combined with Strategy **D**. |
-| **D — Per-package `exclude_replace_names` + unified prebuilt** (implemented for `base/status`) | For a **single** package, omit `#define` lines for `googlesql`, `googlesql_base`, `googlesql_bison_parser`, `re2`, and `differential_privacy` so headers use **upstream** namespaces that match `libgooglesql.a`. Use **only** with `-tags googlesql,googlesql_unified_prebuilt` and a built `libgooglesql.a`; the default amalgamation path uses `//go:build !googlesql_unified_prebuilt` and does not require the archive. |
+| **D — Per-package `exclude_replace_names` + unified prebuilt** (implemented for `base/status`) | For a **single** package, omit `#define` lines for `googlesql`, `googlesql_base`, `googlesql_bison_parser`, `re2`, and `differential_privacy` so headers use **upstream** namespaces that match `libgooglesql.a`. Use **only** with `-tags googlesql,googlesql_unified_prebuilt` and a built `libgooglesql.a`. The **deprecated** non-unified path (`//go:build !googlesql_unified_prebuilt`) does not use that archive and remains legacy until deleted. |
 
 **Global** `global_exclude_replace_names: [absl, google]` already keeps Abseil and `google::protobuf` consistent with Tier B; Strategy D extends that idea to **googlesql\*** / **re2** / **differential_privacy** for selected packages.
 
@@ -63,15 +63,15 @@ Enable **one** package at a time, run `go test` for packages that depend on it, 
 
 **Staged trimming (when debugging):** If link failures or duplicate symbols involve several thin binds at once, temporarily reduce `link_only_bind_packages` to `base/status` plus only the **prefix** of that list up to the slice you are fixing (for example `base/status` and `googlesql/public/analyzer` only). Regenerate binds (`go run .` from [`internal/cmd/generator`](../internal/cmd/generator)), re-run tests, then add the next package and repeat. Restore the **full** list once the whole chain passes under unified prebuilt.
 
-**After every `config.yaml` change:** regenerate so merged [`bind.cc`](../internal/cmd/generator/pkg/generator.go) (amalgamation vs `-DGOOGLESQL_LINK_ONLY_BIND`) stays in sync.
+**After every `config.yaml` change:** regenerate so merged [`bind.cc`](../internal/cmd/generator/pkg/generator.go) (legacy amalgamation TU vs `-DGOOGLESQL_LINK_ONLY_BIND`) stays in sync.
 
-**Primary supported path (link-only + prebuilt):** For ongoing development and rollout exit criteria, treat **`make local/test-root-unified`** (or `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same prebuilts as the Makefile) as the **main** gate. Maintaining the fat amalgamation branch (`//go:build !googlesql_unified_prebuilt`) in parallel is **optional** — you can standardize on prebuilt-only to avoid two CGO modes.
+**Primary supported path (link-only + prebuilt):** For ongoing development and rollout exit criteria, treat **`make local/test-root-unified`** (or `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same prebuilts as the Makefile) as the **main** gate. The fat amalgamation branch (`//go:build !googlesql_unified_prebuilt`) is **deprecated** — not a second supported mode to maintain indefinitely; it remains in the tree only until the build tag and generated binds can be removed.
 
-**Verification commands** (same toolchain as [`Makefile`](../Makefile) `local/test` / `local/test-root-unified`):
+**Verification commands** (same toolchain as [`Makefile`](../Makefile) `local/test-root-unified`; legacy `local/test` where CI has not migrated yet):
 
 1. **Unified prebuilt link-only (primary):** `make local/test-root-unified` with `GO_TEST_FLAGS='-run ^$'` for compile/link/startup smoke, then widen `-run` or use `TESTPKG` to narrow scope.
-2. **Legacy fat amalgamation (optional):** `make local/test` — `-tags googlesql` without `googlesql_unified_prebuilt`; useful during migration or comparison, not required for a prebuilt-only policy.
-3. **Analyzer shard gate (optional):** `make local/test-prebuilt-googlesql-unified-root` (see `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT` in the Makefile).
+2. **Legacy fat amalgamation (deprecated):** `make local/test` — `-tags googlesql` without `googlesql_unified_prebuilt`; may still run in transitional CI; **not** the project’s long-term direction.
+3. **Analyzer shard gate:** `make local/test-prebuilt-googlesql-unified-root` (see `TESTPKG_PREBUILT_GOOGLESQL_UNIFIED_ROOT` in the Makefile).
 4. **Prebuilts:** `bash scripts/verify-prebuilt-googlesql-unified.sh` and `bash scripts/verify-prebuilt-protobuf.sh` before trusting archive-boundary changes.
 
 

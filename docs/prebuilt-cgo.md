@@ -10,7 +10,9 @@ This document describes the **default protobuf path**: link a **Bazel-built** `l
 | **Tier B Abseil (pilot)** | `-tags googlesql,googlesql_tier_b_absl` | `libabsl_cgo.a` under `internal/ccall/go-absl/lib/` — **not** combined with `googlesql_tier_b` |
 | **Unified prebuilt** | `-tags googlesql,googlesql_unified_prebuilt` | `libgooglesql.a` per [`libgooglesql-unified.md`](libgooglesql-unified.md) |
 
-Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Makefile`](../Makefile) `CGO_CXXFLAGS_PREBUILT` for `local/test`) so the C++ standard library matches the Bazel-built archive.
+**Full GoogleSQL CGO:** The repository’s **supported** direction is **unified prebuilt + link-only** binds — see [`link-only-cgo-migration.md`](link-only-cgo-migration.md). Tags with `googlesql` alone (no `googlesql_unified_prebuilt`) still select the **deprecated** fat-amalgamation path for GoogleSQL-owned packages until that code is removed.
+
+Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Makefile`](../Makefile) `CGO_CXXFLAGS_PREBUILT` for unified / local test targets) so the C++ standard library matches the Bazel-built archive.
 
 **Without prebuilts / first-time setup:** run `make prebuilt-libs` (requires Bazelisk, populated submodule, and time for a cold Bazel build—often tens of minutes). Alternatively download a **release tarball** (below) and extract into the repo root. Full native pipeline: [`native-build-pipeline.md`](native-build-pipeline.md).
 
@@ -169,7 +171,8 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 | `make prebuilt-libs` | Build `libprotobuf_cgo.a` via Bazel + `ar` (same as `extract-protobuf-lib`) |
 | `make verify-prebuilt-protobuf` | Fail fast if the archive for the current `GOOS_GOARCH` is missing |
 | `make local/build` | Default `go build` with the protobuf prebuilt path (after verify) |
-| `make local/test` | Default `go test` with the protobuf prebuilt path (after verify); respects `TESTPKG` |
+| `make local/test-root-unified` | **Preferred** full-module check: `googlesql` + `googlesql_unified_prebuilt`, prebuilt archives, link-only path (see [`link-only-cgo-migration.md`](link-only-cgo-migration.md)) |
+| `make local/test` | **Deprecated** for long-term full-stack work: `go test` without unified prebuilt (fat amalgamation for GoogleSQL shards). May still match transitional CI. Respects `TESTPKG` |
 | `make prebuilt-libs-absl` | Build `libabsl_cgo.a` (same as `extract-absl-lib`) |
 | `make verify-prebuilt-absl` | Fail fast if `libabsl_cgo.a` for current `GOOS_GOARCH` is missing |
 | `make local/build-prebuilt-absl` | `go build` with `-tags googlesql,googlesql_tier_b_absl` (pilot path by default) |

@@ -48,7 +48,7 @@ boundary.
 
 ## Verification (when changing layout)
 
-- `make local/test` (root package), then go-googlesqlite / bigquery-emulator with
+- `make local/test-root-unified` (root package) when exercising the **supported** unified path, or transitional `make local/test` if matching legacy CI; then go-googlesqlite / bigquery-emulator with
   shared `GOCACHE` per the googlesql-stack-debug skill.
 - On link errors involving `…_absl::` vs `absl::`, suspect **macro / ABI
   mismatch** before chasing “missing patch” in vendored protobuf.

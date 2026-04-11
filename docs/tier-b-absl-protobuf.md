@@ -92,7 +92,7 @@ make local/build-prebuilt-googlesql-unified-root
 make local/test-prebuilt-googlesql-unified-root
 ```
 
-The default `-tags googlesql` path remains unchanged and still uses the historical amalgamated `bind.cc` files unless `googlesql_unified_prebuilt` is set.
+Without `googlesql_unified_prebuilt`, `-tags googlesql` alone still selects the **deprecated** fat-amalgamation `bind.cc` path. The **supported** direction is **`googlesql` + `googlesql_unified_prebuilt`** with prebuilt archives and link-only binds — see [link-only-cgo-migration.md](link-only-cgo-migration.md).
 
 ## Related tooling (repo root)
 
