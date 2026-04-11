@@ -74,18 +74,18 @@ Before large mechanical edits, understand what changed between **`from`** and **
    - After copying protobuf or vendor trees, run **`go run ./internal/cmd/vendorpatch`** or **`scripts/apply-vendor-patches.sh`** so amalgamation and git patches apply.
    - **Go AST / bridge parity:** New syntax or nodes (e.g. `GROUP BY ALL`) may need updates to [`internal/cmd/generator/bridge.yaml`](../../internal/cmd/generator/bridge.yaml), **`bridge.inc` by hand** (generator may not overwrite existing file), **[`enum.go`](../../enum.go)** (`LanguageFeature` values), and **[`ast/node.go`](../../ast/node.go)**, plus a **parser test** that enables the feature. Not every upgrade needs this — follow upstream delta and user-facing API gaps.
 3. **Documentation:** Add `docs/googlesql-upgrade-delta-<from>-to-<to>.md` (match existing naming) summarizing upstream changes and how this repo addresses them.
-4. **Tests:** `CGO_ENABLED=1` with `CXX=clang++` (and ccache/mold on Linux per README). Prefer **`task test:local`** / **`task test:local-root-unified`** / **`task test:compile-root-unified`** / **`task build:local`** / **`task test:linux`** with `TESTPKG` narrowed when iterating. Prefer the **root** package gate (`TESTPKG` unset or `./`); see **Failure triage** and skill `googlesql-stack-debug` before interpreting `go test ./...` failures under `internal/ccall`. Do **not** run the heaviest suites in parallel with downstream repos. For memory-constrained machines, use `go test -p 1` and optionally [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh).
+4. **Tests:** `CGO_ENABLED=1` with `CXX=clang++` (and ccache/mold on Linux per README). Prefer **`task test:local`** / **`task test:googlesql-unified-root`** / **`task test:compile-root-unified`** / **`task build:local`** / **`task test:linux`** with `TESTPKG` narrowed when iterating. Prefer the **root** package gate (`TESTPKG` unset or `./`); see **Failure triage** and skill `googlesql-stack-debug` before interpreting `go test ./...` failures under `internal/ccall`. Do **not** run the heaviest suites in parallel with downstream repos. For memory-constrained machines, use `go test -p 1` and optionally [`scripts/cgo-go.sh`](../../scripts/cgo-go.sh).
 
 **Pointers:** [docs/protobuf-vendoring.md](../../docs/protobuf-vendoring.md), [internal/cmd/updater/main.go](../../internal/cmd/updater/main.go).
 
-Downstream repos (**go-googlesqlite**, **bigquery-emulator**) should follow **go-googlesql** prebuilt-first docs ([`docs/prebuilt-cgo.md`](../../docs/prebuilt-cgo.md), [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md)) when choosing build tags and Makefile targets; the unified prebuilt path is the supported direction.
+Downstream repos (**go-googlesqlite**, **bigquery-emulator**) should follow **go-googlesql** prebuilt-first docs ([`docs/prebuilt-cgo.md`](../../docs/prebuilt-cgo.md), [`docs/link-only-cgo-migration.md`](../../docs/link-only-cgo-migration.md)) when choosing build tags and Taskfile tasks; the unified prebuilt path is the supported direction.
 
 ## Phase 3 — go-googlesqlite
 
 1. Ensure module uses the intended go-googlesql (`replace` or bumped version).
 2. Align **LanguageFeature** / analyzer options and **builtin registration** with new upstream surface (`internal/analyzer.go`, `internal/function_register.go`, function implementations). Watch for **signature changes** (extra args, types) — update `function_bind.go` and builtins (e.g. JSON helpers) when upstream changes function catalogs.
 3. Add **tests** (e.g. `query_test.go` subtests named for the release).
-4. Run tests **after** go-googlesql passes: e.g. `go test -tags googlesql,googlesql_unified_prebuilt .` or Makefile targets from the repo README. Keep **one repo at a time** for heavy CGO loads.
+4. Run tests **after** go-googlesql passes: e.g. `go test -tags googlesql,googlesql_unified_prebuilt .` or the verification steps in each repo README / Taskfile. Keep **one repo at a time** for heavy CGO loads.
 
 ## Phase 4 — bigquery-emulator
 
