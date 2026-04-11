@@ -1,7 +1,8 @@
 version: "3"
 
 # https://taskfile.dev — install: https://taskfile.dev/installation/
-# Replaces the former Makefile. All GoogleSQL CGO uses link-only + unified prebuilt tags unless noted.
+# Replaces the former Makefile. Tasks `source .envrc` so CGO/cache match direnv (see scripts/go-googlesql-env.sh).
+# All GoogleSQL CGO uses link-only + unified prebuilt tags unless noted.
 
 vars:
   DOCKER_IMAGE: go-googlesql
@@ -25,12 +26,12 @@ tasks:
   cache:dirs:
     desc: Create GOCACHE / GOMODCACHE / ccache dirs under GO_CACHE_ROOT
     cmds:
-      - bash -c 'source scripts/task-env.sh && task_env_export && mkdir -p "$GO_CACHE_ROOT/gocache" "$GO_CACHE_ROOT/gomodcache" "$GO_CACHE_ROOT/ccache"'
+      - bash -c 'source .envrc && mkdir -p "$GO_CACHE_ROOT/gocache" "$GO_CACHE_ROOT/gomodcache" "$GO_CACHE_ROOT/ccache"'
 
   cache:clean-cgo:
     desc: Remove stale gocache and ccache objects (after OOM or bad SIGSEGV)
     cmds:
-      - bash -c 'source scripts/task-env.sh && task_env_export && rm -rf "$GO_CACHE_ROOT/gocache"/* "$GO_CACHE_ROOT/ccache"/*'
+      - bash -c 'source .envrc && rm -rf "$GO_CACHE_ROOT/gocache"/* "$GO_CACHE_ROOT/ccache"/*'
 
   verify:prebuilt-protobuf:
     cmds:
@@ -89,7 +90,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
@@ -105,7 +106,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
         CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
@@ -120,7 +121,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
@@ -136,7 +137,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
@@ -152,7 +153,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
@@ -175,7 +176,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
@@ -190,7 +191,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
         CGO_LDFLAGS="$CGO_LDFLAGS_BASE" \
@@ -205,7 +206,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
@@ -221,7 +222,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         CGO_ENABLED=1 \
         CGO_CXXFLAGS="$CGO_CXXFLAGS_PREBUILT" \
         CGO_LDFLAGS_ALLOW="$CGO_LDFLAGS_ALLOW_LIST" \
@@ -237,7 +238,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         echo "=== ccache stats (before) ==="; ccache -s 2>/dev/null || echo "(install ccache for stats)"
         echo "=== cold: zero ccache counters ==="; ccache -z 2>/dev/null || true
         echo "=== cold: compile test binary ==="
@@ -278,7 +279,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         docker run --rm \
           -e CGO_ENABLED=1 -e CC=clang -e CXX=clang++ \
           -e CCACHE_DIR=/root/.ccache -e CCACHE_COMPRESS=1 \
@@ -301,7 +302,7 @@ tasks:
     cmds:
       - |
         set -euo pipefail
-        source scripts/task-env.sh && task_env_export
+        source .envrc
         docker run --rm \
           -e CGO_ENABLED=1 -e CC=clang -e CXX=clang++ \
           -e CCACHE_DIR=/root/.ccache -e CCACHE_COMPRESS=1 \

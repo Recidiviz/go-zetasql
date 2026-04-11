@@ -73,10 +73,10 @@ git diff 2023.03.2..2023.04.1 -- zetasql/public/functions/json.cc zetasql/refere
 
 ### Building / testing (CGO memory and cache)
 
-Heavy **`go test ./...`** runs can **OOM** (`clang++: signal: killed`) when many CGO packages compile at once. Align with the [build-speed / Taskfile](../Taskfile.yml) setup in **go-googlesql**:
+Heavy **`go test ./...`** runs can **OOM** (`clang++: signal: killed`) when many CGO packages compile at once. Align with the [`.envrc`](../.envrc) / [Taskfile](../Taskfile.yml) setup in **go-googlesql** (install [direnv](https://direnv.net/) and run **`direnv allow`** so your shell matches **`task`**):
 
 - Prefer **`task test:local`** from the `go-googlesql` checkout with `TESTPKG` set to a **single package** (default `./`), or **`task test:linux`** inside **`go-googlesql:dev`** so **GOCACHE**, **GOMODCACHE**, and **ccache** stay warm.
-- Use **low `-p`** ([`scripts/task-env.sh`](../scripts/task-env.sh) defaults **`GO_BUILD_P_MAX`** to **2**; use **`GO_BUILD_P=1`** or **`go test -p 1`** on tight hosts).
+- Use **low `-p`** ([`scripts/go-googlesql-env.sh`](../scripts/go-googlesql-env.sh) defaults **`GO_BUILD_P_MAX`** to **2**; use **`GO_BUILD_P=1`** or **`go test -p 1`** on tight hosts).
 - When **`mold`** is on `PATH`, **`task build:local`** / **`task test:local`** pass **`CGO_LDFLAGS=-fuse-ld=mold`** for faster linking (Linux).
 
 **go-googlesqlite** / **bigquery-emulator**: run targeted tests on the **root or one package** (e.g. `go test -p 1 -run 'TestQuery/json_float64_wide_number_mode' .` in go-googlesqlite) with the same **`CC="ccache clang"`** / **`GO_CACHE_ROOT`** env as above—not unbounded `./...` without Docker or a large machine.

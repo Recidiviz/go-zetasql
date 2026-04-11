@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Shared environment for Taskfile.dev tasks (replaces former Makefile CGO/local defaults).
-# Usage: source "$(dirname "$0")/task-env.sh" && task_env_export
+# Shared CGO / cache defaults for go-googlesql. Sourced from `.envrc` (direnv) and from Taskfile tasks.
+# Usage: source path/to/scripts/go-googlesql-env.sh && go_googlesql_env_export
 
-task_env_export() {
+go_googlesql_env_export() {
 	export GO_CACHE_ROOT="${GO_CACHE_ROOT:-$HOME/.cache/go-googlesql}"
 	mkdir -p "$GO_CACHE_ROOT/gocache" "$GO_CACHE_ROOT/gomodcache" "$GO_CACHE_ROOT/ccache"
 

@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The format is loosely b
 
 ### Tooling
 
-- **Build automation:** root `Makefile` removed in favor of [`Taskfile.yml`](Taskfile.yml) ([Task](https://taskfile.dev/)); shared CGO env in [`scripts/task-env.sh`](scripts/task-env.sh). CI workflows install Task via `arduino/setup-task@v2`.
+- **Build automation:** root `Makefile` removed in favor of [`Taskfile.yml`](Taskfile.yml) ([Task](https://taskfile.dev/)); shared CGO env in [`.envrc`](.envrc) (direnv) and [`scripts/go-googlesql-env.sh`](scripts/go-googlesql-env.sh) (sourced by `.envrc` and Task). CI workflows install Task via `arduino/setup-task@v2`.
 
 ### Tier B / Phase 5 (CI, artifacts, docs)
 

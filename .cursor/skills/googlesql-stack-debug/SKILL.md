@@ -22,7 +22,7 @@ description: >-
 
 ## Canonical verification (go-googlesql)
 
-- **Primary gate:** **`task test:local`** / **`task test:googlesql-unified-root`** (or `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same prebuilts as [`scripts/task-env.sh`](../../../scripts/task-env.sh)). Use **`task test:compile-root-unified`** when a narrower compile-only check fits. See [`docs/link-only-cgo-migration.md`](../../../docs/link-only-cgo-migration.md).
+- **Primary gate:** **`task test:local`** / **`task test:googlesql-unified-root`** (or `go test` with `-tags googlesql,googlesql_unified_prebuilt` and the same env as [`.envrc`](../../../.envrc) / [`scripts/go-googlesql-env.sh`](../../../scripts/go-googlesql-env.sh)). Use **`task test:compile-root-unified`** when a narrower compile-only check fits. See [`docs/link-only-cgo-migration.md`](../../../docs/link-only-cgo-migration.md).
 - **Narrow iteration:** `TESTPKG=./path/to/pkg task test:local` when iterating.
 - **Do not** treat `go test ./...` across all `internal/ccall/go-*` packages as the primary signal unless you are deliberately hardening standalone subpackages. Split CGO packages often fail in isolation (`bridge_cc.inc` / `GoSlice`, include order, etc.) while the **root** build is correct.
 

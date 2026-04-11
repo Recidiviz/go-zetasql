@@ -42,7 +42,7 @@ boundary.
 2. **Reduce duplicates inside one macro island** — e.g. merge includes so fewer
    TUs repeat the same amalgamation **without** crossing absl rename boundaries.
 
-3. **Keep** [`Taskfile.yml`](../Taskfile.yml) / [`scripts/task-env.sh`](../scripts/task-env.sh) `CGO_LDFLAGS` using
+3. **Keep** [`Taskfile.yml`](../Taskfile.yml) / [`.envrc`](../.envrc) / [`scripts/go-googlesql-env.sh`](../scripts/go-googlesql-env.sh) (`CGO_LDFLAGS_BASE`, allowlist) using
    `-Wl,--allow-multiple-definition` until duplicate protobuf objects are
    actually eliminated by design—not by accident.
 
