@@ -1,5 +1,7 @@
 # Default protobuf prebuilts + unified Abseil / protobuf namespaces
 
+**Consolidation program (shards, CI invariants, exit criteria):** [cgo-consolidation.md](cgo-consolidation.md).
+
 Operational commands, env vars, and downstream notes: **[prebuilt-cgo.md](prebuilt-cgo.md)**.
 
 This document is the **implementation roadmap** for combining:

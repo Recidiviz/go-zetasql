@@ -1,6 +1,6 @@
 # Link-only CGO (unified prebuilt)
 
-This document complements [tier-b-absl-protobuf.md](tier-b-absl-protobuf.md) and [libgooglesql-unified.md](libgooglesql-unified.md).
+This document complements [tier-b-absl-protobuf.md](tier-b-absl-protobuf.md) and [libgooglesql-unified.md](libgooglesql-unified.md). Broader consolidation program, inventory script, and CI invariant: [cgo-consolidation.md](cgo-consolidation.md).
 
 ## Goal
 

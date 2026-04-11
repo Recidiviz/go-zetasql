@@ -1,6 +1,8 @@
 // Package exportinc derives export.inc from bind.cc: the include prelude is everything
 // after "// include headers" through the line before #include "bridge.h" (excluding blank
 // lines and "//#" snippet lines), matching how CGO pulls headers without bridge symbols.
+// Link-only binds (see docs/cgo-consolidation.md) use header-only preludes; implementations
+// come from libgooglesql.a / libprotobuf_cgo.a — sync export.inc after generator runs.
 //
 // Contract for packages whose bind.cc uses the generator template ("// include headers" … bridge.h):
 //

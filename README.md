@@ -52,7 +52,7 @@ Also, the compiler recommends `clang++`. Please set `CXX=clang++` to install.
 | **Deprecated compatibility alias** | `googlesql,googlesql_tier_b` | Same as protobuf prebuilt | Older scripts; same default protobuf prebuilt behavior. |
 | **Tier B Abseil (pilot)** | `googlesql,googlesql_tier_b_absl` | Yes to build `libabsl_cgo.a` | Isolated `go-absl` pilot packages only; do **not** combine with the default protobuf prebuilt owner in one link — [`docs/prebuilt-absl-overlap.md`](docs/prebuilt-absl-overlap.md). |
 
-**Removed path:** protobuf amalgamation is no longer the supported/default CGO build mode in this repo. The normal Linux/Darwin protobuf bind files now link the prebuilt archive. Deeper context: [`docs/native-build-pipeline.md`](docs/native-build-pipeline.md).
+**Removed path:** protobuf amalgamation is no longer the supported/default CGO build mode in this repo. The normal Linux/Darwin protobuf bind files now link the prebuilt archive. Deeper context: [`docs/native-build-pipeline.md`](docs/native-build-pipeline.md). Ongoing CGO shard / prebuilt consolidation program: [`docs/cgo-consolidation.md`](docs/cgo-consolidation.md).
 
 **Contributor quick path (prebuilts):** clone → unpack release assets (or run `task prebuilt:protobuf` and `task prebuilt:googlesql-unified` as in [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md)) → **`task test:local`** (`-tags googlesql,googlesql_unified_prebuilt` + prebuilt verifies). Install [Task](https://taskfile.dev/installation/) if you do not have the `task` CLI. CI cache layout for Bazel: [`docs/ci-bazel-cache.md`](docs/ci-bazel-cache.md).
 
@@ -72,7 +72,7 @@ The first time you run it, it takes time to build all the GoogleSQL code used by
 
 **Sequential tests (multi-repo):** If you work in `go-googlesql`, `go-googlesqlite`, and `bigquery-emulator` together, run heavy `go test` **one repo at a time**. Running full CGO test suites in parallel on one machine often exhausts memory.
 
-**Host `go test` memory cap (systemd):** [`scripts/cgo-go.sh`](scripts/cgo-go.sh) optionally wraps `go build` / `go test` in a user or system scope with **`GOOGLESQL_CGO_MEMORY_MAX`** (default `22G`). If you still have automation using **`ZETASQL_CGO_MEMORY_MAX`**, rename it—only **`GOOGLESQL_CGO_MEMORY_MAX`** is read now.
+**Host `go test` memory cap (systemd):** [`scripts/cgo-go.sh`](scripts/cgo-go.sh) optionally wraps `go build` / `go test` in a user or system scope with **`GOOGLESQL_CGO_MEMORY_MAX`** (default `22G`).
 
 **Reuse local compile cache:** Point the same Go caches at all three checkouts so `go-googlesql` objects are not rebuilt for every downstream test:
 

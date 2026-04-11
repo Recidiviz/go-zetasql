@@ -24,6 +24,8 @@ jobs:
       uses: arduino/setup-task@v2
       with:
         version: 3.x
+    - name: CGO shard inventory (link-only bind.cc invariant)
+      run: ./scripts/cgo-shard-inventory.sh --check
     - name: setup Go ${{ matrix.go-version }}
       uses: actions/setup-go@7b8cf10d4e4a01d4992d18a89f4d7dc5a3e6d6f4 # v4
       with:

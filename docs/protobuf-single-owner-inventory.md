@@ -1,5 +1,7 @@
 # Protobuf amalgamation — scale and consolidation notes
 
+**Related:** multi-phase CGO/prebuilt consolidation charter, inventory script, and CI checks — [cgo-consolidation.md](cgo-consolidation.md).
+
 This doc captures **inventory** from the protobuf CGO consolidation effort and the **blocking constraint** on a naive “single owner” layout.
 
 ## Scale (current generator output)

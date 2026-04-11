@@ -7,6 +7,7 @@ All notable changes to this project are documented here. The format is loosely b
 ### Tooling
 
 - **Build automation:** root `Makefile` removed in favor of [`Taskfile.yml`](Taskfile.yml) ([Task](https://taskfile.dev/)); shared CGO env in [`.envrc`](.envrc) (direnv) and [`scripts/go-googlesql-env.sh`](scripts/go-googlesql-env.sh) (sourced by `.envrc` and Task). CI workflows install Task via `arduino/setup-task@v2`.
+- **CGO consolidation:** [`docs/cgo-consolidation.md`](docs/cgo-consolidation.md) defines the shard-reduction program; [`scripts/cgo-shard-inventory.sh`](scripts/cgo-shard-inventory.sh) (`--summary` / `--check`) enforces that link-only `bind.cc` files never `#include` amalgamated `.cc` bodies. Wired into `.github/workflows/go.yml`.
 
 ### Tier B / Phase 5 (CI, artifacts, docs)
 
