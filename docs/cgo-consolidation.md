@@ -40,7 +40,7 @@ go list -tags googlesql,googlesql_unified_prebuilt -deps ./... | sort -u | head 
 Approximate scale (see also [protobuf-single-owner-inventory.md](protobuf-single-owner-inventory.md)):
 
 - **780+** `bind.cc` files under `internal/ccall/go-googlesql/`.
-- **`./scripts/cgo-shard-inventory.sh --summary`** reports how many `bind.cc` files anywhere under `internal/ccall/` still `#include` a `.cc` source (baseline snapshot: on the order of **~100** total, mostly **`go-absl`**, a dozen **`go-googlesql`**, plus **`go-algorithms`**, **`go-proto`**, **`go-base`** — rerun for current counts).
+- **`./scripts/cgo-shard-inventory.sh --summary`** reports how many `bind.cc` files anywhere under `internal/ccall/` still `#include` a `.cc` source (baseline snapshot: on the order of **~100** total, mostly **`go-absl`**, on the order of **10–12** **`go-googlesql`**, plus **`go-algorithms`**, **`go-proto`**, **`go-base`** — rerun for current counts).
 - Many **link-only** binds (header comment: `Link-only bind.cc`; **~400** files) — implementations in **`libgooglesql.a`**; CI **`--check`** ensures these never `#include` amalgamated `.cc` bodies.
 - **`go-absl/**`**, **`go-proto/**`**, and some **non-link-only** `go-googlesql/**` shards still `#include` `.cc` sources where a separate TU or single-owner rule requires it.
 
@@ -77,9 +77,9 @@ For each **B** candidate:
 3. **Runtime proof:** full `task test:local`; watch for startup issues ([unified-prebuilt-root-segfault-investigation.md](unified-prebuilt-root-segfault-investigation.md)).
 4. **Edit** [`bind_unified_prebuilt_linux.go` / `bind_unified_prebuilt_darwin.go`](../internal/ccall/go-googlesql/bind_unified_prebuilt_linux.go) blank imports only when link order is proven safe (**import order matters**).
 
-**Status:** No shard packages were removed in the initial consolidation documentation/CI pass; use this checklist for future PRs.
+**Status:** The stale duplicate package `internal/ccall/go-googlesql/public/timestamp_pico_value` (legacy `zetasql_*` amalgamation; no matching `cc_library` in `googlesql/public/BUILD`) was removed; the supported CGO shard is `internal/ccall/go-googlesql/public/timestamp_picos_value` (link-only + unified prebuilt). Use this checklist for further PRs.
 
-**Example B candidates** (non-exhaustive; still use legacy `zetasql_*` guards or `#include "*.cc"` in `bind.cc` — regenerate to link-only before removal): `internal/ccall/go-googlesql/analyzer/rewriters/*`, `public/timestamp_pico_value`, `public/range_value`, `parser/flex_tokenizer`, and similar paths from `./scripts/cgo-shard-inventory.sh --list` filtered to `go-googlesql`.
+**Example B candidates** (non-exhaustive; still use legacy `zetasql_*` guards or `#include "*.cc"` in `bind.cc` — regenerate to link-only before removal): `internal/ccall/go-googlesql/analyzer/rewriters/*`, `public/range_value`, `parser/flex_tokenizer`, and similar paths from `./scripts/cgo-shard-inventory.sh --list` filtered to `go-googlesql`.
 
 ## Phase 5 — CI and downstream
 
