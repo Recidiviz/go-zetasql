@@ -1029,6 +1029,29 @@ cc_library(
 )
 
 cc_library(
+    name = "range_value",
+    srcs = ["range_value.cc"],
+    hdrs = [
+        "range_value.h",
+    ],
+    deps = [
+        ":civil_time",
+        ":options_cc_proto",
+        ":type_cc_proto",
+        "//googlesql/base:case",
+        "//googlesql/base:endian",
+        "//googlesql/common:errors",
+        "//googlesql/public/functions:date_time_util",
+        "//googlesql/public/types",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/time",
+    ],
+)
+
+cc_library(
     name = "interval_value_test_util",
     testonly = 1,
     hdrs = [
