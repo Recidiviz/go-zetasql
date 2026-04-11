@@ -97,7 +97,6 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 	prelude = prependParserExportFlexSuppress(packageDir, prelude)
 	prelude = filterBisonExportDuplicateFlexTokenizer(packageDir, prelude)
 	prelude = filterFlexTokenizerExportDuplicateSources(packageDir, prelude)
-	prelude = wrapUnicodeUtilsCCInclude(prelude)
 	prelude = filterParserPackageExportDuplicateFlex(packageDir, prelude)
 	if !strings.Contains(packageDir, "/go-absl/types/") {
 		return prelude
@@ -450,30 +449,6 @@ func slicesInsert(s []string, at int, val string) []string {
 	copy(s[at+1:], s[at:])
 	s[at] = val
 	return s
-}
-
-// wrapUnicodeUtilsCCInclude guards googlesql/common/unicode_utils.cc (or legacy zetasql path) so
-// the public/analyzer CGO package can define GOOGLESQL_OMIT_UNICODE_UTILS_CC (see
-// bind_cc_prelude_before_headers) and avoid duplicating FLAGS_* idstring with root bind.cc.
-func wrapUnicodeUtilsCCInclude(prelude []string) []string {
-	const (
-		directZeta   = `#include "zetasql/common/unicode_utils.cc"`
-		directGoogle = `#include "googlesql/common/unicode_utils.cc"`
-	)
-	out := make([]string, 0, len(prelude)+2)
-	for _, line := range prelude {
-		t := strings.TrimSpace(line)
-		if t == directZeta || t == directGoogle {
-			out = append(out,
-				"#ifndef GOOGLESQL_OMIT_UNICODE_UTILS_CC",
-				line,
-				"#endif",
-			)
-			continue
-		}
-		out = append(out, line)
-	}
-	return out
 }
 
 // prependParserExportFlexSuppress used to force SUPPRESS so flex_tokenizer.flex.cc stubs did not

@@ -3,9 +3,7 @@
 
 #include "googlesql/common/unicode_utils.h"
 // include sources
-#ifndef GOOGLESQL_OMIT_UNICODE_UTILS_CC
 #include "googlesql/common/unicode_utils.cc"
-#endif
 // include dependencies
 #include "go-googlesql/base/base/export.inc"
 #include "go-absl/algorithm/container/export.inc"

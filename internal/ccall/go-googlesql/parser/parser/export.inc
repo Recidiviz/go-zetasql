@@ -16,9 +16,7 @@
 // include sources
 #include "googlesql/parser/ast_node_internal.h"
 #include "googlesql/parser/parser.cc"
-#ifndef GOOGLESQL_OMIT_PARSER_PACKAGE_DUPLICATE_CC
 #include "googlesql/parser/parser_internal.cc"
-#endif
 #include "googlesql/parser/textmapper_lexer_adapter.cc"
 #include "googlesql/parser/tm_parser.cc"
 #include "googlesql/parser/join_processor.cc"

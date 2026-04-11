@@ -1,6 +1,7 @@
-// Shared by secondary CGO packages (parser/parser, bison_parser_generated_lib, public/analyzer) when
-// GOOGLESQL_OMIT_SHARED_PROTO_PB_CC skips .pb.cc: map default descriptor_table_* names to the root
-// go-googlesql TU (same symbols as root_analyzer_amalgamation_macros.inc lines 46–244).
+// Shared by secondary CGO packages (parser/parser, bison_parser_generated_lib, public/analyzer) that
+// link generated protobuf without compiling duplicate .pb.cc bodies: map default descriptor_table_*
+// and related names to the root go-googlesql TU (aligned with root_analyzer_amalgamation_macros.inc
+// lines 46–244).
 
 // google/protobuf, google/type, google/rpc descriptor symbols: single-owner in go-protobuf/protobuf (no shard #defines).
 #define googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto googlesql_public_analyzer_googlesql_2fpublic_2fproto_2fwire_5fformat_5fannotation_2eproto
