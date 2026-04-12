@@ -40,9 +40,9 @@ go list -tags googlesql,googlesql_unified_prebuilt -deps ./... | sort -u | head 
 Approximate scale (see also [protobuf-single-owner-inventory.md](protobuf-single-owner-inventory.md)):
 
 - **780+** `bind.cc` files under `internal/ccall/go-googlesql/`.
-- **`./scripts/cgo-shard-inventory.sh --summary`** reports how many `bind.cc` files anywhere under `internal/ccall/` still `#include` a `.cc` source (recent snapshot: on the order of **~110** total, mostly **`go-absl`**, on the order of **10** **`go-googlesql`**, plus **`go-algorithms`**, **`go-proto`**, **`go-base`** — rerun for current counts).
-- Many **link-only** binds (header comment: `Link-only bind.cc`; on the order of **~400** files) — implementations in **`libgooglesql.a`**; CI **`--check`** ensures these never `#include` amalgamated `.cc` bodies.
-- **`go-absl/**`**, **`go-proto/**`**, and some **non-link-only** `go-googlesql/**` shards still `#include` `.cc` sources where a separate TU or single-owner rule requires it.
+- **`./scripts/cgo-shard-inventory.sh --summary`** reports how many `bind.cc` files anywhere under `internal/ccall/` still `#include` a `.cc` source (rerun for current counts; recent snapshot: on the order of **~96** total — mostly **`go-absl`**, plus **`go-algorithms`** and **`go-base`**; **`go-googlesql`** is link-only for generated shards; **`go-proto`** differential-privacy protos below are link-only).
+- Many **link-only** binds (header comment: `Link-only bind.cc`; on the order of **~410** files) — implementations in **`libgooglesql.a`**; CI **`--check`** ensures these never `#include` amalgamated `.cc` bodies.
+- **`go-absl/**`** and **`go-algorithms/**`** still `#include` `.cc` sources where a separate TU or single-owner rule requires it. **`go-base/logging`** still compiles `base/logging.cc` in the bind TU.
 
 ## Shard classification (A / B / C)
 
@@ -79,9 +79,11 @@ For each **B** candidate:
 
 **Status:** The stale duplicate package `internal/ccall/go-googlesql/public/timestamp_pico_value` (legacy `zetasql_*` amalgamation; no matching `cc_library` in `googlesql/public/BUILD`) was removed; the supported CGO shard is `internal/ccall/go-googlesql/public/timestamp_picos_value` (link-only + unified prebuilt). Use this checklist for further PRs.
 
-**Example B candidates** (non-exhaustive): remaining `analyzer/rewriters/*` shards and any `--list` paths that still look like legacy amalgamation — use Phase 4 before changing `bind_unified_prebuilt_*` imports.
+**Example B candidates** (non-exhaustive): any `--list` paths still looking like legacy amalgamation under `go-googlesql` — use Phase 4 before changing `bind_unified_prebuilt_*` imports (rerun `./scripts/cgo-shard-inventory.sh --list`; many `googlesql/*` shards are already link-only).
 
 **Done (link-only + generator):** `googlesql/public/range_value` is now a normal `cc_library` in [`internal/ccall/googlesql/public/BUILD`](../internal/ccall/googlesql/public/BUILD) and regenerated like other `googlesql/public/*` shards (`bind_link_only.cc.tmpl`, `zetasql`/`zetasql_base` namespace overrides and status-macro prelude in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml)).
+
+- **Differential-privacy `go-proto` shards** (`proto/confidence_interval_cc_proto`, `proto/data_cc_proto`, `proto/numerical_mechanism_cc_proto`, `proto/summary_cc_proto`): link-only `bind.cc` + `cclib.link_only_bind_packages` + `exclude_replace_names` (aligned with `base/status`) so `.pb.cc` bodies are not compiled in the CGO TU; implementations are expected from **`libgooglesql.a`** (external `com_google_*_differential_privacy` objects merged by the unified extract script). Regenerate `bind.cc` / `export.inc` with `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) after `config.yaml` changes; sync `export.inc` via [internal/exportinc](../internal/exportinc/exportinc.go) (`BuildFromBindCC`) if editing bind preludes by hand.
 
 - **`googlesql/parser/flex_istream`:** `cc_library` in [`internal/ccall/googlesql/parser/BUILD`](../internal/ccall/googlesql/parser/BUILD), link-only `bind.cc` (avoids pulling the full `go-absl/strings` amalgamation into the TU, which duplicated `absl::strings` stringify headers). `flex_tokenizer` depends on `:flex_istream`.
 - **`googlesql/parser/macros/flex_token_provider`:** `inject_replace_names` / `symbol_define_overrides` for `zetasql` + `exclude_replace_names` (same idea as `base/status`) so `GOOGLESQL_*` status macros are not broken by namespace `#define`s; sources use `GOOGLESQL_ASSIGN_OR_RETURN` in the inline/header path.

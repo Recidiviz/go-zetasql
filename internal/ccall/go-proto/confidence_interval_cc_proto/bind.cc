@@ -2,12 +2,10 @@
 #ifndef proto_confidence_interval_cc_proto_bind_cc
 #define proto_confidence_interval_cc_proto_bind_cc
 
-// switch namespace
-#define differential_privacy proto_confidence_interval_cc_proto_differential_privacy
-#define googlesql proto_confidence_interval_cc_proto_googlesql
-#define googlesql_base proto_confidence_interval_cc_proto_googlesql_base
-#define googlesql_bison_parser proto_confidence_interval_cc_proto_googlesql_bison_parser
-#define re2 proto_confidence_interval_cc_proto_re2
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define AbslInternalSleepFor proto_confidence_interval_cc_proto_AbslInternalSleepFor
 #define AbslInternalReportFatalUsageError proto_confidence_interval_cc_proto_AbslInternalReportFatalUsageError
 #define AbslInternalMutexYield proto_confidence_interval_cc_proto_AbslInternalMutexYield
@@ -51,23 +49,10 @@
 #define GO_EXPORT(def) export_proto_confidence_interval_cc_proto_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "proto/confidence-interval.pb.h"
-//#undef private
-
-// include sources
-#define schemas proto_confidence_interval_cc_proto_proto_confidence_interval_pb_schemas
-#define file_default_instances proto_confidence_interval_cc_proto_proto_confidence_interval_pb_file_default_instances
-#include "proto/confidence-interval.pb.cc"
-#undef file_default_instances
-#undef schemas
-
-
-// include dependencies
 
 #include "bridge.h"
 

@@ -545,6 +545,12 @@ cclib:
   # Requires libgooglesql.a — see docs/link-only-cgo-migration.md.
   link_only_bind_packages:
     - base/status
+    # Differential-privacy protos: .pb.o live in libgooglesql.a (external DP repo); link-only avoids
+    # duplicate TU bodies vs the unified archive. See docs/cgo-consolidation.md (class C).
+    - proto/confidence_interval_cc_proto
+    - proto/data_cc_proto
+    - proto/numerical_mechanism_cc_proto
+    - proto/summary_cc_proto
   # Unified absl/google: plain namespaces match go-protobuf amalgamation + single include policy.
   global_exclude_replace_names:
     - absl
@@ -669,6 +675,34 @@ cclib:
   # Link-only + libgooglesql.a: use upstream namespaces (Bazel *.pic.o) for the GOOGLESQL_LINK_ONLY_BIND branch only.
   exclude_replace_names:
     - pkg: base/status
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
+    - pkg: proto/confidence_interval_cc_proto
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
+    - pkg: proto/data_cc_proto
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
+    - pkg: proto/numerical_mechanism_cc_proto
+      names:
+        - googlesql
+        - googlesql_base
+        - googlesql_bison_parser
+        - re2
+        - differential_privacy
+    - pkg: proto/summary_cc_proto
       names:
         - googlesql
         - googlesql_base
