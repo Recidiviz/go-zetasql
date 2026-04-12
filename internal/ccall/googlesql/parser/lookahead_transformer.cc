@@ -42,12 +42,6 @@
 #include "googlesql/base/ret_check.h"
 #include "googlesql/base/status_macros.h"
 
-// ICU defines COLON as a macro; it breaks Token::COLON in this TU when ICU
-// headers are pulled in via the amalgamated include graph.
-#ifdef COLON
-#undef COLON
-#endif
-
 namespace googlesql {
 
 // Implementation of the wrapper calls forward-declared in parser_internal.h.
@@ -141,8 +135,7 @@ static bool IsIdentifierOrNonreservedKeyword(Token token) {
 }
 
 // Returns whether `token` is a keyword or an unquoted identifier.
-static bool LookaheadIsKeywordOrUnquotedIdentifier(
-    const TokenWithLocation& token) {
+static bool IsKeywordOrUnquotedIdentifier(const TokenWithLocation& token) {
   switch (token.kind) {
     case Token::EXP_IN_FLOAT_NO_SIGN:
     case Token::STANDALONE_EXPONENT_SIGN:
@@ -392,7 +385,7 @@ static bool IsLiteralBeforeAdjacentUnquotedIdentifier(
     Token lookback1,
     const std::optional<TokenWithOverrideError>& lookback_token,
     const std::optional<TokenWithOverrideError>& current_token) {
-  if (!LookaheadIsKeywordOrUnquotedIdentifier(current_token->token)) {
+  if (!IsKeywordOrUnquotedIdentifier(current_token->token)) {
     return false;
   }
   if (lookback1 != Token::FLOATING_POINT_LITERAL &&
@@ -959,7 +952,7 @@ void LookaheadTransformer::TransformIntegerLiteral() {
   if (Lookback1() == Token::LB_DOT_IN_PATH_EXPRESSION) {
     // Integer literals, for example "123" or "0x01", and identifiers that start
     // with digits, for example "123abc" are allowed in path expressions.
-    if (LookaheadIsKeywordOrUnquotedIdentifier(lookahead_1_->token) &&
+    if (IsKeywordOrUnquotedIdentifier(lookahead_1_->token) &&
         IsAdjacentPrecedingToken(current_token_, lookahead_1_)) {
       FuseLookahead1IntoCurrent(Token::IDENTIFIER);
     } else {

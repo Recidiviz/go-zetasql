@@ -93,7 +93,7 @@ absl::StatusOr<Value> ComputeLaplaceThresholdFromDelta(
 
   GOOGLESQL_ASSIGN_OR_RETURN(
       double double_laplace_threshold,
-      ::differential_privacy::LaplacePartitionSelection::CalculateThreshold(
+      differential_privacy::LaplacePartitionSelection::CalculateThreshold(
           epsilon, delta, max_groups_contributed));
 
   double_laplace_threshold = ceil(double_laplace_threshold);
@@ -141,7 +141,7 @@ absl::StatusOr<Value> ComputeDeltaFromLaplaceThreshold(
 
   GOOGLESQL_ASSIGN_OR_RETURN(
       double delta,
-      ::differential_privacy::LaplacePartitionSelection::CalculateDelta(
+      differential_privacy::LaplacePartitionSelection::CalculateDelta(
           epsilon, laplace_threshold, max_groups_contributed));
 
   if (std::isnan(delta) || delta < 0.0 || delta > 1.0) {

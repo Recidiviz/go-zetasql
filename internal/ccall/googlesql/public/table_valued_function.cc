@@ -357,10 +357,8 @@ void TableValuedFunction::RegisterDeserializer(
     FunctionEnums::TableValuedFunctionType type, TVFDeserializer deserializer) {
   // ABSL_CHECK validated -- This is used at initialization time only.
   ABSL_CHECK(FunctionEnums::TableValuedFunctionType_IsValid(type)) << type;
-  // Multiple CGO TUs may include the same amalgamation via export.inc; first registration wins.
-  if ((*TvfDeserializers())[type]) {
-    return;
-  }
+  // ABSL_CHECK validated -- This is used at initialization time only.
+  ABSL_CHECK(!(*TvfDeserializers())[type]) << type;
   (*TvfDeserializers())[type] = std::move(deserializer);
 }
 
@@ -823,7 +821,7 @@ absl::Status ForwardInputSchemaToOutputSchemaWithAppendedColumnTVF::
 }
 
 namespace {
-static bool tvf_deserializers_registered = []() {
+static bool module_initialization_complete = []() {
   TableValuedFunction::RegisterDeserializer(
       FunctionEnums::FIXED_OUTPUT_SCHEMA_TVF,
       FixedOutputSchemaTVF::Deserialize);

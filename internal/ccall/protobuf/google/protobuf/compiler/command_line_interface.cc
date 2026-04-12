@@ -1,9 +1,32 @@
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
+// https://developers.google.com/protocol-buffers/
 //
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file or at
-// https://developers.google.com/open-source/licenses/bsd
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//     * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//     * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Author: kenton@google.com (Kenton Varda)
 //  Based on original Protocol Buffers design by
@@ -11,23 +34,16 @@
 
 #include "google/protobuf/compiler/command_line_interface.h"
 
-#include <errno.h>
-#include <limits.h>
+#include "absl/container/btree_set.h"
+#include "absl/container/flat_hash_map.h"
+#include "google/protobuf/compiler/allowlists/allowlists.h"
+#include "google/protobuf/descriptor_legacy.h"
+
+#include "google/protobuf/stubs/platform_macros.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
-
-#include <algorithm>
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <fstream>
-#include <iostream>
-#include <memory>
-#include <ostream>
-#include <string>
-#include <utility>
-#include <vector>
 #ifdef major
 #undef major
 #endif
@@ -36,10 +52,21 @@
 #endif
 #include <fcntl.h>
 #include <sys/stat.h>
-
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
+#include <ctype.h>
+#include <errno.h>
+
+#include <fstream>
+#include <iostream>
+
+#include <limits.h>  // For PATH_MAX
+
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #if defined(__APPLE__)
 #include <mach-o/dyld.h>
@@ -47,52 +74,30 @@
 #include <sys/sysctl.h>
 #endif
 
-#include "absl/algorithm/container.h"
-#include "absl/base/attributes.h"
-#include "absl/base/log_severity.h"
-#include "absl/container/btree_map.h"
-#include "absl/container/btree_set.h"
-#include "absl/container/flat_hash_map.h"
-#include "absl/container/flat_hash_set.h"
+#include "google/protobuf/stubs/common.h"
 #include "absl/log/absl_check.h"
 #include "absl/log/absl_log.h"
-#include "absl/log/globals.h"
-#include "absl/status/status.h"
-#include "absl/status/statusor.h"
-#include "absl/strings/ascii.h"
+#include "google/protobuf/compiler/subprocess.h"
+#include "google/protobuf/compiler/plugin.pb.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/strings/match.h"
-#include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_replace.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
-#include "absl/types/span.h"
 #include "google/protobuf/compiler/code_generator.h"
 #include "google/protobuf/compiler/importer.h"
-#include "google/protobuf/compiler/plugin.pb.h"
 #include "google/protobuf/compiler/retention.h"
-#include "google/protobuf/compiler/subprocess.h"
-#include "google/protobuf/compiler/versions.h"
 #include "google/protobuf/compiler/zip_writer.h"
 #include "google/protobuf/descriptor.h"
-#include "google/protobuf/descriptor.pb.h"
-#include "google/protobuf/descriptor_database.h"
-#include "google/protobuf/descriptor_visitor.h"
 #include "google/protobuf/dynamic_message.h"
-#include "google/protobuf/feature_resolver.h"
 #include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/io/io_win32.h"
 #include "google/protobuf/io/printer.h"
 #include "google/protobuf/io/zero_copy_stream_impl.h"
-#include "google/protobuf/io/zero_copy_stream_impl_lite.h"
 #include "google/protobuf/text_format.h"
 
-
-#ifdef _WIN32
-#include "google/protobuf/io/io_win32.h"
-#endif
-
-#include "google/protobuf/stubs/platform_macros.h"
 
 // Must be included last.
 #include "google/protobuf/port_def.inc"
@@ -125,11 +130,11 @@ static const char* kDefaultDirectDependenciesViolationMsg =
     "File is imported but not declared in --direct_dependencies: %s";
 
 // Returns true if the text looks like a Windows-style absolute path, starting
-// with a drive letter.  Example:  "C:\foo".  TODO:  Share this with
+// with a drive letter.  Example:  "C:\foo".  TODO(kenton):  Share this with
 // copy in importer.cc?
 static bool IsWindowsAbsolutePath(const std::string& text) {
 #if defined(_WIN32) || defined(__CYGWIN__)
-  return text.size() >= 3 && text[1] == ':' && absl::ascii_isalpha(text[0]) &&
+  return text.size() >= 3 && text[1] == ':' && isalpha(text[0]) &&
          (text[2] == '/' || text[2] == '\\') && text.find_last_of(':') == 1;
 #else
   return false;
@@ -185,7 +190,7 @@ bool TryCreateParentDirectory(const std::string& prefix,
   std::vector<std::string> parts =
       absl::StrSplit(filename, absl::ByAnyChar("/\\"), absl::SkipEmpty());
   std::string path_so_far = prefix;
-  for (size_t i = 0; i < parts.size() - 1; ++i) {
+  for (int i = 0; i < parts.size() - 1; i++) {
     path_so_far += parts[i];
     if (mkdir(path_so_far.c_str(), 0777) != 0) {
       if (errno != EEXIST) {
@@ -247,7 +252,7 @@ bool IsInstalledProtoPath(absl::string_view path) {
 // type protos are installed.
 void AddDefaultProtoPaths(
     std::vector<std::pair<std::string, std::string>>* paths) {
-  // TODO: The code currently only checks relative paths of where
+  // TODO(xiaofeng): The code currently only checks relative paths of where
   // the protoc binary is installed. We probably should make it handle more
   // cases than that.
   std::string path_str;
@@ -293,48 +298,56 @@ std::string PluginName(absl::string_view plugin_prefix,
                       directive.substr(2, directive.size() - 6));
 }
 
-bool GetBootstrapParam(const std::string& parameter) {
-  std::vector<std::string> parts = absl::StrSplit(parameter, ',');
-  for (const auto& part : parts) {
-    if (part == "bootstrap") {
-      return true;
-    }
-  }
-  return false;
-}
 
+// Get all transitive dependencies of the given file (including the file
+// itself), adding them to the given list of FileDescriptorProtos.  The
+// protos will be ordered such that every file is listed before any file that
+// depends on it, so that you can call DescriptorPool::BuildFile() on them
+// in order.  Any files in *already_seen will not be added, and each file
+// added will be inserted into *already_seen.  If include_source_code_info is
+// true then include the source code information in the FileDescriptorProtos.
+// If include_json_name is true, populate the json_name field of
+// FieldDescriptorProto for all fields.
+struct TransitiveDependencyOptions {
+  bool include_json_name = false;
+  bool include_source_code_info = false;
+  bool retain_options = false;
+};
 
-}  // namespace
-
-void CommandLineInterface::GetTransitiveDependencies(
+void GetTransitiveDependencies(
     const FileDescriptor* file,
     absl::flat_hash_set<const FileDescriptor*>* already_seen,
     RepeatedPtrField<FileDescriptorProto>* output,
-    const TransitiveDependencyOptions& options) {
+    const TransitiveDependencyOptions& options =
+        TransitiveDependencyOptions()) {
   if (!already_seen->insert(file).second) {
     // Already saw this file.  Skip.
     return;
   }
 
   // Add all dependencies.
-  for (int i = 0; i < file->dependency_count(); ++i) {
+  for (int i = 0; i < file->dependency_count(); i++) {
     GetTransitiveDependencies(file->dependency(i), already_seen, output,
                               options);
   }
 
   // Add this file.
   FileDescriptorProto* new_descriptor = output->Add();
-  file->CopyTo(new_descriptor);
-  if (options.include_source_code_info) {
-    file->CopySourceCodeInfoTo(new_descriptor);
-  }
-  if (!options.retain_options) {
-    StripSourceRetentionOptions(*file->pool(), *new_descriptor);
+  if (options.retain_options) {
+    file->CopyTo(new_descriptor);
+    if (options.include_source_code_info) {
+      file->CopySourceCodeInfoTo(new_descriptor);
+    }
+  } else {
+    *new_descriptor =
+        StripSourceRetentionOptions(*file, options.include_source_code_info);
   }
   if (options.include_json_name) {
     file->CopyJsonNameTo(new_descriptor);
   }
 }
+
+}  // namespace
 
 // A MultiFileErrorCollector that prints errors to stderr.
 class CommandLineInterface::ErrorPrinter
@@ -342,12 +355,12 @@ class CommandLineInterface::ErrorPrinter
       public io::ErrorCollector,
       public DescriptorPool::ErrorCollector {
  public:
-  explicit ErrorPrinter(ErrorFormat format, DiskSourceTree* tree = nullptr)
+  ErrorPrinter(ErrorFormat format, DiskSourceTree* tree = nullptr)
       : format_(format),
         tree_(tree),
         found_errors_(false),
         found_warnings_(false) {}
-  ~ErrorPrinter() override = default;
+  ~ErrorPrinter() override {}
 
   // implements MultiFileErrorCollector ------------------------------
   void RecordError(absl::string_view filename, int line, int column,
@@ -438,8 +451,7 @@ class CommandLineInterface::ErrorPrinter
 // them all to disk on demand.
 class CommandLineInterface::GeneratorContextImpl : public GeneratorContext {
  public:
-  explicit GeneratorContextImpl(
-      const std::vector<const FileDescriptor*>& parsed_files);
+  GeneratorContextImpl(const std::vector<const FileDescriptor*>& parsed_files);
 
   // Write all files in the directory to disk at the given output location,
   // which must end in a '/'.
@@ -742,11 +754,10 @@ void CommandLineInterface::MemoryOutputStream::InsertShiftedInfo(
     int inner_indent = 0;
     // insertion_content is guaranteed to end in an endline. This last endline
     // has no effect on indentation.
-    for (; pos < static_cast<size_t>(source_annotation.end()) &&
-           pos < insertion_content.size() - 1;
+    for (; pos < source_annotation.end() && pos < insertion_content.size() - 1;
          ++pos) {
       if (insertion_content[pos] == '\n') {
-        if (pos >= static_cast<size_t>(source_annotation.begin())) {
+        if (pos >= source_annotation.begin()) {
           // The beginning of the annotation is at insertion_offset, but the end
           // can still move further in the target file.
           inner_indent += indent_length;
@@ -806,8 +817,7 @@ void CommandLineInterface::MemoryOutputStream::UpdateMetadata(
     // insert the new metadata from info_to_insert_. Shift all annotations
     // after the new metadata by the length of the text that was inserted
     // (including any additional indent length).
-    if (static_cast<size_t>(source_annotation.begin()) >= insertion_offset &&
-        !crossed_offset) {
+    if (source_annotation.begin() >= insertion_offset && !crossed_offset) {
       crossed_offset = true;
       InsertShiftedInfo(insertion_content, insertion_offset, indent_length,
                         new_metadata);
@@ -915,7 +925,7 @@ CommandLineInterface::MemoryOutputStream::~MemoryOutputStream() {
   }
   // Calculate how much space we need.
   int indent_size = 0;
-  for (size_t i = 0; i < data_.size(); ++i) {
+  for (int i = 0; i < data_.size(); i++) {
     if (data_[i] == '\n') indent_size += indent_.size();
   }
 
@@ -957,7 +967,7 @@ CommandLineInterface::CommandLineInterface()
     : direct_dependencies_violation_msg_(
           kDefaultDirectDependenciesViolationMsg) {}
 
-CommandLineInterface::~CommandLineInterface() = default;
+CommandLineInterface::~CommandLineInterface() {}
 
 void CommandLineInterface::RegisterGenerator(const std::string& flag_name,
                                              CodeGenerator* generator,
@@ -988,13 +998,12 @@ void CommandLineInterface::AllowPlugins(const std::string& exe_name_prefix) {
 namespace {
 
 bool ContainsProto3Optional(const Descriptor* desc) {
-  for (int i = 0; i < desc->field_count(); ++i) {
-    if (desc->field(i)->real_containing_oneof() == nullptr &&
-        desc->field(i)->containing_oneof() != nullptr) {
+  for (int i = 0; i < desc->field_count(); i++) {
+    if (FieldDescriptorLegacy(desc->field(i)).has_optional_keyword()) {
       return true;
     }
   }
-  for (int i = 0; i < desc->nested_type_count(); ++i) {
+  for (int i = 0; i < desc->nested_type_count(); i++) {
     if (ContainsProto3Optional(desc->nested_type(i))) {
       return true;
     }
@@ -1002,15 +1011,79 @@ bool ContainsProto3Optional(const Descriptor* desc) {
   return false;
 }
 
-bool ContainsProto3Optional(Edition edition, const FileDescriptor* file) {
-  if (edition == Edition::EDITION_PROTO3) {
-    for (int i = 0; i < file->message_type_count(); ++i) {
+bool ContainsProto3Optional(const FileDescriptor* file) {
+  if (FileDescriptorLegacy(file).syntax() ==
+      FileDescriptorLegacy::Syntax::SYNTAX_PROTO3) {
+    for (int i = 0; i < file->message_type_count(); i++) {
       if (ContainsProto3Optional(file->message_type(i))) {
         return true;
       }
     }
   }
   return false;
+}
+
+template <typename Visitor>
+struct VisitImpl {
+  Visitor visitor;
+  void Visit(const FieldDescriptor* descriptor) { visitor(descriptor); }
+
+  void Visit(const EnumDescriptor* descriptor) { visitor(descriptor); }
+
+  void Visit(const Descriptor* descriptor) {
+    visitor(descriptor);
+
+    for (int i = 0; i < descriptor->enum_type_count(); i++) {
+      Visit(descriptor->enum_type(i));
+    }
+
+    for (int i = 0; i < descriptor->field_count(); i++) {
+      Visit(descriptor->field(i));
+    }
+
+    for (int i = 0; i < descriptor->nested_type_count(); i++) {
+      Visit(descriptor->nested_type(i));
+    }
+
+    for (int i = 0; i < descriptor->extension_count(); i++) {
+      Visit(descriptor->extension(i));
+    }
+  }
+
+  void Visit(const std::vector<const FileDescriptor*>& descriptors) {
+    for (auto* descriptor : descriptors) {
+      visitor(descriptor);
+      for (int i = 0; i < descriptor->message_type_count(); i++) {
+        Visit(descriptor->message_type(i));
+      }
+      for (int i = 0; i < descriptor->enum_type_count(); i++) {
+        Visit(descriptor->enum_type(i));
+      }
+      for (int i = 0; i < descriptor->extension_count(); i++) {
+        Visit(descriptor->extension(i));
+      }
+    }
+  }
+};
+
+// Visit every node in the descriptors calling `visitor(node)`.
+// The visitor does not need to handle all possible node types. Types that are
+// not visitable via `visitor` will be ignored.
+// Disclaimer: this is not fully implemented yet to visit _every_ node.
+// VisitImpl might need to be updated where needs arise.
+template <typename Visitor>
+void VisitDescriptors(const std::vector<const FileDescriptor*>& descriptors,
+                      Visitor visitor) {
+  // Provide a fallback to ignore all the nodes that are not interesting to the
+  // input visitor.
+  struct VisitorImpl : Visitor {
+    explicit VisitorImpl(Visitor visitor) : Visitor(visitor) {}
+    using Visitor::operator();
+    // Honeypot to ignore all inputs that Visitor does not take.
+    void operator()(const void*) const {}
+  };
+
+  VisitImpl<VisitorImpl>{VisitorImpl(visitor)}.Visit(descriptors);
 }
 
 bool HasReservedFieldNumber(const FieldDescriptor* field) {
@@ -1026,150 +1099,7 @@ bool HasReservedFieldNumber(const FieldDescriptor* field) {
 namespace {
 std::unique_ptr<SimpleDescriptorDatabase>
 PopulateSingleSimpleDescriptorDatabase(const std::string& descriptor_set_name);
-
-// Indicates whether the field is compatible with the given target type.
-bool IsFieldCompatible(const FieldDescriptor& field,
-                       FieldOptions::OptionTargetType target_type) {
-  const RepeatedField<int>& allowed_targets = field.options().targets();
-  return allowed_targets.empty() ||
-         absl::c_linear_search(allowed_targets, target_type);
 }
-
-// Converts the OptionTargetType enum to a string suitable for use in error
-// messages.
-absl::string_view TargetTypeString(FieldOptions::OptionTargetType target_type) {
-  switch (target_type) {
-    case FieldOptions::TARGET_TYPE_FILE:
-      return "file";
-    case FieldOptions::TARGET_TYPE_EXTENSION_RANGE:
-      return "extension range";
-    case FieldOptions::TARGET_TYPE_MESSAGE:
-      return "message";
-    case FieldOptions::TARGET_TYPE_FIELD:
-      return "field";
-    case FieldOptions::TARGET_TYPE_ONEOF:
-      return "oneof";
-    case FieldOptions::TARGET_TYPE_ENUM:
-      return "enum";
-    case FieldOptions::TARGET_TYPE_ENUM_ENTRY:
-      return "enum entry";
-    case FieldOptions::TARGET_TYPE_SERVICE:
-      return "service";
-    case FieldOptions::TARGET_TYPE_METHOD:
-      return "method";
-    default:
-      return "unknown";
-  }
-}
-
-// Recursively validates that the options message (or subpiece of an options
-// message) is compatible with the given target type.
-bool ValidateTargetConstraintsRecursive(
-    const Message& m, DescriptorPool::ErrorCollector& error_collector,
-    absl::string_view file_name, FieldOptions::OptionTargetType target_type) {
-  std::vector<const FieldDescriptor*> fields;
-  const Reflection* reflection = m.GetReflection();
-  reflection->ListFields(m, &fields);
-  bool success = true;
-  for (const auto* field : fields) {
-    if (!IsFieldCompatible(*field, target_type)) {
-      success = false;
-      error_collector.RecordError(
-          file_name, "", nullptr, DescriptorPool::ErrorCollector::OPTION_NAME,
-          absl::StrCat("Option ", field->full_name(),
-                       " cannot be set on an entity of type `",
-                       TargetTypeString(target_type), "`."));
-    }
-    if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
-      if (field->is_repeated()) {
-        int field_size = reflection->FieldSize(m, field);
-        for (int i = 0; i < field_size; ++i) {
-          if (!ValidateTargetConstraintsRecursive(
-                  reflection->GetRepeatedMessage(m, field, i), error_collector,
-                  file_name, target_type)) {
-            success = false;
-          }
-        }
-      } else if (!ValidateTargetConstraintsRecursive(
-                     reflection->GetMessage(m, field), error_collector,
-                     file_name, target_type)) {
-        success = false;
-      }
-    }
-  }
-  return success;
-}
-
-// Validates that the options message is correct with respect to target
-// constraints, returning true if successful. This function converts the
-// options message to a DynamicMessage so that we have visibility into custom
-// options. We take the element name as a FunctionRef so that we do not have to
-// pay the cost of constructing it unless there is an error.
-bool ValidateTargetConstraints(const Message& options,
-                               const DescriptorPool& pool,
-                               DescriptorPool::ErrorCollector& error_collector,
-                               absl::string_view file_name,
-                               FieldOptions::OptionTargetType target_type) {
-  const Descriptor* descriptor =
-      pool.FindMessageTypeByName(options.GetTypeName());
-  if (descriptor == nullptr) {
-    // We were unable to find the options message in the descriptor pool. This
-    // implies that the proto files we are working with do not depend on
-    // descriptor.proto, in which case there are no custom options to worry
-    // about. We can therefore skip the use of DynamicMessage.
-    return ValidateTargetConstraintsRecursive(options, error_collector,
-                                              file_name, target_type);
-  } else {
-    DynamicMessageFactory factory;
-    std::unique_ptr<Message> dynamic_message(
-        factory.GetPrototype(descriptor)->New());
-    std::string serialized;
-    ABSL_CHECK(options.SerializeToString(&serialized));
-    ABSL_CHECK(dynamic_message->ParseFromString(serialized));
-    return ValidateTargetConstraintsRecursive(*dynamic_message, error_collector,
-                                              file_name, target_type);
-  }
-}
-
-// The overloaded GetTargetType() functions below allow us to map from a
-// descriptor type to the associated OptionTargetType enum.
-FieldOptions::OptionTargetType GetTargetType(const FileDescriptor*) {
-  return FieldOptions::TARGET_TYPE_FILE;
-}
-
-FieldOptions::OptionTargetType GetTargetType(
-    const Descriptor::ExtensionRange*) {
-  return FieldOptions::TARGET_TYPE_EXTENSION_RANGE;
-}
-
-FieldOptions::OptionTargetType GetTargetType(const Descriptor*) {
-  return FieldOptions::TARGET_TYPE_MESSAGE;
-}
-
-FieldOptions::OptionTargetType GetTargetType(const FieldDescriptor*) {
-  return FieldOptions::TARGET_TYPE_FIELD;
-}
-
-FieldOptions::OptionTargetType GetTargetType(const OneofDescriptor*) {
-  return FieldOptions::TARGET_TYPE_ONEOF;
-}
-
-FieldOptions::OptionTargetType GetTargetType(const EnumDescriptor*) {
-  return FieldOptions::TARGET_TYPE_ENUM;
-}
-
-FieldOptions::OptionTargetType GetTargetType(const EnumValueDescriptor*) {
-  return FieldOptions::TARGET_TYPE_ENUM_ENTRY;
-}
-
-FieldOptions::OptionTargetType GetTargetType(const ServiceDescriptor*) {
-  return FieldOptions::TARGET_TYPE_SERVICE;
-}
-
-FieldOptions::OptionTargetType GetTargetType(const MethodDescriptor*) {
-  return FieldOptions::TARGET_TYPE_METHOD;
-}
-}  // namespace
 
 int CommandLineInterface::Run(int argc, const char* const argv[]) {
   Clear();
@@ -1217,8 +1147,8 @@ int CommandLineInterface::Run(int argc, const char* const argv[]) {
          databases_per_descriptor_set) {
       raw_databases_per_descriptor_set.push_back(db.get());
     }
-    descriptor_set_in_database = std::make_unique<MergedDescriptorDatabase>(
-        raw_databases_per_descriptor_set);
+    descriptor_set_in_database.reset(
+        new MergedDescriptorDatabase(raw_databases_per_descriptor_set));
   }
 
   if (proto_path_.empty()) {
@@ -1229,41 +1159,29 @@ int CommandLineInterface::Run(int argc, const char* const argv[]) {
       return 1;
     }
 
-    error_collector = std::make_unique<ErrorPrinter>(error_format_);
-    descriptor_pool = std::make_unique<DescriptorPool>(
-        descriptor_set_in_database.get(), error_collector.get());
+    error_collector.reset(new ErrorPrinter(error_format_));
+    descriptor_pool.reset(new DescriptorPool(descriptor_set_in_database.get(),
+                                             error_collector.get()));
   } else {
-    disk_source_tree = std::make_unique<DiskSourceTree>();
+    disk_source_tree.reset(new DiskSourceTree());
     if (!InitializeDiskSourceTree(disk_source_tree.get(),
                                   descriptor_set_in_database.get())) {
       return 1;
     }
 
-    error_collector =
-        std::make_unique<ErrorPrinter>(error_format_, disk_source_tree.get());
+    error_collector.reset(
+        new ErrorPrinter(error_format_, disk_source_tree.get()));
 
-    source_tree_database = std::make_unique<SourceTreeDescriptorDatabase>(
-        disk_source_tree.get(), descriptor_set_in_database.get());
+    source_tree_database.reset(new SourceTreeDescriptorDatabase(
+        disk_source_tree.get(), descriptor_set_in_database.get()));
     source_tree_database->RecordErrorsTo(error_collector.get());
 
-    descriptor_pool = std::make_unique<DescriptorPool>(
+    descriptor_pool.reset(new DescriptorPool(
         source_tree_database.get(),
-        source_tree_database->GetValidationErrorCollector());
+        source_tree_database->GetValidationErrorCollector()));
   }
 
   descriptor_pool->EnforceWeakDependencies(true);
-
-  if (!SetupFeatureResolution(*descriptor_pool)) {
-    return EXIT_FAILURE;
-  }
-
-  // Enforce extension declarations only when compiling. We want to skip
-  // this enforcement when protoc is just being invoked to encode or decode
-  // protos.
-  if (mode_ == MODE_COMPILE
-  ) {
-    descriptor_pool->EnforceExtensionDeclarations(true);
-  }
   if (!ParseInputFiles(descriptor_pool.get(), disk_source_tree.get(),
                        &parsed_files)) {
     return 1;
@@ -1271,51 +1189,31 @@ int CommandLineInterface::Run(int argc, const char* const argv[]) {
 
   bool validation_error = false;  // Defer exiting so we log more warnings.
 
-  for (auto& file : parsed_files) {
-    google::protobuf::internal::VisitDescriptors(
-        *file, [&](const FieldDescriptor& field) {
-          if (HasReservedFieldNumber(&field)) {
-            const char* error_link = nullptr;
-            validation_error = true;
-            std::string error;
-            if (field.number() >= FieldDescriptor::kFirstReservedNumber &&
-                field.number() <= FieldDescriptor::kLastReservedNumber) {
-              error = absl::Substitute(
-                  "Field numbers $0 through $1 are reserved "
-                  "for the protocol buffer library implementation.",
-                  FieldDescriptor::kFirstReservedNumber,
-                  FieldDescriptor::kLastReservedNumber);
-            } else {
-              error = absl::Substitute(
-                  "Field number $0 is reserved for specific purposes.",
-                  field.number());
-            }
-            if (error_link) {
-              absl::StrAppend(&error, "(See ", error_link, ")");
-            }
-            static_cast<DescriptorPool::ErrorCollector*>(error_collector.get())
-                ->RecordError(field.file()->name(), field.full_name(), nullptr,
-                              DescriptorPool::ErrorCollector::NUMBER, error);
-          }
-        });
-  }
-
-  // We visit one file at a time because we need to provide the file name for
-  // error messages. Usually we can get the file name from any descriptor with
-  // something like descriptor->file()->name(), but ExtensionRange does not
-  // support this.
-  for (const google::protobuf::FileDescriptor* file : parsed_files) {
-    FileDescriptorProto proto;
-    file->CopyTo(&proto);
-    google::protobuf::internal::VisitDescriptors(
-        *file, proto, [&](const auto& descriptor, const auto& proto) {
-          if (!ValidateTargetConstraints(proto.options(), *descriptor_pool,
-                                         *error_collector, file->name(),
-                                         GetTargetType(&descriptor))) {
-            validation_error = true;
-          }
-        });
-  }
+  VisitDescriptors(parsed_files, [&](const FieldDescriptor* field) {
+    if (HasReservedFieldNumber(field)) {
+      const char* error_link = nullptr;
+      validation_error = true;
+      std::string error;
+      if (field->number() >= FieldDescriptor::kFirstReservedNumber &&
+          field->number() <= FieldDescriptor::kLastReservedNumber) {
+        error = absl::Substitute(
+            "Field numbers $0 through $1 are reserved "
+            "for the protocol buffer library implementation.",
+            FieldDescriptor::kFirstReservedNumber,
+            FieldDescriptor::kLastReservedNumber);
+      } else {
+        error = absl::Substitute(
+            "Field number $0 is reserved for specific purposes.",
+            field->number());
+      }
+      if (error_link) {
+        absl::StrAppend(&error, "(See ", error_link, ")");
+      }
+      static_cast<DescriptorPool::ErrorCollector*>(error_collector.get())
+          ->RecordError(field->file()->name(), field->full_name(), nullptr,
+                        DescriptorPool::ErrorCollector::NUMBER, error);
+    }
+  });
 
 
   if (validation_error) {
@@ -1329,7 +1227,7 @@ int CommandLineInterface::Run(int argc, const char* const argv[]) {
 
   // Generate output.
   if (mode_ == MODE_COMPILE) {
-    for (size_t i = 0; i < output_directives_.size(); ++i) {
+    for (int i = 0; i < output_directives_.size(); i++) {
       std::string output_location = output_directives_[i].output_location;
       if (!absl::EndsWith(output_location, ".zip") &&
           !absl::EndsWith(output_location, ".jar") &&
@@ -1383,12 +1281,6 @@ int CommandLineInterface::Run(int argc, const char* const argv[]) {
     }
   }
 
-  if (!edition_defaults_out_name_.empty()) {
-    if (!WriteEditionDefaults(*descriptor_pool)) {
-      return 1;
-    }
-  }
-
   if (mode_ == MODE_ENCODE || mode_ == MODE_DECODE) {
     if (codec_type_.empty()) {
       // HACK:  Define an EmptyMessage type to use for decoding.
@@ -1416,7 +1308,7 @@ int CommandLineInterface::Run(int argc, const char* const argv[]) {
   if (mode_ == MODE_PRINT) {
     switch (print_mode_) {
       case PRINT_FREE_FIELDS:
-        for (size_t i = 0; i < parsed_files.size(); ++i) {
+        for (int i = 0; i < parsed_files.size(); ++i) {
           const FileDescriptor* fd = parsed_files[i];
           for (int j = 0; j < fd->message_type_count(); ++j) {
             PrintFreeFieldNumbers(fd->message_type(j));
@@ -1440,7 +1332,7 @@ bool CommandLineInterface::InitializeDiskSourceTree(
   AddDefaultProtoPaths(&proto_path_);
 
   // Set up the source tree.
-  for (size_t i = 0; i < proto_path_.size(); ++i) {
+  for (int i = 0; i < proto_path_.size(); i++) {
     source_tree->MapPath(proto_path_[i].first, proto_path_[i].second);
   }
 
@@ -1520,62 +1412,6 @@ bool CommandLineInterface::VerifyInputFilesInDescriptors(
   return true;
 }
 
-bool CommandLineInterface::SetupFeatureResolution(DescriptorPool& pool) {
-  // Calculate the feature defaults for each built-in generator.  All generators
-  // that support editions must agree on the supported edition range.
-  std::vector<const FieldDescriptor*> feature_extensions;
-  Edition minimum_edition = MinimumAllowedEdition();
-  // Override maximum_edition if experimental_editions is true.
-  Edition maximum_edition =
-      !experimental_editions_ ? MaximumAllowedEdition() : Edition::EDITION_MAX;
-  for (const auto& output : output_directives_) {
-    if (output.generator == nullptr) continue;
-    if (!experimental_editions_ &&
-        (output.generator->GetSupportedFeatures() &
-         CodeGenerator::FEATURE_SUPPORTS_EDITIONS) != 0) {
-      // Only validate min/max edition on generators that advertise editions
-      // support.  Generators still under development will always use the
-      // correct values.
-      if (output.generator->GetMinimumEdition() != minimum_edition) {
-        ABSL_LOG(ERROR) << "Built-in generator " << output.name
-                        << " specifies a minimum edition "
-                        << output.generator->GetMinimumEdition()
-                        << " which is not the protoc minimum "
-                        << minimum_edition << ".";
-        return false;
-      }
-      if (output.generator->GetMaximumEdition() != maximum_edition) {
-        ABSL_LOG(ERROR) << "Built-in generator " << output.name
-                        << " specifies a maximum edition "
-                        << output.generator->GetMaximumEdition()
-                        << " which is not the protoc maximum "
-                        << maximum_edition << ".";
-        return false;
-      }
-    }
-    for (const FieldDescriptor* ext :
-         output.generator->GetFeatureExtensions()) {
-      if (ext == nullptr) {
-        ABSL_LOG(ERROR) << "Built-in generator " << output.name
-                        << " specifies an unknown feature extension.";
-        return false;
-      }
-      feature_extensions.push_back(ext);
-    }
-  }
-  absl::StatusOr<FeatureSetDefaults> defaults =
-      FeatureResolver::CompileDefaults(FeatureSet::descriptor(),
-                                       feature_extensions, minimum_edition,
-                                       maximum_edition);
-  if (!defaults.ok()) {
-    ABSL_LOG(ERROR) << defaults.status();
-    return false;
-  }
-  absl::Status status = pool.SetFeatureSetDefaults(std::move(defaults).value());
-  ABSL_CHECK(status.ok()) << status.message();
-  return true;
-}
-
 bool CommandLineInterface::ParseInputFiles(
     DescriptorPool* descriptor_pool, DiskSourceTree* source_tree,
     std::vector<const FileDescriptor*>* parsed_files) {
@@ -1596,7 +1432,7 @@ bool CommandLineInterface::ParseInputFiles(
     // exclusively reading from descriptor sets, we can eliminate this failure
     // condition.
     for (const auto& input_file : input_files_) {
-      descriptor_pool->AddDirectInputFile(input_file);
+      descriptor_pool->AddUnusedImportTrackFile(input_file);
     }
   }
 
@@ -1612,6 +1448,7 @@ bool CommandLineInterface::ParseInputFiles(
     }
     parsed_files->push_back(parsed_file);
 
+
     // Enforce --disallow_services.
     if (disallow_services_ && parsed_file->service_count() > 0) {
       std::cerr << parsed_file->name()
@@ -1626,7 +1463,7 @@ bool CommandLineInterface::ParseInputFiles(
     // Enforce --direct_dependencies
     if (direct_dependencies_explicitly_set_) {
       bool indirect_imports = false;
-      for (int i = 0; i < parsed_file->dependency_count(); ++i) {
+      for (int i = 0; i < parsed_file->dependency_count(); i++) {
         if (direct_dependencies_.find(parsed_file->dependency(i)->name()) ==
             direct_dependencies_.end()) {
           indirect_imports = true;
@@ -1643,7 +1480,7 @@ bool CommandLineInterface::ParseInputFiles(
       }
     }
   }
-  descriptor_pool->ClearDirectInputFiles();
+  descriptor_pool->ClearUnusedImportTrackFiles();
   return result;
 }
 
@@ -1661,10 +1498,6 @@ void CommandLineInterface::Clear() {
   descriptor_set_out_name_.clear();
   dependency_out_name_.clear();
 
-  experimental_editions_ = false;
-  edition_defaults_out_name_.clear();
-  edition_defaults_minimum_ = EDITION_UNKNOWN;
-  edition_defaults_maximum_ = EDITION_UNKNOWN;
 
   mode_ = MODE_COMPILE;
   print_mode_ = PRINT_NONE;
@@ -1764,23 +1597,10 @@ bool CommandLineInterface::MakeInputsBeProtoPathRelative(
 
 
 bool CommandLineInterface::ExpandArgumentFile(
-    const char* file, std::vector<std::string>* arguments) {
-// On windows to force ifstream to handle proper utr-8, we need to convert to
-// proper supported utf8 wstring. If we dont then the file can't be opened.
-#ifdef _MSC_VER
-  // Convert the file name to wide chars.
-  int size = MultiByteToWideChar(CP_UTF8, 0, file, strlen(file), nullptr, 0);
-  std::wstring file_str;
-  file_str.resize(size);
-  MultiByteToWideChar(CP_UTF8, 0, file, strlen(file), &file_str[0],
-                      file_str.size());
-#else
-  std::string file_str(file);
-#endif
-
+    const std::string& file, std::vector<std::string>* arguments) {
   // The argument file is searched in the working directory only. We don't
   // use the proto import path here.
-  std::ifstream file_stream(file_str.c_str());
+  std::ifstream file_stream(file.c_str());
   if (!file_stream.is_open()) {
     return false;
   }
@@ -1816,7 +1636,7 @@ CommandLineInterface::ParseArgumentStatus CommandLineInterface::ParseArguments(
   }
 
   // Iterate through all arguments and parse them.
-  for (size_t i = 0; i < arguments.size(); ++i) {
+  for (int i = 0; i < arguments.size(); ++i) {
     std::string name, value;
 
     if (ParseArgument(arguments[i].c_str(), &name, &value)) {
@@ -1847,25 +1667,14 @@ CommandLineInterface::ParseArgumentStatus CommandLineInterface::ParseArguments(
     bool foundImplicitPlugin = false;
     for (const auto& d : output_directives_) {
       if (d.generator == nullptr) {
-        // Infers the plugin name from the plugin_prefix_ and output directive.
         std::string plugin_name = PluginName(plugin_prefix_, d.name);
-
-        // Since plugin_parameters_ is also inferred from --xxx_opt, we check
-        // that it actually matches the plugin name inferred from --xxx_out.
         if (plugin_name == kv.first) {
           foundImplicitPlugin = true;
           break;
         }
       }
     }
-
-    // This is a special case for cc_plugin invocations that are only with
-    // "--cpp_opt" but no "--cpp_out". In this case, "--cpp_opt" only serves
-    // as passing the arguments to cc_plugins, and no C++ generator is required
-    // to be present in the invocation. We didn't have to skip for C++ generator
-    // previously because the C++ generator was built-in.
-    if (!foundImplicitPlugin &&
-        kv.first != absl::StrCat(plugin_prefix_, "gen-cpp")) {
+    if (!foundImplicitPlugin) {
       std::cerr << "Unknown flag: "
                 // strip prefix + "gen-" and add back "_opt"
                 << "--" << kv.first.substr(plugin_prefix_.size() + 4) << "_opt"
@@ -1906,7 +1715,7 @@ CommandLineInterface::ParseArgumentStatus CommandLineInterface::ParseArguments(
         break;  // only for --decode_raw
       }
       // --decode (not raw) is handled the same way as the rest of the modes.
-      ABSL_FALLTHROUGH_INTENDED;
+      PROTOBUF_FALLTHROUGH_INTENDED;
     case MODE_ENCODE:
     case MODE_PRINT:
       missing_proto_definitions =
@@ -1920,7 +1729,7 @@ CommandLineInterface::ParseArgumentStatus CommandLineInterface::ParseArguments(
     return PARSE_ARGUMENT_FAIL;
   }
   if (mode_ == MODE_COMPILE && output_directives_.empty() &&
-      descriptor_set_out_name_.empty() && edition_defaults_out_name_.empty()) {
+      descriptor_set_out_name_.empty()) {
     std::cerr << "Missing output directives." << std::endl;
     return PARSE_ARGUMENT_FAIL;
   }
@@ -2007,7 +1816,6 @@ bool CommandLineInterface::ParseArgument(const char* arg, std::string* name,
       *name == "--include_imports" || *name == "--include_source_info" ||
       *name == "--retain_options" || *name == "--version" ||
       *name == "--decode_raw" ||
-      *name == "--experimental_editions" ||
       *name == "--print_free_field_numbers" ||
       *name == "--experimental_allow_proto3_optional" ||
       *name == "--deterministic_output" || *name == "--fatal_warnings") {
@@ -2072,7 +1880,7 @@ CommandLineInterface::InterpretArgument(const std::string& name,
         value, absl::ByAnyChar(CommandLineInterface::kPathSeparator),
         absl::SkipEmpty());
 
-    for (size_t i = 0; i < parts.size(); ++i) {
+    for (int i = 0; i < parts.size(); i++) {
       std::string virtual_path;
       std::string disk_path;
 
@@ -2124,7 +1932,7 @@ CommandLineInterface::InterpretArgument(const std::string& name,
 
     direct_dependencies_explicitly_set_ = true;
     std::vector<std::string> direct =
-        absl::StrSplit(value, ':', absl::SkipEmpty());
+        absl::StrSplit(value, ":", absl::SkipEmpty());
     ABSL_DCHECK(direct_dependencies_.empty());
     direct_dependencies_.insert(direct.begin(), direct.end());
 
@@ -2217,9 +2025,7 @@ CommandLineInterface::InterpretArgument(const std::string& name,
     if (!version_info_.empty()) {
       std::cout << version_info_ << std::endl;
     }
-    std::cout << "libprotoc "
-              << ::google::protobuf::internal::ProtocVersionString(
-                     PROTOBUF_VERSION)
+    std::cout << "libprotoc " << internal::ProtocVersionString(PROTOBUF_VERSION)
               << PROTOBUF_VERSION_SUFFIX << std::endl;
     return PARSE_ARGUMENT_DONE_AND_EXIT;  // Exit without running compiler.
 
@@ -2336,49 +2142,6 @@ CommandLineInterface::InterpretArgument(const std::string& name,
 #else
     ::setenv(io::Printer::kProtocCodegenTrace.data(), "yes", 0);
 #endif
-  } else if (name == "--experimental_editions") {
-    // If you're reading this, you're probably wondering what
-    // --experimental_editions is for and thinking of turning it on. This is an
-    // experimental, undocumented, unsupported flag. Enable it at your own risk
-    // (or, just don't!).
-    experimental_editions_ = true;
-  } else if (name == "--edition_defaults_out") {
-    if (!edition_defaults_out_name_.empty()) {
-      std::cerr << name << " may only be passed once." << std::endl;
-      return PARSE_ARGUMENT_FAIL;
-    }
-    if (value.empty()) {
-      std::cerr << name << " requires a non-empty value." << std::endl;
-      return PARSE_ARGUMENT_FAIL;
-    }
-    if (mode_ != MODE_COMPILE) {
-      std::cerr
-          << "Cannot use --encode or --decode and generate defaults at the "
-             "same time."
-          << std::endl;
-      return PARSE_ARGUMENT_FAIL;
-    }
-    edition_defaults_out_name_ = value;
-  } else if (name == "--edition_defaults_minimum") {
-    if (edition_defaults_minimum_ != EDITION_UNKNOWN) {
-      std::cerr << name << " may only be passed once." << std::endl;
-      return PARSE_ARGUMENT_FAIL;
-    }
-    if (!Edition_Parse(absl::StrCat("EDITION_", value),
-                       &edition_defaults_minimum_)) {
-      std::cerr << name << " unknown edition \"" << value << "\"." << std::endl;
-      return PARSE_ARGUMENT_FAIL;
-    }
-  } else if (name == "--edition_defaults_maximum") {
-    if (edition_defaults_maximum_ != EDITION_UNKNOWN) {
-      std::cerr << name << " may only be passed once." << std::endl;
-      return PARSE_ARGUMENT_FAIL;
-    }
-    if (!Edition_Parse(absl::StrCat("EDITION_", value),
-                       &edition_defaults_maximum_)) {
-      std::cerr << name << " unknown edition \"" << value << "\"." << std::endl;
-      return PARSE_ARGUMENT_FAIL;
-    }
   } else {
     // Some other flag.  Look it up in the generators list.
     const GeneratorInfo* generator_info = FindGeneratorByFlag(name);
@@ -2556,8 +2319,7 @@ bool CommandLineInterface::EnforceProto3OptionalSupport(
       supported_features & CodeGenerator::FEATURE_PROTO3_OPTIONAL;
   if (!supports_proto3_optional) {
     for (const auto fd : parsed_files) {
-      if (ContainsProto3Optional(
-              ::google::protobuf::internal::InternalFeatureHelper::GetEdition(*fd), fd)) {
+      if (ContainsProto3Optional(fd)) {
         std::cerr << fd->name()
                   << ": is a proto3 file that contains optional fields, but "
                      "code generator "
@@ -2568,50 +2330,6 @@ bool CommandLineInterface::EnforceProto3OptionalSupport(
                   << std::endl;
         return false;
       }
-    }
-  }
-  return true;
-}
-
-bool CommandLineInterface::EnforceEditionsSupport(
-    const std::string& codegen_name, uint64_t supported_features,
-    Edition minimum_edition, Edition maximum_edition,
-    const std::vector<const FileDescriptor*>& parsed_files) const {
-  if (experimental_editions_) {
-    // The user has explicitly specified the experimental flag.
-    return true;
-  }
-  for (const auto* fd : parsed_files) {
-    Edition edition =
-        ::google::protobuf::internal::InternalFeatureHelper::GetEdition(*fd);
-    if (edition < Edition::EDITION_2023 || CanSkipEditionCheck(fd->name())) {
-      // Legacy proto2/proto3 or exempted files don't need any checks.
-      continue;
-    }
-
-    if ((supported_features & CodeGenerator::FEATURE_SUPPORTS_EDITIONS) == 0) {
-      std::cerr << absl::Substitute(
-          "$0: is an editions file, but code generator $1 hasn't been "
-          "updated to support editions yet.  Please ask the owner of this code "
-          "generator to add support or switch back to proto2/proto3.\n\nSee "
-          "https://protobuf.dev/editions/overview/ for more information.",
-          fd->name(), codegen_name);
-      return false;
-    }
-    if (edition < minimum_edition) {
-      std::cerr << absl::Substitute(
-          "$0: is a file using edition $2, which isn't supported by code "
-          "generator $1.  Please upgrade your file to at least edition $3.",
-          fd->name(), codegen_name, edition, minimum_edition);
-      return false;
-    }
-    if (edition > maximum_edition) {
-      std::cerr << absl::Substitute(
-          "$0: is a file using edition $2, which isn't supported by code "
-          "generator $1.  Please ask the owner of this code generator to add "
-          "support or switch back to a maximum of edition $3.",
-          fd->name(), codegen_name, edition, maximum_edition);
-      return false;
     }
   }
   return true;
@@ -2657,14 +2375,6 @@ bool CommandLineInterface::GenerateOutput(
       return false;
     }
 
-    if (!EnforceEditionsSupport(
-            output_directive.name,
-            output_directive.generator->GetSupportedFeatures(),
-            output_directive.generator->GetMinimumEdition(),
-            output_directive.generator->GetMaximumEdition(), parsed_files)) {
-      return false;
-    }
-
     if (!output_directive.generator->GenerateAll(parsed_files, parameters,
                                                  generator_context, &error)) {
       // Generator returned an error.
@@ -2683,7 +2393,7 @@ bool CommandLineInterface::GenerateDependencyManifestFile(
   FileDescriptorSet file_set;
 
   absl::flat_hash_set<const FileDescriptor*> already_seen;
-  for (size_t i = 0; i < parsed_files.size(); ++i) {
+  for (int i = 0; i < parsed_files.size(); i++) {
     GetTransitiveDependencies(parsed_files[i], &already_seen,
                               file_set.mutable_file());
   }
@@ -2694,7 +2404,7 @@ bool CommandLineInterface::GenerateDependencyManifestFile(
     GeneratorContextImpl* directory = pair.second.get();
     std::vector<std::string> relative_output_filenames;
     directory->GetOutputFilenames(&relative_output_filenames);
-    for (size_t i = 0; i < relative_output_filenames.size(); ++i) {
+    for (int i = 0; i < relative_output_filenames.size(); i++) {
       std::string output_filename = location + relative_output_filenames[i];
       if (output_filename.compare(0, 2, "./") == 0) {
         output_filename = output_filename.substr(2);
@@ -2707,11 +2417,6 @@ bool CommandLineInterface::GenerateDependencyManifestFile(
     output_filenames.push_back(descriptor_set_out_name_);
   }
 
-  if (!edition_defaults_out_name_.empty()) {
-    output_filenames.push_back(edition_defaults_out_name_);
-  }
-
-  // Create the depfile, even if it will be empty.
   int fd;
   do {
     fd = open(dependency_out_name_.c_str(),
@@ -2723,34 +2428,30 @@ bool CommandLineInterface::GenerateDependencyManifestFile(
     return false;
   }
 
-  // Only write to the depfile if there is at least one output_filename.
-  // Otherwise, the depfile will be malformed.
-  if (!output_filenames.empty()) {
-    io::FileOutputStream out(fd);
-    io::Printer printer(&out, '$');
+  io::FileOutputStream out(fd);
+  io::Printer printer(&out, '$');
 
-    for (size_t i = 0; i < output_filenames.size(); ++i) {
-      printer.Print(output_filenames[i]);
-      if (i == output_filenames.size() - 1) {
-        printer.Print(":");
-      } else {
-        printer.Print(" \\\n");
-      }
+  for (int i = 0; i < output_filenames.size(); i++) {
+    printer.Print(output_filenames[i]);
+    if (i == output_filenames.size() - 1) {
+      printer.Print(":");
+    } else {
+      printer.Print(" \\\n");
     }
+  }
 
-    for (int i = 0; i < file_set.file_size(); ++i) {
-      const FileDescriptorProto& file = file_set.file(i);
-      const std::string& virtual_file = file.name();
-      std::string disk_file;
-      if (source_tree &&
-          source_tree->VirtualFileToDiskFile(virtual_file, &disk_file)) {
-        printer.Print(" $disk_file$", "disk_file", disk_file);
-        if (i < file_set.file_size() - 1) printer.Print("\\\n");
-      } else {
-        std::cerr << "Unable to identify path for file " << virtual_file
-                  << std::endl;
-        return false;
-      }
+  for (int i = 0; i < file_set.file_size(); i++) {
+    const FileDescriptorProto& file = file_set.file(i);
+    const std::string& virtual_file = file.name();
+    std::string disk_file;
+    if (source_tree &&
+        source_tree->VirtualFileToDiskFile(virtual_file, &disk_file)) {
+      printer.Print(" $disk_file$", "disk_file", disk_file);
+      if (i < file_set.file_size() - 1) printer.Print("\\\n");
+    } else {
+      std::cerr << "Unable to identify path for file " << virtual_file
+                << std::endl;
+      return false;
     }
   }
 
@@ -2765,7 +2466,6 @@ bool CommandLineInterface::GeneratePluginOutput(
   CodeGeneratorResponse response;
   std::string processed_parameter = parameter;
 
-  bool bootstrap = GetBootstrapParam(processed_parameter);
 
   // Build the request.
   if (!processed_parameter.empty()) {
@@ -2774,39 +2474,13 @@ bool CommandLineInterface::GeneratePluginOutput(
 
 
   absl::flat_hash_set<const FileDescriptor*> already_seen;
-  for (const FileDescriptor* file : parsed_files) {
-    request.add_file_to_generate(file->name());
-    GetTransitiveDependencies(file, &already_seen, request.mutable_proto_file(),
+  for (int i = 0; i < parsed_files.size(); i++) {
+    request.add_file_to_generate(parsed_files[i]->name());
+    GetTransitiveDependencies(parsed_files[i], &already_seen,
+                              request.mutable_proto_file(),
                               {/*.include_json_name =*/true,
                                /*.include_source_code_info =*/true,
                                /*.retain_options =*/true});
-  }
-
-  // Populate source_file_descriptors and remove source-retention options from
-  // proto_file.
-  ABSL_CHECK(!parsed_files.empty());
-  const DescriptorPool* pool = parsed_files[0]->pool();
-  absl::flat_hash_set<std::string> files_to_generate(input_files_.begin(),
-                                                     input_files_.end());
-  static const auto builtin_plugins = new absl::flat_hash_set<std::string>(
-      {"protoc-gen-cpp", "protoc-gen-java", "protoc-gen-mutable_java",
-       "protoc-gen-python"});
-  for (FileDescriptorProto& file_proto : *request.mutable_proto_file()) {
-    if (files_to_generate.contains(file_proto.name())) {
-      const FileDescriptor* file = pool->FindFileByName(file_proto.name());
-      *request.add_source_file_descriptors() = std::move(file_proto);
-      file->CopyTo(&file_proto);
-      // Don't populate source code info or json_name for bootstrap protos.
-      if (!bootstrap) {
-        file->CopySourceCodeInfoTo(&file_proto);
-
-        // The built-in code generators didn't use the json names.
-        if (!builtin_plugins->contains(plugin_name)) {
-          file->CopyJsonNameTo(&file_proto);
-        }
-      }
-      StripSourceRetentionOptions(*file->pool(), file_proto);
-    }
   }
 
   google::protobuf::compiler::Version* version =
@@ -2834,7 +2508,7 @@ bool CommandLineInterface::GeneratePluginOutput(
   // Write the files.  We do this even if there was a generator error in order
   // to match the behavior of a compiled-in generator.
   std::unique_ptr<io::ZeroCopyOutputStream> current_output;
-  for (int i = 0; i < response.file_size(); ++i) {
+  for (int i = 0; i < response.file_size(); i++) {
     const CodeGeneratorResponse::File& output_file = response.file(i);
 
     if (!output_file.insertion_point().empty()) {
@@ -2868,24 +2542,16 @@ bool CommandLineInterface::GeneratePluginOutput(
   }
 
   // Check for errors.
-  bool success = true;
-  if (!EnforceProto3OptionalSupport(plugin_name, response.supported_features(),
-                                    parsed_files)) {
-    success = false;
-  }
-  if (!EnforceEditionsSupport(plugin_name, response.supported_features(),
-                              static_cast<Edition>(response.minimum_edition()),
-                              static_cast<Edition>(response.maximum_edition()),
-                              parsed_files)) {
-    success = false;
-  }
   if (!response.error().empty()) {
     // Generator returned an error.
     *error = response.error();
-    success = false;
+    return false;
+  } else if (!EnforceProto3OptionalSupport(
+                 plugin_name, response.supported_features(), parsed_files)) {
+    return false;
   }
 
-  return success;
+  return true;
 }
 
 bool CommandLineInterface::EncodeOrDecode(const DescriptorPool* pool) {
@@ -2965,7 +2631,7 @@ bool CommandLineInterface::WriteDescriptorSet(
     // in GetTransitiveDependencies.
     absl::flat_hash_set<const FileDescriptor*> to_output;
     to_output.insert(parsed_files.begin(), parsed_files.end());
-    for (size_t i = 0; i < parsed_files.size(); ++i) {
+    for (int i = 0; i < parsed_files.size(); i++) {
       const FileDescriptor* file = parsed_files[i];
       for (int j = 0; j < file->dependency_count(); j++) {
         const FileDescriptor* dependency = file->dependency(j);
@@ -2980,7 +2646,7 @@ bool CommandLineInterface::WriteDescriptorSet(
   options.include_json_name = true;
   options.include_source_code_info = source_info_in_descriptor_set_;
   options.retain_options = retain_options_in_descriptor_set_;
-  for (size_t i = 0; i < parsed_files.size(); ++i) {
+  for (int i = 0; i < parsed_files.size(); i++) {
     GetTransitiveDependencies(parsed_files[i], &already_seen,
                               file_set.mutable_file(), options);
   }
@@ -3013,76 +2679,6 @@ bool CommandLineInterface::WriteDescriptorSet(
 
   if (!out.Close()) {
     std::cerr << descriptor_set_out_name_ << ": " << strerror(out.GetErrno())
-              << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
-bool CommandLineInterface::WriteEditionDefaults(const DescriptorPool& pool) {
-  const Descriptor* feature_set;
-  if (opensource_runtime_) {
-    feature_set = pool.FindMessageTypeByName("google.protobuf.FeatureSet");
-  } else {
-    feature_set = pool.FindMessageTypeByName("google.protobuf.FeatureSet");
-  }
-  if (feature_set == nullptr) {
-    std::cerr << edition_defaults_out_name_
-              << ": Could not find FeatureSet in descriptor pool.  Please make "
-                 "sure descriptor.proto is in your import path"
-              << std::endl;
-    return false;
-  }
-  std::vector<const FieldDescriptor*> extensions;
-  pool.FindAllExtensions(feature_set, &extensions);
-
-  Edition minimum = MinimumAllowedEdition();
-  if (edition_defaults_minimum_ != EDITION_UNKNOWN) {
-    minimum = edition_defaults_minimum_;
-  }
-  Edition maximum = MaximumAllowedEdition();
-  if (edition_defaults_maximum_ != EDITION_UNKNOWN) {
-    maximum = edition_defaults_maximum_;
-  }
-
-  absl::StatusOr<FeatureSetDefaults> defaults =
-      FeatureResolver::CompileDefaults(feature_set, extensions, minimum,
-                                       maximum);
-  if (!defaults.ok()) {
-    std::cerr << edition_defaults_out_name_ << ": "
-              << defaults.status().message() << std::endl;
-    return false;
-  }
-
-  int fd;
-  do {
-    fd = open(edition_defaults_out_name_.c_str(),
-              O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
-  } while (fd < 0 && errno == EINTR);
-
-  if (fd < 0) {
-    perror(edition_defaults_out_name_.c_str());
-    return false;
-  }
-
-  io::FileOutputStream out(fd);
-
-  {
-    io::CodedOutputStream coded_out(&out);
-    // Determinism is useful here because build outputs are sometimes checked
-    // into version control.
-    coded_out.SetSerializationDeterministic(true);
-    if (!defaults->SerializeToCodedStream(&coded_out)) {
-      std::cerr << edition_defaults_out_name_ << ": "
-                << strerror(out.GetErrno()) << std::endl;
-      out.Close();
-      return false;
-    }
-  }
-
-  if (!out.Close()) {
-    std::cerr << edition_defaults_out_name_ << ": " << strerror(out.GetErrno())
               << std::endl;
     return false;
   }
@@ -3146,8 +2742,8 @@ void GatherOccupiedFieldRanges(
     ranges->insert(FieldRange(fd->number(), fd->number() + 1));
   }
   for (int i = 0; i < descriptor->extension_range_count(); ++i) {
-    ranges->insert(FieldRange(descriptor->extension_range(i)->start_number(),
-                              descriptor->extension_range(i)->end_number()));
+    ranges->insert(FieldRange(descriptor->extension_range(i)->start,
+                              descriptor->extension_range(i)->end));
   }
   for (int i = 0; i < descriptor->reserved_range_count(); ++i) {
     ranges->insert(FieldRange(descriptor->reserved_range(i)->start,
@@ -3164,10 +2760,10 @@ void GatherOccupiedFieldRanges(
 // Utility function for PrintFreeFieldNumbers.
 // Actually prints the formatted free field numbers for given message name and
 // occupied ranges.
-void FormatFreeFieldNumbers(absl::string_view name,
+void FormatFreeFieldNumbers(const std::string& name,
                             const absl::btree_set<FieldRange>& ranges) {
   std::string output;
-  absl::StrAppendFormat(&output, "%-35s free:", name);
+  absl::StrAppendFormat(&output, "%-35s free:", name.c_str());
   int next_free_number = 1;
   for (const auto& range : ranges) {
     // This happens when groups re-use parent field numbers, in which
@@ -3199,7 +2795,7 @@ void CommandLineInterface::PrintFreeFieldNumbers(const Descriptor* descriptor) {
   std::vector<const Descriptor*> nested_messages;
   GatherOccupiedFieldRanges(descriptor, &ranges, &nested_messages);
 
-  for (size_t i = 0; i < nested_messages.size(); ++i) {
+  for (int i = 0; i < nested_messages.size(); ++i) {
     PrintFreeFieldNumbers(nested_messages[i]);
   }
   FormatFreeFieldNumbers(descriptor->full_name(), ranges);
@@ -3209,5 +2805,3 @@ void CommandLineInterface::PrintFreeFieldNumbers(const Descriptor* descriptor) {
 }  // namespace compiler
 }  // namespace protobuf
 }  // namespace google
-
-#include "google/protobuf/port_undef.inc"

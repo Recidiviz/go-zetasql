@@ -23,13 +23,6 @@ package(
     default_visibility = ["//googlesql/base:googlesql_implementation"],
 )
 
-# Header-only shim (rewriter_interface.h includes public/rewriter_interface.h). CGO link-only bind.
-cc_library(
-    name = "rewriter_interface",
-    hdrs = ["rewriter_interface.h"],
-    deps = ["//googlesql/public:rewriter_interface"],
-)
-
 cc_library(
     name = "rewriter_relevance_checker",
     srcs = ["rewriter_relevance_checker.cc"],
@@ -189,105 +182,6 @@ cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings:str_format",
-    ],
-)
-
-cc_library(
-    name = "array_functions_rewriter",
-    srcs = ["array_functions_rewriter.cc"],
-    hdrs = ["array_functions_rewriter.h"],
-    deps = [
-        "//googlesql/analyzer:substitute",
-        "//googlesql/base:ret_check",
-        "//googlesql/base:status",
-        "//googlesql/public:analyzer_options",
-        "//googlesql/public:analyzer_output_properties",
-        "//googlesql/public:builtin_function_cc_proto",
-        "//googlesql/public:catalog",
-        "//googlesql/public:function",
-        "//googlesql/public:options_cc_proto",
-        "//googlesql/public:rewriter_interface",
-        "//googlesql/public/types",
-        "//googlesql/resolved_ast",
-        "//googlesql/resolved_ast:resolved_ast_deep_copy_visitor",
-        "//googlesql/resolved_ast:rewrite_utils",
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/strings:str_format",
-    ],
-)
-
-cc_library(
-    name = "set_operation_corresponding_rewriter",
-    srcs = ["set_operation_corresponding_rewriter.cc"],
-    hdrs = ["set_operation_corresponding_rewriter.h"],
-    deps = [
-        "//googlesql/base:ret_check",
-        "//googlesql/base:status",
-        "//googlesql/public:rewriter_interface",
-        "//googlesql/resolved_ast",
-        "//googlesql/resolved_ast:resolved_ast_builder",
-        "//googlesql/resolved_ast:resolved_ast_rewrite_visitor",
-        "//googlesql/resolved_ast:rewrite_utils",
-        "@com_google_absl//absl/status:statusor",
-    ],
-)
-
-cc_library(
-    name = "unary_function_rewriter",
-    srcs = ["unary_function_rewriter.cc"],
-    hdrs = ["unary_function_rewriter.h"],
-    deps = [
-        "//googlesql/analyzer:substitute",
-        "//googlesql/base:ret_check",
-        "//googlesql/base:status",
-        "//googlesql/public:analyzer_options",
-        "//googlesql/public:analyzer_output_properties",
-        "//googlesql/public:builtin_function_cc_proto",
-        "//googlesql/public:catalog",
-        "//googlesql/public:function",
-        "//googlesql/public:options_cc_proto",
-        "//googlesql/public:rewriter_interface",
-        "//googlesql/public/types",
-        "//googlesql/resolved_ast",
-        "//googlesql/resolved_ast:resolved_ast_deep_copy_visitor",
-        "//googlesql/resolved_ast:resolved_node",
-        "//googlesql/resolved_ast:rewrite_utils",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/strings:substitute",
-        "@com_google_absl//absl/types:span",
-    ],
-)
-
-cc_library(
-    name = "ternary_function_rewriter",
-    srcs = ["ternary_function_rewriter.cc"],
-    hdrs = ["ternary_function_rewriter.h"],
-    deps = [
-        "//googlesql/analyzer:substitute",
-        "//googlesql/base:ret_check",
-        "//googlesql/base:status",
-        "//googlesql/public:analyzer_options",
-        "//googlesql/public:analyzer_output_properties",
-        "//googlesql/public:builtin_function_cc_proto",
-        "//googlesql/public:catalog",
-        "//googlesql/public:function",
-        "//googlesql/public:options_cc_proto",
-        "//googlesql/public:rewriter_interface",
-        "//googlesql/public/types",
-        "//googlesql/resolved_ast",
-        "//googlesql/resolved_ast:resolved_ast_deep_copy_visitor",
-        "//googlesql/resolved_ast:resolved_node",
-        "//googlesql/resolved_ast:rewrite_utils",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/strings:substitute",
-        "@com_google_absl//absl/types:span",
     ],
 )
 

@@ -60,7 +60,7 @@ static void RegisterCatalogCallbacks() {
 }
 
 namespace {
-static bool row_type_catalog_callbacks_initialized = []() {
+static bool module_initialization_complete = []() {
   RegisterCatalogCallbacks();
   return true;
 } ();

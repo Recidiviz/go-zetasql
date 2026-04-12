@@ -68,8 +68,7 @@
 namespace googlesql {
 class AnalyzerOptions;
 
-static FunctionSignatureOptions SetRewriterBuiltinInternal3(
-    ResolvedASTRewrite rewriter) {
+static FunctionSignatureOptions SetRewriter(ResolvedASTRewrite rewriter) {
   return FunctionSignatureOptions().set_rewrite_options(
       FunctionSignatureRewriteOptions().set_rewriter(rewriter));
 }
@@ -841,7 +840,7 @@ void GetErrorHandlingFunctions(TypeFactory* type_factory,
                  {{ARG_TYPE_ANY_1,
                    {ARG_TYPE_ANY_1},
                    FN_NULLIFERROR,
-                   SetRewriterBuiltinInternal3(REWRITE_NULLIFERROR_FUNCTION)}},
+                   SetRewriter(REWRITE_NULLIFERROR_FUNCTION)}},
                  FunctionOptions().set_may_suppress_side_effects(true));
 }
 
@@ -3714,12 +3713,12 @@ void GetTypeOfFunction(TypeFactory* type_factory,
         {{type_factory->get_string(),
           {ARG_TYPE_ARBITRARY},
           FN_TYPEOF,
-          SetRewriterBuiltinInternal3(REWRITE_TYPEOF_FUNCTION).set_propagates_collation(false)},
+          SetRewriter(REWRITE_TYPEOF_FUNCTION).set_propagates_collation(false)},
          // TODO: Remove these signatures.
          {type_factory->get_string(),
           {ARG_TYPE_GRAPH_ELEMENT},
           FN_TYPEOF_GRAPH_ELEMENT,
-          SetRewriterBuiltinInternal3(REWRITE_TYPEOF_FUNCTION)
+          SetRewriter(REWRITE_TYPEOF_FUNCTION)
               .set_propagates_collation(false)
               .set_is_hidden(true)
               .AddRequiredLanguageFeature(FEATURE_SQL_GRAPH)}});

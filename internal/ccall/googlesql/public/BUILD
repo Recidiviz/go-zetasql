@@ -592,7 +592,6 @@ cc_library(
         "//googlesql/proto:simple_property_graph_cc_proto",
         "//googlesql/public/proto:type_annotation_cc_proto",
         "//googlesql/public/types",
-        ":sql_tvf",
         "//googlesql/resolved_ast",
         "//googlesql/resolved_ast:resolved_ast_cc_proto",
         "@com_google_absl//absl/base:core_headers",
@@ -1025,29 +1024,6 @@ cc_library(
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/strings:str_format",
         "@com_googlesource_code_re2//:re2",
-    ],
-)
-
-cc_library(
-    name = "range_value",
-    srcs = ["range_value.cc"],
-    hdrs = [
-        "range_value.h",
-    ],
-    deps = [
-        ":civil_time",
-        ":options_cc_proto",
-        ":type_cc_proto",
-        "//googlesql/base:case",
-        "//googlesql/base:endian",
-        "//googlesql/common:errors",
-        "//googlesql/public/functions:date_time_util",
-        "//googlesql/public/types",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/strings:str_format",
-        "@com_google_absl//absl/time",
     ],
 )
 
@@ -3108,12 +3084,6 @@ cc_library(
         "@com_google_absl//absl/strings:str_format",
         "@com_google_absl//absl/types:span",
     ],
-)
-
-cc_library(
-    name = "token_list",
-    hdrs = ["token_list.h"],
-    deps = [":simple_token_list"],
 )
 
 cc_library(

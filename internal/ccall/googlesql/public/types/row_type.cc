@@ -149,10 +149,7 @@ static HasColumnCallbackType* row_type_has_column_callback = nullptr;
 // This setter is called from `:type_with_catalog_impl` (if it's linked in)
 // to install the callback.
 void SetRowTypeHasColumnColumnCallback(HasColumnCallbackType callback) {
-  // Multiple CGO TUs may initialize row_type state via the same amalgamation paths.
-  if (row_type_has_column_callback != nullptr) {
-    return;
-  }
+  ABSL_DCHECK(row_type_has_column_callback == nullptr);
   row_type_has_column_callback = new HasColumnCallbackType(callback);
 }
 

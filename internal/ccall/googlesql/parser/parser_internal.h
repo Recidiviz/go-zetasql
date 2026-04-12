@@ -135,8 +135,8 @@ using googlesql::parser::ParserMode;
 
 void PushParserMode(LookaheadTransformer&, ParserMode);
 void PopParserMode(LookaheadTransformer&);
-Token GetNextToken(LookaheadTransformer&, absl::string_view*,
-                   ParseLocationRange*);
+int GetNextToken(LookaheadTransformer&, absl::string_view*,
+                 ParseLocationRange*);
 absl::Status OverrideNextTokenLookback(LookaheadTransformer&, bool,
                                        parser::Token, parser::Token);
 absl::Status OverrideCurrentTokenLookback(LookaheadTransformer&, parser::Token);

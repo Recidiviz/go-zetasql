@@ -27,9 +27,9 @@ namespace googlesql {
 namespace parser {
 
 // A wrapper class for the generated TextMapper lexer class with access to
-// the private fields of `TmScanLexer`.
+// the private fields of `Lexer`.
 // TODO: b/322871843 - Rename the file to tokenizer.h.
-class GoogleSqlTokenizer final : TmScanLexer {
+class GoogleSqlTokenizer final : Lexer {
  public:
   GoogleSqlTokenizer(absl::string_view filename, absl::string_view input,
                      int start_offset);

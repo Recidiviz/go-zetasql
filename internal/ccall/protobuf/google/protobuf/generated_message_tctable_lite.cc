@@ -1,28 +1,39 @@
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
+// https://developers.google.com/protocol-buffers/
 //
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file or at
-// https://developers.google.com/open-source/licenses/bsd
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//     * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//     * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <algorithm>
-#include <cstddef>
 #include <cstdint>
-#include <cstring>
-#include <limits>
-#include <new>  // IWYU pragma: keep for operator new
 #include <numeric>
 #include <string>
 #include <type_traits>
+#include <utility>
 
-#include "absl/base/optimization.h"
-#include "absl/log/absl_check.h"
-#include "absl/log/absl_log.h"
-#include "absl/numeric/bits.h"
-#include "absl/strings/str_cat.h"
-#include "absl/strings/string_view.h"
-#include "google/protobuf/arenastring.h"
-#include "google/protobuf/generated_enum_util.h"
 #include "google/protobuf/generated_message_tctable_decl.h"
 #include "google/protobuf/generated_message_tctable_impl.h"
 #include "google/protobuf/inlined_string_field.h"
@@ -30,10 +41,6 @@
 #include "google/protobuf/map.h"
 #include "google/protobuf/message_lite.h"
 #include "google/protobuf/parse_context.h"
-#include "google/protobuf/port.h"
-#include "google/protobuf/repeated_field.h"
-#include "google/protobuf/repeated_ptr_field.h"
-#include "google/protobuf/serial_arena.h"
 #include "google/protobuf/varint_shuffle.h"
 #include "google/protobuf/wire_format_lite.h"
 #include "utf8_validity.h"
@@ -69,18 +76,36 @@ void AlignFail(std::integral_constant<size_t, 8>, std::uintptr_t address) {
 #endif
 
 const char* TcParser::GenericFallbackLite(PROTOBUF_TC_PARAM_DECL) {
-  PROTOBUF_MUSTTAIL return GenericFallbackImpl<MessageLite, std::string>(
-      PROTOBUF_TC_PARAM_PASS);
+  return GenericFallbackImpl<MessageLite, std::string>(PROTOBUF_TC_PARAM_PASS);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Core fast parsing implementation:
 //////////////////////////////////////////////////////////////////////////////
 
-PROTOBUF_NOINLINE const char* TcParser::ParseLoopPreserveNone(
+PROTOBUF_NOINLINE const char* TcParser::ParseLoop(
     MessageLite* msg, const char* ptr, ParseContext* ctx,
     const TcParseTableBase* table) {
-  return ParseLoop(msg, ptr, ctx, table);
+  // Note: TagDispatch uses a dispatch table at "&table->fast_entries".
+  // For fast dispatch, we'd like to have a pointer to that, but if we use
+  // that expression, there's no easy way to get back to "table", which we also
+  // need during dispatch.  It turns out that "table + 1" points exactly to
+  // fast_entries, so we just increment table by 1 here, to get the register
+  // holding the value we want.
+  table += 1;
+  while (!ctx->Done(&ptr)) {
+#if defined(__GNUC__)
+    // Note: this asm prevents the compiler (clang, specifically) from
+    // believing (thanks to CSE) that it needs to dedicate a registeer both
+    // to "table" and "&table->fast_entries".
+    // TODO(b/64614992): remove this asm
+    asm("" : "+r"(table));
+#endif
+    ptr = TagDispatch(msg, ptr, ctx, TcFieldData::DefaultInit(), table - 1, 0);
+    if (ptr == nullptr) break;
+    if (ctx->LastTag() != 1) break;  // Ended on terminating tag
+  }
+  return ptr;
 }
 
 // On the fast path, a (matching) 1-byte tag already has the decoded value.
@@ -146,14 +171,25 @@ const TcParseTableBase::FieldEntry* TcParser::FindFieldEntry(
     uint32_t skipbit = 1 << adj_fnum;
     if (PROTOBUF_PREDICT_FALSE(skipmap & skipbit)) return nullptr;
     skipmap &= skipbit - 1;
-    adj_fnum -= absl::popcount(skipmap);
+#if (__GNUC__ || __clang__) && __POPCNT__
+    // Note: here and below, skipmap typically has very few set bits
+    // (31 in the worst case, but usually zero) so a loop isn't that
+    // bad, and a compiler-generated popcount is typically only
+    // worthwhile if the processor itself has hardware popcount support.
+    adj_fnum -= __builtin_popcount(skipmap);
+#else
+    while (skipmap) {
+      --adj_fnum;
+      skipmap &= skipmap - 1;
+    }
+#endif
     auto* entry = field_entries + adj_fnum;
     PROTOBUF_ASSUME(entry != nullptr);
     return entry;
   }
   const uint16_t* lookup_table = table->field_lookup_begin();
   for (;;) {
-#ifdef ABSL_IS_LITTLE_ENDIAN
+#ifdef PROTOBUF_LITTLE_ENDIAN
     memcpy(&fstart, lookup_table, sizeof(fstart));
 #else
     fstart = lookup_table[0] | (lookup_table[1] << 16);
@@ -176,7 +212,14 @@ const TcParseTableBase::FieldEntry* TcParser::FindFieldEntry(
       if (PROTOBUF_PREDICT_FALSE(skipmap & skipbit)) return nullptr;
       skipmap &= skipbit - 1;
       adj_fnum += se.field_entry_offset;
-      adj_fnum -= absl::popcount(skipmap);
+#if (__GNUC__ || __clang__) && __POPCNT__
+      adj_fnum -= __builtin_popcount(skipmap);
+#else
+      while (skipmap) {
+        --adj_fnum;
+        skipmap &= skipmap - 1;
+      }
+#endif
       auto* entry = field_entries + adj_fnum;
       PROTOBUF_ASSUME(entry != nullptr);
       return entry;
@@ -268,22 +311,22 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::MiniParse(
       entry->type_card & (+field_layout::kSplitMask | FieldKind::kFkMask);
 
   static constexpr TailCallParseFunc kMiniParseTable[] = {
-      &MpFallback,             // FieldKind::kFkNone
-      &MpVarint<false>,        // FieldKind::kFkVarint
-      &MpPackedVarint<false>,  // FieldKind::kFkPackedVarint
-      &MpFixed<false>,         // FieldKind::kFkFixed
-      &MpPackedFixed<false>,   // FieldKind::kFkPackedFixed
-      &MpString<false>,        // FieldKind::kFkString
-      &MpMessage<false>,       // FieldKind::kFkMessage
-      &MpMap<false>,           // FieldKind::kFkMap
-      &Error,                  // kSplitMask | FieldKind::kFkNone
-      &MpVarint<true>,         // kSplitMask | FieldKind::kFkVarint
-      &MpPackedVarint<true>,   // kSplitMask | FieldKind::kFkPackedVarint
-      &MpFixed<true>,          // kSplitMask | FieldKind::kFkFixed
-      &MpPackedFixed<true>,    // kSplitMask | FieldKind::kFkPackedFixed
-      &MpString<true>,         // kSplitMask | FieldKind::kFkString
-      &MpMessage<true>,        // kSplitMask | FieldKind::kFkMessage
-      &MpMap<true>,            // kSplitMask | FieldKind::kFkMap
+      &MpFallback,        // FieldKind::kFkNone
+      &MpVarint<false>,   // FieldKind::kFkVarint
+      &MpPackedVarint,    // FieldKind::kFkPackedVarint
+      &MpFixed<false>,    // FieldKind::kFkFixed
+      &MpPackedFixed,     // FieldKind::kFkPackedFixed
+      &MpString<false>,   // FieldKind::kFkString
+      &MpMessage<false>,  // FieldKind::kFkMessage
+      &MpMap,             // FieldKind::kFkMap
+      &Error,             // kSplitMask | FieldKind::kFkNone
+      &MpVarint<true>,    // kSplitMask | FieldKind::kFkVarint
+      &Error,             // kSplitMask | FieldKind::kFkPackedVarint
+      &MpFixed<true>,     // kSplitMask | FieldKind::kFkFixed
+      &Error,             // kSplitMask | FieldKind::kFkPackedFixed
+      &MpString<true>,    // kSplitMask | FieldKind::kFkString
+      &MpMessage<true>,   // kSplitMask | FieldKind::kFkMessage
+      &Error,             // kSplitMask | FieldKind::kFkMap
   };
   // Just to be sure we got the order right, above.
   static_assert(0 == FieldKind::kFkNone, "Invalid table order");
@@ -351,26 +394,25 @@ PROTOBUF_NOINLINE const char* TcParser::FastEndG2(PROTOBUF_TC_PARAM_DECL) {
   PROTOBUF_MUSTTAIL return FastEndGroupImpl<uint16_t>(PROTOBUF_TC_PARAM_PASS);
 }
 
+namespace {
+
+// InvertPacked changes tag bits from the given wire type to length
+// delimited. This is the difference expected between packed and non-packed
+// repeated fields.
+template <WireFormatLite::WireType Wt>
+inline PROTOBUF_ALWAYS_INLINE void InvertPacked(TcFieldData& data) {
+  data.data ^= Wt ^ WireFormatLite::WIRETYPE_LENGTH_DELIMITED;
+}
+
+}  // namespace
+
 //////////////////////////////////////////////////////////////////////////////
 // Message fields
 //////////////////////////////////////////////////////////////////////////////
 
-inline PROTOBUF_ALWAYS_INLINE MessageLite* TcParser::NewMessage(
-    const TcParseTableBase* table, Arena* arena) {
-  return table->class_data->New(arena);
-}
-
-MessageLite* TcParser::AddMessage(const TcParseTableBase* table,
-                                  RepeatedPtrFieldBase& field) {
-  return static_cast<MessageLite*>(field.AddInternal(
-      [table](Arena* arena) { return NewMessage(table, arena); }));
-}
-
 template <typename TagType, bool group_coding, bool aux_is_table>
 inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularParseMessageAuxImpl(
     PROTOBUF_TC_PARAM_DECL) {
-  PROTOBUF_PREFETCH_WITH_OFFSET(ptr, 192);
-  PROTOBUF_PREFETCH_WITH_OFFSET(ptr, 256);
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
     PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
   }
@@ -379,19 +421,28 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularParseMessageAuxImpl(
   hasbits |= (uint64_t{1} << data.hasbit_idx());
   SyncHasbits(msg, hasbits, table);
   auto& field = RefAt<MessageLite*>(msg, data.offset());
-  const auto aux = *table->field_aux(data.aux_idx());
-  const auto* inner_table =
-      aux_is_table ? aux.table : aux.message_default()->GetTcParseTable();
 
-  if (field == nullptr) {
-    field = NewMessage(inner_table, msg->GetArena());
+  if (aux_is_table) {
+    const auto* inner_table = table->field_aux(data.aux_idx())->table;
+    if (field == nullptr) {
+      field = inner_table->default_instance->New(msg->GetArenaForAllocation());
+    }
+    if (group_coding) {
+      return ctx->ParseGroup<TcParser>(field, ptr, FastDecodeTag(saved_tag),
+                                       inner_table);
+    }
+    return ctx->ParseMessage<TcParser>(field, ptr, inner_table);
+  } else {
+    if (field == nullptr) {
+      const MessageLite* default_instance =
+          table->field_aux(data.aux_idx())->message_default();
+      field = default_instance->New(msg->GetArenaForAllocation());
+    }
+    if (group_coding) {
+      return ctx->ParseGroup(field, ptr, FastDecodeTag(saved_tag));
+    }
+    return ctx->ParseMessage(field, ptr);
   }
-  const auto inner_loop = [&](const char* ptr) {
-    return ParseLoop(field, ptr, ctx, inner_table);
-  };
-  return group_coding
-             ? ctx->ParseGroupInlined(ptr, FastDecodeTag(saved_tag), inner_loop)
-             : ctx->ParseLengthDelimitedInlined(ptr, inner_loop);
 }
 
 PROTOBUF_NOINLINE const char* TcParser::FastMdS1(PROTOBUF_TC_PARAM_DECL) {
@@ -454,21 +505,27 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedParseMessageAuxImpl(
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
     PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
   }
-  PROTOBUF_PREFETCH_WITH_OFFSET(ptr, 256);
   const auto expected_tag = UnalignedLoad<TagType>(ptr);
   const auto aux = *table->field_aux(data.aux_idx());
   auto& field = RefAt<RepeatedPtrFieldBase>(msg, data.offset());
-  const TcParseTableBase* inner_table =
-      aux_is_table ? aux.table : aux.message_default()->GetTcParseTable();
   do {
     ptr += sizeof(TagType);
-    MessageLite* submsg = AddMessage(inner_table, field);
-    const auto inner_loop = [&](const char* ptr) {
-      return ParseLoop(submsg, ptr, ctx, inner_table);
-    };
-    ptr = group_coding ? ctx->ParseGroupInlined(
-                             ptr, FastDecodeTag(expected_tag), inner_loop)
-                       : ctx->ParseLengthDelimitedInlined(ptr, inner_loop);
+    MessageLite* submsg = field.Add<GenericTypeHandler<MessageLite>>(
+        aux_is_table ? aux.table->default_instance : aux.message_default());
+    if (aux_is_table) {
+      if (group_coding) {
+        ptr = ctx->ParseGroup<TcParser>(submsg, ptr,
+                                        FastDecodeTag(expected_tag), aux.table);
+      } else {
+        ptr = ctx->ParseMessage<TcParser>(submsg, ptr, aux.table);
+      }
+    } else {
+      if (group_coding) {
+        ptr = ctx->ParseGroup(submsg, ptr, FastDecodeTag(expected_tag));
+      } else {
+        ptr = ctx->ParseMessage(submsg, ptr);
+      }
+    }
     if (PROTOBUF_PREDICT_FALSE(ptr == nullptr)) {
       PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
     }
@@ -525,7 +582,7 @@ PROTOBUF_NOINLINE const char* TcParser::FastGtR2(PROTOBUF_TC_PARAM_DECL) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <typename LayoutType, typename TagType>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularFixed(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularFixed(
     PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
     PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
@@ -555,21 +612,27 @@ PROTOBUF_NOINLINE const char* TcParser::FastF64S2(PROTOBUF_TC_PARAM_DECL) {
 }
 
 template <typename LayoutType, typename TagType>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedFixed(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedFixed(
     PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
-    PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    // Check if the field can be parsed as packed repeated:
+    constexpr WireFormatLite::WireType fallback_wt =
+        sizeof(LayoutType) == 4 ? WireFormatLite::WIRETYPE_FIXED32
+                                : WireFormatLite::WIRETYPE_FIXED64;
+    InvertPacked<fallback_wt>(data);
+    if (data.coded_tag<TagType>() == 0) {
+      return PackedFixed<LayoutType, TagType>(PROTOBUF_TC_PARAM_PASS);
+    } else {
+      PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    }
   }
   auto& field = RefAt<RepeatedField<LayoutType>>(msg, data.offset());
   const auto tag = UnalignedLoad<TagType>(ptr);
   do {
     field.Add(UnalignedLoad<LayoutType>(ptr + sizeof(TagType)));
     ptr += sizeof(TagType) + sizeof(LayoutType);
-    if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) {
-      PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-    }
-  } while (UnalignedLoad<TagType>(ptr) == tag);
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+  } while (ctx->DataAvailable(ptr) && UnalignedLoad<TagType>(ptr) == tag);
+  PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
 PROTOBUF_NOINLINE const char* TcParser::FastF32R1(PROTOBUF_TC_PARAM_DECL) {
@@ -589,11 +652,24 @@ PROTOBUF_NOINLINE const char* TcParser::FastF64R2(PROTOBUF_TC_PARAM_DECL) {
       PROTOBUF_TC_PARAM_PASS);
 }
 
+// Note: some versions of GCC will fail with error "function not inlinable" if
+// corecursive functions are both marked with PROTOBUF_ALWAYS_INLINE (Clang
+// accepts this). We can still apply the attribute to one of the two functions,
+// just not both (so we do mark the Repeated variant as always inlined). This
+// also applies to PackedVarint, below.
 template <typename LayoutType, typename TagType>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::PackedFixed(
-    PROTOBUF_TC_PARAM_DECL) {
+const char* TcParser::PackedFixed(PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
-    PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    // Try parsing as non-packed repeated:
+    constexpr WireFormatLite::WireType fallback_wt =
+        sizeof(LayoutType) == 4 ? WireFormatLite::WIRETYPE_FIXED32
+        : WireFormatLite::WIRETYPE_FIXED64;
+    InvertPacked<fallback_wt>(data);
+    if (data.coded_tag<TagType>() == 0) {
+      return RepeatedFixed<LayoutType, TagType>(PROTOBUF_TC_PARAM_PASS);
+    } else {
+      PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    }
   }
   ptr += sizeof(TagType);
   // Since ctx->ReadPackedFixed does not use TailCall<> or Return<>, sync any
@@ -601,7 +677,7 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::PackedFixed(
   SyncHasbits(msg, hasbits, table);
   auto& field = RefAt<RepeatedField<LayoutType>>(msg, data.offset());
   int size = ReadSize(&ptr);
-  // TODO: add a tailcalling variant of ReadPackedFixed.
+  // TODO(dlj): add a tailcalling variant of ReadPackedFixed.
   return ctx->ReadPackedFixed(ptr, size,
                               static_cast<RepeatedField<LayoutType>*>(&field));
 }
@@ -719,37 +795,19 @@ inline int64_t ZigZagDecodeHelper<int64_t, true>(int64_t value) {
   return WireFormatLite::ZigZagDecode64(value);
 }
 
-// Prefetch the enum data, if necessary.
-// We can issue the prefetch before we start parsing the ints.
-inline PROTOBUF_ALWAYS_INLINE void PrefetchEnumData(
-    uint16_t xform_val, TcParseTableBase::FieldAux aux) {
-}
-
-// When `xform_val` is a constant, we want to inline `ValidateEnum` because it
-// is either dropped when not a kTvEnum, or useful when it is.
-//
-// When it is not a constant, we do not inline `ValidateEnum` because it bloats
-// the code around it and pessimizes the non-enum and kTvRange cases which are
-// way more common than the kTvEnum cases. It is also called from places that
-// already have out-of-line functions (like MpVarint) so an extra out-of-line
-// call to `ValidateEnum` does not affect much.
-inline PROTOBUF_ALWAYS_INLINE bool EnumIsValidAux(
-    int32_t val, uint16_t xform_val, TcParseTableBase::FieldAux aux) {
+bool EnumIsValidAux(int32_t val, uint16_t xform_val,
+                    TcParseTableBase::FieldAux aux) {
   if (xform_val == field_layout::kTvRange) {
     auto lo = aux.enum_range.start;
     return lo <= val && val < (lo + aux.enum_range.length);
   }
-  if (PROTOBUF_BUILTIN_CONSTANT_P(xform_val)) {
-    return internal::ValidateEnumInlined(val, aux.enum_data);
-  } else {
-    return internal::ValidateEnum(val, aux.enum_data);
-  }
+  return aux.enum_validator(val);
 }
 
 }  // namespace
 
 template <typename FieldType, typename TagType, bool zigzag>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularVarint(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularVarint(
     PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
     PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
@@ -810,7 +868,7 @@ PROTOBUF_NOINLINE const char* TcParser::SingularVarBigint(
 }
 
 template <typename FieldType>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::FastVarintS1(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::FastVarintS1(
     PROTOBUF_TC_PARAM_DECL) {
   using TagType = uint8_t;
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
@@ -893,10 +951,16 @@ PROTOBUF_NOINLINE const char* TcParser::FastZ64S2(PROTOBUF_TC_PARAM_DECL) {
 }
 
 template <typename FieldType, typename TagType, bool zigzag>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedVarint(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedVarint(
     PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
-    PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    // Try parsing as non-packed repeated:
+    InvertPacked<WireFormatLite::WIRETYPE_VARINT>(data);
+    if (data.coded_tag<TagType>() == 0) {
+      return PackedVarint<FieldType, TagType, zigzag>(PROTOBUF_TC_PARAM_PASS);
+    } else {
+      PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    }
   }
   auto& field = RefAt<RepeatedField<FieldType>>(msg, data.offset());
   const auto expected_tag = UnalignedLoad<TagType>(ptr);
@@ -904,15 +968,15 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedVarint(
     ptr += sizeof(TagType);
     FieldType tmp;
     ptr = ParseVarint(ptr, &tmp);
-    if (PROTOBUF_PREDICT_FALSE(ptr == nullptr)) {
+    if (ptr == nullptr) {
       PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
     }
     field.Add(ZigZagDecodeHelper<FieldType, zigzag>(tmp));
-    if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) {
-      PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    if (!ctx->DataAvailable(ptr)) {
+      break;
     }
   } while (UnalignedLoad<TagType>(ptr) == expected_tag);
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+  PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
 PROTOBUF_NOINLINE const char* TcParser::FastV8R1(PROTOBUF_TC_PARAM_DECL) {
@@ -957,11 +1021,16 @@ PROTOBUF_NOINLINE const char* TcParser::FastZ64R2(PROTOBUF_TC_PARAM_DECL) {
       PROTOBUF_TC_PARAM_PASS);
 }
 
+// See comment on PackedFixed for why this is not PROTOBUF_ALWAYS_INLINE.
 template <typename FieldType, typename TagType, bool zigzag>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::PackedVarint(
-    PROTOBUF_TC_PARAM_DECL) {
+const char* TcParser::PackedVarint(PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
-    PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    InvertPacked<WireFormatLite::WIRETYPE_VARINT>(data);
+    if (data.coded_tag<TagType>() == 0) {
+      return RepeatedVarint<FieldType, TagType, zigzag>(PROTOBUF_TC_PARAM_PASS);
+    } else {
+      PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    }
   }
   ptr += sizeof(TagType);
   // Since ctx->ReadPackedVarint does not use TailCall or Return, sync any
@@ -1060,20 +1129,19 @@ PROTOBUF_NOINLINE const char* TcParser::MpUnknownEnumFallback(
 }
 
 template <typename TagType, uint16_t xform_val>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularEnum(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularEnum(
     PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
     PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
   }
-  const TcParseTableBase::FieldAux aux = *table->field_aux(data.aux_idx());
-  PrefetchEnumData(xform_val, aux);
   const char* ptr2 = ptr;  // Save for unknown enum case
   ptr += sizeof(TagType);  // Consume tag
   uint64_t tmp;
   ptr = ParseVarint(ptr, &tmp);
-  if (PROTOBUF_PREDICT_FALSE(ptr == nullptr)) {
+  if (ptr == nullptr) {
     PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
   }
+  const TcParseTableBase::FieldAux aux = *table->field_aux(data.aux_idx());
   if (PROTOBUF_PREDICT_FALSE(
           !EnumIsValidAux(static_cast<int32_t>(tmp), xform_val, aux))) {
     ptr = ptr2;
@@ -1102,21 +1170,25 @@ PROTOBUF_NOINLINE const char* TcParser::FastEvS2(PROTOBUF_TC_PARAM_DECL) {
 }
 
 template <typename TagType, uint16_t xform_val>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedEnum(
-    PROTOBUF_TC_PARAM_DECL) {
+const char* TcParser::RepeatedEnum(PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
-    PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    InvertPacked<WireFormatLite::WIRETYPE_VARINT>(data);
+    if (data.coded_tag<TagType>() == 0) {
+      PROTOBUF_MUSTTAIL return PackedEnum<TagType, xform_val>(
+          PROTOBUF_TC_PARAM_PASS);
+    } else {
+      PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    }
   }
   auto& field = RefAt<RepeatedField<int32_t>>(msg, data.offset());
   const auto expected_tag = UnalignedLoad<TagType>(ptr);
   const TcParseTableBase::FieldAux aux = *table->field_aux(data.aux_idx());
-  PrefetchEnumData(xform_val, aux);
   do {
     const char* ptr2 = ptr;  // save for unknown enum case
     ptr += sizeof(TagType);
     uint64_t tmp;
     ptr = ParseVarint(ptr, &tmp);
-    if (PROTOBUF_PREDICT_FALSE(ptr == nullptr)) {
+    if (ptr == nullptr) {
       PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
     }
     if (PROTOBUF_PREDICT_FALSE(
@@ -1127,12 +1199,11 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedEnum(
       PROTOBUF_MUSTTAIL return FastUnknownEnumFallback(PROTOBUF_TC_PARAM_PASS);
     }
     field.Add(static_cast<int32_t>(tmp));
-    if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) {
-      PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    if (!ctx->DataAvailable(ptr)) {
+      break;
     }
   } while (UnalignedLoad<TagType>(ptr) == expected_tag);
-
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+  PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
 const TcParser::UnknownFieldOps& TcParser::GetUnknownFieldOps(
@@ -1154,10 +1225,15 @@ PROTOBUF_NOINLINE void TcParser::AddUnknownEnum(MessageLite* msg,
 }
 
 template <typename TagType, uint16_t xform_val>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::PackedEnum(
-    PROTOBUF_TC_PARAM_DECL) {
+const char* TcParser::PackedEnum(PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
-    PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    InvertPacked<WireFormatLite::WIRETYPE_VARINT>(data);
+    if (data.coded_tag<TagType>() == 0) {
+      PROTOBUF_MUSTTAIL return RepeatedEnum<TagType, xform_val>(
+          PROTOBUF_TC_PARAM_PASS);
+    } else {
+      PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    }
   }
   const auto saved_tag = UnalignedLoad<TagType>(ptr);
   ptr += sizeof(TagType);
@@ -1166,7 +1242,6 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::PackedEnum(
   SyncHasbits(msg, hasbits, table);
   auto* field = &RefAt<RepeatedField<int32_t>>(msg, data.offset());
   const TcParseTableBase::FieldAux aux = *table->field_aux(data.aux_idx());
-  PrefetchEnumData(xform_val, aux);
   return ctx->ReadPackedVarint(ptr, [=](int32_t value) {
     if (!EnumIsValidAux(value, xform_val, aux)) {
       AddUnknownEnum(msg, table, FastDecodeTag(saved_tag), value);
@@ -1211,7 +1286,7 @@ PROTOBUF_NOINLINE const char* TcParser::FastEvP2(PROTOBUF_TC_PARAM_DECL) {
 }
 
 template <typename TagType, uint8_t min>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularEnumSmallRange(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularEnumSmallRange(
     PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
     PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
@@ -1249,10 +1324,15 @@ PROTOBUF_NOINLINE const char* TcParser::FastEr1S2(PROTOBUF_TC_PARAM_DECL) {
 }
 
 template <typename TagType, uint8_t min>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedEnumSmallRange(
-    PROTOBUF_TC_PARAM_DECL) {
+const char* TcParser::RepeatedEnumSmallRange(PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
-    PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    InvertPacked<WireFormatLite::WIRETYPE_VARINT>(data);
+    if (data.coded_tag<TagType>() == 0) {
+      PROTOBUF_MUSTTAIL return PackedEnumSmallRange<TagType, min>(
+          PROTOBUF_TC_PARAM_PASS);
+    } else {
+      PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    }
   }
   auto& field = RefAt<RepeatedField<int32_t>>(msg, data.offset());
   auto expected_tag = UnalignedLoad<TagType>(ptr);
@@ -1264,12 +1344,10 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedEnumSmallRange(
     }
     field.Add(static_cast<int32_t>(v));
     ptr += sizeof(TagType) + 1;
-    if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) {
-      PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-    }
+    if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) break;
   } while (UnalignedLoad<TagType>(ptr) == expected_tag);
 
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+  PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
 PROTOBUF_NOINLINE const char* TcParser::FastEr0R1(PROTOBUF_TC_PARAM_DECL) {
@@ -1291,10 +1369,15 @@ PROTOBUF_NOINLINE const char* TcParser::FastEr1R2(PROTOBUF_TC_PARAM_DECL) {
 }
 
 template <typename TagType, uint8_t min>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::PackedEnumSmallRange(
-    PROTOBUF_TC_PARAM_DECL) {
+const char* TcParser::PackedEnumSmallRange(PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
-    PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    InvertPacked<WireFormatLite::WIRETYPE_VARINT>(data);
+    if (data.coded_tag<TagType>() == 0) {
+      PROTOBUF_MUSTTAIL return RepeatedEnumSmallRange<TagType, min>(
+          PROTOBUF_TC_PARAM_PASS);
+    } else {
+      PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+    }
   }
 
   // Since ctx->ReadPackedVarint does not use TailCall or Return, sync any
@@ -1306,39 +1389,13 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::PackedEnumSmallRange(
   auto* field = &RefAt<RepeatedField<int32_t>>(msg, data.offset());
   const uint8_t max = data.aux_idx();
 
-  return ctx->ReadPackedVarint(
-      ptr,
-      [=](int32_t v) {
-        if (PROTOBUF_PREDICT_FALSE(min > v || v > max)) {
-          AddUnknownEnum(msg, table, FastDecodeTag(saved_tag), v);
-        } else {
-          field->Add(v);
-        }
-      },
-      /*size_callback=*/
-      [=](int32_t size_bytes) {
-        // For enums that fit in one varint byte, optimistically assume that all
-        // the values are one byte long (i.e. no large unknown values).  If so,
-        // we know exactly how many values we're going to get.
-        //
-        // But! size_bytes might be much larger than the total size of the
-        // serialized proto (e.g. input corruption, or parsing msg1 as msg2).
-        // We don't want a small serialized proto to lead to giant memory
-        // allocations.
-        //
-        // Ideally we'd restrict size_bytes to the total size of the input, but
-        // we don't know that value.  The best we can do is to restrict it to
-        // the remaining bytes in the chunk, plus a "benefit of the doubt"
-        // factor if we're very close to the end of the chunk.
-        //
-        // Do these calculations in int64 because it's possible we overflow
-        // int32 (imgaine that field->size() and size_bytes are both large).
-        int64_t new_size =
-            int64_t{field->size()} +
-            std::min(size_bytes, std::max(1024, ctx->MaximumReadSize(ptr)));
-        field->Reserve(static_cast<int32_t>(
-            std::min(new_size, int64_t{std::numeric_limits<int32_t>::max()})));
-      });
+  return ctx->ReadPackedVarint(ptr, [=](int32_t v) {
+    if (PROTOBUF_PREDICT_FALSE(min > v || v > max)) {
+      AddUnknownEnum(msg, table, FastDecodeTag(saved_tag), v);
+    } else {
+      field->Add(v);
+    }
+  });
 }
 
 PROTOBUF_NOINLINE const char* TcParser::FastEr0P1(PROTOBUF_TC_PARAM_DECL) {
@@ -1406,7 +1463,7 @@ PROTOBUF_ALWAYS_INLINE inline bool IsValidUTF8(ArenaStringPtr& field) {
 }  // namespace
 
 template <typename TagType, typename FieldType, TcParser::Utf8Type utf8>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularString(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularString(
     PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
     PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
@@ -1415,14 +1472,14 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularString(
   ptr += sizeof(TagType);
   hasbits |= (uint64_t{1} << data.hasbit_idx());
   auto& field = RefAt<FieldType>(msg, data.offset());
-  auto arena = msg->GetArena();
+  auto arena = msg->GetArenaForAllocation();
   if (arena) {
     ptr =
         ReadStringIntoArena(msg, ptr, ctx, data.aux_idx(), table, field, arena);
   } else {
     ptr = ReadStringNoArena(msg, ptr, ctx, data.aux_idx(), table, field);
   }
-  if (PROTOBUF_PREDICT_FALSE(ptr == nullptr)) {
+  if (ptr == nullptr) {
     PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
   }
   switch (utf8) {
@@ -1430,19 +1487,17 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::SingularString(
 #ifdef NDEBUG
     case kUtf8ValidateOnly:
 #endif
-      break;
+      PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
     default:
       if (PROTOBUF_PREDICT_TRUE(IsValidUTF8(field))) {
-        break;
+        PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
       }
       ReportFastUtf8Error(FastDecodeTag(saved_tag), table);
       if (utf8 == kUtf8) {
         PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
       }
-      break;
+      PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
   }
-
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
 PROTOBUF_NOINLINE const char* TcParser::FastBS1(PROTOBUF_TC_PARAM_DECL) {
@@ -1514,7 +1569,7 @@ const char* TcParser::FastUcS2(PROTOBUF_TC_PARAM_DECL) {
 }
 
 template <typename TagType, typename FieldType, TcParser::Utf8Type utf8>
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedString(
+PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedString(
     PROTOBUF_TC_PARAM_DECL) {
   if (PROTOBUF_PREDICT_FALSE(data.coded_tag<TagType>() != 0)) {
     PROTOBUF_MUSTTAIL return MiniParse(PROTOBUF_TC_PARAM_NO_DATA_PASS);
@@ -1540,19 +1595,19 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedString(
     }
   };
 
-  auto* arena = field.GetArena();
+  auto* arena = field.GetOwningArena();
   SerialArena* serial_arena;
   if (PROTOBUF_PREDICT_TRUE(arena != nullptr &&
                             arena->impl_.GetSerialArenaFast(&serial_arena) &&
                             field.PrepareForParse())) {
     do {
       ptr += sizeof(TagType);
-      ptr = ParseRepeatedStringOnce(ptr, serial_arena, ctx, field);
+      ptr = ParseRepeatedStringOnce(ptr, arena, serial_arena, ctx, field);
 
       if (PROTOBUF_PREDICT_FALSE(ptr == nullptr || !validate_last_string())) {
         PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
       }
-      if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) goto parse_loop;
+      if (!ctx->DataAvailable(ptr)) break;
     } while (UnalignedLoad<TagType>(ptr) == expected_tag);
   } else {
     do {
@@ -1562,11 +1617,9 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::RepeatedString(
       if (PROTOBUF_PREDICT_FALSE(ptr == nullptr || !validate_last_string())) {
         PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
       }
-      if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) goto parse_loop;
+      if (!ctx->DataAvailable(ptr)) break;
     } while (UnalignedLoad<TagType>(ptr) == expected_tag);
   }
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-parse_loop:
   PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
@@ -1607,7 +1660,7 @@ namespace {
 inline void SetHas(const FieldEntry& entry, MessageLite* msg) {
   auto has_idx = static_cast<uint32_t>(entry.has_idx);
 #if defined(__x86_64__) && defined(__GNUC__)
-  asm("bts %1, %0\n" : "+m"(*reinterpret_cast<char*>(msg)) : "r"(has_idx));
+  asm("bts %1, %0\n" : "+m"(*msg) : "r"(has_idx));
 #else
   auto& hasblock = TcParser::RefAt<uint32_t>(msg, has_idx / 32 * 4);
   hasblock |= uint32_t{1} << (has_idx % 32);
@@ -1647,12 +1700,6 @@ bool TcParser::ChangeOneof(const TcParseTableBase* table,
         field.Destroy();
         break;
       }
-      case field_layout::kRepCord: {
-        if (msg->GetArena() == nullptr) {
-          delete RefAt<absl::Cord*>(msg, current_entry->offset);
-        }
-        break;
-      }
       case field_layout::kRepSString:
       case field_layout::kRepIString:
       default:
@@ -1665,7 +1712,7 @@ bool TcParser::ChangeOneof(const TcParseTableBase* table,
       case field_layout::kRepMessage:
       case field_layout::kRepGroup: {
         auto& field = RefAt<MessageLite*>(msg, current_entry->offset);
-        if (!msg->GetArena()) {
+        if (!msg->GetArenaForAllocation()) {
           delete field;
         }
         break;
@@ -1695,12 +1742,12 @@ void* TcParser::MaybeGetSplitBase(MessageLite* msg, const bool is_split,
   if (is_split) {
     const uint32_t split_offset = GetSplitOffset(table);
     void* default_split =
-        TcParser::RefAt<void*>(table->default_instance(), split_offset);
+        TcParser::RefAt<void*>(table->default_instance, split_offset);
     void*& split = TcParser::RefAt<void*>(msg, split_offset);
     if (split == default_split) {
       // Allocate split instance when needed.
       uint32_t size = GetSizeofSplit(table);
-      Arena* arena = msg->GetArena();
+      Arena* arena = msg->GetArenaForAllocation();
       split = (arena == nullptr) ? ::operator new(size)
                                  : arena->AllocateAligned(size);
       memcpy(split, default_split, size);
@@ -1718,7 +1765,7 @@ PROTOBUF_NOINLINE const char* TcParser::MpFixed(PROTOBUF_TC_PARAM_DECL) {
 
   // Check for repeated parsing (wiretype fallback is handled there):
   if (card == field_layout::kFcRepeated) {
-    PROTOBUF_MUSTTAIL return MpRepeatedFixed<is_split>(PROTOBUF_TC_PARAM_PASS);
+    PROTOBUF_MUSTTAIL return MpRepeatedFixed(PROTOBUF_TC_PARAM_PASS);
   }
   // Check for mismatched wiretype:
   const uint16_t rep = type_card & field_layout::kRepMask;
@@ -1751,7 +1798,6 @@ PROTOBUF_NOINLINE const char* TcParser::MpFixed(PROTOBUF_TC_PARAM_DECL) {
   PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
-template <bool is_split>
 PROTOBUF_NOINLINE const char* TcParser::MpRepeatedFixed(
     PROTOBUF_TC_PARAM_DECL) {
   const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
@@ -1760,18 +1806,16 @@ PROTOBUF_NOINLINE const char* TcParser::MpRepeatedFixed(
 
   // Check for packed repeated fallback:
   if (decoded_wiretype == WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-    PROTOBUF_MUSTTAIL return MpPackedFixed<is_split>(PROTOBUF_TC_PARAM_PASS);
+    PROTOBUF_MUSTTAIL return MpPackedFixed(PROTOBUF_TC_PARAM_PASS);
   }
 
-  void* const base = MaybeGetSplitBase(msg, is_split, table);
   const uint16_t type_card = entry.type_card;
   const uint16_t rep = type_card & field_layout::kRepMask;
   if (rep == field_layout::kRep64Bits) {
     if (decoded_wiretype != WireFormatLite::WIRETYPE_FIXED64) {
       PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
     }
-    auto& field = MaybeCreateRepeatedFieldRefAt<uint64_t, is_split>(
-        base, entry.offset, msg);
+    auto& field = RefAt<RepeatedField<uint64_t>>(msg, entry.offset);
     constexpr auto size = sizeof(uint64_t);
     const char* ptr2 = ptr;
     uint32_t next_tag;
@@ -1779,17 +1823,15 @@ PROTOBUF_NOINLINE const char* TcParser::MpRepeatedFixed(
       ptr = ptr2;
       *field.Add() = UnalignedLoad<uint64_t>(ptr);
       ptr += size;
-      if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) goto parse_loop;
+      if (!ctx->DataAvailable(ptr)) break;
       ptr2 = ReadTag(ptr, &next_tag);
-      if (PROTOBUF_PREDICT_FALSE(ptr2 == nullptr)) goto error;
     } while (next_tag == decoded_tag);
   } else {
     ABSL_DCHECK_EQ(rep, static_cast<uint16_t>(field_layout::kRep32Bits));
     if (decoded_wiretype != WireFormatLite::WIRETYPE_FIXED32) {
       PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
     }
-    auto& field = MaybeCreateRepeatedFieldRefAt<uint32_t, is_split>(
-        base, entry.offset, msg);
+    auto& field = RefAt<RepeatedField<uint32_t>>(msg, entry.offset);
     constexpr auto size = sizeof(uint32_t);
     const char* ptr2 = ptr;
     uint32_t next_tag;
@@ -1797,20 +1839,14 @@ PROTOBUF_NOINLINE const char* TcParser::MpRepeatedFixed(
       ptr = ptr2;
       *field.Add() = UnalignedLoad<uint32_t>(ptr);
       ptr += size;
-      if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) goto parse_loop;
+      if (!ctx->DataAvailable(ptr)) break;
       ptr2 = ReadTag(ptr, &next_tag);
-      if (PROTOBUF_PREDICT_FALSE(ptr2 == nullptr)) goto error;
     } while (next_tag == decoded_tag);
   }
 
   PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-parse_loop:
-  PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-error:
-  PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
-template <bool is_split>
 PROTOBUF_NOINLINE const char* TcParser::MpPackedFixed(PROTOBUF_TC_PARAM_DECL) {
   const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
   const uint16_t type_card = entry.type_card;
@@ -1818,24 +1854,25 @@ PROTOBUF_NOINLINE const char* TcParser::MpPackedFixed(PROTOBUF_TC_PARAM_DECL) {
 
   // Check for non-packed repeated fallback:
   if (decoded_wiretype != WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-    PROTOBUF_MUSTTAIL return MpRepeatedFixed<is_split>(PROTOBUF_TC_PARAM_PASS);
+    PROTOBUF_MUSTTAIL return MpRepeatedFixed(PROTOBUF_TC_PARAM_PASS);
   }
 
-  void* const base = MaybeGetSplitBase(msg, is_split, table);
+  // Since ctx->ReadPackedFixed does not use TailCall<> or Return<>, sync any
+  // pending hasbits now:
+  SyncHasbits(msg, hasbits, table);
+
   int size = ReadSize(&ptr);
   uint16_t rep = type_card & field_layout::kRepMask;
   if (rep == field_layout::kRep64Bits) {
-    auto& field = MaybeCreateRepeatedFieldRefAt<uint64_t, is_split>(
-        base, entry.offset, msg);
+    auto& field = RefAt<RepeatedField<uint64_t>>(msg, entry.offset);
     ptr = ctx->ReadPackedFixed(ptr, size, &field);
   } else {
     ABSL_DCHECK_EQ(rep, static_cast<uint16_t>(field_layout::kRep32Bits));
-    auto& field = MaybeCreateRepeatedFieldRefAt<uint32_t, is_split>(
-        base, entry.offset, msg);
+    auto& field = RefAt<RepeatedField<uint32_t>>(msg, entry.offset);
     ptr = ctx->ReadPackedFixed(ptr, size, &field);
   }
 
-  if (PROTOBUF_PREDICT_FALSE(ptr == nullptr)) {
+  if (ptr == nullptr) {
     PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
   }
   PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
@@ -1849,7 +1886,7 @@ PROTOBUF_NOINLINE const char* TcParser::MpVarint(PROTOBUF_TC_PARAM_DECL) {
 
   // Check for repeated parsing:
   if (card == field_layout::kFcRepeated) {
-    PROTOBUF_MUSTTAIL return MpRepeatedVarint<is_split>(PROTOBUF_TC_PARAM_PASS);
+    PROTOBUF_MUSTTAIL return MpRepeatedVarint(PROTOBUF_TC_PARAM_PASS);
   }
   // Check for wire type mismatch:
   if ((data.tag() & 7) != WireFormatLite::WIRETYPE_VARINT) {
@@ -1905,210 +1942,141 @@ PROTOBUF_NOINLINE const char* TcParser::MpVarint(PROTOBUF_TC_PARAM_DECL) {
   PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
-template <bool is_split, typename FieldType, uint16_t xform_val_in>
-const char* TcParser::MpRepeatedVarintT(PROTOBUF_TC_PARAM_DECL) {
-  const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
-  const uint32_t decoded_tag = data.tag();
-  // For is_split we ignore the incoming xform_val and read it from entry to
-  // reduce duplication for the uncommon paths.
-  const uint16_t xform_val =
-      is_split ? (entry.type_card & field_layout::kTvMask) : xform_val_in;
-  const bool is_zigzag = xform_val == field_layout::kTvZigZag;
-  const bool is_validated_enum = xform_val & field_layout::kTvEnum;
-
-  const char* ptr2 = ptr;
-  uint32_t next_tag;
-  void* const base = MaybeGetSplitBase(msg, is_split, table);
-  auto& field = MaybeCreateRepeatedFieldRefAt<FieldType, is_split>(
-      base, entry.offset, msg);
-
-  TcParseTableBase::FieldAux aux;
-  if (is_validated_enum) {
-    aux = *table->field_aux(&entry);
-    PrefetchEnumData(xform_val, aux);
-  }
-
-  do {
-    uint64_t tmp;
-    ptr = ParseVarint(ptr2, &tmp);
-    if (PROTOBUF_PREDICT_FALSE(ptr == nullptr)) goto error;
-    if (is_validated_enum) {
-      if (!EnumIsValidAux(static_cast<int32_t>(tmp), xform_val, aux)) {
-        ptr = ptr2;
-        PROTOBUF_MUSTTAIL return MpUnknownEnumFallback(PROTOBUF_TC_PARAM_PASS);
-      }
-    } else if (is_zigzag) {
-      tmp = sizeof(FieldType) == 8 ? WireFormatLite::ZigZagDecode64(tmp)
-                                   : WireFormatLite::ZigZagDecode32(tmp);
-    }
-    field.Add(static_cast<FieldType>(tmp));
-    if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) goto parse_loop;
-    ptr2 = ReadTag(ptr, &next_tag);
-    if (PROTOBUF_PREDICT_FALSE(ptr2 == nullptr)) goto error;
-  } while (next_tag == decoded_tag);
-
-parse_loop:
-  PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-error:
-  PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-}
-
-template <bool is_split>
 PROTOBUF_NOINLINE const char* TcParser::MpRepeatedVarint(
     PROTOBUF_TC_PARAM_DECL) {
   const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
-  const auto type_card = entry.type_card;
+  auto type_card = entry.type_card;
   const uint32_t decoded_tag = data.tag();
-  const auto decoded_wiretype = decoded_tag & 7;
+  auto decoded_wiretype = decoded_tag & 7;
 
   // Check for packed repeated fallback:
   if (decoded_wiretype == WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-    PROTOBUF_MUSTTAIL return MpPackedVarint<is_split>(PROTOBUF_TC_PARAM_PASS);
+    PROTOBUF_MUSTTAIL return MpPackedVarint(PROTOBUF_TC_PARAM_PASS);
   }
   // Check for wire type mismatch:
   if (decoded_wiretype != WireFormatLite::WIRETYPE_VARINT) {
     PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
   }
-  // For split we avoid the duplicate code and have the impl reload the value.
-  // Less code bloat for uncommon paths.
-  const uint16_t xform_val = (type_card & field_layout::kTvMask);
-  const uint16_t rep = type_card & field_layout::kRepMask;
-  switch (rep >> field_layout::kRepShift) {
-    case field_layout::kRep64Bits >> field_layout::kRepShift:
-      if (xform_val == 0) {
-        PROTOBUF_MUSTTAIL return MpRepeatedVarintT<is_split, uint64_t, 0>(
-            PROTOBUF_TC_PARAM_PASS);
-      } else {
-        ABSL_DCHECK_EQ(xform_val, +field_layout::kTvZigZag);
-        PROTOBUF_MUSTTAIL return MpRepeatedVarintT<
-            is_split, uint64_t, (is_split ? 0 : field_layout::kTvZigZag)>(
-            PROTOBUF_TC_PARAM_PASS);
-      }
-    case field_layout::kRep32Bits >> field_layout::kRepShift:
-      switch (xform_val >> field_layout::kTvShift) {
-        case 0:
-          PROTOBUF_MUSTTAIL return MpRepeatedVarintT<is_split, uint32_t, 0>(
-              PROTOBUF_TC_PARAM_PASS);
-        case field_layout::kTvZigZag >> field_layout::kTvShift:
-          PROTOBUF_MUSTTAIL return MpRepeatedVarintT<
-              is_split, uint32_t, (is_split ? 0 : field_layout::kTvZigZag)>(
-              PROTOBUF_TC_PARAM_PASS);
-        case field_layout::kTvEnum >> field_layout::kTvShift:
-          PROTOBUF_MUSTTAIL return MpRepeatedVarintT<
-              is_split, uint32_t, (is_split ? 0 : field_layout::kTvEnum)>(
-              PROTOBUF_TC_PARAM_PASS);
-        case field_layout::kTvRange >> field_layout::kTvShift:
-          PROTOBUF_MUSTTAIL return MpRepeatedVarintT<
-              is_split, uint32_t, (is_split ? 0 : field_layout::kTvRange)>(
-              PROTOBUF_TC_PARAM_PASS);
-        default:
-          Unreachable();
-      }
-    case field_layout::kRep8Bits >> field_layout::kRepShift:
-      PROTOBUF_MUSTTAIL return MpRepeatedVarintT<is_split, bool, 0>(
-          PROTOBUF_TC_PARAM_PASS);
-
-    default:
-      Unreachable();
-      return nullptr;  // To silence -Werror=return-type in some toolchains
-  }
-}
-
-template <bool is_split, typename FieldType, uint16_t xform_val_in>
-const char* TcParser::MpPackedVarintT(PROTOBUF_TC_PARAM_DECL) {
-  const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
-  // For is_split we ignore the incoming xform_val and read it from entry to
-  // reduce duplication for the uncommon paths.
-  const uint16_t xform_val =
-      is_split ? (entry.type_card & field_layout::kTvMask) : xform_val_in;
+  uint16_t xform_val = (type_card & field_layout::kTvMask);
   const bool is_zigzag = xform_val == field_layout::kTvZigZag;
   const bool is_validated_enum = xform_val & field_layout::kTvEnum;
 
-  void* const base = MaybeGetSplitBase(msg, is_split, table);
-  auto* field = &MaybeCreateRepeatedFieldRefAt<FieldType, is_split>(
-      base, entry.offset, msg);
-
-  if (is_validated_enum) {
-    const TcParseTableBase::FieldAux aux = *table->field_aux(entry.aux_idx);
-    PrefetchEnumData(xform_val, aux);
-    return ctx->ReadPackedVarint(ptr, [=](int32_t value) {
-      if (!EnumIsValidAux(value, xform_val, aux)) {
-        AddUnknownEnum(msg, table, data.tag(), value);
-      } else {
-        field->Add(value);
+  uint16_t rep = type_card & field_layout::kRepMask;
+  if (rep == field_layout::kRep64Bits) {
+    auto& field = RefAt<RepeatedField<uint64_t>>(msg, entry.offset);
+    const char* ptr2 = ptr;
+    uint32_t next_tag;
+    do {
+      uint64_t tmp;
+      ptr = ParseVarint(ptr2, &tmp);
+      if (ptr == nullptr) {
+        PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
       }
-    });
+      field.Add(is_zigzag ? WireFormatLite::ZigZagDecode64(tmp) : tmp);
+      if (!ctx->DataAvailable(ptr)) break;
+      ptr2 = ReadTag(ptr, &next_tag);
+      if (ptr2 == nullptr) {
+        PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+      }
+    } while (next_tag == decoded_tag);
+  } else if (rep == field_layout::kRep32Bits) {
+    auto& field = RefAt<RepeatedField<uint32_t>>(msg, entry.offset);
+    const char* ptr2 = ptr;
+    uint32_t next_tag;
+    do {
+      uint64_t tmp;
+      ptr = ParseVarint(ptr2, &tmp);
+      if (ptr == nullptr) {
+        PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+      }
+      if (is_validated_enum) {
+        if (!EnumIsValidAux(tmp, xform_val, *table->field_aux(&entry))) {
+          ptr = ptr2;
+          PROTOBUF_MUSTTAIL return MpUnknownEnumFallback(
+              PROTOBUF_TC_PARAM_PASS);
+        }
+      } else if (is_zigzag) {
+        tmp = WireFormatLite::ZigZagDecode32(tmp);
+      }
+      field.Add(tmp);
+      if (!ctx->DataAvailable(ptr)) break;
+      ptr2 = ReadTag(ptr, &next_tag);
+      if (ptr2 == nullptr) {
+        PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+      }
+    } while (next_tag == decoded_tag);
   } else {
-    return ctx->ReadPackedVarint(ptr, [=](uint64_t value) {
-      field->Add(is_zigzag ? (sizeof(FieldType) == 8
-                                  ? WireFormatLite::ZigZagDecode64(value)
-                                  : WireFormatLite::ZigZagDecode32(
-                                        static_cast<uint32_t>(value)))
-                           : value);
-    });
+    ABSL_DCHECK_EQ(rep, static_cast<uint16_t>(field_layout::kRep8Bits));
+    auto& field = RefAt<RepeatedField<bool>>(msg, entry.offset);
+    const char* ptr2 = ptr;
+    uint32_t next_tag;
+    do {
+      uint64_t tmp;
+      ptr = ParseVarint(ptr2, &tmp);
+      if (ptr == nullptr) {
+        PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+      }
+      field.Add(static_cast<bool>(tmp));
+      if (!ctx->DataAvailable(ptr)) break;
+      ptr2 = ReadTag(ptr, &next_tag);
+      if (ptr2 == nullptr) {
+        PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+      }
+    } while (next_tag == decoded_tag);
   }
+
+  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
-template <bool is_split>
 PROTOBUF_NOINLINE const char* TcParser::MpPackedVarint(PROTOBUF_TC_PARAM_DECL) {
   const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
-  const auto type_card = entry.type_card;
-  const auto decoded_wiretype = data.tag() & 7;
+  auto type_card = entry.type_card;
+  auto decoded_wiretype = data.tag() & 7;
 
   // Check for non-packed repeated fallback:
   if (decoded_wiretype != WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-    PROTOBUF_MUSTTAIL return MpRepeatedVarint<is_split>(PROTOBUF_TC_PARAM_PASS);
+    PROTOBUF_MUSTTAIL return MpRepeatedVarint(PROTOBUF_TC_PARAM_PASS);
   }
-
-  // For split we avoid the duplicate code and have the impl reload the value.
-  // Less code bloat for uncommon paths.
   const uint16_t xform_val = (type_card & field_layout::kTvMask);
+  const bool is_zigzag = xform_val == field_layout::kTvZigZag;
+  const bool is_validated_enum = xform_val & field_layout::kTvEnum;
 
   // Since ctx->ReadPackedFixed does not use TailCall<> or Return<>, sync any
   // pending hasbits now:
   SyncHasbits(msg, hasbits, table);
 
-  const uint16_t rep = type_card & field_layout::kRepMask;
-
-  switch (rep >> field_layout::kRepShift) {
-    case field_layout::kRep64Bits >> field_layout::kRepShift:
-      if (xform_val == 0) {
-        PROTOBUF_MUSTTAIL return MpPackedVarintT<is_split, uint64_t, 0>(
-            PROTOBUF_TC_PARAM_PASS);
-      } else {
-        ABSL_DCHECK_EQ(xform_val, +field_layout::kTvZigZag);
-        PROTOBUF_MUSTTAIL return MpPackedVarintT<
-            is_split, uint64_t, (is_split ? 0 : field_layout::kTvZigZag)>(
-            PROTOBUF_TC_PARAM_PASS);
-      }
-    case field_layout::kRep32Bits >> field_layout::kRepShift:
-      switch (xform_val >> field_layout::kTvShift) {
-        case 0:
-          PROTOBUF_MUSTTAIL return MpPackedVarintT<is_split, uint32_t, 0>(
-              PROTOBUF_TC_PARAM_PASS);
-        case field_layout::kTvZigZag >> field_layout::kTvShift:
-          PROTOBUF_MUSTTAIL return MpPackedVarintT<
-              is_split, uint32_t, (is_split ? 0 : field_layout::kTvZigZag)>(
-              PROTOBUF_TC_PARAM_PASS);
-        case field_layout::kTvEnum >> field_layout::kTvShift:
-          PROTOBUF_MUSTTAIL return MpPackedVarintT<
-              is_split, uint32_t, (is_split ? 0 : field_layout::kTvEnum)>(
-              PROTOBUF_TC_PARAM_PASS);
-        case field_layout::kTvRange >> field_layout::kTvShift:
-          PROTOBUF_MUSTTAIL return MpPackedVarintT<
-              is_split, uint32_t, (is_split ? 0 : field_layout::kTvRange)>(
-              PROTOBUF_TC_PARAM_PASS);
-        default:
-          Unreachable();
-      }
-    case field_layout::kRep8Bits >> field_layout::kRepShift:
-      PROTOBUF_MUSTTAIL return MpPackedVarintT<is_split, bool, 0>(
-          PROTOBUF_TC_PARAM_PASS);
-
-    default:
-      Unreachable();
-      return nullptr;  // To silence -Werror=return-type in some toolchains
+  uint16_t rep = type_card & field_layout::kRepMask;
+  if (rep == field_layout::kRep64Bits) {
+    auto* field = &RefAt<RepeatedField<uint64_t>>(msg, entry.offset);
+    return ctx->ReadPackedVarint(ptr, [field, is_zigzag](uint64_t value) {
+      field->Add(is_zigzag ? WireFormatLite::ZigZagDecode64(value) : value);
+    });
+  } else if (rep == field_layout::kRep32Bits) {
+    auto* field = &RefAt<RepeatedField<uint32_t>>(msg, entry.offset);
+    if (is_validated_enum) {
+      const TcParseTableBase::FieldAux aux = *table->field_aux(entry.aux_idx);
+      return ctx->ReadPackedVarint(ptr, [=](int32_t value) {
+        if (!EnumIsValidAux(value, xform_val, aux)) {
+          AddUnknownEnum(msg, table, data.tag(), value);
+        } else {
+          field->Add(value);
+        }
+      });
+    } else {
+      return ctx->ReadPackedVarint(ptr, [field, is_zigzag](uint64_t value) {
+        field->Add(is_zigzag ? WireFormatLite::ZigZagDecode32(
+                                   static_cast<uint32_t>(value))
+                             : value);
+      });
+    }
+  } else {
+    ABSL_DCHECK_EQ(rep, static_cast<uint16_t>(field_layout::kRep8Bits));
+    auto* field = &RefAt<RepeatedField<bool>>(msg, entry.offset);
+    return ctx->ReadPackedVarint(
+        ptr, [field](uint64_t value) { field->Add(value); });
   }
+
+  PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
 bool TcParser::MpVerifyUtf8(absl::string_view wire_bytes,
@@ -2132,15 +2100,6 @@ bool TcParser::MpVerifyUtf8(absl::string_view wire_bytes,
 #endif  // NDEBUG
   return true;
 }
-bool TcParser::MpVerifyUtf8(const absl::Cord& wire_bytes,
-                            const TcParseTableBase* table,
-                            const FieldEntry& entry, uint16_t xform_val) {
-  switch (xform_val) {
-    default:
-      ABSL_DCHECK_EQ(xform_val, 0);
-      return true;
-  }
-}
 
 template <bool is_split>
 PROTOBUF_NOINLINE const char* TcParser::MpString(PROTOBUF_TC_PARAM_DECL) {
@@ -2153,7 +2112,7 @@ PROTOBUF_NOINLINE const char* TcParser::MpString(PROTOBUF_TC_PARAM_DECL) {
     PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
   }
   if (card == field_layout::kFcRepeated) {
-    PROTOBUF_MUSTTAIL return MpRepeatedString<is_split>(PROTOBUF_TC_PARAM_PASS);
+    PROTOBUF_MUSTTAIL return MpRepeatedString(PROTOBUF_TC_PARAM_PASS);
   }
   const uint16_t xform_val = type_card & field_layout::kTvMask;
   const uint16_t rep = type_card & field_layout::kRepMask;
@@ -2173,7 +2132,7 @@ PROTOBUF_NOINLINE const char* TcParser::MpString(PROTOBUF_TC_PARAM_DECL) {
     case field_layout::kRepAString: {
       auto& field = RefAt<ArenaStringPtr>(base, entry.offset);
       if (need_init) field.InitDefault();
-      Arena* arena = msg->GetArena();
+      Arena* arena = msg->GetArenaForAllocation();
       if (arena) {
         ptr = ctx->ReadArenaString(ptr, &field, arena);
       } else {
@@ -2185,41 +2144,24 @@ PROTOBUF_NOINLINE const char* TcParser::MpString(PROTOBUF_TC_PARAM_DECL) {
       break;
     }
 
-
-    case field_layout::kRepCord: {
-      absl::Cord* field;
-      if (is_oneof) {
-        if (need_init) {
-          field = Arena::Create<absl::Cord>(msg->GetArena());
-          RefAt<absl::Cord*>(msg, entry.offset) = field;
-        } else {
-          field = RefAt<absl::Cord*>(msg, entry.offset);
-        }
-      } else {
-        field = &RefAt<absl::Cord>(base, entry.offset);
-      }
-      ptr = InlineCordParser(field, ptr, ctx);
-      if (!ptr) break;
-      is_valid = MpVerifyUtf8(*field, table, entry, xform_val);
+    case field_layout::kRepIString: {
+      ABSL_DCHECK(false);
       break;
     }
-
-    default:
-      Unreachable();
   }
 
-  if (PROTOBUF_PREDICT_FALSE(ptr == nullptr || !is_valid)) {
+  if (ptr == nullptr || !is_valid) {
     PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
   }
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+  PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
-inline PROTOBUF_ALWAYS_INLINE const char* TcParser::ParseRepeatedStringOnce(
-    const char* ptr, SerialArena* serial_arena, ParseContext* ctx,
+PROTOBUF_ALWAYS_INLINE const char* TcParser::ParseRepeatedStringOnce(
+    const char* ptr, Arena* arena, SerialArena* serial_arena, ParseContext* ctx,
     RepeatedPtrField<std::string>& field) {
   int size = ReadSize(&ptr);
   if (PROTOBUF_PREDICT_FALSE(!ptr)) return {};
-  auto* str = new (serial_arena->AllocateFromStringBlock()) std::string();
+  auto* str = Arena::Create<std::string>(arena);
   field.AddAllocatedForParse(str);
   ptr = ctx->ReadString(ptr, size, str);
   if (PROTOBUF_PREDICT_FALSE(!ptr)) return {};
@@ -2227,7 +2169,6 @@ inline PROTOBUF_ALWAYS_INLINE const char* TcParser::ParseRepeatedStringOnce(
   return ptr;
 }
 
-template <bool is_split>
 PROTOBUF_NOINLINE const char* TcParser::MpRepeatedString(
     PROTOBUF_TC_PARAM_DECL) {
   const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
@@ -2241,15 +2182,13 @@ PROTOBUF_NOINLINE const char* TcParser::MpRepeatedString(
 
   const uint16_t rep = type_card & field_layout::kRepMask;
   const uint16_t xform_val = type_card & field_layout::kTvMask;
-  void* const base = MaybeGetSplitBase(msg, is_split, table);
   switch (rep) {
     case field_layout::kRepSString: {
-      auto& field = MaybeCreateRepeatedPtrFieldRefAt<std::string, is_split>(
-          base, entry.offset, msg);
+      auto& field = RefAt<RepeatedPtrField<std::string>>(msg, entry.offset);
       const char* ptr2 = ptr;
       uint32_t next_tag;
 
-      auto* arena = field.GetArena();
+      auto* arena = field.GetOwningArena();
       SerialArena* serial_arena;
       if (PROTOBUF_PREDICT_TRUE(
               arena != nullptr &&
@@ -2257,13 +2196,13 @@ PROTOBUF_NOINLINE const char* TcParser::MpRepeatedString(
               field.PrepareForParse())) {
         do {
           ptr = ptr2;
-          ptr = ParseRepeatedStringOnce(ptr, serial_arena, ctx, field);
+          ptr = ParseRepeatedStringOnce(ptr, arena, serial_arena, ctx, field);
           if (PROTOBUF_PREDICT_FALSE(ptr == nullptr ||
                                      !MpVerifyUtf8(field[field.size() - 1],
                                                    table, entry, xform_val))) {
             PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
           }
-          if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) goto parse_loop;
+          if (!ctx->DataAvailable(ptr)) break;
           ptr2 = ReadTag(ptr, &next_tag);
         } while (next_tag == decoded_tag);
       } else {
@@ -2276,7 +2215,7 @@ PROTOBUF_NOINLINE const char* TcParser::MpRepeatedString(
                   !MpVerifyUtf8(*str, table, entry, xform_val))) {
             PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
           }
-          if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) goto parse_loop;
+          if (!ctx->DataAvailable(ptr)) break;
           ptr2 = ReadTag(ptr, &next_tag);
         } while (next_tag == decoded_tag);
       }
@@ -2291,24 +2230,9 @@ PROTOBUF_NOINLINE const char* TcParser::MpRepeatedString(
 #endif
   }
 
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-parse_loop:
   PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
-
-inline const TcParseTableBase* TcParser::GetTableFromAux(
-    uint16_t type_card, TcParseTableBase::FieldAux aux) {
-  uint16_t tv = type_card & field_layout::kTvMask;
-  if (ABSL_PREDICT_TRUE(tv == field_layout::kTvTable)) {
-    return aux.table;
-  }
-  ABSL_DCHECK(tv == field_layout::kTvDefault || tv == field_layout::kTvWeakPtr);
-  const MessageLite* prototype = tv == field_layout::kTvDefault
-                                     ? aux.message_default()
-                                     : aux.message_default_weak();
-  return prototype->GetTcParseTable();
-}
 
 template <bool is_split>
 PROTOBUF_NOINLINE const char* TcParser::MpMessage(PROTOBUF_TC_PARAM_DECL) {
@@ -2318,17 +2242,7 @@ PROTOBUF_NOINLINE const char* TcParser::MpMessage(PROTOBUF_TC_PARAM_DECL) {
 
   // Check for repeated parsing:
   if (card == field_layout::kFcRepeated) {
-    const uint16_t rep = type_card & field_layout::kRepMask;
-    switch (rep) {
-      case field_layout::kRepMessage:
-        PROTOBUF_MUSTTAIL return MpRepeatedMessageOrGroup<is_split, false>(
-            PROTOBUF_TC_PARAM_PASS);
-      case field_layout::kRepGroup:
-        PROTOBUF_MUSTTAIL return MpRepeatedMessageOrGroup<is_split, true>(
-            PROTOBUF_TC_PARAM_PASS);
-      default:
-        PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
-    }
+    PROTOBUF_MUSTTAIL return MpRepeatedMessage(PROTOBUF_TC_PARAM_PASS);
   }
 
   const uint32_t decoded_tag = data.tag();
@@ -2365,69 +2279,88 @@ PROTOBUF_NOINLINE const char* TcParser::MpMessage(PROTOBUF_TC_PARAM_DECL) {
   void* const base = MaybeGetSplitBase(msg, is_split, table);
   SyncHasbits(msg, hasbits, table);
   MessageLite*& field = RefAt<MessageLite*>(base, entry.offset);
-
-  const TcParseTableBase* inner_table =
-      GetTableFromAux(type_card, *table->field_aux(&entry));
-  if (need_init || field == nullptr) {
-    field = NewMessage(inner_table, msg->GetArena());
+  if ((type_card & field_layout::kTvMask) == field_layout::kTvTable) {
+    auto* inner_table = table->field_aux(&entry)->table;
+    if (need_init || field == nullptr) {
+      field = inner_table->default_instance->New(msg->GetArenaForAllocation());
+    }
+    if (is_group) {
+      return ctx->ParseGroup<TcParser>(field, ptr, decoded_tag, inner_table);
+    }
+    return ctx->ParseMessage<TcParser>(field, ptr, inner_table);
+  } else {
+    if (need_init || field == nullptr) {
+      const MessageLite* def;
+      if ((type_card & field_layout::kTvMask) == field_layout::kTvDefault) {
+        def = table->field_aux(&entry)->message_default();
+      } else {
+        ABSL_DCHECK_EQ(type_card & field_layout::kTvMask,
+                       +field_layout::kTvWeakPtr);
+        def = table->field_aux(&entry)->message_default_weak();
+      }
+      field = def->New(msg->GetArenaForAllocation());
+    }
+    if (is_group) {
+      return ctx->ParseGroup(field, ptr, decoded_tag);
+    }
+    return ctx->ParseMessage(field, ptr);
   }
-  const auto inner_loop = [&](const char* ptr) {
-    return ParseLoopPreserveNone(field, ptr, ctx, inner_table);
-  };
-  return is_group ? ctx->ParseGroupInlined(ptr, decoded_tag, inner_loop)
-                  : ctx->ParseLengthDelimitedInlined(ptr, inner_loop);
 }
 
-template <bool is_split, bool is_group>
-const char* TcParser::MpRepeatedMessageOrGroup(PROTOBUF_TC_PARAM_DECL) {
+const char* TcParser::MpRepeatedMessage(PROTOBUF_TC_PARAM_DECL) {
   const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
   const uint16_t type_card = entry.type_card;
   ABSL_DCHECK_EQ(type_card & field_layout::kFcMask,
                  static_cast<uint16_t>(field_layout::kFcRepeated));
   const uint32_t decoded_tag = data.tag();
   const uint32_t decoded_wiretype = decoded_tag & 7;
+  const uint16_t rep = type_card & field_layout::kRepMask;
+  const bool is_group = rep == field_layout::kRepGroup;
 
   // Validate wiretype:
-  if (!is_group) {
-    ABSL_DCHECK_EQ(type_card & field_layout::kRepMask,
-                   static_cast<uint16_t>(field_layout::kRepMessage));
-    if (decoded_wiretype != WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-      PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
-    }
-  } else {
-    ABSL_DCHECK_EQ(type_card & field_layout::kRepMask,
-                   static_cast<uint16_t>(field_layout::kRepGroup));
-    if (decoded_wiretype != WireFormatLite::WIRETYPE_START_GROUP) {
+  switch (rep) {
+    case field_layout::kRepMessage:
+      if (decoded_wiretype != WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        goto fallback;
+      }
+      break;
+    case field_layout::kRepGroup:
+      if (decoded_wiretype != WireFormatLite::WIRETYPE_START_GROUP) {
+        goto fallback;
+      }
+      break;
+    default: {
+    fallback:
       PROTOBUF_MUSTTAIL return table->fallback(PROTOBUF_TC_PARAM_PASS);
     }
   }
 
-  void* const base = MaybeGetSplitBase(msg, is_split, table);
-  RepeatedPtrFieldBase& field =
-      MaybeCreateRepeatedRefAt<RepeatedPtrFieldBase, is_split>(
-          base, entry.offset, msg);
-  const TcParseTableBase* inner_table =
-      GetTableFromAux(type_card, *table->field_aux(&entry));
-
-  const char* ptr2 = ptr;
-  uint32_t next_tag;
-  do {
-    MessageLite* value = AddMessage(inner_table, field);
-    const auto inner_loop = [&](const char* ptr) {
-      return ParseLoopPreserveNone(value, ptr, ctx, inner_table);
-    };
-    ptr = is_group ? ctx->ParseGroupInlined(ptr2, decoded_tag, inner_loop)
-                   : ctx->ParseLengthDelimitedInlined(ptr2, inner_loop);
-    if (PROTOBUF_PREDICT_FALSE(ptr == nullptr)) goto error;
-    if (PROTOBUF_PREDICT_FALSE(!ctx->DataAvailable(ptr))) goto parse_loop;
-    ptr2 = ReadTag(ptr, &next_tag);
-    if (PROTOBUF_PREDICT_FALSE(ptr2 == nullptr)) goto error;
-  } while (next_tag == decoded_tag);
-  PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-parse_loop:
-  PROTOBUF_MUSTTAIL return ToParseLoop(PROTOBUF_TC_PARAM_NO_DATA_PASS);
-error:
-  PROTOBUF_MUSTTAIL return Error(PROTOBUF_TC_PARAM_NO_DATA_PASS);
+  SyncHasbits(msg, hasbits, table);
+  auto& field = RefAt<RepeatedPtrFieldBase>(msg, entry.offset);
+  const auto aux = *table->field_aux(&entry);
+  if ((type_card & field_layout::kTvMask) == field_layout::kTvTable) {
+    auto* inner_table = aux.table;
+    MessageLite* value = field.Add<GenericTypeHandler<MessageLite>>(
+        inner_table->default_instance);
+    if (is_group) {
+      return ctx->ParseGroup<TcParser>(value, ptr, decoded_tag, inner_table);
+    }
+    return ctx->ParseMessage<TcParser>(value, ptr, inner_table);
+  } else {
+    const MessageLite* def;
+    if ((type_card & field_layout::kTvMask) == field_layout::kTvDefault) {
+      def = aux.message_default();
+    } else {
+      ABSL_DCHECK_EQ(type_card & field_layout::kTvMask,
+                     +field_layout::kTvWeakPtr);
+      def = aux.message_default_weak();
+    }
+    MessageLite* value = field.Add<GenericTypeHandler<MessageLite>>(def);
+    if (is_group) {
+      return ctx->ParseGroup(value, ptr, decoded_tag);
+    }
+    return ctx->ParseMessage(value, ptr);
+  }
 }
 
 static void SerializeMapKey(const NodeBase* node, MapTypeCard type_card,
@@ -2470,7 +2403,7 @@ static void SerializeMapKey(const NodeBase* node, MapTypeCard type_card,
           }
           break;
         default:
-          Unreachable();
+          PROTOBUF_ASSUME(false);
       }
       break;
     case WireFormatLite::WIRETYPE_FIXED32:
@@ -2489,7 +2422,7 @@ static void SerializeMapKey(const NodeBase* node, MapTypeCard type_card,
           &coded_output);
       break;
     default:
-      Unreachable();
+      PROTOBUF_ASSUME(false);
   }
 }
 
@@ -2531,10 +2464,10 @@ PROTOBUF_ALWAYS_INLINE inline void TcParser::InitializeMapNodeEntry(
                                   map.arena());
       break;
     case MapTypeCard::kMessage:
-      aux[1].table->class_data->PlacementNew(obj, map.arena());
+      aux[1].create_in_arena(map.arena(), reinterpret_cast<MessageLite*>(obj));
       break;
     default:
-      Unreachable();
+      PROTOBUF_ASSUME(false);
   }
 }
 
@@ -2549,7 +2482,7 @@ PROTOBUF_NOINLINE void TcParser::DestroyMapNode(NodeBase* node,
         ->~basic_string();
   } else if (map_info.value_type_card.cpp_type() == MapTypeCard::kMessage) {
     static_cast<MessageLite*>(node->GetVoidValue(map_info.node_size_info))
-        ->DestroyInstance();
+        ->~MessageLite();
   }
   map.DeallocNode(node, map_info.node_size_info);
 }
@@ -2628,7 +2561,7 @@ const char* TcParser::ParseOneMapEntry(
             memcpy(obj, &tmp, sizeof(tmp));
             continue;
           default:
-            Unreachable();
+            PROTOBUF_ASSUME(false);
         }
       case WFL::WIRETYPE_FIXED32:
         ptr = ReadFixed<uint32_t>(obj, ptr);
@@ -2664,19 +2597,18 @@ const char* TcParser::ParseOneMapEntry(
           continue;
         }
       default:
-        Unreachable();
+        PROTOBUF_ASSUME(false);
     }
   }
   return ptr;
 }
 
-template <bool is_split>
 PROTOBUF_NOINLINE const char* TcParser::MpMap(PROTOBUF_TC_PARAM_DECL) {
   const auto& entry = RefAt<FieldEntry>(table, data.entry_offset());
   // `aux[0]` points into a MapAuxInfo.
   // If we have a message mapped_type aux[1] points into a `create_in_arena`.
   // If we have a validated enum mapped_type aux[1] point into a
-  // `enum_data`.
+  // `enum_validator`.
   const auto* aux = table->field_aux(&entry);
   const auto map_info = aux[0].map_info;
 
@@ -2690,11 +2622,10 @@ PROTOBUF_NOINLINE const char* TcParser::MpMap(PROTOBUF_TC_PARAM_DECL) {
   // Otherwise, it points into a MapField and we must synchronize with
   // reflection. It is done by calling the MutableMap() virtual function on the
   // field's base class.
-  void* const base = MaybeGetSplitBase(msg, is_split, table);
   UntypedMapBase& map =
       map_info.use_lite
-          ? RefAt<UntypedMapBase>(base, entry.offset)
-          : *RefAt<MapFieldBaseForParse>(base, entry.offset).MutableMap();
+          ? RefAt<UntypedMapBase>(msg, entry.offset)
+          : *RefAt<MapFieldBaseForParse>(msg, entry.offset).MutableMap();
 
   const uint32_t saved_tag = data.tag();
 
@@ -2711,11 +2642,10 @@ PROTOBUF_NOINLINE const char* TcParser::MpMap(PROTOBUF_TC_PARAM_DECL) {
     });
 
     if (PROTOBUF_PREDICT_TRUE(ptr != nullptr)) {
-      if (PROTOBUF_PREDICT_FALSE(map_info.value_is_validated_enum &&
-                                 !internal::ValidateEnumInlined(
-                                     *static_cast<int32_t*>(node->GetVoidValue(
-                                         map_info.node_size_info)),
-                                     aux[1].enum_data))) {
+      if (PROTOBUF_PREDICT_FALSE(
+              map_info.value_is_validated_enum &&
+              !aux[1].enum_validator(*static_cast<int32_t*>(
+                  node->GetVoidValue(map_info.node_size_info))))) {
         WriteMapEntryAsUnknown(msg, table, saved_tag, node, map_info);
       } else {
         // Done parsing the node, try to insert it.
@@ -2739,7 +2669,7 @@ PROTOBUF_NOINLINE const char* TcParser::MpMap(PROTOBUF_TC_PARAM_DECL) {
                     static_cast<KeyMapBase<std::string>::KeyNode*>(node));
             break;
           default:
-            Unreachable();
+            PROTOBUF_ASSUME(false);
         }
       }
     }
@@ -2768,156 +2698,6 @@ PROTOBUF_NOINLINE const char* TcParser::MpMap(PROTOBUF_TC_PARAM_DECL) {
   PROTOBUF_MUSTTAIL return ToTagDispatch(PROTOBUF_TC_PARAM_NO_DATA_PASS);
 }
 
-const char* TcParser::MessageSetWireFormatParseLoopLite(
-    PROTOBUF_TC_PARAM_NO_DATA_DECL) {
-  PROTOBUF_MUSTTAIL return MessageSetWireFormatParseLoopImpl<MessageLite>(
-      PROTOBUF_TC_PARAM_NO_DATA_PASS);
-}
-
-std::string TypeCardToString(uint16_t type_card) {
-  // In here we convert the runtime value of entry.type_card back into a
-  // sequence of literal enum labels. We use the mnenonic labels for nicer
-  // codegen.
-  namespace fl = internal::field_layout;
-  const int rep_index = (type_card & fl::kRepMask) >> fl::kRepShift;
-  const int tv_index = (type_card & fl::kTvMask) >> fl::kTvShift;
-
-  static constexpr const char* kFieldCardNames[] = {"Singular", "Optional",
-                                                    "Repeated", "Oneof"};
-  static_assert((fl::kFcSingular >> fl::kFcShift) == 0, "");
-  static_assert((fl::kFcOptional >> fl::kFcShift) == 1, "");
-  static_assert((fl::kFcRepeated >> fl::kFcShift) == 2, "");
-  static_assert((fl::kFcOneof >> fl::kFcShift) == 3, "");
-
-  std::string out;
-
-  absl::StrAppend(&out, "::_fl::kFc",
-                  kFieldCardNames[(type_card & fl::kFcMask) >> fl::kFcShift]);
-
-#define PROTOBUF_INTERNAL_TYPE_CARD_CASE(x)  \
-  case fl::k##x:                             \
-    absl::StrAppend(&out, " | ::_fl::k" #x); \
-    break
-
-  switch (type_card & fl::kFkMask) {
-    case fl::kFkString: {
-      switch (type_card & ~fl::kFcMask & ~fl::kRepMask & ~fl::kSplitMask) {
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Bytes);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(RawString);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Utf8String);
-        default:
-          ABSL_LOG(FATAL) << "Unknown type_card: 0x" << type_card;
-      }
-
-      static constexpr const char* kRepNames[] = {"AString", "IString", "Cord",
-                                                  "SPiece", "SString"};
-      static_assert((fl::kRepAString >> fl::kRepShift) == 0, "");
-      static_assert((fl::kRepIString >> fl::kRepShift) == 1, "");
-      static_assert((fl::kRepCord >> fl::kRepShift) == 2, "");
-      static_assert((fl::kRepSPiece >> fl::kRepShift) == 3, "");
-      static_assert((fl::kRepSString >> fl::kRepShift) == 4, "");
-
-      absl::StrAppend(&out, " | ::_fl::kRep", kRepNames[rep_index]);
-      break;
-    }
-
-    case fl::kFkMessage: {
-      absl::StrAppend(&out, " | ::_fl::kMessage");
-
-      static constexpr const char* kRepNames[] = {nullptr, "Group", "Lazy"};
-      static_assert((fl::kRepGroup >> fl::kRepShift) == 1, "");
-      static_assert((fl::kRepLazy >> fl::kRepShift) == 2, "");
-
-      if (auto* rep = kRepNames[rep_index]) {
-        absl::StrAppend(&out, " | ::_fl::kRep", rep);
-      }
-
-      static constexpr const char* kXFormNames[2][4] = {
-          {nullptr, "Default", "Table", "WeakPtr"}, {nullptr, "Eager", "Lazy"}};
-
-      static_assert((fl::kTvDefault >> fl::kTvShift) == 1, "");
-      static_assert((fl::kTvTable >> fl::kTvShift) == 2, "");
-      static_assert((fl::kTvWeakPtr >> fl::kTvShift) == 3, "");
-      static_assert((fl::kTvEager >> fl::kTvShift) == 1, "");
-      static_assert((fl::kTvLazy >> fl::kTvShift) == 2, "");
-
-      if (auto* xform = kXFormNames[rep_index == 2][tv_index]) {
-        absl::StrAppend(&out, " | ::_fl::kTv", xform);
-      }
-      break;
-    }
-
-    case fl::kFkMap:
-      absl::StrAppend(&out, " | ::_fl::kMap");
-      break;
-
-    case fl::kFkNone:
-      break;
-
-    case fl::kFkVarint:
-    case fl::kFkPackedVarint:
-    case fl::kFkFixed:
-    case fl::kFkPackedFixed: {
-      switch (type_card & ~fl::kFcMask & ~fl::kSplitMask) {
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Bool);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Fixed32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(UInt32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(SFixed32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Int32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(SInt32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Float);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Enum);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(EnumRange);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(OpenEnum);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Fixed64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(UInt64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(SFixed64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Int64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(SInt64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(Double);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedBool);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedFixed32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedUInt32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedSFixed32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedInt32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedSInt32);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedFloat);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedEnum);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedEnumRange);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedOpenEnum);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedFixed64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedUInt64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedSFixed64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedInt64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedSInt64);
-        PROTOBUF_INTERNAL_TYPE_CARD_CASE(PackedDouble);
-        default:
-          ABSL_LOG(FATAL) << "Unknown type_card: 0x" << type_card;
-      }
-    }
-  }
-
-  if (type_card & fl::kSplitMask) {
-    absl::StrAppend(&out, " | ::_fl::kSplitTrue");
-  }
-
-#undef PROTOBUF_INTERNAL_TYPE_CARD_CASE
-
-  return out;
-}
-
-const char* TcParser::DiscardEverythingFallback(PROTOBUF_TC_PARAM_DECL) {
-  SyncHasbits(msg, hasbits, table);
-  uint32_t tag = data.tag();
-  if ((tag & 7) == WireFormatLite::WIRETYPE_END_GROUP || tag == 0) {
-    ctx->SetLastTag(tag);
-    return ptr;
-  }
-  return UnknownFieldParse(tag, nullptr, ptr, ctx);
-}
-
 }  // namespace internal
 }  // namespace protobuf
 }  // namespace google
-
-#include "google/protobuf/port_undef.inc"

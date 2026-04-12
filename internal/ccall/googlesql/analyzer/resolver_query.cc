@@ -730,8 +730,8 @@ STATIC_IDSTRING(kWeightId, "$sample_weight");
 STATIC_IDSTRING(kDummyTableId, "$dummy_table");
 STATIC_IDSTRING(kPivotId, "$pivot");
 STATIC_IDSTRING(kUnpivotColumnId, "$unpivot");
-STATIC_IDSTRING(kResolverQueryMatchRecognizeId, "$match_recognize");
-STATIC_IDSTRING(kResolverQueryGraphTableId, "$graph_table");
+STATIC_IDSTRING(kMatchRecognizeId, "$match_recognize");
+STATIC_IDSTRING(kGraphTableId, "$graph_table");
 STATIC_IDSTRING(kRowId, "$row");
 
 absl::Status Resolver::CheckForUnwantedSelectClauseChildNodes(
@@ -2366,7 +2366,7 @@ absl::Status Resolver::ResolvePipeIf(
         std::move(case_info.resolved_expr), sql,
         idx == selected_case_idx ? std::move(resolved_subpipeline) : nullptr));
   }
-  GOOGLESQL_RET_CHECK(resolved_subpipeline == nullptr);
+  GOOGLESQL_RET_CHECK_EQ(resolved_subpipeline, nullptr);
 
   auto if_scan = MakeResolvedPipeIfScan(
       chosen_scan->column_list(), std::move(*current_scan), selected_case_idx,
@@ -6187,7 +6187,7 @@ absl::Status Resolver::ResolveSelectDistinct(
       // Create a new DISTINCT column.
       const IdString* query_alias = &kDistinctId;
       if (query_resolution_info->IsGqlReturn()) {
-        query_alias = &kResolverQueryGraphTableId;
+        query_alias = &kGraphTableId;
       }
       distinct_column =
           ResolvedColumn(AllocateColumnId(), *query_alias, column.name_id(),
@@ -7466,7 +7466,7 @@ absl::Status Resolver::HandleGroupBySelectColumn(
     const IdString* query_alias = &kGroupById;
     if (query_resolution_info->IsGqlReturn() ||
         query_resolution_info->IsGqlWith()) {
-      query_alias = &kResolverQueryGraphTableId;
+      query_alias = &kGraphTableId;
     }
     *group_by_column = ResolvedColumn(
         AllocateColumnId(), *query_alias, select_column_state->alias,
@@ -7643,7 +7643,7 @@ absl::Status Resolver::HandleGroupByExpression(
     const IdString* query_alias = &kGroupById;
     if (query_resolution_info->IsGqlReturn() ||
         query_resolution_info->IsGqlWith()) {
-      query_alias = &kResolverQueryGraphTableId;
+      query_alias = &kGraphTableId;
     }
     *group_by_column = ResolvedColumn(AllocateColumnId(), *query_alias, alias,
                                       (*resolved_expr)->annotated_type());
@@ -13253,7 +13253,7 @@ absl::Status Resolver::ResolveMatchRecognizeMeasures(
     std::unique_ptr<const ResolvedExpr> expr;
     GOOGLESQL_RETURN_IF_ERROR(ResolveExpr(measure->expression(),
                                 measure_expr_resolution_info.get(), &expr));
-    ResolvedColumn column(AllocateColumnId(), kResolverQueryMatchRecognizeId,
+    ResolvedColumn column(AllocateColumnId(), kMatchRecognizeId,
                           measure->alias()->GetAsIdString(),
                           expr->annotated_type());
     GOOGLESQL_RET_CHECK(side_effect_scope_depth_ == 0 ||
@@ -13567,15 +13567,15 @@ absl::Status Resolver::ResolveMatchRecognizeClause(
       &match_recognize_state_,
       MatchRecognizeState{
           .match_number_column =
-              ResolvedColumn(AllocateColumnId(), kResolverQueryMatchRecognizeId,
+              ResolvedColumn(AllocateColumnId(), kMatchRecognizeId,
                              id_string_pool_->Make("$match_number"),
                              type_factory_->get_int64()),
           .match_row_number_column =
-              ResolvedColumn(AllocateColumnId(), kResolverQueryMatchRecognizeId,
+              ResolvedColumn(AllocateColumnId(), kMatchRecognizeId,
                              id_string_pool_->Make("$match_row_number"),
                              type_factory_->get_int64()),
           .classifier_column =
-              ResolvedColumn(AllocateColumnId(), kResolverQueryMatchRecognizeId,
+              ResolvedColumn(AllocateColumnId(), kMatchRecognizeId,
                              id_string_pool_->Make("$classifier"),
                              type_factory_->get_string()),
       });

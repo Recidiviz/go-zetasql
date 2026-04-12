@@ -18,7 +18,6 @@
 #define GOOGLESQL_PUBLIC_FUNCTIONS_UTIL_H_
 
 #include <cstdint>
-#include <sstream>
 #include <string>
 
 #include "absl/base/attributes.h"
@@ -78,16 +77,6 @@ extern template std::string UnaryOverflowMessage<int64_t>(
 template <typename T>
 std::string BinaryOverflowMessage(T in1, T in2,
                                   absl::string_view operator_symbol);
-
-template <>
-inline std::string BinaryOverflowMessage<absl::int128>(
-    absl::int128 in1, absl::int128 in2,
-    absl::string_view operator_symbol) {
-  std::ostringstream oss;
-  oss << ArithmeticType<absl::int128>::kName << " overflow: " << in1
-      << operator_symbol << in2;
-  return oss.str();
-}
 
 extern template std::string BinaryOverflowMessage<int32_t>(
     int32_t in1, int32_t in2, absl::string_view operator_symbol);

@@ -147,7 +147,7 @@ class ContainerType : public Type {
   std::string DebugFormatNullableValueContentForContainer(
       const internal::NullableValueContent& nullable_content, const Type* type,
       const FormatValueContentOptions& options) const {
-    ABSL_CHECK(options.mode == Type::FormatValueContentOptions::Mode::kDebug)
+    ABSL_DCHECK_EQ(options.mode, Type::FormatValueContentOptions::Mode::kDebug)
         << "This function should only be called in debug formatting mode";
 
     std::string value_str =

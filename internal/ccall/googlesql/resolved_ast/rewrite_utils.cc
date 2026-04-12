@@ -2215,13 +2215,11 @@ FunctionCallBuilder::UncheckedPathCreate(
     }
   }
   std::vector<ConcreteArgument> arg_types;
-  arg_types.push_back(ConcreteArgument{components[0]->type(), 1});
+  arg_types.emplace_back(components[0]->type(), 1);
   if (components.size() > 1) {
     GOOGLESQL_RET_CHECK_GE(components.size(), 3);
-    arg_types.push_back(
-        ConcreteArgument{components[1]->type(), components.size() / 2});
-    arg_types.push_back(
-        ConcreteArgument{components[2]->type(), components.size() / 2});
+    arg_types.emplace_back(components[1]->type(), components.size() / 2);
+    arg_types.emplace_back(components[2]->type(), components.size() / 2);
   }
 
   const Function* path_fn = nullptr;
@@ -2682,8 +2680,8 @@ absl::StatusOr<std::unique_ptr<const ResolvedFunctionCall>>
 FunctionCallBuilder::IsNotDistinctFrom(
     std::unique_ptr<const ResolvedExpr> left_expr,
     std::unique_ptr<const ResolvedExpr> right_expr) {
-  GOOGLESQL_RET_CHECK(left_expr != nullptr);
-  GOOGLESQL_RET_CHECK(right_expr != nullptr);
+  GOOGLESQL_RET_CHECK_NE(left_expr, nullptr);
+  GOOGLESQL_RET_CHECK_NE(right_expr, nullptr);
   GOOGLESQL_RET_CHECK(left_expr->type()->Equals(right_expr->type()))
       << "Inconsistent types of left_expr and right_expr: "
       << left_expr->type()->DebugString() << " vs "

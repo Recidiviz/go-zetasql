@@ -46,7 +46,7 @@
 
 namespace googlesql {
 namespace {
-constexpr size_t kGraphPathShortTypeNameNumPropertyTypeLimit = 3;
+constexpr size_t kShortTypeNameNumPropertyTypeLimit = 3;
 
 // Gets ValueContentOrderedList from ValueContent.
 const internal::ValueContentOrderedList* GetContainer(
@@ -172,7 +172,7 @@ absl::StatusOr<std::string> GraphPathType::TypeNameImpl(
 
 std::string GraphPathType::ShortTypeName(ProductMode mode,
                                          bool use_external_float32) const {
-  return TypeNameImpl(kGraphPathShortTypeNameNumPropertyTypeLimit, mode,
+  return TypeNameImpl(kShortTypeNameNumPropertyTypeLimit, mode,
                       use_external_float32)
       .value_or("");
 }

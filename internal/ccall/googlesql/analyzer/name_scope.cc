@@ -976,7 +976,7 @@ void NameScope::DescribeInto(
               continue;
             }
 
-            if (reflection_column->table_alias().empty()) {
+            if (!reflection_column->has_table_alias()) {
               reflection_column->set_table_alias(name.ToString());
             } else {
               // We found a second table alias pointing at the same column.

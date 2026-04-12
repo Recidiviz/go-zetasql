@@ -1687,7 +1687,7 @@ GraphTableQueryResolver::ResolveGraphPathPatternQuantifier(
   // compile time. We simply confirm that they're a constant and expect
   // parameters to be validated at runtime.
   int64_t lower_bound, upper_bound;
-  GOOGLESQL_RET_CHECK(lower_bound_expr != nullptr);
+  GOOGLESQL_RET_CHECK_NE(lower_bound_expr, nullptr);
   if (lower_bound_expr->Is<ResolvedLiteral>()) {
     lower_bound =
         lower_bound_expr->GetAs<ResolvedLiteral>()->value().int64_value();

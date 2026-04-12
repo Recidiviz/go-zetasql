@@ -44,7 +44,7 @@ GoogleSqlTokenizer::GoogleSqlTokenizer(absl::string_view filename,
     // We do not use Lexer::Rewind() because its time complexity is
     // O(start_offset). See the comment for `Lexer::start_offset_` in
     // googlesql.tm for more information.
-    : TmScanLexer(absl::ClippedSubstr(input, start_offset)) {
+    : Lexer(absl::ClippedSubstr(input, start_offset)) {
   filename_ = filename;
   start_offset_ = start_offset;
 }

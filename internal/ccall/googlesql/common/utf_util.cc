@@ -32,7 +32,7 @@
 
 namespace googlesql {
 
-constexpr absl::string_view kUtfUtilReplacementCharacter = "\uFFFD";
+constexpr absl::string_view kReplacementCharacter = "\uFFFD";
 
 static int SpanWellFormedUTF8(const char* s, int length) {
   for (int i = 0; i < length;) {
@@ -70,8 +70,7 @@ std::string CoerceToWellFormedUTF8(absl::string_view input) {
         // (or start of input), and the point just before the current one.
         out.append(s + prev, start - prev);
       }
-      out.append(kUtfUtilReplacementCharacter.data(),
-                 kUtfUtilReplacementCharacter.size());
+      out.append(kReplacementCharacter.data(), kReplacementCharacter.size());
       prev = i;
     }
   }

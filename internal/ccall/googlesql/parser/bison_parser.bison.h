@@ -32,7 +32,7 @@
 
 
 /**
- ** \file bison_parser.bison.h
+ ** \file bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h
  ** Define the zetasql_bison_parser::parser class.
  */
 
@@ -41,10 +41,10 @@
 // Undocumented macros, especially those whose name start with YY_,
 // are private implementation details.  Do not rely on them.
 
-#ifndef YY_ZETASQL_BISON_PARSER_BISON_PARSER_BISON_H_INCLUDED
-# define YY_ZETASQL_BISON_PARSER_BISON_PARSER_BISON_H_INCLUDED
+#ifndef YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+# define YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
 // //                    "%code requires" blocks.
-#line 17 "bison_parser.y" // lalr1.cc:401
+#line 17 "zetasql/parser/bison_parser.y" // lalr1.cc:401
 
 // Bison parser for ZetaSQL. This works in conjunction with
 // zetasql::parser::BisonParser.
@@ -55,16 +55,14 @@
 // (Do NOT set the --report-file to a path on citc, because then the file will
 // be truncated at 1MB for some reason.)
 
-#include <cstdint>
-
-#include "googlesql/parser/bison_parser.h"
-#include "googlesql/parser/join_processor.h"
-#include "googlesql/parser/parse_tree.h"
-#include "googlesql/parser/parser_internal.h"
-#include "googlesql/parser/statement_properties.h"
-#include "googlesql/public/parse_location.h"
-#include "googlesql/public/strings.h"
-#include "googlesql/base/case.h"
+#include "zetasql/parser/location.hh"
+#include "zetasql/parser/bison_parser.h"
+#include "zetasql/parser/join_processor.h"
+#include "zetasql/parser/parse_tree.h"
+#include "zetasql/parser/parser_internal.h"
+#include "zetasql/parser/statement_properties.h"
+#include "zetasql/public/strings.h"
+#include "zetasql/base/case.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_join.h"
@@ -76,7 +74,8 @@
 #define YYDEBUG 0
 #endif
 
-#line 80 "bison_parser.bison.h" // lalr1.cc:401
+
+#line 79 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 # include <cstdlib> // std::abort
@@ -121,7 +120,7 @@
 #else
 # define YY_CONSTEXPR
 #endif
-
+# include "location.hh"
 
 
 #ifndef YY_ATTRIBUTE
@@ -187,7 +186,7 @@
 
 
 namespace zetasql_bison_parser {
-#line 191 "bison_parser.bison.h" // lalr1.cc:401
+#line 190 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 
@@ -199,15 +198,10 @@ namespace zetasql_bison_parser {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 84 "bison_parser.y" // lalr1.cc:401
+    #line 262 "zetasql/parser/bison_parser.y" // lalr1.cc:401
 
   bool boolean;
   int64_t int64_val;
-  struct {
-    const char* str;
-    size_t len;
-  } string_view;
-  const char* string_constant;
   zetasql::TypeKind type_kind;
   zetasql::ASTFunctionCall::NullHandlingModifier null_handling_modifier;
   zetasql::ASTWindowFrame::FrameUnit frame_unit;
@@ -215,7 +209,6 @@ namespace zetasql_bison_parser {
       templated_parameter_kind;
   zetasql::ASTBinaryExpression::Op binary_op;
   zetasql::ASTUnaryExpression::Op unary_op;
-  zetasql::ASTOptionsEntry::AssignmentOp options_assignment_op;
   zetasql::ASTJoin::JoinType join_type;
   zetasql::ASTJoin::JoinHint join_hint;
   zetasql::ASTSampleSize::Unit sample_size_unit;
@@ -243,7 +236,6 @@ namespace zetasql_bison_parser {
   zetasql::ASTFunctionParameter::ProcedureParameterMode parameter_mode;
   zetasql::ASTCreateFunctionStmtBase::DeterminismLevel determinism_level;
   zetasql::ASTGeneratedColumnInfo::StoredMode stored_mode;
-  zetasql::ASTGeneratedColumnInfo::GeneratedMode generated_mode;
   zetasql::ASTOrderingExpression::OrderingSpec ordering_spec;
   zetasql::ASTSelectWith* select_with;
   zetasql::ASTSetOperationColumnMatchMode* column_match_mode;
@@ -257,7 +249,6 @@ namespace zetasql_bison_parser {
   zetasql::ASTQuery* query;
   zetasql::ASTExpression* expression;
   zetasql::ASTExpressionSubquery* expression_subquery;
-  zetasql::ASTPathExpression* path_expression;
   zetasql::ASTFunctionCall* function_call;
   zetasql::ASTAlias* alias;
   zetasql::ASTIdentifier* identifier;
@@ -267,22 +258,13 @@ namespace zetasql_bison_parser {
   zetasql::parser_internal::SeparatedIdentifierTmpNode* slashed_identifier;
   zetasql::ASTPivotClause* pivot_clause;
   zetasql::ASTUnpivotClause* unpivot_clause;
-  zetasql::ASTRowPatternExpression* row_pattern_expression;
   zetasql::ASTSetOperationType* set_operation_type;
   zetasql::ASTSetOperationAllOrDistinct* set_operation_all_or_distinct;
-  zetasql::ASTBytesLiteral* bytes_literal;
-  zetasql::ASTBytesLiteralComponent* bytes_literal_component;
-  zetasql::ASTStringLiteral* string_literal;
-  zetasql::ASTStringLiteralComponent* string_literal_component;
-  zetasql::ASTPipeOperator* pipe_operator;
-  zetasql::ASTSampleClause* sample_clause;
   struct {
     zetasql::ASTPivotClause* pivot_clause;
     zetasql::ASTUnpivotClause* unpivot_clause;
     zetasql::ASTAlias* alias;
   } pivot_or_unpivot_clause_and_alias;
-  zetasql::ASTPostfixTableOperator* postfix_table_operator;
-  zetasql::ASTTableExpression* table_expression;
   struct {
     zetasql::ASTNode* where;
     zetasql::ASTNode* group_by;
@@ -304,14 +286,6 @@ namespace zetasql_bison_parser {
     zetasql::ASTWithConnectionClause* with_connection_clause;
   } language_or_remote_with_connection;
   struct {
-    zetasql::ASTIdentifier* language;
-    zetasql::ASTNode* options;
-  } language_options_set;
-  struct {
-    zetasql::ASTNode* options;
-    zetasql::ASTNode* body;
-  } options_body_set;
-  struct {
     zetasql::ASTScript* body;
     zetasql::ASTIdentifier* language;
     zetasql::ASTNode* code;
@@ -328,28 +302,14 @@ namespace zetasql_bison_parser {
     zetasql::ASTQuery* query;
     zetasql::ASTPathExpression* replica_source;
   } query_or_replica_source_info;
-  struct {
-    zetasql::ASTNode* hint;
-    bool and_order_by;
-  } group_by_preamble;
-  zetasql::ASTStructBracedConstructor* struct_braced_constructor;
-  zetasql::ASTBracedConstructor* braced_constructor;
-  zetasql::ASTBracedConstructorField* braced_constructor_field;
-  zetasql::ASTBracedConstructorFieldValue* braced_constructor_field_value;
 
-  struct {
-    zetasql::ASTNode* partition_by;
-    zetasql::ASTNode* options_list;
-    zetasql::ASTNode* spanner_index_innerleaving_clause;
-  } create_index_statement_suffix;
-
-#line 347 "bison_parser.bison.h" // lalr1.cc:401
+#line 307 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
     };
 #else
     typedef YYSTYPE semantic_type;
 #endif
     /// Symbol locations.
-    typedef zetasql::ParseLocationRange location_type;
+    typedef location location_type;
 
     /// Syntax errors thrown from user actions.
     struct syntax_error : std::runtime_error
@@ -383,358 +343,319 @@ namespace zetasql_bison_parser {
         INTEGER_LITERAL = 263,
         FLOATING_POINT_LITERAL = 264,
         IDENTIFIER = 265,
-        BACKSLASH = 266,
-        SCRIPT_LABEL = 267,
-        COMMENT = 268,
-        KW_ADD_ASSIGN = 269,
-        KW_SUB_ASSIGN = 270,
-        KW_NOT_EQUALS_C_STYLE = 271,
-        KW_NOT_EQUALS_SQL_STYLE = 272,
-        KW_LESS_EQUALS = 273,
-        KW_GREATER_EQUALS = 274,
-        KW_DOUBLE_AT = 275,
-        KW_CONCAT_OP = 276,
-        KW_OPEN_HINT = 277,
-        KW_OPEN_INTEGER_HINT = 278,
-        OPEN_INTEGER_PREFIX_HINT = 279,
-        KW_SHIFT_LEFT = 280,
-        KW_SHIFT_RIGHT = 281,
-        KW_NAMED_ARGUMENT_ASSIGNMENT = 282,
-        KW_LAMBDA_ARROW = 283,
-        KW_PIPE = 284,
-        UNARY_NOT_PRECEDENCE = 285,
-        UNARY_PRECEDENCE = 286,
-        DOUBLE_AT_PRECEDENCE = 287,
-        PRIMARY_PRECEDENCE = 288,
-        SENTINEL_RESERVED_KW_START = 289,
-        KW_ALL = 290,
-        KW_AND = 291,
-        KW_ANY = 292,
-        KW_ARRAY = 293,
-        KW_AS = 294,
-        KW_ASC = 295,
-        KW_ASSERT_ROWS_MODIFIED = 296,
-        KW_AT = 297,
-        KW_BETWEEN = 298,
-        KW_BY = 299,
-        KW_CASE = 300,
-        KW_CAST = 301,
-        KW_COLLATE = 302,
-        KW_CREATE = 303,
-        KW_CROSS = 304,
-        KW_CURRENT = 305,
-        KW_DEFAULT = 306,
-        KW_DEFINE_FOR_MACROS = 307,
-        KW_DEFINE = 308,
-        KW_DESC = 309,
-        KW_DISTINCT = 310,
-        KW_ELSE = 311,
-        KW_END = 312,
-        KW_ENUM = 313,
-        KW_EXCEPT = 314,
-        KW_EXISTS = 315,
-        KW_EXTRACT = 316,
-        KW_FALSE = 317,
-        KW_FOLLOWING = 318,
-        KW_FOR = 319,
-        KW_FROM = 320,
-        KW_FULL = 321,
-        KW_GROUP = 322,
-        KW_GROUPING = 323,
-        KW_HASH = 324,
-        KW_HAVING = 325,
-        KW_IF = 326,
-        KW_IGNORE = 327,
-        KW_IN = 328,
-        KW_INNER = 329,
-        KW_INTERSECT = 330,
-        KW_INTERVAL = 331,
-        KW_INTO = 332,
-        KW_IS = 333,
-        KW_JOIN = 334,
-        KW_LEFT = 335,
-        KW_LIKE = 336,
-        KW_LIMIT = 337,
-        KW_LOOKUP = 338,
-        KW_MATCH_RECOGNIZE_RESERVED = 339,
-        KW_MERGE = 340,
-        KW_NATURAL = 341,
-        KW_NEW = 342,
-        KW_NO = 343,
-        KW_NOT = 344,
-        KW_NULL = 345,
-        KW_NULLS = 346,
-        KW_ON = 347,
-        KW_OR = 348,
-        KW_ORDER = 349,
-        KW_OUTER = 350,
-        KW_OVER = 351,
-        KW_PARTITION = 352,
-        KW_PRECEDING = 353,
-        KW_PROTO = 354,
-        KW_RANGE = 355,
-        KW_RECURSIVE = 356,
-        KW_RESPECT = 357,
-        KW_RIGHT = 358,
-        KW_ROLLUP = 359,
-        KW_ROWS = 360,
-        KW_SELECT = 361,
-        KW_SET = 362,
-        KW_STRUCT = 363,
-        KW_TABLESAMPLE = 364,
-        KW_THEN = 365,
-        KW_TO = 366,
-        KW_TRUE = 367,
-        KW_UNBOUNDED = 368,
-        KW_UNION = 369,
-        KW_USING = 370,
-        KW_WHEN = 371,
-        KW_WHERE = 372,
-        KW_WINDOW = 373,
-        KW_WITH = 374,
-        KW_UNNEST = 375,
-        KW_CONTAINS = 376,
-        KW_CUBE = 377,
-        KW_ESCAPE = 378,
-        KW_EXCLUDE = 379,
-        KW_FETCH = 380,
-        KW_GROUPS = 381,
-        KW_LATERAL = 382,
-        KW_OF = 383,
-        KW_SOME = 384,
-        KW_TREAT = 385,
-        KW_WITHIN = 386,
-        KW_QUALIFY_RESERVED = 387,
-        SENTINEL_RESERVED_KW_END = 388,
-        SENTINEL_LB_TOKEN_START = 389,
-        LB_OPEN_STATEMENT_BLOCK = 390,
-        LB_BEGIN_AT_STATEMENT_START = 391,
-        LB_EXPLAIN_SQL_STATEMENT = 392,
-        LB_END_OF_STATEMENT_LEVEL_HINT = 393,
-        LB_DOT_IN_PATH_EXPRESSION = 394,
-        LB_OPEN_NESTED_DML = 395,
-        LB_OPEN_TYPE_TEMPLATE = 396,
-        LB_CLOSE_TYPE_TEMPLATE = 397,
-        LB_WITH_IN_SELECT_WITH_OPTIONS = 398,
-        SENTINEL_LB_TOKEN_END = 399,
-        KW_WITH_STARTING_WITH_GROUP_ROWS = 400,
-        KW_WITH_STARTING_WITH_EXPRESSION = 401,
-        KW_EXCEPT_IN_SET_OP = 402,
-        KW_FULL_IN_SET_OP = 403,
-        KW_LEFT_IN_SET_OP = 404,
-        KW_REPLACE_AFTER_INSERT = 405,
-        KW_UPDATE_AFTER_INSERT = 406,
-        KW_NOT_SPECIAL = 407,
-        KW_OPTIONS_IN_SELECT_WITH_OPTIONS = 408,
-        INVALID_LITERAL_PRECEDING_IDENTIFIER_NO_SPACE = 409,
-        DECIMAL_INTEGER_LITERAL = 410,
-        HEX_INTEGER_LITERAL = 411,
-        EXP_IN_FLOAT_NO_SIGN = 412,
-        STANDALONE_EXPONENT_SIGN = 413,
-        SENTINEL_NONRESERVED_KW_START = 414,
-        KW_ABORT = 415,
-        KW_ACCESS = 416,
-        KW_ACTION = 417,
-        KW_ADD = 418,
-        KW_AGGREGATE = 419,
-        KW_ALTER = 420,
-        KW_ALWAYS = 421,
-        KW_ANALYZE = 422,
-        KW_APPROX = 423,
-        KW_ARE = 424,
-        KW_ASSERT = 425,
-        KW_BATCH = 426,
-        KW_BEGIN = 427,
-        KW_BIGDECIMAL = 428,
-        KW_BIGNUMERIC = 429,
-        KW_BREAK = 430,
-        KW_CALL = 431,
-        KW_CASCADE = 432,
-        KW_CHECK = 433,
-        KW_CLAMPED = 434,
-        KW_CLONE = 435,
-        KW_COPY = 436,
-        KW_CLUSTER = 437,
-        KW_COLUMN = 438,
-        KW_COLUMNS = 439,
-        KW_COMMIT = 440,
-        KW_CONNECTION = 441,
-        KW_CONTINUE = 442,
-        KW_CONSTANT = 443,
-        KW_CONSTRAINT = 444,
-        KW_CYCLE = 445,
-        KW_DATA = 446,
-        KW_DATABASE = 447,
-        KW_DATE = 448,
-        KW_DATETIME = 449,
-        KW_DECIMAL = 450,
-        KW_DECLARE = 451,
-        KW_DEFINER = 452,
-        KW_DELETE = 453,
-        KW_DELETION = 454,
-        KW_DEPTH = 455,
-        KW_DESCRIBE = 456,
-        KW_DESCRIPTOR = 457,
-        KW_DETERMINISTIC = 458,
-        KW_DO = 459,
-        KW_DROP = 460,
-        KW_ENFORCED = 461,
-        KW_ELSEIF = 462,
-        KW_EXECUTE = 463,
-        KW_EXPLAIN = 464,
-        KW_EXPORT = 465,
-        KW_EXTEND = 466,
-        KW_EXTERNAL = 467,
-        KW_FILES = 468,
-        KW_FILTER = 469,
-        KW_FILL = 470,
-        KW_FIRST = 471,
-        KW_FOREIGN = 472,
-        KW_FORMAT = 473,
-        KW_FUNCTION = 474,
-        KW_GENERATED = 475,
-        KW_GRANT = 476,
-        KW_GROUP_ROWS = 477,
-        KW_HIDDEN = 478,
-        KW_IDENTITY = 479,
-        KW_IMMEDIATE = 480,
-        KW_IMMUTABLE = 481,
-        KW_IMPORT = 482,
-        KW_INCLUDE = 483,
-        KW_INCREMENT = 484,
-        KW_INDEX = 485,
-        KW_INOUT = 486,
-        KW_INPUT = 487,
-        KW_INSERT = 488,
-        KW_INVOKER = 489,
-        KW_ITERATE = 490,
-        KW_ISOLATION = 491,
-        KW_JSON = 492,
-        KW_KEY = 493,
-        KW_LANGUAGE = 494,
-        KW_LAST = 495,
-        KW_LEAVE = 496,
-        KW_LEVEL = 497,
-        KW_LOAD = 498,
-        KW_LOOP = 499,
-        KW_MACRO = 500,
-        KW_MAP = 501,
-        KW_MATCH = 502,
-        KW_MATCH_RECOGNIZE_NONRESERVED = 503,
-        KW_MATCHED = 504,
-        KW_MATERIALIZED = 505,
-        KW_MAX = 506,
-        KW_MAXVALUE = 507,
-        KW_MEASURES = 508,
-        KW_MESSAGE = 509,
-        KW_METADATA = 510,
-        KW_MIN = 511,
-        KW_MINVALUE = 512,
-        KW_MODEL = 513,
-        KW_MODULE = 514,
-        KW_NUMERIC = 515,
-        KW_OFFSET = 516,
-        KW_ONLY = 517,
-        KW_OPTIONS = 518,
-        KW_OUT = 519,
-        KW_OUTPUT = 520,
-        KW_OVERWRITE = 521,
-        KW_PARTITIONS = 522,
-        KW_PATTERN = 523,
-        KW_PERCENT = 524,
-        KW_PIVOT = 525,
-        KW_POLICIES = 526,
-        KW_POLICY = 527,
-        KW_PRIMARY = 528,
-        KW_PRIVATE = 529,
-        KW_PRIVILEGE = 530,
-        KW_PRIVILEGES = 531,
-        KW_PROCEDURE = 532,
-        KW_PROJECT = 533,
-        KW_PUBLIC = 534,
-        KW_QUALIFY_NONRESERVED = 535,
-        KW_RAISE = 536,
-        KW_READ = 537,
-        KW_REFERENCES = 538,
-        KW_REMOTE = 539,
-        KW_REMOVE = 540,
-        KW_RENAME = 541,
-        KW_REPEAT = 542,
-        KW_REPEATABLE = 543,
-        KW_REPLACE = 544,
-        KW_REPLACE_FIELDS = 545,
-        KW_REPLICA = 546,
-        KW_REPORT = 547,
-        KW_RESTRICT = 548,
-        KW_RESTRICTION = 549,
-        KW_RETURN = 550,
-        KW_RETURNS = 551,
-        KW_REVOKE = 552,
-        KW_ROLLBACK = 553,
-        KW_ROW = 554,
-        KW_RUN = 555,
-        KW_SAFE_CAST = 556,
-        KW_SCHEMA = 557,
-        KW_SEARCH = 558,
-        KW_SECURITY = 559,
-        KW_SEQUENCE = 560,
-        KW_SETS = 561,
-        KW_SHOW = 562,
-        KW_SIMPLE = 563,
-        KW_SNAPSHOT = 564,
-        KW_SOURCE = 565,
-        KW_SQL = 566,
-        KW_STABLE = 567,
-        KW_START = 568,
-        KW_STATIC_DESCRIBE = 569,
-        KW_STORED = 570,
-        KW_STORING = 571,
-        KW_SYSTEM = 572,
-        KW_SYSTEM_TIME = 573,
-        KW_TABLE = 574,
-        KW_TABLES = 575,
-        KW_TARGET = 576,
-        KW_TRANSFORM = 577,
-        KW_TEMP = 578,
-        KW_TEMPORARY = 579,
-        KW_TIME = 580,
-        KW_TIMESTAMP = 581,
-        KW_TRANSACTION = 582,
-        KW_TRUNCATE = 583,
-        KW_TYPE = 584,
-        KW_UNDROP = 585,
-        KW_UNIQUE = 586,
-        KW_UNKNOWN = 587,
-        KW_UNPIVOT = 588,
-        KW_UNTIL = 589,
-        KW_UPDATE = 590,
-        KW_VALUE = 591,
-        KW_VALUES = 592,
-        KW_VECTOR = 593,
-        KW_VOLATILE = 594,
-        KW_VIEW = 595,
-        KW_VIEWS = 596,
-        KW_WEIGHT = 597,
-        KW_WHILE = 598,
-        KW_WRITE = 599,
-        KW_ZONE = 600,
-        KW_EXCEPTION = 601,
-        KW_ERROR = 602,
-        KW_CORRESPONDING = 603,
-        KW_STRICT = 604,
-        KW_INTERLEAVE = 605,
-        KW_NULL_FILTERED = 606,
-        KW_PARENT = 607,
-        SENTINEL_NONRESERVED_KW_END = 608,
-        KW_CURRENT_DATETIME_FUNCTION = 609,
-        MACRO_BODY_TOKEN = 610,
-        MODE_STATEMENT = 611,
-        MODE_SCRIPT = 612,
-        MODE_NEXT_STATEMENT = 613,
-        MODE_NEXT_SCRIPT_STATEMENT = 614,
-        MODE_NEXT_STATEMENT_KIND = 615,
-        MODE_EXPRESSION = 616,
-        MODE_TYPE = 617
+        LABEL = 266,
+        COMMENT = 267,
+        KW_NOT_EQUALS_C_STYLE = 268,
+        KW_NOT_EQUALS_SQL_STYLE = 269,
+        KW_LESS_EQUALS = 270,
+        KW_GREATER_EQUALS = 271,
+        KW_DOUBLE_AT = 272,
+        KW_CONCAT_OP = 273,
+        KW_DOT_STAR = 274,
+        KW_OPEN_HINT = 275,
+        KW_OPEN_INTEGER_HINT = 276,
+        KW_SHIFT_LEFT = 277,
+        KW_SHIFT_RIGHT = 278,
+        KW_NAMED_ARGUMENT_ASSIGNMENT = 279,
+        KW_LAMBDA_ARROW = 280,
+        UNARY_NOT_PRECEDENCE = 281,
+        UNARY_PRECEDENCE = 282,
+        DOUBLE_AT_PRECEDENCE = 283,
+        PRIMARY_PRECEDENCE = 284,
+        SENTINEL_RESERVED_KW_START = 285,
+        KW_ALL = 286,
+        KW_AND = 287,
+        KW_AND_FOR_BETWEEN = 288,
+        KW_ANY = 289,
+        KW_ARRAY = 290,
+        KW_AS = 291,
+        KW_ASC = 292,
+        KW_ASSERT_ROWS_MODIFIED = 293,
+        KW_AT = 294,
+        KW_BETWEEN = 295,
+        KW_BY = 296,
+        KW_CASE = 297,
+        KW_CAST = 298,
+        KW_COLLATE = 299,
+        KW_CREATE = 300,
+        KW_CROSS = 301,
+        KW_CURRENT = 302,
+        KW_DEFAULT = 303,
+        KW_DEFINE = 304,
+        KW_DESC = 305,
+        KW_DISTINCT = 306,
+        KW_ELSE = 307,
+        KW_END = 308,
+        KW_ENUM = 309,
+        KW_EXCEPT = 310,
+        KW_EXISTS = 311,
+        KW_EXTRACT = 312,
+        KW_FALSE = 313,
+        KW_FOLLOWING = 314,
+        KW_FROM = 315,
+        KW_FULL = 316,
+        KW_FULL_IN_SET_OP = 317,
+        KW_GROUP = 318,
+        KW_GROUPING = 319,
+        KW_HASH = 320,
+        KW_HAVING = 321,
+        KW_IF = 322,
+        KW_IGNORE = 323,
+        KW_IN = 324,
+        KW_INNER = 325,
+        KW_INTERSECT = 326,
+        KW_INTERVAL = 327,
+        KW_INTO = 328,
+        KW_IS = 329,
+        KW_JOIN = 330,
+        KW_LEFT = 331,
+        KW_LEFT_IN_SET_OP = 332,
+        KW_LIKE = 333,
+        KW_LIMIT = 334,
+        KW_LOOKUP = 335,
+        KW_MERGE = 336,
+        KW_NATURAL = 337,
+        KW_NEW = 338,
+        KW_NO = 339,
+        KW_NOT = 340,
+        KW_NULL = 341,
+        KW_NULLS = 342,
+        KW_ON = 343,
+        KW_OR = 344,
+        KW_ORDER = 345,
+        KW_OUTER = 346,
+        KW_OVER = 347,
+        KW_PARTITION = 348,
+        KW_PRECEDING = 349,
+        KW_PROTO = 350,
+        KW_RANGE = 351,
+        KW_RECURSIVE = 352,
+        KW_RESPECT = 353,
+        KW_RIGHT = 354,
+        KW_ROLLUP = 355,
+        KW_ROWS = 356,
+        KW_SELECT = 357,
+        KW_SET = 358,
+        KW_STRUCT = 359,
+        KW_TABLESAMPLE = 360,
+        KW_THEN = 361,
+        KW_TO = 362,
+        KW_TRUE = 363,
+        KW_UNBOUNDED = 364,
+        KW_UNION = 365,
+        KW_USING = 366,
+        KW_WHEN = 367,
+        KW_WHERE = 368,
+        KW_WINDOW = 369,
+        KW_WITH = 370,
+        KW_UNNEST = 371,
+        KW_CONTAINS = 372,
+        KW_CUBE = 373,
+        KW_ESCAPE = 374,
+        KW_EXCLUDE = 375,
+        KW_FETCH = 376,
+        KW_FOR = 377,
+        KW_GROUPS = 378,
+        KW_LATERAL = 379,
+        KW_OF = 380,
+        KW_SOME = 381,
+        KW_TREAT = 382,
+        KW_WITHIN = 383,
+        KW_QUALIFY_RESERVED = 384,
+        SENTINEL_RESERVED_KW_END = 385,
+        KW_WITH_STARTING_WITH_EXPRESSION = 386,
+        KW_EXCEPT_IN_SET_OP = 387,
+        KW_NOT_SPECIAL = 388,
+        SENTINEL_NONRESERVED_KW_START = 389,
+        KW_ABORT = 390,
+        KW_ACCESS = 391,
+        KW_ACTION = 392,
+        KW_ADD = 393,
+        KW_AGGREGATE = 394,
+        KW_ALTER = 395,
+        KW_ANALYZE = 396,
+        KW_APPROX = 397,
+        KW_ARE = 398,
+        KW_ASSERT = 399,
+        KW_BATCH = 400,
+        KW_BEGIN = 401,
+        KW_BIGDECIMAL = 402,
+        KW_BIGNUMERIC = 403,
+        KW_BREAK = 404,
+        KW_CALL = 405,
+        KW_CASCADE = 406,
+        KW_CHECK = 407,
+        KW_CLAMPED = 408,
+        KW_CLONE = 409,
+        KW_COPY = 410,
+        KW_CLUSTER = 411,
+        KW_COLUMN = 412,
+        KW_COLUMNS = 413,
+        KW_COMMIT = 414,
+        KW_CONNECTION = 415,
+        KW_CONTINUE = 416,
+        KW_CONSTANT = 417,
+        KW_CONSTRAINT = 418,
+        KW_DATA = 419,
+        KW_DATABASE = 420,
+        KW_DATE = 421,
+        KW_DATETIME = 422,
+        KW_DECIMAL = 423,
+        KW_DECLARE = 424,
+        KW_DEFINER = 425,
+        KW_DELETE = 426,
+        KW_DELETION = 427,
+        KW_DESCRIBE = 428,
+        KW_DESCRIPTOR = 429,
+        KW_DETERMINISTIC = 430,
+        KW_DO = 431,
+        KW_DROP = 432,
+        KW_ENFORCED = 433,
+        KW_ELSEIF = 434,
+        KW_EXECUTE = 435,
+        KW_EXPLAIN = 436,
+        KW_EXPORT = 437,
+        KW_EXTERNAL = 438,
+        KW_FILES = 439,
+        KW_FILTER = 440,
+        KW_FILL = 441,
+        KW_FIRST = 442,
+        KW_FOREIGN = 443,
+        KW_FORMAT = 444,
+        KW_FUNCTION = 445,
+        KW_GENERATED = 446,
+        KW_GRANT = 447,
+        KW_GROUP_ROWS = 448,
+        KW_HIDDEN = 449,
+        KW_IMMEDIATE = 450,
+        KW_IMMUTABLE = 451,
+        KW_IMPORT = 452,
+        KW_INCLUDE = 453,
+        KW_INDEX = 454,
+        KW_INOUT = 455,
+        KW_INPUT = 456,
+        KW_INSERT = 457,
+        KW_INVOKER = 458,
+        KW_ITERATE = 459,
+        KW_ISOLATION = 460,
+        KW_JSON = 461,
+        KW_KEY = 462,
+        KW_LANGUAGE = 463,
+        KW_LAST = 464,
+        KW_LEAVE = 465,
+        KW_LEVEL = 466,
+        KW_LOAD = 467,
+        KW_LOOP = 468,
+        KW_MACRO = 469,
+        KW_MATCH = 470,
+        KW_MATCHED = 471,
+        KW_MATERIALIZED = 472,
+        KW_MAX = 473,
+        KW_MESSAGE = 474,
+        KW_METADATA = 475,
+        KW_MIN = 476,
+        KW_MODEL = 477,
+        KW_MODULE = 478,
+        KW_NUMERIC = 479,
+        KW_OFFSET = 480,
+        KW_ONLY = 481,
+        KW_OPTIONS = 482,
+        KW_OUT = 483,
+        KW_OUTPUT = 484,
+        KW_OVERWRITE = 485,
+        KW_PARTITIONS = 486,
+        KW_PERCENT = 487,
+        KW_PIVOT = 488,
+        KW_POLICIES = 489,
+        KW_POLICY = 490,
+        KW_PRIMARY = 491,
+        KW_PRIVATE = 492,
+        KW_PRIVILEGE = 493,
+        KW_PRIVILEGES = 494,
+        KW_PROCEDURE = 495,
+        KW_PUBLIC = 496,
+        KW_QUALIFY_NONRESERVED = 497,
+        KW_RAISE = 498,
+        KW_READ = 499,
+        KW_REFERENCES = 500,
+        KW_REMOTE = 501,
+        KW_REMOVE = 502,
+        KW_RENAME = 503,
+        KW_REPEAT = 504,
+        KW_REPEATABLE = 505,
+        KW_REPLACE = 506,
+        KW_REPLACE_FIELDS = 507,
+        KW_REPLICA = 508,
+        KW_REPORT = 509,
+        KW_RESTRICT = 510,
+        KW_RESTRICTION = 511,
+        KW_RETURN = 512,
+        KW_RETURNS = 513,
+        KW_REVOKE = 514,
+        KW_ROLLBACK = 515,
+        KW_ROW = 516,
+        KW_RUN = 517,
+        KW_SAFE_CAST = 518,
+        KW_SCHEMA = 519,
+        KW_SEARCH = 520,
+        KW_SECURITY = 521,
+        KW_SEQUENCE = 522,
+        KW_SETS = 523,
+        KW_SHOW = 524,
+        KW_SIMPLE = 525,
+        KW_SNAPSHOT = 526,
+        KW_SOURCE = 527,
+        KW_SQL = 528,
+        KW_STABLE = 529,
+        KW_START = 530,
+        KW_STORED = 531,
+        KW_STORING = 532,
+        KW_SYSTEM = 533,
+        KW_SYSTEM_TIME = 534,
+        KW_TABLE = 535,
+        KW_TABLES = 536,
+        KW_TARGET = 537,
+        KW_TRANSFORM = 538,
+        KW_TEMP = 539,
+        KW_TEMPORARY = 540,
+        KW_TIME = 541,
+        KW_TIMESTAMP = 542,
+        KW_TRANSACTION = 543,
+        KW_TRUNCATE = 544,
+        KW_TYPE = 545,
+        KW_UNDROP = 546,
+        KW_UNIQUE = 547,
+        KW_UNKNOWN = 548,
+        KW_UNPIVOT = 549,
+        KW_UNTIL = 550,
+        KW_UPDATE = 551,
+        KW_VALUE = 552,
+        KW_VALUES = 553,
+        KW_VECTOR = 554,
+        KW_VOLATILE = 555,
+        KW_VIEW = 556,
+        KW_VIEWS = 557,
+        KW_WEIGHT = 558,
+        KW_WHILE = 559,
+        KW_WRITE = 560,
+        KW_ZONE = 561,
+        KW_EXCEPTION = 562,
+        KW_ERROR = 563,
+        KW_CORRESPONDING = 564,
+        KW_STRICT = 565,
+        KW_INTERLEAVE = 566,
+        KW_NULL_FILTERED = 567,
+        KW_PARENT = 568,
+        SENTINEL_NONRESERVED_KW_END = 569,
+        KW_CURRENT_DATETIME_FUNCTION = 570,
+        MACRO_BODY_TOKEN = 571,
+        MODE_STATEMENT = 572,
+        MODE_SCRIPT = 573,
+        MODE_NEXT_STATEMENT = 574,
+        MODE_NEXT_SCRIPT_STATEMENT = 575,
+        MODE_NEXT_STATEMENT_KIND = 576,
+        MODE_EXPRESSION = 577,
+        MODE_TYPE = 578
       };
     };
 
@@ -859,8 +780,8 @@ namespace zetasql_bison_parser {
     {};
 
     /// Build a parser object.
-    BisonParserImpl (zetasql::parser::LookaheadTransformer* tokenizer_yyarg, zetasql::parser::BisonParser* parser_yyarg, zetasql::ASTNode** ast_node_result_yyarg, zetasql::parser::ASTStatementProperties*
-                  ast_statement_properties_yyarg, std::string* error_message_yyarg, zetasql::ParseLocationPoint* error_location_yyarg, int* statement_end_byte_offset_yyarg);
+    BisonParserImpl (zetasql::parser::ZetaSqlFlexTokenizer* tokenizer_yyarg, zetasql::parser::BisonParser* parser_yyarg, zetasql::ASTNode** ast_node_result_yyarg, zetasql::parser::ASTStatementProperties*
+                  ast_statement_properties_yyarg, std::string* error_message_yyarg, zetasql::ParseLocationPoint* error_location_yyarg, bool* move_error_location_past_whitespace_yyarg, int* statement_end_byte_offset_yyarg);
     virtual ~BisonParserImpl ();
 
     /// Parse.  An alias for parse ().
@@ -1199,32 +1120,33 @@ namespace zetasql_bison_parser {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 41080,     ///< Last index in yytable_.
-      yynnts_ = 704,  ///< Number of nonterminal symbols.
-      yyfinal_ = 513, ///< Termination state number.
+      yylast_ = 35560,     ///< Last index in yytable_.
+      yynnts_ = 595,  ///< Number of nonterminal symbols.
+      yyfinal_ = 465, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 387  ///< Number of tokens.
+      yyntokens_ = 347  ///< Number of tokens.
     };
 
 
     // User arguments.
-    zetasql::parser::LookaheadTransformer* tokenizer;
+    zetasql::parser::ZetaSqlFlexTokenizer* tokenizer;
     zetasql::parser::BisonParser* parser;
     zetasql::ASTNode** ast_node_result;
     zetasql::parser::ASTStatementProperties*
                   ast_statement_properties;
     std::string* error_message;
     zetasql::ParseLocationPoint* error_location;
+    bool* move_error_location_past_whitespace;
     int* statement_end_byte_offset;
   };
 
 
 
 } // zetasql_bison_parser
-#line 1226 "bison_parser.bison.h" // lalr1.cc:401
+#line 1148 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 
 
-#endif // !YY_ZETASQL_BISON_PARSER_BISON_PARSER_BISON_H_INCLUDED
+#endif // !YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED

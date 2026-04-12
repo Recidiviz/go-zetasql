@@ -44,7 +44,6 @@
 #include "absl/log/log.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
@@ -551,7 +550,7 @@ class State {
     // TODO Figure out how to validate behavior with annotations.
     ResolvedColumn new_column = column_factory_.MakeCol(
         orig_column.table_name(),
-        absl::StrCat(absl::StartsWith(orig_column.name(), "$") ? "" : "$",
+        absl::StrCat(orig_column.name().starts_with("$") ? "" : "$",
                      orig_column.name(), field_suffix),
         AnnotatedType(replacement_type_, orig_column.type_annotation_map()));
 

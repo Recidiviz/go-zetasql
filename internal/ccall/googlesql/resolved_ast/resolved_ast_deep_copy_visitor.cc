@@ -15,20 +15,20 @@
 //
 
 // resolved_ast_deep_copy_visitor.cc GENERATED FROM resolved_ast_deep_copy_visitor.cc.template
-#include "googlesql/resolved_ast/resolved_ast_deep_copy_visitor.h"
+#include "zetasql/resolved_ast/resolved_ast_deep_copy_visitor.h"
 
 #include <string>
 
 #include "absl/memory/memory.h"
-#include "googlesql/base/source_location.h"
+#include "zetasql/base/source_location.h"
 
-namespace googlesql {
+namespace zetasql {
 
 // Default visit for the AST. This will throw an error, because we want to
 // ensure that the entire AST is copied.
 absl::Status ResolvedASTDeepCopyVisitor::DefaultVisit(
     const ResolvedNode* node) {
-  return ::googlesql_base::InvalidArgumentErrorBuilder(googlesql_base::SourceLocation::current())
+  return ::zetasql_base::InvalidArgumentErrorBuilder(zetasql_base::SourceLocation::current())
          << "Unhandled node type in deep copy:\n"
          << node->DebugString();
 }
@@ -156,11 +156,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGetJsonField(
   return CopyVisitResolvedGetJsonField(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGetRowField(
-    const ResolvedGetRowField* node) {
-  return CopyVisitResolvedGetRowField(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedFlatten(
     const ResolvedFlatten* node) {
   return CopyVisitResolvedFlatten(node);
@@ -179,11 +174,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedReplaceFieldItem(
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedReplaceField(
     const ResolvedReplaceField* node) {
   return CopyVisitResolvedReplaceField(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGetProtoOneof(
-    const ResolvedGetProtoOneof* node) {
-  return CopyVisitResolvedGetProtoOneof(node);
 }
 
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedSubqueryExpr(
@@ -221,11 +211,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedSingleRowScan(
   return CopyVisitResolvedSingleRowScan(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUnsetArgumentScan(
-    const ResolvedUnsetArgumentScan* node) {
-  return CopyVisitResolvedUnsetArgumentScan(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedTableScan(
     const ResolvedTableScan* node) {
   return CopyVisitResolvedTableScan(node);
@@ -254,16 +239,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedFilterScan(
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGroupingCall(
     const ResolvedGroupingCall* node) {
   return CopyVisitResolvedGroupingCall(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGroupingSetList(
-    const ResolvedGroupingSetList* node) {
-  return CopyVisitResolvedGroupingSetList(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGroupingSetProduct(
-    const ResolvedGroupingSetProduct* node) {
-  return CopyVisitResolvedGroupingSetProduct(node);
 }
 
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGroupingSet(
@@ -341,11 +316,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedComputedColumn(
   return CopyVisitResolvedComputedColumn(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedDeferredComputedColumn(
-    const ResolvedDeferredComputedColumn* node) {
-  return CopyVisitResolvedDeferredComputedColumn(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedOrderByItem(
     const ResolvedOrderByItem* node) {
   return CopyVisitResolvedOrderByItem(node);
@@ -391,11 +361,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedOutputColumn(
   return CopyVisitResolvedOutputColumn(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedOutputSchema(
-    const ResolvedOutputSchema* node) {
-  return CopyVisitResolvedOutputSchema(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedProjectScan(
     const ResolvedProjectScan* node) {
   return CopyVisitResolvedProjectScan(node);
@@ -421,34 +386,9 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedExplainStmt(
   return CopyVisitResolvedExplainStmt(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedStringWithLocation(
-    const ResolvedStringWithLocation* node) {
-  return CopyVisitResolvedStringWithLocation(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedStatementWithPipeOperatorsStmt(
-    const ResolvedStatementWithPipeOperatorsStmt* node) {
-  return CopyVisitResolvedStatementWithPipeOperatorsStmt(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedQueryStmt(
     const ResolvedQueryStmt* node) {
   return CopyVisitResolvedQueryStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGeneralizedQueryStmt(
-    const ResolvedGeneralizedQueryStmt* node) {
-  return CopyVisitResolvedGeneralizedQueryStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMultiStmt(
-    const ResolvedMultiStmt* node) {
-  return CopyVisitResolvedMultiStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateWithEntryStmt(
-    const ResolvedCreateWithEntryStmt* node) {
-  return CopyVisitResolvedCreateWithEntryStmt(node);
 }
 
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateDatabaseStmt(
@@ -474,11 +414,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateIndexStmt(
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateSchemaStmt(
     const ResolvedCreateSchemaStmt* node) {
   return CopyVisitResolvedCreateSchemaStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateExternalSchemaStmt(
-    const ResolvedCreateExternalSchemaStmt* node) {
-  return CopyVisitResolvedCreateExternalSchemaStmt(node);
 }
 
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateTableStmt(
@@ -606,11 +541,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedRecursiveRefScan(
   return CopyVisitResolvedRecursiveRefScan(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedRecursionDepthModifier(
-    const ResolvedRecursionDepthModifier* node) {
-  return CopyVisitResolvedRecursionDepthModifier(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedRecursiveScan(
     const ResolvedRecursiveScan* node) {
   return CopyVisitResolvedRecursiveScan(node);
@@ -676,11 +606,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAssertRowsModified(
   return CopyVisitResolvedAssertRowsModified(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedOnConflictClause(
-    const ResolvedOnConflictClause* node) {
-  return CopyVisitResolvedOnConflictClause(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedInsertRow(
     const ResolvedInsertRow* node) {
   return CopyVisitResolvedInsertRow(node);
@@ -701,9 +626,9 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUpdateItem(
   return CopyVisitResolvedUpdateItem(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUpdateItemElement(
-    const ResolvedUpdateItemElement* node) {
-  return CopyVisitResolvedUpdateItemElement(node);
+absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUpdateArrayItem(
+    const ResolvedUpdateArrayItem* node) {
+  return CopyVisitResolvedUpdateArrayItem(node);
 }
 
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUpdateStmt(
@@ -751,11 +676,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterDatabaseStmt(
   return CopyVisitResolvedAlterDatabaseStmt(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterIndexStmt(
-    const ResolvedAlterIndexStmt* node) {
-  return CopyVisitResolvedAlterIndexStmt(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterMaterializedViewStmt(
     const ResolvedAlterMaterializedViewStmt* node) {
   return CopyVisitResolvedAlterMaterializedViewStmt(node);
@@ -769,11 +689,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterApproxViewStmt(
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterSchemaStmt(
     const ResolvedAlterSchemaStmt* node) {
   return CopyVisitResolvedAlterSchemaStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterExternalSchemaStmt(
-    const ResolvedAlterExternalSchemaStmt* node) {
-  return CopyVisitResolvedAlterExternalSchemaStmt(node);
 }
 
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterModelStmt(
@@ -816,16 +731,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAddColumnAction(
   return CopyVisitResolvedAddColumnAction(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAddColumnIdentifierAction(
-    const ResolvedAddColumnIdentifierAction* node) {
-  return CopyVisitResolvedAddColumnIdentifierAction(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedRebuildAction(
-    const ResolvedRebuildAction* node) {
-  return CopyVisitResolvedRebuildAction(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAddConstraintAction(
     const ResolvedAddConstraintAction* node) {
   return CopyVisitResolvedAddConstraintAction(node);
@@ -849,16 +754,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterColumnOptionsAction(
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterColumnDropNotNullAction(
     const ResolvedAlterColumnDropNotNullAction* node) {
   return CopyVisitResolvedAlterColumnDropNotNullAction(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterColumnDropGeneratedAction(
-    const ResolvedAlterColumnDropGeneratedAction* node) {
-  return CopyVisitResolvedAlterColumnDropGeneratedAction(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterColumnSetGeneratedAction(
-    const ResolvedAlterColumnSetGeneratedAction* node) {
-  return CopyVisitResolvedAlterColumnSetGeneratedAction(node);
 }
 
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterColumnSetDataTypeAction(
@@ -1116,46 +1011,6 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUnpivotScan(
   return CopyVisitResolvedUnpivotScan(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMatchRecognizeScan(
-    const ResolvedMatchRecognizeScan* node) {
-  return CopyVisitResolvedMatchRecognizeScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMeasureGroup(
-    const ResolvedMeasureGroup* node) {
-  return CopyVisitResolvedMeasureGroup(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMatchRecognizeVariableDefinition(
-    const ResolvedMatchRecognizeVariableDefinition* node) {
-  return CopyVisitResolvedMatchRecognizeVariableDefinition(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMatchRecognizePatternEmpty(
-    const ResolvedMatchRecognizePatternEmpty* node) {
-  return CopyVisitResolvedMatchRecognizePatternEmpty(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMatchRecognizePatternAnchor(
-    const ResolvedMatchRecognizePatternAnchor* node) {
-  return CopyVisitResolvedMatchRecognizePatternAnchor(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMatchRecognizePatternVariableRef(
-    const ResolvedMatchRecognizePatternVariableRef* node) {
-  return CopyVisitResolvedMatchRecognizePatternVariableRef(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMatchRecognizePatternOperation(
-    const ResolvedMatchRecognizePatternOperation* node) {
-  return CopyVisitResolvedMatchRecognizePatternOperation(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedMatchRecognizePatternQuantification(
-    const ResolvedMatchRecognizePatternQuantification* node) {
-  return CopyVisitResolvedMatchRecognizePatternQuantification(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCloneDataStmt(
     const ResolvedCloneDataStmt* node) {
   return CopyVisitResolvedCloneDataStmt(node);
@@ -1181,279 +1036,9 @@ absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAuxLoadDataStmt(
   return CopyVisitResolvedAuxLoadDataStmt(node);
 }
 
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreatePropertyGraphStmt(
-    const ResolvedCreatePropertyGraphStmt* node) {
-  return CopyVisitResolvedCreatePropertyGraphStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphElementTable(
-    const ResolvedGraphElementTable* node) {
-  return CopyVisitResolvedGraphElementTable(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphNodeTableReference(
-    const ResolvedGraphNodeTableReference* node) {
-  return CopyVisitResolvedGraphNodeTableReference(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphElementLabel(
-    const ResolvedGraphElementLabel* node) {
-  return CopyVisitResolvedGraphElementLabel(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphPropertyDeclaration(
-    const ResolvedGraphPropertyDeclaration* node) {
-  return CopyVisitResolvedGraphPropertyDeclaration(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphPropertyDefinition(
-    const ResolvedGraphPropertyDefinition* node) {
-  return CopyVisitResolvedGraphPropertyDefinition(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphDynamicLabelSpecification(
-    const ResolvedGraphDynamicLabelSpecification* node) {
-  return CopyVisitResolvedGraphDynamicLabelSpecification(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphDynamicPropertiesSpecification(
-    const ResolvedGraphDynamicPropertiesSpecification* node) {
-  return CopyVisitResolvedGraphDynamicPropertiesSpecification(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphRefScan(
-    const ResolvedGraphRefScan* node) {
-  return CopyVisitResolvedGraphRefScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphLinearScan(
-    const ResolvedGraphLinearScan* node) {
-  return CopyVisitResolvedGraphLinearScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphTableScan(
-    const ResolvedGraphTableScan* node) {
-  return CopyVisitResolvedGraphTableScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphCallScan(
-    const ResolvedGraphCallScan* node) {
-  return CopyVisitResolvedGraphCallScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphScan(
-    const ResolvedGraphScan* node) {
-  return CopyVisitResolvedGraphScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphPathPatternQuantifier(
-    const ResolvedGraphPathPatternQuantifier* node) {
-  return CopyVisitResolvedGraphPathPatternQuantifier(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphPathSearchPrefix(
-    const ResolvedGraphPathSearchPrefix* node) {
-  return CopyVisitResolvedGraphPathSearchPrefix(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphNodeScan(
-    const ResolvedGraphNodeScan* node) {
-  return CopyVisitResolvedGraphNodeScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphEdgeScan(
-    const ResolvedGraphEdgeScan* node) {
-  return CopyVisitResolvedGraphEdgeScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphGetElementProperty(
-    const ResolvedGraphGetElementProperty* node) {
-  return CopyVisitResolvedGraphGetElementProperty(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphLabelNaryExpr(
-    const ResolvedGraphLabelNaryExpr* node) {
-  return CopyVisitResolvedGraphLabelNaryExpr(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphLabel(
-    const ResolvedGraphLabel* node) {
-  return CopyVisitResolvedGraphLabel(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphWildCardLabel(
-    const ResolvedGraphWildCardLabel* node) {
-  return CopyVisitResolvedGraphWildCardLabel(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphElementIdentifier(
-    const ResolvedGraphElementIdentifier* node) {
-  return CopyVisitResolvedGraphElementIdentifier(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphElementProperty(
-    const ResolvedGraphElementProperty* node) {
-  return CopyVisitResolvedGraphElementProperty(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphMakeElement(
-    const ResolvedGraphMakeElement* node) {
-  return CopyVisitResolvedGraphMakeElement(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedArrayAggregate(
-    const ResolvedArrayAggregate* node) {
-  return CopyVisitResolvedArrayAggregate(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphMakeArrayVariable(
-    const ResolvedGraphMakeArrayVariable* node) {
-  return CopyVisitResolvedGraphMakeArrayVariable(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphPathMode(
-    const ResolvedGraphPathMode* node) {
-  return CopyVisitResolvedGraphPathMode(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphPathCost(
-    const ResolvedGraphPathCost* node) {
-  return CopyVisitResolvedGraphPathCost(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphPathScan(
-    const ResolvedGraphPathScan* node) {
-  return CopyVisitResolvedGraphPathScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGraphIsLabeledPredicate(
-    const ResolvedGraphIsLabeledPredicate* node) {
-  return CopyVisitResolvedGraphIsLabeledPredicate(node);
-}
-
 absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUndropStmt(
     const ResolvedUndropStmt* node) {
   return CopyVisitResolvedUndropStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedIdentityColumnInfo(
-    const ResolvedIdentityColumnInfo* node) {
-  return CopyVisitResolvedIdentityColumnInfo(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedDescribeScan(
-    const ResolvedDescribeScan* node) {
-  return CopyVisitResolvedDescribeScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedStaticDescribeScan(
-    const ResolvedStaticDescribeScan* node) {
-  return CopyVisitResolvedStaticDescribeScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAssertScan(
-    const ResolvedAssertScan* node) {
-  return CopyVisitResolvedAssertScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedLogScan(
-    const ResolvedLogScan* node) {
-  return CopyVisitResolvedLogScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedPipeIfScan(
-    const ResolvedPipeIfScan* node) {
-  return CopyVisitResolvedPipeIfScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedPipeIfCase(
-    const ResolvedPipeIfCase* node) {
-  return CopyVisitResolvedPipeIfCase(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedPipeForkScan(
-    const ResolvedPipeForkScan* node) {
-  return CopyVisitResolvedPipeForkScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedPipeTeeScan(
-    const ResolvedPipeTeeScan* node) {
-  return CopyVisitResolvedPipeTeeScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedPipeExportDataScan(
-    const ResolvedPipeExportDataScan* node) {
-  return CopyVisitResolvedPipeExportDataScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedPipeCreateTableScan(
-    const ResolvedPipeCreateTableScan* node) {
-  return CopyVisitResolvedPipeCreateTableScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedPipeInsertScan(
-    const ResolvedPipeInsertScan* node) {
-  return CopyVisitResolvedPipeInsertScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedSubpipeline(
-    const ResolvedSubpipeline* node) {
-  return CopyVisitResolvedSubpipeline(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedSubpipelineInputScan(
-    const ResolvedSubpipelineInputScan* node) {
-  return CopyVisitResolvedSubpipelineInputScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedSubpipelineStmt(
-    const ResolvedSubpipelineStmt* node) {
-  return CopyVisitResolvedSubpipelineStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedGeneralizedQuerySubpipeline(
-    const ResolvedGeneralizedQuerySubpipeline* node) {
-  return CopyVisitResolvedGeneralizedQuerySubpipeline(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedBarrierScan(
-    const ResolvedBarrierScan* node) {
-  return CopyVisitResolvedBarrierScan(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateConnectionStmt(
-    const ResolvedCreateConnectionStmt* node) {
-  return CopyVisitResolvedCreateConnectionStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterConnectionStmt(
-    const ResolvedAlterConnectionStmt* node) {
-  return CopyVisitResolvedAlterConnectionStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedLockMode(
-    const ResolvedLockMode* node) {
-  return CopyVisitResolvedLockMode(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUpdateFieldItem(
-    const ResolvedUpdateFieldItem* node) {
-  return CopyVisitResolvedUpdateFieldItem(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedUpdateConstructor(
-    const ResolvedUpdateConstructor* node) {
-  return CopyVisitResolvedUpdateConstructor(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedCreateSequenceStmt(
-    const ResolvedCreateSequenceStmt* node) {
-  return CopyVisitResolvedCreateSequenceStmt(node);
-}
-
-absl::Status ResolvedASTDeepCopyVisitor::VisitResolvedAlterSequenceStmt(
-    const ResolvedAlterSequenceStmt* node) {
-  return CopyVisitResolvedAlterSequenceStmt(node);
 }
 
 absl::Status
@@ -1467,25 +1052,20 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedLiteral(
     node->float_literal_id()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_preserve_in_literal_remover(node->preserve_in_literal_remover());
+  // Copy the preserve_in_literal_remover field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_preserve_in_literal_remover(
+      node->preserve_in_literal_remover());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1504,22 +1084,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedParameter(
     node->is_untyped()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1536,22 +1109,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExpressionColumn(
     node->name()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1565,26 +1131,18 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCatalogColumnRef(
   // Create a mutable instance of ResolvedCatalogColumnRef.
   auto copy = MakeResolvedCatalogColumnRef(
     node->type(),
-    node->column(),
-    node->name()
+    node->column()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1595,7 +1153,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCatalogColumnRef(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnRef(
     const ResolvedColumnRef* node) {
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn column,
       CopyResolvedColumn(node->column()));
 
@@ -1606,22 +1164,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnRef(
     node->is_correlated()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1633,7 +1184,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupingSetMultiColumn(
     const ResolvedGroupingSetMultiColumn* node) {
   // Get a deep copy of column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> column_list,
       ProcessNodeList(node->column_list()));
 
@@ -1647,14 +1198,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupingSetMultiColumn(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1671,22 +1214,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedConstant(
     node->constant()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1703,22 +1239,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSystemVariable(
     node->name_path()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1731,18 +1260,18 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedInlineLambda(
     const ResolvedInlineLambda* node) {
   std::vector<ResolvedColumn> argument_list;
   for (int i = 0; i < node->argument_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->argument_list()[i]));
     argument_list.push_back(elem);
   }
 
   // Get a deep copy of parameter_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> parameter_list,
       ProcessNodeList(node->parameter_list()));
 
   // Get deep copy of body field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> body,
       ProcessNode(node->body()));
 
@@ -1758,14 +1287,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedInlineLambda(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1786,14 +1307,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSequence(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1816,14 +1329,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFilterFieldArg(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -1834,12 +1339,12 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedFilterField(
     const ResolvedFilterField* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
   // Get a deep copy of filter_field_arg_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedFilterFieldArg>> filter_field_arg_list,
       ProcessNodeList(node->filter_field_arg_list()));
 
@@ -1851,22 +1356,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFilterField(
     node->reset_cleared_required_fields()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1878,14 +1376,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedFunctionCall(
     const ResolvedFunctionCall* node) {
   // Get a deep copy of argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> argument_list,
       ProcessNodeList(node->argument_list()));
 
   // Get a deep copy of generic_argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedFunctionArgument>> generic_argument_list,
       ProcessNodeList(node->generic_argument_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedFunctionCall.
   auto copy = MakeResolvedFunctionCall(
@@ -1898,34 +1401,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFunctionCall(
     node->function_call_info()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedFunctionCall>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation_list(node->collation_list());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -1937,49 +1429,44 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateFunctionCall(
     const ResolvedAggregateFunctionCall* node) {
   // Get deep copy of having_modifier field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedAggregateHavingModifier> having_modifier,
       ProcessNode(node->having_modifier()));
 
   // Get a deep copy of order_by_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOrderByItem>> order_by_item_list,
       ProcessNodeList(node->order_by_item_list()));
 
   // Get deep copy of limit field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> limit,
       ProcessNode(node->limit()));
 
-  // Get a deep copy of group_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumn>> group_by_list,
-      ProcessNodeList(node->group_by_list()));
-
-  // Get a deep copy of group_by_aggregate_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> group_by_aggregate_list,
-      ProcessNodeList(node->group_by_aggregate_list()));
-
-  // Get deep copy of having_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> having_expr,
-      ProcessNode(node->having_expr()));
-
   // Get a deep copy of argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> argument_list,
       ProcessNodeList(node->argument_list()));
 
   // Get a deep copy of generic_argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedFunctionArgument>> generic_argument_list,
       ProcessNodeList(node->generic_argument_list()));
 
-  // Get deep copy of where_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> where_expr,
-      ProcessNode(node->where_expr()));
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Get deep copy of with_group_rows_subquery field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedScan> with_group_rows_subquery,
+      ProcessNode(node->with_group_rows_subquery()));
+
+  // Get a deep copy of with_group_rows_parameter_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedColumnRef>> with_group_rows_parameter_list,
+      ProcessNodeList(node->with_group_rows_parameter_list()));
 
   // Create a mutable instance of ResolvedAggregateFunctionCall.
   auto copy = MakeResolvedAggregateFunctionCall(
@@ -1991,53 +1478,40 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateFunctionCall(
     node->error_mode(),
     node->distinct(),
     node->null_handling_modifier(),
-    std::move(where_expr),
     std::move(having_modifier),
     std::move(order_by_item_list),
     std::move(limit),
-    node->function_call_info(),
-    std::move(group_by_list),
-    std::move(group_by_aggregate_list),
-    std::move(having_expr)
+    node->function_call_info()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAggregateFunctionCall>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation_list(node->collation_list());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> group_by_hint_list,
-     ProcessNodeList(node->group_by_hint_list()));
-  copy->set_group_by_hint_list({
-       std::make_move_iterator(group_by_hint_list.begin()),
-       std::make_move_iterator(group_by_hint_list.end())
-  });
+  // Copy the with_group_rows_subquery field explicitly because it is not a
+  // constructor arg.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedScan> scan,
+      ProcessNode(node->with_group_rows_subquery()));
+  copy.get()->set_with_group_rows_subquery(std::move(scan));
 
+  // Copy the with_group_rows_parameter_list field explicitly because it is not
+  // a constructor arg.
+  ZETASQL_RETURN_IF_ERROR(CopyWithGroupRowsParameterList<ResolvedAggregateFunctionCall>(node,
+                                                                copy.get()));
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2049,24 +1523,34 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticFunctionCall(
     const ResolvedAnalyticFunctionCall* node) {
   // Get deep copy of window_frame field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedWindowFrame> window_frame,
       ProcessNode(node->window_frame()));
 
   // Get a deep copy of argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> argument_list,
       ProcessNodeList(node->argument_list()));
 
   // Get a deep copy of generic_argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedFunctionArgument>> generic_argument_list,
       ProcessNodeList(node->generic_argument_list()));
 
-  // Get deep copy of where_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> where_expr,
-      ProcessNode(node->where_expr()));
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
+  // Get deep copy of with_group_rows_subquery field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedScan> with_group_rows_subquery,
+      ProcessNode(node->with_group_rows_subquery()));
+
+  // Get a deep copy of with_group_rows_parameter_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedColumnRef>> with_group_rows_parameter_list,
+      ProcessNodeList(node->with_group_rows_parameter_list()));
 
   // Create a mutable instance of ResolvedAnalyticFunctionCall.
   auto copy = MakeResolvedAnalyticFunctionCall(
@@ -2078,38 +1562,37 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticFunctionCall(
     node->error_mode(),
     node->distinct(),
     node->null_handling_modifier(),
-    std::move(where_expr),
     std::move(window_frame)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAnalyticFunctionCall>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation_list(node->collation_list());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
 
+  // Copy the with_group_rows_subquery field explicitly because it is not a
+  // constructor arg.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedScan> scan,
+      ProcessNode(node->with_group_rows_subquery()));
+  copy.get()->set_with_group_rows_subquery(std::move(scan));
+
+  // Copy the with_group_rows_parameter_list field explicitly because it is not
+  // a constructor arg.
+  ZETASQL_RETURN_IF_ERROR(CopyWithGroupRowsParameterList<ResolvedAnalyticFunctionCall>(node,
+                                                                copy.get()));
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2133,14 +1616,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExtendedCastElement(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -2151,7 +1626,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedExtendedCast(
     const ResolvedExtendedCast* node) {
   // Get a deep copy of element_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExtendedCastElement>> element_list,
       ProcessNodeList(node->element_list()));
 
@@ -2166,14 +1641,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExtendedCast(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -2184,22 +1651,22 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCast(
     const ResolvedCast* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
   // Get deep copy of extended_cast field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExtendedCast> extended_cast,
       ProcessNode(node->extended_cast()));
 
   // Get deep copy of format field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> format,
       ProcessNode(node->format()));
 
   // Get deep copy of time_zone field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> time_zone,
       ProcessNode(node->time_zone()));
 
@@ -2214,22 +1681,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCast(
     node->type_modifiers()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2241,7 +1701,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedMakeStruct(
     const ResolvedMakeStruct* node) {
   // Get a deep copy of field_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> field_list,
       ProcessNodeList(node->field_list()));
 
@@ -2251,22 +1711,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedMakeStruct(
     std::move(field_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2278,7 +1731,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedMakeProto(
     const ResolvedMakeProto* node) {
   // Get a deep copy of field_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedMakeProtoField>> field_list,
       ProcessNodeList(node->field_list()));
 
@@ -2288,22 +1741,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedMakeProto(
     std::move(field_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2315,7 +1761,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedMakeProtoField(
     const ResolvedMakeProtoField* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
@@ -2332,14 +1778,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedMakeProtoField(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -2350,7 +1788,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetStructField(
     const ResolvedGetStructField* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
@@ -2362,22 +1800,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetStructField(
     node->field_expr_is_positional()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2389,7 +1820,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetProtoField(
     const ResolvedGetProtoField* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
@@ -2404,22 +1835,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetProtoField(
     node->return_default_value_when_unset()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2431,7 +1855,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetJsonField(
     const ResolvedGetJsonField* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
@@ -2442,60 +1866,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetJsonField(
     node->field_name()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetRowField(
-    const ResolvedGetRowField* node) {
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  // Create a mutable instance of ResolvedGetRowField.
-  auto copy = MakeResolvedGetRowField(
-    node->type(),
-    std::move(expr),
-    node->column()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2507,12 +1886,12 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedFlatten(
     const ResolvedFlatten* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
   // Get a deep copy of get_field_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> get_field_list,
       ProcessNodeList(node->get_field_list()));
 
@@ -2523,22 +1902,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFlatten(
     std::move(get_field_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2554,22 +1926,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFlattenedArg(
     node->type()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2581,7 +1946,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedReplaceFieldItem(
     const ResolvedReplaceFieldItem* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
@@ -2598,14 +1963,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedReplaceFieldItem(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -2616,12 +1973,12 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedReplaceField(
     const ResolvedReplaceField* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
   // Get a deep copy of replace_field_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedReplaceFieldItem>> replace_field_item_list,
       ProcessNodeList(node->replace_field_item_list()));
 
@@ -2632,60 +1989,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedReplaceField(
     std::move(replace_field_item_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGetProtoOneof(
-    const ResolvedGetProtoOneof* node) {
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  // Create a mutable instance of ResolvedGetProtoOneof.
-  auto copy = MakeResolvedGetProtoOneof(
-    node->type(),
-    std::move(expr),
-    node->oneof_descriptor()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2697,19 +2009,24 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedSubqueryExpr(
     const ResolvedSubqueryExpr* node) {
   // Get a deep copy of parameter_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> parameter_list,
       ProcessNodeList(node->parameter_list()));
 
   // Get deep copy of in_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> in_expr,
       ProcessNode(node->in_expr()));
 
   // Get deep copy of subquery field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> subquery,
       ProcessNode(node->subquery()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedSubqueryExpr.
   auto copy = MakeResolvedSubqueryExpr(
@@ -2720,34 +2037,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSubqueryExpr(
     std::move(subquery)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_in_collation(node->in_collation());
+  // Copy the in_collation field explicitly because it is not a constructor arg.
+  copy.get()->set_in_collation(node->in_collation());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSubqueryExpr>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2759,12 +2065,12 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithExpr(
     const ResolvedWithExpr* node) {
   // Get a deep copy of assignment_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> assignment_list,
       ProcessNodeList(node->assignment_list()));
 
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
@@ -2775,22 +2081,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithExpr(
     std::move(expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2802,16 +2101,21 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedExecuteAsRoleScan(
     const ResolvedExecuteAsRoleScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedExecuteAsRoleScan.
   auto copy = MakeResolvedExecuteAsRoleScan(
@@ -2821,34 +2125,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExecuteAsRoleScan(
     node->original_inlined_tvf()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExecuteAsRoleScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -2870,14 +2163,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedModel(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -2898,14 +2183,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedConnection(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -2917,7 +2194,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDescriptor(
     const ResolvedDescriptor* node) {
   std::vector<ResolvedColumn> descriptor_column_list;
   for (int i = 0; i < node->descriptor_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->descriptor_column_list()[i]));
     descriptor_column_list.push_back(elem);
   }
@@ -2934,14 +2211,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDescriptor(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -2953,94 +2222,38 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSingleRowScan(
     const ResolvedSingleRowScan* node) {
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedSingleRowScan.
   auto copy = MakeResolvedSingleRowScan(
     column_list
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSingleRowScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedUnsetArgumentScan(
-    const ResolvedUnsetArgumentScan* node) {
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedUnsetArgumentScan.
-  auto copy = MakeResolvedUnsetArgumentScan(
-    column_list
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3052,16 +2265,21 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedTableScan(
     const ResolvedTableScan* node) {
   // Get deep copy of for_system_time_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> for_system_time_expr,
       ProcessNode(node->for_system_time_expr()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedTableScan.
   auto copy = MakeResolvedTableScan(
@@ -3071,49 +2289,27 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedTableScan(
     node->alias()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedTableScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_column_index_list(node->column_index_list());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedLockMode> lock_mode,
-      ProcessNode(node->lock_mode()));
-  copy->set_lock_mode(std::move(lock_mode));
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_read_as_row_type(node->read_as_row_type());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_table_column_list(node->table_column_list());
+  // Copy the column_index_list field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_column_index_list(node->column_index_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3125,31 +2321,31 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedJoinScan(
     const ResolvedJoinScan* node) {
   // Get deep copy of left_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> left_scan,
       ProcessNode(node->left_scan()));
 
   // Get deep copy of right_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> right_scan,
       ProcessNode(node->right_scan()));
 
   // Get deep copy of join_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> join_expr,
       ProcessNode(node->join_expr()));
 
-  // Get a deep copy of parameter_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedColumnRef>> parameter_list,
-      ProcessNodeList(node->parameter_list()));
-
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedJoinScan.
   auto copy = MakeResolvedJoinScan(
@@ -3157,40 +2353,26 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedJoinScan(
     node->join_type(),
     std::move(left_scan),
     std::move(right_scan),
-    std::move(join_expr),
-    node->has_using(),
-    node->is_lateral(),
-    std::move(parameter_list)
+    std::move(join_expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedJoinScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3202,84 +2384,69 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedArrayScan(
     const ResolvedArrayScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
-  // Get a deep copy of array_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedExpr>> array_expr_list,
-      ProcessNodeList(node->array_expr_list()));
+  // Get deep copy of array_expr field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedExpr> array_expr,
+      ProcessNode(node->array_expr()));
 
-  std::vector<ResolvedColumn> element_column_list;
-  for (int i = 0; i < node->element_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->element_column_list()[i]));
-    element_column_list.push_back(elem);
-  }
+  ZETASQL_ASSIGN_OR_RETURN(
+      ResolvedColumn element_column,
+      CopyResolvedColumn(node->element_column()));
 
   // Get deep copy of array_offset_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnHolder> array_offset_column,
       ProcessNode(node->array_offset_column()));
 
   // Get deep copy of join_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> join_expr,
       ProcessNode(node->join_expr()));
 
-  // Get deep copy of array_zip_mode field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> array_zip_mode,
-      ProcessNode(node->array_zip_mode()));
-
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedArrayScan.
   auto copy = MakeResolvedArrayScan(
     column_list,
     std::move(input_scan),
-    std::move(array_expr_list),
-    element_column_list,
+    std::move(array_expr),
+    element_column,
     std::move(array_offset_column),
     std::move(join_expr),
-    node->is_outer(),
-    std::move(array_zip_mode)
+    node->is_outer()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedArrayScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3290,7 +2457,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedArrayScan(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnHolder(
     const ResolvedColumnHolder* node) {
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn column,
       CopyResolvedColumn(node->column()));
 
@@ -3305,14 +2472,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnHolder(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -3323,21 +2482,26 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedFilterScan(
     const ResolvedFilterScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get deep copy of filter_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> filter_expr,
       ProcessNode(node->filter_expr()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedFilterScan.
   auto copy = MakeResolvedFilterScan(
@@ -3346,34 +2510,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFilterScan(
     std::move(filter_expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedFilterScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3385,11 +2538,11 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupingCall(
     const ResolvedGroupingCall* node) {
   // Get deep copy of group_by_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnRef> group_by_column,
       ProcessNode(node->group_by_column()));
 
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn output_column,
       CopyResolvedColumn(node->output_column()));
 
@@ -3405,80 +2558,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupingCall(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupingSetList(
-    const ResolvedGroupingSetList* node) {
-  // Get a deep copy of elem_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGroupingSetBase>> elem_list,
-      ProcessNodeList(node->elem_list()));
-
-  // Create a mutable instance of ResolvedGroupingSetList.
-  auto copy = MakeResolvedGroupingSetList(
-    std::move(elem_list)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupingSetProduct(
-    const ResolvedGroupingSetProduct* node) {
-  // Get a deep copy of input_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGroupingSetBase>> input_list,
-      ProcessNodeList(node->input_list()));
-
-  // Create a mutable instance of ResolvedGroupingSetProduct.
-  auto copy = MakeResolvedGroupingSetProduct(
-    std::move(input_list)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -3489,7 +2568,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupingSet(
     const ResolvedGroupingSet* node) {
   // Get a deep copy of group_by_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> group_by_column_list,
       ProcessNodeList(node->group_by_column_list()));
 
@@ -3504,14 +2583,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupingSet(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -3522,7 +2593,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRollup(
     const ResolvedRollup* node) {
   // Get a deep copy of rollup_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingSetMultiColumn>> rollup_column_list,
       ProcessNodeList(node->rollup_column_list()));
 
@@ -3537,14 +2608,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRollup(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -3555,7 +2618,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCube(
     const ResolvedCube* node) {
   // Get a deep copy of cube_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingSetMultiColumn>> cube_column_list,
       ProcessNodeList(node->cube_column_list()));
 
@@ -3570,14 +2633,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCube(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -3589,38 +2644,43 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateScan(
     const ResolvedAggregateScan* node) {
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get a deep copy of group_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> group_by_list,
       ProcessNodeList(node->group_by_list()));
 
   // Get a deep copy of aggregate_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> aggregate_list,
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumn>> aggregate_list,
       ProcessNodeList(node->aggregate_list()));
 
   // Get a deep copy of grouping_set_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingSetBase>> grouping_set_list,
       ProcessNodeList(node->grouping_set_list()));
 
   // Get a deep copy of rollup_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> rollup_column_list,
       ProcessNodeList(node->rollup_column_list()));
 
   // Get a deep copy of grouping_call_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingCall>> grouping_call_list,
       ProcessNodeList(node->grouping_call_list()));
 
@@ -3635,37 +2695,26 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateScan(
     std::move(grouping_call_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAggregateScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation_list(node->collation_list());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3677,49 +2726,54 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnonymizedAggregateScan(
     const ResolvedAnonymizedAggregateScan* node) {
   // Get deep copy of k_threshold_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> k_threshold_expr,
       ProcessNode(node->k_threshold_expr()));
 
   // Get a deep copy of anonymization_option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> anonymization_option_list,
       ProcessNodeList(node->anonymization_option_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get a deep copy of group_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> group_by_list,
       ProcessNodeList(node->group_by_list()));
 
   // Get a deep copy of aggregate_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> aggregate_list,
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumn>> aggregate_list,
       ProcessNodeList(node->aggregate_list()));
 
   // Get a deep copy of grouping_set_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingSetBase>> grouping_set_list,
       ProcessNodeList(node->grouping_set_list()));
 
   // Get a deep copy of rollup_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> rollup_column_list,
       ProcessNodeList(node->rollup_column_list()));
 
   // Get a deep copy of grouping_call_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingCall>> grouping_call_list,
       ProcessNodeList(node->grouping_call_list()));
 
@@ -3736,37 +2790,26 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnonymizedAggregateScan(
     std::move(anonymization_option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAnonymizedAggregateScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation_list(node->collation_list());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3778,49 +2821,54 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDifferentialPrivacyAggregateScan(
     const ResolvedDifferentialPrivacyAggregateScan* node) {
   // Get deep copy of group_selection_threshold_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> group_selection_threshold_expr,
       ProcessNode(node->group_selection_threshold_expr()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get a deep copy of group_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> group_by_list,
       ProcessNodeList(node->group_by_list()));
 
   // Get a deep copy of aggregate_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> aggregate_list,
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumn>> aggregate_list,
       ProcessNodeList(node->aggregate_list()));
 
   // Get a deep copy of grouping_set_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingSetBase>> grouping_set_list,
       ProcessNodeList(node->grouping_set_list()));
 
   // Get a deep copy of rollup_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> rollup_column_list,
       ProcessNodeList(node->rollup_column_list()));
 
   // Get a deep copy of grouping_call_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingCall>> grouping_call_list,
       ProcessNodeList(node->grouping_call_list()));
 
@@ -3837,37 +2885,26 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDifferentialPrivacyAggregateScan(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDifferentialPrivacyAggregateScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation_list(node->collation_list());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3879,44 +2916,49 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregationThresholdAggregateScan(
     const ResolvedAggregationThresholdAggregateScan* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get a deep copy of group_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> group_by_list,
       ProcessNodeList(node->group_by_list()));
 
   // Get a deep copy of aggregate_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> aggregate_list,
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumn>> aggregate_list,
       ProcessNodeList(node->aggregate_list()));
 
   // Get a deep copy of grouping_set_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingSetBase>> grouping_set_list,
       ProcessNodeList(node->grouping_set_list()));
 
   // Get a deep copy of rollup_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> rollup_column_list,
       ProcessNodeList(node->rollup_column_list()));
 
   // Get a deep copy of grouping_call_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedGroupingCall>> grouping_call_list,
       ProcessNodeList(node->grouping_call_list()));
 
@@ -3932,37 +2974,26 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregationThresholdAggregateScan(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAggregationThresholdAggregateScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation_list(node->collation_list());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -3974,13 +3005,13 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOperationItem(
     const ResolvedSetOperationItem* node) {
   // Get deep copy of scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> scan,
       ProcessNode(node->scan()));
 
   std::vector<ResolvedColumn> output_column_list;
   for (int i = 0; i < node->output_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->output_column_list()[i]));
     output_column_list.push_back(elem);
   }
@@ -3997,14 +3028,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOperationItem(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4015,16 +3038,21 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOperationScan(
     const ResolvedSetOperationScan* node) {
   // Get a deep copy of input_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedSetOperationItem>> input_item_list,
       ProcessNodeList(node->input_item_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedSetOperationScan.
   auto copy = MakeResolvedSetOperationScan(
@@ -4033,40 +3061,31 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOperationScan(
     std::move(input_item_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSetOperationScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_column_match_mode(node->column_match_mode());
+  // Copy the `column_match_mode` field explicitly because it is not
+  // a constructor arg.
+  copy.get()->set_column_match_mode(node->column_match_mode());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_column_propagation_mode(node->column_propagation_mode());
+  // Copy the `column_match_mode` field explicitly because it is not
+  // a constructor arg.
+  copy.get()->set_column_propagation_mode(node->column_propagation_mode());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4078,21 +3097,26 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedOrderByScan(
     const ResolvedOrderByScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get a deep copy of order_by_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOrderByItem>> order_by_item_list,
       ProcessNodeList(node->order_by_item_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedOrderByScan.
   auto copy = MakeResolvedOrderByScan(
@@ -4101,34 +3125,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedOrderByScan(
     std::move(order_by_item_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedOrderByScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4140,26 +3153,31 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedLimitOffsetScan(
     const ResolvedLimitOffsetScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get deep copy of limit field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> limit,
       ProcessNode(node->limit()));
 
   // Get deep copy of offset field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> offset,
       ProcessNode(node->offset()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedLimitOffsetScan.
   auto copy = MakeResolvedLimitOffsetScan(
@@ -4169,34 +3187,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedLimitOffsetScan(
     std::move(offset)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedLimitOffsetScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4209,10 +3216,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithRefScan(
     const ResolvedWithRefScan* node) {
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedWithRefScan.
   auto copy = MakeResolvedWithRefScan(
@@ -4220,34 +3232,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithRefScan(
     node->with_query_name()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedWithRefScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4259,21 +3260,26 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticScan(
     const ResolvedAnalyticScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get a deep copy of function_group_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAnalyticFunctionGroup>> function_group_list,
       ProcessNodeList(node->function_group_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedAnalyticScan.
   auto copy = MakeResolvedAnalyticScan(
@@ -4282,34 +3288,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticScan(
     std::move(function_group_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAnalyticScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4321,36 +3316,41 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedSampleScan(
     const ResolvedSampleScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get deep copy of size field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> size,
       ProcessNode(node->size()));
 
   // Get deep copy of repeatable_argument field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> repeatable_argument,
       ProcessNode(node->repeatable_argument()));
 
   // Get deep copy of weight_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnHolder> weight_column,
       ProcessNode(node->weight_column()));
 
   // Get a deep copy of partition_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> partition_by_list,
       ProcessNodeList(node->partition_by_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedSampleScan.
   auto copy = MakeResolvedSampleScan(
@@ -4364,34 +3364,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSampleScan(
     std::move(partition_by_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSampleScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4402,12 +3391,12 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSampleScan(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedComputedColumn(
     const ResolvedComputedColumn* node) {
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn column,
       CopyResolvedColumn(node->column()));
 
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
@@ -4423,57 +3412,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedComputedColumn(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedDeferredComputedColumn(
-    const ResolvedDeferredComputedColumn* node) {
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn column,
-      CopyResolvedColumn(node->column()));
-
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn side_effect_column,
-      CopyResolvedColumn(node->side_effect_column()));
-
-  // Create a mutable instance of ResolvedDeferredComputedColumn.
-  auto copy = MakeResolvedDeferredComputedColumn(
-    column,
-    std::move(expr),
-    side_effect_column
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4484,12 +3422,12 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedOrderByItem(
     const ResolvedOrderByItem* node) {
   // Get deep copy of column_ref field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnRef> column_ref,
       ProcessNode(node->column_ref()));
 
   // Get deep copy of collation_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> collation_name,
       ProcessNode(node->collation_name()));
 
@@ -4501,22 +3439,14 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedOrderByItem(
     node->null_order()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation(node->collation());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation(node->collation());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4528,17 +3458,17 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnAnnotations(
     const ResolvedColumnAnnotations* node) {
   // Get deep copy of collation_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> collation_name,
       ProcessNode(node->collation_name()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of child_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnAnnotations>> child_list,
       ProcessNodeList(node->child_list()));
 
@@ -4557,14 +3487,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnAnnotations(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4575,21 +3497,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGeneratedColumnInfo(
     const ResolvedGeneratedColumnInfo* node) {
   // Get deep copy of expression field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expression,
       ProcessNode(node->expression()));
-
-  // Get deep copy of identity_column_info field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedIdentityColumnInfo> identity_column_info,
-      ProcessNode(node->identity_column_info()));
 
   // Create a mutable instance of ResolvedGeneratedColumnInfo.
   auto copy = MakeResolvedGeneratedColumnInfo(
     std::move(expression),
-    node->stored_mode(),
-    node->generated_mode(),
-    std::move(identity_column_info)
+    node->stored_mode()
   );
 
   // Set parse location range if it was previously set, as this is not a
@@ -4597,14 +3512,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGeneratedColumnInfo(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4616,7 +3523,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnDefaultValue(
     const ResolvedColumnDefaultValue* node) {
   // Get deep copy of expression field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expression,
       ProcessNode(node->expression()));
 
@@ -4632,14 +3539,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnDefaultValue(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4650,21 +3549,21 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnDefinition(
     const ResolvedColumnDefinition* node) {
   // Get deep copy of annotations field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnAnnotations> annotations,
       ProcessNode(node->annotations()));
 
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn column,
       CopyResolvedColumn(node->column()));
 
   // Get deep copy of generated_column_info field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedGeneratedColumnInfo> generated_column_info,
       ProcessNode(node->generated_column_info()));
 
   // Get deep copy of default_value field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnDefaultValue> default_value,
       ProcessNode(node->default_value()));
 
@@ -4685,14 +3584,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedColumnDefinition(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4703,7 +3594,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedPrimaryKey(
     const ResolvedPrimaryKey* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
@@ -4722,14 +3613,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedPrimaryKey(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4740,7 +3623,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedForeignKey(
     const ResolvedForeignKey* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
@@ -4764,14 +3647,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedForeignKey(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4782,12 +3657,12 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCheckConstraint(
     const ResolvedCheckConstraint* node) {
   // Get deep copy of expression field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expression,
       ProcessNode(node->expression()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
@@ -4805,14 +3680,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCheckConstraint(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4822,7 +3689,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCheckConstraint(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedOutputColumn(
     const ResolvedOutputColumn* node) {
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn column,
       CopyResolvedColumn(node->column()));
 
@@ -4838,48 +3705,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedOutputColumn(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedOutputSchema(
-    const ResolvedOutputSchema* node) {
-  // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
-      ProcessNodeList(node->output_column_list()));
-
-  // Create a mutable instance of ResolvedOutputSchema.
-  auto copy = MakeResolvedOutputSchema(
-    std::move(output_column_list),
-    node->is_value_table()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -4890,21 +3715,26 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedProjectScan(
     const ResolvedProjectScan* node) {
   // Get a deep copy of expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> expr_list,
       ProcessNodeList(node->expr_list()));
 
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedProjectScan.
   auto copy = MakeResolvedProjectScan(
@@ -4913,34 +3743,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedProjectScan(
     std::move(input_scan)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedProjectScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -4952,16 +3771,21 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedTVFScan(
     const ResolvedTVFScan* node) {
   // Get a deep copy of argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedFunctionArgument>> argument_list,
       ProcessNodeList(node->argument_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedTVFScan.
   auto copy = MakeResolvedTVFScan(
@@ -4974,34 +3798,27 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedTVFScan(
     node->function_call_signature()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedTVFScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
+
+  // Copy the column_index_list field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_column_index_list(node->column_index_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5013,16 +3830,21 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupRowsScan(
     const ResolvedGroupRowsScan* node) {
   // Get a deep copy of input_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> input_column_list,
       ProcessNodeList(node->input_column_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedGroupRowsScan.
   auto copy = MakeResolvedGroupRowsScan(
@@ -5031,34 +3853,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGroupRowsScan(
     node->alias()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedGroupRowsScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5070,44 +3881,44 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedFunctionArgument(
     const ResolvedFunctionArgument* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
 
   // Get deep copy of scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> scan,
       ProcessNode(node->scan()));
 
   // Get deep copy of model field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedModel> model,
       ProcessNode(node->model()));
 
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
 
   // Get deep copy of descriptor_arg field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedDescriptor> descriptor_arg,
       ProcessNode(node->descriptor_arg()));
 
   std::vector<ResolvedColumn> argument_column_list;
   for (int i = 0; i < node->argument_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->argument_column_list()[i]));
     argument_column_list.push_back(elem);
   }
 
   // Get deep copy of inline_lambda field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedInlineLambda> inline_lambda,
       ProcessNode(node->inline_lambda()));
 
   // Get deep copy of sequence field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedSequence> sequence,
       ProcessNode(node->sequence()));
 
@@ -5120,9 +3931,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFunctionArgument(
     std::move(descriptor_arg),
     argument_column_list,
     std::move(inline_lambda),
-    std::move(sequence),
-    node->graph(),
-    node->argument_alias()
+    std::move(sequence)
   );
 
   // Set parse location range if it was previously set, as this is not a
@@ -5130,14 +3939,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFunctionArgument(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5149,113 +3950,30 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedExplainStmt(
     const ResolvedExplainStmt* node) {
   // Get deep copy of statement field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedStatement> statement,
       ProcessNode(node->statement()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedExplainStmt.
   auto copy = MakeResolvedExplainStmt(
     std::move(statement)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExplainStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedStringWithLocation(
-    const ResolvedStringWithLocation* node) {
-  // Create a mutable instance of ResolvedStringWithLocation.
-  auto copy = MakeResolvedStringWithLocation(
-    node->value()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedStatementWithPipeOperatorsStmt(
-    const ResolvedStatementWithPipeOperatorsStmt* node) {
-  // Get deep copy of statement field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedStatement> statement,
-      ProcessNode(node->statement()));
-
-  // Get deep copy of suffix_subpipeline_sql field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedStringWithLocation> suffix_subpipeline_sql,
-      ProcessNode(node->suffix_subpipeline_sql()));
-
-  // Create a mutable instance of ResolvedStatementWithPipeOperatorsStmt.
-  auto copy = MakeResolvedStatementWithPipeOperatorsStmt(
-    std::move(statement),
-    std::move(suffix_subpipeline_sql)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5267,14 +3985,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedQueryStmt(
     const ResolvedQueryStmt* node) {
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedQueryStmt.
   auto copy = MakeResolvedQueryStmt(
@@ -5283,160 +4006,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedQueryStmt(
     std::move(query)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedQueryStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGeneralizedQueryStmt(
-    const ResolvedGeneralizedQueryStmt* node) {
-  // Get deep copy of output_schema field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedOutputSchema> output_schema,
-      ProcessNode(node->output_schema()));
-
-  // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> query,
-      ProcessNode(node->query()));
-
-  // Create a mutable instance of ResolvedGeneralizedQueryStmt.
-  auto copy = MakeResolvedGeneralizedQueryStmt(
-    std::move(output_schema),
-    std::move(query)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMultiStmt(
-    const ResolvedMultiStmt* node) {
-  // Get a deep copy of statement_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedStatement>> statement_list,
-      ProcessNodeList(node->statement_list()));
-
-  // Create a mutable instance of ResolvedMultiStmt.
-  auto copy = MakeResolvedMultiStmt(
-    std::move(statement_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateWithEntryStmt(
-    const ResolvedCreateWithEntryStmt* node) {
-  // Get deep copy of with_entry field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedWithEntry> with_entry,
-      ProcessNode(node->with_entry()));
-
-  // Create a mutable instance of ResolvedCreateWithEntryStmt.
-  auto copy = MakeResolvedCreateWithEntryStmt(
-    std::move(with_entry)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5448,9 +4027,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateDatabaseStmt(
     const ResolvedCreateDatabaseStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateDatabaseStmt.
   auto copy = MakeResolvedCreateDatabaseStmt(
@@ -5458,28 +4042,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateDatabaseStmt(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateDatabaseStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5491,20 +4063,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedIndexItem(
     const ResolvedIndexItem* node) {
   // Get deep copy of column_ref field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnRef> column_ref,
       ProcessNode(node->column_ref()));
-
-  // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> option_list,
-      ProcessNodeList(node->option_list()));
 
   // Create a mutable instance of ResolvedIndexItem.
   auto copy = MakeResolvedIndexItem(
     std::move(column_ref),
-    node->descending(),
-    std::move(option_list)
+    node->descending()
   );
 
   // Set parse location range if it was previously set, as this is not a
@@ -5512,14 +4078,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedIndexItem(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5531,16 +4089,16 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedUnnestItem(
     const ResolvedUnnestItem* node) {
   // Get deep copy of array_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> array_expr,
       ProcessNode(node->array_expr()));
 
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn element_column,
       CopyResolvedColumn(node->element_column()));
 
   // Get deep copy of array_offset_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnHolder> array_offset_column,
       ProcessNode(node->array_offset_column()));
 
@@ -5557,14 +4115,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUnnestItem(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -5575,39 +4125,39 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateIndexStmt(
     const ResolvedCreateIndexStmt* node) {
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
   // Get a deep copy of index_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedIndexItem>> index_item_list,
       ProcessNodeList(node->index_item_list()));
 
   // Get a deep copy of storing_expression_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> storing_expression_list,
       ProcessNodeList(node->storing_expression_list()));
 
-  // Get a deep copy of partition_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedExpr>> partition_by_list,
-      ProcessNodeList(node->partition_by_list()));
-
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of computed_columns_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> computed_columns_list,
       ProcessNodeList(node->computed_columns_list()));
 
   // Get a deep copy of unnest_expressions_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedUnnestItem>> unnest_expressions_list,
       ProcessNodeList(node->unnest_expressions_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateIndexStmt.
   auto copy = MakeResolvedCreateIndexStmt(
@@ -5622,34 +4172,21 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateIndexStmt(
     node->index_all_columns(),
     std::move(index_item_list),
     std::move(storing_expression_list),
-    std::move(partition_by_list),
     std::move(option_list),
     std::move(computed_columns_list),
     std::move(unnest_expressions_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateIndexStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5661,97 +4198,39 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateSchemaStmt(
     const ResolvedCreateSchemaStmt* node) {
   // Get deep copy of collation_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> collation_name,
       ProcessNode(node->collation_name()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateSchemaStmt.
   auto copy = MakeResolvedCreateSchemaStmt(
     node->name_path(),
     node->create_scope(),
     node->create_mode(),
-    std::move(option_list),
-    std::move(collation_name)
+    std::move(collation_name),
+    std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateSchemaStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateExternalSchemaStmt(
-    const ResolvedCreateExternalSchemaStmt* node) {
-  // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedConnection> connection,
-      ProcessNode(node->connection()));
-
-  // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> option_list,
-      ProcessNodeList(node->option_list()));
-
-  // Create a mutable instance of ResolvedCreateExternalSchemaStmt.
-  auto copy = MakeResolvedCreateExternalSchemaStmt(
-    node->name_path(),
-    node->create_scope(),
-    node->create_mode(),
-    std::move(option_list),
-    std::move(connection)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5763,64 +4242,69 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableStmt(
     const ResolvedCreateTableStmt* node) {
   // Get deep copy of clone_from field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> clone_from,
       ProcessNode(node->clone_from()));
 
   // Get deep copy of copy_from field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> copy_from,
       ProcessNode(node->copy_from()));
 
   // Get a deep copy of partition_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> partition_by_list,
       ProcessNodeList(node->partition_by_list()));
 
   // Get a deep copy of cluster_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> cluster_by_list,
       ProcessNodeList(node->cluster_by_list()));
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> column_definition_list,
       ProcessNodeList(node->column_definition_list()));
 
   std::vector<ResolvedColumn> pseudo_column_list;
   for (int i = 0; i < node->pseudo_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->pseudo_column_list()[i]));
     pseudo_column_list.push_back(elem);
   }
 
   // Get deep copy of primary_key field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedPrimaryKey> primary_key,
       ProcessNode(node->primary_key()));
 
   // Get a deep copy of foreign_key_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedForeignKey>> foreign_key_list,
       ProcessNodeList(node->foreign_key_list()));
 
   // Get a deep copy of check_constraint_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedCheckConstraint>> check_constraint_list,
       ProcessNodeList(node->check_constraint_list()));
 
   // Get deep copy of collation_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> collation_name,
       ProcessNode(node->collation_name()));
 
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
 
@@ -5845,28 +4329,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableStmt(
     std::move(cluster_by_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateTableStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5878,64 +4350,69 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableAsSelectStmt(
     const ResolvedCreateTableAsSelectStmt* node) {
   // Get a deep copy of partition_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> partition_by_list,
       ProcessNodeList(node->partition_by_list()));
 
   // Get a deep copy of cluster_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> cluster_by_list,
       ProcessNodeList(node->cluster_by_list()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> column_definition_list,
       ProcessNodeList(node->column_definition_list()));
 
   std::vector<ResolvedColumn> pseudo_column_list;
   for (int i = 0; i < node->pseudo_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->pseudo_column_list()[i]));
     pseudo_column_list.push_back(elem);
   }
 
   // Get deep copy of primary_key field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedPrimaryKey> primary_key,
       ProcessNode(node->primary_key()));
 
   // Get a deep copy of foreign_key_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedForeignKey>> foreign_key_list,
       ProcessNodeList(node->foreign_key_list()));
 
   // Get a deep copy of check_constraint_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedCheckConstraint>> check_constraint_list,
       ProcessNodeList(node->check_constraint_list()));
 
   // Get deep copy of collation_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> collation_name,
       ProcessNode(node->collation_name()));
 
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
 
@@ -5960,28 +4437,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableAsSelectStmt(
     std::move(query)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateTableAsSelectStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -5993,12 +4458,12 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateModelAliasedQuery(
     const ResolvedCreateModelAliasedQuery* node) {
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
@@ -6015,14 +4480,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateModelAliasedQuery(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -6033,59 +4490,64 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateModelStmt(
     const ResolvedCreateModelStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
   // Get a deep copy of aliased_query_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedCreateModelAliasedQuery>> aliased_query_list,
       ProcessNodeList(node->aliased_query_list()));
 
   // Get a deep copy of transform_input_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> transform_input_column_list,
       ProcessNodeList(node->transform_input_column_list()));
 
   // Get a deep copy of transform_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> transform_list,
       ProcessNodeList(node->transform_list()));
 
   // Get a deep copy of transform_output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> transform_output_column_list,
       ProcessNodeList(node->transform_output_column_list()));
 
   // Get a deep copy of transform_analytic_function_group_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAnalyticFunctionGroup>> transform_analytic_function_group_list,
       ProcessNodeList(node->transform_analytic_function_group_list()));
 
   // Get a deep copy of input_column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> input_column_definition_list,
       ProcessNodeList(node->input_column_definition_list()));
 
   // Get a deep copy of output_column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> output_column_definition_list,
       ProcessNodeList(node->output_column_definition_list()));
 
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateModelStmt.
   auto copy = MakeResolvedCreateModelStmt(
@@ -6106,28 +4568,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateModelStmt(
     std::move(connection)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateModelStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6138,23 +4588,28 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateModelStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateViewStmt(
     const ResolvedCreateViewStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
   // Get a deep copy of column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> column_definition_list,
       ProcessNodeList(node->column_definition_list()));
 
@@ -6174,28 +4629,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateViewStmt(
     std::move(column_definition_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateViewStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6207,7 +4650,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithPartitionColumns(
     const ResolvedWithPartitionColumns* node) {
   // Get a deep copy of column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> column_definition_list,
       ProcessNodeList(node->column_definition_list()));
 
@@ -6222,14 +4665,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithPartitionColumns(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -6240,14 +4675,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateSnapshotTableStmt(
     const ResolvedCreateSnapshotTableStmt* node) {
   // Get deep copy of clone_from field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> clone_from,
       ProcessNode(node->clone_from()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateSnapshotTableStmt.
   auto copy = MakeResolvedCreateSnapshotTableStmt(
@@ -6258,28 +4698,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateSnapshotTableStmt(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateSnapshotTableStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6291,49 +4719,54 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateExternalTableStmt(
     const ResolvedCreateExternalTableStmt* node) {
   // Get deep copy of with_partition_columns field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedWithPartitionColumns> with_partition_columns,
       ProcessNode(node->with_partition_columns()));
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> column_definition_list,
       ProcessNodeList(node->column_definition_list()));
 
   std::vector<ResolvedColumn> pseudo_column_list;
   for (int i = 0; i < node->pseudo_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->pseudo_column_list()[i]));
     pseudo_column_list.push_back(elem);
   }
 
   // Get deep copy of primary_key field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedPrimaryKey> primary_key,
       ProcessNode(node->primary_key()));
 
   // Get a deep copy of foreign_key_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedForeignKey>> foreign_key_list,
       ProcessNodeList(node->foreign_key_list()));
 
   // Get a deep copy of check_constraint_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedCheckConstraint>> check_constraint_list,
       ProcessNodeList(node->check_constraint_list()));
 
   // Get deep copy of collation_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> collation_name,
       ProcessNode(node->collation_name()));
 
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
 
@@ -6355,28 +4788,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateExternalTableStmt(
     std::move(with_partition_columns)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateExternalTableStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6388,14 +4809,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportModelStmt(
     const ResolvedExportModelStmt* node) {
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedExportModelStmt.
   auto copy = MakeResolvedExportModelStmt(
@@ -6404,28 +4830,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportModelStmt(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExportModelStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6437,24 +4851,29 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportDataStmt(
     const ResolvedExportDataStmt* node) {
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedExportDataStmt.
   auto copy = MakeResolvedExportDataStmt(
@@ -6465,28 +4884,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportDataStmt(
     std::move(query)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExportDataStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6498,14 +4905,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportMetadataStmt(
     const ResolvedExportMetadataStmt* node) {
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedExportMetadataStmt.
   auto copy = MakeResolvedExportMetadataStmt(
@@ -6515,28 +4927,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExportMetadataStmt(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExportMetadataStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6548,9 +4948,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDefineTableStmt(
     const ResolvedDefineTableStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedDefineTableStmt.
   auto copy = MakeResolvedDefineTableStmt(
@@ -6558,28 +4963,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDefineTableStmt(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDefineTableStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6590,6 +4983,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDefineTableStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDescribeStmt(
     const ResolvedDescribeStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedDescribeStmt.
   auto copy = MakeResolvedDescribeStmt(
     node->object_type(),
@@ -6597,28 +4995,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDescribeStmt(
     node->from_name_path()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDescribeStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6630,9 +5016,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedShowStmt(
     const ResolvedShowStmt* node) {
   // Get deep copy of like_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedLiteral> like_expr,
       ProcessNode(node->like_expr()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedShowStmt.
   auto copy = MakeResolvedShowStmt(
@@ -6641,28 +5032,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedShowStmt(
     std::move(like_expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedShowStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6673,34 +5052,27 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedShowStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedBeginStmt(
     const ResolvedBeginStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedBeginStmt.
   auto copy = MakeResolvedBeginStmt(
     node->read_write_mode(),
     node->isolation_level_list()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedBeginStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6711,34 +5083,27 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedBeginStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetTransactionStmt(
     const ResolvedSetTransactionStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedSetTransactionStmt.
   auto copy = MakeResolvedSetTransactionStmt(
     node->read_write_mode(),
     node->isolation_level_list()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedSetTransactionStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6749,32 +5114,25 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetTransactionStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCommitStmt(
     const ResolvedCommitStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedCommitStmt.
   auto copy = MakeResolvedCommitStmt(
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCommitStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6785,32 +5143,25 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCommitStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRollbackStmt(
     const ResolvedRollbackStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedRollbackStmt.
   auto copy = MakeResolvedRollbackStmt(
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRollbackStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6821,33 +5172,26 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRollbackStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedStartBatchStmt(
     const ResolvedStartBatchStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedStartBatchStmt.
   auto copy = MakeResolvedStartBatchStmt(
     node->batch_type()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedStartBatchStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6858,32 +5202,25 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedStartBatchStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRunBatchStmt(
     const ResolvedRunBatchStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedRunBatchStmt.
   auto copy = MakeResolvedRunBatchStmt(
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRunBatchStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6894,32 +5231,25 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRunBatchStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAbortBatchStmt(
     const ResolvedAbortBatchStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedAbortBatchStmt.
   auto copy = MakeResolvedAbortBatchStmt(
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAbortBatchStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6930,6 +5260,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAbortBatchStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropStmt(
     const ResolvedDropStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedDropStmt.
   auto copy = MakeResolvedDropStmt(
     node->object_type(),
@@ -6938,28 +5273,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropStmt(
     node->drop_mode()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -6970,34 +5293,27 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropMaterializedViewStmt(
     const ResolvedDropMaterializedViewStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedDropMaterializedViewStmt.
   auto copy = MakeResolvedDropMaterializedViewStmt(
     node->is_if_exists(),
     node->name_path()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropMaterializedViewStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7008,34 +5324,27 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropMaterializedViewStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropSnapshotTableStmt(
     const ResolvedDropSnapshotTableStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedDropSnapshotTableStmt.
   auto copy = MakeResolvedDropSnapshotTableStmt(
     node->is_if_exists(),
     node->name_path()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropSnapshotTableStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7048,89 +5357,38 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRecursiveRefScan(
     const ResolvedRecursiveRefScan* node) {
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedRecursiveRefScan.
   auto copy = MakeResolvedRecursiveRefScan(
     column_list
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRecursiveRefScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedRecursionDepthModifier(
-    const ResolvedRecursionDepthModifier* node) {
-  // Get deep copy of lower_bound field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> lower_bound,
-      ProcessNode(node->lower_bound()));
-
-  // Get deep copy of upper_bound field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> upper_bound,
-      ProcessNode(node->upper_bound()));
-
-  // Get deep copy of recursion_depth_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedColumnHolder> recursion_depth_column,
-      ProcessNode(node->recursion_depth_column()));
-
-  // Create a mutable instance of ResolvedRecursionDepthModifier.
-  auto copy = MakeResolvedRecursionDepthModifier(
-    std::move(lower_bound),
-    std::move(upper_bound),
-    std::move(recursion_depth_column)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7142,64 +5400,52 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRecursiveScan(
     const ResolvedRecursiveScan* node) {
   // Get deep copy of non_recursive_term field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedSetOperationItem> non_recursive_term,
       ProcessNode(node->non_recursive_term()));
 
   // Get deep copy of recursive_term field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedSetOperationItem> recursive_term,
       ProcessNode(node->recursive_term()));
 
-  // Get deep copy of recursion_depth_modifier field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedRecursionDepthModifier> recursion_depth_modifier,
-      ProcessNode(node->recursion_depth_modifier()));
-
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedRecursiveScan.
   auto copy = MakeResolvedRecursiveScan(
     column_list,
     node->op_type(),
     std::move(non_recursive_term),
-    std::move(recursive_term),
-    std::move(recursion_depth_modifier)
+    std::move(recursive_term)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRecursiveScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7211,21 +5457,26 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithScan(
     const ResolvedWithScan* node) {
   // Get a deep copy of with_entry_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedWithEntry>> with_entry_list,
       ProcessNodeList(node->with_entry_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedWithScan.
   auto copy = MakeResolvedWithScan(
@@ -7235,34 +5486,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithScan(
     node->recursive()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedWithScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7274,7 +5514,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithEntry(
     const ResolvedWithEntry* node) {
   // Get deep copy of with_subquery field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> with_subquery,
       ProcessNode(node->with_subquery()));
 
@@ -7290,14 +5530,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWithEntry(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -7308,7 +5540,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedOption(
     const ResolvedOption* node) {
   // Get deep copy of value field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> value,
       ProcessNode(node->value()));
 
@@ -7319,22 +5551,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedOption(
     std::move(value)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_assignment_op(node->assignment_op());
-
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7346,40 +5567,33 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedWindowPartitioning(
     const ResolvedWindowPartitioning* node) {
   // Get a deep copy of partition_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> partition_by_list,
       ProcessNodeList(node->partition_by_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedWindowPartitioning.
   auto copy = MakeResolvedWindowPartitioning(
     std::move(partition_by_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedWindowPartitioning>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_collation_list(node->collation_list());
+  // Copy the collation field explicitly because it is not a constructor arg.
+  copy.get()->set_collation_list(node->collation_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7391,37 +5605,30 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedWindowOrdering(
     const ResolvedWindowOrdering* node) {
   // Get a deep copy of order_by_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOrderByItem>> order_by_item_list,
       ProcessNodeList(node->order_by_item_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedWindowOrdering.
   auto copy = MakeResolvedWindowOrdering(
     std::move(order_by_item_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedWindowOrdering>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7433,12 +5640,12 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedWindowFrame(
     const ResolvedWindowFrame* node) {
   // Get deep copy of start_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedWindowFrameExpr> start_expr,
       ProcessNode(node->start_expr()));
 
   // Get deep copy of end_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedWindowFrameExpr> end_expr,
       ProcessNode(node->end_expr()));
 
@@ -7455,14 +5662,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWindowFrame(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -7473,18 +5672,18 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticFunctionGroup(
     const ResolvedAnalyticFunctionGroup* node) {
   // Get deep copy of partition_by field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedWindowPartitioning> partition_by,
       ProcessNode(node->partition_by()));
 
   // Get deep copy of order_by field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedWindowOrdering> order_by,
       ProcessNode(node->order_by()));
 
   // Get a deep copy of analytic_function_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> analytic_function_list,
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedComputedColumn>> analytic_function_list,
       ProcessNodeList(node->analytic_function_list()));
 
   // Create a mutable instance of ResolvedAnalyticFunctionGroup.
@@ -7500,14 +5699,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyticFunctionGroup(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -7518,7 +5709,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedWindowFrameExpr(
     const ResolvedWindowFrameExpr* node) {
   // Get deep copy of expression field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expression,
       ProcessNode(node->expression()));
 
@@ -7534,14 +5725,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedWindowFrameExpr(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -7552,7 +5735,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDMLValue(
     const ResolvedDMLValue* node) {
   // Get deep copy of value field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> value,
       ProcessNode(node->value()));
 
@@ -7566,14 +5749,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDMLValue(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7589,22 +5764,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDMLDefault(
     node->type()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7616,9 +5784,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssertStmt(
     const ResolvedAssertStmt* node) {
   // Get deep copy of expression field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expression,
       ProcessNode(node->expression()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedAssertStmt.
   auto copy = MakeResolvedAssertStmt(
@@ -7626,28 +5799,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssertStmt(
     node->description()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAssertStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7659,7 +5820,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssertRowsModified(
     const ResolvedAssertRowsModified* node) {
   // Get deep copy of rows field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> rows,
       ProcessNode(node->rows()));
 
@@ -7674,69 +5835,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssertRowsModified(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedOnConflictClause(
-    const ResolvedOnConflictClause* node) {
-  std::vector<ResolvedColumn> conflict_target_column_list;
-  for (int i = 0; i < node->conflict_target_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->conflict_target_column_list()[i]));
-    conflict_target_column_list.push_back(elem);
-  }
-
-  // Get deep copy of insert_row_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedTableScan> insert_row_scan,
-      ProcessNode(node->insert_row_scan()));
-
-  // Get a deep copy of update_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedUpdateItem>> update_item_list,
-      ProcessNodeList(node->update_item_list()));
-
-  // Get deep copy of update_where_expression field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> update_where_expression,
-      ProcessNode(node->update_where_expression()));
-
-  // Create a mutable instance of ResolvedOnConflictClause.
-  auto copy = MakeResolvedOnConflictClause(
-    node->conflict_action(),
-    conflict_target_column_list,
-    node->unique_constraint_name(),
-    std::move(insert_row_scan),
-    std::move(update_item_list),
-    std::move(update_where_expression)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -7747,7 +5845,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedInsertRow(
     const ResolvedInsertRow* node) {
   // Get a deep copy of value_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedDMLValue>> value_list,
       ProcessNodeList(node->value_list()));
 
@@ -7762,14 +5860,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedInsertRow(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -7780,58 +5870,53 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedInsertStmt(
     const ResolvedInsertStmt* node) {
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
   // Get deep copy of assert_rows_modified field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedAssertRowsModified> assert_rows_modified,
       ProcessNode(node->assert_rows_modified()));
 
   // Get deep copy of returning field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedReturningClause> returning,
       ProcessNode(node->returning()));
 
   std::vector<ResolvedColumn> insert_column_list;
   for (int i = 0; i < node->insert_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->insert_column_list()[i]));
     insert_column_list.push_back(elem);
   }
 
   // Get a deep copy of query_parameter_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> query_parameter_list,
       ProcessNodeList(node->query_parameter_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
   std::vector<ResolvedColumn> query_output_column_list;
   for (int i = 0; i < node->query_output_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->query_output_column_list()[i]));
     query_output_column_list.push_back(elem);
   }
 
   // Get a deep copy of row_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedInsertRow>> row_list,
       ProcessNodeList(node->row_list()));
 
-  // Get deep copy of on_conflict_clause field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedOnConflictClause> on_conflict_clause,
-      ProcessNode(node->on_conflict_clause()));
-
-  // Get a deep copy of generated_column_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedExpr>> generated_column_expr_list,
-      ProcessNodeList(node->generated_column_expr_list()));
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedInsertStmt.
   auto copy = MakeResolvedInsertStmt(
@@ -7843,37 +5928,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedInsertStmt(
     std::move(query_parameter_list),
     std::move(query),
     query_output_column_list,
-    std::move(row_list),
-    std::move(on_conflict_clause),
-    node->topologically_sorted_generated_column_id_list(),
-    std::move(generated_column_expr_list)
+    std::move(row_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedInsertStmt>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_column_access_list(node->column_access_list());
+  // Copy the column_access_list field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_column_access_list(node->column_access_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7885,29 +5956,34 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDeleteStmt(
     const ResolvedDeleteStmt* node) {
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
   // Get deep copy of assert_rows_modified field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedAssertRowsModified> assert_rows_modified,
       ProcessNode(node->assert_rows_modified()));
 
   // Get deep copy of returning field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedReturningClause> returning,
       ProcessNode(node->returning()));
 
   // Get deep copy of array_offset_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnHolder> array_offset_column,
       ProcessNode(node->array_offset_column()));
 
   // Get deep copy of where_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> where_expr,
       ProcessNode(node->where_expr()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedDeleteStmt.
   auto copy = MakeResolvedDeleteStmt(
@@ -7918,31 +5994,20 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDeleteStmt(
     std::move(where_expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDeleteStmt>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_column_access_list(node->column_access_list());
+  // Copy the column_access_list field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_column_access_list(node->column_access_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -7954,37 +6019,37 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateItem(
     const ResolvedUpdateItem* node) {
   // Get deep copy of target field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> target,
       ProcessNode(node->target()));
 
   // Get deep copy of set_value field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedDMLValue> set_value,
       ProcessNode(node->set_value()));
 
   // Get deep copy of element_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnHolder> element_column,
       ProcessNode(node->element_column()));
 
-  // Get a deep copy of update_item_element_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedUpdateItemElement>> update_item_element_list,
-      ProcessNodeList(node->update_item_element_list()));
+  // Get a deep copy of array_update_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedUpdateArrayItem>> array_update_list,
+      ProcessNodeList(node->array_update_list()));
 
   // Get a deep copy of delete_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedDeleteStmt>> delete_list,
       ProcessNodeList(node->delete_list()));
 
   // Get a deep copy of update_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedUpdateStmt>> update_list,
       ProcessNodeList(node->update_list()));
 
   // Get a deep copy of insert_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedInsertStmt>> insert_list,
       ProcessNodeList(node->insert_list()));
 
@@ -7993,7 +6058,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateItem(
     std::move(target),
     std::move(set_value),
     std::move(element_column),
-    std::move(update_item_element_list),
+    std::move(array_update_list),
     std::move(delete_list),
     std::move(update_list),
     std::move(insert_list)
@@ -8005,14 +6070,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateItem(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -8020,23 +6077,22 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateItem(
 }
 
 absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateItemElement(
-    const ResolvedUpdateItemElement* node) {
-  // Get deep copy of subscript field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> subscript,
-      ProcessNode(node->subscript()));
+ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateArrayItem(
+    const ResolvedUpdateArrayItem* node) {
+  // Get deep copy of offset field.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::unique_ptr<ResolvedExpr> offset,
+      ProcessNode(node->offset()));
 
   // Get deep copy of update_item field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedUpdateItem> update_item,
       ProcessNode(node->update_item()));
 
-  // Create a mutable instance of ResolvedUpdateItemElement.
-  auto copy = MakeResolvedUpdateItemElement(
-    std::move(subscript),
-    std::move(update_item),
-    node->update_item_mode()
+  // Create a mutable instance of ResolvedUpdateArrayItem.
+  auto copy = MakeResolvedUpdateArrayItem(
+    std::move(offset),
+    std::move(update_item)
   );
 
   // Set parse location range if it was previously set, as this is not a
@@ -8044,14 +6100,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateItemElement(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8063,44 +6111,44 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateStmt(
     const ResolvedUpdateStmt* node) {
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
   // Get deep copy of assert_rows_modified field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedAssertRowsModified> assert_rows_modified,
       ProcessNode(node->assert_rows_modified()));
 
   // Get deep copy of returning field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedReturningClause> returning,
       ProcessNode(node->returning()));
 
   // Get deep copy of array_offset_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnHolder> array_offset_column,
       ProcessNode(node->array_offset_column()));
 
   // Get deep copy of where_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> where_expr,
       ProcessNode(node->where_expr()));
 
   // Get a deep copy of update_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedUpdateItem>> update_item_list,
       ProcessNodeList(node->update_item_list()));
 
   // Get deep copy of from_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> from_scan,
       ProcessNode(node->from_scan()));
 
-  // Get a deep copy of generated_column_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedExpr>> generated_column_expr_list,
-      ProcessNodeList(node->generated_column_expr_list()));
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedUpdateStmt.
   auto copy = MakeResolvedUpdateStmt(
@@ -8110,36 +6158,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateStmt(
     std::move(array_offset_column),
     std::move(where_expr),
     std::move(update_item_list),
-    std::move(from_scan),
-    node->topologically_sorted_generated_column_id_list(),
-    std::move(generated_column_expr_list)
+    std::move(from_scan)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedUpdateStmt>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_column_access_list(node->column_access_list());
+  // Copy the column_access_list field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_column_access_list(node->column_access_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8151,24 +6186,24 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedMergeWhen(
     const ResolvedMergeWhen* node) {
   // Get deep copy of match_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> match_expr,
       ProcessNode(node->match_expr()));
 
   std::vector<ResolvedColumn> insert_column_list;
   for (int i = 0; i < node->insert_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->insert_column_list()[i]));
     insert_column_list.push_back(elem);
   }
 
   // Get deep copy of insert_row field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedInsertRow> insert_row,
       ProcessNode(node->insert_row()));
 
   // Get a deep copy of update_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedUpdateItem>> update_item_list,
       ProcessNodeList(node->update_item_list()));
 
@@ -8188,14 +6223,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedMergeWhen(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -8206,24 +6233,29 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedMergeStmt(
     const ResolvedMergeStmt* node) {
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
   // Get deep copy of from_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> from_scan,
       ProcessNode(node->from_scan()));
 
   // Get deep copy of merge_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> merge_expr,
       ProcessNode(node->merge_expr()));
 
   // Get a deep copy of when_clause_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedMergeWhen>> when_clause_list,
       ProcessNodeList(node->when_clause_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedMergeStmt.
   auto copy = MakeResolvedMergeStmt(
@@ -8233,31 +6265,20 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedMergeStmt(
     std::move(when_clause_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedMergeStmt>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_column_access_list(node->column_access_list());
+  // Copy the column_access_list field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_column_access_list(node->column_access_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8269,14 +6290,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedTruncateStmt(
     const ResolvedTruncateStmt* node) {
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
   // Get deep copy of where_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> where_expr,
       ProcessNode(node->where_expr()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedTruncateStmt.
   auto copy = MakeResolvedTruncateStmt(
@@ -8284,28 +6310,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedTruncateStmt(
     std::move(where_expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedTruncateStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8327,14 +6341,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedObjectUnit(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -8345,7 +6351,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedPrivilege(
     const ResolvedPrivilege* node) {
   // Get a deep copy of unit_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedObjectUnit>> unit_list,
       ProcessNodeList(node->unit_list()));
 
@@ -8361,14 +6367,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedPrivilege(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -8378,13 +6376,18 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedPrivilege(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGrantStmt(
     const ResolvedGrantStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of privilege_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedPrivilege>> privilege_list,
       ProcessNodeList(node->privilege_list()));
 
   // Get a deep copy of grantee_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> grantee_expr_list,
       ProcessNodeList(node->grantee_expr_list()));
 
@@ -8397,28 +6400,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGrantStmt(
     std::move(grantee_expr_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedGrantStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8429,13 +6420,18 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGrantStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRevokeStmt(
     const ResolvedRevokeStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of privilege_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedPrivilege>> privilege_list,
       ProcessNodeList(node->privilege_list()));
 
   // Get a deep copy of grantee_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> grantee_expr_list,
       ProcessNodeList(node->grantee_expr_list()));
 
@@ -8448,28 +6444,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRevokeStmt(
     std::move(grantee_expr_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRevokeStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8480,8 +6464,13 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRevokeStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterDatabaseStmt(
     const ResolvedAlterDatabaseStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -8492,80 +6481,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterDatabaseStmt(
     node->is_if_exists()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterDatabaseStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterIndexStmt(
-    const ResolvedAlterIndexStmt* node) {
-  // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedTableScan> table_scan,
-      ProcessNode(node->table_scan()));
-
-  // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
-      ProcessNodeList(node->alter_action_list()));
-
-  // Create a mutable instance of ResolvedAlterIndexStmt.
-  auto copy = MakeResolvedAlterIndexStmt(
-    node->name_path(),
-    std::move(alter_action_list),
-    node->is_if_exists(),
-    node->table_name_path(),
-    node->index_type(),
-    std::move(table_scan)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8576,8 +6501,13 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterIndexStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterMaterializedViewStmt(
     const ResolvedAlterMaterializedViewStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -8588,28 +6518,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterMaterializedViewStmt(
     node->is_if_exists()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterMaterializedViewStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8620,8 +6538,13 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterMaterializedViewStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterApproxViewStmt(
     const ResolvedAlterApproxViewStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -8632,28 +6555,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterApproxViewStmt(
     node->is_if_exists()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterApproxViewStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8664,8 +6575,13 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterApproxViewStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterSchemaStmt(
     const ResolvedAlterSchemaStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -8676,72 +6592,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterSchemaStmt(
     node->is_if_exists()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterSchemaStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterExternalSchemaStmt(
-    const ResolvedAlterExternalSchemaStmt* node) {
-  // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
-      ProcessNodeList(node->alter_action_list()));
-
-  // Create a mutable instance of ResolvedAlterExternalSchemaStmt.
-  auto copy = MakeResolvedAlterExternalSchemaStmt(
-    node->name_path(),
-    std::move(alter_action_list),
-    node->is_if_exists()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8752,8 +6612,13 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterExternalSchemaStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterModelStmt(
     const ResolvedAlterModelStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -8764,28 +6629,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterModelStmt(
     node->is_if_exists()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterModelStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8796,8 +6649,13 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterModelStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterTableStmt(
     const ResolvedAlterTableStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -8808,34 +6666,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterTableStmt(
     node->is_if_exists()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedTableScan> table_scan,
-      ProcessNode(node->table_scan()));
-  copy->set_table_scan(std::move(table_scan));
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterTableStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8846,8 +6686,13 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterTableStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterViewStmt(
     const ResolvedAlterViewStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -8858,28 +6703,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterViewStmt(
     node->is_if_exists()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterViewStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -8891,7 +6724,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOptionsAction(
     const ResolvedSetOptionsAction* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
@@ -8906,14 +6739,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetOptionsAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -8924,7 +6749,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterSubEntityAction(
     const ResolvedAlterSubEntityAction* node) {
   // Get deep copy of alter_action field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedAlterAction> alter_action,
       ProcessNode(node->alter_action()));
 
@@ -8942,14 +6767,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterSubEntityAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -8960,7 +6777,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddSubEntityAction(
     const ResolvedAddSubEntityAction* node) {
   // Get a deep copy of options_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> options_list,
       ProcessNodeList(node->options_list()));
 
@@ -8977,14 +6794,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddSubEntityAction(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9008,14 +6817,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropSubEntityAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9026,7 +6827,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddColumnAction(
     const ResolvedAddColumnAction* node) {
   // Get deep copy of column_definition field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnDefinition> column_definition,
       ProcessNode(node->column_definition()));
 
@@ -9042,76 +6843,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddColumnAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddColumnIdentifierAction(
-    const ResolvedAddColumnIdentifierAction* node) {
-  // Get a deep copy of options_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> options_list,
-      ProcessNodeList(node->options_list()));
-
-  // Create a mutable instance of ResolvedAddColumnIdentifierAction.
-  auto copy = MakeResolvedAddColumnIdentifierAction(
-    node->name(),
-    std::move(options_list),
-    node->is_if_not_exists()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedRebuildAction(
-    const ResolvedRebuildAction* node) {
-  // Create a mutable instance of ResolvedRebuildAction.
-  auto copy = MakeResolvedRebuildAction(
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9122,7 +6853,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddConstraintAction(
     const ResolvedAddConstraintAction* node) {
   // Get deep copy of constraint field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConstraint> constraint,
       ProcessNode(node->constraint()));
 
@@ -9138,14 +6869,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddConstraintAction(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9168,14 +6891,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropConstraintAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9196,14 +6911,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropPrimaryKeyAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9214,7 +6921,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnOptionsAction(
     const ResolvedAlterColumnOptionsAction* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
@@ -9230,14 +6937,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnOptionsAction(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9260,78 +6959,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnDropNotNullAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnDropGeneratedAction(
-    const ResolvedAlterColumnDropGeneratedAction* node) {
-  // Create a mutable instance of ResolvedAlterColumnDropGeneratedAction.
-  auto copy = MakeResolvedAlterColumnDropGeneratedAction(
-    node->is_if_exists(),
-    node->column()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnSetGeneratedAction(
-    const ResolvedAlterColumnSetGeneratedAction* node) {
-  // Get deep copy of generated_column_info field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGeneratedColumnInfo> generated_column_info,
-      ProcessNode(node->generated_column_info()));
-
-  // Create a mutable instance of ResolvedAlterColumnSetGeneratedAction.
-  auto copy = MakeResolvedAlterColumnSetGeneratedAction(
-    node->is_if_exists(),
-    node->column(),
-    std::move(generated_column_info)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9342,7 +6969,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnSetDataTypeAction(
     const ResolvedAlterColumnSetDataTypeAction* node) {
   // Get deep copy of updated_annotations field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnAnnotations> updated_annotations,
       ProcessNode(node->updated_annotations()));
 
@@ -9361,14 +6988,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnSetDataTypeAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9379,7 +6998,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnSetDefaultAction(
     const ResolvedAlterColumnSetDefaultAction* node) {
   // Get deep copy of default_value field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnDefaultValue> default_value,
       ProcessNode(node->default_value()));
 
@@ -9395,14 +7014,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnSetDefaultAction(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9425,14 +7036,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterColumnDropDefaultAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9453,14 +7056,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropColumnAction(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9484,14 +7079,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRenameColumnAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9513,14 +7100,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetAsAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9531,7 +7110,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetCollateClause(
     const ResolvedSetCollateClause* node) {
   // Get deep copy of collation_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> collation_name,
       ProcessNode(node->collation_name()));
 
@@ -9546,14 +7125,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedSetCollateClause(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9564,9 +7135,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterTableSetOptionsStmt(
     const ResolvedAlterTableSetOptionsStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedAlterTableSetOptionsStmt.
   auto copy = MakeResolvedAlterTableSetOptionsStmt(
@@ -9575,28 +7151,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterTableSetOptionsStmt(
     node->is_if_exists()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterTableSetOptionsStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9607,6 +7171,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterTableSetOptionsStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRenameStmt(
     const ResolvedRenameStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedRenameStmt.
   auto copy = MakeResolvedRenameStmt(
     node->object_type(),
@@ -9614,28 +7183,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRenameStmt(
     node->new_name_path()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRenameStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9647,14 +7204,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreatePrivilegeRestrictionStmt(
     const ResolvedCreatePrivilegeRestrictionStmt* node) {
   // Get a deep copy of column_privilege_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedPrivilege>> column_privilege_list,
       ProcessNodeList(node->column_privilege_list()));
 
   // Get a deep copy of restrictee_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> restrictee_list,
       ProcessNodeList(node->restrictee_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreatePrivilegeRestrictionStmt.
   auto copy = MakeResolvedCreatePrivilegeRestrictionStmt(
@@ -9666,28 +7228,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreatePrivilegeRestrictionStmt(
     std::move(restrictee_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreatePrivilegeRestrictionStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9699,19 +7249,24 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateRowAccessPolicyStmt(
     const ResolvedCreateRowAccessPolicyStmt* node) {
   // Get a deep copy of grantee_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> grantee_expr_list,
       ProcessNodeList(node->grantee_expr_list()));
 
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
   // Get deep copy of predicate field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> predicate,
       ProcessNode(node->predicate()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateRowAccessPolicyStmt.
   auto copy = MakeResolvedCreateRowAccessPolicyStmt(
@@ -9725,28 +7280,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateRowAccessPolicyStmt(
     node->predicate_str()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateRowAccessPolicyStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9758,9 +7301,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropPrivilegeRestrictionStmt(
     const ResolvedDropPrivilegeRestrictionStmt* node) {
   // Get a deep copy of column_privilege_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedPrivilege>> column_privilege_list,
       ProcessNodeList(node->column_privilege_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedDropPrivilegeRestrictionStmt.
   auto copy = MakeResolvedDropPrivilegeRestrictionStmt(
@@ -9770,28 +7318,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropPrivilegeRestrictionStmt(
     std::move(column_privilege_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropPrivilegeRestrictionStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9802,6 +7338,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropPrivilegeRestrictionStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropRowAccessPolicyStmt(
     const ResolvedDropRowAccessPolicyStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedDropRowAccessPolicyStmt.
   auto copy = MakeResolvedDropRowAccessPolicyStmt(
     node->is_drop_all(),
@@ -9810,28 +7351,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropRowAccessPolicyStmt(
     node->target_name_path()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropRowAccessPolicyStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9842,6 +7371,11 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropRowAccessPolicyStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropIndexStmt(
     const ResolvedDropIndexStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedDropIndexStmt.
   auto copy = MakeResolvedDropIndexStmt(
     node->is_if_exists(),
@@ -9850,28 +7384,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropIndexStmt(
     node->index_type()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropIndexStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -9883,7 +7405,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedGrantToAction(
     const ResolvedGrantToAction* node) {
   // Get a deep copy of grantee_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> grantee_expr_list,
       ProcessNodeList(node->grantee_expr_list()));
 
@@ -9898,14 +7420,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedGrantToAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9916,7 +7430,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRestrictToAction(
     const ResolvedRestrictToAction* node) {
   // Get a deep copy of restrictee_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> restrictee_list,
       ProcessNodeList(node->restrictee_list()));
 
@@ -9931,14 +7445,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRestrictToAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9949,7 +7455,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddToRestricteeListAction(
     const ResolvedAddToRestricteeListAction* node) {
   // Get a deep copy of restrictee_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> restrictee_list,
       ProcessNodeList(node->restrictee_list()));
 
@@ -9965,14 +7471,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAddToRestricteeListAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -9983,7 +7481,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRemoveFromRestricteeListAction(
     const ResolvedRemoveFromRestricteeListAction* node) {
   // Get a deep copy of restrictee_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> restrictee_list,
       ProcessNodeList(node->restrictee_list()));
 
@@ -9999,14 +7497,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRemoveFromRestricteeListAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -10017,7 +7507,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedFilterUsingAction(
     const ResolvedFilterUsingAction* node) {
   // Get deep copy of predicate field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> predicate,
       ProcessNode(node->predicate()));
 
@@ -10033,14 +7523,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFilterUsingAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -10051,7 +7533,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedRevokeFromAction(
     const ResolvedRevokeFromAction* node) {
   // Get a deep copy of revokee_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> revokee_expr_list,
       ProcessNodeList(node->revokee_expr_list()));
 
@@ -10066,14 +7548,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRevokeFromAction(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10095,14 +7569,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRenameToAction(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -10113,12 +7579,17 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterPrivilegeRestrictionStmt(
     const ResolvedAlterPrivilegeRestrictionStmt* node) {
   // Get a deep copy of column_privilege_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedPrivilege>> column_privilege_list,
       ProcessNodeList(node->column_privilege_list()));
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -10131,28 +7602,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterPrivilegeRestrictionStmt(
     node->object_type()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterPrivilegeRestrictionStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10164,12 +7623,17 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterRowAccessPolicyStmt(
     const ResolvedAlterRowAccessPolicyStmt* node) {
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -10182,28 +7646,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterRowAccessPolicyStmt(
     std::move(table_scan)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterRowAccessPolicyStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10215,12 +7667,17 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterAllRowAccessPoliciesStmt(
     const ResolvedAlterAllRowAccessPoliciesStmt* node) {
   // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> table_scan,
       ProcessNode(node->table_scan()));
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -10232,28 +7689,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterAllRowAccessPoliciesStmt(
     std::move(table_scan)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterAllRowAccessPoliciesStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10265,9 +7710,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateConstantStmt(
     const ResolvedCreateConstantStmt* node) {
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateConstantStmt.
   auto copy = MakeResolvedCreateConstantStmt(
@@ -10277,28 +7727,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateConstantStmt(
     std::move(expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateConstantStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10310,24 +7748,29 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateFunctionStmt(
     const ResolvedCreateFunctionStmt* node) {
   // Get a deep copy of aggregate_expression_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> aggregate_expression_list,
       ProcessNodeList(node->aggregate_expression_list()));
 
   // Get deep copy of function_expression field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> function_expression,
       ProcessNode(node->function_expression()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateFunctionStmt.
   auto copy = MakeResolvedCreateFunctionStmt(
@@ -10350,28 +7793,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateFunctionStmt(
     std::move(connection)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateFunctionStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10395,14 +7826,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedArgumentDef(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -10419,22 +7842,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedArgumentRef(
     node->argument_kind()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
+  // Copy the type_annotation_map field explicitly because it is not a
+  // constructor arg.
+  copy.get()->set_type_annotation_map(node->type_annotation_map());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10446,19 +7862,24 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableFunctionStmt(
     const ResolvedCreateTableFunctionStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateTableFunctionStmt.
   auto copy = MakeResolvedCreateTableFunctionStmt(
@@ -10477,28 +7898,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateTableFunctionStmt(
     node->sql_security()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateTableFunctionStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10511,10 +7920,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRelationArgumentScan(
     const ResolvedRelationArgumentScan* node) {
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedRelationArgumentScan.
   auto copy = MakeResolvedRelationArgumentScan(
@@ -10523,34 +7937,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedRelationArgumentScan(
     node->is_value_table()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedRelationArgumentScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10562,7 +7965,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedArgumentList(
     const ResolvedArgumentList* node) {
   // Get a deep copy of arg_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedArgumentDef>> arg_list,
       ProcessNodeList(node->arg_list()));
 
@@ -10576,14 +7979,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedArgumentList(
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10605,14 +8000,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedFunctionSignatureHolder(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -10623,14 +8010,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropFunctionStmt(
     const ResolvedDropFunctionStmt* node) {
   // Get deep copy of arguments field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedArgumentList> arguments,
       ProcessNode(node->arguments()));
 
   // Get deep copy of signature field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedFunctionSignatureHolder> signature,
       ProcessNode(node->signature()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedDropFunctionStmt.
   auto copy = MakeResolvedDropFunctionStmt(
@@ -10640,28 +8032,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropFunctionStmt(
     std::move(signature)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropFunctionStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10672,34 +8052,27 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropFunctionStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedDropTableFunctionStmt(
     const ResolvedDropTableFunctionStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Create a mutable instance of ResolvedDropTableFunctionStmt.
   auto copy = MakeResolvedDropTableFunctionStmt(
     node->is_if_exists(),
     node->name_path()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedDropTableFunctionStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10711,9 +8084,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCallStmt(
     const ResolvedCallStmt* node) {
   // Get a deep copy of argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> argument_list,
       ProcessNodeList(node->argument_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCallStmt.
   auto copy = MakeResolvedCallStmt(
@@ -10722,28 +8100,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCallStmt(
     std::move(argument_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCallStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10755,9 +8121,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedImportStmt(
     const ResolvedImportStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedImportStmt.
   auto copy = MakeResolvedImportStmt(
@@ -10769,28 +8140,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedImportStmt(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedImportStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10802,9 +8161,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedModuleStmt(
     const ResolvedModuleStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedModuleStmt.
   auto copy = MakeResolvedModuleStmt(
@@ -10812,28 +8176,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedModuleStmt(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedModuleStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10845,7 +8197,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateHavingModifier(
     const ResolvedAggregateHavingModifier* node) {
   // Get deep copy of having_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> having_expr,
       ProcessNode(node->having_expr()));
 
@@ -10861,14 +8213,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAggregateHavingModifier(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -10879,37 +8223,42 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateMaterializedViewStmt(
     const ResolvedCreateMaterializedViewStmt* node) {
   // Get a deep copy of partition_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> partition_by_list,
       ProcessNodeList(node->partition_by_list()));
 
   // Get a deep copy of cluster_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> cluster_by_list,
       ProcessNodeList(node->cluster_by_list()));
 
   // Get deep copy of replica_source field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> replica_source,
       ProcessNode(node->replica_source()));
 
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
   // Get a deep copy of column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> column_definition_list,
       ProcessNodeList(node->column_definition_list()));
 
@@ -10932,28 +8281,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateMaterializedViewStmt(
     std::move(replica_source)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateMaterializedViewStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -10964,23 +8301,28 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateMaterializedViewStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateApproxViewStmt(
     const ResolvedCreateApproxViewStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get deep copy of query field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> query,
       ProcessNode(node->query()));
 
   // Get a deep copy of column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> column_definition_list,
       ProcessNodeList(node->column_definition_list()));
 
@@ -11000,28 +8342,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateApproxViewStmt(
     std::move(column_definition_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateApproxViewStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11033,14 +8363,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateProcedureStmt(
     const ResolvedCreateProcedureStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateProcedureStmt.
   auto copy = MakeResolvedCreateProcedureStmt(
@@ -11057,28 +8392,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateProcedureStmt(
     node->external_security()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateProcedureStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11090,7 +8413,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedExecuteImmediateArgument(
     const ResolvedExecuteImmediateArgument* node) {
   // Get deep copy of expression field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expression,
       ProcessNode(node->expression()));
 
@@ -11106,14 +8429,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExecuteImmediateArgument(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -11124,14 +8439,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedExecuteImmediateStmt(
     const ResolvedExecuteImmediateStmt* node) {
   // Get deep copy of sql field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> sql,
       ProcessNode(node->sql()));
 
   // Get a deep copy of using_argument_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExecuteImmediateArgument>> using_argument_list,
       ProcessNodeList(node->using_argument_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedExecuteImmediateStmt.
   auto copy = MakeResolvedExecuteImmediateStmt(
@@ -11140,28 +8460,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedExecuteImmediateStmt(
     std::move(using_argument_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedExecuteImmediateStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11173,14 +8481,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssignmentStmt(
     const ResolvedAssignmentStmt* node) {
   // Get deep copy of target field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> target,
       ProcessNode(node->target()));
 
   // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> expr,
       ProcessNode(node->expr()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedAssignmentStmt.
   auto copy = MakeResolvedAssignmentStmt(
@@ -11188,28 +8501,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssignmentStmt(
     std::move(expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAssignmentStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11221,9 +8522,14 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateEntityStmt(
     const ResolvedCreateEntityStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCreateEntityStmt.
   auto copy = MakeResolvedCreateEntityStmt(
@@ -11236,28 +8542,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateEntityStmt(
     std::move(option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCreateEntityStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11268,8 +8562,13 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateEntityStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterEntityStmt(
     const ResolvedAlterEntityStmt* node) {
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
+
   // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
       ProcessNodeList(node->alter_action_list()));
 
@@ -11281,28 +8580,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterEntityStmt(
     node->entity_type()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAlterEntityStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11313,7 +8600,7 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterEntityStmt(
 absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedPivotColumn(
     const ResolvedPivotColumn* node) {
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn column,
       CopyResolvedColumn(node->column()));
 
@@ -11330,14 +8617,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedPivotColumn(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -11348,41 +8627,46 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedPivotScan(
     const ResolvedPivotScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   // Get a deep copy of group_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> group_by_list,
       ProcessNodeList(node->group_by_list()));
 
   // Get a deep copy of pivot_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> pivot_expr_list,
       ProcessNodeList(node->pivot_expr_list()));
 
   // Get deep copy of for_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> for_expr,
       ProcessNode(node->for_expr()));
 
   // Get a deep copy of pivot_value_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> pivot_value_list,
       ProcessNodeList(node->pivot_value_list()));
 
   // Get a deep copy of pivot_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedPivotColumn>> pivot_column_list,
       ProcessNodeList(node->pivot_column_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedPivotScan.
   auto copy = MakeResolvedPivotScan(
@@ -11395,34 +8679,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedPivotScan(
     std::move(pivot_column_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedPivotScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11434,17 +8707,17 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedReturningClause(
     const ResolvedReturningClause* node) {
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get deep copy of action_column field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedColumnHolder> action_column,
       ProcessNode(node->action_column()));
 
   // Get a deep copy of expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> expr_list,
       ProcessNodeList(node->expr_list()));
 
@@ -11461,14 +8734,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedReturningClause(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -11479,7 +8744,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedUnpivotArg(
     const ResolvedUnpivotArg* node) {
   // Get a deep copy of column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnRef>> column_list,
       ProcessNodeList(node->column_list()));
 
@@ -11494,14 +8759,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUnpivotArg(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -11512,42 +8769,47 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedUnpivotScan(
     const ResolvedUnpivotScan* node) {
   // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> input_scan,
       ProcessNode(node->input_scan()));
 
   std::vector<ResolvedColumn> value_column_list;
   for (int i = 0; i < node->value_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->value_column_list()[i]));
     value_column_list.push_back(elem);
   }
 
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       ResolvedColumn label_column,
       CopyResolvedColumn(node->label_column()));
 
   // Get a deep copy of label_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedLiteral>> label_list,
       ProcessNodeList(node->label_list()));
 
   // Get a deep copy of unpivot_arg_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedUnpivotArg>> unpivot_arg_list,
       ProcessNodeList(node->unpivot_arg_list()));
 
   // Get a deep copy of projected_input_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedComputedColumn>> projected_input_column_list,
       ProcessNodeList(node->projected_input_column_list()));
 
   std::vector<ResolvedColumn> column_list;
   for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->column_list()[i]));
     column_list.push_back(elem);
   }
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedUnpivotScan.
   auto copy = MakeResolvedUnpivotScan(
@@ -11561,372 +8823,23 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUnpivotScan(
     node->include_nulls()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedUnpivotScan>(node, copy.get()));
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
+  // Copy the is_ordered field explicitly because it is not a constructor arg.
+  copy.get()->set_is_ordered(node->is_ordered());
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
+  // Copy the `node_source` field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_node_source(node->node_source());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMatchRecognizeScan(
-    const ResolvedMatchRecognizeScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> option_list,
-      ProcessNodeList(node->option_list()));
-
-  // Get a deep copy of analytic_function_group_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedAnalyticFunctionGroup>> analytic_function_group_list,
-      ProcessNodeList(node->analytic_function_group_list()));
-
-  // Get a deep copy of pattern_variable_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedMatchRecognizeVariableDefinition>> pattern_variable_definition_list,
-      ProcessNodeList(node->pattern_variable_definition_list()));
-
-  // Get deep copy of pattern field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedMatchRecognizePatternExpr> pattern,
-      ProcessNode(node->pattern()));
-
-  // Get a deep copy of measure_group_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedMeasureGroup>> measure_group_list,
-      ProcessNodeList(node->measure_group_list()));
-
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn match_number_column,
-      CopyResolvedColumn(node->match_number_column()));
-
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn match_row_number_column,
-      CopyResolvedColumn(node->match_row_number_column()));
-
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn classifier_column,
-      CopyResolvedColumn(node->classifier_column()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedMatchRecognizeScan.
-  auto copy = MakeResolvedMatchRecognizeScan(
-    column_list,
-    std::move(input_scan),
-    std::move(option_list),
-    std::move(analytic_function_group_list),
-    std::move(pattern_variable_definition_list),
-    std::move(pattern),
-    node->after_match_skip_mode(),
-    std::move(measure_group_list),
-    match_number_column,
-    match_row_number_column,
-    classifier_column
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMeasureGroup(
-    const ResolvedMeasureGroup* node) {
-  // Get deep copy of pattern_variable_ref field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedMatchRecognizePatternVariableRef> pattern_variable_ref,
-      ProcessNode(node->pattern_variable_ref()));
-
-  // Get a deep copy of aggregate_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumnBase>> aggregate_list,
-      ProcessNodeList(node->aggregate_list()));
-
-  // Create a mutable instance of ResolvedMeasureGroup.
-  auto copy = MakeResolvedMeasureGroup(
-    std::move(pattern_variable_ref),
-    std::move(aggregate_list)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMatchRecognizeVariableDefinition(
-    const ResolvedMatchRecognizeVariableDefinition* node) {
-  // Get deep copy of predicate field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> predicate,
-      ProcessNode(node->predicate()));
-
-  // Create a mutable instance of ResolvedMatchRecognizeVariableDefinition.
-  auto copy = MakeResolvedMatchRecognizeVariableDefinition(
-    node->name(),
-    std::move(predicate)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMatchRecognizePatternEmpty(
-    const ResolvedMatchRecognizePatternEmpty* node) {
-  // Create a mutable instance of ResolvedMatchRecognizePatternEmpty.
-  auto copy = MakeResolvedMatchRecognizePatternEmpty(
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMatchRecognizePatternAnchor(
-    const ResolvedMatchRecognizePatternAnchor* node) {
-  // Create a mutable instance of ResolvedMatchRecognizePatternAnchor.
-  auto copy = MakeResolvedMatchRecognizePatternAnchor(
-    node->mode()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMatchRecognizePatternVariableRef(
-    const ResolvedMatchRecognizePatternVariableRef* node) {
-  // Create a mutable instance of ResolvedMatchRecognizePatternVariableRef.
-  auto copy = MakeResolvedMatchRecognizePatternVariableRef(
-    node->name()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMatchRecognizePatternOperation(
-    const ResolvedMatchRecognizePatternOperation* node) {
-  // Get a deep copy of operand_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedMatchRecognizePatternExpr>> operand_list,
-      ProcessNodeList(node->operand_list()));
-
-  // Create a mutable instance of ResolvedMatchRecognizePatternOperation.
-  auto copy = MakeResolvedMatchRecognizePatternOperation(
-    node->op_type(),
-    std::move(operand_list)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedMatchRecognizePatternQuantification(
-    const ResolvedMatchRecognizePatternQuantification* node) {
-  // Get deep copy of operand field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedMatchRecognizePatternExpr> operand,
-      ProcessNode(node->operand()));
-
-  // Get deep copy of lower_bound field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> lower_bound,
-      ProcessNode(node->lower_bound()));
-
-  // Get deep copy of upper_bound field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> upper_bound,
-      ProcessNode(node->upper_bound()));
-
-  // Create a mutable instance of ResolvedMatchRecognizePatternQuantification.
-  auto copy = MakeResolvedMatchRecognizePatternQuantification(
-    std::move(operand),
-    std::move(lower_bound),
-    std::move(upper_bound),
-    node->is_reluctant()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11938,14 +8851,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedCloneDataStmt(
     const ResolvedCloneDataStmt* node) {
   // Get deep copy of target_table field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedTableScan> target_table,
       ProcessNode(node->target_table()));
 
   // Get deep copy of clone_from field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedScan> clone_from,
       ProcessNode(node->clone_from()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedCloneDataStmt.
   auto copy = MakeResolvedCloneDataStmt(
@@ -11953,28 +8871,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedCloneDataStmt(
     std::move(clone_from)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedCloneDataStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -11990,22 +8896,15 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedTableAndColumnInfo(
     node->table()
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_column_index_list(node->column_index_list());
+  // Copy the column_index_list field explicitly because it is not a constructor
+  // arg.
+  copy.get()->set_column_index_list(node->column_index_list());
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -12017,14 +8916,19 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyzeStmt(
     const ResolvedAnalyzeStmt* node) {
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get a deep copy of table_and_column_index_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedTableAndColumnInfo>> table_and_column_index_list,
       ProcessNodeList(node->table_and_column_index_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedAnalyzeStmt.
   auto copy = MakeResolvedAnalyzeStmt(
@@ -12032,28 +8936,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAnalyzeStmt(
     std::move(table_and_column_index_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAnalyzeStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -12065,7 +8957,7 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAuxLoadDataPartitionFilter(
     const ResolvedAuxLoadDataPartitionFilter* node) {
   // Get deep copy of filter field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> filter,
       ProcessNode(node->filter()));
 
@@ -12081,14 +8973,6 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAuxLoadDataPartitionFilter(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
@@ -12099,71 +8983,76 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedAuxLoadDataStmt(
     const ResolvedAuxLoadDataStmt* node) {
   // Get deep copy of partition_filter field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedAuxLoadDataPartitionFilter> partition_filter,
       ProcessNode(node->partition_filter()));
 
   // Get a deep copy of output_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOutputColumn>> output_column_list,
       ProcessNodeList(node->output_column_list()));
 
   // Get a deep copy of column_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedColumnDefinition>> column_definition_list,
       ProcessNodeList(node->column_definition_list()));
 
   std::vector<ResolvedColumn> pseudo_column_list;
   for (int i = 0; i < node->pseudo_column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
+    ZETASQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
                      CopyResolvedColumn(node->pseudo_column_list()[i]));
     pseudo_column_list.push_back(elem);
   }
 
   // Get deep copy of primary_key field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedPrimaryKey> primary_key,
       ProcessNode(node->primary_key()));
 
   // Get a deep copy of foreign_key_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedForeignKey>> foreign_key_list,
       ProcessNodeList(node->foreign_key_list()));
 
   // Get a deep copy of check_constraint_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedCheckConstraint>> check_constraint_list,
       ProcessNodeList(node->check_constraint_list()));
 
   // Get a deep copy of partition_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> partition_by_list,
       ProcessNodeList(node->partition_by_list()));
 
   // Get a deep copy of cluster_by_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedExpr>> cluster_by_list,
       ProcessNodeList(node->cluster_by_list()));
 
   // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> option_list,
       ProcessNodeList(node->option_list()));
 
   // Get deep copy of with_partition_columns field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedWithPartitionColumns> with_partition_columns,
       ProcessNode(node->with_partition_columns()));
 
   // Get deep copy of connection field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedConnection> connection,
       ProcessNode(node->connection()));
 
   // Get a deep copy of from_files_option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::vector<std::unique_ptr<ResolvedOption>> from_files_option_list,
       ProcessNodeList(node->from_files_option_list()));
+
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedAuxLoadDataStmt.
   auto copy = MakeResolvedAuxLoadDataStmt(
@@ -12185,1497 +9074,16 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedAuxLoadDataStmt(
     std::move(from_files_option_list)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedAuxLoadDataStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
   const auto parse_location = node->GetParseLocationRangeOrNULL();
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreatePropertyGraphStmt(
-    const ResolvedCreatePropertyGraphStmt* node) {
-  // Get a deep copy of node_table_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphElementTable>> node_table_list,
-      ProcessNodeList(node->node_table_list()));
-
-  // Get a deep copy of edge_table_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphElementTable>> edge_table_list,
-      ProcessNodeList(node->edge_table_list()));
-
-  // Get a deep copy of label_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphElementLabel>> label_list,
-      ProcessNodeList(node->label_list()));
-
-  // Get a deep copy of property_declaration_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphPropertyDeclaration>> property_declaration_list,
-      ProcessNodeList(node->property_declaration_list()));
-
-  // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> option_list,
-      ProcessNodeList(node->option_list()));
-
-  // Create a mutable instance of ResolvedCreatePropertyGraphStmt.
-  auto copy = MakeResolvedCreatePropertyGraphStmt(
-    node->name_path(),
-    node->create_scope(),
-    node->create_mode(),
-    std::move(node_table_list),
-    std::move(edge_table_list),
-    std::move(label_list),
-    std::move(property_declaration_list),
-    std::move(option_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphElementTable(
-    const ResolvedGraphElementTable* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get a deep copy of key_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedExpr>> key_list,
-      ProcessNodeList(node->key_list()));
-
-  // Get deep copy of source_node_reference field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphNodeTableReference> source_node_reference,
-      ProcessNode(node->source_node_reference()));
-
-  // Get deep copy of dest_node_reference field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphNodeTableReference> dest_node_reference,
-      ProcessNode(node->dest_node_reference()));
-
-  // Get a deep copy of property_definition_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphPropertyDefinition>> property_definition_list,
-      ProcessNodeList(node->property_definition_list()));
-
-  // Get deep copy of dynamic_label field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphDynamicLabelSpecification> dynamic_label,
-      ProcessNode(node->dynamic_label()));
-
-  // Get deep copy of dynamic_properties field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphDynamicPropertiesSpecification> dynamic_properties,
-      ProcessNode(node->dynamic_properties()));
-
-  // Create a mutable instance of ResolvedGraphElementTable.
-  auto copy = MakeResolvedGraphElementTable(
-    node->alias(),
-    std::move(input_scan),
-    std::move(key_list),
-    std::move(source_node_reference),
-    std::move(dest_node_reference),
-    node->label_name_list(),
-    std::move(property_definition_list),
-    std::move(dynamic_label),
-    std::move(dynamic_properties)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphNodeTableReference(
-    const ResolvedGraphNodeTableReference* node) {
-  // Get a deep copy of edge_table_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedExpr>> edge_table_column_list,
-      ProcessNodeList(node->edge_table_column_list()));
-
-  // Get a deep copy of node_table_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedExpr>> node_table_column_list,
-      ProcessNodeList(node->node_table_column_list()));
-
-  // Create a mutable instance of ResolvedGraphNodeTableReference.
-  auto copy = MakeResolvedGraphNodeTableReference(
-    node->node_table_identifier(),
-    std::move(edge_table_column_list),
-    std::move(node_table_column_list)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphElementLabel(
-    const ResolvedGraphElementLabel* node) {
-  // Get a deep copy of options_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> options_list,
-      ProcessNodeList(node->options_list()));
-
-  // Create a mutable instance of ResolvedGraphElementLabel.
-  auto copy = MakeResolvedGraphElementLabel(
-    node->name(),
-    node->property_declaration_name_list(),
-    std::move(options_list)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphPropertyDeclaration(
-    const ResolvedGraphPropertyDeclaration* node) {
-  // Create a mutable instance of ResolvedGraphPropertyDeclaration.
-  auto copy = MakeResolvedGraphPropertyDeclaration(
-    node->name(),
-    node->type()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphPropertyDefinition(
-    const ResolvedGraphPropertyDefinition* node) {
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  // Get a deep copy of options_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> options_list,
-      ProcessNodeList(node->options_list()));
-
-  // Create a mutable instance of ResolvedGraphPropertyDefinition.
-  auto copy = MakeResolvedGraphPropertyDefinition(
-    std::move(expr),
-    node->sql(),
-    node->property_declaration_name(),
-    std::move(options_list),
-    node->is_measure()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphDynamicLabelSpecification(
-    const ResolvedGraphDynamicLabelSpecification* node) {
-  // Get deep copy of label_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> label_expr,
-      ProcessNode(node->label_expr()));
-
-  // Create a mutable instance of ResolvedGraphDynamicLabelSpecification.
-  auto copy = MakeResolvedGraphDynamicLabelSpecification(
-    std::move(label_expr)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphDynamicPropertiesSpecification(
-    const ResolvedGraphDynamicPropertiesSpecification* node) {
-  // Get deep copy of property_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> property_expr,
-      ProcessNode(node->property_expr()));
-
-  // Create a mutable instance of ResolvedGraphDynamicPropertiesSpecification.
-  auto copy = MakeResolvedGraphDynamicPropertiesSpecification(
-    std::move(property_expr)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphRefScan(
-    const ResolvedGraphRefScan* node) {
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedGraphRefScan.
-  auto copy = MakeResolvedGraphRefScan(
-    column_list
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphLinearScan(
-    const ResolvedGraphLinearScan* node) {
-  // Get a deep copy of scan_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedScan>> scan_list,
-      ProcessNodeList(node->scan_list()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedGraphLinearScan.
-  auto copy = MakeResolvedGraphLinearScan(
-    column_list,
-    std::move(scan_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphTableScan(
-    const ResolvedGraphTableScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphScanBase> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get a deep copy of shape_expr_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumn>> shape_expr_list,
-      ProcessNodeList(node->shape_expr_list()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedGraphTableScan.
-  auto copy = MakeResolvedGraphTableScan(
-    column_list,
-    node->property_graph(),
-    std::move(input_scan),
-    std::move(shape_expr_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphCallScan(
-    const ResolvedGraphCallScan* node) {
-  // Get deep copy of subquery field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> subquery,
-      ProcessNode(node->subquery()));
-
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get a deep copy of parameter_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedColumnRef>> parameter_list,
-      ProcessNodeList(node->parameter_list()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedGraphCallScan.
-  auto copy = MakeResolvedGraphCallScan(
-    column_list,
-    node->optional(),
-    std::move(subquery),
-    std::move(input_scan),
-    std::move(parameter_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphScan(
-    const ResolvedGraphScan* node) {
-  // Get a deep copy of input_scan_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphPathScan>> input_scan_list,
-      ProcessNodeList(node->input_scan_list()));
-
-  // Get deep copy of filter_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> filter_expr,
-      ProcessNode(node->filter_expr()));
-
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedGraphScan.
-  auto copy = MakeResolvedGraphScan(
-    column_list,
-    std::move(input_scan_list),
-    std::move(filter_expr),
-    std::move(input_scan),
-    node->optional()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphPathPatternQuantifier(
-    const ResolvedGraphPathPatternQuantifier* node) {
-  // Get deep copy of lower_bound field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> lower_bound,
-      ProcessNode(node->lower_bound()));
-
-  // Get deep copy of upper_bound field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> upper_bound,
-      ProcessNode(node->upper_bound()));
-
-  // Create a mutable instance of ResolvedGraphPathPatternQuantifier.
-  auto copy = MakeResolvedGraphPathPatternQuantifier(
-    std::move(lower_bound),
-    std::move(upper_bound)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphPathSearchPrefix(
-    const ResolvedGraphPathSearchPrefix* node) {
-  // Get deep copy of path_count field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> path_count,
-      ProcessNode(node->path_count()));
-
-  // Create a mutable instance of ResolvedGraphPathSearchPrefix.
-  auto copy = MakeResolvedGraphPathSearchPrefix(
-    node->type(),
-    std::move(path_count)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphNodeScan(
-    const ResolvedGraphNodeScan* node) {
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Get deep copy of filter_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> filter_expr,
-      ProcessNode(node->filter_expr()));
-
-  // Get deep copy of label_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphLabelExpr> label_expr,
-      ProcessNode(node->label_expr()));
-
-  // Create a mutable instance of ResolvedGraphNodeScan.
-  auto copy = MakeResolvedGraphNodeScan(
-    column_list,
-    std::move(filter_expr),
-    std::move(label_expr),
-    node->target_element_table_list()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphEdgeScan(
-    const ResolvedGraphEdgeScan* node) {
-  // Get deep copy of cost_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> cost_expr,
-      ProcessNode(node->cost_expr()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Get deep copy of filter_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> filter_expr,
-      ProcessNode(node->filter_expr()));
-
-  // Get deep copy of label_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphLabelExpr> label_expr,
-      ProcessNode(node->label_expr()));
-
-  // Create a mutable instance of ResolvedGraphEdgeScan.
-  auto copy = MakeResolvedGraphEdgeScan(
-    column_list,
-    std::move(filter_expr),
-    std::move(label_expr),
-    node->target_element_table_list(),
-    node->orientation(),
-    std::move(cost_expr)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> lhs_hint_list,
-     ProcessNodeList(node->lhs_hint_list()));
-  copy->set_lhs_hint_list({
-       std::make_move_iterator(lhs_hint_list.begin()),
-       std::make_move_iterator(lhs_hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> rhs_hint_list,
-     ProcessNodeList(node->rhs_hint_list()));
-  copy->set_rhs_hint_list({
-       std::make_move_iterator(rhs_hint_list.begin()),
-       std::make_move_iterator(rhs_hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphGetElementProperty(
-    const ResolvedGraphGetElementProperty* node) {
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  // Get deep copy of property_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> property_name,
-      ProcessNode(node->property_name()));
-
-  // Create a mutable instance of ResolvedGraphGetElementProperty.
-  auto copy = MakeResolvedGraphGetElementProperty(
-    node->type(),
-    std::move(expr),
-    node->property(),
-    std::move(property_name)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphLabelNaryExpr(
-    const ResolvedGraphLabelNaryExpr* node) {
-  // Get a deep copy of operand_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphLabelExpr>> operand_list,
-      ProcessNodeList(node->operand_list()));
-
-  // Create a mutable instance of ResolvedGraphLabelNaryExpr.
-  auto copy = MakeResolvedGraphLabelNaryExpr(
-    node->op(),
-    std::move(operand_list)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphLabel(
-    const ResolvedGraphLabel* node) {
-  // Get deep copy of label_name field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> label_name,
-      ProcessNode(node->label_name()));
-
-  // Create a mutable instance of ResolvedGraphLabel.
-  auto copy = MakeResolvedGraphLabel(
-    node->label(),
-    std::move(label_name)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphWildCardLabel(
-    const ResolvedGraphWildCardLabel* node) {
-  // Create a mutable instance of ResolvedGraphWildCardLabel.
-  auto copy = MakeResolvedGraphWildCardLabel(
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphElementIdentifier(
-    const ResolvedGraphElementIdentifier* node) {
-  // Get a deep copy of key_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedExpr>> key_list,
-      ProcessNodeList(node->key_list()));
-
-  // Get deep copy of source_node_identifier field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphElementIdentifier> source_node_identifier,
-      ProcessNode(node->source_node_identifier()));
-
-  // Get deep copy of dest_node_identifier field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphElementIdentifier> dest_node_identifier,
-      ProcessNode(node->dest_node_identifier()));
-
-  // Create a mutable instance of ResolvedGraphElementIdentifier.
-  auto copy = MakeResolvedGraphElementIdentifier(
-    node->element_table(),
-    std::move(key_list),
-    std::move(source_node_identifier),
-    std::move(dest_node_identifier)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphElementProperty(
-    const ResolvedGraphElementProperty* node) {
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  // Create a mutable instance of ResolvedGraphElementProperty.
-  auto copy = MakeResolvedGraphElementProperty(
-    node->declaration(),
-    std::move(expr)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphMakeElement(
-    const ResolvedGraphMakeElement* node) {
-  // Get deep copy of identifier field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphElementIdentifier> identifier,
-      ProcessNode(node->identifier()));
-
-  // Get a deep copy of property_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphElementProperty>> property_list,
-      ProcessNodeList(node->property_list()));
-
-  // Get deep copy of dynamic_labels field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> dynamic_labels,
-      ProcessNode(node->dynamic_labels()));
-
-  // Get deep copy of dynamic_properties field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> dynamic_properties,
-      ProcessNode(node->dynamic_properties()));
-
-  // Create a mutable instance of ResolvedGraphMakeElement.
-  auto copy = MakeResolvedGraphMakeElement(
-    node->type(),
-    std::move(identifier),
-    std::move(property_list),
-    node->label_list(),
-    std::move(dynamic_labels),
-    std::move(dynamic_properties)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedArrayAggregate(
-    const ResolvedArrayAggregate* node) {
-  // Get deep copy of array field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> array,
-      ProcessNode(node->array()));
-
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn element_column,
-      CopyResolvedColumn(node->element_column()));
-
-  // Get a deep copy of pre_aggregate_computed_column_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedComputedColumn>> pre_aggregate_computed_column_list,
-      ProcessNodeList(node->pre_aggregate_computed_column_list()));
-
-  // Get deep copy of aggregate field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedAggregateFunctionCall> aggregate,
-      ProcessNode(node->aggregate()));
-
-  // Create a mutable instance of ResolvedArrayAggregate.
-  auto copy = MakeResolvedArrayAggregate(
-    node->type(),
-    std::move(array),
-    element_column,
-    std::move(pre_aggregate_computed_column_list),
-    std::move(aggregate)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphMakeArrayVariable(
-    const ResolvedGraphMakeArrayVariable* node) {
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn element,
-      CopyResolvedColumn(node->element()));
-
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn array,
-      CopyResolvedColumn(node->array()));
-
-  // Create a mutable instance of ResolvedGraphMakeArrayVariable.
-  auto copy = MakeResolvedGraphMakeArrayVariable(
-    element,
-    array
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphPathMode(
-    const ResolvedGraphPathMode* node) {
-  // Create a mutable instance of ResolvedGraphPathMode.
-  auto copy = MakeResolvedGraphPathMode(
-    node->path_mode()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphPathCost(
-    const ResolvedGraphPathCost* node) {
-  // Create a mutable instance of ResolvedGraphPathCost.
-  auto copy = MakeResolvedGraphPathCost(
-    node->cost_supertype()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphPathScan(
-    const ResolvedGraphPathScan* node) {
-  // Get a deep copy of input_scan_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphPathScanBase>> input_scan_list,
-      ProcessNodeList(node->input_scan_list()));
-
-  // Get deep copy of filter_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> filter_expr,
-      ProcessNode(node->filter_expr()));
-
-  // Get deep copy of path field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedColumnHolder> path,
-      ProcessNode(node->path()));
-
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn head,
-      CopyResolvedColumn(node->head()));
-
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      ResolvedColumn tail,
-      CopyResolvedColumn(node->tail()));
-
-  // Get deep copy of quantifier field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphPathPatternQuantifier> quantifier,
-      ProcessNode(node->quantifier()));
-
-  // Get a deep copy of group_variable_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGraphMakeArrayVariable>> group_variable_list,
-      ProcessNodeList(node->group_variable_list()));
-
-  // Get deep copy of path_mode field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphPathMode> path_mode,
-      ProcessNode(node->path_mode()));
-
-  // Get deep copy of search_prefix field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphPathSearchPrefix> search_prefix,
-      ProcessNode(node->search_prefix()));
-
-  // Get deep copy of path_cost field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphPathCost> path_cost,
-      ProcessNode(node->path_cost()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedGraphPathScan.
-  auto copy = MakeResolvedGraphPathScan(
-    column_list,
-    std::move(input_scan_list),
-    std::move(filter_expr),
-    std::move(path),
-    head,
-    tail,
-    std::move(quantifier),
-    std::move(group_variable_list),
-    std::move(path_mode),
-    std::move(search_prefix),
-    std::move(path_cost)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> path_hint_list,
-     ProcessNodeList(node->path_hint_list()));
-  copy->set_path_hint_list({
-       std::make_move_iterator(path_hint_list.begin()),
-       std::make_move_iterator(path_hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGraphIsLabeledPredicate(
-    const ResolvedGraphIsLabeledPredicate* node) {
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  // Get deep copy of label_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedGraphLabelExpr> label_expr,
-      ProcessNode(node->label_expr()));
-
-  // Create a mutable instance of ResolvedGraphIsLabeledPredicate.
-  auto copy = MakeResolvedGraphIsLabeledPredicate(
-    node->type(),
-    node->is_not(),
-    std::move(expr),
-    std::move(label_expr)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
   }
 
   // Add the non-abstract node to the stack.
@@ -13687,32 +9095,27 @@ absl::Status
 ResolvedASTDeepCopyVisitor::CopyVisitResolvedUndropStmt(
     const ResolvedUndropStmt* node) {
   // Get deep copy of for_system_time_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
+  ZETASQL_ASSIGN_OR_RETURN(
       std::unique_ptr<ResolvedExpr> for_system_time_expr,
       ProcessNode(node->for_system_time_expr()));
 
-  // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> option_list,
-      ProcessNodeList(node->option_list()));
+  // Get a deep copy of hint_list vector.
+  ZETASQL_ASSIGN_OR_RETURN(
+      std::vector<std::unique_ptr<ResolvedOption>> hint_list,
+      ProcessNodeList(node->hint_list()));
 
   // Create a mutable instance of ResolvedUndropStmt.
   auto copy = MakeResolvedUndropStmt(
     node->schema_object_kind(),
     node->is_if_not_exists(),
     node->name_path(),
-    std::move(for_system_time_expr),
-    std::move(option_list)
+    std::move(for_system_time_expr)
   );
 
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
+  // Copy the hint list explicitly because hint_list is not a constructor arg.
+  // Because it is not a constructor arg, the only way to copy the value is to
+  // copy it explicitly.
+  ZETASQL_RETURN_IF_ERROR(CopyHintList<ResolvedUndropStmt>(node, copy.get()));
 
   // Set parse location range if it was previously set, as this is not a
   // constructor arg.
@@ -13720,1217 +9123,10 @@ ResolvedASTDeepCopyVisitor::CopyVisitResolvedUndropStmt(
   if (parse_location != nullptr) {
     copy.get()->SetParseLocationRange(*parse_location);
   }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
 
   // Add the non-abstract node to the stack.
   PushNodeToStack(std::move(copy));
   return absl::OkStatus();
 }
 
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedIdentityColumnInfo(
-    const ResolvedIdentityColumnInfo* node) {
-  // Create a mutable instance of ResolvedIdentityColumnInfo.
-  auto copy = MakeResolvedIdentityColumnInfo(
-    node->start_with_value(),
-    node->increment_by_value(),
-    node->max_value(),
-    node->min_value(),
-    node->cycling_enabled()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedDescribeScan(
-    const ResolvedDescribeScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get deep copy of describe_expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedComputedColumn> describe_expr,
-      ProcessNode(node->describe_expr()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedDescribeScan.
-  auto copy = MakeResolvedDescribeScan(
-    column_list,
-    std::move(input_scan),
-    std::move(describe_expr)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedStaticDescribeScan(
-    const ResolvedStaticDescribeScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedStaticDescribeScan.
-  auto copy = MakeResolvedStaticDescribeScan(
-    column_list,
-    std::move(input_scan),
-    node->describe_text()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedAssertScan(
-    const ResolvedAssertScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get deep copy of condition field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> condition,
-      ProcessNode(node->condition()));
-
-  // Get deep copy of message field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> message,
-      ProcessNode(node->message()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedAssertScan.
-  auto copy = MakeResolvedAssertScan(
-    column_list,
-    std::move(input_scan),
-    std::move(condition),
-    std::move(message)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedLogScan(
-    const ResolvedLogScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get deep copy of subpipeline field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedSubpipeline> subpipeline,
-      ProcessNode(node->subpipeline()));
-
-  // Get deep copy of output_schema field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedOutputSchema> output_schema,
-      ProcessNode(node->output_schema()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedLogScan.
-  auto copy = MakeResolvedLogScan(
-    column_list,
-    std::move(input_scan),
-    std::move(subpipeline),
-    std::move(output_schema)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedPipeIfScan(
-    const ResolvedPipeIfScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get a deep copy of if_case_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedPipeIfCase>> if_case_list,
-      ProcessNodeList(node->if_case_list()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedPipeIfScan.
-  auto copy = MakeResolvedPipeIfScan(
-    column_list,
-    std::move(input_scan),
-    node->selected_case(),
-    std::move(if_case_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedPipeIfCase(
-    const ResolvedPipeIfCase* node) {
-  // Get deep copy of condition field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> condition,
-      ProcessNode(node->condition()));
-
-  // Get deep copy of subpipeline field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedSubpipeline> subpipeline,
-      ProcessNode(node->subpipeline()));
-
-  // Create a mutable instance of ResolvedPipeIfCase.
-  auto copy = MakeResolvedPipeIfCase(
-    std::move(condition),
-    node->subpipeline_sql(),
-    std::move(subpipeline)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedPipeForkScan(
-    const ResolvedPipeForkScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get a deep copy of subpipeline_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGeneralizedQuerySubpipeline>> subpipeline_list,
-      ProcessNodeList(node->subpipeline_list()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedPipeForkScan.
-  auto copy = MakeResolvedPipeForkScan(
-    column_list,
-    std::move(input_scan),
-    std::move(subpipeline_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedPipeTeeScan(
-    const ResolvedPipeTeeScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  // Get a deep copy of subpipeline_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedGeneralizedQuerySubpipeline>> subpipeline_list,
-      ProcessNodeList(node->subpipeline_list()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedPipeTeeScan.
-  auto copy = MakeResolvedPipeTeeScan(
-    column_list,
-    std::move(input_scan),
-    std::move(subpipeline_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedPipeExportDataScan(
-    const ResolvedPipeExportDataScan* node) {
-  // Get deep copy of export_data_stmt field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExportDataStmt> export_data_stmt,
-      ProcessNode(node->export_data_stmt()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedPipeExportDataScan.
-  auto copy = MakeResolvedPipeExportDataScan(
-    column_list,
-    std::move(export_data_stmt)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedPipeCreateTableScan(
-    const ResolvedPipeCreateTableScan* node) {
-  // Get deep copy of create_table_as_select_stmt field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedCreateTableAsSelectStmt> create_table_as_select_stmt,
-      ProcessNode(node->create_table_as_select_stmt()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedPipeCreateTableScan.
-  auto copy = MakeResolvedPipeCreateTableScan(
-    column_list,
-    std::move(create_table_as_select_stmt)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedPipeInsertScan(
-    const ResolvedPipeInsertScan* node) {
-  // Get deep copy of insert_stmt field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedInsertStmt> insert_stmt,
-      ProcessNode(node->insert_stmt()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedPipeInsertScan.
-  auto copy = MakeResolvedPipeInsertScan(
-    column_list,
-    std::move(insert_stmt)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedSubpipeline(
-    const ResolvedSubpipeline* node) {
-  // Get deep copy of scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> scan,
-      ProcessNode(node->scan()));
-
-  // Create a mutable instance of ResolvedSubpipeline.
-  auto copy = MakeResolvedSubpipeline(
-    std::move(scan)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedSubpipelineInputScan(
-    const ResolvedSubpipelineInputScan* node) {
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedSubpipelineInputScan.
-  auto copy = MakeResolvedSubpipelineInputScan(
-    column_list
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedSubpipelineStmt(
-    const ResolvedSubpipelineStmt* node) {
-  // Get deep copy of table_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedTableScan> table_scan,
-      ProcessNode(node->table_scan()));
-
-  // Get deep copy of subpipeline field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedSubpipeline> subpipeline,
-      ProcessNode(node->subpipeline()));
-
-  // Get deep copy of output_schema field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedOutputSchema> output_schema,
-      ProcessNode(node->output_schema()));
-
-  // Create a mutable instance of ResolvedSubpipelineStmt.
-  auto copy = MakeResolvedSubpipelineStmt(
-    std::move(table_scan),
-    std::move(subpipeline),
-    std::move(output_schema)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedGeneralizedQuerySubpipeline(
-    const ResolvedGeneralizedQuerySubpipeline* node) {
-  // Get deep copy of subpipeline field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedSubpipeline> subpipeline,
-      ProcessNode(node->subpipeline()));
-
-  // Get deep copy of output_schema field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedOutputSchema> output_schema,
-      ProcessNode(node->output_schema()));
-
-  // Create a mutable instance of ResolvedGeneralizedQuerySubpipeline.
-  auto copy = MakeResolvedGeneralizedQuerySubpipeline(
-    std::move(subpipeline),
-    std::move(output_schema)
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedBarrierScan(
-    const ResolvedBarrierScan* node) {
-  // Get deep copy of input_scan field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedScan> input_scan,
-      ProcessNode(node->input_scan()));
-
-  std::vector<ResolvedColumn> column_list;
-  for (int i = 0; i < node->column_list().size(); ++i) {
-    GOOGLESQL_ASSIGN_OR_RETURN(ResolvedColumn elem,
-                     CopyResolvedColumn(node->column_list()[i]));
-    column_list.push_back(elem);
-  }
-
-  // Create a mutable instance of ResolvedBarrierScan.
-  auto copy = MakeResolvedBarrierScan(
-    column_list,
-    std::move(input_scan)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_is_ordered(node->is_ordered());
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_node_source(node->node_source());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateConnectionStmt(
-    const ResolvedCreateConnectionStmt* node) {
-  // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> option_list,
-      ProcessNodeList(node->option_list()));
-
-  // Create a mutable instance of ResolvedCreateConnectionStmt.
-  auto copy = MakeResolvedCreateConnectionStmt(
-    node->name_path(),
-    node->create_scope(),
-    node->create_mode(),
-    std::move(option_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterConnectionStmt(
-    const ResolvedAlterConnectionStmt* node) {
-  // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
-      ProcessNodeList(node->alter_action_list()));
-
-  // Create a mutable instance of ResolvedAlterConnectionStmt.
-  auto copy = MakeResolvedAlterConnectionStmt(
-    node->name_path(),
-    std::move(alter_action_list),
-    node->is_if_exists()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedLockMode(
-    const ResolvedLockMode* node) {
-  // Create a mutable instance of ResolvedLockMode.
-  auto copy = MakeResolvedLockMode(
-    node->strength()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateFieldItem(
-    const ResolvedUpdateFieldItem* node) {
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  // Create a mutable instance of ResolvedUpdateFieldItem.
-  auto copy = MakeResolvedUpdateFieldItem(
-    std::move(expr),
-    node->proto_field_path(),
-    node->operation()
-  );
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedUpdateConstructor(
-    const ResolvedUpdateConstructor* node) {
-  // Get deep copy of expr field.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::unique_ptr<ResolvedExpr> expr,
-      ProcessNode(node->expr()));
-
-  // Get a deep copy of update_field_item_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedUpdateFieldItem>> update_field_item_list,
-      ProcessNodeList(node->update_field_item_list()));
-
-  // Create a mutable instance of ResolvedUpdateConstructor.
-  auto copy = MakeResolvedUpdateConstructor(
-    node->type(),
-    std::move(expr),
-    node->alias(),
-    std::move(update_field_item_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  copy->set_type_annotation_map(node->type_annotation_map());
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedCreateSequenceStmt(
-    const ResolvedCreateSequenceStmt* node) {
-  // Get a deep copy of option_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedOption>> option_list,
-      ProcessNodeList(node->option_list()));
-
-  // Create a mutable instance of ResolvedCreateSequenceStmt.
-  auto copy = MakeResolvedCreateSequenceStmt(
-    node->name_path(),
-    node->create_scope(),
-    node->create_mode(),
-    std::move(option_list)
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-absl::Status
-ResolvedASTDeepCopyVisitor::CopyVisitResolvedAlterSequenceStmt(
-    const ResolvedAlterSequenceStmt* node) {
-  // Get a deep copy of alter_action_list vector.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-      std::vector<std::unique_ptr<ResolvedAlterAction>> alter_action_list,
-      ProcessNodeList(node->alter_action_list()));
-
-  // Create a mutable instance of ResolvedAlterSequenceStmt.
-  auto copy = MakeResolvedAlterSequenceStmt(
-    node->name_path(),
-    std::move(alter_action_list),
-    node->is_if_exists()
-  );
-
-  // Copy the field explicitly because it is not a constructor arg.
-  GOOGLESQL_ASSIGN_OR_RETURN(
-     std::vector<std::unique_ptr<ResolvedOption>> hint_list,
-     ProcessNodeList(node->hint_list()));
-  copy->set_hint_list({
-       std::make_move_iterator(hint_list.begin()),
-       std::make_move_iterator(hint_list.end())
-  });
-
-  // Set parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto parse_location = node->GetParseLocationRangeOrNULL();
-  if (parse_location != nullptr) {
-    copy.get()->SetParseLocationRange(*parse_location);
-  }
-  // Set keyword parse location range if it was previously set, as this is not a
-  // constructor arg.
-  const auto operator_keyword_parse_location =
-      node->GetOperatorKeywordLocationRangeOrNULL();
-  if (operator_keyword_parse_location != nullptr) {
-    copy.get()->SetOperatorKeywordLocationRange(
-        *operator_keyword_parse_location);
-  }
-
-  // Add the non-abstract node to the stack.
-  PushNodeToStack(std::move(copy));
-  return absl::OkStatus();
-}
-
-}  // namespace googlesql
+}  // namespace zetasql

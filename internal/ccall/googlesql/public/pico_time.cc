@@ -18,7 +18,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <sstream>
 #include <string>
 
 #include "absl/numeric/int128.h"
@@ -100,10 +99,9 @@ absl::StatusOr<PicoTime> PicoTime::FromUnixPicos(absl::int128 unix_picos) {
   const absl::int128 kPicosMin = MinValue().ToUnixPicos();
   const absl::int128 kPicosMax = MaxValue().ToUnixPicos();
   if (unix_picos < kPicosMin || unix_picos > kPicosMax) {
-    std::ostringstream oss;
-    oss << "Unix picoseconds value is out of allowed range between " << kPicosMin
-        << " to " << kPicosMax;
-    return absl::OutOfRangeError(oss.str());
+    return absl::OutOfRangeError(
+        absl::StrCat("Unix picoseconds value is out of allowed range between ",
+                     kPicosMin, " to ", kPicosMax));
   }
 
   int64_t seconds = static_cast<int64_t>(unix_picos / kNumPicosPerSecond);

@@ -2842,7 +2842,7 @@ void Unparser::visitASTCaseValueExpression(const ASTCaseValueExpression* node,
 void Unparser::visitASTBinaryExpression(const ASTBinaryExpression* node,
                                         void* data) {
   PrintOpenParenIfNeeded(node);
-  UnparseChildrenWithSeparator(node, data, " = ");
+  UnparseChildrenWithSeparator(node, data, node->GetSQLForOperator());
   PrintCloseParenIfNeeded(node);
 }
 
@@ -3140,7 +3140,7 @@ void Unparser::visitASTOptionsList(const ASTOptionsList* node, void* data) {
 }
 
 void Unparser::visitASTOptionsEntry(const ASTOptionsEntry* node, void* data) {
-  UnparseChildrenWithSeparator(node, data, " = ");
+  UnparseChildrenWithSeparator(node, data, node->GetSQLForOperator());
 }
 
 void Unparser::visitASTMaxLiteral(const ASTMaxLiteral* node, void* data) {

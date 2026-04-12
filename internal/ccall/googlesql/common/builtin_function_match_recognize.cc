@@ -31,8 +31,7 @@
 
 namespace googlesql {
 
-static FunctionSignatureOptions SetRewriterMatchRecognize(
-    ResolvedASTRewrite rewriter) {
+static FunctionSignatureOptions SetRewriter(ResolvedASTRewrite rewriter) {
   return FunctionSignatureOptions().set_rewrite_options(
       FunctionSignatureRewriteOptions().set_rewriter(rewriter));
 }
@@ -71,7 +70,7 @@ void GetMatchRecognizeFunctions(TypeFactory* type_factory,
                  {{ARG_TYPE_ANY_1,
                    {ARG_TYPE_ANY_1},
                    FN_FIRST_AGG,
-                   SetRewriterMatchRecognize(REWRITE_MATCH_RECOGNIZE_FUNCTION)}},
+                   SetRewriter(REWRITE_MATCH_RECOGNIZE_FUNCTION)}},
                  nav_agg_options);
 
   // LAST<T>(T) -> T
@@ -80,7 +79,7 @@ void GetMatchRecognizeFunctions(TypeFactory* type_factory,
                  {{ARG_TYPE_ANY_1,
                    {ARG_TYPE_ANY_1},
                    FN_LAST_AGG,
-                   SetRewriterMatchRecognize(REWRITE_MATCH_RECOGNIZE_FUNCTION)}},
+                   SetRewriter(REWRITE_MATCH_RECOGNIZE_FUNCTION)}},
                  nav_agg_options);
 
   // NEXT() is a navigation function used only inside MATCH_RECOGNZIE.

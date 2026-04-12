@@ -83,7 +83,7 @@ namespace googlesql {
 
 namespace {
 
-functions::TimestampScale CastGetTimestampScale(
+functions::TimestampScale GetTimestampScale(
     const LanguageOptions& language_options) {
   if (language_options.LanguageFeatureEnabled(FEATURE_TIMESTAMP_NANOS)) {
     return functions::kNanoseconds;
@@ -1129,10 +1129,10 @@ absl::StatusOr<Value> CastContext::CastValue(
       if (format.has_value()) {
         GOOGLESQL_RETURN_IF_ERROR(functions::CastStringToTime(
             format.value(), v.string_value(),
-            CastGetTimestampScale(language_options()), &time));
+            GetTimestampScale(language_options()), &time));
       } else {
         GOOGLESQL_RETURN_IF_ERROR(functions::ConvertStringToTime(
-            v.string_value(), CastGetTimestampScale(language_options()), &time));
+            v.string_value(), GetTimestampScale(language_options()), &time));
       }
       return Value::Time(time);
     }
@@ -1143,7 +1143,7 @@ absl::StatusOr<Value> CastContext::CastValue(
             format.value(), v.time_value(), &result));
       } else {
         GOOGLESQL_RETURN_IF_ERROR(functions::ConvertTimeToString(
-            v.time_value(), CastGetTimestampScale(language_options()), &result));
+            v.time_value(), GetTimestampScale(language_options()), &result));
       }
       return Value::String(result);
     }
@@ -1163,11 +1163,11 @@ absl::StatusOr<Value> CastContext::CastValue(
 
         GOOGLESQL_RETURN_IF_ERROR(functions::CastStringToDatetime(
             format.value(), v.string_value(),
-            CastGetTimestampScale(language_options()), current_date().value(),
+            GetTimestampScale(language_options()), current_date().value(),
             &datetime));
       } else {
         GOOGLESQL_RETURN_IF_ERROR(functions::ConvertStringToDatetime(
-            v.string_value(), CastGetTimestampScale(language_options()),
+            v.string_value(), GetTimestampScale(language_options()),
             &datetime));
       }
       return Value::Datetime(datetime);
@@ -1179,7 +1179,7 @@ absl::StatusOr<Value> CastContext::CastValue(
             format.value(), v.datetime_value(), &result));
       } else {
         GOOGLESQL_RETURN_IF_ERROR(functions::ConvertDatetimeToString(
-            v.datetime_value(), CastGetTimestampScale(language_options()),
+            v.datetime_value(), GetTimestampScale(language_options()),
             &result));
       }
       return Value::String(result);

@@ -16,8 +16,8 @@
 
 // resolved_ast_rewrite_visitor.h GENERATED FROM resolved_ast_rewrite_visitor.h.template
 
-#ifndef GOOGLESQL_RESOLVED_AST_RESOLVED_AST_REWRITER_VISITOR_H_
-#define GOOGLESQL_RESOLVED_AST_RESOLVED_AST_REWRITER_VISITOR_H_
+#ifndef ZETASQL_RESOLVED_AST_RESOLVED_AST_REWRITER_VISITOR_H_
+#define ZETASQL_RESOLVED_AST_RESOLVED_AST_REWRITER_VISITOR_H_
 
 #include <algorithm>
 #include <memory>
@@ -26,21 +26,21 @@
 #include <utility>
 #include <vector>
 
-#include "googlesql/common/thread_stack.h"
-#include "googlesql/resolved_ast/resolved_ast.h"
-#include "googlesql/resolved_ast/resolved_ast_builder.h"
-#include "googlesql/resolved_ast/resolved_node.h"
+#include "zetasql/common/thread_stack.h"
+#include "zetasql/resolved_ast/resolved_ast.h"
+#include "zetasql/resolved_ast/resolved_ast_builder.h"
+#include "zetasql/resolved_ast/resolved_node.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "googlesql/base/ret_check.h"
+#include "zetasql/base/ret_check.h"
 
-namespace googlesql {
+namespace zetasql {
 
 // A visitor used to perform a deep transform of a resolved AST in place.
 //
 // The key feature of this visitor is that it operates on
-// unique_ptr<const ResolvedNode>. So, each operation is given ownership of
-// the input object, and is required to return ownership of another object. The
+// unique_ptr<const ResolvedNode>. So, each operatation is given ownership of
+// the input object, and require to return ownership of another object. The
 // "no-op" case is therefore to just return the input.
 //
 // Each concrete node ResolvedNodeX has an associated PreVisit and PostVisit
@@ -66,7 +66,7 @@ namespace googlesql {
 //
 // class MyVisitor : public ResolvedASTRewriteVisitor {
 //   absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-//   PostVisitResolvedX(std::unique_ptr<const ResolvedNodeX> node) override {
+//   VisitResolvedX(std::unique_ptr<const ResolvedNodeX> node) override {
 //     ResolvedXBuilder builder = ToBuilder(std::move(node));
 //     // Take ownership of a child ...
 //     ResolvedChildBuilder child_a = ToBuilder(builder.release_child_a());
@@ -369,17 +369,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedGetRowField(
-      const ResolvedGetRowField&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGetRowField (
-      std::unique_ptr<const ResolvedGetRowField> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedFlatten(
       const ResolvedFlatten&) {
     return absl::OkStatus();
@@ -421,17 +410,6 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedReplaceField (
       std::unique_ptr<const ResolvedReplaceField> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGetProtoOneof(
-      const ResolvedGetProtoOneof&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGetProtoOneof (
-      std::unique_ptr<const ResolvedGetProtoOneof> node) {
     return node;
   }
 
@@ -512,17 +490,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedUnsetArgumentScan(
-      const ResolvedUnsetArgumentScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedUnsetArgumentScan (
-      std::unique_ptr<const ResolvedUnsetArgumentScan> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedTableScan(
       const ResolvedTableScan&) {
     return absl::OkStatus();
@@ -586,28 +553,6 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedGroupingCall (
       std::unique_ptr<const ResolvedGroupingCall> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGroupingSetList(
-      const ResolvedGroupingSetList&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGroupingSetList (
-      std::unique_ptr<const ResolvedGroupingSetList> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGroupingSetProduct(
-      const ResolvedGroupingSetProduct&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGroupingSetProduct (
-      std::unique_ptr<const ResolvedGroupingSetProduct> node) {
     return node;
   }
 
@@ -776,17 +721,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedDeferredComputedColumn(
-      const ResolvedDeferredComputedColumn&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedDeferredComputedColumn (
-      std::unique_ptr<const ResolvedDeferredComputedColumn> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedOrderByItem(
       const ResolvedOrderByItem&) {
     return absl::OkStatus();
@@ -886,17 +820,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedOutputSchema(
-      const ResolvedOutputSchema&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedOutputSchema (
-      std::unique_ptr<const ResolvedOutputSchema> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedProjectScan(
       const ResolvedProjectScan&) {
     return absl::OkStatus();
@@ -952,28 +875,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedStringWithLocation(
-      const ResolvedStringWithLocation&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedStringWithLocation (
-      std::unique_ptr<const ResolvedStringWithLocation> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedStatementWithPipeOperatorsStmt(
-      const ResolvedStatementWithPipeOperatorsStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedStatementWithPipeOperatorsStmt (
-      std::unique_ptr<const ResolvedStatementWithPipeOperatorsStmt> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedQueryStmt(
       const ResolvedQueryStmt&) {
     return absl::OkStatus();
@@ -982,39 +883,6 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedQueryStmt (
       std::unique_ptr<const ResolvedQueryStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGeneralizedQueryStmt(
-      const ResolvedGeneralizedQueryStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGeneralizedQueryStmt (
-      std::unique_ptr<const ResolvedGeneralizedQueryStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedMultiStmt(
-      const ResolvedMultiStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMultiStmt (
-      std::unique_ptr<const ResolvedMultiStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedCreateWithEntryStmt(
-      const ResolvedCreateWithEntryStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedCreateWithEntryStmt (
-      std::unique_ptr<const ResolvedCreateWithEntryStmt> node) {
     return node;
   }
 
@@ -1070,17 +938,6 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedCreateSchemaStmt (
       std::unique_ptr<const ResolvedCreateSchemaStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedCreateExternalSchemaStmt(
-      const ResolvedCreateExternalSchemaStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedCreateExternalSchemaStmt (
-      std::unique_ptr<const ResolvedCreateExternalSchemaStmt> node) {
     return node;
   }
 
@@ -1359,17 +1216,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedRecursionDepthModifier(
-      const ResolvedRecursionDepthModifier&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedRecursionDepthModifier (
-      std::unique_ptr<const ResolvedRecursionDepthModifier> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedRecursiveScan(
       const ResolvedRecursiveScan&) {
     return absl::OkStatus();
@@ -1513,17 +1359,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedOnConflictClause(
-      const ResolvedOnConflictClause&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedOnConflictClause (
-      std::unique_ptr<const ResolvedOnConflictClause> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedInsertRow(
       const ResolvedInsertRow&) {
     return absl::OkStatus();
@@ -1568,14 +1403,14 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedUpdateItemElement(
-      const ResolvedUpdateItemElement&) {
+  virtual absl::Status PreVisitResolvedUpdateArrayItem(
+      const ResolvedUpdateArrayItem&) {
     return absl::OkStatus();
   }
 
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedUpdateItemElement (
-      std::unique_ptr<const ResolvedUpdateItemElement> node) {
+  PostVisitResolvedUpdateArrayItem (
+      std::unique_ptr<const ResolvedUpdateArrayItem> node) {
     return node;
   }
 
@@ -1678,17 +1513,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedAlterIndexStmt(
-      const ResolvedAlterIndexStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAlterIndexStmt (
-      std::unique_ptr<const ResolvedAlterIndexStmt> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedAlterMaterializedViewStmt(
       const ResolvedAlterMaterializedViewStmt&) {
     return absl::OkStatus();
@@ -1719,17 +1543,6 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedAlterSchemaStmt (
       std::unique_ptr<const ResolvedAlterSchemaStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedAlterExternalSchemaStmt(
-      const ResolvedAlterExternalSchemaStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAlterExternalSchemaStmt (
-      std::unique_ptr<const ResolvedAlterExternalSchemaStmt> node) {
     return node;
   }
 
@@ -1821,28 +1634,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedAddColumnIdentifierAction(
-      const ResolvedAddColumnIdentifierAction&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAddColumnIdentifierAction (
-      std::unique_ptr<const ResolvedAddColumnIdentifierAction> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedRebuildAction(
-      const ResolvedRebuildAction&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedRebuildAction (
-      std::unique_ptr<const ResolvedRebuildAction> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedAddConstraintAction(
       const ResolvedAddConstraintAction&) {
     return absl::OkStatus();
@@ -1895,28 +1686,6 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedAlterColumnDropNotNullAction (
       std::unique_ptr<const ResolvedAlterColumnDropNotNullAction> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedAlterColumnDropGeneratedAction(
-      const ResolvedAlterColumnDropGeneratedAction&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAlterColumnDropGeneratedAction (
-      std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedAlterColumnSetGeneratedAction(
-      const ResolvedAlterColumnSetGeneratedAction&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAlterColumnSetGeneratedAction (
-      std::unique_ptr<const ResolvedAlterColumnSetGeneratedAction> node) {
     return node;
   }
 
@@ -2481,94 +2250,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedMatchRecognizeScan(
-      const ResolvedMatchRecognizeScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMatchRecognizeScan (
-      std::unique_ptr<const ResolvedMatchRecognizeScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedMeasureGroup(
-      const ResolvedMeasureGroup&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMeasureGroup (
-      std::unique_ptr<const ResolvedMeasureGroup> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedMatchRecognizeVariableDefinition(
-      const ResolvedMatchRecognizeVariableDefinition&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMatchRecognizeVariableDefinition (
-      std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedMatchRecognizePatternEmpty(
-      const ResolvedMatchRecognizePatternEmpty&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMatchRecognizePatternEmpty (
-      std::unique_ptr<const ResolvedMatchRecognizePatternEmpty> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedMatchRecognizePatternAnchor(
-      const ResolvedMatchRecognizePatternAnchor&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMatchRecognizePatternAnchor (
-      std::unique_ptr<const ResolvedMatchRecognizePatternAnchor> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedMatchRecognizePatternVariableRef(
-      const ResolvedMatchRecognizePatternVariableRef&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMatchRecognizePatternVariableRef (
-      std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedMatchRecognizePatternOperation(
-      const ResolvedMatchRecognizePatternOperation&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMatchRecognizePatternOperation (
-      std::unique_ptr<const ResolvedMatchRecognizePatternOperation> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedMatchRecognizePatternQuantification(
-      const ResolvedMatchRecognizePatternQuantification&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedMatchRecognizePatternQuantification (
-      std::unique_ptr<const ResolvedMatchRecognizePatternQuantification> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedCloneDataStmt(
       const ResolvedCloneDataStmt&) {
     return absl::OkStatus();
@@ -2624,336 +2305,6 @@ class ResolvedASTRewriteVisitor {
     return node;
   }
 
-  virtual absl::Status PreVisitResolvedCreatePropertyGraphStmt(
-      const ResolvedCreatePropertyGraphStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedCreatePropertyGraphStmt (
-      std::unique_ptr<const ResolvedCreatePropertyGraphStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphElementTable(
-      const ResolvedGraphElementTable&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphElementTable (
-      std::unique_ptr<const ResolvedGraphElementTable> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphNodeTableReference(
-      const ResolvedGraphNodeTableReference&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphNodeTableReference (
-      std::unique_ptr<const ResolvedGraphNodeTableReference> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphElementLabel(
-      const ResolvedGraphElementLabel&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphElementLabel (
-      std::unique_ptr<const ResolvedGraphElementLabel> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphPropertyDeclaration(
-      const ResolvedGraphPropertyDeclaration&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphPropertyDeclaration (
-      std::unique_ptr<const ResolvedGraphPropertyDeclaration> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphPropertyDefinition(
-      const ResolvedGraphPropertyDefinition&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphPropertyDefinition (
-      std::unique_ptr<const ResolvedGraphPropertyDefinition> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphDynamicLabelSpecification(
-      const ResolvedGraphDynamicLabelSpecification&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphDynamicLabelSpecification (
-      std::unique_ptr<const ResolvedGraphDynamicLabelSpecification> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphDynamicPropertiesSpecification(
-      const ResolvedGraphDynamicPropertiesSpecification&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphDynamicPropertiesSpecification (
-      std::unique_ptr<const ResolvedGraphDynamicPropertiesSpecification> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphRefScan(
-      const ResolvedGraphRefScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphRefScan (
-      std::unique_ptr<const ResolvedGraphRefScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphLinearScan(
-      const ResolvedGraphLinearScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphLinearScan (
-      std::unique_ptr<const ResolvedGraphLinearScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphTableScan(
-      const ResolvedGraphTableScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphTableScan (
-      std::unique_ptr<const ResolvedGraphTableScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphCallScan(
-      const ResolvedGraphCallScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphCallScan (
-      std::unique_ptr<const ResolvedGraphCallScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphScan(
-      const ResolvedGraphScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphScan (
-      std::unique_ptr<const ResolvedGraphScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphPathPatternQuantifier(
-      const ResolvedGraphPathPatternQuantifier&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphPathPatternQuantifier (
-      std::unique_ptr<const ResolvedGraphPathPatternQuantifier> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphPathSearchPrefix(
-      const ResolvedGraphPathSearchPrefix&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphPathSearchPrefix (
-      std::unique_ptr<const ResolvedGraphPathSearchPrefix> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphNodeScan(
-      const ResolvedGraphNodeScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphNodeScan (
-      std::unique_ptr<const ResolvedGraphNodeScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphEdgeScan(
-      const ResolvedGraphEdgeScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphEdgeScan (
-      std::unique_ptr<const ResolvedGraphEdgeScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphGetElementProperty(
-      const ResolvedGraphGetElementProperty&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphGetElementProperty (
-      std::unique_ptr<const ResolvedGraphGetElementProperty> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphLabelNaryExpr(
-      const ResolvedGraphLabelNaryExpr&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphLabelNaryExpr (
-      std::unique_ptr<const ResolvedGraphLabelNaryExpr> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphLabel(
-      const ResolvedGraphLabel&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphLabel (
-      std::unique_ptr<const ResolvedGraphLabel> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphWildCardLabel(
-      const ResolvedGraphWildCardLabel&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphWildCardLabel (
-      std::unique_ptr<const ResolvedGraphWildCardLabel> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphElementIdentifier(
-      const ResolvedGraphElementIdentifier&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphElementIdentifier (
-      std::unique_ptr<const ResolvedGraphElementIdentifier> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphElementProperty(
-      const ResolvedGraphElementProperty&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphElementProperty (
-      std::unique_ptr<const ResolvedGraphElementProperty> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphMakeElement(
-      const ResolvedGraphMakeElement&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphMakeElement (
-      std::unique_ptr<const ResolvedGraphMakeElement> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedArrayAggregate(
-      const ResolvedArrayAggregate&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedArrayAggregate (
-      std::unique_ptr<const ResolvedArrayAggregate> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphMakeArrayVariable(
-      const ResolvedGraphMakeArrayVariable&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphMakeArrayVariable (
-      std::unique_ptr<const ResolvedGraphMakeArrayVariable> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphPathMode(
-      const ResolvedGraphPathMode&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphPathMode (
-      std::unique_ptr<const ResolvedGraphPathMode> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphPathCost(
-      const ResolvedGraphPathCost&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphPathCost (
-      std::unique_ptr<const ResolvedGraphPathCost> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphPathScan(
-      const ResolvedGraphPathScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphPathScan (
-      std::unique_ptr<const ResolvedGraphPathScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGraphIsLabeledPredicate(
-      const ResolvedGraphIsLabeledPredicate&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGraphIsLabeledPredicate (
-      std::unique_ptr<const ResolvedGraphIsLabeledPredicate> node) {
-    return node;
-  }
-
   virtual absl::Status PreVisitResolvedUndropStmt(
       const ResolvedUndropStmt&) {
     return absl::OkStatus();
@@ -2962,270 +2313,6 @@ class ResolvedASTRewriteVisitor {
   virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
   PostVisitResolvedUndropStmt (
       std::unique_ptr<const ResolvedUndropStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedIdentityColumnInfo(
-      const ResolvedIdentityColumnInfo&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedIdentityColumnInfo (
-      std::unique_ptr<const ResolvedIdentityColumnInfo> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedDescribeScan(
-      const ResolvedDescribeScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedDescribeScan (
-      std::unique_ptr<const ResolvedDescribeScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedStaticDescribeScan(
-      const ResolvedStaticDescribeScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedStaticDescribeScan (
-      std::unique_ptr<const ResolvedStaticDescribeScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedAssertScan(
-      const ResolvedAssertScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAssertScan (
-      std::unique_ptr<const ResolvedAssertScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedLogScan(
-      const ResolvedLogScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedLogScan (
-      std::unique_ptr<const ResolvedLogScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedPipeIfScan(
-      const ResolvedPipeIfScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedPipeIfScan (
-      std::unique_ptr<const ResolvedPipeIfScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedPipeIfCase(
-      const ResolvedPipeIfCase&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedPipeIfCase (
-      std::unique_ptr<const ResolvedPipeIfCase> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedPipeForkScan(
-      const ResolvedPipeForkScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedPipeForkScan (
-      std::unique_ptr<const ResolvedPipeForkScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedPipeTeeScan(
-      const ResolvedPipeTeeScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedPipeTeeScan (
-      std::unique_ptr<const ResolvedPipeTeeScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedPipeExportDataScan(
-      const ResolvedPipeExportDataScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedPipeExportDataScan (
-      std::unique_ptr<const ResolvedPipeExportDataScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedPipeCreateTableScan(
-      const ResolvedPipeCreateTableScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedPipeCreateTableScan (
-      std::unique_ptr<const ResolvedPipeCreateTableScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedPipeInsertScan(
-      const ResolvedPipeInsertScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedPipeInsertScan (
-      std::unique_ptr<const ResolvedPipeInsertScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedSubpipeline(
-      const ResolvedSubpipeline&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedSubpipeline (
-      std::unique_ptr<const ResolvedSubpipeline> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedSubpipelineInputScan(
-      const ResolvedSubpipelineInputScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedSubpipelineInputScan (
-      std::unique_ptr<const ResolvedSubpipelineInputScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedSubpipelineStmt(
-      const ResolvedSubpipelineStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedSubpipelineStmt (
-      std::unique_ptr<const ResolvedSubpipelineStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedGeneralizedQuerySubpipeline(
-      const ResolvedGeneralizedQuerySubpipeline&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedGeneralizedQuerySubpipeline (
-      std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedBarrierScan(
-      const ResolvedBarrierScan&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedBarrierScan (
-      std::unique_ptr<const ResolvedBarrierScan> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedCreateConnectionStmt(
-      const ResolvedCreateConnectionStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedCreateConnectionStmt (
-      std::unique_ptr<const ResolvedCreateConnectionStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedAlterConnectionStmt(
-      const ResolvedAlterConnectionStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAlterConnectionStmt (
-      std::unique_ptr<const ResolvedAlterConnectionStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedLockMode(
-      const ResolvedLockMode&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedLockMode (
-      std::unique_ptr<const ResolvedLockMode> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedUpdateFieldItem(
-      const ResolvedUpdateFieldItem&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedUpdateFieldItem (
-      std::unique_ptr<const ResolvedUpdateFieldItem> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedUpdateConstructor(
-      const ResolvedUpdateConstructor&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedUpdateConstructor (
-      std::unique_ptr<const ResolvedUpdateConstructor> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedCreateSequenceStmt(
-      const ResolvedCreateSequenceStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedCreateSequenceStmt (
-      std::unique_ptr<const ResolvedCreateSequenceStmt> node) {
-    return node;
-  }
-
-  virtual absl::Status PreVisitResolvedAlterSequenceStmt(
-      const ResolvedAlterSequenceStmt&) {
-    return absl::OkStatus();
-  }
-
-  virtual absl::StatusOr<std::unique_ptr<const ResolvedNode>>
-  PostVisitResolvedAlterSequenceStmt (
-      std::unique_ptr<const ResolvedAlterSequenceStmt> node) {
     return node;
   }
 
@@ -3240,8 +2327,8 @@ class ResolvedASTRewriteVisitor {
           return std::move(input).status();
         }
         const ResolvedNode* input_node = (*input).get();
-        GOOGLESQL_RET_CHECK(input_node != nullptr);
-        GOOGLESQL_RET_CHECK(input_node->template Is<ExpectedReturnT>());
+        ZETASQL_RET_CHECK(input_node != nullptr);
+        ZETASQL_RET_CHECK(input_node->template Is<ExpectedReturnT>());
         return absl::WrapUnique<const ExpectedReturnT>(
             (*std::move(input)).release()->template GetAs<ExpectedReturnT>());
       }
@@ -3250,17 +2337,7 @@ class ResolvedASTRewriteVisitor {
   // Helper function to dispatch a vector of nodes.
   template<typename ResolvedNodeT>
   absl::StatusOr<std::vector<std::unique_ptr<const ResolvedNodeT>>>
-  DispatchNodeList(std::vector<std::unique_ptr<const ResolvedNodeT>> nodes) {
-    for (std::unique_ptr<const ResolvedNodeT>& node : nodes) {
-      absl::StatusOr<std::unique_ptr<const ResolvedNodeT>> result =
-          Dispatch<ResolvedNodeT>(std::move(node));
-      if (!result.ok()) {
-        return std::move(result).status();
-      }
-      node = *std::move(result);
-    }
-    return nodes;
-  }
+  DispatchNodeList(std::vector<std::unique_ptr<const ResolvedNodeT>> nodes);
 
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedLiteral> node);
@@ -3311,8 +2388,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedGetJsonField> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGetRowField> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedFlatten> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedFlattenedArg> node);
@@ -3320,8 +2395,6 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedReplaceFieldItem> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedReplaceField> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGetProtoOneof> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedSubqueryExpr> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3337,8 +2410,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedSingleRowScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedUnsetArgumentScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedTableScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedJoinScan> node);
@@ -3350,10 +2421,6 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedFilterScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedGroupingCall> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGroupingSetList> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGroupingSetProduct> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedGroupingSet> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3385,8 +2452,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedComputedColumn> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedDeferredComputedColumn> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedOrderByItem> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedColumnAnnotations> node);
@@ -3405,8 +2470,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedOutputColumn> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedOutputSchema> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedProjectScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedTVFScan> node);
@@ -3417,17 +2480,7 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedExplainStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedStringWithLocation> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedStatementWithPipeOperatorsStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedQueryStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGeneralizedQueryStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMultiStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedCreateWithEntryStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCreateDatabaseStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3438,8 +2491,6 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedCreateIndexStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCreateSchemaStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedCreateExternalSchemaStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCreateTableStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3491,8 +2542,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedRecursiveRefScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedRecursionDepthModifier> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedRecursiveScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedWithScan> node);
@@ -3519,8 +2568,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAssertRowsModified> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedOnConflictClause> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedInsertRow> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedInsertStmt> node);
@@ -3529,7 +2576,7 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedUpdateItem> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedUpdateItemElement> node);
+      std::unique_ptr<const ResolvedUpdateArrayItem> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedUpdateStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3549,15 +2596,11 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterDatabaseStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAlterIndexStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterMaterializedViewStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterApproxViewStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterSchemaStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAlterExternalSchemaStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterModelStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3575,10 +2618,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAddColumnAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAddColumnIdentifierAction> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedRebuildAction> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAddConstraintAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedDropConstraintAction> node);
@@ -3588,10 +2627,6 @@ class ResolvedASTRewriteVisitor {
       std::unique_ptr<const ResolvedAlterColumnOptionsAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterColumnDropNotNullAction> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAlterColumnDropGeneratedAction> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAlterColumnSetGeneratedAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAlterColumnSetDataTypeAction> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
@@ -3695,22 +2730,6 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedUnpivotScan> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMatchRecognizeScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMeasureGroup> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMatchRecognizeVariableDefinition> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMatchRecognizePatternEmpty> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMatchRecognizePatternAnchor> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMatchRecognizePatternVariableRef> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMatchRecognizePatternOperation> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedMatchRecognizePatternQuantification> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedCloneDataStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedTableAndColumnInfo> node);
@@ -3721,118 +2740,7 @@ class ResolvedASTRewriteVisitor {
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedAuxLoadDataStmt> node);
   absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedCreatePropertyGraphStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphElementTable> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphNodeTableReference> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphElementLabel> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphPropertyDeclaration> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphPropertyDefinition> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphDynamicLabelSpecification> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphDynamicPropertiesSpecification> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphRefScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphLinearScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphTableScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphCallScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphPathPatternQuantifier> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphPathSearchPrefix> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphNodeScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphEdgeScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphGetElementProperty> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphLabelNaryExpr> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphLabel> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphWildCardLabel> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphElementIdentifier> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphElementProperty> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphMakeElement> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedArrayAggregate> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphMakeArrayVariable> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphPathMode> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphPathCost> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphPathScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGraphIsLabeledPredicate> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
       std::unique_ptr<const ResolvedUndropStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedIdentityColumnInfo> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedDescribeScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedStaticDescribeScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAssertScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedLogScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedPipeIfScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedPipeIfCase> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedPipeForkScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedPipeTeeScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedPipeExportDataScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedPipeCreateTableScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedPipeInsertScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedSubpipeline> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedSubpipelineInputScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedSubpipelineStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedGeneralizedQuerySubpipeline> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedBarrierScan> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedCreateConnectionStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAlterConnectionStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedLockMode> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedUpdateFieldItem> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedUpdateConstructor> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedCreateSequenceStmt> node);
-  absl::StatusOr<std::unique_ptr<const ResolvedNode>> DefaultVisit(
-      std::unique_ptr<const ResolvedAlterSequenceStmt> node);
-  absl::StatusOr<ResolvedColumn> DefaultVisit(ResolvedColumn column);
-  absl::StatusOr<const Type*> DefaultVisit(const Type* type);
-
   template <typename TypeName>
   std::unique_ptr<const TypeName> CastUniquePtr(std::unique_ptr<const ResolvedNode> node) {
     return absl::WrapUnique(static_cast<const TypeName*>(node.release()));
@@ -3841,8 +2749,8 @@ class ResolvedASTRewriteVisitor {
   template <typename ExpectedReturnT>
   absl::StatusOr<std::unique_ptr<const ExpectedReturnT>> Dispatch(
       std::unique_ptr<const ResolvedNode> node) {
-    GOOGLESQL_RETURN_IF_NOT_ENOUGH_STACK("Resolved AST nested too deeply.");
-    GOOGLESQL_RET_CHECK(node != nullptr);
+    ZETASQL_RETURN_IF_NOT_ENOUGH_STACK("Resolved AST nested too deeply.");
+    ZETASQL_RET_CHECK(node != nullptr);
     absl::StatusOr<std::unique_ptr<const ResolvedNode>> visited_node;
     switch(node->node_kind()) {
       case ResolvedLiteral::TYPE: {
@@ -4013,13 +2921,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedGetRowField::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGetRowField>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGetRowField>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedFlatten::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedFlatten>) {
@@ -4045,13 +2946,6 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedReplaceField>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedReplaceField>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGetProtoOneof::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGetProtoOneof>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGetProtoOneof>(std::move(node)));
         }
         break;
       }
@@ -4104,13 +2998,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedUnsetArgumentScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedUnsetArgumentScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedUnsetArgumentScan>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedTableScan::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedTableScan>) {
@@ -4150,20 +3037,6 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedGroupingCall>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedGroupingCall>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGroupingSetList::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGroupingSetList>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGroupingSetList>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGroupingSetProduct::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGroupingSetProduct>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGroupingSetProduct>(std::move(node)));
         }
         break;
       }
@@ -4272,13 +3145,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedDeferredComputedColumn::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedDeferredComputedColumn>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedDeferredComputedColumn>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedOrderByItem::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedOrderByItem>) {
@@ -4342,13 +3208,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedOutputSchema::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedOutputSchema>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedOutputSchema>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedProjectScan::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedProjectScan>) {
@@ -4384,45 +3243,10 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedStringWithLocation::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedStringWithLocation>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedStringWithLocation>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedStatementWithPipeOperatorsStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedStatementWithPipeOperatorsStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedStatementWithPipeOperatorsStmt>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedQueryStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedQueryStmt>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedQueryStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGeneralizedQueryStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGeneralizedQueryStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGeneralizedQueryStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedMultiStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMultiStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMultiStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedCreateWithEntryStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedCreateWithEntryStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateWithEntryStmt>(std::move(node)));
         }
         break;
       }
@@ -4458,13 +3282,6 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedCreateSchemaStmt>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateSchemaStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedCreateExternalSchemaStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedCreateExternalSchemaStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateExternalSchemaStmt>(std::move(node)));
         }
         break;
       }
@@ -4643,13 +3460,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedRecursionDepthModifier::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedRecursionDepthModifier>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedRecursionDepthModifier>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedRecursiveScan::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedRecursiveScan>) {
@@ -4741,13 +3551,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedOnConflictClause::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedOnConflictClause>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedOnConflictClause>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedInsertRow::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedInsertRow>) {
@@ -4776,10 +3579,10 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedUpdateItemElement::TYPE: {
+      case ResolvedUpdateArrayItem::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedUpdateItemElement>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedUpdateItemElement>(std::move(node)));
+                                        ResolvedUpdateArrayItem>) {
+          visited_node = DefaultVisit(CastUniquePtr<ResolvedUpdateArrayItem>(std::move(node)));
         }
         break;
       }
@@ -4846,13 +3649,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedAlterIndexStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAlterIndexStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterIndexStmt>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedAlterMaterializedViewStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAlterMaterializedViewStmt>) {
@@ -4871,13 +3667,6 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAlterSchemaStmt>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterSchemaStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedAlterExternalSchemaStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAlterExternalSchemaStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterExternalSchemaStmt>(std::move(node)));
         }
         break;
       }
@@ -4937,20 +3726,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedAddColumnIdentifierAction::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAddColumnIdentifierAction>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAddColumnIdentifierAction>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedRebuildAction::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedRebuildAction>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedRebuildAction>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedAddConstraintAction::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAddConstraintAction>) {
@@ -4983,20 +3758,6 @@ class ResolvedASTRewriteVisitor {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedAlterColumnDropNotNullAction>) {
           visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterColumnDropNotNullAction>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedAlterColumnDropGeneratedAction::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAlterColumnDropGeneratedAction>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterColumnDropGeneratedAction>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedAlterColumnSetGeneratedAction::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAlterColumnSetGeneratedAction>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterColumnSetGeneratedAction>(std::move(node)));
         }
         break;
       }
@@ -5357,62 +4118,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedMatchRecognizeScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMatchRecognizeScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMatchRecognizeScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedMeasureGroup::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMeasureGroup>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMeasureGroup>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedMatchRecognizeVariableDefinition::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMatchRecognizeVariableDefinition>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMatchRecognizeVariableDefinition>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedMatchRecognizePatternEmpty::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMatchRecognizePatternEmpty>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMatchRecognizePatternEmpty>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedMatchRecognizePatternAnchor::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMatchRecognizePatternAnchor>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMatchRecognizePatternAnchor>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedMatchRecognizePatternVariableRef::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMatchRecognizePatternVariableRef>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMatchRecognizePatternVariableRef>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedMatchRecognizePatternOperation::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMatchRecognizePatternOperation>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMatchRecognizePatternOperation>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedMatchRecognizePatternQuantification::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedMatchRecognizePatternQuantification>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedMatchRecognizePatternQuantification>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedCloneDataStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedCloneDataStmt>) {
@@ -5448,216 +4153,6 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedCreatePropertyGraphStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedCreatePropertyGraphStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreatePropertyGraphStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphElementTable::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphElementTable>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphElementTable>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphNodeTableReference::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphNodeTableReference>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphNodeTableReference>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphElementLabel::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphElementLabel>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphElementLabel>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphPropertyDeclaration::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphPropertyDeclaration>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphPropertyDeclaration>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphPropertyDefinition::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphPropertyDefinition>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphPropertyDefinition>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphDynamicLabelSpecification::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphDynamicLabelSpecification>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphDynamicLabelSpecification>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphDynamicPropertiesSpecification::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphDynamicPropertiesSpecification>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphDynamicPropertiesSpecification>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphRefScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphRefScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphRefScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphLinearScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphLinearScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphLinearScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphTableScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphTableScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphTableScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphCallScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphCallScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphCallScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphPathPatternQuantifier::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphPathPatternQuantifier>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphPathPatternQuantifier>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphPathSearchPrefix::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphPathSearchPrefix>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphPathSearchPrefix>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphNodeScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphNodeScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphNodeScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphEdgeScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphEdgeScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphEdgeScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphGetElementProperty::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphGetElementProperty>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphGetElementProperty>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphLabelNaryExpr::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphLabelNaryExpr>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphLabelNaryExpr>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphLabel::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphLabel>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphLabel>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphWildCardLabel::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphWildCardLabel>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphWildCardLabel>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphElementIdentifier::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphElementIdentifier>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphElementIdentifier>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphElementProperty::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphElementProperty>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphElementProperty>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphMakeElement::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphMakeElement>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphMakeElement>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedArrayAggregate::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedArrayAggregate>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedArrayAggregate>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphMakeArrayVariable::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphMakeArrayVariable>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphMakeArrayVariable>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphPathMode::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphPathMode>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphPathMode>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphPathCost::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphPathCost>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphPathCost>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphPathScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphPathScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphPathScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGraphIsLabeledPredicate::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGraphIsLabeledPredicate>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGraphIsLabeledPredicate>(std::move(node)));
-        }
-        break;
-      }
       case ResolvedUndropStmt::TYPE: {
         if constexpr (std::is_base_of_v<ResolvedNode,
                                         ResolvedUndropStmt>) {
@@ -5665,205 +4160,15 @@ class ResolvedASTRewriteVisitor {
         }
         break;
       }
-      case ResolvedIdentityColumnInfo::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedIdentityColumnInfo>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedIdentityColumnInfo>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedDescribeScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedDescribeScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedDescribeScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedStaticDescribeScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedStaticDescribeScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedStaticDescribeScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedAssertScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAssertScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAssertScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedLogScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedLogScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedLogScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedPipeIfScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedPipeIfScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeIfScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedPipeIfCase::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedPipeIfCase>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeIfCase>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedPipeForkScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedPipeForkScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeForkScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedPipeTeeScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedPipeTeeScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeTeeScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedPipeExportDataScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedPipeExportDataScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeExportDataScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedPipeCreateTableScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedPipeCreateTableScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeCreateTableScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedPipeInsertScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedPipeInsertScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedPipeInsertScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedSubpipeline::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedSubpipeline>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedSubpipeline>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedSubpipelineInputScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedSubpipelineInputScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedSubpipelineInputScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedSubpipelineStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedSubpipelineStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedSubpipelineStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedGeneralizedQuerySubpipeline::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedGeneralizedQuerySubpipeline>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedGeneralizedQuerySubpipeline>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedBarrierScan::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedBarrierScan>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedBarrierScan>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedCreateConnectionStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedCreateConnectionStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateConnectionStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedAlterConnectionStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAlterConnectionStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterConnectionStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedLockMode::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedLockMode>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedLockMode>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedUpdateFieldItem::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedUpdateFieldItem>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedUpdateFieldItem>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedUpdateConstructor::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedUpdateConstructor>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedUpdateConstructor>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedCreateSequenceStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedCreateSequenceStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedCreateSequenceStmt>(std::move(node)));
-        }
-        break;
-      }
-      case ResolvedAlterSequenceStmt::TYPE: {
-        if constexpr (std::is_base_of_v<ResolvedNode,
-                                        ResolvedAlterSequenceStmt>) {
-          visited_node = DefaultVisit(CastUniquePtr<ResolvedAlterSequenceStmt>(std::move(node)));
-        }
-        break;
-      }
       default:
-        GOOGLESQL_RET_CHECK_FAIL() << "could not dispatch node of type "
+        ZETASQL_RET_CHECK_FAIL() << "could not dispatch node of type "
                          << node->node_kind_string();
         break;
     }
     return VerifyType<ExpectedReturnT>(std::move(visited_node));
   }
-
-  virtual absl::Status PreVisitResolvedColumn(const ResolvedColumn&) {
-    return absl::OkStatus();
-  }
-
-  // Rewrite a ResolvedColumn. The default behavior returns it as is.
-  // Overrides may be necessary when a visitor needs to remap columns.
-  virtual absl::StatusOr<ResolvedColumn> PostVisitResolvedColumn(
-      const ResolvedColumn& column) {
-    return column;
-  }
-
-  virtual absl::Status PreVisitType(const Type* type) {
-    return absl::OkStatus();
-  }
-
-  // Rewrite a Type. The default behavior returns it as is.
-  // Overrides may be necessary when a visitor needs to remap columns.
-  // Note: This does not visit Types inside FunctionSignatures.
-  virtual absl::StatusOr<const Type*> PostVisitType(const Type* type) {
-    return type;
-  }
 };
 
-}  // namespace googlesql
+}  // namespace zetasql
 
-#endif  // GOOGLESQL_RESOLVED_AST_RESOLVED_AST_REWRITER_VISITOR_H_
+#endif  // ZETASQL_RESOLVED_AST_RESOLVED_AST_REWRITER_VISITOR_H_

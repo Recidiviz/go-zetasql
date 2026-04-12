@@ -109,24 +109,21 @@ bool RegExp::Extract(absl::string_view str, PositionUnit position_unit,
     return false;
   }
   int32_t str_length32 = 0;
-  if (!CheckAndCastStrLength(str, &str_length32, error)) {
-    return false;
+  if (!CheckAndCastStrLength(str, &str_length32)) {
+    return internal::UpdateError(
+        error,
+        absl::Substitute("Input string size too large $0", str.length()));
   }
   if (position > str_length32 && !(str.empty() && position == 1)) {
     return true;
   }
   int64_t offset = 0;
   if (position_unit == kUtf8Chars) {
-    int32_t string_offset = 0;
-    bool hit_end = false;
-    if (!ForwardN(str, str_length32, position - 1, &string_offset, &hit_end,
-                  error)) {
-      return false;
-    }
-    if (hit_end) {
+    auto string_offset = ForwardN(str, str_length32, position - 1);
+    if (string_offset == std::nullopt) {
       return true;
     }
-    offset = string_offset;
+    offset = string_offset.value();
   } else {
     offset = position - 1;
   }
@@ -378,24 +375,21 @@ bool RegExp::Instr(const InstrParams& options,
     return false;  // position or occurrence_index <= 0
   }
   int32_t str_length32 = 0;
-  if (!CheckAndCastStrLength(str, &str_length32, error)) {
-    return false;
+  if (!CheckAndCastStrLength(str, &str_length32)) {
+    return internal::UpdateError(
+        error,
+        absl::Substitute("Input string size too large $0", str.length()));
   }
   if (options.position > str_length32 || re_->pattern().empty()) {
     return true;
   }
   int64_t offset = 0;
   if (options.position_unit == kUtf8Chars) {
-    int32_t string_offset = 0;
-    bool hit_end = false;
-    if (!ForwardN(str, str_length32, options.position - 1, &string_offset,
-                  &hit_end, error)) {
-      return false;
+    auto string_offset = ForwardN(str, str_length32, options.position - 1);
+    if (string_offset == std::nullopt) {
+      return true;  // input str is an invalid utf-8 string
     }
-    if (hit_end) {
-      return true;
-    }
-    offset = string_offset;
+    offset = string_offset.value();
   } else {
     offset = options.position - 1;
   }

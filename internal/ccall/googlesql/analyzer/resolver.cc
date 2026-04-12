@@ -1614,7 +1614,7 @@ absl::Status Resolver::ResolveStructType(
             if (maybe_name.ok()) {
               return googlesql_base::StatusBuilder(status)
                      << "Did you mean to define the STRUCT field as `"
-                     << *maybe_name << " " << maybe_type << "` instead? ";
+                     << maybe_name << " " << maybe_type << "` instead? ";
             }
           }
         }

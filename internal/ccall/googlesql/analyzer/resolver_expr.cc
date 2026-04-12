@@ -729,7 +729,7 @@ absl::StatusOr<const google::protobuf::Descriptor*> Resolver::FindMessageTypeFor
   return found_type->AsProto()->descriptor();
 }
 
-functions::TimestampScale ResolverExprGetTimestampScale(
+functions::TimestampScale GetTimestampScale(
     const LanguageOptions& language_options) {
   if (language_options.LanguageFeatureEnabled(FEATURE_TIMESTAMP_PICOS)) {
     return functions::kPicoseconds;
@@ -767,7 +767,7 @@ absl::Status Resolver::MakeResolvedDateOrTimeLiteral(
       break;
     }
     case TYPE_TIMESTAMP: {
-      functions::TimestampScale scale = ResolverExprGetTimestampScale(language());
+      functions::TimestampScale scale = GetTimestampScale(language());
 
       // All GoogleSQL Timestamps are internally stored with picosecond
       // precision (with 0 padding if needed). We use scale when parsing the
@@ -907,7 +907,7 @@ Resolver::ParseRangeBoundary(const TypeKind& type_kind,
     case TYPE_TIMESTAMP: {
       Value timestamp_value = Value::NullTimestamp();
       if (!unbounded) {
-        functions::TimestampScale scale = ResolverExprGetTimestampScale(language);
+        functions::TimestampScale scale = GetTimestampScale(language);
         PicoTime pico_time;
         GOOGLESQL_RETURN_IF_ERROR(functions::ConvertStringToTimestamp(
             *boundary_value, default_time_zone, scale,

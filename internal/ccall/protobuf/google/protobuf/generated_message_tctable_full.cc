@@ -33,11 +33,10 @@
 #include "google/protobuf/extension_set.h"
 #include "google/protobuf/generated_message_tctable_impl.h"
 #include "google/protobuf/message.h"
-#include "google/protobuf/message_lite.h"
 #include "google/protobuf/parse_context.h"
+#include "google/protobuf/port.h"
 #include "google/protobuf/unknown_field_set.h"
 #include "google/protobuf/wire_format.h"
-#include "google/protobuf/wire_format_lite.h"
 
 // must be last
 #include "google/protobuf/port_def.inc"
@@ -45,15 +44,14 @@
 namespace google {
 namespace protobuf {
 namespace internal {
+using ::google::protobuf::internal::DownCast;
 
 const char* TcParser::GenericFallback(PROTOBUF_TC_PARAM_DECL) {
-  PROTOBUF_MUSTTAIL return GenericFallbackImpl<Message, UnknownFieldSet>(
-      PROTOBUF_TC_PARAM_PASS);
+  return GenericFallbackImpl<Message, UnknownFieldSet>(PROTOBUF_TC_PARAM_PASS);
 }
 
 const char* TcParser::ReflectionFallback(PROTOBUF_TC_PARAM_DECL) {
-  bool must_fallback_to_generic = (ptr == nullptr);
-  if (PROTOBUF_PREDICT_FALSE(must_fallback_to_generic)) {
+  if (PROTOBUF_PREDICT_FALSE(MustFallbackToGeneric(PROTOBUF_TC_PARAM_PASS))) {
     PROTOBUF_MUSTTAIL return GenericFallback(PROTOBUF_TC_PARAM_PASS);
   }
 
@@ -64,7 +62,7 @@ const char* TcParser::ReflectionFallback(PROTOBUF_TC_PARAM_DECL) {
     return ptr;
   }
 
-  auto* full_msg = DownCastMessage<Message>(msg);
+  auto* full_msg = DownCast<Message*>(msg);
   auto* descriptor = full_msg->GetDescriptor();
   auto* reflection = full_msg->GetReflection();
   int field_number = WireFormatLite::GetTagFieldNumber(tag);
@@ -88,17 +86,9 @@ const char* TcParser::ReflectionParseLoop(PROTOBUF_TC_PARAM_DECL) {
   (void)table;
   (void)hasbits;
   // Call into the wire format reflective parse loop.
-  return WireFormat::_InternalParse(DownCastMessage<Message>(msg), ptr, ctx);
-}
-
-const char* TcParser::MessageSetWireFormatParseLoop(
-    PROTOBUF_TC_PARAM_NO_DATA_DECL) {
-  PROTOBUF_MUSTTAIL return MessageSetWireFormatParseLoopImpl<Message>(
-      PROTOBUF_TC_PARAM_NO_DATA_PASS);
+  return WireFormat::_InternalParse(DownCast<Message*>(msg), ptr, ctx);
 }
 
 }  // namespace internal
 }  // namespace protobuf
 }  // namespace google
-
-#include "google/protobuf/port_undef.inc"

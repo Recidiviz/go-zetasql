@@ -22,11 +22,8 @@
 #include "googlesql/public/options.pb.h"
 #include "absl/base/attributes.h"
 #include "absl/base/macros.h"
-#include "absl/flags/declare.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
-
-ABSL_DECLARE_FLAG(std::string, googlesql_minimized_error_message_tag);
 
 namespace googlesql {
 

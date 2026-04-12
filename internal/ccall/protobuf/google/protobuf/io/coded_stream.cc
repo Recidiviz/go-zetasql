@@ -1,9 +1,32 @@
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
+// https://developers.google.com/protocol-buffers/
 //
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file or at
-// https://developers.google.com/open-source/licenses/bsd
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//     * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//     * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Author: kenton@google.com (Kenton Varda)
 //  Based on original Protocol Buffers design by
@@ -20,13 +43,9 @@
 #include <limits.h>
 
 #include <algorithm>
-#include <atomic>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
-#include <limits>
-#include <memory>
-#include <string>
 #include <utility>
 
 #include "absl/log/absl_check.h"
@@ -37,6 +56,7 @@
 #include "google/protobuf/arena.h"
 #include "google/protobuf/io/zero_copy_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl_lite.h"
+#include "google/protobuf/port.h"
 
 
 // Must be included last.
@@ -77,7 +97,7 @@ inline uint8_t* CopyCordToArray(const absl::Cord& cord, uint8_t* target) {
 // CodedInputStream ==================================================
 
 CodedInputStream::~CodedInputStream() {
-  if (input_ != nullptr) {
+  if (input_ != NULL) {
     BackUpInputToCurrentPosition();
   }
 }
@@ -203,7 +223,7 @@ bool CodedInputStream::SkipFallback(int count, int original_buffer_size) {
   }
 
   count -= original_buffer_size;
-  buffer_ = nullptr;
+  buffer_ = NULL;
   buffer_end_ = buffer_;
 
   // Make sure this skip doesn't try to skip past the current limit.
@@ -344,36 +364,17 @@ bool CodedInputStream::ReadCord(absl::Cord* output, int size) {
 }
 
 
-bool CodedInputStream::ReadLittleEndian16Fallback(uint16_t* value) {
-  constexpr size_t kSize = sizeof(*value);
-  uint8_t bytes[kSize];
-
-  const uint8_t* ptr;
-  if (BufferSize() >= static_cast<int64_t>(kSize)) {
-    // Fast path:  Enough bytes in the buffer to read directly.
-    ptr = buffer_;
-    Advance(kSize);
-  } else {
-    // Slow path:  Had to read past the end of the buffer.
-    if (!ReadRaw(bytes, kSize)) return false;
-    ptr = bytes;
-  }
-  ReadLittleEndian16FromArray(ptr, value);
-  return true;
-}
-
 bool CodedInputStream::ReadLittleEndian32Fallback(uint32_t* value) {
-  constexpr size_t kSize = sizeof(*value);
-  uint8_t bytes[kSize];
+  uint8_t bytes[sizeof(*value)];
 
   const uint8_t* ptr;
-  if (BufferSize() >= static_cast<int64_t>(kSize)) {
+  if (BufferSize() >= static_cast<int64_t>(sizeof(*value))) {
     // Fast path:  Enough bytes in the buffer to read directly.
     ptr = buffer_;
-    Advance(kSize);
+    Advance(sizeof(*value));
   } else {
     // Slow path:  Had to read past the end of the buffer.
-    if (!ReadRaw(bytes, kSize)) return false;
+    if (!ReadRaw(bytes, sizeof(*value))) return false;
     ptr = bytes;
   }
   ReadLittleEndian32FromArray(ptr, value);
@@ -381,17 +382,16 @@ bool CodedInputStream::ReadLittleEndian32Fallback(uint32_t* value) {
 }
 
 bool CodedInputStream::ReadLittleEndian64Fallback(uint64_t* value) {
-  constexpr size_t kSize = sizeof(*value);
-  uint8_t bytes[kSize];
+  uint8_t bytes[sizeof(*value)];
 
   const uint8_t* ptr;
-  if (BufferSize() >= static_cast<int64_t>(kSize)) {
+  if (BufferSize() >= static_cast<int64_t>(sizeof(*value))) {
     // Fast path:  Enough bytes in the buffer to read directly.
     ptr = buffer_;
-    Advance(kSize);
+    Advance(sizeof(*value));
   } else {
     // Slow path:  Had to read past the end of the buffer.
-    if (!ReadRaw(bytes, kSize)) return false;
+    if (!ReadRaw(bytes, sizeof(*value))) return false;
     ptr = bytes;
   }
   ReadLittleEndian64FromArray(ptr, value);
@@ -916,7 +916,7 @@ uint8_t* EpsCopyOutputStream::WriteAliasedRaw(const void* data, int size,
   }
 }
 
-#ifndef ABSL_IS_LITTLE_ENDIAN
+#ifndef PROTOBUF_LITTLE_ENDIAN
 uint8_t* EpsCopyOutputStream::WriteRawLittleEndian32(const void* data, int size,
                                                    uint8_t* ptr) {
   auto p = static_cast<const uint8_t*>(data);

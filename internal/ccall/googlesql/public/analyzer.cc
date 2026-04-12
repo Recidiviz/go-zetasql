@@ -16,8 +16,6 @@
 
 #include "googlesql/public/analyzer.h"
 
-#include <cstdlib>
-
 #include <iostream>
 #include <memory>
 #include <thread>
@@ -56,6 +54,8 @@
 #include "googlesql/resolved_ast/resolved_node_kind.pb.h"
 #include "googlesql/resolved_ast/validator.h"
 #include "absl/base/nullability.h"
+#include "absl/flags/declare.h"
+#include "absl/flags/flag.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -63,10 +63,10 @@
 #include "googlesql/base/ret_check.h"
 #include "googlesql/base/status_macros.h"
 
-static bool GooglesqlPrintResolvedAstFromEnv() {
-  const char* v = std::getenv("GOOGLESQL_PRINT_RESOLVED_AST");
-  return v != nullptr && v[0] != '\0' && v[0] != '0';
-}
+// This provides a way to extract and look at the googlesql resolved AST
+// from within some other test or tool.  It prints to cout rather than logging
+// because the output is often too big to log without truncating.
+ABSL_DECLARE_FLAG(bool, googlesql_print_resolved_ast);
 
 namespace googlesql {
 
@@ -126,7 +126,7 @@ static absl::Status FinishResolveStatementImpl(
       internal::MakeScopedTimerStarted(
           &analyzer_runtime_info->resolver_timed_value());
 
-  if (GooglesqlPrintResolvedAstFromEnv()) {
+  if (absl::GetFlag(FLAGS_googlesql_print_resolved_ast)) {
     std::cout << "Resolved AST from thread "
               << std::this_thread::get_id()
               << ":" << std::endl

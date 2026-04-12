@@ -22,7 +22,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <ostream>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -99,8 +98,6 @@ struct SpecifiedFlagsCompare {
 ABSL_NAMESPACE_END
 }  // namespace absl
 
-// These flags influence how command line flags are parsed and are only intended
-// to be set on the command line.  Avoid reading or setting them from C++ code.
 ABSL_FLAG(std::vector<std::string>, flagfile, {},
           "comma-separated list of files to load flags from")
     .OnUpdate([]() {
@@ -150,8 +147,6 @@ ABSL_FLAG(std::vector<std::string>, tryfromenv, {},
       absl::flags_internal::tryfromenv_needs_processing = true;
     });
 
-// Rather than reading or setting --undefok from C++ code, please consider using
-// ABSL_RETIRED_FLAG instead.
 ABSL_FLAG(std::vector<std::string>, undefok, {},
           "comma-separated list of flag names that it is okay to specify "
           "on the command line even if the program does not define a flag "
@@ -421,7 +416,7 @@ bool HandleGeneratorFlags(std::vector<ArgsList>& input_args,
   // programmatically before invoking ParseCommandLine. Note that we do not
   // actually process arguments specified in the flagfile, but instead
   // create a secondary arguments list to be processed along with the rest
-  // of the command line arguments. Since we always the process most recently
+  // of the comamnd line arguments. Since we always the process most recently
   // created list of arguments first, this will result in flagfile argument
   // being processed before any other argument in the command line. If
   // FLAGS_flagfile contains more than one file name we create multiple new
@@ -637,7 +632,7 @@ void ReportUnrecognizedFlags(
 // --------------------------------------------------------------------
 
 bool WasPresentOnCommandLine(absl::string_view flag_name) {
-  absl::ReaderMutexLock l(&specified_flags_guard);
+  absl::MutexLock l(&specified_flags_guard);
   ABSL_INTERNAL_CHECK(specified_flags != nullptr,
                       "ParseCommandLine is not invoked yet");
 
@@ -671,7 +666,7 @@ std::vector<std::string> GetMisspellingHints(const absl::string_view flag) {
   const size_t maxCutoff = std::min(flag.size() / 2 + 1, kMaxDistance);
   auto undefok = absl::GetFlag(FLAGS_undefok);
   BestHints best_hints(static_cast<uint8_t>(maxCutoff));
-  flags_internal::ForEachFlag([&](const CommandLineFlag& f) {
+  absl::flags_internal::ForEachFlag([&](const CommandLineFlag& f) {
     if (best_hints.hints.size() >= kMaxHints) return;
     uint8_t distance = strings_internal::CappedDamerauLevenshteinDistance(
         flag, f.Name(), best_hints.best_distance);
@@ -698,50 +693,55 @@ std::vector<std::string> GetMisspellingHints(const absl::string_view flag) {
 
 std::vector<char*> ParseCommandLineImpl(int argc, char* argv[],
                                         UsageFlagsAction usage_flag_action,
-                                        OnUndefinedFlag undef_flag_action,
-                                        std::ostream& error_help_output) {
+                                        OnUndefinedFlag undef_flag_action) {
   std::vector<char*> positional_args;
   std::vector<UnrecognizedFlag> unrecognized_flags;
 
-  auto help_mode = flags_internal::ParseAbseilFlagsOnlyImpl(
-      argc, argv, positional_args, unrecognized_flags, usage_flag_action);
+  bool parse_successful = absl::ParseAbseilFlagsOnly(
+      argc, argv, positional_args, unrecognized_flags);
 
   if (undef_flag_action != OnUndefinedFlag::kIgnoreUndefined) {
+    if (parse_successful &&
+        undef_flag_action == OnUndefinedFlag::kAbortIfUndefined) {
+      if (!unrecognized_flags.empty()) { parse_successful = false; }
+    }
+
     flags_internal::ReportUnrecognizedFlags(
         unrecognized_flags,
-        (undef_flag_action == OnUndefinedFlag::kAbortIfUndefined));
-
-    if (undef_flag_action == OnUndefinedFlag::kAbortIfUndefined) {
-      if (!unrecognized_flags.empty()) {
-        flags_internal::HandleUsageFlags(error_help_output,
-        ProgramUsageMessage()); std::exit(1);
-      }
-    }
+        !parse_successful &&
+            (undef_flag_action == OnUndefinedFlag::kAbortIfUndefined));
   }
 
-  flags_internal::MaybeExit(help_mode);
+#if ABSL_FLAGS_STRIP_NAMES
+  if (!parse_successful) {
+    ReportUsageError("NOTE: command line flags are disabled in this build",
+                     true);
+  }
+#endif
+
+  if (!parse_successful) {
+    HandleUsageFlags(std::cout, ProgramUsageMessage());
+    std::exit(1);
+  }
+
+  if (usage_flag_action == UsageFlagsAction::kHandleUsage) {
+    int exit_code = HandleUsageFlags(std::cout, ProgramUsageMessage());
+
+    if (exit_code != -1) {
+      std::exit(exit_code);
+    }
+  }
 
   return positional_args;
 }
 
 // --------------------------------------------------------------------
 
-// This function handles all Abseil Flags and built-in usage flags and, if any
-// help mode was handled, it returns that help mode. The caller of this function
-// can decide to exit based on the returned help mode.
-// The caller may decide to handle unrecognized positional arguments and
-// unrecognized flags first before exiting.
-//
-// Returns:
-// * HelpMode::kFull if parsing errors were detected in recognized arguments
-// * The HelpMode that was handled in case when `usage_flag_action` is
-//   UsageFlagsAction::kHandleUsage and a usage flag was specified on the
-//   commandline
-// * Otherwise it returns HelpMode::kNone
-HelpMode ParseAbseilFlagsOnlyImpl(
-    int argc, char* argv[], std::vector<char*>& positional_args,
-    std::vector<UnrecognizedFlag>& unrecognized_flags,
-    UsageFlagsAction usage_flag_action) {
+}  // namespace flags_internal
+
+bool ParseAbseilFlagsOnly(int argc, char* argv[],
+                          std::vector<char*>& positional_args,
+                          std::vector<UnrecognizedFlag>& unrecognized_flags) {
   ABSL_INTERNAL_CHECK(argc > 0, "Missing argv[0]");
 
   using flags_internal::ArgsList;
@@ -771,9 +771,9 @@ HelpMode ParseAbseilFlagsOnlyImpl(
     specified_flags->clear();
   }
 
-  // Iterate through the list of the input arguments. First level are
-  // arguments originated from argc/argv. Following levels are arguments
-  // originated from recursive parsing of flagfile(s).
+  // Iterate through the list of the input arguments. First level are arguments
+  // originated from argc/argv. Following levels are arguments originated from
+  // recursive parsing of flagfile(s).
   bool success = true;
   while (!input_args.empty()) {
     // First we process the built-in generator flags.
@@ -793,8 +793,8 @@ HelpMode ParseAbseilFlagsOnlyImpl(
     }
 
     // Handle the next argument in the current list. If the stack of argument
-    // lists contains only one element - we are processing an argument from
-    // the original argv.
+    // lists contains only one element - we are processing an argument from the
+    // original argv.
     absl::string_view arg(curr_list.Front());
     bool arg_from_argv = input_args.size() == 1;
 
@@ -895,33 +895,7 @@ HelpMode ParseAbseilFlagsOnlyImpl(
 
   std::swap(unrecognized_flags, filtered);
 
-  if (!success) {
-#if ABSL_FLAGS_STRIP_NAMES
-    flags_internal::ReportUsageError(
-        "NOTE: command line flags are disabled in this build", true);
-#else
-    flags_internal::HandleUsageFlags(std::cerr, ProgramUsageMessage());
-#endif
-    return HelpMode::kFull;  // We just need to make sure the exit with
-                             // code 1.
-  }
-
-  return usage_flag_action == UsageFlagsAction::kHandleUsage
-             ? flags_internal::HandleUsageFlags(std::cout,
-                                                ProgramUsageMessage())
-             : HelpMode::kNone;
-}
-
-}  // namespace flags_internal
-
-void ParseAbseilFlagsOnly(int argc, char* argv[],
-                          std::vector<char*>& positional_args,
-                          std::vector<UnrecognizedFlag>& unrecognized_flags) {
-  auto help_mode = flags_internal::ParseAbseilFlagsOnlyImpl(
-      argc, argv, positional_args, unrecognized_flags,
-      flags_internal::UsageFlagsAction::kHandleUsage);
-
-  flags_internal::MaybeExit(help_mode);
+  return success;
 }
 
 // --------------------------------------------------------------------

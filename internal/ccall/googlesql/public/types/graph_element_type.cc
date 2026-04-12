@@ -56,7 +56,7 @@
 namespace googlesql {
 namespace {
 
-constexpr size_t kGraphElementShortTypeNameNumPropertyTypeLimit = 3;
+constexpr size_t kShortTypeNameNumPropertyTypeLimit = 3;
 
 std::string ElementKindName(const GraphElementType::ElementKind element_kind) {
   switch (element_kind) {
@@ -333,7 +333,7 @@ absl::StatusOr<std::string> GraphElementType::TypeNameImpl(
 
 std::string GraphElementType::ShortTypeName(ProductMode mode,
                                             bool use_external_float32) const {
-  return TypeNameImpl(kGraphElementShortTypeNameNumPropertyTypeLimit,
+  return TypeNameImpl(kShortTypeNameNumPropertyTypeLimit,
                       [&](const PropertyType& property_type, size_t /*index*/) {
                         return MakePropertyTypeName(property_type, mode,
                                                     use_external_float32);

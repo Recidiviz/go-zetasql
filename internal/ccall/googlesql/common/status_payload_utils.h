@@ -45,9 +45,6 @@ std::string GetTypeUrl() {
 // Whether the given status has exactly one payload of type T.
 template <class T>
 bool HasPayloadWithType(const absl::Status& status) {
-  if (!HasPayload(status)) {
-    return false;
-  }
   return status.GetPayload(googlesql_base::GetTypeUrl<T>()).has_value();
 }
 

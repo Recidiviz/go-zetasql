@@ -1,9 +1,32 @@
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
+// https://developers.google.com/protocol-buffers/
 //
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file or at
-// https://developers.google.com/open-source/licenses/bsd
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//     * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//     * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Author: kenton@google.com (Kenton Varda)
 //  Based on original Protocol Buffers design by
@@ -11,30 +34,22 @@
 
 #include "google/protobuf/extension_set.h"
 
-#include <algorithm>
-#include <cstdint>
-#include <string>
-
 #include "google/protobuf/descriptor.pb.h"
+#include "google/protobuf/arena.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/dynamic_message.h"
+#include "google/protobuf/text_format.h"
+#include "google/protobuf/testing/googletest.h"
 #include <gtest/gtest.h>
 #include "absl/base/casts.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/match.h"
-#include "google/protobuf/arena.h"
-#include "google/protobuf/cpp_features.pb.h"
-#include "google/protobuf/descriptor.h"
-#include "google/protobuf/dynamic_message.h"
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl.h"
-#include "google/protobuf/message_lite.h"
-#include "google/protobuf/port.h"
 #include "google/protobuf/test_util.h"
 #include "google/protobuf/test_util2.h"
-#include "google/protobuf/text_format.h"
 #include "google/protobuf/unittest.pb.h"
 #include "google/protobuf/unittest_mset.pb.h"
-#include "google/protobuf/unittest_mset_wire_format.pb.h"
-#include "google/protobuf/unittest_proto3_extensions.pb.h"
 #include "google/protobuf/wire_format.h"
 #include "google/protobuf/wire_format_lite.h"
 
@@ -44,18 +59,13 @@
 
 namespace google {
 namespace protobuf {
-
-
 namespace internal {
-
-extern bool fully_verify_message_sets_opt_out;
-
 namespace {
 
 using ::google::protobuf::internal::DownCast;
 using TestUtil::EqualsToSerialized;
 
-// This test closely mirrors google/protobuf/compiler/cpp/unittest.cc
+// This test closely mirrors third_party/protobuf/compiler/cpp/unittest.cc
 // except that it uses extensions rather than regular fields.
 
 TEST(ExtensionSetTest, Defaults) {
@@ -148,7 +158,7 @@ TEST(ExtensionSetTest, SetAllocatedExtension) {
   message.SetAllocatedExtension(unittest::optional_foreign_message_extension,
                                 new unittest::ForeignMessage());
 
-  // SetAllocatedExtension with nullptr is equivalent to ClearExtension.
+  // SetAllocatedExtension with nullptr is equivalent to ClearExtenion.
   message.SetAllocatedExtension(unittest::optional_foreign_message_extension,
                                 nullptr);
   EXPECT_FALSE(
@@ -189,7 +199,7 @@ TEST(ExtensionSetTest, ReleaseExtension) {
 TEST(ExtensionSetTest, ArenaUnsafeArenaSetAllocatedAndRelease) {
   Arena arena;
   unittest::TestAllExtensions* message =
-      Arena::Create<unittest::TestAllExtensions>(&arena);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena);
   unittest::ForeignMessage extension;
   message->UnsafeArenaSetAllocatedExtension(
       unittest::optional_foreign_message_extension, &extension);
@@ -235,7 +245,7 @@ TEST(ExtensionSetTest, UnsafeArenaSetAllocatedAndRelease) {
 TEST(ExtensionSetTest, ArenaUnsafeArenaReleaseOfHeapAlloc) {
   Arena arena;
   unittest::TestAllExtensions* message =
-      Arena::Create<unittest::TestAllExtensions>(&arena);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena);
   unittest::ForeignMessage* extension = new unittest::ForeignMessage;
   message->SetAllocatedExtension(unittest::optional_foreign_message_extension,
                                  extension);
@@ -366,7 +376,7 @@ TEST(ExtensionSetTest, SwapExtensionBothFull) {
 TEST(ExtensionSetTest, ArenaSetAllExtension) {
   Arena arena1;
   unittest::TestAllExtensions* message1 =
-      Arena::Create<unittest::TestAllExtensions>(&arena1);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena1);
   TestUtil::SetAllExtensions(message1);
   TestUtil::ExpectAllExtensionsSet(*message1);
 }
@@ -374,7 +384,7 @@ TEST(ExtensionSetTest, ArenaSetAllExtension) {
 TEST(ExtensionSetTest, ArenaCopyConstructor) {
   Arena arena1;
   unittest::TestAllExtensions* message1 =
-      Arena::Create<unittest::TestAllExtensions>(&arena1);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena1);
   TestUtil::SetAllExtensions(message1);
   unittest::TestAllExtensions message2(*message1);
   arena1.Reset();
@@ -384,7 +394,7 @@ TEST(ExtensionSetTest, ArenaCopyConstructor) {
 TEST(ExtensionSetTest, ArenaMergeFrom) {
   Arena arena1;
   unittest::TestAllExtensions* message1 =
-      Arena::Create<unittest::TestAllExtensions>(&arena1);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena1);
   TestUtil::SetAllExtensions(message1);
   unittest::TestAllExtensions message2;
   message2.MergeFrom(*message1);
@@ -395,8 +405,8 @@ TEST(ExtensionSetTest, ArenaMergeFrom) {
 TEST(ExtensionSetTest, ArenaMergeFromWithClearedExtensions) {
   Arena arena;
   {
-    auto* message1 = Arena::Create<unittest::TestAllExtensions>(&arena);
-    auto* message2 = Arena::Create<unittest::TestAllExtensions>(&arena);
+    auto* message1 = Arena::CreateMessage<unittest::TestAllExtensions>(&arena);
+    auto* message2 = Arena::CreateMessage<unittest::TestAllExtensions>(&arena);
 
     // Set an extension and then clear it
     message1->SetExtension(unittest::optional_int32_extension, 1);
@@ -411,8 +421,8 @@ TEST(ExtensionSetTest, ArenaMergeFromWithClearedExtensions) {
   {
     // As more complicated case, let's have message1 and message2 share some
     // uncleared extensions in common.
-    auto* message1 = Arena::Create<unittest::TestAllExtensions>(&arena);
-    auto* message2 = Arena::Create<unittest::TestAllExtensions>(&arena);
+    auto* message1 = Arena::CreateMessage<unittest::TestAllExtensions>(&arena);
+    auto* message2 = Arena::CreateMessage<unittest::TestAllExtensions>(&arena);
 
     // Set int32 and uint32 on both messages.
     message1->SetExtension(unittest::optional_int32_extension, 1);
@@ -435,7 +445,7 @@ TEST(ExtensionSetTest, ArenaMergeFromWithClearedExtensions) {
 TEST(ExtensionSetTest, ArenaSetAllocatedMessageAndRelease) {
   Arena arena;
   unittest::TestAllExtensions* message =
-      Arena::Create<unittest::TestAllExtensions>(&arena);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena);
   EXPECT_FALSE(
       message->HasExtension(unittest::optional_foreign_message_extension));
   // Add a extension using SetAllocatedExtension
@@ -459,9 +469,9 @@ TEST(ExtensionSetTest, SwapExtensionBothFullWithArena) {
   std::unique_ptr<Arena> arena2(new Arena());
 
   unittest::TestAllExtensions* message1 =
-      Arena::Create<unittest::TestAllExtensions>(&arena1);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena1);
   unittest::TestAllExtensions* message2 =
-      Arena::Create<unittest::TestAllExtensions>(arena2.get());
+      Arena::CreateMessage<unittest::TestAllExtensions>(arena2.get());
 
   TestUtil::SetAllExtensions(message1);
   TestUtil::SetAllExtensions(message2);
@@ -481,9 +491,9 @@ TEST(ExtensionSetTest, SwapExtensionBothFullWithArena) {
   Arena arena3, arena4;
 
   unittest::TestAllExtensions* message3 =
-      Arena::Create<unittest::TestAllExtensions>(&arena3);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena3);
   unittest::TestAllExtensions* message4 =
-      Arena::Create<unittest::TestAllExtensions>(&arena4);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena4);
   TestUtil::SetAllExtensions(message3);
   message3->Swap(message4);
   arena3.Reset();
@@ -495,9 +505,9 @@ TEST(ExtensionSetTest, SwapFieldsOfExtensionBothFullWithArena) {
   Arena* arena2 = new Arena();
 
   unittest::TestAllExtensions* message1 =
-      Arena::Create<unittest::TestAllExtensions>(&arena1);
+      Arena::CreateMessage<unittest::TestAllExtensions>(&arena1);
   unittest::TestAllExtensions* message2 =
-      Arena::Create<unittest::TestAllExtensions>(arena2);
+      Arena::CreateMessage<unittest::TestAllExtensions>(arena2);
 
   TestUtil::SetAllExtensions(message1);
   TestUtil::SetAllExtensions(message2);
@@ -829,7 +839,7 @@ TEST(ExtensionSetTest, SpaceUsedExcludingSelf) {
 #define TEST_REPEATED_EXTENSIONS_SPACE_USED(type, cpptype, value)              \
   do {                                                                         \
     std::unique_ptr<unittest::TestAllExtensions> message(                      \
-        Arena::Create<unittest::TestAllExtensions>(nullptr));                  \
+        Arena::CreateMessage<unittest::TestAllExtensions>(nullptr));           \
     const size_t base_size = message->SpaceUsedLong();                         \
     size_t min_expected_size = sizeof(RepeatedField<cpptype>) + base_size;     \
     message->AddExtension(unittest::repeated_##type##_extension, value);       \
@@ -842,12 +852,10 @@ TEST(ExtensionSetTest, SpaceUsedExcludingSelf) {
     const size_t old_capacity =                                                \
         message->GetRepeatedExtension(unittest::repeated_##type##_extension)   \
             .Capacity();                                                       \
-    if (sizeof(cpptype) > 1) {                                                 \
-      EXPECT_GE(                                                               \
-          old_capacity,                                                        \
-          (RepeatedFieldLowerClampLimit<cpptype, std::max(sizeof(cpptype),     \
-                                                          sizeof(void*))>())); \
-    }                                                                          \
+    EXPECT_GE(                                                                 \
+        old_capacity,                                                          \
+        (RepeatedFieldLowerClampLimit<cpptype, std::max(sizeof(cpptype),       \
+                                                        sizeof(void*))>()));   \
     for (int i = 0; i < 16; ++i) {                                             \
       message->AddExtension(unittest::repeated_##type##_extension, value);     \
     }                                                                          \
@@ -880,7 +888,7 @@ TEST(ExtensionSetTest, SpaceUsedExcludingSelf) {
   // Repeated strings
   {
     std::unique_ptr<unittest::TestAllExtensions> message(
-        Arena::Create<unittest::TestAllExtensions>(nullptr));
+        Arena::CreateMessage<unittest::TestAllExtensions>(nullptr));
     const size_t base_size = message->SpaceUsedLong();
     size_t min_expected_size =
         sizeof(RepeatedPtrField<std::string>) + base_size;
@@ -899,7 +907,7 @@ TEST(ExtensionSetTest, SpaceUsedExcludingSelf) {
   // Repeated messages
   {
     std::unique_ptr<unittest::TestAllExtensions> message(
-        Arena::Create<unittest::TestAllExtensions>(nullptr));
+        Arena::CreateMessage<unittest::TestAllExtensions>(nullptr));
     const size_t base_size = message->SpaceUsedLong();
     size_t min_expected_size =
         sizeof(RepeatedPtrField<unittest::ForeignMessage>) + base_size;
@@ -1193,9 +1201,6 @@ TEST(ExtensionSetTest, DynamicExtensions) {
   // Test adding a dynamic extension to a compiled-in message object.
 
   FileDescriptorProto dynamic_proto;
-  unittest::TestDynamicExtensions::descriptor()->file()->CopyHeadingTo(
-      &dynamic_proto);
-  dynamic_proto.clear_dependency();
   dynamic_proto.set_name("dynamic_extensions_test.proto");
   dynamic_proto.add_dependency(
       unittest::TestAllExtensions::descriptor()->file()->name());
@@ -1329,7 +1334,11 @@ TEST(ExtensionSetTest, DynamicExtensions) {
     const Message& sub_message =
         message.GetReflection()->GetMessage(message, message_extension);
     const unittest::ForeignMessage* typed_sub_message =
-        google::protobuf::DynamicCastMessage<unittest::ForeignMessage>(&sub_message);
+#if PROTOBUF_RTTI
+        dynamic_cast<const unittest::ForeignMessage*>(&sub_message);
+#else
+        static_cast<const unittest::ForeignMessage*>(&sub_message);
+#endif
     ASSERT_TRUE(typed_sub_message != nullptr);
     EXPECT_EQ(456, typed_sub_message->c());
   }
@@ -1359,7 +1368,7 @@ TEST(ExtensionSetTest, Proto3PackedDynamicExtensions) {
   google::protobuf::FileDescriptorProto file_descriptor_proto;
   file_descriptor_proto.set_syntax("proto3");
   file_descriptor_proto.set_name(
-      "google/protobuf/unittest_proto3_packed_extension.proto");
+      "third_party/protobuf/unittest_proto3_packed_extension.proto");
   file_descriptor_proto.set_package("proto3_unittest");
   file_descriptor_proto.add_dependency(
       DescriptorProto::descriptor()->file()->name());
@@ -1397,19 +1406,6 @@ TEST(ExtensionSetTest, Proto3PackedDynamicExtensions) {
   EXPECT_EQ(reserialized_options, "\xca\xb5\x18\x01\x01");
 }
 
-TEST(ExtensionSetTest, Proto3ExtensionPresenceSingular) {
-  using protobuf_unittest::Proto3FileExtensions;
-  FileDescriptorProto file;
-
-  EXPECT_FALSE(file.options().HasExtension(Proto3FileExtensions::singular_int));
-  EXPECT_EQ(file.options().GetExtension(Proto3FileExtensions::singular_int), 0);
-
-  file.mutable_options()->SetExtension(Proto3FileExtensions::singular_int, 1);
-
-  EXPECT_TRUE(file.options().HasExtension(Proto3FileExtensions::singular_int));
-  EXPECT_EQ(file.options().GetExtension(Proto3FileExtensions::singular_int), 1);
-}
-
 TEST(ExtensionSetTest, BoolExtension) {
   unittest::TestAllExtensions msg;
   uint8_t wire_bytes[2] = {13 * 8, 42 /* out of bounds payload for bool */};
@@ -1434,21 +1430,7 @@ TEST(ExtensionSetTest, ExtensionSetSpaceUsed) {
   EXPECT_TRUE((l2 - l) > (l3 - l));
 }
 
-TEST(ExtensionSetTest, Descriptor) {
-  EXPECT_EQ(
-      GetExtensionReflection(unittest::optional_int32_extension),
-      unittest::TestAllExtensions::descriptor()->file()->FindExtensionByName(
-          "optional_int32_extension"));
-  EXPECT_NE(GetExtensionReflection(unittest::optional_int32_extension),
-            nullptr);
-  EXPECT_EQ(GetExtensionReflection(pb::cpp),
-            pb::CppFeatures::descriptor()->file()->FindExtensionByName("cpp"));
-  EXPECT_NE(GetExtensionReflection(pb::cpp), nullptr);
-}
-
 }  // namespace
 }  // namespace internal
 }  // namespace protobuf
 }  // namespace google
-
-#include "google/protobuf/port_undef.inc"

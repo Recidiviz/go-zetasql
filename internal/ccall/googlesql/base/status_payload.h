@@ -22,7 +22,6 @@
 #include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "google/protobuf/descriptor.h"
 
 namespace googlesql_base {
 
@@ -31,11 +30,7 @@ extern const absl::string_view kGoogleSqlTypeUrlPrefix;
 // Return the type_url for encoding a Status payload of type T.
 template <class T>
 std::string GetTypeUrl() {
-  const google::protobuf::Descriptor* d = T::descriptor();
-  if (ABSL_PREDICT_TRUE(d != nullptr)) {
-    return absl::StrCat(kGoogleSqlTypeUrlPrefix, d->full_name());
-  }
-  return absl::StrCat(kGoogleSqlTypeUrlPrefix, "googlesql.__missing_descriptor__");
+  return absl::StrCat(kGoogleSqlTypeUrlPrefix, T::descriptor()->full_name());
 }
 
 // Attaches the given payload. This will overwrite any previous payload with
@@ -43,15 +38,7 @@ std::string GetTypeUrl() {
 template <class T>
 void AttachPayload(absl::Status* status, const T& payload) {
   absl::Cord serialized = absl::Cord(payload.SerializeAsString());
-  const google::protobuf::Descriptor* d = T::descriptor();
-  if (d == nullptr) {
-    d = payload.GetDescriptor();
-  }
-  if (d == nullptr) {
-    return;
-  }
-  status->SetPayload(absl::StrCat(kGoogleSqlTypeUrlPrefix, d->full_name()),
-                     serialized);
+  status->SetPayload(GetTypeUrl<T>(), serialized);
 }
 
 }  // namespace googlesql_base

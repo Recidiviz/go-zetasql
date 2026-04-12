@@ -17,7 +17,6 @@
 #include "googlesql/public/functions/util.h"
 
 #include <cstdint>
-#include <sstream>
 #include <string>
 
 #include "googlesql/common/utf_util.h"
@@ -83,8 +82,8 @@ template std::string UnaryOverflowMessage<int64_t>(
 template <typename T>
 std::string BinaryOverflowMessage(T in1, T in2,
                                   absl::string_view operator_symbol) {
-  return absl::StrCat(ArithmeticType<T>::kName, " overflow: ",
-                      absl::AlphaNum(in1), operator_symbol, absl::AlphaNum(in2));
+  return absl::StrCat(ArithmeticType<T>::kName, " overflow: ", in1,
+                      operator_symbol, in2);
 }
 
 template std::string BinaryOverflowMessage<int32_t>(
@@ -97,6 +96,8 @@ template std::string BinaryOverflowMessage<float>(
     float in1, float in2, absl::string_view operator_symbol);
 template std::string BinaryOverflowMessage<double>(
     double in1, double in2, absl::string_view operator_symbol);
+template std::string BinaryOverflowMessage<absl::int128>(
+    absl::int128 in1, absl::int128 in2, absl::string_view operator_symbol);
 
 // This override is introduced because StrCat does not support long double.
 template <>
