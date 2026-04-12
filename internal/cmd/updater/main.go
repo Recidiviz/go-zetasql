@@ -56,9 +56,8 @@ func externalDir() string {
 	return filepath.Join(cacheDir(), "external")
 }
 
-// execrootRoot returns the Bazel execroot directory for the vendored SQL engine
-// workspace. Upstream renamed the module to googlesql; older caches may still use
-// com_google_zetasql.
+// execrootRoot returns the Bazel execroot directory for the vendored GoogleSQL
+// engine workspace. Prefer googlesql; older caches may still use com_google_zetasql.
 func execrootRoot() string {
 	root := filepath.Join(cacheDir(), "execroot")
 	for _, name := range []string{"googlesql", "com_google_googlesql", "com_google_zetasql"} {
@@ -193,7 +192,7 @@ func applyPostCopyOverlays() error {
 	); err != nil {
 		return err
 	}
-	// Generated flex may set yyFlexLexer=ZetaSqlFlexLexer; flex_tokenizer.h expects GoogleSqlFlexTokenizerBase.
+	// Generated flex may set yyFlexLexer=ZetaSqlFlexLexer (upstream lexer class name); flex_tokenizer.h expects GoogleSqlFlexTokenizerBase.
 	if err := replaceAllInFile(
 		filepath.Join(ccallDir(), "googlesql", "parser", "flex_tokenizer.flex.cc"),
 		"    #define yyFlexLexer ZetaSqlFlexLexer",
@@ -342,10 +341,11 @@ func replaceAllInFile(path, old, new string) error {
 	return os.WriteFile(path, []byte(strings.ReplaceAll(s, old, new)), 0o644)
 }
 
-// copyZetasqlGeneratedIntoGooglesqlGaps copies Bazel //zetasql outputs into internal/ccall/googlesql
+// copyBazelLegacyBinGapsIntoGooglesql copies Bazel bin outputs from the legacy
+// `zetasql` segment (older Bazel layout label //zetasql) into internal/ccall/googlesql
 // only when the destination path does not already exist. The primary googlesql copy wins on
-// conflicts; this pass supplies zetasql-only artifacts (e.g. flex/bison) merged into one tree.
-func copyZetasqlGeneratedIntoGooglesqlGaps() error {
+// conflicts; this pass fills gaps (e.g. flex/bison) merged into one GoogleSQL tree.
+func copyBazelLegacyBinGapsIntoGooglesql() error {
 	root := filepath.Join(bazelBinDir(), "zetasql")
 	if _, err := os.Stat(root); err != nil {
 		return nil
@@ -515,7 +515,7 @@ func main() {
 	if err := copyBazelGenerated("googlesql", ""); err != nil {
 		panic(err)
 	}
-	if err := copyZetasqlGeneratedIntoGooglesqlGaps(); err != nil {
+	if err := copyBazelLegacyBinGapsIntoGooglesql(); err != nil {
 		panic(err)
 	}
 	if !*noOverlays {

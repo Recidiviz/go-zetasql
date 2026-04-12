@@ -1,5 +1,6 @@
 CCALL_DIR := $(abspath $(CURDIR)/../../ccall)
 EXTERNAL_DIR := $(abspath $(CURDIR)/cache/external)
+# Legacy execroot name; Docker/export caches may use googlesql or com_google_googlesql instead.
 OUT_DIR := $(abspath $(CURDIR)/cache/execroot/com_google_zetasql/bazel-out/k8-fastbuild/bin)
 OUT_EXTERNAL_DIR := $(OUT_DIR)/external
 

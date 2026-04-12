@@ -24,7 +24,7 @@ var importYAML []byte
 func main() {
 	listPackages := flag.Bool("list-packages", false, "print go-googlesql output dirs from BUILD scan and exit")
 	orphanDirs := flag.Bool("orphan-dirs", false, "print stale go-googlesql package dirs (have bind.cc but not in BUILD scan) and exit")
-	verifyFQDN := flag.Bool("verify-zetasql-fqdn", false, "fail if any stale zetasql_* FQDN include guards remain under go-googlesql")
+	verifyFQDN := flag.Bool("verify-googlesql-fqdn", false, "fail if any stale legacy zetasql_* FQDN include guards remain under go-googlesql (pre-GoogleSQL normalization)")
 	flag.Parse()
 
 	if err := run(*listPackages, *orphanDirs, *verifyFQDN); err != nil {
@@ -68,18 +68,18 @@ func run(listPackages, orphanDirs, verifyFQDN bool) error {
 		return nil
 	}
 	if verifyFQDN {
-		if err := pkg.VerifyNoStaleZetasqlFQDNGuards(); err != nil {
+		if err := pkg.VerifyNoStaleGooglesqlFQDNGuards(); err != nil {
 			return err
 		}
-		fmt.Println("ok: no stale zetasql_* FQDN guards under go-googlesql")
+		fmt.Println("ok: no stale legacy zetasql_* FQDN guards under go-googlesql")
 		return nil
 	}
 
 	if err := generator.Generate(); err != nil {
 		return err
 	}
-	if err := pkg.VerifyNoStaleZetasqlFQDNGuards(); err != nil {
-		return fmt.Errorf("generator produced stale zetasql_* FQDN guards: %w", err)
+	if err := pkg.VerifyNoStaleGooglesqlFQDNGuards(); err != nil {
+		return fmt.Errorf("generator produced stale legacy zetasql_* FQDN guards: %w", err)
 	}
 	return nil
 }

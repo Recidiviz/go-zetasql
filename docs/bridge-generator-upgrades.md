@@ -41,7 +41,7 @@ Remove orphan trees (and any blank imports in `base/base.go`, `common/common.go`
 
 ```bash
 cd internal/cmd/generator && go run . -list-packages   # expected go-googlesql paths from BUILD
-cd internal/cmd/generator && go run . -verify-zetasql-fqdn   # stale FQDN guards only; no full regen
+cd internal/cmd/generator && go run . -verify-googlesql-fqdn   # stale FQDN guards only; no full regen
 ```
 
 [`scripts/ccall-bridge-verify.sh`](../scripts/ccall-bridge-verify.sh) runs the verify step for CI or pre-commit.

@@ -52,7 +52,7 @@ type AmalgamationHeaderExclude struct {
 }
 
 // AmalgamationSourceExclude drops .cc/.c sources from bind.cc amalgamation for a Bazel lib
-// (paths as emitted by Lib.SourcePaths(), e.g. zetasql/parser/flex_tokenizer.flex.cc).
+// (paths as emitted by Lib.SourcePaths(), e.g. googlesql/parser/flex_tokenizer.flex.cc).
 type AmalgamationSourceExclude struct {
 	Pkg     string   `yaml:"pkg"`
 	Sources []string `yaml:"sources"`
@@ -66,7 +66,7 @@ type BindCCPreludeBeforeHeaders struct {
 }
 
 // SymbolDefineOverride replaces the default #define <sym> <fqdn>_<sym> for one global symbol in a
-// single package (e.g. point ZetaSqlFlexTokenizerBase at another package's mangled symbol).
+// single package (e.g. point a GoogleSQL tokenizer base class at another package's mangled symbol).
 type SymbolDefineOverride struct {
 	Pkg         string `yaml:"pkg"`
 	Symbol      string `yaml:"symbol"`
@@ -85,7 +85,7 @@ type InjectReplaceNames struct {
 // ExtraBindGoImport adds a blank `_ "pkg"` import to bind_linux.go / bind_darwin.go for a
 // ccall package (e.g. link protobuf utf8_range + bison flex objects into parser).
 type ExtraBindGoImport struct {
-	Pkg     string   `yaml:"pkg"`     // e.g. zetasql/parser/parser
+	Pkg     string   `yaml:"pkg"`     // e.g. googlesql/parser/parser
 	Imports []string `yaml:"imports"` // full module paths
 }
 

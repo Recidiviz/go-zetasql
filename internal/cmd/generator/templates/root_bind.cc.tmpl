@@ -4,8 +4,8 @@
 #define GO_EXPORT(def) export_googlesql_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 // Apply namespace macros before _cgo_export.h: the generated header can pull
-// nested includes that reach zetasql amalgamation headers; those must see the
-// root analyzer zetasql namespace macro (e.g. WarningSink).
+// nested includes that reach GoogleSQL amalgamation headers; those must see the
+// root analyzer namespace macro (e.g. WarningSink).
 #include "root_analyzer_amalgamation_macros.inc"
 // bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h later.
 #include "_cgo_export.h"

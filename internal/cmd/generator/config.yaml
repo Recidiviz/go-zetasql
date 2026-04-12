@@ -490,6 +490,7 @@ conflict_symbols:
       - file_default_instances
 
 exclude_googlesql_dirs:
+  # Upstream directory name (historical); not the old product name.
   - legacy_zetasql
   - testing
   - testdata
@@ -635,12 +636,12 @@ cclib:
     - pkg: googlesql/parser/bison_parser_generated_lib
       symbol: googlesql_bison_parser
       replacement: googlesql_public_analyzer_googlesql_bison_parser
-    # bridge.inc still uses zetasql:: for legacy generators; map to the same mangled
-    # googlesql namespace as the rest of the root analyzer TU.
+    # bridge.inc still spells the namespace as zetasql:: in some generated paths; map to the same
+    # mangled googlesql namespace as the rest of the root analyzer TU.
     - pkg: googlesql/public/analyzer
       symbol: zetasql
       replacement: googlesql_public_analyzer_googlesql
-    # range_value.h / range_value.cc still use zetasql:: and zetasql_base::; prebuilt archive matches googlesql:: / googlesql_base::.
+    # range_value.h / range_value.cc still use zetasql:: / zetasql_base:: spellings; prebuilt archive matches googlesql:: / googlesql_base::.
     - pkg: googlesql/public/range_value
       symbol: zetasql
       replacement: googlesql_public_range_value_googlesql

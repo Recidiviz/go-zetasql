@@ -43,9 +43,10 @@ func stripBazelExternalPrefix(seg string) string {
 }
 
 // mapBazelRootToCcallPath maps Bazel package roots to directory segments under
-// internal/ccall/go-googlesql/.... Modern targets use googlesql/...; legacy
-// BUILD files still reference zetasql/... for the same on-disk tree — map those
-// to googlesql so generated #include paths use go-googlesql/... only.
+// internal/ccall/go-googlesql/.... Modern targets use googlesql/...; some legacy
+// BUILD files still reference zetasql/... (old GoogleSQL tree spelling) for the
+// same on-disk tree — map those to googlesql so generated #include paths use
+// go-googlesql/... only.
 func mapBazelRootToCcallPath(path string) string {
 	switch {
 	case path == "googlesql" || strings.HasPrefix(path, "googlesql/"):
@@ -60,7 +61,7 @@ func mapBazelRootToCcallPath(path string) string {
 }
 
 // LibPkgKey returns the canonical config key for a cc_library (googlesql/...), mapping legacy
-// zetasql/ BUILD roots to googlesql/ for inject_replace_names and related YAML.
+// zetasql/ BUILD roots (pre-renaming) to googlesql/ for inject_replace_names and related YAML.
 func LibPkgKey(basePkg, name string) string {
 	return fmt.Sprintf("%s/%s", mapBazelRootToCcallPath(basePkg), name)
 }

@@ -84,14 +84,15 @@ func (g *Generator) OrphanGooglesqlPackageDirs() ([]string, error) {
 	return orphans, nil
 }
 
-// staleFQDNGuard matches legacy include guards that used a zetasql_* FQDN prefix for whole-package
-// symbols (e.g. zetasql_base_refcount_bind_cc). Does not match namespace token aliases such as
-// `#define zetasql googlesql_pkg_...` or `#define zetasql_base ...` (no _bind_cc / _bridge_h suffix).
+// staleFQDNGuard matches legacy include guards that used a zetasql_* FQDN prefix (pre–GoogleSQL
+// normalization) for whole-package symbols (e.g. zetasql_base_refcount_bind_cc). Does not match
+// namespace token aliases such as `#define zetasql googlesql_pkg_...` or `#define zetasql_base ...`
+// (no _bind_cc / _bridge_h suffix).
 var staleFQDNGuard = regexp.MustCompile(`(?m)^#\s*(ifndef|define)\s+zetasql_[a-zA-Z0-9_]+_(bind_cc|bridge_h|extern_h)\s*$`)
 
-// VerifyNoStaleZetasqlFQDNGuards returns an error if any file under internal/ccall/go-googlesql
-// contains stale zetasql_* FQDN guards (not namespace-token defines).
-func VerifyNoStaleZetasqlFQDNGuards() error {
+// VerifyNoStaleGooglesqlFQDNGuards returns an error if any file under internal/ccall/go-googlesql
+// contains stale legacy FQDN guards using the old zetasql_* prefix (not namespace-token defines).
+func VerifyNoStaleGooglesqlFQDNGuards() error {
 	root := filepath.Join(ccallDir(), "go-googlesql")
 	var bad []string
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
@@ -106,7 +107,7 @@ func VerifyNoStaleZetasqlFQDNGuards() error {
 		if ext != ".cc" && ext != ".h" && ext != ".go" && ext != ".inc" {
 			return nil
 		}
-		// Root amalgamation macro files intentionally define `zetasql` as a namespace token.
+		// Root amalgamation macro files intentionally define a `zetasql` namespace token alias.
 		if base == "root_analyzer_amalgamation_macros.inc" || base == "root_link_only_unified_macros.inc" {
 			return nil
 		}
@@ -124,7 +125,7 @@ func VerifyNoStaleZetasqlFQDNGuards() error {
 	}
 	if len(bad) > 0 {
 		sort.Strings(bad)
-		return fmt.Errorf("stale zetasql_* FQDN guards in: %s", strings.Join(bad, ", "))
+		return fmt.Errorf("stale legacy zetasql_* FQDN guards (normalize to GoogleSQL) in: %s", strings.Join(bad, ", "))
 	}
 	return nil
 }

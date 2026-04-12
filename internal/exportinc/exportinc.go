@@ -391,13 +391,13 @@ func filterBisonExportDuplicateFlexTokenizer(packageDir string, prelude []string
 		return prelude
 	}
 	const (
-		dropZeta   = `#include "zetasql/parser/flex_tokenizer.cc"`
-		dropGoogle = `#include "googlesql/parser/flex_tokenizer.cc"`
+		dropLegacyZetasqlInclude = `#include "zetasql/parser/flex_tokenizer.cc"`
+		dropGooglesqlInclude     = `#include "googlesql/parser/flex_tokenizer.cc"`
 	)
 	out := make([]string, 0, len(prelude))
 	for _, line := range prelude {
 		t := strings.TrimSpace(line)
-		if t == dropZeta || t == dropGoogle {
+		if t == dropLegacyZetasqlInclude || t == dropGooglesqlInclude {
 			continue
 		}
 		out = append(out, line)
@@ -413,15 +413,15 @@ func filterFlexTokenizerExportDuplicateSources(packageDir string, prelude []stri
 		return prelude
 	}
 	const (
-		dropCCZeta   = `#include "zetasql/parser/flex_tokenizer.cc"`
-		dropFlexZeta = `#include "zetasql/parser/flex_tokenizer.flex.cc"`
-		dropCCGoogle = `#include "googlesql/parser/flex_tokenizer.cc"`
-		dropFlexGoogle = `#include "googlesql/parser/flex_tokenizer.flex.cc"`
+		dropLegacyZetasqlCC   = `#include "zetasql/parser/flex_tokenizer.cc"`
+		dropLegacyZetasqlFlex = `#include "zetasql/parser/flex_tokenizer.flex.cc"`
+		dropGooglesqlCC       = `#include "googlesql/parser/flex_tokenizer.cc"`
+		dropGooglesqlFlex     = `#include "googlesql/parser/flex_tokenizer.flex.cc"`
 	)
 	out := make([]string, 0, len(prelude))
 	for _, line := range prelude {
 		t := strings.TrimSpace(line)
-		if t == dropCCZeta || t == dropFlexZeta || t == dropCCGoogle || t == dropFlexGoogle {
+		if t == dropLegacyZetasqlCC || t == dropLegacyZetasqlFlex || t == dropGooglesqlCC || t == dropGooglesqlFlex {
 			continue
 		}
 		out = append(out, line)

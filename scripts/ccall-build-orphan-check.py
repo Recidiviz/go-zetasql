@@ -5,7 +5,8 @@ Scan Bazel BUILD files under a tree (intended for internal/ccall/googlesql).
 Checks (all optional except legacy-name scan):
 
   A) Legacy filenames: paths containing "zetasql" (case-insensitive). Useful
-     after ZetaSQL → GoogleSQL renames. On by default.
+     after GoogleSQL tree renames when old path segments remain in filenames.
+     On by default.
 
   B) Orphan sources: hand-written source-like files under a package directory
      whose relative path never appears as a substring in that package's BUILD
@@ -230,7 +231,7 @@ def main() -> int:
     ap.add_argument(
         "--no-legacy-zetasql-names",
         action="store_true",
-        help="Disable scan for files whose names contain zetasql (default: scan enabled)",
+        help='Disable scan for files whose names contain "zetasql" (legacy spelling; default: scan enabled)',
     )
     ap.add_argument(
         "--orphans",
@@ -348,12 +349,12 @@ def main() -> int:
             print()
             if findings["legacy_zetasql_names"]:
                 print(
-                    "Paths with 'zetasql' in the filename (review for stale duplicates):"
+                    "Paths with legacy 'zetasql' in the filename (review for stale duplicates):"
                 )
                 for item in findings["legacy_zetasql_names"]:
                     print(f"  {item['path']}")
             else:
-                print("Legacy zetasql filenames: none")
+                print("Legacy zetasql-spelling filenames: none")
 
         print()
         parts = []

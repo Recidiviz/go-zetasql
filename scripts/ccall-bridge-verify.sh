@@ -6,4 +6,4 @@ if [[ -z "$ROOT" ]] || [[ ! -d "$ROOT/internal/cmd/generator" ]]; then
 	ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 fi
 cd "$ROOT/internal/cmd/generator"
-exec go run . -verify-zetasql-fqdn
+exec go run . -verify-googlesql-fqdn

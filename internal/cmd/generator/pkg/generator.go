@@ -1053,7 +1053,7 @@ func (g *Generator) buildReplaceNameEntries(pkgKey string, linkOnly bool) []Repl
 				Pkg:         pkgKey,
 				Symbol:      "zetasql",
 				Replacement: "googlesql",
-				Comment:     "Bridge code still uses zetasql:: while Bazel libgooglesql.a exports googlesql::.",
+				Comment:     "Some bridge sources still spell the namespace as zetasql::; libgooglesql.a exports googlesql::.",
 			}
 		}
 	}

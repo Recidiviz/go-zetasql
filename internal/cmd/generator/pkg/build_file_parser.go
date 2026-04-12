@@ -316,7 +316,7 @@ func (p *BuildFileParser) looksLikeDedicatedTestLib(name string, deps []Dependen
 	}
 	// Do not skip libs solely because they list gtest in deps — upstream often adds
 	// @com_google_googletest//:gtest to non-test targets; skipping would freeze
-	// bind.cc generation and omit new //zetasql/... export.inc dependencies.
+	// bind.cc generation and omit new //googlesql/... export.inc dependencies.
 	_ = deps
 	return false
 }
