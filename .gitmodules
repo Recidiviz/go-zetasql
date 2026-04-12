@@ -1,3 +1,0 @@
-[submodule "internal/cmd/updater/googlesql"]
-	path = internal/cmd/updater/googlesql
-	url = https://github.com/google/googlesql.git
