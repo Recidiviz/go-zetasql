@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"io"
 	"io/fs"
 	"os"
@@ -412,6 +413,9 @@ var copyOutExternalLibMap = map[string]string{
 }
 
 func main() {
+	noOverlays := flag.Bool("no-overlays", false, "skip post-copy string overlays on internal/ccall (raw upstream + Bazel copy only)")
+	flag.Parse()
+
 	opt := cp.Options{
 		AddPermission: 0o755,
 		Skip: func(src string) (bool, error) {
@@ -513,8 +517,10 @@ func main() {
 	if err := copyZetasqlGeneratedIntoGooglesqlGaps(); err != nil {
 		panic(err)
 	}
-	if err := applyPostCopyOverlays(); err != nil {
-		panic(err)
+	if !*noOverlays {
+		if err := applyPostCopyOverlays(); err != nil {
+			panic(err)
+		}
 	}
 	if err := runVendorpatchCLI(); err != nil {
 		panic(err)
