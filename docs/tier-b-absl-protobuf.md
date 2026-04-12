@@ -102,7 +102,7 @@ GoogleSQL CGO uses **`googlesql` + `googlesql_unified_prebuilt`** with prebuilt 
 |-------------------|---------|
 | `task verify:protobuf-tier-b` | Warn if vendored protobuf is below Bazel 29.x-era macros; strict mode: `VERIFY_PROTOBUF_TIER_B_STRICT=1` |
 | `task sync:protobuf-vendor-from-bazel` | Copy Bazel `@com_google_protobuf` sources into `internal/ccall/protobuf/` (then `go run ./internal/cmd/vendorpatch`) |
-| `task regenerate:googlesql-cpp-protos` | Regenerate `internal/ccall/googlesql/**/*.pb.{h,cc}` with Bazel-built `protoc` |
+| `task regenerate:ccall-cpp-protos` | Regenerate `internal/ccall` `*.pb.{h,cc}` (googlesql, googleapis, proto) with Bazel-built `protoc` (`regenerate:googlesql-cpp-protos` is an alias) |
 | `task verify:tier-b-cgo-policy` | Print supported / unsupported tag combinations |
 | [link-only-cgo-migration.md](link-only-cgo-migration.md) | Generator opt-in `cclib.link_only_bind_packages` for thin `bind.cc` |
 

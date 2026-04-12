@@ -6,7 +6,7 @@
 # After rsync you MUST:
 #   1. go run ./internal/cmd/vendorpatch              # amalgamation + patches/*.patch
 #   2. Rebase or drop stale patches under internal/ccall/protobuf/patches/ if git apply fails.
-#   3. bash scripts/regenerate-googlesql-cpp-protos.sh
+#   3. bash scripts/regenerate-ccall-cpp-protos.sh
 #
 # Protobuf 29+ changes port_def.inc layout; amalgamation guards in vendorpatch must match.
 # See docs/prebuilt-cgo.md (protobuf alignment) and docs/protobuf-vendoring.md.

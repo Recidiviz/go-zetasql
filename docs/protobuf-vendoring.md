@@ -112,8 +112,9 @@ Parser errors (e.g. missing AST types or fields in generated headers) usually me
 
 1. Run [`internal/cmd/updater`](../internal/cmd/updater) with a populated **`cache/`** as required by the tool.
 2. **Unset** `GO_GOOGLESQL_SKIP_PROTOBUF_COPY` (do **not** set `=1`) when you intend a **full** protobuf copy from cache for that upgrade.
-3. Run [`internal/cmd/generator`](../internal/cmd/generator) so `includeDirs`, copied trees (e.g. `utf8_range`, protobuf), and generated Go stay aligned.
-4. Re-check parser sources (e.g. [`parse_tree_serializer.cc`](../internal/ccall/googlesql/parser/parse_tree_serializer.cc)) against [`parse_tree.pb.h`](../internal/ccall/googlesql/parser/parse_tree.pb.h) after protos match the pinned tag (e.g. **2023.08.1**).
+3. After `*.proto` files are present under `internal/ccall` (synced from the submodule; they are gitignored), regenerate **`*.pb.h` / `*.pb.cc`** with **`task regenerate:ccall-cpp-protos`** or **`bash scripts/regenerate-ccall-cpp-protos.sh`** (uses the GoogleSQL submodule’s Bazel-built `protoc` unless **`PROTOC`** points at a host binary).
+4. Run [`internal/cmd/generator`](../internal/cmd/generator) so `includeDirs`, copied trees (e.g. `utf8_range`, protobuf), and generated Go stay aligned.
+5. Re-check parser sources (e.g. [`parse_tree_serializer.cc`](../internal/ccall/googlesql/parser/parse_tree_serializer.cc)) against [`parse_tree.pb.h`](../internal/ccall/googlesql/parser/parse_tree.pb.h) after protos match the pinned tag (e.g. **2023.08.1**).
 
 Commit large `internal/ccall` vendor updates separately from small CGO flag fixes, per conventional commits.
 
@@ -193,7 +194,9 @@ After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_u
 
 ### Regenerating `parse_tree` (protoc vs vendored runtime)
 
-Vendored C++ protobuf is **4.23.3** (`GOOGLE_PROTOBUF_VERSION` **4023003**). Use **protoc 23.3** (e.g. [releases](https://github.com/protocolbuffers/protobuf/releases/tag/v23.3)) — not `protoc` 25+ / 30+, which emit incompatible `*.pb.{h,cc}` for this tree. From **`internal/ccall`**:
+For bulk regeneration of **googlesql**, **googleapis**, and **`internal/ccall/proto`** outputs, prefer **`task regenerate:ccall-cpp-protos`** (see [`scripts/regenerate-ccall-cpp-protos.sh`](../scripts/regenerate-ccall-cpp-protos.sh)).
+
+Vendored C++ protobuf is **4.23.3** (`GOOGLE_PROTOBUF_VERSION` **4023003**). Older notes used **protoc 23.3** (e.g. [releases](https://github.com/protocolbuffers/protobuf/releases/tag/v23.3)) for hand-run commands; the repo’s **`regenerate-ccall-cpp-protos`** script uses **`protoc` from `@com_google_protobuf` in the submodule** so codegen stays aligned with **`MODULE.bazel`**. From **`internal/ccall`**, a single-file manual run looks like:
 
 ```bash
 protoc -I. -Iprotobuf --cpp_out=. googlesql/parser/parse_tree.proto

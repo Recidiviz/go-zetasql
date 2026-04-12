@@ -21,7 +21,7 @@ tasks:
     cmds:
       - |
         echo "go-googlesql — use https://taskfile.dev (task --list-all)"
-        echo "Common: task test:local | task build:local | task prebuilt:protobuf prebuilt:googlesql-unified"
+        echo "Common: task test:local | task build:local | task regenerate:ccall-cpp-protos | task prebuilt:protobuf prebuilt:googlesql-unified"
 
   cache:dirs:
     desc: Create GOCACHE / GOMODCACHE / ccache dirs under GO_CACHE_ROOT
@@ -80,9 +80,15 @@ tasks:
     cmds:
       - bash scripts/sync-protobuf-cpp-runtime-from-bazel.sh
 
-  regenerate:googlesql-cpp-protos:
+  regenerate:ccall-cpp-protos:
+    desc: Regenerate internal/ccall/**/*.pb.{h,cc} from .proto (googlesql, googleapis, proto); uses Bazel-built protoc unless PROTOC is set
     cmds:
-      - bash scripts/regenerate-googlesql-cpp-protos.sh
+      - bash scripts/regenerate-ccall-cpp-protos.sh
+
+  regenerate:googlesql-cpp-protos:
+    desc: Alias for regenerate:ccall-cpp-protos (historical name)
+    cmds:
+      - bash scripts/regenerate-ccall-cpp-protos.sh
 
   build:local:
     deps: [cache:dirs, verify:prebuilt-protobuf, verify:prebuilt-googlesql-unified]

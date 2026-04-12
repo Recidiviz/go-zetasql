@@ -55,7 +55,7 @@ The extract script runs Bazel on **`@com_google_protobuf//:protobuf`** and **`@c
 
 1. `task sync:protobuf-vendor-from-bazel` — copies `google/protobuf` runtime from the Bazel external tree into `internal/ccall/protobuf/`.
 2. `go run ./internal/cmd/vendorpatch` — reapplies amalgamation guards and `patches/*.patch` (rebase patches when upstream drifts).
-3. `task regenerate:googlesql-cpp-protos` — regenerates `internal/ccall/googlesql/**/*.pb.{h,cc}` with Bazel-built `protoc`.
+3. `task regenerate:ccall-cpp-protos` — regenerates `internal/ccall` `*.pb.{h,cc}` for googlesql, googleapis, and `proto/` trees (`task regenerate:googlesql-cpp-protos` is the same) using Bazel-built `protoc`.
 4. `task verify:protobuf-tier-b` — optional; set `VERIFY_PROTOBUF_TIER_B_STRICT=1` to fail CI if the vendored `GOOGLE_PROTOBUF_VERSION` is still below the protobuf 5.29 line.
 
 See also [link-only-cgo-migration.md](link-only-cgo-migration.md) for the long-term “no amalgamation” generator path.

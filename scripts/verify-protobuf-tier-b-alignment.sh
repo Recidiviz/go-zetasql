@@ -36,7 +36,7 @@ if [[ "$VENDOR_VER" -lt 5029000 ]]; then
 	echo "WARNING: vendored GOOGLE_PROTOBUF_VERSION=$VENDOR_VER is below 5029000 (protobuf 5.29.x)." >&2
 	echo "Tier B libprotobuf_cgo.a from Bazel will not link cleanly until you refresh vendor + *.pb.h:" >&2
 	echo "  bash scripts/sync-protobuf-cpp-runtime-from-bazel.sh && go run ./internal/cmd/vendorpatch" >&2
-	echo "  bash scripts/regenerate-googlesql-cpp-protos.sh" >&2
+	echo "  bash scripts/regenerate-ccall-cpp-protos.sh" >&2
 	if [[ "${VERIFY_PROTOBUF_TIER_B_STRICT:-}" == "1" ]]; then
 		exit 1
 	fi
