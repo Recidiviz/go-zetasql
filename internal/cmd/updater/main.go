@@ -414,6 +414,7 @@ var copyOutExternalLibMap = map[string]string{
 
 func main() {
 	noOverlays := flag.Bool("no-overlays", false, "skip post-copy string overlays on internal/ccall (raw upstream + Bazel copy only)")
+	noVendorpatch := flag.Bool("no-vendorpatch", false, "skip internal/cmd/vendorpatch (protobuf amalgamation + patches/*.patch); use with -no-overlays for a full raw tree")
 	flag.Parse()
 
 	opt := cp.Options{
@@ -522,8 +523,10 @@ func main() {
 			panic(err)
 		}
 	}
-	if err := runVendorpatchCLI(); err != nil {
-		panic(err)
+	if !*noVendorpatch {
+		if err := runVendorpatchCLI(); err != nil {
+			panic(err)
+		}
 	}
 }
 
