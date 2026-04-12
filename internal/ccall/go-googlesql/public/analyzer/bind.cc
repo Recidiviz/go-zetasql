@@ -6,8 +6,6 @@
 // archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
 // Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
 // See docs/link-only-cgo-migration.md.
-// Bridge code still uses zetasql:: while Bazel libgooglesql.a exports googlesql::.
-#define zetasql googlesql
 #define AbslInternalSleepFor googlesql_public_analyzer_AbslInternalSleepFor
 #define AbslInternalReportFatalUsageError googlesql_public_analyzer_AbslInternalReportFatalUsageError
 #define AbslInternalMutexYield googlesql_public_analyzer_AbslInternalMutexYield

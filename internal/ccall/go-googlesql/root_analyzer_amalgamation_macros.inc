@@ -1,6 +1,5 @@
 #define differential_privacy googlesql_public_analyzer_differential_privacy
 #define googlesql googlesql_public_analyzer_googlesql
-#define zetasql googlesql_public_analyzer_googlesql
 #define googlesql_base googlesql_public_analyzer_googlesql_base
 #define googlesql_bison_parser googlesql_public_analyzer_googlesql_bison_parser
 #define re2 googlesql_public_analyzer_re2

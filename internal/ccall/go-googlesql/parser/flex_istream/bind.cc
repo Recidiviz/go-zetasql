@@ -8,9 +8,7 @@
 // See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_parser_flex_istream_differential_privacy
 #define googlesql googlesql_parser_flex_istream_googlesql
-#define zetasql googlesql_parser_flex_istream_googlesql
 #define googlesql_base googlesql_parser_flex_istream_googlesql_base
-#define zetasql_base googlesql_parser_flex_istream_googlesql_base
 #define googlesql_bison_parser googlesql_parser_flex_istream_googlesql_bison_parser
 #define re2 googlesql_parser_flex_istream_re2
 #define AbslInternalSleepFor googlesql_parser_flex_istream_AbslInternalSleepFor

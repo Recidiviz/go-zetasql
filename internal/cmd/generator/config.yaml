@@ -612,8 +612,6 @@ cclib:
     - pkg: googlesql/public/range_value
       lines: |
         #include "googlesql/base/status_macros.h"
-        #define ZETASQL_ASSIGN_OR_RETURN GOOGLESQL_ASSIGN_OR_RETURN
-        #define ZETASQL_RETURN_IF_ERROR GOOGLESQL_RETURN_IF_ERROR
   # Parser/bison CGO packages link with the root analyzer TU; align googlesql* namespace
   # mangling with go-googlesql/public/analyzer (root_analyzer_amalgamation_macros.inc) so
   # protobuf extensions and shared types resolve across packages.
@@ -636,88 +634,8 @@ cclib:
     - pkg: googlesql/parser/bison_parser_generated_lib
       symbol: googlesql_bison_parser
       replacement: googlesql_public_analyzer_googlesql_bison_parser
-    # bridge.inc still spells the namespace as zetasql:: in some generated paths; map to the same
-    # mangled googlesql namespace as the rest of the root analyzer TU.
-    - pkg: googlesql/public/analyzer
-      symbol: zetasql
-      replacement: googlesql_public_analyzer_googlesql
-    # range_value.h / range_value.cc still use zetasql:: / zetasql_base:: spellings; prebuilt archive matches googlesql:: / googlesql_base::.
-    - pkg: googlesql/public/range_value
-      symbol: zetasql
-      replacement: googlesql_public_range_value_googlesql
-    - pkg: googlesql/public/range_value
-      symbol: zetasql_base
-      replacement: googlesql_public_range_value_googlesql_base
-    - pkg: googlesql/parser/flex_tokenizer
-      symbol: zetasql
-      replacement: googlesql_parser_flex_tokenizer_googlesql
-    - pkg: googlesql/parser/flex_tokenizer
-      symbol: zetasql_base
-      replacement: googlesql_parser_flex_tokenizer_googlesql_base
-    - pkg: googlesql/parser/token_disambiguator
-      symbol: zetasql
-      replacement: googlesql_parser_token_disambiguator_googlesql
-    - pkg: googlesql/parser/token_disambiguator
-      symbol: zetasql_base
-      replacement: googlesql_parser_token_disambiguator_googlesql_base
-    - pkg: googlesql/parser/flex_istream
-      symbol: zetasql
-      replacement: googlesql_parser_flex_istream_googlesql
-    - pkg: googlesql/parser/flex_istream
-      symbol: zetasql_base
-      replacement: googlesql_parser_flex_istream_googlesql_base
-    - pkg: googlesql/parser/macros/flex_token_provider
-      symbol: zetasql
-      replacement: googlesql
-    - pkg: googlesql/parser/macros/flex_token_provider
-      symbol: zetasql_base
-      replacement: googlesql_base
   # id_string / unicode_utils flags — only the parser amalgamation needs these defines.
   inject_replace_names:
-    - pkg: googlesql/public/analyzer
-      after: googlesql
-      names:
-        - zetasql
-    - pkg: googlesql/public/range_value
-      after: googlesql
-      names:
-        - zetasql
-    - pkg: googlesql/public/range_value
-      after: googlesql_base
-      names:
-        - zetasql_base
-    - pkg: googlesql/parser/flex_tokenizer
-      after: googlesql
-      names:
-        - zetasql
-    - pkg: googlesql/parser/flex_tokenizer
-      after: googlesql_base
-      names:
-        - zetasql_base
-    - pkg: googlesql/parser/token_disambiguator
-      after: googlesql
-      names:
-        - zetasql
-    - pkg: googlesql/parser/token_disambiguator
-      after: googlesql_base
-      names:
-        - zetasql_base
-    - pkg: googlesql/parser/flex_istream
-      after: googlesql
-      names:
-        - zetasql
-    - pkg: googlesql/parser/flex_istream
-      after: googlesql_base
-      names:
-        - zetasql_base
-    - pkg: googlesql/parser/macros/flex_token_provider
-      after: googlesql
-      names:
-        - zetasql
-    - pkg: googlesql/parser/macros/flex_token_provider
-      after: googlesql_base
-      names:
-        - zetasql_base
     - pkg: googlesql/parser/parser
       after: FLAGS_nogooglesql_canonicalize_signed_zero_to_string
       names:

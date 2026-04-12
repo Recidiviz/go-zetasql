@@ -86,8 +86,7 @@ func (g *Generator) OrphanGooglesqlPackageDirs() ([]string, error) {
 
 // staleFQDNGuard matches legacy include guards that used a zetasql_* FQDN prefix (pre–GoogleSQL
 // normalization) for whole-package symbols (e.g. zetasql_base_refcount_bind_cc). Does not match
-// namespace token aliases such as `#define zetasql googlesql_pkg_...` or `#define zetasql_base ...`
-// (no _bind_cc / _bridge_h suffix).
+// unrelated lines containing the substring "zetasql" (e.g. namespace aliases in generated C++).
 var staleFQDNGuard = regexp.MustCompile(`(?m)^#\s*(ifndef|define)\s+zetasql_[a-zA-Z0-9_]+_(bind_cc|bridge_h|extern_h)\s*$`)
 
 // VerifyNoStaleGooglesqlFQDNGuards returns an error if any file under internal/ccall/go-googlesql
@@ -102,13 +101,8 @@ func VerifyNoStaleGooglesqlFQDNGuards() error {
 		if d.IsDir() {
 			return nil
 		}
-		base := filepath.Base(path)
 		ext := filepath.Ext(path)
 		if ext != ".cc" && ext != ".h" && ext != ".go" && ext != ".inc" {
-			return nil
-		}
-		// Root amalgamation macro files intentionally define a `zetasql` namespace token alias.
-		if base == "root_analyzer_amalgamation_macros.inc" || base == "root_link_only_unified_macros.inc" {
 			return nil
 		}
 		data, err := os.ReadFile(path)

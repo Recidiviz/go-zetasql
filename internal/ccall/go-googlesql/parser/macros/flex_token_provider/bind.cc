@@ -6,8 +6,6 @@
 // archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
 // Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
 // See docs/link-only-cgo-migration.md.
-#define zetasql googlesql
-#define zetasql_base googlesql_base
 #define AbslInternalSleepFor googlesql_parser_macros_flex_token_provider_AbslInternalSleepFor
 #define AbslInternalReportFatalUsageError googlesql_parser_macros_flex_token_provider_AbslInternalReportFatalUsageError
 #define AbslInternalMutexYield googlesql_parser_macros_flex_token_provider_AbslInternalMutexYield

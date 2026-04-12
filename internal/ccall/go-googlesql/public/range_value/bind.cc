@@ -8,9 +8,7 @@
 // See docs/link-only-cgo-migration.md.
 #define differential_privacy googlesql_public_range_value_differential_privacy
 #define googlesql googlesql_public_range_value_googlesql
-#define zetasql googlesql_public_range_value_googlesql
 #define googlesql_base googlesql_public_range_value_googlesql_base
-#define zetasql_base googlesql_public_range_value_googlesql_base
 #define googlesql_bison_parser googlesql_public_range_value_googlesql_bison_parser
 #define re2 googlesql_public_range_value_re2
 #define AbslInternalSleepFor googlesql_public_range_value_AbslInternalSleepFor

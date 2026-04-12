@@ -316,6 +316,7 @@ int yyFlexLexer::yylex()
 #include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
 
+// Namespace alias: bison output uses the historical *_bison_parser name; amalgamation macros expect googlesql_bison_parser.
 namespace googlesql_bison_parser = zetasql_bison_parser;
 
 using googlesql_bison_parser::BisonParserImpl;

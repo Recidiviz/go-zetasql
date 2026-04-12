@@ -1047,16 +1047,6 @@ func (g *Generator) buildReplaceNameEntries(pkgKey string, linkOnly bool) []Repl
 		}
 		overrideBySymbol[o.Symbol] = o
 	}
-	if linkOnly {
-		if pkgKey == "googlesql/public/analyzer" {
-			overrideBySymbol["zetasql"] = SymbolDefineOverride{
-				Pkg:         pkgKey,
-				Symbol:      "zetasql",
-				Replacement: "googlesql",
-				Comment:     "Some bridge sources still spell the namespace as zetasql::; libgooglesql.a exports googlesql::.",
-			}
-		}
-	}
 	excluded := map[string]struct{}{}
 	for _, n := range g.cfg.CCLib.GlobalExcludeReplaceNames {
 		excluded[n] = struct{}{}
