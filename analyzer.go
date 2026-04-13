@@ -12,7 +12,7 @@ import (
 )
 
 /*
-*/
+ */
 import "C"
 
 type AnalyzerOutput struct {
@@ -54,9 +54,12 @@ func (o *AnalyzerOptions) SetLanguage(options *LanguageOptions) {
 // analysis.
 //
 // For example, for the query
-//   SELECT * FROM table WHERE CustomerId = @customer_id
+//
+//	SELECT * FROM table WHERE CustomerId = @customer_id
+//
 // the parameter can be added using
-//   analyzerOptions.AddQueryParameter("customer_id", types.Int64Type());
+//
+//	analyzerOptions.AddQueryParameter("customer_id", types.Int64Type());
 //
 // Note that an error will be produced if type is not supported according to
 // the current language options.
@@ -97,9 +100,12 @@ func (o *AnalyzerOptions) ClearQueryParameters() {
 // analysis.
 //
 // For example, for the query
-//   SELECT * FROM table WHERE CustomerId = ?
+//
+//	SELECT * FROM table WHERE CustomerId = ?
+//
 // the parameter can be added using
-//   analyzerOptions.AddPositionalQueryParameter(types.Int64Type());
+//
+//	analyzerOptions.AddPositionalQueryParameter(types.Int64Type());
 //
 // Note that an error will be produced if type is not supported according to
 // the current language options. At least as many positional parameters must
@@ -154,13 +160,17 @@ func (o *AnalyzerOptions) ClearPositionalQueyParameters() {
 // ExpressionColumnNode nodes will always be in lowercase.
 //
 // For example, to support the expression
-//   enabled = true AND cost > 0.0
+//
+//	enabled = true AND cost > 0.0
+//
 // those columns can be added using
-//   analyzerOptions.AddExpressionColumn("enabled", types.BoolType());
-//   analyzerOptions.AddExpressionColumn("cost", types.DoubleType());
+//
+//	analyzerOptions.AddExpressionColumn("enabled", types.BoolType());
+//	analyzerOptions.AddExpressionColumn("cost", types.DoubleType());
 //
 // To evaluate an expression in the scope of a particular proto, like
-//   has_cost AND cost > 0 AND value.cost != 10
+//
+//	has_cost AND cost > 0 AND value.cost != 10
 //
 // Note that an error will be produced if type is not supported according to
 // the current language options.
