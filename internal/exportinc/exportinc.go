@@ -101,6 +101,7 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 	prelude = filterFlexTokenizerExportDuplicateSources(packageDir, prelude)
 	prelude = filterParserPackageExportDuplicateFlex(packageDir, prelude)
 	prelude = filterAlgorithmsUtilLinkOnlySources(packageDir, prelude)
+	prelude = filterGoBaseLoggingLinkOnlySources(packageDir, prelude)
 	if !strings.Contains(packageDir, "/go-absl/types/") {
 		return prelude
 	}
@@ -146,6 +147,24 @@ func filterAlgorithmsUtilLinkOnlySources(packageDir string, prelude []string) []
 	out := make([]string, 0, len(prelude))
 	for _, line := range prelude {
 		if _, ok := dropSet[strings.TrimSpace(line)]; ok {
+			continue
+		}
+		out = append(out, line)
+	}
+	return out
+}
+
+// filterGoBaseLoggingLinkOnlySources drops base/logging.cc for go-base/logging (cclib.link_only_bind_packages).
+// Generator syncs export.inc from amalgamation-shaped bind.cc.tmpl; thin bind.cc is link-only and
+// logging.pic.o lives in libgooglesql.a (//googlesql/base:logging). Parent TUs must not compile the .cc again.
+func filterGoBaseLoggingLinkOnlySources(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-base/logging") {
+		return prelude
+	}
+	const drop = `#include "base/logging.cc"`
+	out := make([]string, 0, len(prelude))
+	for _, line := range prelude {
+		if strings.TrimSpace(line) == drop {
 			continue
 		}
 		out = append(out, line)

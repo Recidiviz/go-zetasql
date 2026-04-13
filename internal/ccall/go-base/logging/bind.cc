@@ -2,7 +2,10 @@
 #ifndef base_logging_bind_cc
 #define base_logging_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy base_logging_differential_privacy
 #define googlesql base_logging_googlesql
 #define googlesql_base base_logging_googlesql_base
@@ -51,21 +54,10 @@
 #define GO_EXPORT(def) export_base_logging_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "base/logging.h"
-//#undef private
-
-// include sources
-#include "base/logging.cc"
-
-// include dependencies
-#include "go-absl/base/base/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/base/log_severity/export.inc"
 
 #include "bridge.h"
 

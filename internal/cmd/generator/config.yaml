@@ -545,6 +545,8 @@ cclib:
   # Requires libgooglesql.a — see docs/link-only-cgo-migration.md.
   link_only_bind_packages:
     - base/status
+    # base/logging.cc — //googlesql/base:logging in libgooglesql.a (extract_googlesql_unified_lib.sh).
+    - base/logging
     # algorithms/util.cc is merged from com_google_cc_differential_privacy into libgooglesql.a;
     # link-only avoids compiling the .cc body in the CGO TU (see extract_googlesql_unified_lib.sh SEARCH_ROOTS).
     - algorithms/util

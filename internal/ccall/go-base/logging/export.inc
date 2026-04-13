@@ -3,7 +3,6 @@
 
 #include "base/logging.h"
 // include sources
-#include "base/logging.cc"
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/core_headers/export.inc"
