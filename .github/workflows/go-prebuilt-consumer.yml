@@ -5,8 +5,10 @@ on:
     paths:
       - ".github/workflows/go-prebuilt-consumer.yml"
       - "internal/ccall/go-protobuf/**"
+      - "internal/ccall/go-googlesql-unified/**"
       - "Taskfile.yml"
       - "scripts/package-protobuf-prebuilt.sh"
+      - "scripts/package-default-prebuilts.sh"
       - "scripts/verify-prebuilt-protobuf.sh"
       - "scripts/verify-protobuf-tier-b-alignment.sh"
       - "scripts/verify-tier-b-cgo-tag-policy.sh"
@@ -16,7 +18,7 @@ on:
 
 jobs:
   producer:
-    name: Build protobuf prebuilts (Bazel)
+    name: Build default prebuilts (Bazel)
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -50,23 +52,25 @@ jobs:
             ${{ runner.os }}-bazel-googlesql-
       - name: Build prebuilts
         run: |
-          task verify:protobuf-tier-b verify:tier-b-cgo-policy prebuilt:protobuf verify:prebuilt-protobuf
+          task verify:protobuf-tier-b verify:tier-b-cgo-policy \
+            prebuilt:protobuf verify:prebuilt-protobuf \
+            prebuilt:googlesql-unified verify:prebuilt-googlesql-unified
         env:
           CC: clang
           CXX: clang++
           BAZEL_JOBS: "4"
       - name: Package tarball for artifact
-        run: bash scripts/package-protobuf-prebuilt.sh
+        run: bash scripts/package-default-prebuilts.sh
       - name: Upload prebuilt tarball
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: protobuf-prebuilts-linux-amd64
-          path: go-googlesql-prebuilts-protobuf-linux_amd64.tar.gz
+          name: default-prebuilts-linux-amd64
+          path: go-googlesql-prebuilts-default-linux_amd64.tar.gz
           if-no-files-found: error
           retention-days: 14
 
   consumer:
-    name: Test with prebuilts only (no Bazel)
+    name: Test default stack with prebuilts only (no Bazel)
     needs: producer
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -90,10 +94,10 @@ jobs:
       - name: Download prebuilt tarball
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: protobuf-prebuilts-linux-amd64
+          name: default-prebuilts-linux-amd64
           path: prebuilt-artifact
       - name: Extract prebuilts into workspace
-        run: tar -xzf prebuilt-artifact/go-googlesql-prebuilts-protobuf-linux_amd64.tar.gz -C "$GITHUB_WORKSPACE"
+        run: tar -xzf prebuilt-artifact/go-googlesql-prebuilts-default-linux_amd64.tar.gz -C "$GITHUB_WORKSPACE"
       - name: Assert Bazel is not on PATH
         run: |
           if command -v bazelisk >/dev/null 2>&1; then echo "error: bazelisk should not be installed on consumer"; exit 1; fi
@@ -102,7 +106,8 @@ jobs:
       - name: Verify and test default prebuilts
         run: |
           task verify:prebuilt-protobuf
-          task test:protobuf-cgo
+          task verify:prebuilt-googlesql-unified
+          task test:local TESTPKG=./
         env:
           CC: clang
           CXX: clang++

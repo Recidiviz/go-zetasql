@@ -153,6 +153,18 @@ A parameterized template lives at [`internal/cmd/generator/templates/bind_tier_b
 
 **Generator:** set **`emit_tier_b_absl_go: true`** in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) and run the generator from [`internal/cmd/generator`](../internal/cmd/generator): it emits **`bind_tier_b_absl.go`** and prepends **`//go:build !googlesql_tier_b_absl`** to generated **`bind_linux.go`** / **`bind_darwin.go`** for each package under **`internal/ccall/go-absl/`**. Default is **`false`** so normal regeneration does not change Tier B–ready trees until you opt in.
 
+## Downstream bootstrap (no Task / no direnv)
+
+Downstream shells must mirror Task’s exports: **`CGO_LDFLAGS_ALLOW`**, **`CGO_LDFLAGS`**, **`CGO_CXXFLAGS`**, not only `CGO_LDFLAGS_*_LIST` from [`scripts/go-googlesql-env.sh`](../scripts/go-googlesql-env.sh). Use:
+
+```bash
+export GO_GOOGLESQL_ROOT=/path/to/go-googlesql   # optional if using the script from that repo
+source "$GO_GOOGLESQL_ROOT/scripts/go-googlesql-stack-bootstrap.sh"
+# then: go test -tags googlesql,googlesql_unified_prebuilt ...
+```
+
+See also [Downstream repositories](#downstream-repositories) and [`README.md`](../README.md#development).
+
 ## Environment variables
 
 | Variable | Role |
@@ -194,7 +206,7 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 
 1. Use the **same** `replace` path or version of `github.com/vantaboard/go-googlesql`.
 2. Build with **identical** tags: `-tags googlesql,googlesql_unified_prebuilt` for the default GoogleSQL CGO path.
-3. Run **`task prebuilt:protobuf`** (or copy the resulting `lib/` tree) in the **go-googlesql** checkout that `replace` points to—downstream does **not** build `libprotobuf_cgo.a` for you.
+3. Run **`task prebuilt:protobuf`** and **`task prebuilt:googlesql-unified`** (or extract the **default release tarball** below) in the **go-googlesql** checkout that `replace` points to—downstream does **not** build those archives for you.
 4. Align **`CGO_CFLAGS`**, **`CGO_LDFLAGS`**, and **`CGO_LDFLAGS_ALLOW`** with this repo’s [`Taskfile.yml`](../Taskfile.yml) when running `go test` / `go build` outside Task.
 
 ### Phase 5 checklist (dependent repos)
@@ -203,28 +215,31 @@ Use this when aligning **go-googlesqlite**, **bigquery-emulator**, or **bigquery
 
 - [ ] Bump / pin the `go-googlesql` module to a version that matches your **release prebuilts** or source tree.
 - [ ] Mirror **build tags** and **`CGO_CXXFLAGS`** / **`CGO_LDFLAGS`** / **`CGO_LDFLAGS_ALLOW`** with this repo’s default protobuf prebuilt settings.
-- [ ] Add CI that either runs **`task prebuilt:protobuf`** (Bazel available) or **downloads and extracts** the matching `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` before `go test`.
+- [ ] Add CI that either runs **`task prebuilt:protobuf`** + **`task prebuilt:googlesql-unified`** (Bazel available) or **downloads and extracts** the matching **`go-googlesql-prebuilts-default-linux_amd64-<tag>.tar.gz`** before `go test`.
 - [ ] Document **sqlite- or product-specific** caveats (linker, single archive owner) in the downstream README and link here—avoid duplicating the full pipeline; open issues only for **gaps** (extra platform, etc.).
 - [ ] For user-visible native contract changes, add **release notes** pointing at this repository’s tag and [`CHANGELOG.md`](../CHANGELOG.md).
 
 ## Release tarballs (`linux_amd64`)
 
-Tagged releases can ship a **default protobuf prebuilt** archive alongside the module (not imported via `go get`):
+Tagged releases ship a **default unified-prebuilt stack** archive alongside the module (not imported via `go get`):
 
-- **Asset name:** `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` (e.g. `<tag>` = `v1.2.3`)
+- **Asset name:** `go-googlesql-prebuilts-default-linux_amd64-<tag>.tar.gz` (e.g. `<tag>` = `v1.2.3`)
+- **Contents:** `internal/ccall/go-protobuf/protobuf/lib/` (same as `task prebuilt:protobuf`) **and** `internal/ccall/go-googlesql-unified/lib/` (same as `task prebuilt:googlesql-unified`), plus `go-googlesql-prebuilts-manifest.json` (tag, sha, `GOOS_GOARCH`, schema).
 - **Checksums:** `SHA256SUMS` on the same [GitHub Release](https://github.com/vantaboard/go-googlesql/releases)
 - **Workflow:** [`.github/workflows/release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml) (runs on `push` of `v*` tags)
+- **Packaging:** `bash scripts/package-default-prebuilts.sh` or **`task package:default-prebuilts-tarball`**
 
-**Install:**
+**Protobuf-only tarball** (narrow CI / debugging): `bash scripts/package-protobuf-prebuilt.sh` still produces `go-googlesql-prebuilts-protobuf-${GOOS_GOARCH}.tar.gz` with only the protobuf `lib/` tree—use for **`task test:protobuf-cgo`**, not for full **`googlesql,googlesql_unified_prebuilt`** links without also supplying `libgooglesql.a`.
+
+**Install (default stack):**
 
 ```bash
 # From repo root after verifying SHA256SUMS
-tar -xzf go-googlesql-prebuilts-protobuf-linux_amd64-vX.Y.Z.tar.gz
+tar -xzf go-googlesql-prebuilts-default-linux_amd64-vX.Y.Z.tar.gz
 task verify:prebuilt-protobuf
-task test:protobuf-cgo
+task verify:prebuilt-googlesql-unified
+task test:local TESTPKG=./
 ```
-
-The tarball contains `internal/ccall/go-protobuf/protobuf/lib/` with the same layout as `task prebuilt:protobuf`.
 
 ## Versioning (tarball ↔ git ↔ module)
 
@@ -234,7 +249,7 @@ The tarball contains `internal/ccall/go-protobuf/protobuf/lib/` with the same la
 | Go module version | `go.mod` / `github.com/vantaboard/go-googlesql` **semver** matching the tag you depend on in `require` |
 | Prebuilt archive bytes | Built from that tag’s tree; **verify** `SHA256SUMS` when downloading |
 
-Downstream apps should pin the **same** module version and unpack the matching release asset (or rebuild with `task prebuilt:protobuf` on that checkout).
+Downstream apps should pin the **same** module version and unpack the matching release asset (or rebuild with `task prebuilt:protobuf` **and** `task prebuilt:googlesql-unified` on that checkout).
 
 ## Artifact matrix (CI vs local)
 
@@ -243,8 +258,8 @@ Downstream apps should pin the **same** module version and unpack the matching r
 | Default **GitHub Actions** ([`go.yml`](../.github/workflows/go.yml)) | Protobuf + `libgooglesql.a` built on the runner, then `task test:local` | `googlesql,googlesql_unified_prebuilt` |
 | **Manual default-prebuilt workflow** ([`go-tier-b-prebuilt.yml`](../.github/workflows/go-tier-b-prebuilt.yml)) | Built on the runner with Bazel, then `task test:protobuf-cgo` | `googlesql,googlesql_unified_prebuilt` |
 | **Manual Abseil Tier B** ([`go-tier-b-absl-prebuilt.yml`](../.github/workflows/go-tier-b-absl-prebuilt.yml)) | Builds `libabsl_cgo.a`, then `task test:tier-b-absl` | `googlesql,googlesql_tier_b_absl` |
-| **Consumer gate (no Bazel)** ([`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml)) | Protobuf artifact; extract then `task test:protobuf-cgo` | `googlesql,googlesql_unified_prebuilt` |
-| **GitHub Release** ([`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml)) | Published tarball per `v*` tag | N/A (download + extract) |
+| **Consumer gate (no Bazel)** ([`go-prebuilt-consumer.yml`](../.github/workflows/go-prebuilt-consumer.yml)) | Default bundle artifact; extract then `task verify:*` + `task test:local TESTPKG=./` | `googlesql,googlesql_unified_prebuilt` |
+| **GitHub Release** ([`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml)) | Published **default** tarball per `v*` tag | N/A (download + extract) |
 | **Local dev** | Run `task prebuilt:protobuf` + `task prebuilt:googlesql-unified` (and `task prebuilt:absl` for Tier B) | `googlesql,googlesql_unified_prebuilt` or pilot tags |
 
 Static `.a` files remain **gitignored**; published **tarballs** are optional release assets, not part of the Go module zip.

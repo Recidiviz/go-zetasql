@@ -76,6 +76,12 @@ tasks:
     cmds:
       - bash scripts/package-protobuf-prebuilt.sh
 
+  package:default-prebuilts-tarball:
+    deps: [verify:prebuilt-protobuf, verify:prebuilt-googlesql-unified]
+    desc: Tar protobuf + googlesql-unified lib trees + manifest (default googlesql_unified_prebuilt stack)
+    cmds:
+      - bash scripts/package-default-prebuilts.sh
+
   sync:protobuf-vendor-from-bazel:
     cmds:
       - bash scripts/sync-protobuf-cpp-runtime-from-bazel.sh

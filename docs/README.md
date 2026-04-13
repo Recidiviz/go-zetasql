@@ -7,6 +7,7 @@ Use this map to find the right note. **Supported default:** `googlesql` + `googl
 | Doc | Purpose |
 |-----|---------|
 | [prebuilt-cgo.md](prebuilt-cgo.md) | Tags, env, building and verifying archives, release tarballs, downstream repos |
+| [stack-release-policy.md](stack-release-policy.md) | Version alignment: `go-googlesql` tag, default prebuilt tarball, downstream `replace`, `GO_GOOGLESQL_BASE` |
 | [link-only-cgo-migration.md](link-only-cgo-migration.md) | Link-only `bind.cc`, generator workflow, verification commands |
 | [libgooglesql-unified.md](libgooglesql-unified.md) | `libgooglesql.a` layout, C ABI, Bazel target list, Textmapper gotchas |
 | [native-build-pipeline.md](native-build-pipeline.md) | Bazel → static archives, install-prefix sketch, shard rollout history |

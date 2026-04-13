@@ -1,5 +1,5 @@
-# Attach the default protobuf prebuilt tarball + SHA256SUMS to the same tag as the Docker release.
-# Primary "no Bazel" artifact for linux_amd64 (see docs/prebuilt-cgo.md, docs/ci-bazel-cache.md).
+# Attach the default unified-prebuilt stack tarball + SHA256SUMS to the same tag as the Docker release.
+# Contains libprotobuf_cgo.a + libgooglesql.a trees (see docs/prebuilt-cgo.md).
 name: Release prebuilt archives
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  protobuf-prebuilt-tarball:
+  default-prebuilts-tarball:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -44,21 +44,23 @@ jobs:
             ${{ runner.os }}-bazel-googlesql-
       - name: Build and verify prebuilts
         run: |
-          task verify:protobuf-tier-b verify:tier-b-cgo-policy prebuilt:protobuf verify:prebuilt-protobuf
+          task verify:protobuf-tier-b verify:tier-b-cgo-policy \
+            prebuilt:protobuf verify:prebuilt-protobuf \
+            prebuilt:googlesql-unified verify:prebuilt-googlesql-unified
         env:
           CC: clang
           CXX: clang++
           BAZEL_JOBS: "4"
       - name: Package release tarball and checksums
         run: |
-          OUT="go-googlesql-prebuilts-protobuf-linux_amd64-${GITHUB_REF_NAME}.tar.gz"
-          OUTPUT_NAME="$OUT" bash scripts/package-protobuf-prebuilt.sh
+          OUT="go-googlesql-prebuilts-default-linux_amd64-${GITHUB_REF_NAME}.tar.gz"
+          GIT_TAG="${GITHUB_REF_NAME}" GIT_SHA="${GITHUB_SHA}" OUTPUT_NAME="$OUT" bash scripts/package-default-prebuilts.sh
           sha256sum "$OUT" > SHA256SUMS
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            go-googlesql-prebuilts-protobuf-linux_amd64-*.tar.gz
+            go-googlesql-prebuilts-default-linux_amd64-*.tar.gz
             SHA256SUMS
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
