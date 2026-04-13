@@ -71,6 +71,7 @@
 #include "go-absl/flags/marshalling/export.inc"
 #include "go-absl/log/go_internal/config/export.inc"
 #include "go-absl/log/go_internal/flags/export.inc"
+#include "go-absl/log/go_internal/vlog_config/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

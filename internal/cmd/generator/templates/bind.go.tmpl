@@ -42,10 +42,24 @@ package {{ .Pkg }}
 #cgo LDFLAGS: {{ . }}
 {{- end }}
 
+{{- if .UnifiedRootBindPreamble }}
+#include "bridge.h"
+{{- range .BridgeHeaderIncludes }}
+#undef GO_EXPORT
+#define GO_EXPORT(API) export_{{ .ExportFQDN }}_ ## API
+#include "{{ .Header }}"
+{{- end }}
+#undef GO_EXPORT
+#define GO_EXPORT(API) export_absl_time_internal_cctz_time_zone_ ## API
+#include "../go-absl/time/go_internal/cctz/time_zone/bridge.h"
+{{- else }}
 #define GO_EXPORT(API) export_{{ $fqdn }}_ ## API
 #include "bridge.h"
-{{- range .BridgeHeaders }}
-#include "{{ . }}"
+{{- range .DepBridgeIncludes }}
+#undef GO_EXPORT
+#define GO_EXPORT(API) export_{{ .ExportFQDN }}_ ## API
+#include "{{ .Header }}"
+{{- end }}
 {{- end }}
 */
 import "C"
@@ -82,12 +96,12 @@ func {{ .Name }}({{- range $index, $value := .Args }}arg{{ $index }} {{ $value.G
 }
 
 func {{ .BasePkg }}_{{ .Name }}({{- range $index, $value := .Args }}arg{{ $index }} {{ $value.CGO }},{{- end }}) {
-	C.export_{{ $fqdn }}_{{ .Name }}({{- range $index, $value := .Args }}arg{{ $index }},{{- end }})
+	C.export_{{ if .ExportFQDN }}{{ .ExportFQDN }}{{ else }}{{ $fqdn }}{{ end }}_{{ .Name }}({{- range $index, $value := .Args }}arg{{ $index }},{{- end }})
 }
 {{- end }}
 
 {{- range .ExportFuncs }}
-//export export_{{ $fqdn }}_{{ .Name }}
-//go:linkname export_{{ $fqdn }}_{{ .Name }} {{ .LibName }}.{{ .BasePkg }}_{{ .Name }}
-func export_{{ $fqdn }}_{{ .Name }}({{- range $index, $value := .Args }}arg{{ $index }} {{ $value.CGO }},{{- end }})
+//export export_{{ if .ExportFQDN }}{{ .ExportFQDN }}{{ else }}{{ $fqdn }}{{ end }}_{{ .Name }}
+//go:linkname export_{{ if .ExportFQDN }}{{ .ExportFQDN }}{{ else }}{{ $fqdn }}{{ end }}_{{ .Name }} {{ .LibName }}.{{ .BasePkg }}_{{ .Name }}
+func export_{{ if .ExportFQDN }}{{ .ExportFQDN }}{{ else }}{{ $fqdn }}{{ end }}_{{ .Name }}({{- range $index, $value := .Args }}arg{{ $index }} {{if $value.ExportStubGO}}{{$value.ExportStubGO}}{{else}}{{$value.CGO}}{{end}},{{- end }})
 {{- end }}

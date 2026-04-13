@@ -45,7 +45,6 @@ package optional_ref
 #cgo LDFLAGS: -l:libcxx_prebuilt.a
 #cgo LDFLAGS: -l:libcxxabi_prebuilt.a
 #cgo LDFLAGS: -Wl,--end-group
-
 #define GO_EXPORT(API) export_googlesql_base_optional_ref_ ## API
 #include "bridge.h"
 */

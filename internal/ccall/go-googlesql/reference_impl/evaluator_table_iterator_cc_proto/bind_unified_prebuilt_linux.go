@@ -45,7 +45,6 @@ package evaluator_table_iterator_cc_proto
 #cgo LDFLAGS: -l:libcxx_prebuilt.a
 #cgo LDFLAGS: -l:libcxxabi_prebuilt.a
 #cgo LDFLAGS: -Wl,--end-group
-
 #define GO_EXPORT(API) export_googlesql_reference_impl_evaluator_table_iterator_cc_proto_ ## API
 #include "bridge.h"
 */

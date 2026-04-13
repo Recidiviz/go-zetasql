@@ -21,6 +21,15 @@ import (
 // defaultCgoStd is the -std= value for generated #cgo CXXFLAGS (matches upstream Bazel / GoogleSQL).
 const defaultCgoStd = "c++20"
 
+// cctzBridgePackage is the ImportSymbol package key for Abseil cctz. Its bridge uses
+// export_absl_time_internal_cctz_time_zone_*; the go-absl cctz bind already emits matching //exports.
+// Emitting linkname stubs for this dep duplicates declarations vs bridge_extern.h (conflicting types).
+const cctzBridgePackage = "absl/time/internal/cctz/time_zone"
+
+// parserBridgePackage is the full AST/parser shard; it has a dedicated bind with //exports. Skip
+// linkname stubs for this dep (type conflicts vs parser/bridge_extern.h when GO_EXPORT is correct).
+const parserBridgePackage = "googlesql/parser/parser"
+
 var (
 	bazelSupportedLibs = []string{"googlesql", "absl", "algorithms", "base", "proto"}
 	includeDirs        = []string{"protobuf", "utf8_range", "gtest", "icu", "re2", "json", "googleapis", "boringssl", "flex/src"}
@@ -523,11 +532,31 @@ func (g *Generator) pkgs() []*Package {
 	return pkgs
 }
 
+// rootBridgeHShard is one amalgamation shard included from go-googlesql/bridge.h with a matching
+// export_<fqdn>_ GO_EXPORT prefix (see bind_unified CGO preamble).
+type rootBridgeHShard struct {
+	Include string // e.g. ../go-googlesql/public/analyzer/bridge_extern.h
+	FQDN    string // e.g. googlesql_public_analyzer (token pasted into export_<fqdn>_Name)
+}
+
+func (g *Generator) rootBridgeHShards() []rootBridgeHShard {
+	var out []rootBridgeHShard
+	for _, name := range g.rootGoogleSQLAmalgamationLibs() {
+		goPath := normalizeGoPkgPath(name)
+		inc := filepath.ToSlash(filepath.Join("..", goPath, "bridge_extern.h"))
+		out = append(out, rootBridgeHShard{
+			Include: inc,
+			FQDN:    g.ccallExportFQDNForBridgePackage(name),
+		})
+	}
+	return out
+}
+
 func (g *Generator) generateRootBridgeH(outputDir string) error {
-	libs := g.rootGoogleSQLAmalgamationLibs()
+	shards := g.rootBridgeHShards()
 	output, err := g.generateCCSourceByTemplate(
 		"templates/root_bridge.h.tmpl",
-		libs,
+		shards,
 	)
 	if err != nil {
 		return err
@@ -683,6 +712,23 @@ func (g *Generator) generateBindGOLinkOnly(outputDir string, lib *Lib) error {
 	darwinUnifiedBytes, err := g.generateGoSourceByTemplate("templates/bind.go.tmpl", darwinUnified)
 	if err != nil {
 		return err
+	}
+
+	// Avoid cgo resolving C.export_googlesql_public_sql_formatter_FormatSql back to the Go //export
+	// when root emits a linkname stub: call the bridge.inc shim instead (see bridge.inc).
+	// cgo needs an explicit declaration in this TU (nested #include from bridge.h is not enough).
+	const sqlFmtShimDecl = `#include "bridge.h"
+extern void googlesql_format_sql_go_shim(void *arg0, void **arg1, void **arg2);
+`
+	if LibPkgKey(lib.BasePkg, lib.Name) == "googlesql/public/sql_formatter" {
+		old := []byte(`#include "bridge.h"
+`)
+		linuxUnifiedBytes = bytes.Replace(linuxUnifiedBytes, old, []byte(sqlFmtShimDecl), 1)
+		darwinUnifiedBytes = bytes.Replace(darwinUnifiedBytes, old, []byte(sqlFmtShimDecl), 1)
+		rep := []byte(`C.export_googlesql_public_sql_formatter_FormatSql`)
+		shim := []byte(`C.googlesql_format_sql_go_shim`)
+		linuxUnifiedBytes = bytes.ReplaceAll(linuxUnifiedBytes, rep, shim)
+		darwinUnifiedBytes = bytes.ReplaceAll(darwinUnifiedBytes, rep, shim)
 	}
 
 	uniPre := linkOnlyUnifiedGoBuildPrefix(g.cfg)
@@ -1277,8 +1323,10 @@ type BindGoParam struct {
 	ExtraCXXFlags []string
 	LDFlags       []string
 	// ExtraLDFlags are emitted as extra #cgo LDFLAGS lines (e.g. -L/-lgooglesql).
-	ExtraLDFlags  []string
-	BridgeHeaders []string
+	ExtraLDFlags []string
+	// DepBridgeIncludes lists dependency bridge.h files for non-unified preambles: each entry sets
+	// GO_EXPORT to export_<ExportFQDN>_ before including Header (must match that dep's bind.cc).
+	DepBridgeIncludes []bridgeHeaderInclude
 	// ImportGoLibsLinkOrderFirst, if non-empty, is emitted as a separate import block before
 	// ImportGoLibs. gofmt sorts paths alphabetically within one block, which placed
 	// go-googlesql-unified before go-protobuf and made cmd/link emit -lgooglesql before
@@ -1286,7 +1334,17 @@ type BindGoParam struct {
 	ImportGoLibsLinkOrderFirst []string
 	ImportGoLibs               []string
 	Funcs                      []Func
-	ExportFuncs   []ExportFunc
+	ExportFuncs                []ExportFunc
+	// BridgeHeaderIncludes lists dependency bridge.h files for the unified prebuilt root preamble:
+	// each entry sets GO_EXPORT to export_<ExportFQDN>_ before including Header.
+	BridgeHeaderIncludes []bridgeHeaderInclude
+	// UnifiedRootBindPreamble selects the multi-fqdn #cgo block in bind.go.tmpl (root go-googlesql only).
+	UnifiedRootBindPreamble bool
+}
+
+type bridgeHeaderInclude struct {
+	ExportFQDN string
+	Header     string
 }
 
 type BridgeExternParam struct {
@@ -1297,6 +1355,9 @@ type Func struct {
 	BasePkg string
 	Name    string
 	Args    []Type
+	// ExportFQDN, when set, overrides BindGoParam.FQDN for the C symbol name in bind.go.tmpl
+	// (root unified prebuilt: each bridge shard uses export_<lib-specific fqdn>_API).
+	ExportFQDN string
 }
 
 type ExportFunc struct {
@@ -1310,13 +1371,45 @@ type Type struct {
 	NeedsCast    bool
 	GO           string
 	CGO          string
+	// ExportStubGO, when set, is used in //export forwarders only (cgo forbids C.char / *C.char there).
+	ExportStubGO string
 	C            string
+}
+
+func exportStubGOFromCGO(cgo string) string {
+	switch cgo {
+	case "*C.char", "*C.uchar", "*C.schar":
+		return "unsafe.Pointer"
+	case "C.char", "C.uchar":
+		return "byte"
+	default:
+		return cgo
+	}
+}
+
+func exportStubTypes(fn Func) Func {
+	out := fn
+	out.Args = make([]Type, len(fn.Args))
+	for i, t := range fn.Args {
+		t.ExportStubGO = exportStubGOFromCGO(t.CGO)
+		out.Args[i] = t
+	}
+	return out
 }
 
 func (t *Type) GoToC(index int) string {
 	argName := fmt.Sprintf("arg%d", index)
 	if t.IsRetType {
 		return fmt.Sprintf("(%s)(unsafe.Pointer(%s))", t.CGO, argName)
+	}
+	if !t.NeedsCast {
+		return argName
+	}
+	if t.CGO == "unsafe.Pointer" {
+		if t.GO == "unsafe.Pointer" {
+			return argName
+		}
+		return fmt.Sprintf("unsafe.Pointer(%s)", argName)
 	}
 	return fmt.Sprintf("%s(%s)", t.CGO, argName)
 }
@@ -1416,7 +1509,17 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 		includePaths = append(includePaths, filepath.Join(ccallDir, includeDir))
 	}
 	param.IncludePaths = includePaths
-	bridgeHeaderMap := map[string]struct{}{}
+	param.UnifiedRootBindPreamble = true
+	// Shards in root bridge.h whose //export linkname stubs conflict with the amalgamated
+	// bridge_extern.h (cgo conflicting types). sql_formatter is omitted: it has no dep //exports
+	// and still needs root linkname stubs for symbols such as FormatSql.
+	rootNoExportLinknameDep := map[string]struct{}{
+		"googlesql/public/analyzer":       {},
+		"googlesql/public/catalog":        {},
+		"googlesql/public/simple_catalog": {},
+	}
+	// The same dependency (e.g. cctz) appears for many pkgs; dedupe linkname //export stubs by dep + method.
+	exportRootLinknameSeen := map[string]struct{}{}
 	for _, pkg := range g.pkgs() {
 		// Parser methods use export_googlesql_parser_parser_* in parser/parser/bind_linux.go only.
 		if pkg.Name == "googlesql/parser/parser" {
@@ -1427,37 +1530,104 @@ func (g *Generator) createRootBindGoParam(cxxflags, ldflags []string) *BindGoPar
 			if dep == pkgName {
 				continue
 			}
-			pkg, exists := g.importSymbolPackageMap[dep]
+			depPkg, exists := g.pkgMap[dep]
 			if !exists {
 				continue
 			}
 			goPkgPath := normalizeGoPkgPath(dep)
 			libName := fmt.Sprintf("github.com/vantaboard/go-googlesql/internal/ccall/%s", goPkgPath)
 			param.ImportGoLibs = append(param.ImportGoLibs, libName)
-			basePkg := sanitizeIdentifier(filepath.Base(goPkgPath))
-			bridgeHeader := filepath.Join(ccallDir, goPkgPath, "bridge.h")
-			if _, exists := bridgeHeaderMap[bridgeHeader]; exists {
+			if _, skip := rootNoExportLinknameDep[dep]; skip {
 				continue
 			}
-			param.BridgeHeaders = append(param.BridgeHeaders, bridgeHeader)
-			bridgeHeaderMap[bridgeHeader] = struct{}{}
-			for _, method := range pkg.Methods {
+			if dep == cctzBridgePackage || dep == parserBridgePackage {
+				continue
+			}
+			basePkg := sanitizeIdentifier(filepath.Base(goPkgPath))
+			// Root unified bind calls C.export_* for every shard; thin subpackage binds do not
+			// //export most symbols. These linkname stubs provide the symbol for the root cgo TU,
+			// forwarding to the subpackage inner *_Name shims. Use exportStubTypes so //export
+			// signatures avoid C.char / *C.char (cgo restriction).
+			for _, method := range depPkg.Methods {
 				method := method
+				dedupeKey := libName + "\x00" + method.Name
+				if _, dup := exportRootLinknameSeen[dedupeKey]; dup {
+					continue
+				}
+				exportRootLinknameSeen[dedupeKey] = struct{}{}
 				fn, needsImportUnsagePkg := g.pkgMethodToFunc(basePkg, &method)
+				fn.ExportFQDN = g.ccallExportFQDNForBridgePackage(dep)
 				if needsImportUnsagePkg {
 					param.ImportUnsafePkg = true
 				}
 				param.ExportFuncs = append(param.ExportFuncs, ExportFunc{
-					Func:    fn,
+					Func:    exportStubTypes(fn),
 					LibName: libName,
 				})
 			}
 		}
-		funcs, needsImportUnsafePkg := g.pkgToFuncs("googlesql", pkg)
+		exportFQDN := g.ccallExportFQDNForBridgePackage(pkg.Name)
+		funcs, needsImportUnsafePkg := g.pkgToFuncsWithExportFQDN(exportFQDN, "googlesql", pkg)
 		param.Funcs = append(param.Funcs, funcs...)
 		if needsImportUnsafePkg {
 			param.ImportUnsafePkg = true
 		}
+	}
+	// Root calls C.export_googlesql_public_sql_formatter_*; no other shard lists sql_formatter in
+	// pkgToAllDeps. sql_formatter_FormatSql uses googlesql_format_sql_go_shim in bridge.inc so
+	// linkname //export stubs do not recurse through C.export_*.
+	if sqlPkg, ok := g.pkgMap["googlesql/public/sql_formatter"]; ok {
+		const sqlFmtLib = "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql/public/sql_formatter"
+		param.ImportGoLibs = appendUniqueGoImport(param.ImportGoLibs, sqlFmtLib)
+		basePkg := "sql_formatter"
+		for _, method := range sqlPkg.Methods {
+			method := method
+			dedupeKey := sqlFmtLib + "\x00" + method.Name
+			if _, dup := exportRootLinknameSeen[dedupeKey]; dup {
+				continue
+			}
+			exportRootLinknameSeen[dedupeKey] = struct{}{}
+			fn, needsImportUnsagePkg := g.pkgMethodToFunc(basePkg, &method)
+			fn.ExportFQDN = g.ccallExportFQDNForBridgePackage("googlesql/public/sql_formatter")
+			if needsImportUnsagePkg {
+				param.ImportUnsafePkg = true
+			}
+			param.ExportFuncs = append(param.ExportFuncs, ExportFunc{
+				Func:    exportStubTypes(fn),
+				LibName: sqlFmtLib,
+			})
+		}
+	}
+	// Root bridge.h already embeds analyzer/catalog/simple_catalog/sql_formatter externs; every
+	// other cc_library shard still needs its bridge_extern.h included with the matching export_ fqdn.
+	bridgeSeen := map[string]struct{}{}
+	rootBridgeEmbedded := map[string]struct{}{
+		"googlesql/public/analyzer":       {},
+		"googlesql/public/catalog":        {},
+		"googlesql/public/simple_catalog": {},
+		"googlesql/public/sql_formatter":  {},
+	}
+	for _, pkg := range g.pkgs() {
+		if pkg.Name == "googlesql/parser/parser" {
+			continue
+		}
+		if _, embedded := rootBridgeEmbedded[pkg.Name]; embedded {
+			continue
+		}
+		// Appended explicitly after BridgeHeaderIncludes in bind.go.tmpl (UnifiedRootBindPreamble).
+		if pkg.Name == "absl/time/internal/cctz/time_zone" {
+			continue
+		}
+		goPkgPath := normalizeGoPkgPath(pkg.Name)
+		bridgeHeader := filepath.Join(ccallDir, goPkgPath, "bridge.h")
+		if _, exists := bridgeSeen[bridgeHeader]; exists {
+			continue
+		}
+		bridgeSeen[bridgeHeader] = struct{}{}
+		param.BridgeHeaderIncludes = append(param.BridgeHeaderIncludes, bridgeHeaderInclude{
+			ExportFQDN: g.ccallExportFQDNForBridgePackage(pkg.Name),
+			Header:     bridgeHeader,
+		})
 	}
 	param.ImportGoLibs = append(param.ImportGoLibs,
 		"github.com/vantaboard/go-googlesql/internal/ccall/utf8_range_link",
@@ -1483,33 +1653,22 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 	}
 	param.IncludePaths = includePaths
 	pkgName := LibPkgKey(lib.BasePkg, lib.Name)
-	exportFuncs := []ExportFunc{}
-	bridgeHeaders := []string{}
+	depBridgeIncludes := []bridgeHeaderInclude{}
 	importGoLibs := []string{}
 	for _, dep := range g.pkgToAllDeps[pkgName] {
 		if dep == pkgName {
 			continue
 		}
-		pkg, exists := g.importSymbolPackageMap[dep]
-		if !exists {
+		if _, exists := g.pkgMap[dep]; !exists {
 			continue
 		}
 		goPkgPath := normalizeGoPkgPath(dep)
 		libName := fmt.Sprintf("github.com/vantaboard/go-googlesql/internal/ccall/%s", goPkgPath)
 		importGoLibs = append(importGoLibs, libName)
-		basePkg := sanitizeIdentifier(filepath.Base(goPkgPath))
-		bridgeHeaders = append(bridgeHeaders, filepath.Join(ccallDir, goPkgPath, "bridge.h"))
-		for _, method := range pkg.Methods {
-			method := method
-			fn, needsImportUnsagePkg := g.pkgMethodToFunc(basePkg, &method)
-			if needsImportUnsagePkg {
-				param.ImportUnsafePkg = true
-			}
-			exportFuncs = append(exportFuncs, ExportFunc{
-				Func:    fn,
-				LibName: libName,
-			})
-		}
+		depBridgeIncludes = append(depBridgeIncludes, bridgeHeaderInclude{
+			ExportFQDN: g.ccallExportFQDNForBridgePackage(dep),
+			Header:     filepath.Join(ccallDir, goPkgPath, "bridge.h"),
+		})
 	}
 	param.ImportGoLibs = importGoLibs
 	for _, extra := range g.cfg.CCLib.ExtraBindGoImports {
@@ -1518,8 +1677,9 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 		}
 		param.ImportGoLibs = append(param.ImportGoLibs, extra.Imports...)
 	}
-	param.BridgeHeaders = bridgeHeaders
-	param.ExportFuncs = exportFuncs
+	param.DepBridgeIncludes = depBridgeIncludes
+	// Dep //export linkname stubs live only in root bind (createRootBindGoParam).
+
 	if pkg, exists := g.pkgMap[pkgName]; exists {
 		pkg := pkg
 		funcs, needsImportUnsafePkg := g.pkgToFuncs(sanitizeIdentifier(lib.Name), &pkg)
@@ -1535,17 +1695,42 @@ func (g *Generator) createBindGoParam(lib *Lib, cxxflags, ldflags []string) *Bin
 }
 
 func (g *Generator) pkgToFuncs(pkgName string, pkg *Package) ([]Func, bool) {
+	return g.pkgToFuncsWithExportFQDN("", pkgName, pkg)
+}
+
+// pkgToFuncsWithExportFQDN builds Func entries for a bridge package. If exportFQDN is non-empty,
+// each Func's ExportFQDN is set so unified root bind.go.tmpl emits C.export_<exportFQDN>_Name
+// (must match link-only bind.cc GO_EXPORT for that shard's bridge.inc).
+func (g *Generator) pkgToFuncsWithExportFQDN(exportFQDN, pkgName string, pkg *Package) ([]Func, bool) {
 	needsImportUnsafePkg := false
 	funcs := make([]Func, 0, len(pkg.Methods))
 	for _, method := range pkg.Methods {
 		method := method
 		fn, needsUnsafePkg := g.pkgMethodToFunc(pkgName, &method)
+		fn.ExportFQDN = exportFQDN
 		funcs = append(funcs, fn)
 		if needsUnsafePkg {
 			needsImportUnsafePkg = true
 		}
 	}
 	return funcs, needsImportUnsafePkg
+}
+
+// ccallExportFQDNForBridgePackage returns the export name prefix segment (same as bind_link_only.cc.tmpl
+// export_<fqdn>_) for the cc_library that owns this bridge package, e.g. googlesql/public/analyzer ->
+// googlesql_public_analyzer.
+func (g *Generator) ccallExportFQDNForBridgePackage(pkgName string) string {
+	lib, ok := g.libMap[pkgName]
+	if ok {
+		nb := mapBazelRootToCcallPath(lib.BasePkg)
+		basePrefix := sanitizeIdentifier(strings.ReplaceAll(nb, "/", "_"))
+		return fmt.Sprintf("%s_%s", basePrefix, sanitizeIdentifier(lib.Name))
+	}
+	segs := strings.Split(pkgName, "/")
+	if len(segs) >= 2 && segs[0] == "googlesql" {
+		return sanitizeIdentifier(strings.Join(segs, "_"))
+	}
+	return "googlesql"
 }
 
 func (g *Generator) pkgMethodToFunc(pkgName string, method *Method) (Func, bool) {
@@ -1576,19 +1761,21 @@ func (g *Generator) pkgMethodToFunc(pkgName string, method *Method) (Func, bool)
 		if cgoType == "" {
 			log.Fatalf("unexpected type: %s.%s.%s", pkgName, method.Name, ret)
 		}
+		fullCGO := "*" + cgoType
 		if cgoType == "unsafe.Pointer" {
 			needsImportUnsafePkg = true
 		}
 		goType := g.toGoType(ret)
-		needsCast := goType != cgoType
+		goFull := "*" + goType
+		needsCast := goFull != fullCGO
 		if needsCast {
 			needsImportUnsafePkg = true
 		}
 		args = append(args, Type{
 			IsRetType: true,
 			NeedsCast: needsCast,
-			GO:        "*" + goType,
-			CGO:       "*" + cgoType,
+			GO:        goFull,
+			CGO:       fullCGO,
 		})
 	}
 	fn.Args = args

@@ -9,10 +9,8 @@
 #include "absl/crc/internal/crc_x86_arm_combined.cc"
 // include dependencies
 #include "go-absl/crc/cpu_detect/export.inc"
-#include "go-absl/base/base/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
-#include "go-absl/base/dynamic_annotations/export.inc"
 #include "go-absl/base/endian/export.inc"
 #include "go-absl/base/prefetch/export.inc"
 #include "go-absl/base/raw_logging_internal/export.inc"

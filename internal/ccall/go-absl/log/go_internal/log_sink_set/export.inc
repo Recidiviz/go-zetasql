@@ -11,6 +11,7 @@
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/log_severity/export.inc"
+#include "go-absl/base/no_destructor/export.inc"
 #include "go-absl/base/raw_logging_internal/export.inc"
 #include "go-absl/cleanup/cleanup/export.inc"
 #include "go-absl/log/globals/export.inc"

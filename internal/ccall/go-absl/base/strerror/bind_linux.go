@@ -36,7 +36,6 @@ package strerror
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_base_strerror_ ## API
 #include "bridge.h"
 */

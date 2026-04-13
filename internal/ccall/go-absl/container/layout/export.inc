@@ -6,6 +6,7 @@
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/debugging/demangle_internal/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/types/span/export.inc"

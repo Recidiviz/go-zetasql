@@ -36,7 +36,6 @@ package append_truncated
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_log_internal_append_truncated_ ## API
 #include "bridge.h"
 */

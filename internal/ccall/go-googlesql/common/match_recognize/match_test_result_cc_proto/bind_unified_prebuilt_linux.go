@@ -45,7 +45,6 @@ package match_test_result_cc_proto
 #cgo LDFLAGS: -l:libcxx_prebuilt.a
 #cgo LDFLAGS: -l:libcxxabi_prebuilt.a
 #cgo LDFLAGS: -Wl,--end-group
-
 #define GO_EXPORT(API) export_googlesql_common_match_recognize_match_test_result_cc_proto_ ## API
 #include "bridge.h"
 */

@@ -31,7 +31,6 @@ package gaussian_stddev_calculator
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
-
 #define GO_EXPORT(API) export_algorithms_internal_gaussian_stddev_calculator_ ## API
 #include "bridge.h"
 */

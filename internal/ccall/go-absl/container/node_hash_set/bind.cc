@@ -62,12 +62,14 @@
 // include sources
 
 // include dependencies
-#include "go-absl/container/hash_function_defaults/export.inc"
+#include "go-absl/container/container_memory/export.inc"
+#include "go-absl/container/hash_container_defaults/export.inc"
 #include "go-absl/container/node_slot_policy/export.inc"
 #include "go-absl/container/raw_hash_set/export.inc"
 #include "go-absl/algorithm/container/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/memory/memory/export.inc"
+#include "go-absl/meta/type_traits/export.inc"
 
 #include "bridge.h"
 

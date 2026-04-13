@@ -67,7 +67,9 @@
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/log_severity/export.inc"
+#include "go-absl/base/raw_logging_internal/export.inc"
 #include "go-absl/hash/hash/export.inc"
+#include "go-absl/log/go_internal/vlog_config/export.inc"
 #include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"

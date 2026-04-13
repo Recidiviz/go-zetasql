@@ -25,6 +25,7 @@
 #include "go-absl/base/cycleclock_internal/export.inc"
 #include "go-absl/base/dynamic_annotations/export.inc"
 #include "go-absl/base/log_severity/export.inc"
+#include "go-absl/base/nullability/export.inc"
 #include "go-absl/base/raw_logging_internal/export.inc"
 #include "go-absl/base/spinlock_wait/export.inc"
 #include "go-absl/meta/type_traits/export.inc"

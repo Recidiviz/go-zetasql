@@ -65,6 +65,7 @@
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/endian/export.inc"
+#include "go-absl/base/prefetch/export.inc"
 #include "go-absl/numeric/int128/export.inc"
 
 #include "bridge.h"

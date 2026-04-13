@@ -39,7 +39,6 @@ package simple_model_cc_proto
 #cgo LDFLAGS: -Wl,-force_load,${SRCDIR}/../../../go-googlesql-unified/lib/libgooglesql.a
 #cgo LDFLAGS: -lz
 #cgo LDFLAGS: -lc++
-
 #define GO_EXPORT(API) export_googlesql_public_simple_model_cc_proto_ ## API
 #include "bridge.h"
 */

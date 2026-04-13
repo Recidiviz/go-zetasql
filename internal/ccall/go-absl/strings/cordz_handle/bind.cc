@@ -63,8 +63,8 @@
 #include "absl/strings/internal/cordz_handle.cc"
 
 // include dependencies
-#include "go-absl/base/base/export.inc"
 #include "go-absl/base/config/export.inc"
+#include "go-absl/base/no_destructor/export.inc"
 #include "go-absl/base/raw_logging_internal/export.inc"
 #include "go-absl/synchronization/synchronization/export.inc"
 

@@ -31,12 +31,12 @@
 // version 2.2 of Bison.
 
 /**
- ** \file bazel-out/k8-fastbuild/bin/zetasql/parser/location.hh
- ** Define the zetasql_bison_parser::location class.
+ ** \file bazel-out/k8-fastbuild/bin/googlesql/parser/location.hh
+ ** Define the googlesql_bison_parser::location class.
  */
 
-#ifndef YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
-# define YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
+#ifndef YY_GOOGLESQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
+# define YY_GOOGLESQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
 
 # include <algorithm> // std::max
 # include <iostream>
@@ -55,8 +55,8 @@
 # endif
 
 
-namespace zetasql_bison_parser {
-#line 60 "bazel-out/k8-fastbuild/bin/zetasql/parser/location.hh" // location.cc:339
+namespace googlesql_bison_parser {
+#line 60 "bazel-out/k8-fastbuild/bin/googlesql/parser/location.hh" // location.cc:339
   /// A point in a source file.
   class position
   {
@@ -317,6 +317,6 @@ namespace zetasql_bison_parser {
   }
 
 
-} // zetasql_bison_parser
-#line 322 "bazel-out/k8-fastbuild/bin/zetasql/parser/location.hh" // location.cc:339
-#endif // !YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED
+} // googlesql_bison_parser
+#line 322 "bazel-out/k8-fastbuild/bin/googlesql/parser/location.hh" // location.cc:339
+#endif // !YY_GOOGLESQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_LOCATION_HH_INCLUDED

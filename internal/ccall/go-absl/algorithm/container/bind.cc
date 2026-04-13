@@ -63,7 +63,9 @@
 
 // include dependencies
 #include "go-absl/algorithm/algorithm/export.inc"
+#include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/base/nullability/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
 
 #include "bridge.h"

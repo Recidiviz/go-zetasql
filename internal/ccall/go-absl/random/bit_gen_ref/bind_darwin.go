@@ -31,7 +31,6 @@ package bit_gen_ref
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
-
 #define GO_EXPORT(API) export_absl_random_bit_gen_ref_ ## API
 #include "bridge.h"
 */

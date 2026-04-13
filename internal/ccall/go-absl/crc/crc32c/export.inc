@@ -8,7 +8,7 @@
 #include "absl/crc/crc32c.cc"
 #include "absl/crc/internal/crc32c_inline.h"
 #include "absl/crc/internal/crc_memcpy_fallback.cc"
-#include "absl/crc/internal/crc_memcpy_x86_64.cc"
+#include "absl/crc/internal/crc_memcpy_x86_arm_combined.cc"
 #include "absl/crc/internal/crc_non_temporal_memcpy.cc"
 // include dependencies
 #include "go-absl/crc/cpu_detect/export.inc"
@@ -16,9 +16,9 @@
 #include "go-absl/crc/non_temporal_memcpy/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
-#include "go-absl/base/dynamic_annotations/export.inc"
 #include "go-absl/base/endian/export.inc"
 #include "go-absl/base/prefetch/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/strings/str_format/export.inc"
 
 #endif

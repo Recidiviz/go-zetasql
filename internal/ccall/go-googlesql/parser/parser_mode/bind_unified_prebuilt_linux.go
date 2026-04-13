@@ -45,7 +45,6 @@ package parser_mode
 #cgo LDFLAGS: -l:libcxx_prebuilt.a
 #cgo LDFLAGS: -l:libcxxabi_prebuilt.a
 #cgo LDFLAGS: -Wl,--end-group
-
 #define GO_EXPORT(API) export_googlesql_parser_parser_mode_ ## API
 #include "bridge.h"
 */

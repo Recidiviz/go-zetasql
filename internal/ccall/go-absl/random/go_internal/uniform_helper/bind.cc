@@ -65,7 +65,6 @@
 #include "go-absl/random/go_internal/traits/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
-#include "go-absl/numeric/int128/export.inc"
 
 #include "bridge.h"
 

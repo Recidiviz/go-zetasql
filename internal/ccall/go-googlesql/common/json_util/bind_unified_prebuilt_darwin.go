@@ -39,7 +39,6 @@ package json_util
 #cgo LDFLAGS: -Wl,-force_load,${SRCDIR}/../../../go-googlesql-unified/lib/libgooglesql.a
 #cgo LDFLAGS: -lz
 #cgo LDFLAGS: -lc++
-
 #define GO_EXPORT(API) export_googlesql_common_json_util_ ## API
 #include "bridge.h"
 */

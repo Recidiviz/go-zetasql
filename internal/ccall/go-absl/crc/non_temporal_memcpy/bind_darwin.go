@@ -31,7 +31,6 @@ package non_temporal_memcpy
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
-
 #define GO_EXPORT(API) export_absl_crc_non_temporal_memcpy_ ## API
 #include "bridge.h"
 */

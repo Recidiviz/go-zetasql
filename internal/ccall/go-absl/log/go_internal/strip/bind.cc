@@ -64,6 +64,7 @@
 // include dependencies
 #include "go-absl/log/go_internal/log_message/export.inc"
 #include "go-absl/log/go_internal/nullstream/export.inc"
+#include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/log_severity/export.inc"
 
 #include "bridge.h"

@@ -56,7 +56,6 @@
 
 // include headers
 //#define private public
-#include "absl/strings/internal/char_map.h"
 #include "absl/strings/internal/escaping.h"
 #include "absl/strings/internal/ostringstream.h"
 #include "absl/strings/internal/resize_uninitialized.h"

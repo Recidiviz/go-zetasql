@@ -9,6 +9,7 @@
 #include "go-absl/debugging/debugging_internal/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/base/dynamic_annotations/export.inc"
 #include "go-absl/base/raw_logging_internal/export.inc"
 
 #endif

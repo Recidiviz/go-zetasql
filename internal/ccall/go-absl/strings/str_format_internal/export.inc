@@ -20,6 +20,8 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/container/fixed_array/export.inc"
+#include "go-absl/container/inlined_vector/export.inc"
 #include "go-absl/functional/function_ref/export.inc"
 #include "go-absl/meta/type_traits/export.inc"
 #include "go-absl/numeric/bits/export.inc"

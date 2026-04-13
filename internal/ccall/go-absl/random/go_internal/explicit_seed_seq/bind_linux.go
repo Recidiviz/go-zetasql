@@ -36,7 +36,6 @@ package explicit_seed_seq
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_random_internal_explicit_seed_seq_ ## API
 #include "bridge.h"
 */

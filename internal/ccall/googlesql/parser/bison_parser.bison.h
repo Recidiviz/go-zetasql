@@ -32,8 +32,8 @@
 
 
 /**
- ** \file bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h
- ** Define the zetasql_bison_parser::parser class.
+ ** \file bazel-out/k8-fastbuild/bin/googlesql/parser/bison_parser.bison.h
+ ** Define the googlesql_bison_parser::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
@@ -41,13 +41,13 @@
 // Undocumented macros, especially those whose name start with YY_,
 // are private implementation details.  Do not rely on them.
 
-#ifndef YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
-# define YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+#ifndef YY_GOOGLESQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+# define YY_GOOGLESQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
 // //                    "%code requires" blocks.
-#line 17 "zetasql/parser/bison_parser.y" // lalr1.cc:401
+#line 17 "googlesql/parser/bison_parser.y" // lalr1.cc:401
 
 // Bison parser for ZetaSQL. This works in conjunction with
-// zetasql::parser::BisonParser.
+// googlesql::parser::BisonParser.
 //
 // To debug the state machine in case of conflicts, run (locally):
 // $ bison bison_parser.y -Wprecedence -Wcounterexamples -b tmp_prefix -r all \
@@ -55,14 +55,14 @@
 // (Do NOT set the --report-file to a path on citc, because then the file will
 // be truncated at 1MB for some reason.)
 
-#include "zetasql/parser/location.hh"
-#include "zetasql/parser/bison_parser.h"
-#include "zetasql/parser/join_processor.h"
-#include "zetasql/parser/parse_tree.h"
-#include "zetasql/parser/parser_internal.h"
-#include "zetasql/parser/statement_properties.h"
-#include "zetasql/public/strings.h"
-#include "zetasql/base/case.h"
+#include "googlesql/parser/location.hh"
+#include "googlesql/parser/bison_parser.h"
+#include "googlesql/parser/join_processor.h"
+#include "googlesql/parser/parse_tree.h"
+#include "googlesql/parser/parser_internal.h"
+#include "googlesql/parser/statement_properties.h"
+#include "googlesql/public/strings.h"
+#include "googlesql/base/case.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_join.h"
@@ -75,7 +75,7 @@
 #endif
 
 
-#line 79 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 79 "bazel-out/k8-fastbuild/bin/googlesql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 # include <cstdlib> // std::abort
@@ -185,8 +185,8 @@
 #endif
 
 
-namespace zetasql_bison_parser {
-#line 190 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+namespace googlesql_bison_parser {
+#line 190 "bazel-out/k8-fastbuild/bin/googlesql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 
@@ -198,112 +198,112 @@ namespace zetasql_bison_parser {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 262 "zetasql/parser/bison_parser.y" // lalr1.cc:401
+    #line 262 "googlesql/parser/bison_parser.y" // lalr1.cc:401
 
   bool boolean;
   int64_t int64_val;
-  zetasql::TypeKind type_kind;
-  zetasql::ASTFunctionCall::NullHandlingModifier null_handling_modifier;
-  zetasql::ASTWindowFrame::FrameUnit frame_unit;
-  zetasql::ASTTemplatedParameterType::TemplatedTypeKind
+  googlesql::TypeKind type_kind;
+  googlesql::ASTFunctionCall::NullHandlingModifier null_handling_modifier;
+  googlesql::ASTWindowFrame::FrameUnit frame_unit;
+  googlesql::ASTTemplatedParameterType::TemplatedTypeKind
       templated_parameter_kind;
-  zetasql::ASTBinaryExpression::Op binary_op;
-  zetasql::ASTUnaryExpression::Op unary_op;
-  zetasql::ASTJoin::JoinType join_type;
-  zetasql::ASTJoin::JoinHint join_hint;
-  zetasql::ASTSampleSize::Unit sample_size_unit;
-  zetasql::ASTInsertStatement::InsertMode insert_mode;
-  zetasql::ASTNodeKind ast_node_kind;
-  zetasql::ASTUnpivotClause::NullFilter opt_unpivot_nulls_filter;
-  zetasql::parser_internal::NotKeywordPresence not_keyword_presence;
-  zetasql::parser_internal::AllOrDistinctKeyword all_or_distinct_keyword;
-  zetasql::SchemaObjectKind schema_object_kind_keyword;
-  zetasql::parser_internal::PrecedingOrFollowingKeyword
+  googlesql::ASTBinaryExpression::Op binary_op;
+  googlesql::ASTUnaryExpression::Op unary_op;
+  googlesql::ASTJoin::JoinType join_type;
+  googlesql::ASTJoin::JoinHint join_hint;
+  googlesql::ASTSampleSize::Unit sample_size_unit;
+  googlesql::ASTInsertStatement::InsertMode insert_mode;
+  googlesql::ASTNodeKind ast_node_kind;
+  googlesql::ASTUnpivotClause::NullFilter opt_unpivot_nulls_filter;
+  googlesql::parser_internal::NotKeywordPresence not_keyword_presence;
+  googlesql::parser_internal::AllOrDistinctKeyword all_or_distinct_keyword;
+  googlesql::SchemaObjectKind schema_object_kind_keyword;
+  googlesql::parser_internal::PrecedingOrFollowingKeyword
       preceding_or_following_keyword;
-  zetasql::parser_internal::TableOrTableFunctionKeywords
+  googlesql::parser_internal::TableOrTableFunctionKeywords
       table_or_table_function_keywords;
-  zetasql::parser_internal::IndexTypeKeywords
+  googlesql::parser_internal::IndexTypeKeywords
       index_type_keywords;
-  zetasql::parser_internal::ShiftOperator shift_operator;
-  zetasql::parser_internal::ImportType import_type;
-  zetasql::ASTAuxLoadDataStatement::InsertionMode insertion_mode;
-  zetasql::ASTCreateStatement::Scope create_scope;
-  zetasql::ASTCreateStatement::SqlSecurity sql_security;
-  zetasql::ASTCreateStatement::SqlSecurity external_security;
-  zetasql::ASTDropStatement::DropMode drop_mode;
-  zetasql::ASTForeignKeyReference::Match foreign_key_match;
-  zetasql::ASTForeignKeyActions::Action foreign_key_action;
-  zetasql::ASTFunctionParameter::ProcedureParameterMode parameter_mode;
-  zetasql::ASTCreateFunctionStmtBase::DeterminismLevel determinism_level;
-  zetasql::ASTGeneratedColumnInfo::StoredMode stored_mode;
-  zetasql::ASTOrderingExpression::OrderingSpec ordering_spec;
-  zetasql::ASTSelectWith* select_with;
-  zetasql::ASTSetOperationColumnMatchMode* column_match_mode;
-  zetasql::ASTSetOperationColumnPropagationMode* column_propagation_mode;
+  googlesql::parser_internal::ShiftOperator shift_operator;
+  googlesql::parser_internal::ImportType import_type;
+  googlesql::ASTAuxLoadDataStatement::InsertionMode insertion_mode;
+  googlesql::ASTCreateStatement::Scope create_scope;
+  googlesql::ASTCreateStatement::SqlSecurity sql_security;
+  googlesql::ASTCreateStatement::SqlSecurity external_security;
+  googlesql::ASTDropStatement::DropMode drop_mode;
+  googlesql::ASTForeignKeyReference::Match foreign_key_match;
+  googlesql::ASTForeignKeyActions::Action foreign_key_action;
+  googlesql::ASTFunctionParameter::ProcedureParameterMode parameter_mode;
+  googlesql::ASTCreateFunctionStmtBase::DeterminismLevel determinism_level;
+  googlesql::ASTGeneratedColumnInfo::StoredMode stored_mode;
+  googlesql::ASTOrderingExpression::OrderingSpec ordering_spec;
+  googlesql::ASTSelectWith* select_with;
+  googlesql::ASTSetOperationColumnMatchMode* column_match_mode;
+  googlesql::ASTSetOperationColumnPropagationMode* column_propagation_mode;
 
   // Not owned. The allocated nodes are all owned by the parser.
   // Nodes should use the most specific type available.
-  zetasql::ASTForeignKeyReference* foreign_key_reference;
-  zetasql::ASTSetOperation* query_set_operation;
-  zetasql::ASTInsertValuesRowList* insert_values_row_list;
-  zetasql::ASTQuery* query;
-  zetasql::ASTExpression* expression;
-  zetasql::ASTExpressionSubquery* expression_subquery;
-  zetasql::ASTFunctionCall* function_call;
-  zetasql::ASTAlias* alias;
-  zetasql::ASTIdentifier* identifier;
-  zetasql::ASTInsertStatement* insert_statement;
-  zetasql::ASTNode* node;
-  zetasql::ASTStatementList* statement_list;
-  zetasql::parser_internal::SeparatedIdentifierTmpNode* slashed_identifier;
-  zetasql::ASTPivotClause* pivot_clause;
-  zetasql::ASTUnpivotClause* unpivot_clause;
-  zetasql::ASTSetOperationType* set_operation_type;
-  zetasql::ASTSetOperationAllOrDistinct* set_operation_all_or_distinct;
+  googlesql::ASTForeignKeyReference* foreign_key_reference;
+  googlesql::ASTSetOperation* query_set_operation;
+  googlesql::ASTInsertValuesRowList* insert_values_row_list;
+  googlesql::ASTQuery* query;
+  googlesql::ASTExpression* expression;
+  googlesql::ASTExpressionSubquery* expression_subquery;
+  googlesql::ASTFunctionCall* function_call;
+  googlesql::ASTAlias* alias;
+  googlesql::ASTIdentifier* identifier;
+  googlesql::ASTInsertStatement* insert_statement;
+  googlesql::ASTNode* node;
+  googlesql::ASTStatementList* statement_list;
+  googlesql::parser_internal::SeparatedIdentifierTmpNode* slashed_identifier;
+  googlesql::ASTPivotClause* pivot_clause;
+  googlesql::ASTUnpivotClause* unpivot_clause;
+  googlesql::ASTSetOperationType* set_operation_type;
+  googlesql::ASTSetOperationAllOrDistinct* set_operation_all_or_distinct;
   struct {
-    zetasql::ASTPivotClause* pivot_clause;
-    zetasql::ASTUnpivotClause* unpivot_clause;
-    zetasql::ASTAlias* alias;
+    googlesql::ASTPivotClause* pivot_clause;
+    googlesql::ASTUnpivotClause* unpivot_clause;
+    googlesql::ASTAlias* alias;
   } pivot_or_unpivot_clause_and_alias;
   struct {
-    zetasql::ASTNode* where;
-    zetasql::ASTNode* group_by;
-    zetasql::ASTNode* having;
-    zetasql::ASTNode* qualify;
-    zetasql::ASTNode* window;
+    googlesql::ASTNode* where;
+    googlesql::ASTNode* group_by;
+    googlesql::ASTNode* having;
+    googlesql::ASTNode* qualify;
+    googlesql::ASTNode* window;
   } clauses_following_from;
   struct {
-    zetasql::ASTExpression* default_expression;
-    zetasql::ASTGeneratedColumnInfo* generated_column_info;
+    googlesql::ASTExpression* default_expression;
+    googlesql::ASTGeneratedColumnInfo* generated_column_info;
   } generated_or_default_column_info;
   struct {
-    zetasql::ASTWithPartitionColumnsClause* with_partition_columns_clause;
-    zetasql::ASTWithConnectionClause* with_connection_clause;
+    googlesql::ASTWithPartitionColumnsClause* with_partition_columns_clause;
+    googlesql::ASTWithConnectionClause* with_connection_clause;
   } external_table_with_clauses;
   struct {
-    zetasql::ASTIdentifier* language;
+    googlesql::ASTIdentifier* language;
     bool is_remote;
-    zetasql::ASTWithConnectionClause* with_connection_clause;
+    googlesql::ASTWithConnectionClause* with_connection_clause;
   } language_or_remote_with_connection;
   struct {
-    zetasql::ASTScript* body;
-    zetasql::ASTIdentifier* language;
-    zetasql::ASTNode* code;
+    googlesql::ASTScript* body;
+    googlesql::ASTIdentifier* language;
+    googlesql::ASTNode* code;
   } begin_end_block_or_language_as_code;
   struct {
-    zetasql::ASTExpression* maybe_dashed_path_expression;
+    googlesql::ASTExpression* maybe_dashed_path_expression;
     bool is_temp_table;
   } path_expression_with_scope;
   struct {
-    zetasql::ASTSetOperationColumnMatchMode* column_match_mode;
-    zetasql::ASTColumnList* column_list;
+    googlesql::ASTSetOperationColumnMatchMode* column_match_mode;
+    googlesql::ASTColumnList* column_list;
   } column_match_suffix;
   struct {
-    zetasql::ASTQuery* query;
-    zetasql::ASTPathExpression* replica_source;
+    googlesql::ASTQuery* query;
+    googlesql::ASTPathExpression* replica_source;
   } query_or_replica_source_info;
 
-#line 307 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+#line 307 "bazel-out/k8-fastbuild/bin/googlesql/parser/bison_parser.bison.h" // lalr1.cc:401
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -780,8 +780,8 @@ namespace zetasql_bison_parser {
     {};
 
     /// Build a parser object.
-    BisonParserImpl (zetasql::parser::ZetaSqlFlexTokenizer* tokenizer_yyarg, zetasql::parser::BisonParser* parser_yyarg, zetasql::ASTNode** ast_node_result_yyarg, zetasql::parser::ASTStatementProperties*
-                  ast_statement_properties_yyarg, std::string* error_message_yyarg, zetasql::ParseLocationPoint* error_location_yyarg, bool* move_error_location_past_whitespace_yyarg, int* statement_end_byte_offset_yyarg);
+    BisonParserImpl (googlesql::parser::ZetaSqlFlexTokenizer* tokenizer_yyarg, googlesql::parser::BisonParser* parser_yyarg, googlesql::ASTNode** ast_node_result_yyarg, googlesql::parser::ASTStatementProperties*
+                  ast_statement_properties_yyarg, std::string* error_message_yyarg, googlesql::ParseLocationPoint* error_location_yyarg, bool* move_error_location_past_whitespace_yyarg, int* statement_end_byte_offset_yyarg);
     virtual ~BisonParserImpl ();
 
     /// Parse.  An alias for parse ().
@@ -1130,23 +1130,23 @@ namespace zetasql_bison_parser {
 
 
     // User arguments.
-    zetasql::parser::ZetaSqlFlexTokenizer* tokenizer;
-    zetasql::parser::BisonParser* parser;
-    zetasql::ASTNode** ast_node_result;
-    zetasql::parser::ASTStatementProperties*
+    googlesql::parser::ZetaSqlFlexTokenizer* tokenizer;
+    googlesql::parser::BisonParser* parser;
+    googlesql::ASTNode** ast_node_result;
+    googlesql::parser::ASTStatementProperties*
                   ast_statement_properties;
     std::string* error_message;
-    zetasql::ParseLocationPoint* error_location;
+    googlesql::ParseLocationPoint* error_location;
     bool* move_error_location_past_whitespace;
     int* statement_end_byte_offset;
   };
 
 
 
-} // zetasql_bison_parser
-#line 1148 "bazel-out/k8-fastbuild/bin/zetasql/parser/bison_parser.bison.h" // lalr1.cc:401
+} // googlesql_bison_parser
+#line 1148 "bazel-out/k8-fastbuild/bin/googlesql/parser/bison_parser.bison.h" // lalr1.cc:401
 
 
 
 
-#endif // !YY_ZETASQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED
+#endif // !YY_GOOGLESQL_BISON_PARSER_BAZEL_OUT_K8_FASTBUILD_BIN_ZETASQL_PARSER_BISON_PARSER_BISON_H_INCLUDED

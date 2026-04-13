@@ -36,7 +36,6 @@ package type_traits
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_meta_type_traits_ ## API
 #include "bridge.h"
 */

@@ -36,7 +36,6 @@ package tracked
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_container_tracked_ ## API
 #include "bridge.h"
 */

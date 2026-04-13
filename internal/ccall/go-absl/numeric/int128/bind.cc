@@ -66,6 +66,7 @@
 #include "go-absl/numeric/bits/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
+#include "go-absl/types/compare/export.inc"
 
 #include "bridge.h"
 

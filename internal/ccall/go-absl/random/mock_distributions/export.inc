@@ -6,8 +6,8 @@
 // include dependencies
 #include "go-absl/random/distributions/export.inc"
 #include "go-absl/random/mocking_bit_gen/export.inc"
-#include "go-absl/meta/type_traits/export.inc"
+#include "go-absl/base/config/export.inc"
 #include "go-absl/random/go_internal/mock_overload_set/export.inc"
-#include "go-googletest/googletest/export.inc"
+#include "go-absl/random/go_internal/mock_validators/export.inc"
 
 #endif

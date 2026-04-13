@@ -39,7 +39,6 @@ package value_content
 #cgo LDFLAGS: -Wl,-force_load,${SRCDIR}/../../../go-googlesql-unified/lib/libgooglesql.a
 #cgo LDFLAGS: -lz
 #cgo LDFLAGS: -lc++
-
 #define GO_EXPORT(API) export_googlesql_public_value_content_ ## API
 #include "bridge.h"
 */

@@ -45,7 +45,6 @@ package simple_model_cc_proto
 #cgo LDFLAGS: -l:libcxx_prebuilt.a
 #cgo LDFLAGS: -l:libcxxabi_prebuilt.a
 #cgo LDFLAGS: -Wl,--end-group
-
 #define GO_EXPORT(API) export_googlesql_public_simple_model_cc_proto_ ## API
 #include "bridge.h"
 */

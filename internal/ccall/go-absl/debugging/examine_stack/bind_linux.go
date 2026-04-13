@@ -36,7 +36,6 @@ package examine_stack
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_debugging_examine_stack_ ## API
 #include "bridge.h"
 */

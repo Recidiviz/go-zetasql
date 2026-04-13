@@ -65,7 +65,6 @@
 //#undef private
 
 // include sources
-#include "absl/base/internal/thread_annotations.h"
 
 // include dependencies
 #include "go-absl/base/config/export.inc"

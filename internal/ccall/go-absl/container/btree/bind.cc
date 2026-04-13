@@ -70,6 +70,7 @@
 #include "go-absl/container/compressed_tuple/export.inc"
 #include "go-absl/container/container_memory/export.inc"
 #include "go-absl/container/layout/export.inc"
+#include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
 #include "go-absl/base/raw_logging_internal/export.inc"
 #include "go-absl/base/throw_delegate/export.inc"
@@ -78,7 +79,6 @@
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"
 #include "go-absl/types/compare/export.inc"
-#include "go-absl/utility/utility/export.inc"
 
 #include "bridge.h"
 

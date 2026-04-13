@@ -39,7 +39,6 @@ package procedure_extension_cc_proto
 #cgo LDFLAGS: -Wl,-force_load,${SRCDIR}/../../../go-googlesql-unified/lib/libgooglesql.a
 #cgo LDFLAGS: -lz
 #cgo LDFLAGS: -lc++
-
 #define GO_EXPORT(API) export_googlesql_scripting_procedure_extension_cc_proto_ ## API
 #include "bridge.h"
 */

@@ -36,7 +36,6 @@ package randen_slow
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_random_internal_randen_slow_ ## API
 #include "bridge.h"
 */

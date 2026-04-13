@@ -36,7 +36,6 @@ package function_ref
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_functional_function_ref_ ## API
 #include "bridge.h"
 */

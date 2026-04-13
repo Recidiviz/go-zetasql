@@ -39,7 +39,6 @@ package feature_label_dictionary_proto_cc_proto
 #cgo LDFLAGS: -Wl,-force_load,${SRCDIR}/../../../go-googlesql-unified/lib/libgooglesql.a
 #cgo LDFLAGS: -lz
 #cgo LDFLAGS: -lc++
-
 #define GO_EXPORT(API) export_googlesql_public_feature_label_dictionary_proto_cc_proto_ ## API
 #include "bridge.h"
 */

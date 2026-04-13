@@ -8,7 +8,9 @@ extern "C" {
 #include <stdint.h>
 
 {{- range . }}
-#include "../go-{{ . }}/bridge_extern.h"
+#undef GO_EXPORT
+#define GO_EXPORT(API) export_{{ .FQDN }}_ ## API
+#include "{{ .Include }}"
 {{- end }}
 
 #ifdef __cplusplus

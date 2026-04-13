@@ -4,6 +4,7 @@
 #include "absl/log/log.h"
 // include sources
 // include dependencies
+#include "go-absl/log/vlog_is_on/export.inc"
 #include "go-absl/log/go_internal/log_impl/export.inc"
 
 #endif

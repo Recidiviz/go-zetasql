@@ -4,8 +4,10 @@
 #include "absl/container/internal/hash_function_defaults.h"
 // include sources
 // include dependencies
+#include "go-absl/container/common/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/hash/hash/export.inc"
+#include "go-absl/meta/type_traits/export.inc"
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/strings/cord/export.inc"
 

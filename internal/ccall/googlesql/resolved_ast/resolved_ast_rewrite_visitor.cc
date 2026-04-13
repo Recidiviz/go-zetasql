@@ -16,7 +16,7 @@
 
 // resolved_ast_rewrite_visitor.cc GENERATED FROM resolved_ast_rewrite_visitor.cc.template
 
-#include "zetasql/resolved_ast/resolved_ast_rewrite_visitor.h"
+#include "googlesql/resolved_ast/resolved_ast_rewrite_visitor.h"
 
 #include <algorithm>
 #include <memory>
@@ -24,15 +24,15 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_builder.h"
-#include "zetasql/resolved_ast/resolved_node.h"
+#include "googlesql/resolved_ast/resolved_ast.h"
+#include "googlesql/resolved_ast/resolved_ast_builder.h"
+#include "googlesql/resolved_ast/resolved_node.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status_macros.h"
+#include "googlesql/base/ret_check.h"
+#include "googlesql/base/status_macros.h"
 
-namespace zetasql {
+namespace googlesql {
 
 template <typename ResolvedNodeT>
 absl::StatusOr<std::vector<std::unique_ptr<const ResolvedNodeT>>>
@@ -6302,4 +6302,4 @@ ResolvedASTRewriteVisitor::DefaultVisit(
   return PostVisitResolvedUndropStmt(std::move(built));
 }
 
-}  // namespace zetasql
+}  // namespace googlesql

@@ -8,7 +8,6 @@
 #include "absl/base/port.h"
 #include "absl/base/thread_annotations.h"
 // include sources
-#include "absl/base/internal/thread_annotations.h"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 

@@ -45,7 +45,6 @@ package node_sources
 #cgo LDFLAGS: -l:libcxx_prebuilt.a
 #cgo LDFLAGS: -l:libcxxabi_prebuilt.a
 #cgo LDFLAGS: -Wl,--end-group
-
 #define GO_EXPORT(API) export_googlesql_resolved_ast_node_sources_ ## API
 #include "bridge.h"
 */

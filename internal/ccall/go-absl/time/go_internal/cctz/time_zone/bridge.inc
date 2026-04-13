@@ -30,7 +30,8 @@ void GO_EXPORT(cctz_detail_parse)(void * arg0,void * arg1,void * arg2,void * arg
 
 void GO_EXPORT(TimeZoneIf_Load)(void * arg0,void ** arg1)
 {
-  std::unique_ptr<absl::time_internal::cctz::TimeZoneIf> ret = absl::time_internal::cctz::TimeZoneIf::Load((char *)arg0);
+  std::unique_ptr<absl::time_internal::cctz::TimeZoneIf> ret =
+      absl::time_internal::cctz::TimeZoneIf::Make(std::string((char *)arg0));
   *(std::unique_ptr<absl::time_internal::cctz::TimeZoneIf> *)arg1 = std::move(ret);
 }
 
@@ -59,7 +60,7 @@ void GO_EXPORT(time_zone_Impl_UTCImpl)(void ** arg0)
 void GO_EXPORT(TimeZoneInfo_Load)(void * arg0,void * arg1,char* arg2)
 {
   absl::time_internal::cctz::TimeZoneInfo *info = (absl::time_internal::cctz::TimeZoneInfo *)arg0;
-  *arg2 = info->Load((char *)arg1);
+  *arg2 = info->Load(std::string((char *)arg1));
 }
 
 void GO_EXPORT(TimeZoneInfo_BreakTime)(void * arg0,void * arg1,void ** arg2)

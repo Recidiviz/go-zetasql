@@ -63,6 +63,7 @@
 
 // include dependencies
 #include "go-absl/base/config/export.inc"
+#include "go-absl/base/core_headers/export.inc"
 
 #include "bridge.h"
 

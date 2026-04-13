@@ -31,7 +31,6 @@ package gaussian_dp_calculator
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
-
 #define GO_EXPORT(API) export_algorithms_gaussian_dp_calculator_ ## API
 #include "bridge.h"
 */

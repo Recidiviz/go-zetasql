@@ -15,7 +15,7 @@
 #include "go-absl/flags/reflection/export.inc"
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"
-#include "go-absl/container/flat_hash_map/export.inc"
 #include "go-absl/strings/strings/export.inc"
+#include "go-absl/synchronization/synchronization/export.inc"
 
 #endif

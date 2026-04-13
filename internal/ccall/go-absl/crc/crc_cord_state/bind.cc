@@ -65,8 +65,8 @@
 // include dependencies
 #include "go-absl/crc/crc32c/export.inc"
 #include "go-absl/base/config/export.inc"
+#include "go-absl/base/no_destructor/export.inc"
 #include "go-absl/numeric/bits/export.inc"
-#include "go-absl/strings/strings/export.inc"
 
 #include "bridge.h"
 

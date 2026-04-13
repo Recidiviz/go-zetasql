@@ -36,7 +36,6 @@ package bad_any_cast_impl
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_types_bad_any_cast_impl_ ## API
 #include "bridge.h"
 */

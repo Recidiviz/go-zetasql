@@ -80,6 +80,11 @@ class TimeZoneInfo : public TimeZoneIf {
   std::string Version() const override;
   std::string Description() const override;
 
+  // go-googlesql CGO bridge (bridge.inc) loads zone data into an existing object.
+  // Upstream keeps these private; we expose them only in this vendored copy.
+  bool Load(const std::string& name);
+  bool Load(ZoneInfoSource* zip);
+
  private:
   TimeZoneInfo() = default;
   TimeZoneInfo(const TimeZoneInfo&) = delete;
@@ -92,8 +97,6 @@ class TimeZoneInfo : public TimeZoneIf {
   bool ExtendTransitions();
 
   bool ResetToBuiltinUTC(const seconds& offset);
-  bool Load(const std::string& name);
-  bool Load(ZoneInfoSource* zip);
 
   // Helpers for BreakTime() and MakeTime().
   time_zone::absolute_lookup LocalTime(std::int_fast64_t unix_time,

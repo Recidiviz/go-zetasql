@@ -2,5 +2,12 @@
 #define INTERNAL_CCALL_GO_PROTO_NUMERICAL_MECHANISM_CC_PROTO_EXPORT_H
 
 #include "proto/numerical-mechanism.pb.h"
+// include sources
+#define schemas proto_numerical_mechanism_cc_proto_proto_numerical_mechanism_pb_schemas
+#define file_default_instances proto_numerical_mechanism_cc_proto_proto_numerical_mechanism_pb_file_default_instances
+#include "proto/numerical-mechanism.pb.cc"
+#undef file_default_instances
+#undef schemas
+// include dependencies
 
 #endif

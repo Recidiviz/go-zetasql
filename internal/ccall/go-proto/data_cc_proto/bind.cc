@@ -53,8 +53,6 @@
 
 // include headers (types only; no .cc bodies)
 #include "proto/data.pb.h"
-// include dependencies
-#include "go-proto/confidence_interval_cc_proto/export.inc"
 
 #include "bridge.h"
 

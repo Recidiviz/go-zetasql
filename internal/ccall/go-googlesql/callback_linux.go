@@ -27,8 +27,9 @@ package googlesql
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
 
-#define GO_EXPORT(API) export_googlesql_ ## API
 #include "bridge.h"
+#undef GO_EXPORT
+#define GO_EXPORT(API) export_absl_time_internal_cctz_time_zone_ ## API
 #include "../go-absl/time/go_internal/cctz/time_zone/bridge.h"
 */
 import "C"

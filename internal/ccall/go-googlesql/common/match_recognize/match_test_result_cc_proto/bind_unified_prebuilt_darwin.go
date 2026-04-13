@@ -39,7 +39,6 @@ package match_test_result_cc_proto
 #cgo LDFLAGS: -Wl,-force_load,${SRCDIR}/../../../../go-googlesql-unified/lib/libgooglesql.a
 #cgo LDFLAGS: -lz
 #cgo LDFLAGS: -lc++
-
 #define GO_EXPORT(API) export_googlesql_common_match_recognize_match_test_result_cc_proto_ ## API
 #include "bridge.h"
 */

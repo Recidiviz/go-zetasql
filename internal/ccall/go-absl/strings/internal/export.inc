@@ -1,7 +1,6 @@
 #ifndef INTERNAL_CCALL_GO_ABSL_STRINGS_INTERNAL_EXPORT_H
 #define INTERNAL_CCALL_GO_ABSL_STRINGS_INTERNAL_EXPORT_H
 
-#include "absl/strings/internal/char_map.h"
 #include "absl/strings/internal/escaping.h"
 #include "absl/strings/internal/ostringstream.h"
 #include "absl/strings/internal/resize_uninitialized.h"

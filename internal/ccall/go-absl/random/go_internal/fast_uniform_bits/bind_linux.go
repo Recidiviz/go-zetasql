@@ -36,7 +36,6 @@ package fast_uniform_bits
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
 #cgo LDFLAGS: -ldl
-
 #define GO_EXPORT(API) export_absl_random_internal_fast_uniform_bits_ ## API
 #include "bridge.h"
 */

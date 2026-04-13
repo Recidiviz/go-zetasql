@@ -31,7 +31,6 @@ package scoped_set_env
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
-
 #define GO_EXPORT(API) export_absl_base_scoped_set_env_ ## API
 #include "bridge.h"
 */

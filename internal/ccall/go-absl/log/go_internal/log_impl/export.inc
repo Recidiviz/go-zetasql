@@ -7,5 +7,6 @@
 #include "go-absl/log/go_internal/conditions/export.inc"
 #include "go-absl/log/go_internal/log_message/export.inc"
 #include "go-absl/log/go_internal/strip/export.inc"
+#include "go-absl/log/absl_vlog_is_on/export.inc"
 
 #endif

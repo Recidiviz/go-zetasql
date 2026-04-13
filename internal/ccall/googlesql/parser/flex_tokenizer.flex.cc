@@ -1,6 +1,6 @@
-#line 1 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 1 "bazel-out/k8-fastbuild/bin/googlesql/parser/flex_tokenizer.flex.cc"
 
-#line 3 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 3 "bazel-out/k8-fastbuild/bin/googlesql/parser/flex_tokenizer.flex.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -52160,7 +52160,7 @@ static const yy_state_type yy_NUL_trans[1628] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "zetasql/parser/flex_tokenizer.l"
+#line 1 "googlesql/parser/flex_tokenizer.l"
 /*
  * Copyright 2019 Google LLC
  *
@@ -52228,27 +52228,27 @@ static const yy_state_type yy_NUL_trans[1628] =
    means that only the whitespace and catchall error rules will be active.
 */
 
-#line 78 "zetasql/parser/flex_tokenizer.l"
+#line 78 "googlesql/parser/flex_tokenizer.l"
 #include <algorithm>
 #include <string>
 #include <string.h>
 
-#include "zetasql/parser/bison_parser.bison.h"
-#include "zetasql/parser/flex_tokenizer.h"
-#include "zetasql/parser/keywords.h"
-#include "zetasql/public/parse_location.h"
-#include "zetasql/parser/parser_internal.h"
-#include "zetasql/public/strings.h"
+#include "googlesql/parser/bison_parser.bison.h"
+#include "googlesql/parser/flex_tokenizer.h"
+#include "googlesql/parser/keywords.h"
+#include "googlesql/public/parse_location.h"
+#include "googlesql/parser/parser_internal.h"
+#include "googlesql/public/strings.h"
 #include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
 
-using zetasql_bison_parser::BisonParserImpl;
-using namespace zetasql::parser_internal;
+using googlesql_bison_parser::BisonParserImpl;
+using namespace googlesql::parser_internal;
 
 #undef YY_DECL
 #define YY_DECL \
-    int zetasql::parser::ZetaSqlFlexTokenizer::GetNextTokenFlexImpl( \
-        zetasql_bison_parser::location* yylloc)
+    int googlesql::parser::ZetaSqlFlexTokenizer::GetNextTokenFlexImpl( \
+        googlesql_bison_parser::location* yylloc)
 
 // This action is executed for every token that is matched, before the defined
 // actions are executed. We use this to:
@@ -52272,7 +52272,7 @@ using namespace zetasql::parser_internal;
     yylloc->end.column = yylloc->begin.column + prefix_length_result; \
   } while (0)
 
-constexpr char ::zetasql::parser::ZetaSqlFlexTokenizer::kEofSentinelInput[];
+constexpr char ::googlesql::parser::ZetaSqlFlexTokenizer::kEofSentinelInput[];
 
 #define RETURN_ILLEGAL_CHARACTER_ERROR \
   SetOverrideError( \
@@ -52281,7 +52281,7 @@ constexpr char ::zetasql::parser::ZetaSqlFlexTokenizer::kEofSentinelInput[];
                    absl::CEscape(absl::string_view(YYText(), 1)))); \
   yyterminate();
 
-#line 52291 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 52291 "bazel-out/k8-fastbuild/bin/googlesql/parser/flex_tokenizer.flex.cc"
 /* These are some basic regex definitions that are used in the lexer rules
    below.
 */
@@ -52344,11 +52344,11 @@ constexpr char ::zetasql::parser::ZetaSqlFlexTokenizer::kEofSentinelInput[];
 /* Requiring a newline at the end of dash_coment and pound_comment does not
    cause an error even if the comment comes in the last line of a query,
    thanks to the newline sentinel input (See:
-   https://github.com/google/zetasql/blob/master/zetasql/parser/flex_tokenizer.h?l=128).
+   https://github.com/google/googlesql/blob/master/googlesql/parser/flex_tokenizer.h?l=128).
 */
 /* Dash comments using -- */
 /* # comment ignores anything from # to the end of the line. */
-#line 52358 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 52358 "bazel-out/k8-fastbuild/bin/googlesql/parser/flex_tokenizer.flex.cc"
 
 #define INITIAL 0
 #define DOT_IDENTIFIER 1
@@ -52484,9 +52484,9 @@ YY_DECL
 		}
 
 	{
-#line 295 "zetasql/parser/flex_tokenizer.l"
+#line 295 "googlesql/parser/flex_tokenizer.l"
 
-#line 297 "zetasql/parser/flex_tokenizer.l"
+#line 297 "googlesql/parser/flex_tokenizer.l"
  /* RULES SECTION
 
     This is a list of lexer rules, where the left side is the token and the
@@ -52541,7 +52541,7 @@ YY_DECL
  /* IMPORTANT: This rule must come before keywords, since it conditionally
   *   force-emits the IDENTIFIER token, even if a keyword is present.
  */
-#line 52551 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 52551 "bazel-out/k8-fastbuild/bin/googlesql/parser/flex_tokenizer.flex.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -52589,7 +52589,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 351 "zetasql/parser/flex_tokenizer.l"
+#line 351 "googlesql/parser/flex_tokenizer.l"
 {
   // We have a label declaration, so force a LABEL token even if it
   // matches a non-reserved keyword. Note that label names cannot be handled in
@@ -52603,7 +52603,7 @@ YY_RULE_SETUP
                      "' may not be used as a label name without backquotes"));
     yyterminate();
   } else {
-    return zetasql_bison_parser::BisonParserImpl::token::LABEL;
+    return googlesql_bison_parser::BisonParserImpl::token::LABEL;
   }
 }
 	YY_BREAK
@@ -52621,63 +52621,63 @@ YY_RULE_SETUP
 /* Spanner-specific keywords */
 case 2:
 YY_RULE_SETUP
-#line 381 "zetasql/parser/flex_tokenizer.l"
+#line 381 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INTERLEAVE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 382 "zetasql/parser/flex_tokenizer.l"
+#line 382 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_NULL_FILTERED; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 383 "zetasql/parser/flex_tokenizer.l"
+#line 383 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PARENT; }
 	YY_BREAK
 /* End of Spanner-specific keywords */
 case 5:
 YY_RULE_SETUP
-#line 386 "zetasql/parser/flex_tokenizer.l"
+#line 386 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ABORT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 387 "zetasql/parser/flex_tokenizer.l"
+#line 387 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ACCESS; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 388 "zetasql/parser/flex_tokenizer.l"
+#line 388 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ACTION; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 389 "zetasql/parser/flex_tokenizer.l"
+#line 389 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ADD; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 390 "zetasql/parser/flex_tokenizer.l"
+#line 390 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_AGGREGATE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 391 "zetasql/parser/flex_tokenizer.l"
+#line 391 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ALL; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 392 "zetasql/parser/flex_tokenizer.l"
+#line 392 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ALTER; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 393 "zetasql/parser/flex_tokenizer.l"
+#line 393 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ANALYZE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 394 "zetasql/parser/flex_tokenizer.l"
+#line 394 "googlesql/parser/flex_tokenizer.l"
 {
   if (YY_START == IN_BETWEEN) {
     // See IN_BETWEEN tokenizer mode description.
@@ -52694,64 +52694,64 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 407 "zetasql/parser/flex_tokenizer.l"
+#line 407 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_APPROX; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 408 "zetasql/parser/flex_tokenizer.l"
+#line 408 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ANY; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 409 "zetasql/parser/flex_tokenizer.l"
+#line 409 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ARE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 410 "zetasql/parser/flex_tokenizer.l"
+#line 410 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ARRAY; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 411 "zetasql/parser/flex_tokenizer.l"
+#line 411 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_AS; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 412 "zetasql/parser/flex_tokenizer.l"
+#line 412 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ASC; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 413 "zetasql/parser/flex_tokenizer.l"
+#line 413 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ASSERT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 414 "zetasql/parser/flex_tokenizer.l"
+#line 414 "googlesql/parser/flex_tokenizer.l"
 {
   return BisonParserImpl::token::KW_ASSERT_ROWS_MODIFIED;
 }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 417 "zetasql/parser/flex_tokenizer.l"
+#line 417 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_AT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 418 "zetasql/parser/flex_tokenizer.l"
+#line 418 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_BATCH; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 419 "zetasql/parser/flex_tokenizer.l"
+#line 419 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_BEGIN; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 420 "zetasql/parser/flex_tokenizer.l"
+#line 420 "googlesql/parser/flex_tokenizer.l"
 {
   // See IN_BETWEEN tokenizer mode description.
   yy_push_state(IN_BETWEEN);
@@ -52760,362 +52760,362 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 425 "zetasql/parser/flex_tokenizer.l"
+#line 425 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_BIGDECIMAL; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 426 "zetasql/parser/flex_tokenizer.l"
+#line 426 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_BIGNUMERIC; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 427 "zetasql/parser/flex_tokenizer.l"
+#line 427 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_BREAK; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 428 "zetasql/parser/flex_tokenizer.l"
+#line 428 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_BY; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 429 "zetasql/parser/flex_tokenizer.l"
+#line 429 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CALL; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 430 "zetasql/parser/flex_tokenizer.l"
+#line 430 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CASCADE; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 431 "zetasql/parser/flex_tokenizer.l"
+#line 431 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CASE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 432 "zetasql/parser/flex_tokenizer.l"
+#line 432 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CAST; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 433 "zetasql/parser/flex_tokenizer.l"
+#line 433 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CHECK; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 434 "zetasql/parser/flex_tokenizer.l"
+#line 434 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CLAMPED; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 435 "zetasql/parser/flex_tokenizer.l"
+#line 435 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CLONE; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 436 "zetasql/parser/flex_tokenizer.l"
+#line 436 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_COPY; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 437 "zetasql/parser/flex_tokenizer.l"
+#line 437 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CLUSTER; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 438 "zetasql/parser/flex_tokenizer.l"
+#line 438 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_COLLATE; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 439 "zetasql/parser/flex_tokenizer.l"
+#line 439 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_COLUMN; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 440 "zetasql/parser/flex_tokenizer.l"
+#line 440 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_COLUMNS; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 441 "zetasql/parser/flex_tokenizer.l"
+#line 441 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_COMMIT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 442 "zetasql/parser/flex_tokenizer.l"
+#line 442 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CONNECTION; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 443 "zetasql/parser/flex_tokenizer.l"
+#line 443 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CONSTANT; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 444 "zetasql/parser/flex_tokenizer.l"
+#line 444 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CONSTRAINT; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 445 "zetasql/parser/flex_tokenizer.l"
+#line 445 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CONTINUE; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 446 "zetasql/parser/flex_tokenizer.l"
+#line 446 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CONTAINS; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 447 "zetasql/parser/flex_tokenizer.l"
+#line 447 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CORRESPONDING; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 448 "zetasql/parser/flex_tokenizer.l"
+#line 448 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CREATE; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 449 "zetasql/parser/flex_tokenizer.l"
+#line 449 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CROSS; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 450 "zetasql/parser/flex_tokenizer.l"
+#line 450 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CUBE; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 451 "zetasql/parser/flex_tokenizer.l"
+#line 451 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CURRENT; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 452 "zetasql/parser/flex_tokenizer.l"
+#line 452 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DATA; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 453 "zetasql/parser/flex_tokenizer.l"
+#line 453 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DATABASE; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 454 "zetasql/parser/flex_tokenizer.l"
+#line 454 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DATE; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 455 "zetasql/parser/flex_tokenizer.l"
+#line 455 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DATETIME; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 456 "zetasql/parser/flex_tokenizer.l"
+#line 456 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DECIMAL; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 457 "zetasql/parser/flex_tokenizer.l"
+#line 457 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DECLARE; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 458 "zetasql/parser/flex_tokenizer.l"
+#line 458 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DEFAULT; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 459 "zetasql/parser/flex_tokenizer.l"
+#line 459 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DEFINE; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 460 "zetasql/parser/flex_tokenizer.l"
+#line 460 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DEFINER; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 461 "zetasql/parser/flex_tokenizer.l"
+#line 461 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DELETE; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 462 "zetasql/parser/flex_tokenizer.l"
+#line 462 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DELETION; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 463 "zetasql/parser/flex_tokenizer.l"
+#line 463 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DESC; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 464 "zetasql/parser/flex_tokenizer.l"
+#line 464 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DESCRIPTOR; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 465 "zetasql/parser/flex_tokenizer.l"
+#line 465 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DESCRIBE; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 466 "zetasql/parser/flex_tokenizer.l"
+#line 466 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DETERMINISTIC; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 467 "zetasql/parser/flex_tokenizer.l"
+#line 467 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DISTINCT; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 468 "zetasql/parser/flex_tokenizer.l"
+#line 468 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DO; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 469 "zetasql/parser/flex_tokenizer.l"
+#line 469 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DROP; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 470 "zetasql/parser/flex_tokenizer.l"
+#line 470 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ELSE; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 471 "zetasql/parser/flex_tokenizer.l"
+#line 471 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ELSEIF; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 472 "zetasql/parser/flex_tokenizer.l"
+#line 472 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_END; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 473 "zetasql/parser/flex_tokenizer.l"
+#line 473 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ENFORCED; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 474 "zetasql/parser/flex_tokenizer.l"
+#line 474 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ENUM; }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 475 "zetasql/parser/flex_tokenizer.l"
+#line 475 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ERROR; }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 476 "zetasql/parser/flex_tokenizer.l"
+#line 476 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ESCAPE; }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 477 "zetasql/parser/flex_tokenizer.l"
+#line 477 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXCEPT; }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 478 "zetasql/parser/flex_tokenizer.l"
+#line 478 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXCEPTION; }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 479 "zetasql/parser/flex_tokenizer.l"
+#line 479 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXCLUDE; }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 480 "zetasql/parser/flex_tokenizer.l"
+#line 480 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXECUTE; }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 481 "zetasql/parser/flex_tokenizer.l"
+#line 481 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXISTS; }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 482 "zetasql/parser/flex_tokenizer.l"
+#line 482 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXPLAIN; }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 483 "zetasql/parser/flex_tokenizer.l"
+#line 483 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXPORT; }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 484 "zetasql/parser/flex_tokenizer.l"
+#line 484 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXTERNAL; }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 485 "zetasql/parser/flex_tokenizer.l"
+#line 485 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_EXTRACT; }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 486 "zetasql/parser/flex_tokenizer.l"
+#line 486 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FALSE; }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 487 "zetasql/parser/flex_tokenizer.l"
+#line 487 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FETCH; }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 488 "zetasql/parser/flex_tokenizer.l"
+#line 488 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FILES; }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 489 "zetasql/parser/flex_tokenizer.l"
+#line 489 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FILL; }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 490 "zetasql/parser/flex_tokenizer.l"
+#line 490 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FILTER; }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 491 "zetasql/parser/flex_tokenizer.l"
+#line 491 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FIRST; }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 492 "zetasql/parser/flex_tokenizer.l"
+#line 492 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FOLLOWING; }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 493 "zetasql/parser/flex_tokenizer.l"
+#line 493 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FOR; }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 494 "zetasql/parser/flex_tokenizer.l"
+#line 494 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FOREIGN; }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 495 "zetasql/parser/flex_tokenizer.l"
+#line 495 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FORMAT; }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 496 "zetasql/parser/flex_tokenizer.l"
+#line 496 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FROM; }
 	YY_BREAK
 case 98:
@@ -53125,7 +53125,7 @@ YY_LINENO_REWIND_TO(yy_bp + 4);
 (yy_c_buf_p) = yy_cp = yy_bp + 4;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 497 "zetasql/parser/flex_tokenizer.l"
+#line 497 "googlesql/parser/flex_tokenizer.l"
 {
   if (mode_ == BisonParserMode::kTokenizer) {
     return BisonParserImpl::token::KW_FULL;
@@ -53135,187 +53135,187 @@ YY_RULE_SETUP
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 503 "zetasql/parser/flex_tokenizer.l"
+#line 503 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FULL; }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 504 "zetasql/parser/flex_tokenizer.l"
+#line 504 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_FUNCTION; }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 505 "zetasql/parser/flex_tokenizer.l"
+#line 505 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_GENERATED; }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 506 "zetasql/parser/flex_tokenizer.l"
+#line 506 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_GRANT; }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 507 "zetasql/parser/flex_tokenizer.l"
+#line 507 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_GROUP; }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 508 "zetasql/parser/flex_tokenizer.l"
+#line 508 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_GROUP_ROWS; }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 509 "zetasql/parser/flex_tokenizer.l"
+#line 509 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_GROUPING; }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 510 "zetasql/parser/flex_tokenizer.l"
+#line 510 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_GROUPS; }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 511 "zetasql/parser/flex_tokenizer.l"
+#line 511 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_HASH; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 512 "zetasql/parser/flex_tokenizer.l"
+#line 512 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_HAVING; }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 513 "zetasql/parser/flex_tokenizer.l"
+#line 513 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_HIDDEN; }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 514 "zetasql/parser/flex_tokenizer.l"
+#line 514 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_IF; }
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 515 "zetasql/parser/flex_tokenizer.l"
+#line 515 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_IGNORE; }
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 516 "zetasql/parser/flex_tokenizer.l"
+#line 516 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_IMMEDIATE; }
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 517 "zetasql/parser/flex_tokenizer.l"
+#line 517 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_IMMUTABLE; }
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 518 "zetasql/parser/flex_tokenizer.l"
+#line 518 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_IMPORT; }
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 519 "zetasql/parser/flex_tokenizer.l"
+#line 519 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_IN; }
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 520 "zetasql/parser/flex_tokenizer.l"
+#line 520 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INCLUDE; }
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 521 "zetasql/parser/flex_tokenizer.l"
+#line 521 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INOUT; }
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 522 "zetasql/parser/flex_tokenizer.l"
+#line 522 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INDEX; }
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 523 "zetasql/parser/flex_tokenizer.l"
+#line 523 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INNER; }
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 524 "zetasql/parser/flex_tokenizer.l"
+#line 524 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INSERT; }
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 525 "zetasql/parser/flex_tokenizer.l"
+#line 525 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INTERSECT; }
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 526 "zetasql/parser/flex_tokenizer.l"
+#line 526 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INTERVAL; }
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 527 "zetasql/parser/flex_tokenizer.l"
+#line 527 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ITERATE; }
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 528 "zetasql/parser/flex_tokenizer.l"
+#line 528 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INPUT; }
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 529 "zetasql/parser/flex_tokenizer.l"
+#line 529 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INTO; }
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 530 "zetasql/parser/flex_tokenizer.l"
+#line 530 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_INVOKER; }
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 531 "zetasql/parser/flex_tokenizer.l"
+#line 531 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_IS; }
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 532 "zetasql/parser/flex_tokenizer.l"
+#line 532 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ISOLATION; }
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 533 "zetasql/parser/flex_tokenizer.l"
+#line 533 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_JOIN; }
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 534 "zetasql/parser/flex_tokenizer.l"
+#line 534 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_JSON; }
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 535 "zetasql/parser/flex_tokenizer.l"
+#line 535 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_KEY; }
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 536 "zetasql/parser/flex_tokenizer.l"
+#line 536 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LANGUAGE; }
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 537 "zetasql/parser/flex_tokenizer.l"
+#line 537 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LAST; }
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 538 "zetasql/parser/flex_tokenizer.l"
+#line 538 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LATERAL; }
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 539 "zetasql/parser/flex_tokenizer.l"
+#line 539 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LEAVE; }
 	YY_BREAK
 case 136:
@@ -53325,7 +53325,7 @@ YY_LINENO_REWIND_TO(yy_bp + 4);
 (yy_c_buf_p) = yy_cp = yy_bp + 4;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 540 "zetasql/parser/flex_tokenizer.l"
+#line 540 "googlesql/parser/flex_tokenizer.l"
 {
   if (mode_ == BisonParserMode::kTokenizer) {
     return BisonParserImpl::token::KW_LEFT;
@@ -53335,257 +53335,257 @@ YY_RULE_SETUP
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 546 "zetasql/parser/flex_tokenizer.l"
+#line 546 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LEFT; }
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 547 "zetasql/parser/flex_tokenizer.l"
+#line 547 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LEVEL; }
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 548 "zetasql/parser/flex_tokenizer.l"
+#line 548 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LIKE; }
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 549 "zetasql/parser/flex_tokenizer.l"
+#line 549 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LIMIT; }
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 550 "zetasql/parser/flex_tokenizer.l"
+#line 550 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LOAD; }
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 551 "zetasql/parser/flex_tokenizer.l"
+#line 551 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LOOKUP; }
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 552 "zetasql/parser/flex_tokenizer.l"
+#line 552 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LOOP; }
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 553 "zetasql/parser/flex_tokenizer.l"
+#line 553 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MACRO; }
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 554 "zetasql/parser/flex_tokenizer.l"
+#line 554 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MATCH; }
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 555 "zetasql/parser/flex_tokenizer.l"
+#line 555 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MATCHED; }
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 556 "zetasql/parser/flex_tokenizer.l"
+#line 556 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MATERIALIZED; }
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 557 "zetasql/parser/flex_tokenizer.l"
+#line 557 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MAX; }
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-#line 558 "zetasql/parser/flex_tokenizer.l"
+#line 558 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MERGE; }
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 559 "zetasql/parser/flex_tokenizer.l"
+#line 559 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MESSAGE; }
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 560 "zetasql/parser/flex_tokenizer.l"
+#line 560 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_METADATA; }
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
-#line 561 "zetasql/parser/flex_tokenizer.l"
+#line 561 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MIN; }
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
-#line 562 "zetasql/parser/flex_tokenizer.l"
+#line 562 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MODEL; }
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 563 "zetasql/parser/flex_tokenizer.l"
+#line 563 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_MODULE; }
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-#line 564 "zetasql/parser/flex_tokenizer.l"
+#line 564 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_NATURAL; }
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
-#line 565 "zetasql/parser/flex_tokenizer.l"
+#line 565 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_NEW; }
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-#line 566 "zetasql/parser/flex_tokenizer.l"
+#line 566 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_NO; }
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-#line 567 "zetasql/parser/flex_tokenizer.l"
+#line 567 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_NOT; }
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-#line 568 "zetasql/parser/flex_tokenizer.l"
+#line 568 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_NULL; }
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-#line 569 "zetasql/parser/flex_tokenizer.l"
+#line 569 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_NULLS; }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-#line 570 "zetasql/parser/flex_tokenizer.l"
+#line 570 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_NUMERIC; }
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
-#line 571 "zetasql/parser/flex_tokenizer.l"
+#line 571 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OF; }
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
-#line 572 "zetasql/parser/flex_tokenizer.l"
+#line 572 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OFFSET; }
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
-#line 573 "zetasql/parser/flex_tokenizer.l"
+#line 573 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ON; }
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
-#line 574 "zetasql/parser/flex_tokenizer.l"
+#line 574 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ONLY; }
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
-#line 575 "zetasql/parser/flex_tokenizer.l"
+#line 575 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OPTIONS; }
 	YY_BREAK
 case 167:
 YY_RULE_SETUP
-#line 576 "zetasql/parser/flex_tokenizer.l"
+#line 576 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OR; }
 	YY_BREAK
 case 168:
 YY_RULE_SETUP
-#line 577 "zetasql/parser/flex_tokenizer.l"
+#line 577 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ORDER; }
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
-#line 578 "zetasql/parser/flex_tokenizer.l"
+#line 578 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OUT; }
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
-#line 579 "zetasql/parser/flex_tokenizer.l"
+#line 579 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OUTER; }
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
-#line 580 "zetasql/parser/flex_tokenizer.l"
+#line 580 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OUTPUT; }
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
-#line 581 "zetasql/parser/flex_tokenizer.l"
+#line 581 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OVER; }
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
-#line 582 "zetasql/parser/flex_tokenizer.l"
+#line 582 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_OVERWRITE; }
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
-#line 583 "zetasql/parser/flex_tokenizer.l"
+#line 583 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PARTITION; }
 	YY_BREAK
 case 175:
 YY_RULE_SETUP
-#line 584 "zetasql/parser/flex_tokenizer.l"
+#line 584 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PARTITIONS; }
 	YY_BREAK
 case 176:
 YY_RULE_SETUP
-#line 585 "zetasql/parser/flex_tokenizer.l"
+#line 585 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PERCENT; }
 	YY_BREAK
 case 177:
 YY_RULE_SETUP
-#line 586 "zetasql/parser/flex_tokenizer.l"
+#line 586 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_POLICIES; }
 	YY_BREAK
 case 178:
 YY_RULE_SETUP
-#line 587 "zetasql/parser/flex_tokenizer.l"
+#line 587 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_POLICY; }
 	YY_BREAK
 case 179:
 YY_RULE_SETUP
-#line 588 "zetasql/parser/flex_tokenizer.l"
+#line 588 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PRECEDING; }
 	YY_BREAK
 case 180:
 YY_RULE_SETUP
-#line 589 "zetasql/parser/flex_tokenizer.l"
+#line 589 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PRIMARY; }
 	YY_BREAK
 case 181:
 YY_RULE_SETUP
-#line 590 "zetasql/parser/flex_tokenizer.l"
+#line 590 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PRIVATE; }
 	YY_BREAK
 case 182:
 YY_RULE_SETUP
-#line 591 "zetasql/parser/flex_tokenizer.l"
+#line 591 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PRIVILEGE; }
 	YY_BREAK
 case 183:
 YY_RULE_SETUP
-#line 592 "zetasql/parser/flex_tokenizer.l"
+#line 592 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PRIVILEGES; }
 	YY_BREAK
 case 184:
 YY_RULE_SETUP
-#line 593 "zetasql/parser/flex_tokenizer.l"
+#line 593 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PROCEDURE; }
 	YY_BREAK
 case 185:
 YY_RULE_SETUP
-#line 594 "zetasql/parser/flex_tokenizer.l"
+#line 594 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PROTO; }
 	YY_BREAK
 case 186:
 YY_RULE_SETUP
-#line 595 "zetasql/parser/flex_tokenizer.l"
+#line 595 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PUBLIC; }
 	YY_BREAK
 case 187:
 YY_RULE_SETUP
-#line 596 "zetasql/parser/flex_tokenizer.l"
+#line 596 "googlesql/parser/flex_tokenizer.l"
 {
   return IsReservedKeyword("QUALIFY") ?
       BisonParserImpl::token::KW_QUALIFY_RESERVED :
@@ -53594,157 +53594,157 @@ YY_RULE_SETUP
 	YY_BREAK
 case 188:
 YY_RULE_SETUP
-#line 601 "zetasql/parser/flex_tokenizer.l"
+#line 601 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RAISE; }
 	YY_BREAK
 case 189:
 YY_RULE_SETUP
-#line 602 "zetasql/parser/flex_tokenizer.l"
+#line 602 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RANGE; }
 	YY_BREAK
 case 190:
 YY_RULE_SETUP
-#line 603 "zetasql/parser/flex_tokenizer.l"
+#line 603 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_READ; }
 	YY_BREAK
 case 191:
 YY_RULE_SETUP
-#line 604 "zetasql/parser/flex_tokenizer.l"
+#line 604 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RECURSIVE; }
 	YY_BREAK
 case 192:
 YY_RULE_SETUP
-#line 605 "zetasql/parser/flex_tokenizer.l"
+#line 605 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REFERENCES; }
 	YY_BREAK
 case 193:
 YY_RULE_SETUP
-#line 606 "zetasql/parser/flex_tokenizer.l"
+#line 606 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REMOTE; }
 	YY_BREAK
 case 194:
 YY_RULE_SETUP
-#line 607 "zetasql/parser/flex_tokenizer.l"
+#line 607 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REMOVE; }
 	YY_BREAK
 case 195:
 YY_RULE_SETUP
-#line 608 "zetasql/parser/flex_tokenizer.l"
+#line 608 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RENAME; }
 	YY_BREAK
 case 196:
 YY_RULE_SETUP
-#line 609 "zetasql/parser/flex_tokenizer.l"
+#line 609 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REPEAT; }
 	YY_BREAK
 case 197:
 YY_RULE_SETUP
-#line 610 "zetasql/parser/flex_tokenizer.l"
+#line 610 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REPEATABLE; }
 	YY_BREAK
 case 198:
 YY_RULE_SETUP
-#line 611 "zetasql/parser/flex_tokenizer.l"
+#line 611 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REPLACE; }
 	YY_BREAK
 case 199:
 YY_RULE_SETUP
-#line 612 "zetasql/parser/flex_tokenizer.l"
+#line 612 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REPLACE_FIELDS; }
 	YY_BREAK
 case 200:
 YY_RULE_SETUP
-#line 613 "zetasql/parser/flex_tokenizer.l"
+#line 613 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REPLICA; }
 	YY_BREAK
 case 201:
 YY_RULE_SETUP
-#line 614 "zetasql/parser/flex_tokenizer.l"
+#line 614 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REPORT; }
 	YY_BREAK
 case 202:
 YY_RULE_SETUP
-#line 615 "zetasql/parser/flex_tokenizer.l"
+#line 615 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RESPECT; }
 	YY_BREAK
 case 203:
 YY_RULE_SETUP
-#line 616 "zetasql/parser/flex_tokenizer.l"
+#line 616 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RESTRICT; }
 	YY_BREAK
 case 204:
 YY_RULE_SETUP
-#line 617 "zetasql/parser/flex_tokenizer.l"
+#line 617 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RESTRICTION; }
 	YY_BREAK
 case 205:
 YY_RULE_SETUP
-#line 618 "zetasql/parser/flex_tokenizer.l"
+#line 618 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RETURN; }
 	YY_BREAK
 case 206:
 YY_RULE_SETUP
-#line 619 "zetasql/parser/flex_tokenizer.l"
+#line 619 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RETURNS; }
 	YY_BREAK
 case 207:
 YY_RULE_SETUP
-#line 620 "zetasql/parser/flex_tokenizer.l"
+#line 620 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_REVOKE; }
 	YY_BREAK
 case 208:
 YY_RULE_SETUP
-#line 621 "zetasql/parser/flex_tokenizer.l"
+#line 621 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RIGHT; }
 	YY_BREAK
 case 209:
 YY_RULE_SETUP
-#line 622 "zetasql/parser/flex_tokenizer.l"
+#line 622 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ROLLBACK; }
 	YY_BREAK
 case 210:
 YY_RULE_SETUP
-#line 623 "zetasql/parser/flex_tokenizer.l"
+#line 623 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ROLLUP; }
 	YY_BREAK
 case 211:
 YY_RULE_SETUP
-#line 624 "zetasql/parser/flex_tokenizer.l"
+#line 624 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ROW; }
 	YY_BREAK
 case 212:
 YY_RULE_SETUP
-#line 625 "zetasql/parser/flex_tokenizer.l"
+#line 625 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ROWS; }
 	YY_BREAK
 case 213:
 YY_RULE_SETUP
-#line 626 "zetasql/parser/flex_tokenizer.l"
+#line 626 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_RUN; }
 	YY_BREAK
 case 214:
 YY_RULE_SETUP
-#line 627 "zetasql/parser/flex_tokenizer.l"
+#line 627 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SAFE_CAST; }
 	YY_BREAK
 case 215:
 YY_RULE_SETUP
-#line 628 "zetasql/parser/flex_tokenizer.l"
+#line 628 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SCHEMA; }
 	YY_BREAK
 case 216:
 YY_RULE_SETUP
-#line 629 "zetasql/parser/flex_tokenizer.l"
+#line 629 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SEARCH; }
 	YY_BREAK
 case 217:
 YY_RULE_SETUP
-#line 630 "zetasql/parser/flex_tokenizer.l"
+#line 630 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SECURITY; }
 	YY_BREAK
 case 218:
 YY_RULE_SETUP
-#line 631 "zetasql/parser/flex_tokenizer.l"
+#line 631 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SELECT; }
 	YY_BREAK
 /* This is a hack to differentiate F(sequence clamped between x and y), see
@@ -53759,304 +53759,304 @@ YY_LINENO_REWIND_TO(yy_bp + 8);
 (yy_c_buf_p) = yy_cp = yy_bp + 8;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 637 "zetasql/parser/flex_tokenizer.l"
+#line 637 "googlesql/parser/flex_tokenizer.l"
 {
   return BisonParserImpl::token::IDENTIFIER;
 }
 	YY_BREAK
 case 220:
 YY_RULE_SETUP
-#line 640 "zetasql/parser/flex_tokenizer.l"
+#line 640 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SEQUENCE; }
 	YY_BREAK
 case 221:
 YY_RULE_SETUP
-#line 641 "zetasql/parser/flex_tokenizer.l"
+#line 641 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SET; }
 	YY_BREAK
 case 222:
 YY_RULE_SETUP
-#line 642 "zetasql/parser/flex_tokenizer.l"
+#line 642 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SETS; }
 	YY_BREAK
 case 223:
 YY_RULE_SETUP
-#line 643 "zetasql/parser/flex_tokenizer.l"
+#line 643 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SHOW; }
 	YY_BREAK
 case 224:
 YY_RULE_SETUP
-#line 644 "zetasql/parser/flex_tokenizer.l"
+#line 644 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SIMPLE; }
 	YY_BREAK
 case 225:
 YY_RULE_SETUP
-#line 645 "zetasql/parser/flex_tokenizer.l"
+#line 645 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SOME; }
 	YY_BREAK
 case 226:
 YY_RULE_SETUP
-#line 646 "zetasql/parser/flex_tokenizer.l"
+#line 646 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SOURCE; }
 	YY_BREAK
 case 227:
 YY_RULE_SETUP
-#line 647 "zetasql/parser/flex_tokenizer.l"
+#line 647 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SNAPSHOT; }
 	YY_BREAK
 case 228:
 YY_RULE_SETUP
-#line 648 "zetasql/parser/flex_tokenizer.l"
+#line 648 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SQL; }
 	YY_BREAK
 case 229:
 YY_RULE_SETUP
-#line 649 "zetasql/parser/flex_tokenizer.l"
+#line 649 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_STABLE; }
 	YY_BREAK
 case 230:
 YY_RULE_SETUP
-#line 650 "zetasql/parser/flex_tokenizer.l"
+#line 650 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_START; }
 	YY_BREAK
 case 231:
 YY_RULE_SETUP
-#line 651 "zetasql/parser/flex_tokenizer.l"
+#line 651 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_STORED; }
 	YY_BREAK
 case 232:
 YY_RULE_SETUP
-#line 652 "zetasql/parser/flex_tokenizer.l"
+#line 652 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_STORING; }
 	YY_BREAK
 case 233:
 YY_RULE_SETUP
-#line 653 "zetasql/parser/flex_tokenizer.l"
+#line 653 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_STRICT; }
 	YY_BREAK
 case 234:
 YY_RULE_SETUP
-#line 654 "zetasql/parser/flex_tokenizer.l"
+#line 654 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_STRUCT; }
 	YY_BREAK
 case 235:
 YY_RULE_SETUP
-#line 655 "zetasql/parser/flex_tokenizer.l"
+#line 655 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SYSTEM; }
 	YY_BREAK
 case 236:
 YY_RULE_SETUP
-#line 656 "zetasql/parser/flex_tokenizer.l"
+#line 656 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SYSTEM_TIME; }
 	YY_BREAK
 case 237:
 YY_RULE_SETUP
-#line 657 "zetasql/parser/flex_tokenizer.l"
+#line 657 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TABLE; }
 	YY_BREAK
 case 238:
 YY_RULE_SETUP
-#line 658 "zetasql/parser/flex_tokenizer.l"
+#line 658 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TABLES; }
 	YY_BREAK
 case 239:
 YY_RULE_SETUP
-#line 659 "zetasql/parser/flex_tokenizer.l"
+#line 659 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TABLESAMPLE; }
 	YY_BREAK
 case 240:
 YY_RULE_SETUP
-#line 660 "zetasql/parser/flex_tokenizer.l"
+#line 660 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_PIVOT; }
 	YY_BREAK
 case 241:
 YY_RULE_SETUP
-#line 661 "zetasql/parser/flex_tokenizer.l"
+#line 661 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UNPIVOT; }
 	YY_BREAK
 case 242:
 YY_RULE_SETUP
-#line 662 "zetasql/parser/flex_tokenizer.l"
+#line 662 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TARGET; }
 	YY_BREAK
 case 243:
 YY_RULE_SETUP
-#line 663 "zetasql/parser/flex_tokenizer.l"
+#line 663 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TEMP; }
 	YY_BREAK
 case 244:
 YY_RULE_SETUP
-#line 664 "zetasql/parser/flex_tokenizer.l"
+#line 664 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TEMPORARY; }
 	YY_BREAK
 case 245:
 YY_RULE_SETUP
-#line 665 "zetasql/parser/flex_tokenizer.l"
+#line 665 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_THEN; }
 	YY_BREAK
 case 246:
 YY_RULE_SETUP
-#line 666 "zetasql/parser/flex_tokenizer.l"
+#line 666 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TIME; }
 	YY_BREAK
 case 247:
 YY_RULE_SETUP
-#line 667 "zetasql/parser/flex_tokenizer.l"
+#line 667 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TIMESTAMP; }
 	YY_BREAK
 case 248:
 YY_RULE_SETUP
-#line 668 "zetasql/parser/flex_tokenizer.l"
+#line 668 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TO; }
 	YY_BREAK
 case 249:
 YY_RULE_SETUP
-#line 669 "zetasql/parser/flex_tokenizer.l"
+#line 669 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TRANSACTION; }
 	YY_BREAK
 case 250:
 YY_RULE_SETUP
-#line 670 "zetasql/parser/flex_tokenizer.l"
+#line 670 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TRANSFORM; }
 	YY_BREAK
 case 251:
 YY_RULE_SETUP
-#line 671 "zetasql/parser/flex_tokenizer.l"
+#line 671 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TREAT; }
 	YY_BREAK
 case 252:
 YY_RULE_SETUP
-#line 672 "zetasql/parser/flex_tokenizer.l"
+#line 672 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TRUE; }
 	YY_BREAK
 case 253:
 YY_RULE_SETUP
-#line 673 "zetasql/parser/flex_tokenizer.l"
+#line 673 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TRUNCATE; }
 	YY_BREAK
 case 254:
 YY_RULE_SETUP
-#line 674 "zetasql/parser/flex_tokenizer.l"
+#line 674 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_TYPE; }
 	YY_BREAK
 case 255:
 YY_RULE_SETUP
-#line 675 "zetasql/parser/flex_tokenizer.l"
+#line 675 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UNBOUNDED; }
 	YY_BREAK
 case 256:
 YY_RULE_SETUP
-#line 676 "zetasql/parser/flex_tokenizer.l"
+#line 676 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UNDROP; }
 	YY_BREAK
 case 257:
 YY_RULE_SETUP
-#line 677 "zetasql/parser/flex_tokenizer.l"
+#line 677 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UNION; }
 	YY_BREAK
 case 258:
 YY_RULE_SETUP
-#line 678 "zetasql/parser/flex_tokenizer.l"
+#line 678 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UNKNOWN; }
 	YY_BREAK
 case 259:
 YY_RULE_SETUP
-#line 679 "zetasql/parser/flex_tokenizer.l"
+#line 679 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UNNEST; }
 	YY_BREAK
 case 260:
 YY_RULE_SETUP
-#line 680 "zetasql/parser/flex_tokenizer.l"
+#line 680 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UNIQUE; }
 	YY_BREAK
 case 261:
 YY_RULE_SETUP
-#line 681 "zetasql/parser/flex_tokenizer.l"
+#line 681 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UNTIL; }
 	YY_BREAK
 case 262:
 YY_RULE_SETUP
-#line 682 "zetasql/parser/flex_tokenizer.l"
+#line 682 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_UPDATE; }
 	YY_BREAK
 case 263:
 YY_RULE_SETUP
-#line 683 "zetasql/parser/flex_tokenizer.l"
+#line 683 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_USING; }
 	YY_BREAK
 case 264:
 YY_RULE_SETUP
-#line 684 "zetasql/parser/flex_tokenizer.l"
+#line 684 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_VALUE; }
 	YY_BREAK
 case 265:
 YY_RULE_SETUP
-#line 685 "zetasql/parser/flex_tokenizer.l"
+#line 685 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_VALUES; }
 	YY_BREAK
 case 266:
 YY_RULE_SETUP
-#line 686 "zetasql/parser/flex_tokenizer.l"
+#line 686 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_VECTOR; }
 	YY_BREAK
 case 267:
 YY_RULE_SETUP
-#line 687 "zetasql/parser/flex_tokenizer.l"
+#line 687 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_VIEW; }
 	YY_BREAK
 case 268:
 YY_RULE_SETUP
-#line 688 "zetasql/parser/flex_tokenizer.l"
+#line 688 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_VIEWS; }
 	YY_BREAK
 case 269:
 YY_RULE_SETUP
-#line 689 "zetasql/parser/flex_tokenizer.l"
+#line 689 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_VOLATILE; }
 	YY_BREAK
 case 270:
 YY_RULE_SETUP
-#line 690 "zetasql/parser/flex_tokenizer.l"
+#line 690 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_WEIGHT; }
 	YY_BREAK
 case 271:
 YY_RULE_SETUP
-#line 691 "zetasql/parser/flex_tokenizer.l"
+#line 691 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_WHEN; }
 	YY_BREAK
 case 272:
 YY_RULE_SETUP
-#line 692 "zetasql/parser/flex_tokenizer.l"
+#line 692 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_WHERE; }
 	YY_BREAK
 case 273:
 YY_RULE_SETUP
-#line 693 "zetasql/parser/flex_tokenizer.l"
+#line 693 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_WHILE; }
 	YY_BREAK
 case 274:
 YY_RULE_SETUP
-#line 694 "zetasql/parser/flex_tokenizer.l"
+#line 694 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_WINDOW; }
 	YY_BREAK
 case 275:
 YY_RULE_SETUP
-#line 695 "zetasql/parser/flex_tokenizer.l"
+#line 695 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_WITH; }
 	YY_BREAK
 case 276:
 YY_RULE_SETUP
-#line 696 "zetasql/parser/flex_tokenizer.l"
+#line 696 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_WITHIN; }
 	YY_BREAK
 case 277:
 YY_RULE_SETUP
-#line 697 "zetasql/parser/flex_tokenizer.l"
+#line 697 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_WRITE; }
 	YY_BREAK
 case 278:
 YY_RULE_SETUP
-#line 698 "zetasql/parser/flex_tokenizer.l"
+#line 698 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_ZONE; }
 	YY_BREAK
 /* END_KEYWORDS -- Do not remove! */
@@ -54065,7 +54065,7 @@ YY_RULE_SETUP
 case 279:
 /* rule 279 can match eol */
 YY_RULE_SETUP
-#line 703 "zetasql/parser/flex_tokenizer.l"
+#line 703 "googlesql/parser/flex_tokenizer.l"
 {
   return BisonParserImpl::token::STRING_LITERAL;
 }
@@ -54073,7 +54073,7 @@ YY_RULE_SETUP
 case 280:
 /* rule 280 can match eol */
 YY_RULE_SETUP
-#line 706 "zetasql/parser/flex_tokenizer.l"
+#line 706 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc, "Syntax error: Unclosed string literal");
   yyterminate();
@@ -54082,7 +54082,7 @@ YY_RULE_SETUP
 case 281:
 /* rule 281 can match eol */
 YY_RULE_SETUP
-#line 710 "zetasql/parser/flex_tokenizer.l"
+#line 710 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc,
                    "Syntax error: Unclosed triple-quoted string literal");
@@ -54092,7 +54092,7 @@ YY_RULE_SETUP
 case 282:
 /* rule 282 can match eol */
 YY_RULE_SETUP
-#line 715 "zetasql/parser/flex_tokenizer.l"
+#line 715 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc, "Syntax error: Unclosed raw string literal");
   yyterminate();
@@ -54101,7 +54101,7 @@ YY_RULE_SETUP
 case 283:
 /* rule 283 can match eol */
 YY_RULE_SETUP
-#line 719 "zetasql/parser/flex_tokenizer.l"
+#line 719 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc,
                    "Syntax error: Unclosed triple-quoted raw string literal");
@@ -54111,13 +54111,13 @@ YY_RULE_SETUP
 case 284:
 /* rule 284 can match eol */
 YY_RULE_SETUP
-#line 725 "zetasql/parser/flex_tokenizer.l"
+#line 725 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::BYTES_LITERAL; }
 	YY_BREAK
 case 285:
 /* rule 285 can match eol */
 YY_RULE_SETUP
-#line 726 "zetasql/parser/flex_tokenizer.l"
+#line 726 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc, "Syntax error: Unclosed bytes literal");
   yyterminate();
@@ -54126,7 +54126,7 @@ YY_RULE_SETUP
 case 286:
 /* rule 286 can match eol */
 YY_RULE_SETUP
-#line 730 "zetasql/parser/flex_tokenizer.l"
+#line 730 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc,
                    "Syntax error: Unclosed triple-quoted bytes literal");
@@ -54136,7 +54136,7 @@ YY_RULE_SETUP
 case 287:
 /* rule 287 can match eol */
 YY_RULE_SETUP
-#line 735 "zetasql/parser/flex_tokenizer.l"
+#line 735 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc, "Syntax error: Unclosed raw bytes literal");
   yyterminate();
@@ -54145,7 +54145,7 @@ YY_RULE_SETUP
 case 288:
 /* rule 288 can match eol */
 YY_RULE_SETUP
-#line 739 "zetasql/parser/flex_tokenizer.l"
+#line 739 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc,
                    "Syntax error: Unclosed triple-quoted raw bytes literal");
@@ -54155,13 +54155,13 @@ YY_RULE_SETUP
 case 289:
 /* rule 289 can match eol */
 YY_RULE_SETUP
-#line 745 "zetasql/parser/flex_tokenizer.l"
+#line 745 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::IDENTIFIER; }
 	YY_BREAK
 case 290:
 /* rule 290 can match eol */
 YY_RULE_SETUP
-#line 747 "zetasql/parser/flex_tokenizer.l"
+#line 747 "googlesql/parser/flex_tokenizer.l"
 {
   SetOverrideError(*yylloc, "Syntax error: Unclosed identifier literal");
   yyterminate();
@@ -54173,7 +54173,7 @@ YY_RULE_SETUP
     123 [AS] abc. */
 case 291:
 YY_RULE_SETUP
-#line 756 "zetasql/parser/flex_tokenizer.l"
+#line 756 "googlesql/parser/flex_tokenizer.l"
 {
   yylloc->begin.column += YYLeng() - 1;
   SetOverrideError(
@@ -54183,7 +54183,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 292:
 YY_RULE_SETUP
-#line 762 "zetasql/parser/flex_tokenizer.l"
+#line 762 "googlesql/parser/flex_tokenizer.l"
 {
   yylloc->begin.column += YYLeng() - 1;
   SetOverrideError(
@@ -54196,7 +54196,7 @@ case 293:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 768 "zetasql/parser/flex_tokenizer.l"
+#line 768 "googlesql/parser/flex_tokenizer.l"
 {
   // If the floating point literal starts with a ".", and the preceding token
   // is an identifier or unreserved keyword, then we should tokenize this
@@ -54228,17 +54228,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 294:
 YY_RULE_SETUP
-#line 797 "zetasql/parser/flex_tokenizer.l"
+#line 797 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::INTEGER_LITERAL; }
 	YY_BREAK
 case 295:
 YY_RULE_SETUP
-#line 798 "zetasql/parser/flex_tokenizer.l"
+#line 798 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::INTEGER_LITERAL; }
 	YY_BREAK
 case 296:
 YY_RULE_SETUP
-#line 800 "zetasql/parser/flex_tokenizer.l"
+#line 800 "googlesql/parser/flex_tokenizer.l"
 {
   // If the floating point literal starts with a ".", and the preceding token
   // is an identifier or unreserved keyword, then we should tokenize this
@@ -54255,7 +54255,7 @@ YY_RULE_SETUP
 case 297:
 /* rule 297 can match eol */
 YY_RULE_SETUP
-#line 813 "zetasql/parser/flex_tokenizer.l"
+#line 813 "googlesql/parser/flex_tokenizer.l"
 {
   // Unfortunately this doesn't catch all cases. We also accept whitespace
   // inside some tokens, and this rule only catches whitespace between
@@ -54272,7 +54272,7 @@ YY_RULE_SETUP
     use it in the grammar. */
 case 298:
 YY_RULE_SETUP
-#line 827 "zetasql/parser/flex_tokenizer.l"
+#line 827 "googlesql/parser/flex_tokenizer.l"
 {
    // These need to suspend special modes such as IN_BETWEEN. This is popped
    // again in the close rule below.
@@ -54284,7 +54284,7 @@ YY_RULE_SETUP
     DOT_IDENTIFIER mode. Do this after the JavaCC parser is retired. */
 case 299:
 YY_RULE_SETUP
-#line 835 "zetasql/parser/flex_tokenizer.l"
+#line 835 "googlesql/parser/flex_tokenizer.l"
 {
   // The corresponding open rule always pushes INITIAL. Even if we entered extra
   // modes in the mean time (such as IN_BETWEEN), we should leave those modes
@@ -54311,7 +54311,7 @@ YY_RULE_SETUP
 case 300:
 /* rule 300 can match eol */
 YY_RULE_SETUP
-#line 858 "zetasql/parser/flex_tokenizer.l"
+#line 858 "googlesql/parser/flex_tokenizer.l"
 {
   if (mode_ == BisonParserMode::kTokenizerPreserveComments) {
     SET_RETURN_PREFIX_LENGTH(1);
@@ -54322,35 +54322,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 301:
 YY_RULE_SETUP
-#line 865 "zetasql/parser/flex_tokenizer.l"
+#line 865 "googlesql/parser/flex_tokenizer.l"
 { return '*'; }
 	YY_BREAK
 case 302:
 YY_RULE_SETUP
-#line 866 "zetasql/parser/flex_tokenizer.l"
+#line 866 "googlesql/parser/flex_tokenizer.l"
 { return ','; }
 	YY_BREAK
 case 303:
 YY_RULE_SETUP
-#line 868 "zetasql/parser/flex_tokenizer.l"
+#line 868 "googlesql/parser/flex_tokenizer.l"
 { return '='; }
 	YY_BREAK
 case 304:
 YY_RULE_SETUP
-#line 869 "zetasql/parser/flex_tokenizer.l"
+#line 869 "googlesql/parser/flex_tokenizer.l"
 {
   return BisonParserImpl::token::KW_NOT_EQUALS_C_STYLE;
 }
 	YY_BREAK
 case 305:
 YY_RULE_SETUP
-#line 873 "zetasql/parser/flex_tokenizer.l"
+#line 873 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_LESS_EQUALS; }
 	YY_BREAK
 /* Don't recognize these in ARRAY<> or STRUCT<> context. */
 case 306:
 YY_RULE_SETUP
-#line 875 "zetasql/parser/flex_tokenizer.l"
+#line 875 "googlesql/parser/flex_tokenizer.l"
 {
   if (prev_flex_token_ == BisonParserImpl::token::KW_ARRAY ||
       prev_flex_token_ == BisonParserImpl::token::KW_STRUCT) {
@@ -54365,31 +54365,31 @@ YY_RULE_SETUP
 	YY_BREAK
 case 307:
 YY_RULE_SETUP
-#line 886 "zetasql/parser/flex_tokenizer.l"
+#line 886 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SHIFT_RIGHT; }
 	YY_BREAK
 case 308:
 YY_RULE_SETUP
-#line 887 "zetasql/parser/flex_tokenizer.l"
+#line 887 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_SHIFT_LEFT; }
 	YY_BREAK
 case 309:
 YY_RULE_SETUP
-#line 888 "zetasql/parser/flex_tokenizer.l"
+#line 888 "googlesql/parser/flex_tokenizer.l"
 {
   return BisonParserImpl::token::KW_NAMED_ARGUMENT_ASSIGNMENT;
 }
 	YY_BREAK
 case 310:
 YY_RULE_SETUP
-#line 891 "zetasql/parser/flex_tokenizer.l"
+#line 891 "googlesql/parser/flex_tokenizer.l"
 {
   return BisonParserImpl::token::KW_LAMBDA_ARROW;
 }
 	YY_BREAK
 case 311:
 YY_RULE_SETUP
-#line 894 "zetasql/parser/flex_tokenizer.l"
+#line 894 "googlesql/parser/flex_tokenizer.l"
 {
   if (prev_flex_token_ == BisonParserImpl::token::KW_ARRAY ||
       prev_flex_token_ == BisonParserImpl::token::KW_STRUCT) {
@@ -54405,7 +54405,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 312:
 YY_RULE_SETUP
-#line 906 "zetasql/parser/flex_tokenizer.l"
+#line 906 "googlesql/parser/flex_tokenizer.l"
 {
   if (YY_START == IN_ARRAY_OR_STRUCT_TYPE) yy_pop_state();
   return '>';
@@ -54413,68 +54413,68 @@ YY_RULE_SETUP
 	YY_BREAK
 case 313:
 YY_RULE_SETUP
-#line 910 "zetasql/parser/flex_tokenizer.l"
+#line 910 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_GREATER_EQUALS; }
 	YY_BREAK
 case 314:
 YY_RULE_SETUP
-#line 911 "zetasql/parser/flex_tokenizer.l"
+#line 911 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_CONCAT_OP; }
 	YY_BREAK
 case 315:
 YY_RULE_SETUP
-#line 912 "zetasql/parser/flex_tokenizer.l"
+#line 912 "googlesql/parser/flex_tokenizer.l"
 { return '|'; }
 	YY_BREAK
 case 316:
 YY_RULE_SETUP
-#line 913 "zetasql/parser/flex_tokenizer.l"
+#line 913 "googlesql/parser/flex_tokenizer.l"
 { return '^'; }
 	YY_BREAK
 case 317:
 YY_RULE_SETUP
-#line 914 "zetasql/parser/flex_tokenizer.l"
+#line 914 "googlesql/parser/flex_tokenizer.l"
 { return '&'; }
 	YY_BREAK
 case 318:
 YY_RULE_SETUP
-#line 915 "zetasql/parser/flex_tokenizer.l"
+#line 915 "googlesql/parser/flex_tokenizer.l"
 { return '+'; }
 	YY_BREAK
 case 319:
 YY_RULE_SETUP
-#line 916 "zetasql/parser/flex_tokenizer.l"
+#line 916 "googlesql/parser/flex_tokenizer.l"
 { return '-'; }
 	YY_BREAK
 case 320:
 YY_RULE_SETUP
-#line 917 "zetasql/parser/flex_tokenizer.l"
+#line 917 "googlesql/parser/flex_tokenizer.l"
 { return '/'; }
 	YY_BREAK
 case 321:
 YY_RULE_SETUP
-#line 918 "zetasql/parser/flex_tokenizer.l"
+#line 918 "googlesql/parser/flex_tokenizer.l"
 { return '~'; }
 	YY_BREAK
 case 322:
 YY_RULE_SETUP
-#line 919 "zetasql/parser/flex_tokenizer.l"
+#line 919 "googlesql/parser/flex_tokenizer.l"
 { return '?'; }
 	YY_BREAK
 case 323:
 YY_RULE_SETUP
-#line 920 "zetasql/parser/flex_tokenizer.l"
+#line 920 "googlesql/parser/flex_tokenizer.l"
 { return '!'; }
 	YY_BREAK
 case 324:
 YY_RULE_SETUP
-#line 921 "zetasql/parser/flex_tokenizer.l"
+#line 921 "googlesql/parser/flex_tokenizer.l"
 { return '%'; }
 	YY_BREAK
 case 325:
 /* rule 325 can match eol */
 YY_RULE_SETUP
-#line 922 "zetasql/parser/flex_tokenizer.l"
+#line 922 "googlesql/parser/flex_tokenizer.l"
 {
   // "{" needs to suspend special modes such as IN_BETWEEN. This is popped
   // again in the "}" rule.
@@ -54493,24 +54493,24 @@ YY_LINENO_REWIND_TO(yy_bp + 1);
 (yy_c_buf_p) = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 932 "zetasql/parser/flex_tokenizer.l"
+#line 932 "googlesql/parser/flex_tokenizer.l"
 {
   return BisonParserImpl::token::KW_OPEN_INTEGER_HINT;
 }
 	YY_BREAK
 case 327:
 YY_RULE_SETUP
-#line 935 "zetasql/parser/flex_tokenizer.l"
+#line 935 "googlesql/parser/flex_tokenizer.l"
 { return '@'; }
 	YY_BREAK
 case 328:
 YY_RULE_SETUP
-#line 936 "zetasql/parser/flex_tokenizer.l"
+#line 936 "googlesql/parser/flex_tokenizer.l"
 { return BisonParserImpl::token::KW_DOUBLE_AT; }
 	YY_BREAK
 case 329:
 YY_RULE_SETUP
-#line 937 "zetasql/parser/flex_tokenizer.l"
+#line 937 "googlesql/parser/flex_tokenizer.l"
 {
   if (IsDotGeneralizedIdentifierPrefixToken(prev_flex_token_) ) {
     // When an identifier or unreserved keyword is followed by a dot, always
@@ -54525,13 +54525,13 @@ YY_RULE_SETUP
     does not use it anywhere. This is here to maintain compatibility. */
 case 330:
 YY_RULE_SETUP
-#line 949 "zetasql/parser/flex_tokenizer.l"
+#line 949 "googlesql/parser/flex_tokenizer.l"
 { return ':'; }
 	YY_BREAK
 case 331:
 /* rule 331 can match eol */
 YY_RULE_SETUP
-#line 951 "zetasql/parser/flex_tokenizer.l"
+#line 951 "googlesql/parser/flex_tokenizer.l"
 {
   if (mode_ == BisonParserMode::kTokenizerPreserveComments) {
     SET_RETURN_PREFIX_LENGTH(1);
@@ -54553,7 +54553,7 @@ YY_RULE_SETUP
 /* These are used only during macro expansions */
 case 332:
 YY_RULE_SETUP
-#line 970 "zetasql/parser/flex_tokenizer.l"
+#line 970 "googlesql/parser/flex_tokenizer.l"
 {
   if (AreMacrosEnabled()) {
     return BisonParserImpl::token::MACRO_INVOCATION;
@@ -54565,7 +54565,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 333:
 YY_RULE_SETUP
-#line 978 "zetasql/parser/flex_tokenizer.l"
+#line 978 "googlesql/parser/flex_tokenizer.l"
 {
   if (AreMacrosEnabled()) {
     return BisonParserImpl::token::MACRO_ARGUMENT_REFERENCE;
@@ -54577,7 +54577,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 334:
 YY_RULE_SETUP
-#line 986 "zetasql/parser/flex_tokenizer.l"
+#line 986 "googlesql/parser/flex_tokenizer.l"
 {
   if (AreMacrosEnabled()) {
     return BisonParserImpl::token::DOLLAR_SIGN;
@@ -54602,7 +54602,7 @@ YY_RULE_SETUP
 case 335:
 /* rule 335 can match eol */
 YY_RULE_SETUP
-#line 1007 "zetasql/parser/flex_tokenizer.l"
+#line 1007 "googlesql/parser/flex_tokenizer.l"
 {
   if (yylloc->end.column == input_size_ + 1) {
     // The whitespace is adjacent to the end of the input, and includes the
@@ -54618,7 +54618,7 @@ YY_RULE_SETUP
 case 336:
 /* rule 336 can match eol */
 YY_RULE_SETUP
-#line 1019 "zetasql/parser/flex_tokenizer.l"
+#line 1019 "googlesql/parser/flex_tokenizer.l"
 {
   if (mode_ == BisonParserMode::kTokenizerPreserveComments) {
     if (yylloc->end.column == input_size_ + 1) {
@@ -54646,7 +54646,7 @@ case YY_STATE_EOF(DOT_IDENTIFIER):
 case YY_STATE_EOF(IN_ARRAY_OR_STRUCT_TYPE):
 case YY_STATE_EOF(IN_BETWEEN):
 case YY_STATE_EOF(STACK_BOTTOM):
-#line 1041 "zetasql/parser/flex_tokenizer.l"
+#line 1041 "googlesql/parser/flex_tokenizer.l"
 {
   // This shouldn't happen. Instead, the {whitespace} condition should trigger
   // at the end of the input, because we always ensure that the query ends in
@@ -54663,7 +54663,7 @@ case YY_STATE_EOF(STACK_BOTTOM):
 case 337:
 /* rule 337 can match eol */
 YY_RULE_SETUP
-#line 1054 "zetasql/parser/flex_tokenizer.l"
+#line 1054 "googlesql/parser/flex_tokenizer.l"
 {
   yy_pop_state();
   return BisonParserImpl::token::IDENTIFIER;
@@ -54675,7 +54675,7 @@ YY_RULE_SETUP
     TODO: Add a tokenizer test for this catchall rule. */
 case 338:
 YY_RULE_SETUP
-#line 1062 "zetasql/parser/flex_tokenizer.l"
+#line 1062 "googlesql/parser/flex_tokenizer.l"
 {
   yy_pop_state();
   SET_RETURN_PREFIX_LENGTH(0);
@@ -54685,17 +54685,17 @@ YY_RULE_SETUP
     as STACK_BOTTOM. */
 case 339:
 YY_RULE_SETUP
-#line 1069 "zetasql/parser/flex_tokenizer.l"
+#line 1069 "googlesql/parser/flex_tokenizer.l"
 {
   RETURN_ILLEGAL_CHARACTER_ERROR
 }
 	YY_BREAK
 case 340:
 YY_RULE_SETUP
-#line 1072 "zetasql/parser/flex_tokenizer.l"
+#line 1072 "googlesql/parser/flex_tokenizer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 54705 "bazel-out/k8-fastbuild/bin/zetasql/parser/flex_tokenizer.flex.cc"
+#line 54705 "bazel-out/k8-fastbuild/bin/googlesql/parser/flex_tokenizer.flex.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -55651,4 +55651,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 1072 "zetasql/parser/flex_tokenizer.l"
+#line 1072 "googlesql/parser/flex_tokenizer.l"

@@ -5,6 +5,7 @@
 // include sources
 // include dependencies
 #include "go-absl/random/go_internal/mock_helpers/export.inc"
+#include "go-absl/base/config/export.inc"
 #include "go-absl/random/mocking_bit_gen/export.inc"
 #include "go-googletest/googletest/export.inc"
 

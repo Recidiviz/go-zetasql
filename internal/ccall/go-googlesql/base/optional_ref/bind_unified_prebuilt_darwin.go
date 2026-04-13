@@ -39,7 +39,6 @@ package optional_ref
 #cgo LDFLAGS: -Wl,-force_load,${SRCDIR}/../../../go-googlesql-unified/lib/libgooglesql.a
 #cgo LDFLAGS: -lz
 #cgo LDFLAGS: -lc++
-
 #define GO_EXPORT(API) export_googlesql_base_optional_ref_ ## API
 #include "bridge.h"
 */
