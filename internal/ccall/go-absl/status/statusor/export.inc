@@ -4,7 +4,6 @@
 #include "absl/status/statusor.h"
 // include sources
 #include "absl/status/internal/statusor_internal.h"
-#include "absl/status/statusor.cc"
 // include dependencies
 #include "go-absl/status/status/export.inc"
 #include "go-absl/base/base/export.inc"

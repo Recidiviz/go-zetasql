@@ -3,7 +3,6 @@
 
 #include "absl/random/internal/randen_slow.h"
 // include sources
-#include "absl/random/internal/randen_slow.cc"
 // include dependencies
 #include "go-absl/random/go_internal/platform/export.inc"
 #include "go-absl/base/config/export.inc"

@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/random/internal/seed_material.cc"
 
 // include dependencies
 #include "go-absl/random/go_internal/fast_uniform_bits/export.inc"

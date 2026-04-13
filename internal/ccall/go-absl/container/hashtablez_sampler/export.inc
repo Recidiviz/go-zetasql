@@ -3,8 +3,6 @@
 
 #include "absl/container/internal/hashtablez_sampler.h"
 // include sources
-#include "absl/container/internal/hashtablez_sampler.cc"
-#include "absl/container/internal/hashtablez_sampler_force_weak_definition.cc"
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/config/export.inc"

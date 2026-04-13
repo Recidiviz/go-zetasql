@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/container/internal/raw_hash_set.cc"
 
 // include dependencies
 #include "go-absl/container/common/export.inc"

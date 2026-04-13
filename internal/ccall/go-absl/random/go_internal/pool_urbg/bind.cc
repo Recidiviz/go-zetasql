@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/random/internal/pool_urbg.cc"
 
 // include dependencies
 #include "go-absl/random/go_internal/randen/export.inc"

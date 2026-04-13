@@ -698,6 +698,47 @@ cclib:
     - pkg: absl/strings/pow10_helper
       sources:
         - absl/strings/internal/pow10_helper.cc
+    # Third batch default-path go-absl slice (single .cc per shard; libprotobuf_cgo.a ownership).
+    - pkg: absl/hash/hash
+      sources:
+        - absl/hash/internal/hash.cc
+    - pkg: absl/container/raw_hash_set
+      sources:
+        - absl/container/internal/raw_hash_set.cc
+    - pkg: absl/status/statusor
+      sources:
+        - absl/status/statusor.cc
+    - pkg: absl/random/internal/platform
+      sources:
+        - absl/random/internal/randen_round_keys.cc
+    - pkg: absl/random/internal/pool_urbg
+      sources:
+        - absl/random/internal/pool_urbg.cc
+    - pkg: absl/random/internal/randen
+      sources:
+        - absl/random/internal/randen.cc
+    - pkg: absl/random/internal/randen_hwaes
+      sources:
+        - absl/random/internal/randen_detect.cc
+    - pkg: absl/random/internal/randen_hwaes_impl
+      sources:
+        - absl/random/internal/randen_hwaes.cc
+    - pkg: absl/random/internal/randen_slow
+      sources:
+        - absl/random/internal/randen_slow.cc
+    - pkg: absl/random/internal/seed_material
+      sources:
+        - absl/random/internal/seed_material.cc
+    # Multi-source shard: both .cc bodies in libprotobuf_cgo.a (hashtablez_sampler*.pic.o).
+    - pkg: absl/container/hashtablez_sampler
+      sources:
+        - absl/container/internal/hashtablez_sampler.cc
+        - absl/container/internal/hashtablez_sampler_force_weak_definition.cc
+    # Avoid duplicate anonymous-namespace kMaxCodePoint when decode_rust_punycode/export.inc
+    # chains utf8_for_code_point/export.inc into the same TU as decode_rust_punycode.cc.
+    - pkg: absl/debugging/utf8_for_code_point
+      sources:
+        - absl/debugging/internal/utf8_for_code_point.cc
   bind_cc_prelude_before_headers:
     - pkg: googlesql/parser/parser
       lines: |

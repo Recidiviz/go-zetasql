@@ -3,7 +3,6 @@
 
 #include "absl/hash/hash.h"
 // include sources
-#include "absl/hash/internal/hash.cc"
 #include "absl/hash/internal/hash.h"
 // include dependencies
 #include "go-absl/hash/city/export.inc"

@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/random/internal/randen_slow.cc"
 
 // include dependencies
 #include "go-absl/random/go_internal/platform/export.inc"

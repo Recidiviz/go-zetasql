@@ -3,7 +3,6 @@
 
 #include "absl/debugging/internal/utf8_for_code_point.h"
 // include sources
-#include "absl/debugging/internal/utf8_for_code_point.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 

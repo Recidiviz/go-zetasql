@@ -4,7 +4,6 @@
 #include "absl/random/internal/randen_detect.h"
 #include "absl/random/internal/randen_hwaes.h"
 // include sources
-#include "absl/random/internal/randen_detect.cc"
 // include dependencies
 #include "go-absl/random/go_internal/platform/export.inc"
 #include "go-absl/random/go_internal/randen_hwaes_impl/export.inc"

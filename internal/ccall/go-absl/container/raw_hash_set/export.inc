@@ -3,7 +3,6 @@
 
 #include "absl/container/internal/raw_hash_set.h"
 // include sources
-#include "absl/container/internal/raw_hash_set.cc"
 // include dependencies
 #include "go-absl/container/common/export.inc"
 #include "go-absl/container/compressed_tuple/export.inc"

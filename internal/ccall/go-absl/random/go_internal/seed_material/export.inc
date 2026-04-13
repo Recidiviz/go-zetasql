@@ -3,7 +3,6 @@
 
 #include "absl/random/internal/seed_material.h"
 // include sources
-#include "absl/random/internal/seed_material.cc"
 // include dependencies
 #include "go-absl/random/go_internal/fast_uniform_bits/export.inc"
 #include "go-absl/base/core_headers/export.inc"

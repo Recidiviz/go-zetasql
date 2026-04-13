@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/hash/internal/hash.cc"
 #include "absl/hash/internal/hash.h"
 
 // include dependencies
