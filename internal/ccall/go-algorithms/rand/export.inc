@@ -3,7 +3,6 @@
 
 #include "algorithms/rand.h"
 // include sources
-#include "algorithms/rand.cc"
 // include dependencies
 #include "go-base/logging/export.inc"
 #include "go-boringssl/export.inc"

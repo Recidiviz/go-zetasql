@@ -2,7 +2,10 @@
 #ifndef algorithms_numerical_mechanisms_bind_cc
 #define algorithms_numerical_mechanisms_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy algorithms_numerical_mechanisms_differential_privacy
 #define googlesql algorithms_numerical_mechanisms_googlesql
 #define googlesql_base algorithms_numerical_mechanisms_googlesql_base
@@ -51,32 +54,10 @@
 #define GO_EXPORT(def) export_algorithms_numerical_mechanisms_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "algorithms/numerical-mechanisms.h"
-//#undef private
-
-// include sources
-#include "algorithms/numerical-mechanisms.cc"
-
-// include dependencies
-#include "go-algorithms/distributions/export.inc"
-#include "go-algorithms/rand/export.inc"
-#include "go-algorithms/util/export.inc"
-#include "go-algorithms/go_internal/gaussian-stddev-calculator/export.inc"
-#include "go-base/logging/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/memory/memory/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-absl/types/optional/export.inc"
-#include "go-base/status/export.inc"
-#include "go-proto/confidence_interval_cc_proto/export.inc"
-#include "go-proto/numerical_mechanism_cc_proto/export.inc"
 
 #include "bridge.h"
 

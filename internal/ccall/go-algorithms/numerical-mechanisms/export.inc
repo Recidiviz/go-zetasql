@@ -3,7 +3,6 @@
 
 #include "algorithms/numerical-mechanisms.h"
 // include sources
-#include "algorithms/numerical-mechanisms.cc"
 // include dependencies
 #include "go-algorithms/distributions/export.inc"
 #include "go-algorithms/rand/export.inc"

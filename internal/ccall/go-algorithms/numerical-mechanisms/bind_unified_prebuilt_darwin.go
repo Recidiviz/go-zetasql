@@ -1,3 +1,5 @@
+//go:build googlesql_unified_prebuilt
+
 package numerical_mechanisms
 
 /*
@@ -12,6 +14,8 @@ package numerical_mechanisms
 #cgo CXXFLAGS: -I../../googleapis
 #cgo CXXFLAGS: -I../../boringssl
 #cgo CXXFLAGS: -I../../flex/src
+#cgo CXXFLAGS: -DGOOGLESQL_LINK_ONLY_BIND
+#cgo CXXFLAGS: -DGOOGLESQL_UNIFIED_PREBUILT_THIN_BIND_CC
 #cgo CXXFLAGS: -Wno-char-subscripts
 #cgo CXXFLAGS: -Wno-sign-compare
 #cgo CXXFLAGS: -Wno-switch
@@ -31,6 +35,10 @@ package numerical_mechanisms
 #cgo CXXFLAGS: -Wno-unknown-warning-option
 #cgo CXXFLAGS: -DHAVE_PTHREAD
 #cgo CXXFLAGS: -DU_COMMON_IMPLEMENTATION
+#cgo LDFLAGS: -L${SRCDIR}/../../go-googlesql-unified/lib
+#cgo LDFLAGS: -Wl,-force_load,${SRCDIR}/../../go-googlesql-unified/lib/libgooglesql.a
+#cgo LDFLAGS: -lz
+#cgo LDFLAGS: -lc++
 #define GO_EXPORT(API) export_algorithms_numerical_mechanisms_ ## API
 #include "bridge.h"
 #undef GO_EXPORT
@@ -39,6 +47,9 @@ package numerical_mechanisms
 */
 import "C"
 import (
-	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
 	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-protobuf/protobuf"
+)
+import (
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-absl/time/go_internal/cctz/time_zone"
+	_ "github.com/vantaboard/go-googlesql/internal/ccall/go-googlesql-unified/googlesqlunified"
 )

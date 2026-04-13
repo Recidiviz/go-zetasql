@@ -2,7 +2,10 @@
 #ifndef algorithms_internal_gaussian_stddev_calculator_bind_cc
 #define algorithms_internal_gaussian_stddev_calculator_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy algorithms_internal_gaussian_stddev_calculator_differential_privacy
 #define googlesql algorithms_internal_gaussian_stddev_calculator_googlesql
 #define googlesql_base algorithms_internal_gaussian_stddev_calculator_googlesql_base
@@ -51,18 +54,10 @@
 #define GO_EXPORT(def) export_algorithms_internal_gaussian_stddev_calculator_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "algorithms/internal/gaussian-stddev-calculator.h"
-//#undef private
-
-// include sources
-#include "algorithms/internal/gaussian-stddev-calculator.cc"
-
-// include dependencies
 
 #include "bridge.h"
 

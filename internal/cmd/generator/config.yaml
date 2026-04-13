@@ -550,6 +550,11 @@ cclib:
     - algorithms/util
     # algorithms/distributions.cc — same DP archive closure as util.
     - algorithms/distributions
+    # numerical-mechanisms.cc, rand.cc, gaussian-stddev-calculator.cc — objects in libgooglesql.a
+    # (com_google_cc_differential_privacy extract); link-only avoids duplicate TUs vs unified archive.
+    - algorithms/numerical-mechanisms
+    - algorithms/rand
+    - algorithms/internal/gaussian-stddev-calculator
     # Differential-privacy protos: .pb.o live in libgooglesql.a (external DP repo); link-only avoids
     # duplicate TU bodies vs the unified archive. See docs/cgo-consolidation.md (class C).
     - proto/confidence_interval_cc_proto

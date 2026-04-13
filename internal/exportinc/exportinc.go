@@ -118,18 +118,28 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 // libgooglesql.a (com_google_cc_differential_privacy). Parent TUs must not compile those bodies
 // again via export.inc.
 func filterAlgorithmsUtilLinkOnlySources(packageDir string, prelude []string) []string {
-	var drop string
+	var drops []string
 	switch {
 	case strings.Contains(packageDir, "go-algorithms/util"):
-		drop = `#include "algorithms/util.cc"`
+		drops = []string{`#include "algorithms/util.cc"`}
 	case strings.Contains(packageDir, "go-algorithms/distributions"):
-		drop = `#include "algorithms/distributions.cc"`
+		drops = []string{`#include "algorithms/distributions.cc"`}
+	case strings.Contains(packageDir, "go-algorithms/numerical-mechanisms"):
+		drops = []string{`#include "algorithms/numerical-mechanisms.cc"`}
+	case strings.Contains(packageDir, "go-algorithms/rand"):
+		drops = []string{`#include "algorithms/rand.cc"`}
+	case strings.Contains(packageDir, "go-algorithms/go_internal/gaussian-stddev-calculator"):
+		drops = []string{`#include "algorithms/internal/gaussian-stddev-calculator.cc"`}
 	default:
 		return prelude
 	}
+	dropSet := make(map[string]struct{}, len(drops))
+	for _, d := range drops {
+		dropSet[d] = struct{}{}
+	}
 	out := make([]string, 0, len(prelude))
 	for _, line := range prelude {
-		if strings.TrimSpace(line) == drop {
+		if _, ok := dropSet[strings.TrimSpace(line)]; ok {
 			continue
 		}
 		out = append(out, line)

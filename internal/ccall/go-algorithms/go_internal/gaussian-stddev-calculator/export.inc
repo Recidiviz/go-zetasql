@@ -3,7 +3,6 @@
 
 #include "algorithms/internal/gaussian-stddev-calculator.h"
 // include sources
-#include "algorithms/internal/gaussian-stddev-calculator.cc"
 // include dependencies
 
 #endif
