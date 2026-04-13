@@ -61,7 +61,6 @@
 //#undef private
 
 // include sources
-#include "absl/flags/internal/flag.cc"
 
 // include dependencies
 #include "go-absl/flags/commandlineflag/export.inc"

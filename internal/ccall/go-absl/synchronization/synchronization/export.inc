@@ -16,18 +16,6 @@
 #include "absl/synchronization/mutex.h"
 #include "absl/synchronization/notification.h"
 // include sources
-#include "absl/synchronization/barrier.cc"
-#include "absl/synchronization/blocking_counter.cc"
-#include "absl/synchronization/internal/create_thread_identity.cc"
-#include "absl/synchronization/internal/futex_waiter.cc"
-#include "absl/synchronization/internal/per_thread_sem.cc"
-#include "absl/synchronization/internal/pthread_waiter.cc"
-#include "absl/synchronization/internal/sem_waiter.cc"
-#include "absl/synchronization/internal/stdcpp_waiter.cc"
-#include "absl/synchronization/internal/waiter_base.cc"
-#include "absl/synchronization/internal/win32_waiter.cc"
-#include "absl/synchronization/mutex.cc"
-#include "absl/synchronization/notification.cc"
 // include dependencies
 #include "go-absl/synchronization/graphcycles_internal/export.inc"
 #include "go-absl/synchronization/kernel_timeout_internal/export.inc"

@@ -74,30 +74,13 @@
 //#undef private
 
 // include sources
-#include "absl/strings/ascii.cc"
-#include "absl/strings/charconv.cc"
-#include "absl/strings/escaping.cc"
-#include "absl/strings/internal/charconv_bigint.cc"
 #include "absl/strings/internal/charconv_bigint.h"
-#include "absl/strings/internal/charconv_parse.cc"
 #include "absl/strings/internal/charconv_parse.h"
-#include "absl/strings/internal/damerau_levenshtein_distance.cc"
-#include "absl/strings/internal/memutil.cc"
 #include "absl/strings/internal/memutil.h"
 #include "absl/strings/internal/stl_type_traits.h"
 #include "absl/strings/internal/str_join_internal.h"
 #include "absl/strings/internal/str_split_internal.h"
-#include "absl/strings/internal/stringify_sink.cc"
 #include "absl/strings/internal/stringify_sink.h"
-#include "absl/strings/match.cc"
-#define kAsciiToInt absl_strings_strings_absl_strings_numbers_kAsciiToInt
-#include "absl/strings/numbers.cc"
-#undef kAsciiToInt
-
-#include "absl/strings/str_cat.cc"
-#include "absl/strings/str_replace.cc"
-#include "absl/strings/str_split.cc"
-#include "absl/strings/substitute.cc"
 
 // include dependencies
 #include "go-absl/strings/charset/export.inc"

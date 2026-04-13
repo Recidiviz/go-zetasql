@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/debugging/internal/decode_rust_punycode.cc"
 
 // include dependencies
 #include "go-absl/debugging/bounded_utf8_length_sequence/export.inc"

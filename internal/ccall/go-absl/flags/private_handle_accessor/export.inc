@@ -3,7 +3,6 @@
 
 #include "absl/flags/internal/private_handle_accessor.h"
 // include sources
-#include "absl/flags/internal/private_handle_accessor.cc"
 // include dependencies
 #include "go-absl/flags/commandlineflag/export.inc"
 #include "go-absl/flags/commandlineflag_internal/export.inc"

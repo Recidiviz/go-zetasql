@@ -6,9 +6,6 @@
 #include "absl/strings/internal/resize_uninitialized.h"
 #include "absl/strings/internal/utf8.h"
 // include sources
-#include "absl/strings/internal/escaping.cc"
-#include "absl/strings/internal/ostringstream.cc"
-#include "absl/strings/internal/utf8.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"

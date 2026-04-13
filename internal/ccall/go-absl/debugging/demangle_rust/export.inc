@@ -3,7 +3,6 @@
 
 #include "absl/debugging/internal/demangle_rust.h"
 // include sources
-#include "absl/debugging/internal/demangle_rust.cc"
 // include dependencies
 #include "go-absl/debugging/decode_rust_punycode/export.inc"
 #include "go-absl/base/config/export.inc"

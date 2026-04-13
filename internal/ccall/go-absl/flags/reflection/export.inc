@@ -4,7 +4,6 @@
 #include "absl/flags/internal/registry.h"
 #include "absl/flags/reflection.h"
 // include sources
-#include "absl/flags/reflection.cc"
 // include dependencies
 #include "go-absl/flags/commandlineflag/export.inc"
 #include "go-absl/flags/commandlineflag_internal/export.inc"

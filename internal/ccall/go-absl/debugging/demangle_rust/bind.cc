@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/debugging/internal/demangle_rust.cc"
 
 // include dependencies
 #include "go-absl/debugging/decode_rust_punycode/export.inc"

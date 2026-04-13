@@ -3,7 +3,6 @@
 
 #include "absl/debugging/internal/decode_rust_punycode.h"
 // include sources
-#include "absl/debugging/internal/decode_rust_punycode.cc"
 // include dependencies
 #include "go-absl/debugging/bounded_utf8_length_sequence/export.inc"
 #include "go-absl/debugging/utf8_for_code_point/export.inc"

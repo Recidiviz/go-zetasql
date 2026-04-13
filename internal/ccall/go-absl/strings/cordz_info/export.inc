@@ -3,7 +3,6 @@
 
 #include "absl/strings/internal/cordz_info.h"
 // include sources
-#include "absl/strings/internal/cordz_info.cc"
 // include dependencies
 #include "go-absl/strings/cord_internal/export.inc"
 #include "go-absl/strings/cordz_functions/export.inc"

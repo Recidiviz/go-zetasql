@@ -4,7 +4,6 @@
 #include "absl/flags/internal/flag.h"
 #include "absl/flags/internal/sequence_lock.h"
 // include sources
-#include "absl/flags/internal/flag.cc"
 // include dependencies
 #include "go-absl/flags/commandlineflag/export.inc"
 #include "go-absl/flags/commandlineflag_internal/export.inc"

@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/flags/internal/program_name.cc"
 
 // include dependencies
 #include "go-absl/flags/path_util/export.inc"

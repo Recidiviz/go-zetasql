@@ -3,7 +3,6 @@
 
 #include "absl/log/internal/nullguard.h"
 // include sources
-#include "absl/log/internal/nullguard.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"

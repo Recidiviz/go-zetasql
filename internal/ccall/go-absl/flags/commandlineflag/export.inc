@@ -3,7 +3,6 @@
 
 #include "absl/flags/commandlineflag.h"
 // include sources
-#include "absl/flags/commandlineflag.cc"
 // include dependencies
 #include "go-absl/flags/commandlineflag_internal/export.inc"
 #include "go-absl/base/config/export.inc"

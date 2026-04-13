@@ -61,10 +61,7 @@
 //#undef private
 
 // include sources
-#include "absl/strings/cord.cc"
-#include "absl/strings/cord_analysis.cc"
 #include "absl/strings/cord_analysis.h"
-#include "absl/strings/cord_buffer.cc"
 
 // include dependencies
 #include "go-absl/strings/cord_internal/export.inc"

@@ -3,7 +3,6 @@
 
 #include "absl/flags/marshalling.h"
 // include sources
-#include "absl/flags/marshalling.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"

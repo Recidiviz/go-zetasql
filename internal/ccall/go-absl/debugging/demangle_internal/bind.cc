@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/debugging/internal/demangle.cc"
 
 // include dependencies
 #include "go-absl/debugging/demangle_rust/export.inc"

@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/strings/internal/cordz_handle.cc"
 
 // include dependencies
 #include "go-absl/base/config/export.inc"

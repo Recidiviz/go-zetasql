@@ -67,12 +67,6 @@
 //#undef private
 
 // include sources
-#include "absl/strings/internal/str_format/arg.cc"
-#include "absl/strings/internal/str_format/bind.cc"
-#include "absl/strings/internal/str_format/extension.cc"
-#include "absl/strings/internal/str_format/float_conversion.cc"
-#include "absl/strings/internal/str_format/output.cc"
-#include "absl/strings/internal/str_format/parser.cc"
 
 // include dependencies
 #include "go-absl/strings/strings/export.inc"

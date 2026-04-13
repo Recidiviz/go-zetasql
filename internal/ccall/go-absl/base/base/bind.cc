@@ -69,11 +69,6 @@
 //#undef private
 
 // include sources
-#include "absl/base/internal/cycleclock.cc"
-#include "absl/base/internal/spinlock.cc"
-#include "absl/base/internal/sysinfo.cc"
-#include "absl/base/internal/thread_identity.cc"
-#include "absl/base/internal/unscaledcycleclock.cc"
 
 // include dependencies
 #include "go-absl/base/atomic_hook/export.inc"

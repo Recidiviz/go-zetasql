@@ -10,12 +10,6 @@
 #include "absl/strings/internal/cord_rep_crc.h"
 #include "absl/strings/internal/cord_rep_flat.h"
 // include sources
-#include "absl/strings/internal/cord_internal.cc"
-#include "absl/strings/internal/cord_rep_btree.cc"
-#include "absl/strings/internal/cord_rep_btree_navigator.cc"
-#include "absl/strings/internal/cord_rep_btree_reader.cc"
-#include "absl/strings/internal/cord_rep_consume.cc"
-#include "absl/strings/internal/cord_rep_crc.cc"
 // include dependencies
 #include "go-absl/strings/strings/export.inc"
 #include "go-absl/base/base_internal/export.inc"

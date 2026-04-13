@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/internal/log_sink_set.cc"
 
 // include dependencies
 #include "go-absl/log/go_internal/config/export.inc"

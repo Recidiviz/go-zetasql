@@ -5,11 +5,7 @@
 #include "absl/crc/internal/crc32c.h"
 #include "absl/crc/internal/crc_memcpy.h"
 // include sources
-#include "absl/crc/crc32c.cc"
 #include "absl/crc/internal/crc32c_inline.h"
-#include "absl/crc/internal/crc_memcpy_fallback.cc"
-#include "absl/crc/internal/crc_memcpy_x86_arm_combined.cc"
-#include "absl/crc/internal/crc_non_temporal_memcpy.cc"
 // include dependencies
 #include "go-absl/crc/cpu_detect/export.inc"
 #include "go-absl/crc/crc_internal/export.inc"

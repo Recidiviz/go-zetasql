@@ -4,7 +4,6 @@
 #include "absl/flags/config.h"
 #include "absl/flags/usage_config.h"
 // include sources
-#include "absl/flags/usage_config.cc"
 // include dependencies
 #include "go-absl/flags/path_util/export.inc"
 #include "go-absl/flags/program_name/export.inc"

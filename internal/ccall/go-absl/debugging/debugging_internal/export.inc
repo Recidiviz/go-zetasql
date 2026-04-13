@@ -5,9 +5,6 @@
 #include "absl/debugging/internal/elf_mem_image.h"
 #include "absl/debugging/internal/vdso_support.h"
 // include sources
-#include "absl/debugging/internal/address_is_readable.cc"
-#include "absl/debugging/internal/elf_mem_image.cc"
-#include "absl/debugging/internal/vdso_support.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"

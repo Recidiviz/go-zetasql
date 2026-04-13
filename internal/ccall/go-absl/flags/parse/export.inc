@@ -4,7 +4,6 @@
 #include "absl/flags/internal/parse.h"
 #include "absl/flags/parse.h"
 // include sources
-#include "absl/flags/parse.cc"
 // include dependencies
 #include "go-absl/flags/commandlineflag/export.inc"
 #include "go-absl/flags/commandlineflag_internal/export.inc"

@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/internal/proto.cc"
 
 // include dependencies
 #include "go-absl/base/base/export.inc"

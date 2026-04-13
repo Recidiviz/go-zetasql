@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/internal/globals.cc"
 
 // include dependencies
 #include "go-absl/base/config/export.inc"

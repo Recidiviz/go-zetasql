@@ -61,7 +61,6 @@
 //#undef private
 
 // include sources
-#include "absl/debugging/symbolize.cc"
 
 // include dependencies
 #include "go-absl/debugging/debugging_internal/export.inc"

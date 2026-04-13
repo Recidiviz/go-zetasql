@@ -3,7 +3,6 @@
 
 #include "absl/log/internal/vlog_config.h"
 // include sources
-#include "absl/log/internal/vlog_config.cc"
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/config/export.inc"

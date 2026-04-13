@@ -3,7 +3,6 @@
 
 #include "absl/log/internal/globals.h"
 // include sources
-#include "absl/log/internal/globals.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"

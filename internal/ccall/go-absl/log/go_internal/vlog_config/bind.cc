@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/internal/vlog_config.cc"
 
 // include dependencies
 #include "go-absl/base/base/export.inc"

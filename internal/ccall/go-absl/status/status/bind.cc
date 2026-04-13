@@ -61,10 +61,7 @@
 //#undef private
 
 // include sources
-#include "absl/status/internal/status_internal.cc"
 #include "absl/status/internal/status_internal.h"
-#include "absl/status/status.cc"
-#include "absl/status/status_payload_printer.cc"
 
 // include dependencies
 #include "go-absl/base/atomic_hook/export.inc"
