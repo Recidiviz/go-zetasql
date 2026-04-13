@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          submodules: recursive
+      - name: Clone GoogleSQL workspace (pinned ref)
+        run: bash scripts/ensure-googlesql-workspace.sh
       - name: Install Task
         uses: arduino/setup-task@v2
         with:
@@ -35,7 +35,7 @@ jobs:
         with:
           path: |
             ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-googlesql-${{ hashFiles('internal/cmd/updater/googlesql/MODULE.bazel', 'internal/cmd/updater/googlesql/MODULE.bazel.lock', 'internal/cmd/updater/googlesql/.bazelversion') }}
+          key: ${{ runner.os }}-bazel-googlesql-${{ hashFiles('internal/cmd/updater/googlesql.ref', 'internal/cmd/updater/Dockerfile', 'go.mod', 'go.sum') }}
           restore-keys: |
             ${{ runner.os }}-bazel-googlesql-
       - name: Tier B tag policy

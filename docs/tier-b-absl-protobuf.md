@@ -27,7 +27,7 @@ Generator / bind files: [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf
 |--------|------|
 | [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) | Builds `lib/$GOOS_$GOARCH/libprotobuf_cgo.a` and symlinks `lib/libprotobuf_cgo.a`. |
 | [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) | Default protobuf CGO bind files: link `libprotobuf_cgo.a` only (no amalgamated protobuf sources in this package). |
-| Generator [`global_exclude_replace_names`](../internal/cmd/generator/config.yaml) under `cclib` | Set to **`[absl, google]`** so generated `bind.cc` omits per-shard `#define absl` / `#define google` where the generator applies global excludes (run `go run .` in `internal/cmd/generator` after edits). |
+| Generator [`global_exclude_replace_names`](../internal/cmd/generator/config.yaml) under `cclib` | Set to **`[absl, google]`** so generated `bind.cc` omits per-shard `#define absl` / `#define google` where the generator applies global excludes (run **`go run ./internal/cmd/generator`** from the repo root after edits). |
 | [`default_bazel_targets.txt`](../internal/ccall/go-googlesql-unified/default_bazel_targets.txt) + [`link_only_bind_packages`](../internal/cmd/generator/config.yaml) | First unified root slice: build parser/analyzer/catalog/sql_formatter objects into `libgooglesql.a`, then use thin link-only `bind.cc` stubs under `googlesql_unified_prebuilt`. |
 
 ## Phase 1 — Build the Bazel archive locally
@@ -59,7 +59,7 @@ Expect link errors until Phases 3–4 align symbols (no `export_protobuf_*` from
        - google
    ```
 
-2. Run `go run .` in [`internal/cmd/generator`](../internal/cmd/generator) and fix compile/link failures iteratively.
+2. Run **`go run ./internal/cmd/generator`** from the repo root and fix compile/link failures iteratively.
 
 **Risk:** omitting `absl` rename can surface **duplicate Abseil symbols** across CGO packages that each still compile pieces of Abseil. Mitigations:
 

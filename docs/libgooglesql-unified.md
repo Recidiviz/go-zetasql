@@ -95,7 +95,7 @@ From the repository root:
 task prebuilt:googlesql-unified
 ```
 
-Requires **bazelisk** or **bazel**, **clang** / **clang++**, and the populated submodule at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql).
+Requires **bazelisk** or **bazel**, **clang** / **clang++**, and the GoogleSQL workspace at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) ([`scripts/ensure-googlesql-workspace.sh`](../scripts/ensure-googlesql-workspace.sh) or clone at [`googlesql.ref`](../internal/cmd/updater/googlesql.ref)).
 
 Override targets (space-separated):
 
@@ -164,7 +164,7 @@ Workflow **[`.github/workflows/go-googlesql-unified-prebuilt.yml`](../.github/wo
 
 - **Triggers:** `workflow_dispatch` (manual) and a **weekly** `schedule` cron for regression signal and cache warmth. Forks may disable scheduled workflows unless enabled in repository settings.
 - **Full analyzer closure** (e.g. after fixing Textmapper fetch) is **not** the default CI graph; run a manual workflow or override **`GOOGLESQL_UNIFIED_BAZEL_TARGETS`** locally when expanding toward `//googlesql/public:analyzer`.
-- Requires **`submodules: recursive`** checkout so [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) is present.
+- Requires [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) (run [`scripts/ensure-googlesql-workspace.sh`](../scripts/ensure-googlesql-workspace.sh) or CI clone step).
 
 ## Local overrides
 

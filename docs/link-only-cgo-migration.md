@@ -13,7 +13,7 @@ Generated `bind.cc` files for GoogleSQL are **link-only** translation units that
 
 Every `googlesql/*` cc_library uses thin [`bind_link_only.cc.tmpl`](../internal/cmd/generator/templates/bind_link_only.cc.tmpl) (`linkOnlyBind` in [`internal/cmd/generator/pkg/generator.go`](../internal/cmd/generator/pkg/generator.go)). Non-googlesql packages that share the same path are listed under `cclib.link_only_bind_packages` in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) (e.g. `base/status`).
 
-Regenerate with `go run .` from [`internal/cmd/generator`](../internal/cmd/generator).
+Regenerate with **`go run ./internal/cmd/generator`** from the repository root.
 
 Go entry points are **`bind_unified_prebuilt_linux.go` / `bind_unified_prebuilt_darwin.go`** with `//go:build googlesql_unified_prebuilt`. They compile with `-DGOOGLESQL_LINK_ONLY_BIND` and link [`libgooglesql.a`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) plus a blank import of [`googlesqlunified`](../internal/ccall/go-googlesql-unified/googlesqlunified/doc.go) for link order.
 
@@ -35,7 +35,7 @@ Generated CGO normally applies **per-package rename macros** so multiple CGO pac
 
 ## Operational
 
-**After every `config.yaml` change:** regenerate (`go run .` from [`internal/cmd/generator`](../internal/cmd/generator)).
+**After every `config.yaml` change:** regenerate (**`go run ./internal/cmd/generator`** from the repository root).
 
 **Primary gate:** **`task test:local`** (same tags and prebuilts: `verify-prebuilt-protobuf` + `verify-prebuilt-googlesql-unified`) or `go test -tags googlesql,googlesql_unified_prebuilt` with the same toolchain as the [`Taskfile.yml`](../Taskfile.yml).
 

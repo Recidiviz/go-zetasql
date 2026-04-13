@@ -68,6 +68,8 @@ The first time you run it, it takes time to build all the GoogleSQL code used by
 
 **direnv (recommended):** Install [direnv](https://direnv.net/) and run **`direnv allow`** in this checkout. [`.envrc`](.envrc) sources [`scripts/go-googlesql-env.sh`](scripts/go-googlesql-env.sh) so your shell gets the same **`CGO_*`**, cache layout, **`GO_BUILD_P`**, and tags-related defaults as **`task`** (which also `source`s `.envrc`). Optional per-machine overrides: **`.envrc.local`** (gitignored).
 
+**GoogleSQL upstream:** The release tag is pinned in [`internal/cmd/updater/googlesql.ref`](internal/cmd/updater/googlesql.ref). Run [`scripts/ensure-googlesql-workspace.sh`](scripts/ensure-googlesql-workspace.sh) to clone **[google/googlesql](https://github.com/google/googlesql)** into `internal/cmd/updater/googlesql/` (gitignored) for Bazel prebuilts. To copy sources and Bazel outputs into **`internal/ccall/`**, run **`make -C internal/cmd/updater update`** (Docker build + cache export + updater). Policy: [`docs/googlesql-submodule-policy.md`](docs/googlesql-submodule-policy.md).
+
 **Fast path (stack work):** `task docker:build-dev` in this repo → optional `task docker:warm-cache` → use the same **`GO_CACHE_ROOT`** (default `~/.cache/go-googlesql`) when running **`task test:linux`** in sibling checkouts **`go-googlesqlite`** and **`bigquery-emulator`**. Those READMEs document **`GO_CACHE_ROOT`**, **ccache**, **mold** (Linux), and optional warm-up for host and Docker workflows.
 
 **Sequential tests (multi-repo):** If you work in `go-googlesql`, `go-googlesqlite`, and `bigquery-emulator` together, run heavy `go test` **one repo at a time**. Running full CGO test suites in parallel on one machine often exhausts memory.

@@ -28,6 +28,12 @@ full_export.inc
 # CGO ephemeral output (not checked in)
 internal/ccall/go-googlesql/_obj/
 
+# Updater Docker export (Bazel external + execroot; large)
+internal/cmd/updater/cache/
+
+# Cloned google/googlesql workspace (see internal/cmd/updater/googlesql.ref, scripts/ensure-googlesql-workspace.sh)
+internal/cmd/updater/googlesql/
+
 # Local Python deps / resolved_ast codegen output (not checked in)
 internal/gen/
 __pycache__/

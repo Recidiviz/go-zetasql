@@ -1,13 +1,20 @@
+# Builds google/googlesql at a pinned tag and exports Bazel artifacts for the Go updater.
+# Build: make -C internal/cmd/updater build   (or docker build -t googlesql-updater .)
 FROM golang:1.24-bullseye
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg git \
+    && rm -rf /var/lib/apt/lists/*
 RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
 RUN echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-RUN apt-get update && apt-get install --no-install-recommends -y make g++ clang git python3 openjdk-11-jdk unzip
+RUN apt-get update && apt-get install --no-install-recommends -y make g++ clang git python3 openjdk-11-jdk unzip \
+    && rm -rf /var/lib/apt/lists/*
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 100
 RUN GOBIN=/usr/local/bin go install github.com/bazelbuild/bazelisk@latest
 
-COPY googlesql /googlesql
+ARG GOOGLESQL_REF=2026.01.1
+ENV GOOGLESQL_REF=${GOOGLESQL_REF}
+
+RUN git clone --depth 1 --branch "${GOOGLESQL_REF}" https://github.com/google/googlesql.git /googlesql
 
 WORKDIR /googlesql
 
@@ -60,6 +67,16 @@ RUN bazelisk build \
   '//googlesql/public:formatter_options_cc_proto' \
   '//googlesql/public:type_modifiers_cc_proto' \
   '//googlesql/reference_impl:evaluation' \
-  '//googlesql/scripting:procedure_extension_cc_proto'
+  '//googlesql/scripting:procedure_extension_cc_proto' \
+  '//googlesql/base/net:gen_public_suffix_data'
 
-COPY export.sh export.sh
+RUN mkdir -p /bazel-meta && \
+  bazelisk info output_base > /bazel-meta/output_base.txt && \
+  bazelisk info execution_root > /bazel-meta/execution_root.txt
+
+COPY export.sh /export.sh
+RUN chmod +x /export.sh
+
+WORKDIR /
+ENTRYPOINT ["/export.sh"]
+CMD ["/tmp"]

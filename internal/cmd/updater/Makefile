@@ -1,14 +1,21 @@
-CCALL_DIR := $(abspath $(CURDIR)/../../ccall)
-EXTERNAL_DIR := $(abspath $(CURDIR)/cache/external)
-# Legacy execroot name; Docker/export caches may use googlesql or com_google_googlesql instead.
-OUT_DIR := $(abspath $(CURDIR)/cache/execroot/com_google_zetasql/bazel-out/k8-fastbuild/bin)
-OUT_EXTERNAL_DIR := $(OUT_DIR)/external
+# Docker builds upstream google/googlesql at internal/cmd/updater/googlesql.ref and exports
+# Bazel artifacts into ./cache; then the Go updater copies into internal/ccall.
+GOOGLESQL_REF ?= $(shell tr -d ' \n\r' < googlesql.ref)
+IMAGE ?= googlesql-updater
+REPO_ROOT := $(abspath $(CURDIR)/../../..)
+
+.PHONY: build export-cache update
 
 build:
-	docker build -t googlesql .
+	docker build -t $(IMAGE) --build-arg GOOGLESQL_REF=$(GOOGLESQL_REF) .
 
-export: build
-	docker run --rm -v "$(CURDIR)/cache:/tmp" googlesql sh -c "bash export.sh"
+# Populate internal/cmd/updater/cache (external/, execroot/googlesql/, googlesql/googlesql/).
+export-cache: build
+	docker run --rm -v "$(CURDIR)/cache:/out" $(IMAGE) /out
 
-update:
-	go run main.go
+# Export cache from Docker, then run the updater from the repo root (single root go.mod).
+update: export-cache
+	cd $(REPO_ROOT) && go run ./internal/cmd/updater
+
+# Legacy alias
+export: export-cache

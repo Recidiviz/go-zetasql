@@ -1,6 +1,6 @@
 # CI: caches and Bazel workflows
 
-This document is the **single inventory** for GitHub Actions caching related to **Go**, **C++ (ccache)**, and **Bazel** in this repository. Use it when debugging slow CI, cache misses, or skew after submodule / `MODULE.bazel` updates.
+This document is the **single inventory** for GitHub Actions caching related to **Go**, **C++ (ccache)**, and **Bazel** in this repository. Use it when debugging slow CI, cache misses, or skew after bumping [`internal/cmd/updater/googlesql.ref`](../internal/cmd/updater/googlesql.ref) or the cloned workspace’s `MODULE.bazel`.
 
 ## Workflows
 
@@ -14,7 +14,7 @@ This document is the **single inventory** for GitHub Actions caching related to 
 | [`release-prebuilts.yml`](../.github/workflows/release-prebuilts.yml) | `push` tags `v*` | Yes | Yes | No | Attaches the default protobuf prebuilt tarball + `SHA256SUMS` to the GitHub Release. |
 | [`release.yml`](../.github/workflows/release.yml) | `push` tags `v*` | No (Docker Buildx) | — | GHA cache (`type=gha`) | Container images only; separate from native prebuilts. |
 
-**Bazelisk** is installed in workflows that invoke Bazel (`go install github.com/bazelbuild/bazelisk@v1.20.0`); the GoogleSQL submodule pins the Bazel version via [`internal/cmd/updater/googlesql/.bazelversion`](../internal/cmd/updater/googlesql/.bazelversion).
+**Bazelisk** is installed in workflows that invoke Bazel (`go install github.com/bazelbuild/bazelisk@v1.20.0`). Workflows run [`scripts/ensure-googlesql-workspace.sh`](../scripts/ensure-googlesql-workspace.sh) so [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) exists at the pinned tag; Bazel’s version comes from `.bazelversion` inside that clone after `ensure-googlesql-workspace.sh` runs.
 
 ## Cache key segments
 
@@ -34,9 +34,10 @@ This document is the **single inventory** for GitHub Actions caching related to 
 
 - **Path:** `~/.cache/bazel`
 - **Key segments:** `runner.os`, fixed workflow family prefix, and **`hashFiles`** on:
-  - `internal/cmd/updater/googlesql/MODULE.bazel`
-  - `internal/cmd/updater/googlesql/MODULE.bazel.lock`
-  - `internal/cmd/updater/googlesql/.bazelversion`
+  - `internal/cmd/updater/googlesql.ref`
+  - `internal/cmd/updater/Dockerfile`
+  - `go.mod`
+  - `go.sum`
 - **Restore prefix:** same OS + family prefix without the hash (partial restore on lockfile bumps).
 
 Unrelated **documentation-only** changes should **not** change these hashes; doc edits under `.github/` or `docs/` do not invalidate the Bazel cache key.
@@ -51,13 +52,13 @@ Exact times depend on GitHub-hosted runner load and cache hit rate.
 | Tier B `task prebuilt:protobuf` | **Tens of minutes to ~2h** (first Bazel analysis + C++ builds) | Much faster; dominated by invalidation scope |
 | Unified prebuilt smoke | Similar to Tier B for first Bazel graph | Similar improvement when cache hits |
 
-Use **`workflow_dispatch`** on Tier B workflows before releases or after changing extract scripts. Weekly **cron** on unified (and consumer) workflows keeps the **Bazel** cache warm for the submodule graph.
+Use **`workflow_dispatch`** on Tier B workflows before releases or after changing extract scripts. Weekly **cron** on unified (and consumer) workflows keeps the **Bazel** cache warm for the cloned GoogleSQL workspace graph.
 
 ## Failure modes and fallback
 
 | Symptom | Likely cause | Mitigation |
 |---------|----------------|------------|
-| Bazel analysis errors after submodule bump | Lockfile / module resolution drift | Run locally: `cd internal/cmd/updater/googlesql && bazelisk build …`; refresh `MODULE.bazel.lock` if policy allows. |
+| Bazel analysis errors after bumping `googlesql.ref` | Lockfile / module resolution drift | Run `scripts/ensure-googlesql-workspace.sh`, then `cd internal/cmd/updater/googlesql && bazelisk build …`; refresh `MODULE.bazel.lock` in that clone if policy allows. |
 | Spurious compile failures after cache restore | Rare cache corruption or toolchain skew | Re-run job; if persistent, **bump** the cache key by changing the hashed files legitimately (e.g. lockfile) or temporarily add a **version suffix** in the workflow key (last resort). |
 | “Works locally, fails in CI” | Different `BAZEL_JOBS`, OS, or missing `clang` | Match CI env; see workflow `env` blocks. |
 

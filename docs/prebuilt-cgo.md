@@ -14,7 +14,7 @@ This document describes the **default protobuf path**: link a **Bazel-built** `l
 
 Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Taskfile.yml`](../Taskfile.yml) `CGO_CXXFLAGS_PREBUILT` for unified / local test targets) so the C++ standard library matches the Bazel-built archive.
 
-**Without prebuilts / first-time setup:** run `task prebuilt:protobuf` (requires Bazelisk, populated submodule, and time for a cold Bazel build—often tens of minutes). Alternatively download a **release tarball** (below) and extract into the repo root. Full native pipeline: [`native-build-pipeline.md`](native-build-pipeline.md).
+**Without prebuilts / first-time setup:** run `task prebuilt:protobuf` (requires Bazelisk, [`scripts/ensure-googlesql-workspace.sh`](../scripts/ensure-googlesql-workspace.sh) or an updater Docker export, and time for a cold Bazel build—often tens of minutes). Alternatively download a **release tarball** (below) and extract into the repo root. Full native pipeline: [`native-build-pipeline.md`](native-build-pipeline.md).
 
 **Removed path:** protobuf amalgamation is no longer the supported default. The normal `bind_linux.go` / `bind_darwin.go` files now link the prebuilt archive directly.
 
@@ -28,7 +28,7 @@ Set **`CGO_CXXFLAGS=-stdlib=libc++`** (or rely on [`Taskfile.yml`](../Taskfile.y
 ## Prerequisites
 
 - **bazelisk** or **bazel** on `PATH`
-- Populated GoogleSQL submodule / Bazel cache at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) (see updater docs)
+- GoogleSQL workspace at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) ([`googlesql.ref`](../internal/cmd/updater/googlesql.ref)) and optional updater cache under [`internal/cmd/updater/cache/`](../internal/cmd/updater/cache/)
 - **clang++** for the extract script
 
 ## Build the archive
@@ -82,7 +82,7 @@ Or: `bash scripts/verify-prebuilt-protobuf.sh`
 
 ## Abseil prebuilt (`libabsl_cgo.a`)
 
-Build a merged Bazel `*.pic.o` archive for **`@com_google_absl`** (same submodule as protobuf extract):
+Build a merged Bazel `*.pic.o` archive for **`@com_google_absl`** (same `internal/cmd/updater/googlesql` workspace as protobuf extract):
 
 ```bash
 task prebuilt:absl
@@ -184,7 +184,7 @@ export CGO_LDFLAGS_ALLOW='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-
 
 ## Generator: unified `absl` / `google`
 
-[`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) sets `cclib.global_exclude_replace_names: [absl, google]` so generated `bind.cc` files omit per-shard `#define absl …` / `#define google …` where the generator applies global excludes—required for a single link domain with Bazel-built protobuf. After changing this block, run `go run .` from [`internal/cmd/generator`](../internal/cmd/generator) and fix any compile fallout.
+[`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) sets `cclib.global_exclude_replace_names: [absl, google]` so generated `bind.cc` files omit per-shard `#define absl …` / `#define google …` where the generator applies global excludes—required for a single link domain with Bazel-built protobuf. After changing this block, run **`go run ./internal/cmd/generator`** from the repo root and fix any compile fallout.
 
 ## Downstream repositories
 

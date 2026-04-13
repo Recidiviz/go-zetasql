@@ -5,5 +5,5 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 if [[ -z "$ROOT" ]] || [[ ! -d "$ROOT/internal/cmd/generator" ]]; then
 	ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 fi
-cd "$ROOT/internal/cmd/generator"
-exec go run . -verify-googlesql-fqdn
+cd "$ROOT"
+exec go run ./internal/cmd/generator -verify-googlesql-fqdn

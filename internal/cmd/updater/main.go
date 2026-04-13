@@ -52,6 +52,15 @@ func cacheDir() string {
 	return filepath.Join(pkgDir(), "cache")
 }
 
+// googlesqlSourceDir is the upstream GoogleSQL tree populated by the Docker export step
+// (cache/googlesql/googlesql). Override with GOOGLESQL_SRC_CACHE for local experiments.
+func googlesqlSourceDir() string {
+	if v := os.Getenv("GOOGLESQL_SRC_CACHE"); v != "" {
+		return v
+	}
+	return filepath.Join(cacheDir(), "googlesql", "googlesql")
+}
+
 func externalDir() string {
 	return filepath.Join(cacheDir(), "external")
 }
@@ -453,7 +462,7 @@ func main() {
 		)
 	}
 	cp.Copy(
-		filepath.Join(pkgDir(), "googlesql", "googlesql"),
+		googlesqlSourceDir(),
 		filepath.Join(ccallDir(), "googlesql"),
 		opt,
 	)
@@ -532,7 +541,7 @@ func main() {
 
 // runVendorpatchCLI applies protobuf amalgamation patches via the root module's
 // internal/cmd/vendorpatch (same logic as scripts/apply-vendor-patches.sh). The
-// updater lives in a nested module and cannot import internal/vendorpatch directly.
+// updater runs with the repository root as working directory for `go run`.
 func runVendorpatchCLI() error {
 	cmd := exec.Command("go", "run", filepath.Join(repoRootDir(), "internal/cmd/vendorpatch"))
 	cmd.Dir = repoRootDir()

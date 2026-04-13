@@ -33,7 +33,7 @@ The **`port_def.inc` / `port_undef.inc`** wrappers below remain important for **
 | GoogleSQL | `internal/ccall/googlesql/public/types/BUILD` | Appends a missing proto dependency line if absent. |
 | GoogleSQL | `internal/ccall/googlesql/public/functions/date_time_util.cc` | Restores an `#undef FCT` after a specific `MakeEvalError` block when missing. |
 
-**Protobuf amalgamation:** after `applyPostCopyOverlays()`, the updater runs **`go run ./internal/cmd/vendorpatch`** from the repository root (the nested updater module cannot import [`internal/vendorpatch`](../internal/vendorpatch/) directly). That first applies [`ApplyProtobufAmalgamationPatches()`](../internal/vendorpatch/amalgamation.go) to [`port_def.inc`](../internal/ccall/protobuf/google/protobuf/port_def.inc) and [`port_undef.inc`](../internal/ccall/protobuf/google/protobuf/port_undef.inc), then [`ApplyProtobufGitPatches()`](../internal/vendorpatch/git_patch.go) (sorted `*.patch` files under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md), if any). Amalgamation is **idempotent** (if the markers are already present, files are unchanged). Git patches require **`git` on `PATH`** and unified diffs with paths relative to the repo root. Anchors for amalgamation live in [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go) (and tests); git patches must be **rebased or regenerated** when upstream edits the same lines.
+**Protobuf amalgamation:** after `applyPostCopyOverlays()`, the updater runs **`go run ./internal/cmd/vendorpatch`** from the repository root. That first applies [`ApplyProtobufAmalgamationPatches()`](../internal/vendorpatch/amalgamation.go) to [`port_def.inc`](../internal/ccall/protobuf/google/protobuf/port_def.inc) and [`port_undef.inc`](../internal/ccall/protobuf/google/protobuf/port_undef.inc), then [`ApplyProtobufGitPatches()`](../internal/vendorpatch/git_patch.go) (sorted `*.patch` files under [`internal/ccall/protobuf/patches/`](../internal/ccall/protobuf/patches/README.md), if any). Amalgamation is **idempotent** (if the markers are already present, files are unchanged). Git patches require **`git` on `PATH`** and unified diffs with paths relative to the repo root. Anchors for amalgamation live in [`internal/vendorpatch/amalgamation.go`](../internal/vendorpatch/amalgamation.go) (and tests); git patches must be **rebased or regenerated** when upstream edits the same lines.
 
 **Standalone:** after a manual protobuf tree copy (without running the full updater), from the repo root run **`go run ./internal/cmd/vendorpatch`** or **[`scripts/apply-vendor-patches.sh`](../scripts/apply-vendor-patches.sh)** to apply the same logic.
 
@@ -59,7 +59,7 @@ assume **mixed revisions or incomplete post-copy patching** first. Re-copy a sin
 
 ## Upgrade playbook
 
-[`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) must track **upstream release tags only** (no extra submodule commits). Embedding-specific fixes live under `internal/ccall/` and related tooling; see [`googlesql-submodule-policy.md`](googlesql-submodule-policy.md).
+The GoogleSQL workspace at [`internal/cmd/updater/googlesql`](../internal/cmd/updater/googlesql) (from [`googlesql.ref`](../internal/cmd/updater/googlesql.ref) / [`ensure-googlesql-workspace.sh`](../scripts/ensure-googlesql-workspace.sh)) must be a **clean upstream release tag**. Embedding-specific fixes live under `internal/ccall/` and related tooling; see [`googlesql-submodule-policy.md`](googlesql-submodule-policy.md).
 
 1. Update the updater **cache** / pins so `com_google_protobuf` matches the GoogleSQL release you target.
 2. Run the updater with `GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1` when **preserving** local protobuf edits, or unset it when **forcing** a full refresh from cache.
@@ -112,8 +112,8 @@ Parser errors (e.g. missing AST types or fields in generated headers) usually me
 
 1. Run [`internal/cmd/updater`](../internal/cmd/updater) with a populated **`cache/`** as required by the tool.
 2. **Unset** `GO_GOOGLESQL_SKIP_PROTOBUF_COPY` (do **not** set `=1`) when you intend a **full** protobuf copy from cache for that upgrade.
-3. After `*.proto` files are present under `internal/ccall` (synced from the submodule; they are gitignored), regenerate **`*.pb.h` / `*.pb.cc`** with **`task regenerate:ccall-cpp-protos`** or **`bash scripts/regenerate-ccall-cpp-protos.sh`** (uses the GoogleSQL submodule’s Bazel-built `protoc` unless **`PROTOC`** points at a host binary).
-4. Run [`internal/cmd/generator`](../internal/cmd/generator) so `includeDirs`, copied trees (e.g. `utf8_range`, protobuf), and generated Go stay aligned.
+3. After `*.proto` files are present under `internal/ccall` (synced from the cloned workspace; they are gitignored), regenerate **`*.pb.h` / `*.pb.cc`** with **`task regenerate:ccall-cpp-protos`** or **`bash scripts/regenerate-ccall-cpp-protos.sh`** (uses Bazel-built `protoc` from `internal/cmd/updater/googlesql` unless **`PROTOC`** points at a host binary).
+4. Run **`go run ./internal/cmd/generator`** from the repo root so `includeDirs`, copied trees (e.g. `utf8_range`, protobuf), and generated Go stay aligned.
 5. Re-check parser sources (e.g. [`parse_tree_serializer.cc`](../internal/ccall/googlesql/parser/parse_tree_serializer.cc)) against [`parse_tree.pb.h`](../internal/ccall/googlesql/parser/parse_tree.pb.h) after protos match the pinned tag (e.g. **2023.08.1**).
 
 Commit large `internal/ccall` vendor updates separately from small CGO flag fixes, per conventional commits.
@@ -129,7 +129,7 @@ After go-googlesql is green:
 ### CI vs `libprotobuf_cgo.a`
 
 - **Default build:** [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) link **`libprotobuf_cgo.a`** (see **`task prebuilt:protobuf`** / **`task verify:prebuilt-protobuf`**). CI bootstraps the archive in [`.github/workflows/go.yml`](../.github/workflows/go.yml) before **`go test`**.
-- **Archive build:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) produces **`lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a`** using Bazel in the GoogleSQL submodule. From the repo root: **`task prebuilt:protobuf`**.
+- **Archive build:** [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) produces **`lib/$(go env GOOS)_$(go env GOARCH)/libprotobuf_cgo.a`** using Bazel in `internal/cmd/updater/googlesql`. From the repo root: **`task prebuilt:protobuf`**.
 - **Stray artifacts:** `*.a` is gitignored globally; local `lib/` trees from the extract script need not be committed.
 
 ### Single-owner protobuf / shard macros (design constraint)
@@ -179,11 +179,9 @@ From a populated [`internal/cmd/updater/cache/`](../internal/cmd/updater/cache/)
 ```bash
 # Refresh GoogleSQL + third-party trees from cache. Omit protobuf copy if you are
 # preserving local patches (otherwise the copy overwrites this doc’s fixes):
-cd internal/cmd/updater
-GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1 go run .
+GO_GOOGLESQL_SKIP_PROTOBUF_COPY=1 go run ./internal/cmd/updater
 
-cd ../generator
-go run .
+go run ./internal/cmd/generator
 ```
 
 After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_undef.inc` amalgamation guards** are present (the updater or `go run ./internal/cmd/vendorpatch` applies them), then re-run **`task verify:prebuilt-protobuf`** / alignment checks if you changed protobuf sources.
@@ -196,7 +194,7 @@ After any **`com_google_protobuf` full copy**, ensure **`port_def.inc` / `port_u
 
 For bulk regeneration of **googlesql**, **googleapis**, and **`internal/ccall/proto`** outputs, prefer **`task regenerate:ccall-cpp-protos`** (see [`scripts/regenerate-ccall-cpp-protos.sh`](../scripts/regenerate-ccall-cpp-protos.sh)).
 
-Vendored C++ protobuf is **4.23.3** (`GOOGLE_PROTOBUF_VERSION` **4023003**). Older notes used **protoc 23.3** (e.g. [releases](https://github.com/protocolbuffers/protobuf/releases/tag/v23.3)) for hand-run commands; the repo’s **`regenerate-ccall-cpp-protos`** script uses **`protoc` from `@com_google_protobuf` in the submodule** so codegen stays aligned with **`MODULE.bazel`**. From **`internal/ccall`**, a single-file manual run looks like:
+Vendored C++ protobuf is **4.23.3** (`GOOGLE_PROTOBUF_VERSION` **4023003**). Older notes used **protoc 23.3** (e.g. [releases](https://github.com/protocolbuffers/protobuf/releases/tag/v23.3)) for hand-run commands; the repo’s **`regenerate-ccall-cpp-protos`** script uses **`protoc` from `@com_google_protobuf` in the cloned GoogleSQL workspace** so codegen stays aligned with **`MODULE.bazel`**. From **`internal/ccall`**, a single-file manual run looks like:
 
 ```bash
 protoc -I. -Iprotobuf --cpp_out=. googlesql/parser/parse_tree.proto

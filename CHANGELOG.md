@@ -6,12 +6,13 @@ All notable changes to this project are documented here. The format is loosely b
 
 ### Tooling
 
+- **GoogleSQL upstream:** Pinned tag in [`internal/cmd/updater/googlesql.ref`](internal/cmd/updater/googlesql.ref); Docker-based updater (`make -C internal/cmd/updater update`) replaces the Git submodule; [`scripts/ensure-googlesql-workspace.sh`](scripts/ensure-googlesql-workspace.sh) clones the tag for CI/Bazel. Root [`go.mod`](go.mod) includes updater/generator dependencies (nested `go.mod` files removed).
 - **Build automation:** root `Makefile` removed in favor of [`Taskfile.yml`](Taskfile.yml) ([Task](https://taskfile.dev/)); shared CGO env in [`.envrc`](.envrc) (direnv) and [`scripts/go-googlesql-env.sh`](scripts/go-googlesql-env.sh) (sourced by `.envrc` and Task). CI workflows install Task via `arduino/setup-task@v2`.
 - **CGO consolidation:** [`docs/cgo-consolidation.md`](docs/cgo-consolidation.md) defines the shard-reduction program; [`scripts/cgo-shard-inventory.sh`](scripts/cgo-shard-inventory.sh) (`--summary` / `--check`) enforces that link-only `bind.cc` files never `#include` amalgamated `.cc` bodies. Wired into `.github/workflows/go.yml`.
 
 ### Tier B / Phase 5 (CI, artifacts, docs)
 
-- **CI:** Shared Bazel disk cache key across default protobuf prebuilts, Tier B Abseil, unified prebuilt, release prebuilts, and consumer workflows (`internal/cmd/updater/googlesql/MODULE.bazel`, `MODULE.bazel.lock`, `.bazelversion`). Inventory: [`docs/ci-bazel-cache.md`](docs/ci-bazel-cache.md).
+- **CI:** Shared Bazel disk cache key across default protobuf prebuilts, Tier B Abseil, unified prebuilt, release prebuilts, and consumer workflows (`internal/cmd/updater/googlesql.ref`, `internal/cmd/updater/Dockerfile`, `go.mod`, `go.sum`). GoogleSQL workspace: `scripts/ensure-googlesql-workspace.sh`. Inventory: [`docs/ci-bazel-cache.md`](docs/ci-bazel-cache.md).
 - **Artifacts:** Tagged releases may include `go-googlesql-prebuilts-protobuf-linux_amd64-<tag>.tar.gz` and `SHA256SUMS` (workflow: `.github/workflows/release-prebuilts.yml`). Packaging script: `scripts/package-protobuf-prebuilt.sh`; Task: `task package:protobuf-prebuilt-tarball`.
 - **Consumer validation:** `.github/workflows/go-prebuilt-consumer.yml` runs a **no-Bazel** job that tests with prebuilts only.
 - **Docs:** README build matrix; expanded [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md), [`docs/native-build-pipeline.md`](docs/native-build-pipeline.md).
