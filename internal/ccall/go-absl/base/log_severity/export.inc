@@ -3,7 +3,6 @@
 
 #include "absl/base/log_severity.h"
 // include sources
-#include "absl/base/log_severity.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"

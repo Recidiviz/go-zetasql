@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/base/internal/throw_delegate.cc"
 
 // include dependencies
 #include "go-absl/base/config/export.inc"

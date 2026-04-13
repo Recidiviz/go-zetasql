@@ -3,7 +3,6 @@
 
 #include "absl/profiling/internal/exponential_biased.h"
 // include sources
-#include "absl/profiling/internal/exponential_biased.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"

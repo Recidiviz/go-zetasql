@@ -3,7 +3,6 @@
 
 #include "absl/numeric/int128.h"
 // include sources
-#include "absl/numeric/int128.cc"
 // include dependencies
 #include "go-absl/numeric/bits/export.inc"
 #include "go-absl/base/config/export.inc"

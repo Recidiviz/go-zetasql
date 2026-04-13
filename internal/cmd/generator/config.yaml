@@ -635,6 +635,38 @@ cclib:
     - pkg: absl/strings/string_view
       sources:
         - absl/strings/string_view.cc
+    # Batch-10 default-path go-absl slice: keep normal go-absl bind_*.go generation and omit only
+    # proven archive-owned .cc bodies from per-shard amalgamation TUs.
+    - pkg: absl/base/throw_delegate
+      sources:
+        - absl/base/internal/throw_delegate.cc
+    - pkg: absl/base/log_severity
+      sources:
+        - absl/base/log_severity.cc
+    - pkg: absl/base/strerror
+      sources:
+        - absl/base/internal/strerror.cc
+    - pkg: absl/base/spinlock_wait
+      sources:
+        - absl/base/internal/spinlock_wait.cc
+    - pkg: absl/numeric/int128
+      sources:
+        - absl/numeric/int128.cc
+    - pkg: absl/hash/city
+      sources:
+        - absl/hash/internal/city.cc
+    - pkg: absl/hash/low_level_hash
+      sources:
+        - absl/hash/internal/low_level_hash.cc
+    - pkg: absl/profiling/exponential_biased
+      sources:
+        - absl/profiling/internal/exponential_biased.cc
+    - pkg: absl/crc/cpu_detect
+      sources:
+        - absl/crc/internal/cpu_detect.cc
+    - pkg: absl/random/seed_gen_exception
+      sources:
+        - absl/random/seed_gen_exception.cc
   bind_cc_prelude_before_headers:
     - pkg: googlesql/parser/parser
       lines: |

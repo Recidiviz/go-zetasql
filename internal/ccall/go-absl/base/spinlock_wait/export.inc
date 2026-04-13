@@ -3,7 +3,6 @@
 
 #include "absl/base/internal/spinlock_wait.h"
 // include sources
-#include "absl/base/internal/spinlock_wait.cc"
 // include dependencies
 #include "go-absl/base/base_internal/export.inc"
 #include "go-absl/base/core_headers/export.inc"

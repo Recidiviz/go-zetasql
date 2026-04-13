@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/base/internal/spinlock_wait.cc"
 
 // include dependencies
 #include "go-absl/base/base_internal/export.inc"

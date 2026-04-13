@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/profiling/internal/exponential_biased.cc"
 
 // include dependencies
 #include "go-absl/base/config/export.inc"

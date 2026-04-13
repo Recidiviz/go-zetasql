@@ -3,7 +3,6 @@
 
 #include "absl/crc/internal/cpu_detect.h"
 // include sources
-#include "absl/crc/internal/cpu_detect.cc"
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/config/export.inc"

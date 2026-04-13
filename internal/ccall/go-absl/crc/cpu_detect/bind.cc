@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/crc/internal/cpu_detect.cc"
 
 // include dependencies
 #include "go-absl/base/base/export.inc"

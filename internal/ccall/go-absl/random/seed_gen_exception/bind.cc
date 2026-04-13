@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/random/seed_gen_exception.cc"
 
 // include dependencies
 #include "go-absl/base/config/export.inc"
