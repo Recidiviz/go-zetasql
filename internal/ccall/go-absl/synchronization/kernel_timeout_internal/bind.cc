@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/synchronization/internal/kernel_timeout.cc"
 
 // include dependencies
 #include "go-absl/base/base/export.inc"

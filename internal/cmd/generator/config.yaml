@@ -886,9 +886,24 @@ cclib:
     - pkg: absl/debugging/symbolize
       sources:
         - absl/debugging/symbolize.cc
-    # Time / cctz / kernel_timeout: defer exclude_amalgamation_sources — follow
-    # docs/cgo-consolidation.md (cctz / kernel_timeout future PR checklist); not YAML-only.
-    # cctz TU must stay link-coherent with libprotobuf_cgo.a + libgooglesql.a (undefined cctz if dropped here).
+    # Time / cctz (partial): Option B — IANA zone bodies stay amalgamated in
+    # absl/time/internal/cctz/time_zone (extract_protobuf_cgo_lib.sh drops time_zone_*.pic.o from
+    # libprotobuf_cgo.a on purpose; see docs/unified-prebuilt-root-segfault-investigation.md).
+    # These .cc bodies have matching *.pic.o in libprotobuf_cgo.a (verify with ar t / task verify:prebuilt-protobuf).
+    - pkg: absl/time/internal/cctz/civil_time
+      sources:
+        - absl/time/internal/cctz/src/civil_time_detail.cc
+    - pkg: absl/time/time
+      sources:
+        - absl/time/civil_time.cc
+        - absl/time/clock.cc
+        - absl/time/duration.cc
+        - absl/time/format.cc
+        - absl/time/time.cc
+    - pkg: absl/synchronization/kernel_timeout_internal
+      sources:
+        - absl/synchronization/internal/kernel_timeout.cc
+    # absl/time/internal/cctz/time_zone: still amalgamated (single-owner Go TU vs archive policy above).
     # Mega-shards (last): list every amalgamated .cc from bind.cc.
     - pkg: absl/base/base
       sources:

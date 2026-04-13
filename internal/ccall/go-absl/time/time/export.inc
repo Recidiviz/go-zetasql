@@ -5,13 +5,6 @@
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 // include sources
-#include "absl/time/civil_time.cc"
-#include "absl/time/clock.cc"
-#include "absl/time/duration.cc"
-#include "absl/time/format.cc"
-#define unix_epoch absl_time_time_absl_time_time_unix_epoch
-#include "absl/time/time.cc"
-#undef unix_epoch
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/config/export.inc"

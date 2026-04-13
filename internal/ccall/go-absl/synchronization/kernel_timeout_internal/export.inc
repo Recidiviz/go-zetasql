@@ -3,7 +3,6 @@
 
 #include "absl/synchronization/internal/kernel_timeout.h"
 // include sources
-#include "absl/synchronization/internal/kernel_timeout.cc"
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/config/export.inc"
