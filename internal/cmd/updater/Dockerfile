@@ -35,7 +35,7 @@ RUN bazelisk build \
   '//googlesql/resolved_ast:resolved_ast_cc_proto' \
   '//googlesql/scripting:variable_cc_proto' \
   '//googlesql/scripting:script_executor_state_cc_proto' \
-  '//googlesql/scripting:script_exception_cc_proto' \
+  '//googlesql/proto:script_exception_cc_proto' \
   '//googlesql/proto:options_cc_proto' \
   '//googlesql/proto:function_cc_proto' \
   '//googlesql/proto:simple_catalog_cc_proto' \
