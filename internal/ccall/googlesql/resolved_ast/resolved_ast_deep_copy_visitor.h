@@ -16,8 +16,8 @@
 
 // resolved_ast_deep_copy_visitor.h GENERATED FROM resolved_ast_deep_copy_visitor.h.template
 
-#ifndef ZETASQL_RESOLVED_AST_RESOLVED_AST_DEEP_COPY_VISITOR_H_
-#define ZETASQL_RESOLVED_AST_RESOLVED_AST_DEEP_COPY_VISITOR_H_
+#ifndef GOOGLESQL_RESOLVED_AST_RESOLVED_AST_DEEP_COPY_VISITOR_H_
+#define GOOGLESQL_RESOLVED_AST_RESOLVED_AST_DEEP_COPY_VISITOR_H_
 
 #include <algorithm>
 #include <memory>
@@ -25,16 +25,16 @@
 #include <utility>
 #include <vector>
 
-#include "zetasql/base/logging.h"
-#include "zetasql/common/thread_stack.h"
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_ast_visitor.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/base/ret_check.h"
-#include "zetasql/base/status.h"
+#include "googlesql/base/logging.h"
+#include "googlesql/common/thread_stack.h"
+#include "googlesql/resolved_ast/resolved_ast.h"
+#include "googlesql/resolved_ast/resolved_ast_visitor.h"
+#include "googlesql/resolved_ast/resolved_node.h"
+#include "googlesql/base/ret_check.h"
+#include "googlesql/base/status.h"
 #include "absl/status/statusor.h"
 
-namespace zetasql {
+namespace googlesql {
 
 // This is the base class for deep-copy rewriter classes.
 //
@@ -54,7 +54,7 @@ namespace zetasql {
 //
 // To more concretely show how the stack is used, consider this FunctionCall.
 //
-// +-FunctionCall(ZetaSQL:$add(INT64, INT64) -> INT64)
+// +-FunctionCall(GoogleSQL:$add(INT64, INT64) -> INT64)
 //   +-ColumnRef(type=INT64, column=KeyValue.Key#1)
 //   +-Literal(type=INT64, value=1)
 //
@@ -101,7 +101,7 @@ namespace zetasql {
 //   the visitor on all child nodes and stitches them in, and automatically
 //   copies all other flags and modifiers to the new node, without having to
 //   call the constructor directly.  This method is the most robust against
-//   future changes and additions to zetasql resolved node classes.
+//   future changes and additions to googlesql resolved node classes.
 //
 //   The example uses GetUnownedTopOfStack to modify the node in place.
 //   The code could also use ConsumeRootNode to pop it from the stack and then
@@ -110,12 +110,12 @@ namespace zetasql {
 //   Example:
 //
 //     absl::Status VisitResolvedTableScan(const ResolvedTableScan* node) {
-//        const zetasql::Table* replacement_table = nullptr;
-//        ZETASQL_RETURN_IF_ERROR(
+//        const googlesql::Table* replacement_table = nullptr;
+//        GOOGLESQL_RETURN_IF_ERROR(
 //          catalog_->FindTable({replacement_table_name_}, &replacement_table));
 //
 //        // Make a copy using the default copy method.
-//        ZETASQL_RETURN_IF_ERROR(CopyVisitResolvedTableScan(node));
+//        GOOGLESQL_RETURN_IF_ERROR(CopyVisitResolvedTableScan(node));
 //
 //        // Mutate it so it points at the new table instead.
 //        ResolvedTableScan* scan = GetUnownedTopOfStack<ResolvedTableScan>();
@@ -128,11 +128,11 @@ namespace zetasql {
 //
 //   This allows constructing different node types than the original tree had.
 //   Calling node constructors directly means that this code will have to be
-//   updated when new fields are added to zetasql nodes.
+//   updated when new fields are added to googlesql nodes.
 //
 //     absl::Status VisitResolvedTableScan(const ResolvedTableScan* node) {
-//        const zetasql::Table* replacement_table = nullptr;
-//        ZETASQL_RETURN_IF_ERROR(
+//        const googlesql::Table* replacement_table = nullptr;
+//        GOOGLESQL_RETURN_IF_ERROR(
 //          catalog_->FindTable({replacement_table_name_}, &replacement_table));
 //
 //        // Push a new unique_ptr of a newly-constructed table scan onto stack.
@@ -148,7 +148,7 @@ namespace zetasql {
 //   propagating each field individually, like this:
 //
 //     absl::Status VisitResolvedFilterScan(const ResolvedFilterScan* node) {
-//       ZETASQL_RETURN_IF_ERROR(CopyVisitResolvedFilterScan(node));
+//       GOOGLESQL_RETURN_IF_ERROR(CopyVisitResolvedFilterScan(node));
 //       auto filter_scan = ConsumeTopOfStack<ResolvedFilterScan>();
 //
 //       // This example just copies the node and its children, without
@@ -182,7 +182,7 @@ namespace zetasql {
 //   DerivedDeepCopyVisitor copier;
 //   analyzer_output->resolved_statement()->Accept(&copier);
 //   std::unique_ptr<ResolvedNode> copied_root_node =
-//       copier.ConsumeRootNode<zetasql::ResolvedNode>();
+//       copier.ConsumeRootNode<googlesql::ResolvedNode>();
 //   // Do something with copied_root_node.
 //
 // Returns an error on unhandled node types. Reusable as long as no errors are
@@ -201,7 +201,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   // and example comment above.
   template <typename ResolvedNodeType>
   absl::StatusOr<std::unique_ptr<ResolvedNodeType>> ConsumeRootNode() {
-    ZETASQL_RET_CHECK_EQ(1, stack_.size());
+    GOOGLESQL_RET_CHECK_EQ(1, stack_.size());
     return ConsumeTopOfStack<ResolvedNodeType>();
   }
 
@@ -213,7 +213,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   static absl::StatusOr<std::unique_ptr<ResolvedNodeType>> Copy(
       const ResolvedNodeType* node) {
     ResolvedASTDeepCopyVisitor visitor;
-    ZETASQL_RETURN_IF_ERROR(node->Accept(&visitor));
+    GOOGLESQL_RETURN_IF_ERROR(node->Accept(&visitor));
     return visitor.ConsumeRootNode<ResolvedNodeType>();
   }
 
@@ -228,7 +228,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
     std::vector<std::unique_ptr<ResolvedNodeType>> copies;
     copies.reserve(nodes.size());
     for (const auto& node : nodes) {
-      ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<ResolvedNodeType> copy,
+      GOOGLESQL_ASSIGN_OR_RETURN(std::unique_ptr<ResolvedNodeType> copy,
                        ResolvedASTDeepCopyVisitor::Copy(node.get()));
       copies.emplace_back(std::move(copy));
     }
@@ -304,7 +304,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
     if (node == nullptr) {
       return std::unique_ptr<ResolvedNodeType>();
     }
-    ZETASQL_RETURN_IF_ERROR(node->Accept(this));
+    GOOGLESQL_RETURN_IF_ERROR(node->Accept(this));
     return ConsumeTopOfStack<ResolvedNodeType>();
   }
 
@@ -321,7 +321,7 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
     output_node_list.reserve(node_list.size());
     for (const std::unique_ptr<const ResolvedNodeType>& node : node_list) {
       auto processed_node = ProcessNode<ResolvedNodeType>(node.get());
-      ZETASQL_RETURN_IF_ERROR(processed_node.status());
+      GOOGLESQL_RETURN_IF_ERROR(processed_node.status());
       output_node_list.push_back(std::move(*processed_node));
     }
     return output_node_list;
@@ -409,6 +409,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedGetJsonField(
       const ResolvedGetJsonField* node);
 
+  absl::Status CopyVisitResolvedGetRowField(
+      const ResolvedGetRowField* node);
+
   absl::Status CopyVisitResolvedFlatten(
       const ResolvedFlatten* node);
 
@@ -420,6 +423,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedReplaceField(
       const ResolvedReplaceField* node);
+
+  absl::Status CopyVisitResolvedGetProtoOneof(
+      const ResolvedGetProtoOneof* node);
 
   absl::Status CopyVisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr* node);
@@ -442,6 +448,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedSingleRowScan(
       const ResolvedSingleRowScan* node);
 
+  absl::Status CopyVisitResolvedUnsetArgumentScan(
+      const ResolvedUnsetArgumentScan* node);
+
   absl::Status CopyVisitResolvedTableScan(
       const ResolvedTableScan* node);
 
@@ -459,6 +468,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedGroupingCall(
       const ResolvedGroupingCall* node);
+
+  absl::Status CopyVisitResolvedGroupingSetList(
+      const ResolvedGroupingSetList* node);
+
+  absl::Status CopyVisitResolvedGroupingSetProduct(
+      const ResolvedGroupingSetProduct* node);
 
   absl::Status CopyVisitResolvedGroupingSet(
       const ResolvedGroupingSet* node);
@@ -505,6 +520,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedComputedColumn(
       const ResolvedComputedColumn* node);
 
+  absl::Status CopyVisitResolvedDeferredComputedColumn(
+      const ResolvedDeferredComputedColumn* node);
+
   absl::Status CopyVisitResolvedOrderByItem(
       const ResolvedOrderByItem* node);
 
@@ -532,6 +550,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedOutputColumn(
       const ResolvedOutputColumn* node);
 
+  absl::Status CopyVisitResolvedOutputSchema(
+      const ResolvedOutputSchema* node);
+
   absl::Status CopyVisitResolvedProjectScan(
       const ResolvedProjectScan* node);
 
@@ -547,8 +568,23 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedExplainStmt(
       const ResolvedExplainStmt* node);
 
+  absl::Status CopyVisitResolvedStringWithLocation(
+      const ResolvedStringWithLocation* node);
+
+  absl::Status CopyVisitResolvedStatementWithPipeOperatorsStmt(
+      const ResolvedStatementWithPipeOperatorsStmt* node);
+
   absl::Status CopyVisitResolvedQueryStmt(
       const ResolvedQueryStmt* node);
+
+  absl::Status CopyVisitResolvedGeneralizedQueryStmt(
+      const ResolvedGeneralizedQueryStmt* node);
+
+  absl::Status CopyVisitResolvedMultiStmt(
+      const ResolvedMultiStmt* node);
+
+  absl::Status CopyVisitResolvedCreateWithEntryStmt(
+      const ResolvedCreateWithEntryStmt* node);
 
   absl::Status CopyVisitResolvedCreateDatabaseStmt(
       const ResolvedCreateDatabaseStmt* node);
@@ -564,6 +600,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedCreateSchemaStmt(
       const ResolvedCreateSchemaStmt* node);
+
+  absl::Status CopyVisitResolvedCreateExternalSchemaStmt(
+      const ResolvedCreateExternalSchemaStmt* node);
 
   absl::Status CopyVisitResolvedCreateTableStmt(
       const ResolvedCreateTableStmt* node);
@@ -640,6 +679,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedRecursiveRefScan(
       const ResolvedRecursiveRefScan* node);
 
+  absl::Status CopyVisitResolvedRecursionDepthModifier(
+      const ResolvedRecursionDepthModifier* node);
+
   absl::Status CopyVisitResolvedRecursiveScan(
       const ResolvedRecursiveScan* node);
 
@@ -679,6 +721,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAssertRowsModified(
       const ResolvedAssertRowsModified* node);
 
+  absl::Status CopyVisitResolvedOnConflictClause(
+      const ResolvedOnConflictClause* node);
+
   absl::Status CopyVisitResolvedInsertRow(
       const ResolvedInsertRow* node);
 
@@ -691,8 +736,8 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedUpdateItem(
       const ResolvedUpdateItem* node);
 
-  absl::Status CopyVisitResolvedUpdateArrayItem(
-      const ResolvedUpdateArrayItem* node);
+  absl::Status CopyVisitResolvedUpdateItemElement(
+      const ResolvedUpdateItemElement* node);
 
   absl::Status CopyVisitResolvedUpdateStmt(
       const ResolvedUpdateStmt* node);
@@ -721,6 +766,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAlterDatabaseStmt(
       const ResolvedAlterDatabaseStmt* node);
 
+  absl::Status CopyVisitResolvedAlterIndexStmt(
+      const ResolvedAlterIndexStmt* node);
+
   absl::Status CopyVisitResolvedAlterMaterializedViewStmt(
       const ResolvedAlterMaterializedViewStmt* node);
 
@@ -729,6 +777,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedAlterSchemaStmt(
       const ResolvedAlterSchemaStmt* node);
+
+  absl::Status CopyVisitResolvedAlterExternalSchemaStmt(
+      const ResolvedAlterExternalSchemaStmt* node);
 
   absl::Status CopyVisitResolvedAlterModelStmt(
       const ResolvedAlterModelStmt* node);
@@ -754,6 +805,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAddColumnAction(
       const ResolvedAddColumnAction* node);
 
+  absl::Status CopyVisitResolvedAddColumnIdentifierAction(
+      const ResolvedAddColumnIdentifierAction* node);
+
+  absl::Status CopyVisitResolvedRebuildAction(
+      const ResolvedRebuildAction* node);
+
   absl::Status CopyVisitResolvedAddConstraintAction(
       const ResolvedAddConstraintAction* node);
 
@@ -768,6 +825,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status CopyVisitResolvedAlterColumnDropNotNullAction(
       const ResolvedAlterColumnDropNotNullAction* node);
+
+  absl::Status CopyVisitResolvedAlterColumnDropGeneratedAction(
+      const ResolvedAlterColumnDropGeneratedAction* node);
+
+  absl::Status CopyVisitResolvedAlterColumnSetGeneratedAction(
+      const ResolvedAlterColumnSetGeneratedAction* node);
 
   absl::Status CopyVisitResolvedAlterColumnSetDataTypeAction(
       const ResolvedAlterColumnSetDataTypeAction* node);
@@ -922,6 +985,30 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedUnpivotScan(
       const ResolvedUnpivotScan* node);
 
+  absl::Status CopyVisitResolvedMatchRecognizeScan(
+      const ResolvedMatchRecognizeScan* node);
+
+  absl::Status CopyVisitResolvedMeasureGroup(
+      const ResolvedMeasureGroup* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizeVariableDefinition(
+      const ResolvedMatchRecognizeVariableDefinition* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternEmpty(
+      const ResolvedMatchRecognizePatternEmpty* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternAnchor(
+      const ResolvedMatchRecognizePatternAnchor* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternVariableRef(
+      const ResolvedMatchRecognizePatternVariableRef* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternOperation(
+      const ResolvedMatchRecognizePatternOperation* node);
+
+  absl::Status CopyVisitResolvedMatchRecognizePatternQuantification(
+      const ResolvedMatchRecognizePatternQuantification* node);
+
   absl::Status CopyVisitResolvedCloneDataStmt(
       const ResolvedCloneDataStmt* node);
 
@@ -937,8 +1024,170 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status CopyVisitResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* node);
 
+  absl::Status CopyVisitResolvedCreatePropertyGraphStmt(
+      const ResolvedCreatePropertyGraphStmt* node);
+
+  absl::Status CopyVisitResolvedGraphElementTable(
+      const ResolvedGraphElementTable* node);
+
+  absl::Status CopyVisitResolvedGraphNodeTableReference(
+      const ResolvedGraphNodeTableReference* node);
+
+  absl::Status CopyVisitResolvedGraphElementLabel(
+      const ResolvedGraphElementLabel* node);
+
+  absl::Status CopyVisitResolvedGraphPropertyDeclaration(
+      const ResolvedGraphPropertyDeclaration* node);
+
+  absl::Status CopyVisitResolvedGraphPropertyDefinition(
+      const ResolvedGraphPropertyDefinition* node);
+
+  absl::Status CopyVisitResolvedGraphDynamicLabelSpecification(
+      const ResolvedGraphDynamicLabelSpecification* node);
+
+  absl::Status CopyVisitResolvedGraphDynamicPropertiesSpecification(
+      const ResolvedGraphDynamicPropertiesSpecification* node);
+
+  absl::Status CopyVisitResolvedGraphRefScan(
+      const ResolvedGraphRefScan* node);
+
+  absl::Status CopyVisitResolvedGraphLinearScan(
+      const ResolvedGraphLinearScan* node);
+
+  absl::Status CopyVisitResolvedGraphTableScan(
+      const ResolvedGraphTableScan* node);
+
+  absl::Status CopyVisitResolvedGraphCallScan(
+      const ResolvedGraphCallScan* node);
+
+  absl::Status CopyVisitResolvedGraphScan(
+      const ResolvedGraphScan* node);
+
+  absl::Status CopyVisitResolvedGraphPathPatternQuantifier(
+      const ResolvedGraphPathPatternQuantifier* node);
+
+  absl::Status CopyVisitResolvedGraphPathSearchPrefix(
+      const ResolvedGraphPathSearchPrefix* node);
+
+  absl::Status CopyVisitResolvedGraphNodeScan(
+      const ResolvedGraphNodeScan* node);
+
+  absl::Status CopyVisitResolvedGraphEdgeScan(
+      const ResolvedGraphEdgeScan* node);
+
+  absl::Status CopyVisitResolvedGraphGetElementProperty(
+      const ResolvedGraphGetElementProperty* node);
+
+  absl::Status CopyVisitResolvedGraphLabelNaryExpr(
+      const ResolvedGraphLabelNaryExpr* node);
+
+  absl::Status CopyVisitResolvedGraphLabel(
+      const ResolvedGraphLabel* node);
+
+  absl::Status CopyVisitResolvedGraphWildCardLabel(
+      const ResolvedGraphWildCardLabel* node);
+
+  absl::Status CopyVisitResolvedGraphElementIdentifier(
+      const ResolvedGraphElementIdentifier* node);
+
+  absl::Status CopyVisitResolvedGraphElementProperty(
+      const ResolvedGraphElementProperty* node);
+
+  absl::Status CopyVisitResolvedGraphMakeElement(
+      const ResolvedGraphMakeElement* node);
+
+  absl::Status CopyVisitResolvedArrayAggregate(
+      const ResolvedArrayAggregate* node);
+
+  absl::Status CopyVisitResolvedGraphMakeArrayVariable(
+      const ResolvedGraphMakeArrayVariable* node);
+
+  absl::Status CopyVisitResolvedGraphPathMode(
+      const ResolvedGraphPathMode* node);
+
+  absl::Status CopyVisitResolvedGraphPathCost(
+      const ResolvedGraphPathCost* node);
+
+  absl::Status CopyVisitResolvedGraphPathScan(
+      const ResolvedGraphPathScan* node);
+
+  absl::Status CopyVisitResolvedGraphIsLabeledPredicate(
+      const ResolvedGraphIsLabeledPredicate* node);
+
   absl::Status CopyVisitResolvedUndropStmt(
       const ResolvedUndropStmt* node);
+
+  absl::Status CopyVisitResolvedIdentityColumnInfo(
+      const ResolvedIdentityColumnInfo* node);
+
+  absl::Status CopyVisitResolvedDescribeScan(
+      const ResolvedDescribeScan* node);
+
+  absl::Status CopyVisitResolvedStaticDescribeScan(
+      const ResolvedStaticDescribeScan* node);
+
+  absl::Status CopyVisitResolvedAssertScan(
+      const ResolvedAssertScan* node);
+
+  absl::Status CopyVisitResolvedLogScan(
+      const ResolvedLogScan* node);
+
+  absl::Status CopyVisitResolvedPipeIfScan(
+      const ResolvedPipeIfScan* node);
+
+  absl::Status CopyVisitResolvedPipeIfCase(
+      const ResolvedPipeIfCase* node);
+
+  absl::Status CopyVisitResolvedPipeForkScan(
+      const ResolvedPipeForkScan* node);
+
+  absl::Status CopyVisitResolvedPipeTeeScan(
+      const ResolvedPipeTeeScan* node);
+
+  absl::Status CopyVisitResolvedPipeExportDataScan(
+      const ResolvedPipeExportDataScan* node);
+
+  absl::Status CopyVisitResolvedPipeCreateTableScan(
+      const ResolvedPipeCreateTableScan* node);
+
+  absl::Status CopyVisitResolvedPipeInsertScan(
+      const ResolvedPipeInsertScan* node);
+
+  absl::Status CopyVisitResolvedSubpipeline(
+      const ResolvedSubpipeline* node);
+
+  absl::Status CopyVisitResolvedSubpipelineInputScan(
+      const ResolvedSubpipelineInputScan* node);
+
+  absl::Status CopyVisitResolvedSubpipelineStmt(
+      const ResolvedSubpipelineStmt* node);
+
+  absl::Status CopyVisitResolvedGeneralizedQuerySubpipeline(
+      const ResolvedGeneralizedQuerySubpipeline* node);
+
+  absl::Status CopyVisitResolvedBarrierScan(
+      const ResolvedBarrierScan* node);
+
+  absl::Status CopyVisitResolvedCreateConnectionStmt(
+      const ResolvedCreateConnectionStmt* node);
+
+  absl::Status CopyVisitResolvedAlterConnectionStmt(
+      const ResolvedAlterConnectionStmt* node);
+
+  absl::Status CopyVisitResolvedLockMode(
+      const ResolvedLockMode* node);
+
+  absl::Status CopyVisitResolvedUpdateFieldItem(
+      const ResolvedUpdateFieldItem* node);
+
+  absl::Status CopyVisitResolvedUpdateConstructor(
+      const ResolvedUpdateConstructor* node);
+
+  absl::Status CopyVisitResolvedCreateSequenceStmt(
+      const ResolvedCreateSequenceStmt* node);
+
+  absl::Status CopyVisitResolvedAlterSequenceStmt(
+      const ResolvedAlterSequenceStmt* node);
 
   absl::Status DefaultVisit(const ResolvedNode* node) override;
 
@@ -1016,6 +1265,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedGetJsonField(
       const ResolvedGetJsonField* node) override;
 
+  absl::Status VisitResolvedGetRowField(
+      const ResolvedGetRowField* node) override;
+
   absl::Status VisitResolvedFlatten(
       const ResolvedFlatten* node) override;
 
@@ -1027,6 +1279,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedReplaceField(
       const ResolvedReplaceField* node) override;
+
+  absl::Status VisitResolvedGetProtoOneof(
+      const ResolvedGetProtoOneof* node) override;
 
   absl::Status VisitResolvedSubqueryExpr(
       const ResolvedSubqueryExpr* node) override;
@@ -1049,6 +1304,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedSingleRowScan(
       const ResolvedSingleRowScan* node) override;
 
+  absl::Status VisitResolvedUnsetArgumentScan(
+      const ResolvedUnsetArgumentScan* node) override;
+
   absl::Status VisitResolvedTableScan(
       const ResolvedTableScan* node) override;
 
@@ -1066,6 +1324,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedGroupingCall(
       const ResolvedGroupingCall* node) override;
+
+  absl::Status VisitResolvedGroupingSetList(
+      const ResolvedGroupingSetList* node) override;
+
+  absl::Status VisitResolvedGroupingSetProduct(
+      const ResolvedGroupingSetProduct* node) override;
 
   absl::Status VisitResolvedGroupingSet(
       const ResolvedGroupingSet* node) override;
@@ -1112,6 +1376,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedComputedColumn(
       const ResolvedComputedColumn* node) override;
 
+  absl::Status VisitResolvedDeferredComputedColumn(
+      const ResolvedDeferredComputedColumn* node) override;
+
   absl::Status VisitResolvedOrderByItem(
       const ResolvedOrderByItem* node) override;
 
@@ -1139,6 +1406,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedOutputColumn(
       const ResolvedOutputColumn* node) override;
 
+  absl::Status VisitResolvedOutputSchema(
+      const ResolvedOutputSchema* node) override;
+
   absl::Status VisitResolvedProjectScan(
       const ResolvedProjectScan* node) override;
 
@@ -1154,8 +1424,23 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedExplainStmt(
       const ResolvedExplainStmt* node) override;
 
+  absl::Status VisitResolvedStringWithLocation(
+      const ResolvedStringWithLocation* node) override;
+
+  absl::Status VisitResolvedStatementWithPipeOperatorsStmt(
+      const ResolvedStatementWithPipeOperatorsStmt* node) override;
+
   absl::Status VisitResolvedQueryStmt(
       const ResolvedQueryStmt* node) override;
+
+  absl::Status VisitResolvedGeneralizedQueryStmt(
+      const ResolvedGeneralizedQueryStmt* node) override;
+
+  absl::Status VisitResolvedMultiStmt(
+      const ResolvedMultiStmt* node) override;
+
+  absl::Status VisitResolvedCreateWithEntryStmt(
+      const ResolvedCreateWithEntryStmt* node) override;
 
   absl::Status VisitResolvedCreateDatabaseStmt(
       const ResolvedCreateDatabaseStmt* node) override;
@@ -1171,6 +1456,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedCreateSchemaStmt(
       const ResolvedCreateSchemaStmt* node) override;
+
+  absl::Status VisitResolvedCreateExternalSchemaStmt(
+      const ResolvedCreateExternalSchemaStmt* node) override;
 
   absl::Status VisitResolvedCreateTableStmt(
       const ResolvedCreateTableStmt* node) override;
@@ -1247,6 +1535,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedRecursiveRefScan(
       const ResolvedRecursiveRefScan* node) override;
 
+  absl::Status VisitResolvedRecursionDepthModifier(
+      const ResolvedRecursionDepthModifier* node) override;
+
   absl::Status VisitResolvedRecursiveScan(
       const ResolvedRecursiveScan* node) override;
 
@@ -1286,6 +1577,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAssertRowsModified(
       const ResolvedAssertRowsModified* node) override;
 
+  absl::Status VisitResolvedOnConflictClause(
+      const ResolvedOnConflictClause* node) override;
+
   absl::Status VisitResolvedInsertRow(
       const ResolvedInsertRow* node) override;
 
@@ -1298,8 +1592,8 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedUpdateItem(
       const ResolvedUpdateItem* node) override;
 
-  absl::Status VisitResolvedUpdateArrayItem(
-      const ResolvedUpdateArrayItem* node) override;
+  absl::Status VisitResolvedUpdateItemElement(
+      const ResolvedUpdateItemElement* node) override;
 
   absl::Status VisitResolvedUpdateStmt(
       const ResolvedUpdateStmt* node) override;
@@ -1328,6 +1622,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAlterDatabaseStmt(
       const ResolvedAlterDatabaseStmt* node) override;
 
+  absl::Status VisitResolvedAlterIndexStmt(
+      const ResolvedAlterIndexStmt* node) override;
+
   absl::Status VisitResolvedAlterMaterializedViewStmt(
       const ResolvedAlterMaterializedViewStmt* node) override;
 
@@ -1336,6 +1633,9 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedAlterSchemaStmt(
       const ResolvedAlterSchemaStmt* node) override;
+
+  absl::Status VisitResolvedAlterExternalSchemaStmt(
+      const ResolvedAlterExternalSchemaStmt* node) override;
 
   absl::Status VisitResolvedAlterModelStmt(
       const ResolvedAlterModelStmt* node) override;
@@ -1361,6 +1661,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAddColumnAction(
       const ResolvedAddColumnAction* node) override;
 
+  absl::Status VisitResolvedAddColumnIdentifierAction(
+      const ResolvedAddColumnIdentifierAction* node) override;
+
+  absl::Status VisitResolvedRebuildAction(
+      const ResolvedRebuildAction* node) override;
+
   absl::Status VisitResolvedAddConstraintAction(
       const ResolvedAddConstraintAction* node) override;
 
@@ -1375,6 +1681,12 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
 
   absl::Status VisitResolvedAlterColumnDropNotNullAction(
       const ResolvedAlterColumnDropNotNullAction* node) override;
+
+  absl::Status VisitResolvedAlterColumnDropGeneratedAction(
+      const ResolvedAlterColumnDropGeneratedAction* node) override;
+
+  absl::Status VisitResolvedAlterColumnSetGeneratedAction(
+      const ResolvedAlterColumnSetGeneratedAction* node) override;
 
   absl::Status VisitResolvedAlterColumnSetDataTypeAction(
       const ResolvedAlterColumnSetDataTypeAction* node) override;
@@ -1529,6 +1841,30 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedUnpivotScan(
       const ResolvedUnpivotScan* node) override;
 
+  absl::Status VisitResolvedMatchRecognizeScan(
+      const ResolvedMatchRecognizeScan* node) override;
+
+  absl::Status VisitResolvedMeasureGroup(
+      const ResolvedMeasureGroup* node) override;
+
+  absl::Status VisitResolvedMatchRecognizeVariableDefinition(
+      const ResolvedMatchRecognizeVariableDefinition* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternEmpty(
+      const ResolvedMatchRecognizePatternEmpty* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternAnchor(
+      const ResolvedMatchRecognizePatternAnchor* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternVariableRef(
+      const ResolvedMatchRecognizePatternVariableRef* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternOperation(
+      const ResolvedMatchRecognizePatternOperation* node) override;
+
+  absl::Status VisitResolvedMatchRecognizePatternQuantification(
+      const ResolvedMatchRecognizePatternQuantification* node) override;
+
   absl::Status VisitResolvedCloneDataStmt(
       const ResolvedCloneDataStmt* node) override;
 
@@ -1544,39 +1880,198 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   absl::Status VisitResolvedAuxLoadDataStmt(
       const ResolvedAuxLoadDataStmt* node) override;
 
+  absl::Status VisitResolvedCreatePropertyGraphStmt(
+      const ResolvedCreatePropertyGraphStmt* node) override;
+
+  absl::Status VisitResolvedGraphElementTable(
+      const ResolvedGraphElementTable* node) override;
+
+  absl::Status VisitResolvedGraphNodeTableReference(
+      const ResolvedGraphNodeTableReference* node) override;
+
+  absl::Status VisitResolvedGraphElementLabel(
+      const ResolvedGraphElementLabel* node) override;
+
+  absl::Status VisitResolvedGraphPropertyDeclaration(
+      const ResolvedGraphPropertyDeclaration* node) override;
+
+  absl::Status VisitResolvedGraphPropertyDefinition(
+      const ResolvedGraphPropertyDefinition* node) override;
+
+  absl::Status VisitResolvedGraphDynamicLabelSpecification(
+      const ResolvedGraphDynamicLabelSpecification* node) override;
+
+  absl::Status VisitResolvedGraphDynamicPropertiesSpecification(
+      const ResolvedGraphDynamicPropertiesSpecification* node) override;
+
+  absl::Status VisitResolvedGraphRefScan(
+      const ResolvedGraphRefScan* node) override;
+
+  absl::Status VisitResolvedGraphLinearScan(
+      const ResolvedGraphLinearScan* node) override;
+
+  absl::Status VisitResolvedGraphTableScan(
+      const ResolvedGraphTableScan* node) override;
+
+  absl::Status VisitResolvedGraphCallScan(
+      const ResolvedGraphCallScan* node) override;
+
+  absl::Status VisitResolvedGraphScan(
+      const ResolvedGraphScan* node) override;
+
+  absl::Status VisitResolvedGraphPathPatternQuantifier(
+      const ResolvedGraphPathPatternQuantifier* node) override;
+
+  absl::Status VisitResolvedGraphPathSearchPrefix(
+      const ResolvedGraphPathSearchPrefix* node) override;
+
+  absl::Status VisitResolvedGraphNodeScan(
+      const ResolvedGraphNodeScan* node) override;
+
+  absl::Status VisitResolvedGraphEdgeScan(
+      const ResolvedGraphEdgeScan* node) override;
+
+  absl::Status VisitResolvedGraphGetElementProperty(
+      const ResolvedGraphGetElementProperty* node) override;
+
+  absl::Status VisitResolvedGraphLabelNaryExpr(
+      const ResolvedGraphLabelNaryExpr* node) override;
+
+  absl::Status VisitResolvedGraphLabel(
+      const ResolvedGraphLabel* node) override;
+
+  absl::Status VisitResolvedGraphWildCardLabel(
+      const ResolvedGraphWildCardLabel* node) override;
+
+  absl::Status VisitResolvedGraphElementIdentifier(
+      const ResolvedGraphElementIdentifier* node) override;
+
+  absl::Status VisitResolvedGraphElementProperty(
+      const ResolvedGraphElementProperty* node) override;
+
+  absl::Status VisitResolvedGraphMakeElement(
+      const ResolvedGraphMakeElement* node) override;
+
+  absl::Status VisitResolvedArrayAggregate(
+      const ResolvedArrayAggregate* node) override;
+
+  absl::Status VisitResolvedGraphMakeArrayVariable(
+      const ResolvedGraphMakeArrayVariable* node) override;
+
+  absl::Status VisitResolvedGraphPathMode(
+      const ResolvedGraphPathMode* node) override;
+
+  absl::Status VisitResolvedGraphPathCost(
+      const ResolvedGraphPathCost* node) override;
+
+  absl::Status VisitResolvedGraphPathScan(
+      const ResolvedGraphPathScan* node) override;
+
+  absl::Status VisitResolvedGraphIsLabeledPredicate(
+      const ResolvedGraphIsLabeledPredicate* node) override;
+
   absl::Status VisitResolvedUndropStmt(
       const ResolvedUndropStmt* node) override;
 
-  // Copies the hint list from the original node to the copied node. This is
-  // required, as hint_list is not a constructor arg, and the only way to
-  // transfer ownership is to explicitly set it after constructing the copy.
-  template <typename ResolvedNodeType> absl::Status CopyHintList(
-      const ResolvedNodeType *from, ResolvedNodeType *to) {
-    for (const std::unique_ptr<const zetasql::ResolvedOption>& hint :
-        from->hint_list()) {
-      ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<zetasql::ResolvedOption> copied_hint,
+  absl::Status VisitResolvedIdentityColumnInfo(
+      const ResolvedIdentityColumnInfo* node) override;
+
+  absl::Status VisitResolvedDescribeScan(
+      const ResolvedDescribeScan* node) override;
+
+  absl::Status VisitResolvedStaticDescribeScan(
+      const ResolvedStaticDescribeScan* node) override;
+
+  absl::Status VisitResolvedAssertScan(
+      const ResolvedAssertScan* node) override;
+
+  absl::Status VisitResolvedLogScan(
+      const ResolvedLogScan* node) override;
+
+  absl::Status VisitResolvedPipeIfScan(
+      const ResolvedPipeIfScan* node) override;
+
+  absl::Status VisitResolvedPipeIfCase(
+      const ResolvedPipeIfCase* node) override;
+
+  absl::Status VisitResolvedPipeForkScan(
+      const ResolvedPipeForkScan* node) override;
+
+  absl::Status VisitResolvedPipeTeeScan(
+      const ResolvedPipeTeeScan* node) override;
+
+  absl::Status VisitResolvedPipeExportDataScan(
+      const ResolvedPipeExportDataScan* node) override;
+
+  absl::Status VisitResolvedPipeCreateTableScan(
+      const ResolvedPipeCreateTableScan* node) override;
+
+  absl::Status VisitResolvedPipeInsertScan(
+      const ResolvedPipeInsertScan* node) override;
+
+  absl::Status VisitResolvedSubpipeline(
+      const ResolvedSubpipeline* node) override;
+
+  absl::Status VisitResolvedSubpipelineInputScan(
+      const ResolvedSubpipelineInputScan* node) override;
+
+  absl::Status VisitResolvedSubpipelineStmt(
+      const ResolvedSubpipelineStmt* node) override;
+
+  absl::Status VisitResolvedGeneralizedQuerySubpipeline(
+      const ResolvedGeneralizedQuerySubpipeline* node) override;
+
+  absl::Status VisitResolvedBarrierScan(
+      const ResolvedBarrierScan* node) override;
+
+  absl::Status VisitResolvedCreateConnectionStmt(
+      const ResolvedCreateConnectionStmt* node) override;
+
+  absl::Status VisitResolvedAlterConnectionStmt(
+      const ResolvedAlterConnectionStmt* node) override;
+
+  absl::Status VisitResolvedLockMode(
+      const ResolvedLockMode* node) override;
+
+  absl::Status VisitResolvedUpdateFieldItem(
+      const ResolvedUpdateFieldItem* node) override;
+
+  absl::Status VisitResolvedUpdateConstructor(
+      const ResolvedUpdateConstructor* node) override;
+
+  absl::Status VisitResolvedCreateSequenceStmt(
+      const ResolvedCreateSequenceStmt* node) override;
+
+  absl::Status VisitResolvedAlterSequenceStmt(
+      const ResolvedAlterSequenceStmt* node) override;
+
+  // Assumes that 'ResolvedNodeType' contains 'hint_list' and copies it
+  // 'from' -> 'to'.
+  template <typename ResolvedNodeType>
+  ABSL_DEPRECATED("Use new signature of CopyHintList() instead")
+  absl::Status CopyHintList(const ResolvedNodeType *from,
+      ResolvedNodeType *to) {
+    return CopyHintList(from->hint_list(), [to](
+      std::unique_ptr<const googlesql::ResolvedOption> hint) {
+        to->add_hint_list(std::move(hint));
+      });
+  }
+  // The following function calls 'append_func' on each hint in 'hints' to copy
+  // them to a target hint list.
+  // Caller must supply a 'HintAppender' function that appends 'ResolvedOption'
+  // type to a target hint list.
+  template <typename HintAppender> absl::Status CopyHintList(
+    const std::vector<std::unique_ptr<const googlesql::ResolvedOption>>& hints,
+    const HintAppender& append_func) {
+    for (const std::unique_ptr<const googlesql::ResolvedOption>& hint : hints) {
+      GOOGLESQL_ASSIGN_OR_RETURN(std::unique_ptr<googlesql::ResolvedOption> copied_hint,
                        ProcessNode(hint.get()));
-      to->add_hint_list(std::move(copied_hint));
+      append_func(std::move(copied_hint));
     }
     return absl::OkStatus();
   }
 
  private:
-  // Copies the WITH GROUP_ROWS parameter list from the original node to the
-  // copied node. This is required, as with_group_rows_parameter_list is not a
-  // constructor arg, and the only way to transfer ownership is to explicitly
-  // set it after constructing the copy.
-  template <typename ResolvedNodeType>
-  absl::Status CopyWithGroupRowsParameterList(const ResolvedNodeType* from,
-                                              ResolvedNodeType* to) {
-    for (const std::unique_ptr<const ResolvedColumnRef>& param :
-         from->with_group_rows_parameter_list()) {
-      ZETASQL_ASSIGN_OR_RETURN(std::unique_ptr<ResolvedColumnRef> copied_ref,
-                       ProcessNode(param.get()));
-      to->add_with_group_rows_parameter_list(std::move(copied_ref));
-    }
-    return absl::OkStatus();
-  }
 
   // The stack is used for making the recursive copying work:
   // 1. A copied node is pushed to the stack before the VisitX function returns.
@@ -1586,6 +2081,6 @@ class ResolvedASTDeepCopyVisitor : public ResolvedASTVisitor {
   std::stack<std::unique_ptr<ResolvedNode>> stack_;
 };
 
-}  // namespace zetasql
+}  // namespace googlesql
 
-#endif  // ZETASQL_RESOLVED_AST_RESOLVED_AST_DEEP_COPY_VISITOR_H_
+#endif  // GOOGLESQL_RESOLVED_AST_RESOLVED_AST_DEEP_COPY_VISITOR_H_

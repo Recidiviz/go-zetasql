@@ -15,17 +15,17 @@
 //
 
 // resolved_node_kind.h GENERATED FROM resolved_node_kind.h.template
-#ifndef ZETASQL_RESOLVED_AST_RESOLVED_NODE_KIND_H_
-#define ZETASQL_RESOLVED_AST_RESOLVED_NODE_KIND_H_
+#ifndef GOOGLESQL_RESOLVED_AST_RESOLVED_NODE_KIND_H_
+#define GOOGLESQL_RESOLVED_AST_RESOLVED_NODE_KIND_H_
 
 #include <string>
 
-#include "zetasql/resolved_ast/resolved_node_kind.pb.h"
+#include "googlesql/resolved_ast/resolved_node_kind.pb.h"
 
-namespace zetasql {
+namespace googlesql {
 
 std::string ResolvedNodeKindToString(ResolvedNodeKind kind);
 
-}  // namespace zetasql
+}  // namespace googlesql
 
-#endif  // ZETASQL_RESOLVED_AST_RESOLVED_NODE_KIND_H_
+#endif  // GOOGLESQL_RESOLVED_AST_RESOLVED_NODE_KIND_H_

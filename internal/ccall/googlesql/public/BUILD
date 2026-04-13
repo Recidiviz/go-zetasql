@@ -592,6 +592,7 @@ cc_library(
         "//googlesql/proto:simple_property_graph_cc_proto",
         "//googlesql/public/proto:type_annotation_cc_proto",
         "//googlesql/public/types",
+        ":sql_tvf",
         "//googlesql/resolved_ast",
         "//googlesql/resolved_ast:resolved_ast_cc_proto",
         "@com_google_absl//absl/base:core_headers",

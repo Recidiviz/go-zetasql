@@ -49,6 +49,11 @@
 // detect/prohibit anytime it is #included twice without a corresponding
 // #undef.
 
+// go-googlesql: in amalgamation.cc / export.inc, port_def is included once at
+// the start of the TU; subsequent includes from headers skip the body.
+#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF
+#else
+
 // The definitions in this file are intended to be portable across Clang,
 // GCC, and MSVC. Function-like macros are usable without an #ifdef guard.
 // Syntax macros (for example, attributes) are always defined, although
@@ -1141,3 +1146,5 @@ PROTOBUF_EXPORT void protobuf_assumption_failed(const char *pred,
 #  undef __has_builtin
 #  undef PROTOBUF_has_builtin_DEFINED_
 #endif
+
+#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_DEF

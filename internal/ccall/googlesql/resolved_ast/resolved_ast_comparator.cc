@@ -15,24 +15,29 @@
 //
 
 // resolved_ast_comparator.cc GENERATED FROM resolved_ast_comparator.cc.template
-#include "zetasql/resolved_ast/resolved_ast_comparator.h"
+#include "googlesql/resolved_ast/resolved_ast_comparator.h"
 
-#include "zetasql/base/logging.h"
+#include "googlesql/base/logging.h"
 #include "google/protobuf/descriptor.h"
-#include "zetasql/common/errors.h"
-#include "zetasql/public/catalog.h"
+#include "googlesql/common/errors.h"
+#include "googlesql/public/catalog.h"
+#include "googlesql/public/types/annotation.h"
 
-namespace zetasql {
+namespace googlesql {
 
 namespace {
 
 // Overloads for Equals to compare two node fields of scalar type.
 static bool Equals(const std::string& str1, const std::string& str2) {
-  return zetasql_base::CaseEqual(str1, str2);
+  return googlesql_base::CaseEqual(str1, str2);
 }
 
 static bool Equals(const Type* type1, const Type* type2) {
   return type1->Equals(type2);
+}
+
+static bool Equals(const AnnotationMap* map1, const AnnotationMap* map2) {
+  return AnnotationMap::Equals(map1, map2);
 }
 
 static bool Equals(const Constant* constant1, const Constant* constant2) {
@@ -40,12 +45,12 @@ static bool Equals(const Constant* constant1, const Constant* constant2) {
   // containing catalog names, so two constants in different (sub)catalogs with
   // the same name will have different full names and therefore compare not
   // equal.
-  return zetasql_base::CaseEqual(constant1->FullName(), constant2->FullName());
+  return googlesql_base::CaseEqual(constant1->FullName(), constant2->FullName());
 }
 
 static bool Equals(const FunctionSignature& sig1,
                    const FunctionSignature& sig2) {
-  return zetasql_base::CaseEqual(sig1.DebugString(), sig2.DebugString());
+  return googlesql_base::CaseEqual(sig1.DebugString(), sig2.DebugString());
 }
 
 static bool Equals(const std::shared_ptr<ResolvedFunctionCallInfo>& info1,
@@ -53,7 +58,7 @@ static bool Equals(const std::shared_ptr<ResolvedFunctionCallInfo>& info1,
   if (info1 == nullptr || info2 == nullptr) {
     return (info1 == nullptr) == (info2 == nullptr);
   }
-  return zetasql_base::CaseEqual(info1->DebugString(), info2->DebugString());
+  return googlesql_base::CaseEqual(info1->DebugString(), info2->DebugString());
 }
 
 static bool Equals(const Value& val1, const Value& val2) {
@@ -63,13 +68,13 @@ static bool Equals(const Value& val1, const Value& val2) {
 static bool Equals(const Function* f1, const Function* f2) {
   // For now, we only compare function names.  If/when we have new use
   // cases, we may want to compare additional things.
-  return zetasql_base::CaseEqual(f1->Name(), f2->Name());
+  return googlesql_base::CaseEqual(f1->Name(), f2->Name());
 }
 
 static bool Equals(const Table* t1, const Table* t2) {
   // For now, we only compare table names.  If/when we have new use
   // cases, we may want to compare additional things.
-  return zetasql_base::CaseEqual(t1->Name(), t2->Name());
+  return googlesql_base::CaseEqual(t1->Name(), t2->Name());
 }
 
 static bool Equals(const google::protobuf::FieldDescriptor* f1,
@@ -182,6 +187,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_GET_JSON_FIELD:
       return CompareResolvedGetJsonField(node1->GetAs<ResolvedGetJsonField>(),
                                    node2->GetAs<ResolvedGetJsonField>());
+    case RESOLVED_GET_ROW_FIELD:
+      return CompareResolvedGetRowField(node1->GetAs<ResolvedGetRowField>(),
+                                   node2->GetAs<ResolvedGetRowField>());
     case RESOLVED_FLATTEN:
       return CompareResolvedFlatten(node1->GetAs<ResolvedFlatten>(),
                                    node2->GetAs<ResolvedFlatten>());
@@ -194,6 +202,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_REPLACE_FIELD:
       return CompareResolvedReplaceField(node1->GetAs<ResolvedReplaceField>(),
                                    node2->GetAs<ResolvedReplaceField>());
+    case RESOLVED_GET_PROTO_ONEOF:
+      return CompareResolvedGetProtoOneof(node1->GetAs<ResolvedGetProtoOneof>(),
+                                   node2->GetAs<ResolvedGetProtoOneof>());
     case RESOLVED_SUBQUERY_EXPR:
       return CompareResolvedSubqueryExpr(node1->GetAs<ResolvedSubqueryExpr>(),
                                    node2->GetAs<ResolvedSubqueryExpr>());
@@ -215,6 +226,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_SINGLE_ROW_SCAN:
       return CompareResolvedSingleRowScan(node1->GetAs<ResolvedSingleRowScan>(),
                                    node2->GetAs<ResolvedSingleRowScan>());
+    case RESOLVED_UNSET_ARGUMENT_SCAN:
+      return CompareResolvedUnsetArgumentScan(node1->GetAs<ResolvedUnsetArgumentScan>(),
+                                   node2->GetAs<ResolvedUnsetArgumentScan>());
     case RESOLVED_TABLE_SCAN:
       return CompareResolvedTableScan(node1->GetAs<ResolvedTableScan>(),
                                    node2->GetAs<ResolvedTableScan>());
@@ -233,6 +247,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_GROUPING_CALL:
       return CompareResolvedGroupingCall(node1->GetAs<ResolvedGroupingCall>(),
                                    node2->GetAs<ResolvedGroupingCall>());
+    case RESOLVED_GROUPING_SET_LIST:
+      return CompareResolvedGroupingSetList(node1->GetAs<ResolvedGroupingSetList>(),
+                                   node2->GetAs<ResolvedGroupingSetList>());
+    case RESOLVED_GROUPING_SET_PRODUCT:
+      return CompareResolvedGroupingSetProduct(node1->GetAs<ResolvedGroupingSetProduct>(),
+                                   node2->GetAs<ResolvedGroupingSetProduct>());
     case RESOLVED_GROUPING_SET:
       return CompareResolvedGroupingSet(node1->GetAs<ResolvedGroupingSet>(),
                                    node2->GetAs<ResolvedGroupingSet>());
@@ -278,6 +298,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_COMPUTED_COLUMN:
       return CompareResolvedComputedColumn(node1->GetAs<ResolvedComputedColumn>(),
                                    node2->GetAs<ResolvedComputedColumn>());
+    case RESOLVED_DEFERRED_COMPUTED_COLUMN:
+      return CompareResolvedDeferredComputedColumn(node1->GetAs<ResolvedDeferredComputedColumn>(),
+                                   node2->GetAs<ResolvedDeferredComputedColumn>());
     case RESOLVED_ORDER_BY_ITEM:
       return CompareResolvedOrderByItem(node1->GetAs<ResolvedOrderByItem>(),
                                    node2->GetAs<ResolvedOrderByItem>());
@@ -305,6 +328,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_OUTPUT_COLUMN:
       return CompareResolvedOutputColumn(node1->GetAs<ResolvedOutputColumn>(),
                                    node2->GetAs<ResolvedOutputColumn>());
+    case RESOLVED_OUTPUT_SCHEMA:
+      return CompareResolvedOutputSchema(node1->GetAs<ResolvedOutputSchema>(),
+                                   node2->GetAs<ResolvedOutputSchema>());
     case RESOLVED_PROJECT_SCAN:
       return CompareResolvedProjectScan(node1->GetAs<ResolvedProjectScan>(),
                                    node2->GetAs<ResolvedProjectScan>());
@@ -320,9 +346,24 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_EXPLAIN_STMT:
       return CompareResolvedExplainStmt(node1->GetAs<ResolvedExplainStmt>(),
                                    node2->GetAs<ResolvedExplainStmt>());
+    case RESOLVED_STRING_WITH_LOCATION:
+      return CompareResolvedStringWithLocation(node1->GetAs<ResolvedStringWithLocation>(),
+                                   node2->GetAs<ResolvedStringWithLocation>());
+    case RESOLVED_STATEMENT_WITH_PIPE_OPERATORS_STMT:
+      return CompareResolvedStatementWithPipeOperatorsStmt(node1->GetAs<ResolvedStatementWithPipeOperatorsStmt>(),
+                                   node2->GetAs<ResolvedStatementWithPipeOperatorsStmt>());
     case RESOLVED_QUERY_STMT:
       return CompareResolvedQueryStmt(node1->GetAs<ResolvedQueryStmt>(),
                                    node2->GetAs<ResolvedQueryStmt>());
+    case RESOLVED_GENERALIZED_QUERY_STMT:
+      return CompareResolvedGeneralizedQueryStmt(node1->GetAs<ResolvedGeneralizedQueryStmt>(),
+                                   node2->GetAs<ResolvedGeneralizedQueryStmt>());
+    case RESOLVED_MULTI_STMT:
+      return CompareResolvedMultiStmt(node1->GetAs<ResolvedMultiStmt>(),
+                                   node2->GetAs<ResolvedMultiStmt>());
+    case RESOLVED_CREATE_WITH_ENTRY_STMT:
+      return CompareResolvedCreateWithEntryStmt(node1->GetAs<ResolvedCreateWithEntryStmt>(),
+                                   node2->GetAs<ResolvedCreateWithEntryStmt>());
     case RESOLVED_CREATE_DATABASE_STMT:
       return CompareResolvedCreateDatabaseStmt(node1->GetAs<ResolvedCreateDatabaseStmt>(),
                                    node2->GetAs<ResolvedCreateDatabaseStmt>());
@@ -338,6 +379,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_CREATE_SCHEMA_STMT:
       return CompareResolvedCreateSchemaStmt(node1->GetAs<ResolvedCreateSchemaStmt>(),
                                    node2->GetAs<ResolvedCreateSchemaStmt>());
+    case RESOLVED_CREATE_EXTERNAL_SCHEMA_STMT:
+      return CompareResolvedCreateExternalSchemaStmt(node1->GetAs<ResolvedCreateExternalSchemaStmt>(),
+                                   node2->GetAs<ResolvedCreateExternalSchemaStmt>());
     case RESOLVED_CREATE_TABLE_STMT:
       return CompareResolvedCreateTableStmt(node1->GetAs<ResolvedCreateTableStmt>(),
                                    node2->GetAs<ResolvedCreateTableStmt>());
@@ -413,6 +457,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_RECURSIVE_REF_SCAN:
       return CompareResolvedRecursiveRefScan(node1->GetAs<ResolvedRecursiveRefScan>(),
                                    node2->GetAs<ResolvedRecursiveRefScan>());
+    case RESOLVED_RECURSION_DEPTH_MODIFIER:
+      return CompareResolvedRecursionDepthModifier(node1->GetAs<ResolvedRecursionDepthModifier>(),
+                                   node2->GetAs<ResolvedRecursionDepthModifier>());
     case RESOLVED_RECURSIVE_SCAN:
       return CompareResolvedRecursiveScan(node1->GetAs<ResolvedRecursiveScan>(),
                                    node2->GetAs<ResolvedRecursiveScan>());
@@ -452,6 +499,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ASSERT_ROWS_MODIFIED:
       return CompareResolvedAssertRowsModified(node1->GetAs<ResolvedAssertRowsModified>(),
                                    node2->GetAs<ResolvedAssertRowsModified>());
+    case RESOLVED_ON_CONFLICT_CLAUSE:
+      return CompareResolvedOnConflictClause(node1->GetAs<ResolvedOnConflictClause>(),
+                                   node2->GetAs<ResolvedOnConflictClause>());
     case RESOLVED_INSERT_ROW:
       return CompareResolvedInsertRow(node1->GetAs<ResolvedInsertRow>(),
                                    node2->GetAs<ResolvedInsertRow>());
@@ -464,9 +514,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_UPDATE_ITEM:
       return CompareResolvedUpdateItem(node1->GetAs<ResolvedUpdateItem>(),
                                    node2->GetAs<ResolvedUpdateItem>());
-    case RESOLVED_UPDATE_ARRAY_ITEM:
-      return CompareResolvedUpdateArrayItem(node1->GetAs<ResolvedUpdateArrayItem>(),
-                                   node2->GetAs<ResolvedUpdateArrayItem>());
+    case RESOLVED_UPDATE_ITEM_ELEMENT:
+      return CompareResolvedUpdateItemElement(node1->GetAs<ResolvedUpdateItemElement>(),
+                                   node2->GetAs<ResolvedUpdateItemElement>());
     case RESOLVED_UPDATE_STMT:
       return CompareResolvedUpdateStmt(node1->GetAs<ResolvedUpdateStmt>(),
                                    node2->GetAs<ResolvedUpdateStmt>());
@@ -494,6 +544,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ALTER_DATABASE_STMT:
       return CompareResolvedAlterDatabaseStmt(node1->GetAs<ResolvedAlterDatabaseStmt>(),
                                    node2->GetAs<ResolvedAlterDatabaseStmt>());
+    case RESOLVED_ALTER_INDEX_STMT:
+      return CompareResolvedAlterIndexStmt(node1->GetAs<ResolvedAlterIndexStmt>(),
+                                   node2->GetAs<ResolvedAlterIndexStmt>());
     case RESOLVED_ALTER_MATERIALIZED_VIEW_STMT:
       return CompareResolvedAlterMaterializedViewStmt(node1->GetAs<ResolvedAlterMaterializedViewStmt>(),
                                    node2->GetAs<ResolvedAlterMaterializedViewStmt>());
@@ -503,6 +556,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ALTER_SCHEMA_STMT:
       return CompareResolvedAlterSchemaStmt(node1->GetAs<ResolvedAlterSchemaStmt>(),
                                    node2->GetAs<ResolvedAlterSchemaStmt>());
+    case RESOLVED_ALTER_EXTERNAL_SCHEMA_STMT:
+      return CompareResolvedAlterExternalSchemaStmt(node1->GetAs<ResolvedAlterExternalSchemaStmt>(),
+                                   node2->GetAs<ResolvedAlterExternalSchemaStmt>());
     case RESOLVED_ALTER_MODEL_STMT:
       return CompareResolvedAlterModelStmt(node1->GetAs<ResolvedAlterModelStmt>(),
                                    node2->GetAs<ResolvedAlterModelStmt>());
@@ -527,6 +583,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ADD_COLUMN_ACTION:
       return CompareResolvedAddColumnAction(node1->GetAs<ResolvedAddColumnAction>(),
                                    node2->GetAs<ResolvedAddColumnAction>());
+    case RESOLVED_ADD_COLUMN_IDENTIFIER_ACTION:
+      return CompareResolvedAddColumnIdentifierAction(node1->GetAs<ResolvedAddColumnIdentifierAction>(),
+                                   node2->GetAs<ResolvedAddColumnIdentifierAction>());
+    case RESOLVED_REBUILD_ACTION:
+      return CompareResolvedRebuildAction(node1->GetAs<ResolvedRebuildAction>(),
+                                   node2->GetAs<ResolvedRebuildAction>());
     case RESOLVED_ADD_CONSTRAINT_ACTION:
       return CompareResolvedAddConstraintAction(node1->GetAs<ResolvedAddConstraintAction>(),
                                    node2->GetAs<ResolvedAddConstraintAction>());
@@ -542,6 +604,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_ALTER_COLUMN_DROP_NOT_NULL_ACTION:
       return CompareResolvedAlterColumnDropNotNullAction(node1->GetAs<ResolvedAlterColumnDropNotNullAction>(),
                                    node2->GetAs<ResolvedAlterColumnDropNotNullAction>());
+    case RESOLVED_ALTER_COLUMN_DROP_GENERATED_ACTION:
+      return CompareResolvedAlterColumnDropGeneratedAction(node1->GetAs<ResolvedAlterColumnDropGeneratedAction>(),
+                                   node2->GetAs<ResolvedAlterColumnDropGeneratedAction>());
+    case RESOLVED_ALTER_COLUMN_SET_GENERATED_ACTION:
+      return CompareResolvedAlterColumnSetGeneratedAction(node1->GetAs<ResolvedAlterColumnSetGeneratedAction>(),
+                                   node2->GetAs<ResolvedAlterColumnSetGeneratedAction>());
     case RESOLVED_ALTER_COLUMN_SET_DATA_TYPE_ACTION:
       return CompareResolvedAlterColumnSetDataTypeAction(node1->GetAs<ResolvedAlterColumnSetDataTypeAction>(),
                                    node2->GetAs<ResolvedAlterColumnSetDataTypeAction>());
@@ -695,6 +763,30 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_UNPIVOT_SCAN:
       return CompareResolvedUnpivotScan(node1->GetAs<ResolvedUnpivotScan>(),
                                    node2->GetAs<ResolvedUnpivotScan>());
+    case RESOLVED_MATCH_RECOGNIZE_SCAN:
+      return CompareResolvedMatchRecognizeScan(node1->GetAs<ResolvedMatchRecognizeScan>(),
+                                   node2->GetAs<ResolvedMatchRecognizeScan>());
+    case RESOLVED_MEASURE_GROUP:
+      return CompareResolvedMeasureGroup(node1->GetAs<ResolvedMeasureGroup>(),
+                                   node2->GetAs<ResolvedMeasureGroup>());
+    case RESOLVED_MATCH_RECOGNIZE_VARIABLE_DEFINITION:
+      return CompareResolvedMatchRecognizeVariableDefinition(node1->GetAs<ResolvedMatchRecognizeVariableDefinition>(),
+                                   node2->GetAs<ResolvedMatchRecognizeVariableDefinition>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_EMPTY:
+      return CompareResolvedMatchRecognizePatternEmpty(node1->GetAs<ResolvedMatchRecognizePatternEmpty>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternEmpty>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_ANCHOR:
+      return CompareResolvedMatchRecognizePatternAnchor(node1->GetAs<ResolvedMatchRecognizePatternAnchor>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternAnchor>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_VARIABLE_REF:
+      return CompareResolvedMatchRecognizePatternVariableRef(node1->GetAs<ResolvedMatchRecognizePatternVariableRef>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternVariableRef>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_OPERATION:
+      return CompareResolvedMatchRecognizePatternOperation(node1->GetAs<ResolvedMatchRecognizePatternOperation>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternOperation>());
+    case RESOLVED_MATCH_RECOGNIZE_PATTERN_QUANTIFICATION:
+      return CompareResolvedMatchRecognizePatternQuantification(node1->GetAs<ResolvedMatchRecognizePatternQuantification>(),
+                                   node2->GetAs<ResolvedMatchRecognizePatternQuantification>());
     case RESOLVED_CLONE_DATA_STMT:
       return CompareResolvedCloneDataStmt(node1->GetAs<ResolvedCloneDataStmt>(),
                                    node2->GetAs<ResolvedCloneDataStmt>());
@@ -710,9 +802,171 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAST(
     case RESOLVED_AUX_LOAD_DATA_STMT:
       return CompareResolvedAuxLoadDataStmt(node1->GetAs<ResolvedAuxLoadDataStmt>(),
                                    node2->GetAs<ResolvedAuxLoadDataStmt>());
+    case RESOLVED_CREATE_PROPERTY_GRAPH_STMT:
+      return CompareResolvedCreatePropertyGraphStmt(node1->GetAs<ResolvedCreatePropertyGraphStmt>(),
+                                   node2->GetAs<ResolvedCreatePropertyGraphStmt>());
+    case RESOLVED_GRAPH_ELEMENT_TABLE:
+      return CompareResolvedGraphElementTable(node1->GetAs<ResolvedGraphElementTable>(),
+                                   node2->GetAs<ResolvedGraphElementTable>());
+    case RESOLVED_GRAPH_NODE_TABLE_REFERENCE:
+      return CompareResolvedGraphNodeTableReference(node1->GetAs<ResolvedGraphNodeTableReference>(),
+                                   node2->GetAs<ResolvedGraphNodeTableReference>());
+    case RESOLVED_GRAPH_ELEMENT_LABEL:
+      return CompareResolvedGraphElementLabel(node1->GetAs<ResolvedGraphElementLabel>(),
+                                   node2->GetAs<ResolvedGraphElementLabel>());
+    case RESOLVED_GRAPH_PROPERTY_DECLARATION:
+      return CompareResolvedGraphPropertyDeclaration(node1->GetAs<ResolvedGraphPropertyDeclaration>(),
+                                   node2->GetAs<ResolvedGraphPropertyDeclaration>());
+    case RESOLVED_GRAPH_PROPERTY_DEFINITION:
+      return CompareResolvedGraphPropertyDefinition(node1->GetAs<ResolvedGraphPropertyDefinition>(),
+                                   node2->GetAs<ResolvedGraphPropertyDefinition>());
+    case RESOLVED_GRAPH_DYNAMIC_LABEL_SPECIFICATION:
+      return CompareResolvedGraphDynamicLabelSpecification(node1->GetAs<ResolvedGraphDynamicLabelSpecification>(),
+                                   node2->GetAs<ResolvedGraphDynamicLabelSpecification>());
+    case RESOLVED_GRAPH_DYNAMIC_PROPERTIES_SPECIFICATION:
+      return CompareResolvedGraphDynamicPropertiesSpecification(node1->GetAs<ResolvedGraphDynamicPropertiesSpecification>(),
+                                   node2->GetAs<ResolvedGraphDynamicPropertiesSpecification>());
+    case RESOLVED_GRAPH_REF_SCAN:
+      return CompareResolvedGraphRefScan(node1->GetAs<ResolvedGraphRefScan>(),
+                                   node2->GetAs<ResolvedGraphRefScan>());
+    case RESOLVED_GRAPH_LINEAR_SCAN:
+      return CompareResolvedGraphLinearScan(node1->GetAs<ResolvedGraphLinearScan>(),
+                                   node2->GetAs<ResolvedGraphLinearScan>());
+    case RESOLVED_GRAPH_TABLE_SCAN:
+      return CompareResolvedGraphTableScan(node1->GetAs<ResolvedGraphTableScan>(),
+                                   node2->GetAs<ResolvedGraphTableScan>());
+    case RESOLVED_GRAPH_CALL_SCAN:
+      return CompareResolvedGraphCallScan(node1->GetAs<ResolvedGraphCallScan>(),
+                                   node2->GetAs<ResolvedGraphCallScan>());
+    case RESOLVED_GRAPH_SCAN:
+      return CompareResolvedGraphScan(node1->GetAs<ResolvedGraphScan>(),
+                                   node2->GetAs<ResolvedGraphScan>());
+    case RESOLVED_GRAPH_PATH_PATTERN_QUANTIFIER:
+      return CompareResolvedGraphPathPatternQuantifier(node1->GetAs<ResolvedGraphPathPatternQuantifier>(),
+                                   node2->GetAs<ResolvedGraphPathPatternQuantifier>());
+    case RESOLVED_GRAPH_PATH_SEARCH_PREFIX:
+      return CompareResolvedGraphPathSearchPrefix(node1->GetAs<ResolvedGraphPathSearchPrefix>(),
+                                   node2->GetAs<ResolvedGraphPathSearchPrefix>());
+    case RESOLVED_GRAPH_NODE_SCAN:
+      return CompareResolvedGraphNodeScan(node1->GetAs<ResolvedGraphNodeScan>(),
+                                   node2->GetAs<ResolvedGraphNodeScan>());
+    case RESOLVED_GRAPH_EDGE_SCAN:
+      return CompareResolvedGraphEdgeScan(node1->GetAs<ResolvedGraphEdgeScan>(),
+                                   node2->GetAs<ResolvedGraphEdgeScan>());
+    case RESOLVED_GRAPH_GET_ELEMENT_PROPERTY:
+      return CompareResolvedGraphGetElementProperty(node1->GetAs<ResolvedGraphGetElementProperty>(),
+                                   node2->GetAs<ResolvedGraphGetElementProperty>());
+    case RESOLVED_GRAPH_LABEL_NARY_EXPR:
+      return CompareResolvedGraphLabelNaryExpr(node1->GetAs<ResolvedGraphLabelNaryExpr>(),
+                                   node2->GetAs<ResolvedGraphLabelNaryExpr>());
+    case RESOLVED_GRAPH_LABEL:
+      return CompareResolvedGraphLabel(node1->GetAs<ResolvedGraphLabel>(),
+                                   node2->GetAs<ResolvedGraphLabel>());
+    case RESOLVED_GRAPH_WILD_CARD_LABEL:
+      return CompareResolvedGraphWildCardLabel(node1->GetAs<ResolvedGraphWildCardLabel>(),
+                                   node2->GetAs<ResolvedGraphWildCardLabel>());
+    case RESOLVED_GRAPH_ELEMENT_IDENTIFIER:
+      return CompareResolvedGraphElementIdentifier(node1->GetAs<ResolvedGraphElementIdentifier>(),
+                                   node2->GetAs<ResolvedGraphElementIdentifier>());
+    case RESOLVED_GRAPH_ELEMENT_PROPERTY:
+      return CompareResolvedGraphElementProperty(node1->GetAs<ResolvedGraphElementProperty>(),
+                                   node2->GetAs<ResolvedGraphElementProperty>());
+    case RESOLVED_GRAPH_MAKE_ELEMENT:
+      return CompareResolvedGraphMakeElement(node1->GetAs<ResolvedGraphMakeElement>(),
+                                   node2->GetAs<ResolvedGraphMakeElement>());
+    case RESOLVED_ARRAY_AGGREGATE:
+      return CompareResolvedArrayAggregate(node1->GetAs<ResolvedArrayAggregate>(),
+                                   node2->GetAs<ResolvedArrayAggregate>());
+    case RESOLVED_GRAPH_MAKE_ARRAY_VARIABLE:
+      return CompareResolvedGraphMakeArrayVariable(node1->GetAs<ResolvedGraphMakeArrayVariable>(),
+                                   node2->GetAs<ResolvedGraphMakeArrayVariable>());
+    case RESOLVED_GRAPH_PATH_MODE:
+      return CompareResolvedGraphPathMode(node1->GetAs<ResolvedGraphPathMode>(),
+                                   node2->GetAs<ResolvedGraphPathMode>());
+    case RESOLVED_GRAPH_PATH_COST:
+      return CompareResolvedGraphPathCost(node1->GetAs<ResolvedGraphPathCost>(),
+                                   node2->GetAs<ResolvedGraphPathCost>());
+    case RESOLVED_GRAPH_PATH_SCAN:
+      return CompareResolvedGraphPathScan(node1->GetAs<ResolvedGraphPathScan>(),
+                                   node2->GetAs<ResolvedGraphPathScan>());
+    case RESOLVED_GRAPH_IS_LABELED_PREDICATE:
+      return CompareResolvedGraphIsLabeledPredicate(node1->GetAs<ResolvedGraphIsLabeledPredicate>(),
+                                   node2->GetAs<ResolvedGraphIsLabeledPredicate>());
     case RESOLVED_UNDROP_STMT:
       return CompareResolvedUndropStmt(node1->GetAs<ResolvedUndropStmt>(),
                                    node2->GetAs<ResolvedUndropStmt>());
+    case RESOLVED_IDENTITY_COLUMN_INFO:
+      return CompareResolvedIdentityColumnInfo(node1->GetAs<ResolvedIdentityColumnInfo>(),
+                                   node2->GetAs<ResolvedIdentityColumnInfo>());
+    case RESOLVED_DESCRIBE_SCAN:
+      return CompareResolvedDescribeScan(node1->GetAs<ResolvedDescribeScan>(),
+                                   node2->GetAs<ResolvedDescribeScan>());
+    case RESOLVED_STATIC_DESCRIBE_SCAN:
+      return CompareResolvedStaticDescribeScan(node1->GetAs<ResolvedStaticDescribeScan>(),
+                                   node2->GetAs<ResolvedStaticDescribeScan>());
+    case RESOLVED_ASSERT_SCAN:
+      return CompareResolvedAssertScan(node1->GetAs<ResolvedAssertScan>(),
+                                   node2->GetAs<ResolvedAssertScan>());
+    case RESOLVED_LOG_SCAN:
+      return CompareResolvedLogScan(node1->GetAs<ResolvedLogScan>(),
+                                   node2->GetAs<ResolvedLogScan>());
+    case RESOLVED_PIPE_IF_SCAN:
+      return CompareResolvedPipeIfScan(node1->GetAs<ResolvedPipeIfScan>(),
+                                   node2->GetAs<ResolvedPipeIfScan>());
+    case RESOLVED_PIPE_IF_CASE:
+      return CompareResolvedPipeIfCase(node1->GetAs<ResolvedPipeIfCase>(),
+                                   node2->GetAs<ResolvedPipeIfCase>());
+    case RESOLVED_PIPE_FORK_SCAN:
+      return CompareResolvedPipeForkScan(node1->GetAs<ResolvedPipeForkScan>(),
+                                   node2->GetAs<ResolvedPipeForkScan>());
+    case RESOLVED_PIPE_TEE_SCAN:
+      return CompareResolvedPipeTeeScan(node1->GetAs<ResolvedPipeTeeScan>(),
+                                   node2->GetAs<ResolvedPipeTeeScan>());
+    case RESOLVED_PIPE_EXPORT_DATA_SCAN:
+      return CompareResolvedPipeExportDataScan(node1->GetAs<ResolvedPipeExportDataScan>(),
+                                   node2->GetAs<ResolvedPipeExportDataScan>());
+    case RESOLVED_PIPE_CREATE_TABLE_SCAN:
+      return CompareResolvedPipeCreateTableScan(node1->GetAs<ResolvedPipeCreateTableScan>(),
+                                   node2->GetAs<ResolvedPipeCreateTableScan>());
+    case RESOLVED_PIPE_INSERT_SCAN:
+      return CompareResolvedPipeInsertScan(node1->GetAs<ResolvedPipeInsertScan>(),
+                                   node2->GetAs<ResolvedPipeInsertScan>());
+    case RESOLVED_SUBPIPELINE:
+      return CompareResolvedSubpipeline(node1->GetAs<ResolvedSubpipeline>(),
+                                   node2->GetAs<ResolvedSubpipeline>());
+    case RESOLVED_SUBPIPELINE_INPUT_SCAN:
+      return CompareResolvedSubpipelineInputScan(node1->GetAs<ResolvedSubpipelineInputScan>(),
+                                   node2->GetAs<ResolvedSubpipelineInputScan>());
+    case RESOLVED_SUBPIPELINE_STMT:
+      return CompareResolvedSubpipelineStmt(node1->GetAs<ResolvedSubpipelineStmt>(),
+                                   node2->GetAs<ResolvedSubpipelineStmt>());
+    case RESOLVED_GENERALIZED_QUERY_SUBPIPELINE:
+      return CompareResolvedGeneralizedQuerySubpipeline(node1->GetAs<ResolvedGeneralizedQuerySubpipeline>(),
+                                   node2->GetAs<ResolvedGeneralizedQuerySubpipeline>());
+    case RESOLVED_BARRIER_SCAN:
+      return CompareResolvedBarrierScan(node1->GetAs<ResolvedBarrierScan>(),
+                                   node2->GetAs<ResolvedBarrierScan>());
+    case RESOLVED_CREATE_CONNECTION_STMT:
+      return CompareResolvedCreateConnectionStmt(node1->GetAs<ResolvedCreateConnectionStmt>(),
+                                   node2->GetAs<ResolvedCreateConnectionStmt>());
+    case RESOLVED_ALTER_CONNECTION_STMT:
+      return CompareResolvedAlterConnectionStmt(node1->GetAs<ResolvedAlterConnectionStmt>(),
+                                   node2->GetAs<ResolvedAlterConnectionStmt>());
+    case RESOLVED_LOCK_MODE:
+      return CompareResolvedLockMode(node1->GetAs<ResolvedLockMode>(),
+                                   node2->GetAs<ResolvedLockMode>());
+    case RESOLVED_UPDATE_FIELD_ITEM:
+      return CompareResolvedUpdateFieldItem(node1->GetAs<ResolvedUpdateFieldItem>(),
+                                   node2->GetAs<ResolvedUpdateFieldItem>());
+    case RESOLVED_UPDATE_CONSTRUCTOR:
+      return CompareResolvedUpdateConstructor(node1->GetAs<ResolvedUpdateConstructor>(),
+                                   node2->GetAs<ResolvedUpdateConstructor>());
+    case RESOLVED_CREATE_SEQUENCE_STMT:
+      return CompareResolvedCreateSequenceStmt(node1->GetAs<ResolvedCreateSequenceStmt>(),
+                                   node2->GetAs<ResolvedCreateSequenceStmt>());
+    case RESOLVED_ALTER_SEQUENCE_STMT:
+      return CompareResolvedAlterSequenceStmt(node1->GetAs<ResolvedAlterSequenceStmt>(),
+                                   node2->GetAs<ResolvedAlterSequenceStmt>());
     default: return false;
   }
 }
@@ -790,6 +1044,9 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCatalogColumnRef(
   if (!Equals(node1->column(), node2->column())) {
     return false;
   }
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnRef(
@@ -820,7 +1077,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingSetMultiColum
   for (int i = 0; i < node1->column_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_list(i),
                                   node2->column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -878,12 +1135,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInlineLambda(
   for (int i = 0; i < node1->parameter_list().size(); ++i) {
     result = CompareResolvedAST(node1->parameter_list(i),
                                   node2->parameter_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->body(),
                                 node2->body());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -925,7 +1182,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFilterField(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->filter_field_arg_list().size() != node2->filter_field_arg_list().size()) {
     return false;
@@ -933,7 +1190,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFilterField(
   for (int i = 0; i < node1->filter_field_arg_list().size(); ++i) {
     result = CompareResolvedAST(node1->filter_field_arg_list(i),
                                   node2->filter_field_arg_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->reset_cleared_required_fields(), node2->reset_cleared_required_fields())) {
@@ -963,7 +1220,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFunctionCall(
   for (int i = 0; i < node1->argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->argument_list(i),
                                   node2->argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->generic_argument_list().size() != node2->generic_argument_list().size()) {
@@ -972,7 +1229,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFunctionCall(
   for (int i = 0; i < node1->generic_argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->generic_argument_list(i),
                                   node2->generic_argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->error_mode(), node2->error_mode())) {
@@ -984,7 +1241,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFunctionCall(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->collation_list().size() != node2->collation_list().size()) {
@@ -1022,7 +1279,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateFunctionCall
   for (int i = 0; i < node1->argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->argument_list(i),
                                   node2->argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->generic_argument_list().size() != node2->generic_argument_list().size()) {
@@ -1031,7 +1288,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateFunctionCall
   for (int i = 0; i < node1->generic_argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->generic_argument_list(i),
                                   node2->generic_argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->error_mode(), node2->error_mode())) {
@@ -1043,7 +1300,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateFunctionCall
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->collation_list().size() != node2->collation_list().size()) {
@@ -1060,22 +1317,13 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateFunctionCall
   if (!Equals(node1->null_handling_modifier(), node2->null_handling_modifier())) {
     return false;
   }
-  result = CompareResolvedAST(node1->with_group_rows_subquery(),
-                                node2->with_group_rows_subquery());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  result = CompareResolvedAST(node1->where_expr(),
+                                node2->where_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
-  if (node1->with_group_rows_parameter_list().size() != node2->with_group_rows_parameter_list().size()) {
-    return false;
-  }
-  for (int i = 0; i < node1->with_group_rows_parameter_list().size(); ++i) {
-    result = CompareResolvedAST(node1->with_group_rows_parameter_list(i),
-                                  node2->with_group_rows_parameter_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
-    if (!*result) return false;
-  }
   result = CompareResolvedAST(node1->having_modifier(),
                                 node2->having_modifier());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->order_by_item_list().size() != node2->order_by_item_list().size()) {
     return false;
@@ -1083,16 +1331,47 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateFunctionCall
   for (int i = 0; i < node1->order_by_item_list().size(); ++i) {
     result = CompareResolvedAST(node1->order_by_item_list(i),
                                   node2->order_by_item_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->limit(),
                                 node2->limit());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->function_call_info(), node2->function_call_info())) {
     return false;
   }
+  if (node1->group_by_list().size() != node2->group_by_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->group_by_list().size(); ++i) {
+    result = CompareResolvedAST(node1->group_by_list(i),
+                                  node2->group_by_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->group_by_hint_list().size() != node2->group_by_hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->group_by_hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->group_by_hint_list(i),
+                                  node2->group_by_hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->group_by_aggregate_list().size() != node2->group_by_aggregate_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->group_by_aggregate_list().size(); ++i) {
+    result = CompareResolvedAST(node1->group_by_aggregate_list(i),
+                                  node2->group_by_aggregate_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->having_expr(),
+                                node2->having_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticFunctionCall(
@@ -1117,7 +1396,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticFunctionCall(
   for (int i = 0; i < node1->argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->argument_list(i),
                                   node2->argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->generic_argument_list().size() != node2->generic_argument_list().size()) {
@@ -1126,7 +1405,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticFunctionCall(
   for (int i = 0; i < node1->generic_argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->generic_argument_list(i),
                                   node2->generic_argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->error_mode(), node2->error_mode())) {
@@ -1138,7 +1417,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticFunctionCall(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->collation_list().size() != node2->collation_list().size()) {
@@ -1155,22 +1434,13 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticFunctionCall(
   if (!Equals(node1->null_handling_modifier(), node2->null_handling_modifier())) {
     return false;
   }
-  result = CompareResolvedAST(node1->with_group_rows_subquery(),
-                                node2->with_group_rows_subquery());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  result = CompareResolvedAST(node1->where_expr(),
+                                node2->where_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
-  if (node1->with_group_rows_parameter_list().size() != node2->with_group_rows_parameter_list().size()) {
-    return false;
-  }
-  for (int i = 0; i < node1->with_group_rows_parameter_list().size(); ++i) {
-    result = CompareResolvedAST(node1->with_group_rows_parameter_list(i),
-                                  node2->with_group_rows_parameter_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
-    if (!*result) return false;
-  }
   result = CompareResolvedAST(node1->window_frame(),
                                 node2->window_frame());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -1199,7 +1469,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExtendedCast(
   for (int i = 0; i < node1->element_list().size(); ++i) {
     result = CompareResolvedAST(node1->element_list(i),
                                   node2->element_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1216,22 +1486,22 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCast(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->return_null_on_error(), node2->return_null_on_error())) {
     return false;
   }
   result = CompareResolvedAST(node1->extended_cast(),
                                 node2->extended_cast());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->format(),
                                 node2->format());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->time_zone(),
                                 node2->time_zone());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->type_modifiers(), node2->type_modifiers())) {
     return false;
@@ -1254,7 +1524,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMakeStruct(
   for (int i = 0; i < node1->field_list().size(); ++i) {
     result = CompareResolvedAST(node1->field_list(i),
                                   node2->field_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1275,7 +1545,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMakeProto(
   for (int i = 0; i < node1->field_list().size(); ++i) {
     result = CompareResolvedAST(node1->field_list(i),
                                   node2->field_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1292,7 +1562,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMakeProtoField(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -1308,7 +1578,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGetStructField(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->field_idx(), node2->field_idx())) {
     return false;
@@ -1330,7 +1600,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGetProtoField(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->field_descriptor(), node2->field_descriptor())) {
     return false;
@@ -1361,9 +1631,28 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGetJsonField(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->field_name(), node2->field_name())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGetRowField(
+    const ResolvedGetRowField* node1, const ResolvedGetRowField* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->column(), node2->column())) {
     return false;
   }
   return true;
@@ -1380,7 +1669,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFlatten(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->get_field_list().size() != node2->get_field_list().size()) {
     return false;
@@ -1388,7 +1677,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFlatten(
   for (int i = 0; i < node1->get_field_list().size(); ++i) {
     result = CompareResolvedAST(node1->get_field_list(i),
                                   node2->get_field_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1411,7 +1700,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedReplaceFieldItem(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->struct_index_path().size() != node2->struct_index_path().size()) {
     return false;
@@ -1443,7 +1732,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedReplaceField(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->replace_field_item_list().size() != node2->replace_field_item_list().size()) {
     return false;
@@ -1451,8 +1740,27 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedReplaceField(
   for (int i = 0; i < node1->replace_field_item_list().size(); ++i) {
     result = CompareResolvedAST(node1->replace_field_item_list(i),
                                   node2->replace_field_item_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGetProtoOneof(
+    const ResolvedGetProtoOneof* node1, const ResolvedGetProtoOneof* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->oneof_descriptor(), node2->oneof_descriptor())) {
+    return false;
   }
   return true;
 }
@@ -1475,19 +1783,19 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSubqueryExpr(
   for (int i = 0; i < node1->parameter_list().size(); ++i) {
     result = CompareResolvedAST(node1->parameter_list(i),
                                   node2->parameter_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->in_expr(),
                                 node2->in_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->in_collation(), node2->in_collation())) {
     return false;
   }
   result = CompareResolvedAST(node1->subquery(),
                                 node2->subquery());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->hint_list().size() != node2->hint_list().size()) {
     return false;
@@ -1495,7 +1803,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSubqueryExpr(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1516,12 +1824,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWithExpr(
   for (int i = 0; i < node1->assignment_list().size(); ++i) {
     result = CompareResolvedAST(node1->assignment_list(i),
                                   node2->assignment_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -1543,7 +1851,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExecuteAsRoleScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -1554,7 +1862,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExecuteAsRoleScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->original_inlined_view(), node2->original_inlined_view())) {
     return false;
@@ -1622,7 +1930,36 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSingleRowScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnsetArgumentScan(
+    const ResolvedUnsetArgumentScan* node1, const ResolvedUnsetArgumentScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -1651,7 +1988,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTableScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -1665,7 +2002,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTableScan(
   }
   result = CompareResolvedAST(node1->for_system_time_expr(),
                                 node2->for_system_time_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->column_index_list().size() != node2->column_index_list().size()) {
     return false;
@@ -1677,6 +2014,21 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTableScan(
   }
   if (!Equals(node1->alias(), node2->alias())) {
     return false;
+  }
+  result = CompareResolvedAST(node1->lock_mode(),
+                                node2->lock_mode());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->read_as_row_type(), node2->read_as_row_type())) {
+    return false;
+  }
+  if (node1->table_column_list().size() != node2->table_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->table_column_list().size(); ++i) {
+    if (!Equals(node1->table_column_list(i), node2->table_column_list(i))) {
+      return false;
+    }
   }
   return true;
 }
@@ -1698,7 +2050,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedJoinScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -1712,16 +2064,31 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedJoinScan(
   }
   result = CompareResolvedAST(node1->left_scan(),
                                 node2->left_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->right_scan(),
                                 node2->right_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->join_expr(),
                                 node2->join_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (!Equals(node1->has_using(), node2->has_using())) {
+    return false;
+  }
+  if (!Equals(node1->is_lateral(), node2->is_lateral())) {
+    return false;
+  }
+  if (node1->parameter_list().size() != node2->parameter_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->parameter_list().size(); ++i) {
+    result = CompareResolvedAST(node1->parameter_list(i),
+                                  node2->parameter_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayScan(
@@ -1742,7 +2109,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -1753,26 +2120,40 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
-  result = CompareResolvedAST(node1->array_expr(),
-                                node2->array_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
-  if (!*result) return false;
-  if (!Equals(node1->element_column(), node2->element_column())) {
+  if (node1->array_expr_list().size() != node2->array_expr_list().size()) {
     return false;
+  }
+  for (int i = 0; i < node1->array_expr_list().size(); ++i) {
+    result = CompareResolvedAST(node1->array_expr_list(i),
+                                  node2->array_expr_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->element_column_list().size() != node2->element_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->element_column_list().size(); ++i) {
+    if (!Equals(node1->element_column_list(i), node2->element_column_list(i))) {
+      return false;
+    }
   }
   result = CompareResolvedAST(node1->array_offset_column(),
                                 node2->array_offset_column());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->join_expr(),
                                 node2->join_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->is_outer(), node2->is_outer())) {
     return false;
   }
+  result = CompareResolvedAST(node1->array_zip_mode(),
+                                node2->array_zip_mode());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnHolder(
@@ -1802,7 +2183,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFilterScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -1813,11 +2194,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFilterScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->filter_expr(),
                                 node2->filter_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -1827,10 +2208,40 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingCall(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->group_by_column(),
                                 node2->group_by_column());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->output_column(), node2->output_column())) {
     return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingSetList(
+    const ResolvedGroupingSetList* node1, const ResolvedGroupingSetList* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->elem_list().size() != node2->elem_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->elem_list().size(); ++i) {
+    result = CompareResolvedAST(node1->elem_list(i),
+                                  node2->elem_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingSetProduct(
+    const ResolvedGroupingSetProduct* node1, const ResolvedGroupingSetProduct* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->input_list().size() != node2->input_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->input_list().size(); ++i) {
+    result = CompareResolvedAST(node1->input_list(i),
+                                  node2->input_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
   }
   return true;
 }
@@ -1844,7 +2255,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupingSet(
   for (int i = 0; i < node1->group_by_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->group_by_column_list(i),
                                   node2->group_by_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1859,7 +2270,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRollup(
   for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->rollup_column_list(i),
                                   node2->rollup_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1874,7 +2285,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCube(
   for (int i = 0; i < node1->cube_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->cube_column_list(i),
                                   node2->cube_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1897,7 +2308,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -1908,7 +2319,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->group_by_list().size() != node2->group_by_list().size()) {
     return false;
@@ -1916,7 +2327,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
   for (int i = 0; i < node1->group_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->group_by_list(i),
                                   node2->group_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->collation_list().size() != node2->collation_list().size()) {
@@ -1933,7 +2344,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
   for (int i = 0; i < node1->aggregate_list().size(); ++i) {
     result = CompareResolvedAST(node1->aggregate_list(i),
                                   node2->aggregate_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->grouping_set_list().size() != node2->grouping_set_list().size()) {
@@ -1942,7 +2353,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
   for (int i = 0; i < node1->grouping_set_list().size(); ++i) {
     result = CompareResolvedAST(node1->grouping_set_list(i),
                                   node2->grouping_set_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->rollup_column_list().size() != node2->rollup_column_list().size()) {
@@ -1951,7 +2362,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
   for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->rollup_column_list(i),
                                   node2->rollup_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->grouping_call_list().size() != node2->grouping_call_list().size()) {
@@ -1960,7 +2371,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateScan(
   for (int i = 0; i < node1->grouping_call_list().size(); ++i) {
     result = CompareResolvedAST(node1->grouping_call_list(i),
                                   node2->grouping_call_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -1983,7 +2394,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -1994,7 +2405,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->group_by_list().size() != node2->group_by_list().size()) {
     return false;
@@ -2002,7 +2413,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   for (int i = 0; i < node1->group_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->group_by_list(i),
                                   node2->group_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->collation_list().size() != node2->collation_list().size()) {
@@ -2019,7 +2430,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   for (int i = 0; i < node1->aggregate_list().size(); ++i) {
     result = CompareResolvedAST(node1->aggregate_list(i),
                                   node2->aggregate_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->grouping_set_list().size() != node2->grouping_set_list().size()) {
@@ -2028,7 +2439,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   for (int i = 0; i < node1->grouping_set_list().size(); ++i) {
     result = CompareResolvedAST(node1->grouping_set_list(i),
                                   node2->grouping_set_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->rollup_column_list().size() != node2->rollup_column_list().size()) {
@@ -2037,7 +2448,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->rollup_column_list(i),
                                   node2->rollup_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->grouping_call_list().size() != node2->grouping_call_list().size()) {
@@ -2046,12 +2457,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   for (int i = 0; i < node1->grouping_call_list().size(); ++i) {
     result = CompareResolvedAST(node1->grouping_call_list(i),
                                   node2->grouping_call_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->k_threshold_expr(),
                                 node2->k_threshold_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->anonymization_option_list().size() != node2->anonymization_option_list().size()) {
     return false;
@@ -2059,7 +2470,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnonymizedAggregateSc
   for (int i = 0; i < node1->anonymization_option_list().size(); ++i) {
     result = CompareResolvedAST(node1->anonymization_option_list(i),
                                   node2->anonymization_option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -2082,7 +2493,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2093,7 +2504,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->group_by_list().size() != node2->group_by_list().size()) {
     return false;
@@ -2101,7 +2512,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   for (int i = 0; i < node1->group_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->group_by_list(i),
                                   node2->group_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->collation_list().size() != node2->collation_list().size()) {
@@ -2118,7 +2529,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   for (int i = 0; i < node1->aggregate_list().size(); ++i) {
     result = CompareResolvedAST(node1->aggregate_list(i),
                                   node2->aggregate_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->grouping_set_list().size() != node2->grouping_set_list().size()) {
@@ -2127,7 +2538,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   for (int i = 0; i < node1->grouping_set_list().size(); ++i) {
     result = CompareResolvedAST(node1->grouping_set_list(i),
                                   node2->grouping_set_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->rollup_column_list().size() != node2->rollup_column_list().size()) {
@@ -2136,7 +2547,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->rollup_column_list(i),
                                   node2->rollup_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->grouping_call_list().size() != node2->grouping_call_list().size()) {
@@ -2145,12 +2556,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   for (int i = 0; i < node1->grouping_call_list().size(); ++i) {
     result = CompareResolvedAST(node1->grouping_call_list(i),
                                   node2->grouping_call_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->group_selection_threshold_expr(),
                                 node2->group_selection_threshold_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
@@ -2158,7 +2569,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDifferentialPrivacyAg
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -2181,7 +2592,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2192,7 +2603,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->group_by_list().size() != node2->group_by_list().size()) {
     return false;
@@ -2200,7 +2611,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   for (int i = 0; i < node1->group_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->group_by_list(i),
                                   node2->group_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->collation_list().size() != node2->collation_list().size()) {
@@ -2217,7 +2628,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   for (int i = 0; i < node1->aggregate_list().size(); ++i) {
     result = CompareResolvedAST(node1->aggregate_list(i),
                                   node2->aggregate_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->grouping_set_list().size() != node2->grouping_set_list().size()) {
@@ -2226,7 +2637,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   for (int i = 0; i < node1->grouping_set_list().size(); ++i) {
     result = CompareResolvedAST(node1->grouping_set_list(i),
                                   node2->grouping_set_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->rollup_column_list().size() != node2->rollup_column_list().size()) {
@@ -2235,7 +2646,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   for (int i = 0; i < node1->rollup_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->rollup_column_list(i),
                                   node2->rollup_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->grouping_call_list().size() != node2->grouping_call_list().size()) {
@@ -2244,7 +2655,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   for (int i = 0; i < node1->grouping_call_list().size(); ++i) {
     result = CompareResolvedAST(node1->grouping_call_list(i),
                                   node2->grouping_call_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->option_list().size() != node2->option_list().size()) {
@@ -2253,7 +2664,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregationThresholdA
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -2264,7 +2675,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSetOperationItem(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->scan(),
                                 node2->scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
     return false;
@@ -2294,7 +2705,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSetOperationScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2312,7 +2723,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSetOperationScan(
   for (int i = 0; i < node1->input_item_list().size(); ++i) {
     result = CompareResolvedAST(node1->input_item_list(i),
                                   node2->input_item_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->column_match_mode(), node2->column_match_mode())) {
@@ -2341,7 +2752,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOrderByScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2352,7 +2763,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOrderByScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->order_by_item_list().size() != node2->order_by_item_list().size()) {
     return false;
@@ -2360,7 +2771,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOrderByScan(
   for (int i = 0; i < node1->order_by_item_list().size(); ++i) {
     result = CompareResolvedAST(node1->order_by_item_list(i),
                                   node2->order_by_item_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -2383,7 +2794,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedLimitOffsetScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2394,15 +2805,15 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedLimitOffsetScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->limit(),
                                 node2->limit());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->offset(),
                                 node2->offset());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -2424,7 +2835,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWithRefScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2456,7 +2867,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2467,7 +2878,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->function_group_list().size() != node2->function_group_list().size()) {
     return false;
@@ -2475,7 +2886,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticScan(
   for (int i = 0; i < node1->function_group_list().size(); ++i) {
     result = CompareResolvedAST(node1->function_group_list(i),
                                   node2->function_group_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -2498,7 +2909,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSampleScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2509,25 +2920,25 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSampleScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->method(), node2->method())) {
     return false;
   }
   result = CompareResolvedAST(node1->size(),
                                 node2->size());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->unit(), node2->unit())) {
     return false;
   }
   result = CompareResolvedAST(node1->repeatable_argument(),
                                 node2->repeatable_argument());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->weight_column(),
                                 node2->weight_column());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->partition_by_list().size() != node2->partition_by_list().size()) {
     return false;
@@ -2535,7 +2946,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSampleScan(
   for (int i = 0; i < node1->partition_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->partition_by_list(i),
                                   node2->partition_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -2549,8 +2960,24 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedComputedColumn(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDeferredComputedColumn(
+    const ResolvedDeferredComputedColumn* node1, const ResolvedDeferredComputedColumn* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->column(), node2->column())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->side_effect_column(), node2->side_effect_column())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOrderByItem(
@@ -2559,11 +2986,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOrderByItem(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->column_ref(),
                                 node2->column_ref());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->collation_name(),
                                 node2->collation_name());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->is_descending(), node2->is_descending())) {
     return false;
@@ -2582,7 +3009,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnAnnotations(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->collation_name(),
                                 node2->collation_name());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->not_null(), node2->not_null())) {
     return false;
@@ -2593,7 +3020,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnAnnotations(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->child_list().size() != node2->child_list().size()) {
@@ -2602,7 +3029,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnAnnotations(
   for (int i = 0; i < node1->child_list().size(); ++i) {
     result = CompareResolvedAST(node1->child_list(i),
                                   node2->child_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->type_parameters(), node2->type_parameters())) {
@@ -2616,11 +3043,18 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGeneratedColumnInfo(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->expression(),
                                 node2->expression());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->stored_mode(), node2->stored_mode())) {
     return false;
   }
+  if (!Equals(node1->generated_mode(), node2->generated_mode())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->identity_column_info(),
+                                node2->identity_column_info());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnDefaultValue(
@@ -2629,7 +3063,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnDefaultValue(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->expression(),
                                 node2->expression());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->sql(), node2->sql())) {
     return false;
@@ -2648,7 +3082,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnDefinition(
   }
   result = CompareResolvedAST(node1->annotations(),
                                 node2->annotations());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->is_hidden(), node2->is_hidden())) {
     return false;
@@ -2658,11 +3092,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedColumnDefinition(
   }
   result = CompareResolvedAST(node1->generated_column_info(),
                                 node2->generated_column_info());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->default_value(),
                                 node2->default_value());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -2684,7 +3118,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPrimaryKey(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->unenforced(), node2->unenforced())) {
@@ -2747,7 +3181,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedForeignKey(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->referencing_column_list().size() != node2->referencing_column_list().size()) {
@@ -2769,7 +3203,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCheckConstraint(
   }
   result = CompareResolvedAST(node1->expression(),
                                 node2->expression());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->enforced(), node2->enforced())) {
     return false;
@@ -2780,7 +3214,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCheckConstraint(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -2793,6 +3227,24 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOutputColumn(
     return false;
   }
   if (!Equals(node1->column(), node2->column())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOutputSchema(
+    const ResolvedOutputSchema* node1, const ResolvedOutputSchema* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->output_column_list().size() != node2->output_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->output_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->output_column_list(i),
+                                  node2->output_column_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_value_table(), node2->is_value_table())) {
     return false;
   }
   return true;
@@ -2815,7 +3267,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedProjectScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2830,12 +3282,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedProjectScan(
   for (int i = 0; i < node1->expr_list().size(); ++i) {
     result = CompareResolvedAST(node1->expr_list(i),
                                   node2->expr_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -2857,7 +3309,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTVFScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2878,7 +3330,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTVFScan(
   for (int i = 0; i < node1->argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->argument_list(i),
                                   node2->argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->column_index_list().size() != node2->column_index_list().size()) {
@@ -2915,7 +3367,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupRowsScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -2930,7 +3382,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGroupRowsScan(
   for (int i = 0; i < node1->input_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->input_column_list(i),
                                   node2->input_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->alias(), node2->alias())) {
@@ -2944,23 +3396,23 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFunctionArgument(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->scan(),
                                 node2->scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->model(),
                                 node2->model());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->descriptor_arg(),
                                 node2->descriptor_arg());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->argument_column_list().size() != node2->argument_column_list().size()) {
     return false;
@@ -2972,12 +3424,18 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFunctionArgument(
   }
   result = CompareResolvedAST(node1->inline_lambda(),
                                 node2->inline_lambda());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->sequence(),
                                 node2->sequence());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (!Equals(node1->graph(), node2->graph())) {
+    return false;
+  }
+  if (!Equals(node1->argument_alias(), node2->argument_alias())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExplainStmt(
@@ -2990,12 +3448,44 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExplainStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->statement(),
                                 node2->statement());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedStringWithLocation(
+    const ResolvedStringWithLocation* node1, const ResolvedStringWithLocation* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->value(), node2->value())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedStatementWithPipeOperatorsStmt(
+    const ResolvedStatementWithPipeOperatorsStmt* node1, const ResolvedStatementWithPipeOperatorsStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->statement(),
+                                node2->statement());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->suffix_subpipeline_sql(),
+                                node2->suffix_subpipeline_sql());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -3009,7 +3499,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedQueryStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
@@ -3018,7 +3508,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedQueryStmt(
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_value_table(), node2->is_value_table())) {
@@ -3026,7 +3516,73 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedQueryStmt(
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGeneralizedQueryStmt(
+    const ResolvedGeneralizedQueryStmt* node1, const ResolvedGeneralizedQueryStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->output_schema(),
+                                node2->output_schema());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->query(),
+                                node2->query());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMultiStmt(
+    const ResolvedMultiStmt* node1, const ResolvedMultiStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->statement_list().size() != node2->statement_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->statement_list().size(); ++i) {
+    result = CompareResolvedAST(node1->statement_list(i),
+                                  node2->statement_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateWithEntryStmt(
+    const ResolvedCreateWithEntryStmt* node1, const ResolvedCreateWithEntryStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->with_entry(),
+                                node2->with_entry());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -3040,7 +3596,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateDatabaseStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3057,7 +3613,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateDatabaseStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3068,10 +3624,19 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedIndexItem(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->column_ref(),
                                 node2->column_ref());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->descending(), node2->descending())) {
     return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
   }
   return true;
 }
@@ -3081,14 +3646,14 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnnestItem(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->array_expr(),
                                 node2->array_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->element_column(), node2->element_column())) {
     return false;
   }
   result = CompareResolvedAST(node1->array_offset_column(),
                                 node2->array_offset_column());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -3102,7 +3667,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3129,7 +3694,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->is_unique(), node2->is_unique())) {
     return false;
@@ -3149,7 +3714,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
   for (int i = 0; i < node1->index_item_list().size(); ++i) {
     result = CompareResolvedAST(node1->index_item_list(i),
                                   node2->index_item_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->storing_expression_list().size() != node2->storing_expression_list().size()) {
@@ -3158,7 +3723,16 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
   for (int i = 0; i < node1->storing_expression_list().size(); ++i) {
     result = CompareResolvedAST(node1->storing_expression_list(i),
                                   node2->storing_expression_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->partition_by_list().size() != node2->partition_by_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->partition_by_list().size(); ++i) {
+    result = CompareResolvedAST(node1->partition_by_list(i),
+                                  node2->partition_by_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->option_list().size() != node2->option_list().size()) {
@@ -3167,7 +3741,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->computed_columns_list().size() != node2->computed_columns_list().size()) {
@@ -3176,7 +3750,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
   for (int i = 0; i < node1->computed_columns_list().size(); ++i) {
     result = CompareResolvedAST(node1->computed_columns_list(i),
                                   node2->computed_columns_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->unnest_expressions_list().size() != node2->unnest_expressions_list().size()) {
@@ -3185,7 +3759,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateIndexStmt(
   for (int i = 0; i < node1->unnest_expressions_list().size(); ++i) {
     result = CompareResolvedAST(node1->unnest_expressions_list(i),
                                   node2->unnest_expressions_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3200,7 +3774,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateSchemaStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3217,19 +3791,61 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateSchemaStmt(
   if (!Equals(node1->create_mode(), node2->create_mode())) {
     return false;
   }
-  result = CompareResolvedAST(node1->collation_name(),
-                                node2->collation_name());
-  ZETASQL_RETURN_IF_ERROR(result.status());
-  if (!*result) return false;
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
   }
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
+  result = CompareResolvedAST(node1->collation_name(),
+                                node2->collation_name());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalSchemaStmt(
+    const ResolvedCreateExternalSchemaStmt* node1, const ResolvedCreateExternalSchemaStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->create_scope(), node2->create_scope())) {
+    return false;
+  }
+  if (!Equals(node1->create_mode(), node2->create_mode())) {
+    return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->connection(),
+                                node2->connection());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
@@ -3242,7 +3858,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3265,7 +3881,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->column_definition_list().size() != node2->column_definition_list().size()) {
@@ -3274,7 +3890,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   for (int i = 0; i < node1->column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_definition_list(i),
                                   node2->column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->pseudo_column_list().size() != node2->pseudo_column_list().size()) {
@@ -3287,7 +3903,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   }
   result = CompareResolvedAST(node1->primary_key(),
                                 node2->primary_key());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->foreign_key_list().size() != node2->foreign_key_list().size()) {
     return false;
@@ -3295,7 +3911,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   for (int i = 0; i < node1->foreign_key_list().size(); ++i) {
     result = CompareResolvedAST(node1->foreign_key_list(i),
                                   node2->foreign_key_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->check_constraint_list().size() != node2->check_constraint_list().size()) {
@@ -3304,7 +3920,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   for (int i = 0; i < node1->check_constraint_list().size(); ++i) {
     result = CompareResolvedAST(node1->check_constraint_list(i),
                                   node2->check_constraint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_value_table(), node2->is_value_table())) {
@@ -3315,19 +3931,19 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   }
   result = CompareResolvedAST(node1->collation_name(),
                                 node2->collation_name());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->clone_from(),
                                 node2->clone_from());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->copy_from(),
                                 node2->copy_from());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->partition_by_list().size() != node2->partition_by_list().size()) {
     return false;
@@ -3335,7 +3951,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   for (int i = 0; i < node1->partition_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->partition_by_list(i),
                                   node2->partition_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->cluster_by_list().size() != node2->cluster_by_list().size()) {
@@ -3344,7 +3960,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableStmt(
   for (int i = 0; i < node1->cluster_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->cluster_by_list(i),
                                   node2->cluster_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3359,7 +3975,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3382,7 +3998,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->column_definition_list().size() != node2->column_definition_list().size()) {
@@ -3391,7 +4007,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   for (int i = 0; i < node1->column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_definition_list(i),
                                   node2->column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->pseudo_column_list().size() != node2->pseudo_column_list().size()) {
@@ -3404,7 +4020,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   }
   result = CompareResolvedAST(node1->primary_key(),
                                 node2->primary_key());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->foreign_key_list().size() != node2->foreign_key_list().size()) {
     return false;
@@ -3412,7 +4028,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   for (int i = 0; i < node1->foreign_key_list().size(); ++i) {
     result = CompareResolvedAST(node1->foreign_key_list(i),
                                   node2->foreign_key_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->check_constraint_list().size() != node2->check_constraint_list().size()) {
@@ -3421,7 +4037,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   for (int i = 0; i < node1->check_constraint_list().size(); ++i) {
     result = CompareResolvedAST(node1->check_constraint_list(i),
                                   node2->check_constraint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_value_table(), node2->is_value_table())) {
@@ -3432,11 +4048,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   }
   result = CompareResolvedAST(node1->collation_name(),
                                 node2->collation_name());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->partition_by_list().size() != node2->partition_by_list().size()) {
     return false;
@@ -3444,7 +4060,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   for (int i = 0; i < node1->partition_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->partition_by_list(i),
                                   node2->partition_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->cluster_by_list().size() != node2->cluster_by_list().size()) {
@@ -3453,7 +4069,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   for (int i = 0; i < node1->cluster_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->cluster_by_list(i),
                                   node2->cluster_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
@@ -3462,12 +4078,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableAsSelectSt
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -3480,7 +4096,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelAliasedQue
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
     return false;
@@ -3488,7 +4104,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelAliasedQue
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3503,7 +4119,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3526,7 +4142,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
@@ -3535,12 +4151,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->aliased_query_list().size() != node2->aliased_query_list().size()) {
     return false;
@@ -3548,7 +4164,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->aliased_query_list().size(); ++i) {
     result = CompareResolvedAST(node1->aliased_query_list(i),
                                   node2->aliased_query_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->transform_input_column_list().size() != node2->transform_input_column_list().size()) {
@@ -3557,7 +4173,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->transform_input_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->transform_input_column_list(i),
                                   node2->transform_input_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->transform_list().size() != node2->transform_list().size()) {
@@ -3566,7 +4182,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->transform_list().size(); ++i) {
     result = CompareResolvedAST(node1->transform_list(i),
                                   node2->transform_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->transform_output_column_list().size() != node2->transform_output_column_list().size()) {
@@ -3575,7 +4191,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->transform_output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->transform_output_column_list(i),
                                   node2->transform_output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->transform_analytic_function_group_list().size() != node2->transform_analytic_function_group_list().size()) {
@@ -3584,7 +4200,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->transform_analytic_function_group_list().size(); ++i) {
     result = CompareResolvedAST(node1->transform_analytic_function_group_list(i),
                                   node2->transform_analytic_function_group_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->input_column_definition_list().size() != node2->input_column_definition_list().size()) {
@@ -3593,7 +4209,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->input_column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->input_column_definition_list(i),
                                   node2->input_column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->output_column_definition_list().size() != node2->output_column_definition_list().size()) {
@@ -3602,7 +4218,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   for (int i = 0; i < node1->output_column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_definition_list(i),
                                   node2->output_column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_remote(), node2->is_remote())) {
@@ -3610,7 +4226,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateModelStmt(
   }
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -3624,7 +4240,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateViewStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3647,7 +4263,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateViewStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
@@ -3656,7 +4272,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateViewStmt(
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->has_explicit_columns(), node2->has_explicit_columns())) {
@@ -3664,7 +4280,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateViewStmt(
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->sql(), node2->sql())) {
     return false;
@@ -3684,7 +4300,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateViewStmt(
   for (int i = 0; i < node1->column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_definition_list(i),
                                   node2->column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3699,7 +4315,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWithPartitionColumns(
   for (int i = 0; i < node1->column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_definition_list(i),
                                   node2->column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3714,7 +4330,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateSnapshotTableSt
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3733,7 +4349,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateSnapshotTableSt
   }
   result = CompareResolvedAST(node1->clone_from(),
                                 node2->clone_from());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
@@ -3741,7 +4357,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateSnapshotTableSt
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3756,7 +4372,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalTableSt
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3779,7 +4395,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalTableSt
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->column_definition_list().size() != node2->column_definition_list().size()) {
@@ -3788,7 +4404,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalTableSt
   for (int i = 0; i < node1->column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_definition_list(i),
                                   node2->column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->pseudo_column_list().size() != node2->pseudo_column_list().size()) {
@@ -3801,7 +4417,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalTableSt
   }
   result = CompareResolvedAST(node1->primary_key(),
                                 node2->primary_key());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->foreign_key_list().size() != node2->foreign_key_list().size()) {
     return false;
@@ -3809,7 +4425,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalTableSt
   for (int i = 0; i < node1->foreign_key_list().size(); ++i) {
     result = CompareResolvedAST(node1->foreign_key_list(i),
                                   node2->foreign_key_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->check_constraint_list().size() != node2->check_constraint_list().size()) {
@@ -3818,7 +4434,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalTableSt
   for (int i = 0; i < node1->check_constraint_list().size(); ++i) {
     result = CompareResolvedAST(node1->check_constraint_list(i),
                                   node2->check_constraint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_value_table(), node2->is_value_table())) {
@@ -3829,15 +4445,15 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateExternalTableSt
   }
   result = CompareResolvedAST(node1->collation_name(),
                                 node2->collation_name());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->with_partition_columns(),
                                 node2->with_partition_columns());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -3851,7 +4467,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportModelStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->model_name_path().size() != node2->model_name_path().size()) {
@@ -3864,7 +4480,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportModelStmt(
   }
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
@@ -3872,7 +4488,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportModelStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3887,12 +4503,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportDataStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
@@ -3900,7 +4516,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportDataStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
@@ -3909,7 +4525,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportDataStmt(
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_value_table(), node2->is_value_table())) {
@@ -3917,7 +4533,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportDataStmt(
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -3931,7 +4547,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportMetadataStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->schema_object_kind(), node2->schema_object_kind())) {
@@ -3947,7 +4563,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportMetadataStmt(
   }
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
@@ -3955,7 +4571,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExportMetadataStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -3970,7 +4586,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDefineTableStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -3987,7 +4603,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDefineTableStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4002,7 +4618,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDescribeStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->object_type(), node2->object_type())) {
@@ -4036,7 +4652,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedShowStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->identifier(), node2->identifier())) {
@@ -4052,7 +4668,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedShowStmt(
   }
   result = CompareResolvedAST(node1->like_expr(),
                                 node2->like_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4066,7 +4682,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedBeginStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->read_write_mode(), node2->read_write_mode())) {
@@ -4092,7 +4708,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSetTransactionStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->read_write_mode(), node2->read_write_mode())) {
@@ -4118,7 +4734,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCommitStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4133,7 +4749,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRollbackStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4148,7 +4764,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedStartBatchStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->batch_type(), node2->batch_type())) {
@@ -4166,7 +4782,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRunBatchStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4181,7 +4797,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAbortBatchStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4196,7 +4812,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->object_type(), node2->object_type())) {
@@ -4228,7 +4844,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropMaterializedViewS
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -4254,7 +4870,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropSnapshotTableStmt
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -4288,7 +4904,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveRefScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -4297,6 +4913,24 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveRefScan(
   if (!Equals(node1->node_source(), node2->node_source())) {
     return false;
   }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursionDepthModifier(
+    const ResolvedRecursionDepthModifier* node1, const ResolvedRecursionDepthModifier* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->lower_bound(),
+                                node2->lower_bound());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->upper_bound(),
+                                node2->upper_bound());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->recursion_depth_column(),
+                                node2->recursion_depth_column());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveScan(
@@ -4317,7 +4951,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -4331,11 +4965,15 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRecursiveScan(
   }
   result = CompareResolvedAST(node1->non_recursive_term(),
                                 node2->non_recursive_term());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->recursive_term(),
                                 node2->recursive_term());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->recursion_depth_modifier(),
+                                node2->recursion_depth_modifier());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4357,7 +4995,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWithScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -4372,12 +5010,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWithScan(
   for (int i = 0; i < node1->with_entry_list().size(); ++i) {
     result = CompareResolvedAST(node1->with_entry_list(i),
                                   node2->with_entry_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->recursive(), node2->recursive())) {
     return false;
@@ -4393,7 +5031,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWithEntry(
   }
   result = CompareResolvedAST(node1->with_subquery(),
                                 node2->with_subquery());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4409,8 +5047,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOption(
   }
   result = CompareResolvedAST(node1->value(),
                                 node2->value());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (!Equals(node1->assignment_op(), node2->assignment_op())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowPartitioning(
@@ -4423,7 +5064,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowPartitioning(
   for (int i = 0; i < node1->partition_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->partition_by_list(i),
                                   node2->partition_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->hint_list().size() != node2->hint_list().size()) {
@@ -4432,7 +5073,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowPartitioning(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->collation_list().size() != node2->collation_list().size()) {
@@ -4455,7 +5096,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowOrdering(
   for (int i = 0; i < node1->order_by_item_list().size(); ++i) {
     result = CompareResolvedAST(node1->order_by_item_list(i),
                                   node2->order_by_item_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->hint_list().size() != node2->hint_list().size()) {
@@ -4464,7 +5105,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowOrdering(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4478,11 +5119,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowFrame(
   }
   result = CompareResolvedAST(node1->start_expr(),
                                 node2->start_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->end_expr(),
                                 node2->end_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4492,11 +5133,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticFunctionGroup
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->partition_by(),
                                 node2->partition_by());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->order_by(),
                                 node2->order_by());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->analytic_function_list().size() != node2->analytic_function_list().size()) {
     return false;
@@ -4504,7 +5145,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyticFunctionGroup
   for (int i = 0; i < node1->analytic_function_list().size(); ++i) {
     result = CompareResolvedAST(node1->analytic_function_list(i),
                                   node2->analytic_function_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4518,7 +5159,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedWindowFrameExpr(
   }
   result = CompareResolvedAST(node1->expression(),
                                 node2->expression());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4528,7 +5169,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDMLValue(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->value(),
                                 node2->value());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4554,12 +5195,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAssertStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->expression(),
                                 node2->expression());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->description(), node2->description())) {
     return false;
@@ -4572,7 +5213,44 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAssertRowsModified(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->rows(),
                                 node2->rows());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedOnConflictClause(
+    const ResolvedOnConflictClause* node1, const ResolvedOnConflictClause* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->conflict_action(), node2->conflict_action())) {
+    return false;
+  }
+  if (node1->conflict_target_column_list().size() != node2->conflict_target_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->conflict_target_column_list().size(); ++i) {
+    if (!Equals(node1->conflict_target_column_list(i), node2->conflict_target_column_list(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->unique_constraint_name(), node2->unique_constraint_name())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->insert_row_scan(),
+                                node2->insert_row_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->update_item_list().size() != node2->update_item_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->update_item_list().size(); ++i) {
+    result = CompareResolvedAST(node1->update_item_list(i),
+                                  node2->update_item_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->update_where_expression(),
+                                node2->update_where_expression());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4586,7 +5264,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInsertRow(
   for (int i = 0; i < node1->value_list().size(); ++i) {
     result = CompareResolvedAST(node1->value_list(i),
                                   node2->value_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4601,23 +5279,23 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInsertStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->insert_mode(), node2->insert_mode())) {
     return false;
   }
   result = CompareResolvedAST(node1->assert_rows_modified(),
                                 node2->assert_rows_modified());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->returning(),
                                 node2->returning());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->insert_column_list().size() != node2->insert_column_list().size()) {
     return false;
@@ -4633,12 +5311,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInsertStmt(
   for (int i = 0; i < node1->query_parameter_list().size(); ++i) {
     result = CompareResolvedAST(node1->query_parameter_list(i),
                                   node2->query_parameter_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->query_output_column_list().size() != node2->query_output_column_list().size()) {
     return false;
@@ -4654,7 +5332,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInsertStmt(
   for (int i = 0; i < node1->row_list().size(); ++i) {
     result = CompareResolvedAST(node1->row_list(i),
                                   node2->row_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->column_access_list().size() != node2->column_access_list().size()) {
@@ -4664,6 +5342,27 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedInsertStmt(
     if (!Equals(node1->column_access_list(i), node2->column_access_list(i))) {
       return false;
     }
+  }
+  result = CompareResolvedAST(node1->on_conflict_clause(),
+                                node2->on_conflict_clause());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->topologically_sorted_generated_column_id_list().size() != node2->topologically_sorted_generated_column_id_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->topologically_sorted_generated_column_id_list().size(); ++i) {
+    if (!Equals(node1->topologically_sorted_generated_column_id_list(i), node2->topologically_sorted_generated_column_id_list(i))) {
+      return false;
+    }
+  }
+  if (node1->generated_column_expr_list().size() != node2->generated_column_expr_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->generated_column_expr_list().size(); ++i) {
+    result = CompareResolvedAST(node1->generated_column_expr_list(i),
+                                  node2->generated_column_expr_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
   }
   return true;
 }
@@ -4677,20 +5376,20 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDeleteStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->assert_rows_modified(),
                                 node2->assert_rows_modified());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->returning(),
                                 node2->returning());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->column_access_list().size() != node2->column_access_list().size()) {
     return false;
@@ -4702,11 +5401,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDeleteStmt(
   }
   result = CompareResolvedAST(node1->array_offset_column(),
                                 node2->array_offset_column());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->where_expr(),
                                 node2->where_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4716,23 +5415,23 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateItem(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->target(),
                                 node2->target());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->set_value(),
                                 node2->set_value());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->element_column(),
                                 node2->element_column());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
-  if (node1->array_update_list().size() != node2->array_update_list().size()) {
+  if (node1->update_item_element_list().size() != node2->update_item_element_list().size()) {
     return false;
   }
-  for (int i = 0; i < node1->array_update_list().size(); ++i) {
-    result = CompareResolvedAST(node1->array_update_list(i),
-                                  node2->array_update_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+  for (int i = 0; i < node1->update_item_element_list().size(); ++i) {
+    result = CompareResolvedAST(node1->update_item_element_list(i),
+                                  node2->update_item_element_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->delete_list().size() != node2->delete_list().size()) {
@@ -4741,7 +5440,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateItem(
   for (int i = 0; i < node1->delete_list().size(); ++i) {
     result = CompareResolvedAST(node1->delete_list(i),
                                   node2->delete_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->update_list().size() != node2->update_list().size()) {
@@ -4750,7 +5449,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateItem(
   for (int i = 0; i < node1->update_list().size(); ++i) {
     result = CompareResolvedAST(node1->update_list(i),
                                   node2->update_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->insert_list().size() != node2->insert_list().size()) {
@@ -4759,23 +5458,26 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateItem(
   for (int i = 0; i < node1->insert_list().size(); ++i) {
     result = CompareResolvedAST(node1->insert_list(i),
                                   node2->insert_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
 }
-absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateArrayItem(
-    const ResolvedUpdateArrayItem* node1, const ResolvedUpdateArrayItem* node2) {
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateItemElement(
+    const ResolvedUpdateItemElement* node1, const ResolvedUpdateItemElement* node2) {
 
   absl::StatusOr<bool> result;
-  result = CompareResolvedAST(node1->offset(),
-                                node2->offset());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  result = CompareResolvedAST(node1->subscript(),
+                                node2->subscript());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->update_item(),
                                 node2->update_item());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (!Equals(node1->update_item_mode(), node2->update_item_mode())) {
+    return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateStmt(
@@ -4788,12 +5490,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->column_access_list().size() != node2->column_access_list().size()) {
     return false;
@@ -4805,19 +5507,19 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateStmt(
   }
   result = CompareResolvedAST(node1->assert_rows_modified(),
                                 node2->assert_rows_modified());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->returning(),
                                 node2->returning());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->array_offset_column(),
                                 node2->array_offset_column());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->where_expr(),
                                 node2->where_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->update_item_list().size() != node2->update_item_list().size()) {
     return false;
@@ -4825,13 +5527,30 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateStmt(
   for (int i = 0; i < node1->update_item_list().size(); ++i) {
     result = CompareResolvedAST(node1->update_item_list(i),
                                   node2->update_item_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->from_scan(),
                                 node2->from_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  if (node1->topologically_sorted_generated_column_id_list().size() != node2->topologically_sorted_generated_column_id_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->topologically_sorted_generated_column_id_list().size(); ++i) {
+    if (!Equals(node1->topologically_sorted_generated_column_id_list(i), node2->topologically_sorted_generated_column_id_list(i))) {
+      return false;
+    }
+  }
+  if (node1->generated_column_expr_list().size() != node2->generated_column_expr_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->generated_column_expr_list().size(); ++i) {
+    result = CompareResolvedAST(node1->generated_column_expr_list(i),
+                                  node2->generated_column_expr_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMergeWhen(
@@ -4843,7 +5562,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMergeWhen(
   }
   result = CompareResolvedAST(node1->match_expr(),
                                 node2->match_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->action_type(), node2->action_type())) {
     return false;
@@ -4858,7 +5577,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMergeWhen(
   }
   result = CompareResolvedAST(node1->insert_row(),
                                 node2->insert_row());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->update_item_list().size() != node2->update_item_list().size()) {
     return false;
@@ -4866,7 +5585,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMergeWhen(
   for (int i = 0; i < node1->update_item_list().size(); ++i) {
     result = CompareResolvedAST(node1->update_item_list(i),
                                   node2->update_item_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4881,12 +5600,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMergeStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->column_access_list().size() != node2->column_access_list().size()) {
     return false;
@@ -4898,11 +5617,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMergeStmt(
   }
   result = CompareResolvedAST(node1->from_scan(),
                                 node2->from_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->merge_expr(),
                                 node2->merge_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->when_clause_list().size() != node2->when_clause_list().size()) {
     return false;
@@ -4910,7 +5629,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMergeStmt(
   for (int i = 0; i < node1->when_clause_list().size(); ++i) {
     result = CompareResolvedAST(node1->when_clause_list(i),
                                   node2->when_clause_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4925,16 +5644,16 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedTruncateStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->where_expr(),
                                 node2->where_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -4965,7 +5684,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPrivilege(
   for (int i = 0; i < node1->unit_list().size(); ++i) {
     result = CompareResolvedAST(node1->unit_list(i),
                                   node2->unit_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -4980,7 +5699,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGrantStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->privilege_list().size() != node2->privilege_list().size()) {
@@ -4989,7 +5708,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGrantStmt(
   for (int i = 0; i < node1->privilege_list().size(); ++i) {
     result = CompareResolvedAST(node1->privilege_list(i),
                                   node2->privilege_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->object_type_list().size() != node2->object_type_list().size()) {
@@ -5022,7 +5741,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGrantStmt(
   for (int i = 0; i < node1->grantee_expr_list().size(); ++i) {
     result = CompareResolvedAST(node1->grantee_expr_list(i),
                                   node2->grantee_expr_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5037,7 +5756,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRevokeStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->privilege_list().size() != node2->privilege_list().size()) {
@@ -5046,7 +5765,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRevokeStmt(
   for (int i = 0; i < node1->privilege_list().size(); ++i) {
     result = CompareResolvedAST(node1->privilege_list(i),
                                   node2->privilege_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->object_type_list().size() != node2->object_type_list().size()) {
@@ -5079,7 +5798,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRevokeStmt(
   for (int i = 0; i < node1->grantee_expr_list().size(); ++i) {
     result = CompareResolvedAST(node1->grantee_expr_list(i),
                                   node2->grantee_expr_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5094,7 +5813,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterDatabaseStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5111,12 +5830,62 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterDatabaseStmt(
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
     return false;
   }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterIndexStmt(
+    const ResolvedAlterIndexStmt* node1, const ResolvedAlterIndexStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (node1->alter_action_list().size() != node2->alter_action_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->alter_action_list().size(); ++i) {
+    result = CompareResolvedAST(node1->alter_action_list(i),
+                                  node2->alter_action_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  if (node1->table_name_path().size() != node2->table_name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->table_name_path().size(); ++i) {
+    if (!Equals(node1->table_name_path(i), node2->table_name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->index_type(), node2->index_type())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->table_scan(),
+                                node2->table_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterMaterializedViewStmt(
@@ -5129,7 +5898,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterMaterializedView
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5146,7 +5915,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterMaterializedView
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -5164,7 +5933,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterApproxViewStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5181,7 +5950,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterApproxViewStmt(
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -5199,7 +5968,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterSchemaStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5216,7 +5985,42 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterSchemaStmt(
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterExternalSchemaStmt(
+    const ResolvedAlterExternalSchemaStmt* node1, const ResolvedAlterExternalSchemaStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (node1->alter_action_list().size() != node2->alter_action_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->alter_action_list().size(); ++i) {
+    result = CompareResolvedAST(node1->alter_action_list(i),
+                                  node2->alter_action_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -5234,7 +6038,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterModelStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5251,7 +6055,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterModelStmt(
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -5269,7 +6073,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterTableStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5286,12 +6090,16 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterTableStmt(
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
     return false;
   }
+  result = CompareResolvedAST(node1->table_scan(),
+                                node2->table_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterViewStmt(
@@ -5304,7 +6112,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterViewStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5321,7 +6129,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterViewStmt(
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -5339,7 +6147,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSetOptionsAction(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5356,7 +6164,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterSubEntityAction(
   }
   result = CompareResolvedAST(node1->alter_action(),
                                 node2->alter_action());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
     return false;
@@ -5379,7 +6187,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAddSubEntityAction(
   for (int i = 0; i < node1->options_list().size(); ++i) {
     result = CompareResolvedAST(node1->options_list(i),
                                   node2->options_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_not_exists(), node2->is_if_not_exists())) {
@@ -5411,8 +6219,35 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAddColumnAction(
   }
   result = CompareResolvedAST(node1->column_definition(),
                                 node2->column_definition());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAddColumnIdentifierAction(
+    const ResolvedAddColumnIdentifierAction* node1, const ResolvedAddColumnIdentifierAction* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  if (node1->options_list().size() != node2->options_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->options_list().size(); ++i) {
+    result = CompareResolvedAST(node1->options_list(i),
+                                  node2->options_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_if_not_exists(), node2->is_if_not_exists())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRebuildAction(
+    const ResolvedRebuildAction* node1, const ResolvedRebuildAction* node2) {
+
+  absl::StatusOr<bool> result;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAddConstraintAction(
@@ -5424,7 +6259,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAddConstraintAction(
   }
   result = CompareResolvedAST(node1->constraint(),
                                 node2->constraint());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->table(), node2->table())) {
     return false;
@@ -5468,7 +6303,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnOptionsAct
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5483,6 +6318,34 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnDropNotNul
   if (!Equals(node1->column(), node2->column())) {
     return false;
   }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnDropGeneratedAction(
+    const ResolvedAlterColumnDropGeneratedAction* node1, const ResolvedAlterColumnDropGeneratedAction* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  if (!Equals(node1->column(), node2->column())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnSetGeneratedAction(
+    const ResolvedAlterColumnSetGeneratedAction* node1, const ResolvedAlterColumnSetGeneratedAction* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  if (!Equals(node1->column(), node2->column())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->generated_column_info(),
+                                node2->generated_column_info());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnSetDataTypeAction(
@@ -5503,7 +6366,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnSetDataTyp
   }
   result = CompareResolvedAST(node1->updated_annotations(),
                                 node2->updated_annotations());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -5519,7 +6382,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterColumnSetDefault
   }
   result = CompareResolvedAST(node1->default_value(),
                                 node2->default_value());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -5580,7 +6443,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSetCollateClause(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->collation_name(),
                                 node2->collation_name());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -5594,7 +6457,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterTableSetOptionsS
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5611,7 +6474,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterTableSetOptionsS
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -5629,7 +6492,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRenameStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->object_type(), node2->object_type())) {
@@ -5663,7 +6526,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreatePrivilegeRestri
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -5686,7 +6549,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreatePrivilegeRestri
   for (int i = 0; i < node1->column_privilege_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_privilege_list(i),
                                   node2->column_privilege_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->object_type(), node2->object_type())) {
@@ -5698,7 +6561,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreatePrivilegeRestri
   for (int i = 0; i < node1->restrictee_list().size(); ++i) {
     result = CompareResolvedAST(node1->restrictee_list(i),
                                   node2->restrictee_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5713,7 +6576,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateRowAccessPolicy
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->create_mode(), node2->create_mode())) {
@@ -5744,16 +6607,16 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateRowAccessPolicy
   for (int i = 0; i < node1->grantee_expr_list().size(); ++i) {
     result = CompareResolvedAST(node1->grantee_expr_list(i),
                                   node2->grantee_expr_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->predicate(),
                                 node2->predicate());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->predicate_str(), node2->predicate_str())) {
     return false;
@@ -5770,7 +6633,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropPrivilegeRestrict
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->object_type(), node2->object_type())) {
@@ -5793,7 +6656,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropPrivilegeRestrict
   for (int i = 0; i < node1->column_privilege_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_privilege_list(i),
                                   node2->column_privilege_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5808,7 +6671,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropRowAccessPolicySt
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_drop_all(), node2->is_drop_all())) {
@@ -5840,7 +6703,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropIndexStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -5872,7 +6735,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGrantToAction(
   for (int i = 0; i < node1->grantee_expr_list().size(); ++i) {
     result = CompareResolvedAST(node1->grantee_expr_list(i),
                                   node2->grantee_expr_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5887,7 +6750,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRestrictToAction(
   for (int i = 0; i < node1->restrictee_list().size(); ++i) {
     result = CompareResolvedAST(node1->restrictee_list(i),
                                   node2->restrictee_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5905,7 +6768,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAddToRestricteeListAc
   for (int i = 0; i < node1->restrictee_list().size(); ++i) {
     result = CompareResolvedAST(node1->restrictee_list(i),
                                   node2->restrictee_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5923,7 +6786,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRemoveFromRestricteeL
   for (int i = 0; i < node1->restrictee_list().size(); ++i) {
     result = CompareResolvedAST(node1->restrictee_list(i),
                                   node2->restrictee_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -5934,7 +6797,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedFilterUsingAction(
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->predicate(),
                                 node2->predicate());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->predicate_str(), node2->predicate_str())) {
     return false;
@@ -5951,7 +6814,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRevokeFromAction(
   for (int i = 0; i < node1->revokee_expr_list().size(); ++i) {
     result = CompareResolvedAST(node1->revokee_expr_list(i),
                                   node2->revokee_expr_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_revoke_from_all(), node2->is_revoke_from_all())) {
@@ -5983,7 +6846,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterPrivilegeRestric
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6000,7 +6863,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterPrivilegeRestric
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -6012,7 +6875,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterPrivilegeRestric
   for (int i = 0; i < node1->column_privilege_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_privilege_list(i),
                                   node2->column_privilege_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->object_type(), node2->object_type())) {
@@ -6030,7 +6893,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterRowAccessPolicyS
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6047,7 +6910,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterRowAccessPolicyS
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -6058,7 +6921,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterRowAccessPolicyS
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6072,7 +6935,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterAllRowAccessPoli
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6089,7 +6952,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterAllRowAccessPoli
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -6097,7 +6960,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterAllRowAccessPoli
   }
   result = CompareResolvedAST(node1->table_scan(),
                                 node2->table_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6111,7 +6974,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateConstantStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6130,7 +6993,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateConstantStmt(
   }
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6144,7 +7007,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateFunctionStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6193,12 +7056,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateFunctionStmt(
   for (int i = 0; i < node1->aggregate_expression_list().size(); ++i) {
     result = CompareResolvedAST(node1->aggregate_expression_list(i),
                                   node2->aggregate_expression_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->function_expression(),
                                 node2->function_expression());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->option_list().size() != node2->option_list().size()) {
     return false;
@@ -6206,7 +7069,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateFunctionStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->sql_security(), node2->sql_security())) {
@@ -6220,7 +7083,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateFunctionStmt(
   }
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6267,7 +7130,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableFunctionSt
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6304,7 +7167,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableFunctionSt
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->language(), node2->language())) {
@@ -6315,7 +7178,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableFunctionSt
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
     return false;
@@ -6323,7 +7186,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateTableFunctionSt
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_value_table(), node2->is_value_table())) {
@@ -6352,7 +7215,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedRelationArgumentScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -6379,7 +7242,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArgumentList(
   for (int i = 0; i < node1->arg_list().size(); ++i) {
     result = CompareResolvedAST(node1->arg_list(i),
                                   node2->arg_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -6403,7 +7266,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropFunctionStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -6419,11 +7282,11 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropFunctionStmt(
   }
   result = CompareResolvedAST(node1->arguments(),
                                 node2->arguments());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->signature(),
                                 node2->signature());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6437,7 +7300,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDropTableFunctionStmt
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -6463,7 +7326,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCallStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->procedure(), node2->procedure())) {
@@ -6478,7 +7341,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCallStmt(
   for (int i = 0; i < node1->argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->argument_list(i),
                                   node2->argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -6493,7 +7356,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedImportStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->import_kind(), node2->import_kind())) {
@@ -6532,7 +7395,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedImportStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -6547,7 +7410,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedModuleStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6564,7 +7427,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedModuleStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -6578,7 +7441,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAggregateHavingModifi
   }
   result = CompareResolvedAST(node1->having_expr(),
                                 node2->having_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6592,7 +7455,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateMaterializedVie
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6615,7 +7478,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateMaterializedVie
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
@@ -6624,7 +7487,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateMaterializedVie
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->has_explicit_columns(), node2->has_explicit_columns())) {
@@ -6632,7 +7495,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateMaterializedVie
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->sql(), node2->sql())) {
     return false;
@@ -6652,7 +7515,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateMaterializedVie
   for (int i = 0; i < node1->column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_definition_list(i),
                                   node2->column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->partition_by_list().size() != node2->partition_by_list().size()) {
@@ -6661,7 +7524,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateMaterializedVie
   for (int i = 0; i < node1->partition_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->partition_by_list(i),
                                   node2->partition_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->cluster_by_list().size() != node2->cluster_by_list().size()) {
@@ -6670,12 +7533,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateMaterializedVie
   for (int i = 0; i < node1->cluster_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->cluster_by_list(i),
                                   node2->cluster_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->replica_source(),
                                 node2->replica_source());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6689,7 +7552,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateApproxViewStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6712,7 +7575,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateApproxViewStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
@@ -6721,7 +7584,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateApproxViewStmt(
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->has_explicit_columns(), node2->has_explicit_columns())) {
@@ -6729,7 +7592,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateApproxViewStmt(
   }
   result = CompareResolvedAST(node1->query(),
                                 node2->query());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->sql(), node2->sql())) {
     return false;
@@ -6749,7 +7612,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateApproxViewStmt(
   for (int i = 0; i < node1->column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_definition_list(i),
                                   node2->column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -6764,7 +7627,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateProcedureStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6798,7 +7661,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateProcedureStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->procedure_body(), node2->procedure_body())) {
@@ -6806,7 +7669,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateProcedureStmt(
   }
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->language(), node2->language())) {
     return false;
@@ -6828,7 +7691,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExecuteImmediateArgum
   }
   result = CompareResolvedAST(node1->expression(),
                                 node2->expression());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6842,12 +7705,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExecuteImmediateStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->sql(),
                                 node2->sql());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->into_identifier_list().size() != node2->into_identifier_list().size()) {
     return false;
@@ -6863,7 +7726,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedExecuteImmediateStmt(
   for (int i = 0; i < node1->using_argument_list().size(); ++i) {
     result = CompareResolvedAST(node1->using_argument_list(i),
                                   node2->using_argument_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -6878,16 +7741,16 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAssignmentStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->target(),
                                 node2->target());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->expr(),
                                 node2->expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -6901,7 +7764,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateEntityStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6933,7 +7796,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateEntityStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -6948,7 +7811,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterEntityStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->name_path().size() != node2->name_path().size()) {
@@ -6965,7 +7828,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterEntityStmt(
   for (int i = 0; i < node1->alter_action_list().size(); ++i) {
     result = CompareResolvedAST(node1->alter_action_list(i),
                                   node2->alter_action_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
@@ -7009,7 +7872,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPivotScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -7020,7 +7883,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPivotScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->group_by_list().size() != node2->group_by_list().size()) {
     return false;
@@ -7028,7 +7891,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPivotScan(
   for (int i = 0; i < node1->group_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->group_by_list(i),
                                   node2->group_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->pivot_expr_list().size() != node2->pivot_expr_list().size()) {
@@ -7037,12 +7900,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPivotScan(
   for (int i = 0; i < node1->pivot_expr_list().size(); ++i) {
     result = CompareResolvedAST(node1->pivot_expr_list(i),
                                   node2->pivot_expr_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->for_expr(),
                                 node2->for_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->pivot_value_list().size() != node2->pivot_value_list().size()) {
     return false;
@@ -7050,7 +7913,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPivotScan(
   for (int i = 0; i < node1->pivot_value_list().size(); ++i) {
     result = CompareResolvedAST(node1->pivot_value_list(i),
                                   node2->pivot_value_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->pivot_column_list().size() != node2->pivot_column_list().size()) {
@@ -7059,7 +7922,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPivotScan(
   for (int i = 0; i < node1->pivot_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->pivot_column_list(i),
                                   node2->pivot_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -7074,12 +7937,12 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedReturningClause(
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->action_column(),
                                 node2->action_column());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->expr_list().size() != node2->expr_list().size()) {
     return false;
@@ -7087,7 +7950,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedReturningClause(
   for (int i = 0; i < node1->expr_list().size(); ++i) {
     result = CompareResolvedAST(node1->expr_list(i),
                                   node2->expr_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -7102,7 +7965,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnpivotArg(
   for (int i = 0; i < node1->column_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_list(i),
                                   node2->column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -7125,7 +7988,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnpivotScan(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->is_ordered(), node2->is_ordered())) {
@@ -7136,7 +7999,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnpivotScan(
   }
   result = CompareResolvedAST(node1->input_scan(),
                                 node2->input_scan());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->value_column_list().size() != node2->value_column_list().size()) {
     return false;
@@ -7155,7 +8018,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnpivotScan(
   for (int i = 0; i < node1->label_list().size(); ++i) {
     result = CompareResolvedAST(node1->label_list(i),
                                   node2->label_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->unpivot_arg_list().size() != node2->unpivot_arg_list().size()) {
@@ -7164,7 +8027,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnpivotScan(
   for (int i = 0; i < node1->unpivot_arg_list().size(); ++i) {
     result = CompareResolvedAST(node1->unpivot_arg_list(i),
                                   node2->unpivot_arg_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->projected_input_column_list().size() != node2->projected_input_column_list().size()) {
@@ -7173,10 +8036,190 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUnpivotScan(
   for (int i = 0; i < node1->projected_input_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->projected_input_column_list(i),
                                   node2->projected_input_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->include_nulls(), node2->include_nulls())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizeScan(
+    const ResolvedMatchRecognizeScan* node1, const ResolvedMatchRecognizeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->analytic_function_group_list().size() != node2->analytic_function_group_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->analytic_function_group_list().size(); ++i) {
+    result = CompareResolvedAST(node1->analytic_function_group_list(i),
+                                  node2->analytic_function_group_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->pattern_variable_definition_list().size() != node2->pattern_variable_definition_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->pattern_variable_definition_list().size(); ++i) {
+    result = CompareResolvedAST(node1->pattern_variable_definition_list(i),
+                                  node2->pattern_variable_definition_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->pattern(),
+                                node2->pattern());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->after_match_skip_mode(), node2->after_match_skip_mode())) {
+    return false;
+  }
+  if (node1->measure_group_list().size() != node2->measure_group_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->measure_group_list().size(); ++i) {
+    result = CompareResolvedAST(node1->measure_group_list(i),
+                                  node2->measure_group_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->match_number_column(), node2->match_number_column())) {
+    return false;
+  }
+  if (!Equals(node1->match_row_number_column(), node2->match_row_number_column())) {
+    return false;
+  }
+  if (!Equals(node1->classifier_column(), node2->classifier_column())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMeasureGroup(
+    const ResolvedMeasureGroup* node1, const ResolvedMeasureGroup* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->pattern_variable_ref(),
+                                node2->pattern_variable_ref());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->aggregate_list().size() != node2->aggregate_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->aggregate_list().size(); ++i) {
+    result = CompareResolvedAST(node1->aggregate_list(i),
+                                  node2->aggregate_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizeVariableDefinition(
+    const ResolvedMatchRecognizeVariableDefinition* node1, const ResolvedMatchRecognizeVariableDefinition* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->predicate(),
+                                node2->predicate());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternEmpty(
+    const ResolvedMatchRecognizePatternEmpty* node1, const ResolvedMatchRecognizePatternEmpty* node2) {
+
+  absl::StatusOr<bool> result;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternAnchor(
+    const ResolvedMatchRecognizePatternAnchor* node1, const ResolvedMatchRecognizePatternAnchor* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->mode(), node2->mode())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternVariableRef(
+    const ResolvedMatchRecognizePatternVariableRef* node1, const ResolvedMatchRecognizePatternVariableRef* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternOperation(
+    const ResolvedMatchRecognizePatternOperation* node1, const ResolvedMatchRecognizePatternOperation* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->op_type(), node2->op_type())) {
+    return false;
+  }
+  if (node1->operand_list().size() != node2->operand_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->operand_list().size(); ++i) {
+    result = CompareResolvedAST(node1->operand_list(i),
+                                  node2->operand_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedMatchRecognizePatternQuantification(
+    const ResolvedMatchRecognizePatternQuantification* node1, const ResolvedMatchRecognizePatternQuantification* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->operand(),
+                                node2->operand());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->lower_bound(),
+                                node2->lower_bound());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->upper_bound(),
+                                node2->upper_bound());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->is_reluctant(), node2->is_reluctant())) {
     return false;
   }
   return true;
@@ -7191,16 +8234,16 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCloneDataStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->target_table(),
                                 node2->target_table());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->clone_from(),
                                 node2->clone_from());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
@@ -7231,7 +8274,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyzeStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->option_list().size() != node2->option_list().size()) {
@@ -7240,7 +8283,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyzeStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->table_and_column_index_list().size() != node2->table_and_column_index_list().size()) {
@@ -7249,7 +8292,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAnalyzeStmt(
   for (int i = 0; i < node1->table_and_column_index_list().size(); ++i) {
     result = CompareResolvedAST(node1->table_and_column_index_list(i),
                                   node2->table_and_column_index_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   return true;
@@ -7260,7 +8303,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataPartitionF
   absl::StatusOr<bool> result;
   result = CompareResolvedAST(node1->filter(),
                                 node2->filter());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (!Equals(node1->is_overwrite(), node2->is_overwrite())) {
     return false;
@@ -7277,7 +8320,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->insertion_mode(), node2->insertion_mode())) {
@@ -7296,7 +8339,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   }
   result = CompareResolvedAST(node1->partition_filter(),
                                 node2->partition_filter());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->output_column_list().size() != node2->output_column_list().size()) {
     return false;
@@ -7304,7 +8347,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->output_column_list().size(); ++i) {
     result = CompareResolvedAST(node1->output_column_list(i),
                                   node2->output_column_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->column_definition_list().size() != node2->column_definition_list().size()) {
@@ -7313,7 +8356,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->column_definition_list().size(); ++i) {
     result = CompareResolvedAST(node1->column_definition_list(i),
                                   node2->column_definition_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->pseudo_column_list().size() != node2->pseudo_column_list().size()) {
@@ -7326,7 +8369,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   }
   result = CompareResolvedAST(node1->primary_key(),
                                 node2->primary_key());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->foreign_key_list().size() != node2->foreign_key_list().size()) {
     return false;
@@ -7334,7 +8377,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->foreign_key_list().size(); ++i) {
     result = CompareResolvedAST(node1->foreign_key_list(i),
                                   node2->foreign_key_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->check_constraint_list().size() != node2->check_constraint_list().size()) {
@@ -7343,7 +8386,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->check_constraint_list().size(); ++i) {
     result = CompareResolvedAST(node1->check_constraint_list(i),
                                   node2->check_constraint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->partition_by_list().size() != node2->partition_by_list().size()) {
@@ -7352,7 +8395,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->partition_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->partition_by_list(i),
                                   node2->partition_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->cluster_by_list().size() != node2->cluster_by_list().size()) {
@@ -7361,7 +8404,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->cluster_by_list().size(); ++i) {
     result = CompareResolvedAST(node1->cluster_by_list(i),
                                   node2->cluster_by_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (node1->option_list().size() != node2->option_list().size()) {
@@ -7370,16 +8413,16 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->option_list().size(); ++i) {
     result = CompareResolvedAST(node1->option_list(i),
                                   node2->option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   result = CompareResolvedAST(node1->with_partition_columns(),
                                 node2->with_partition_columns());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   result = CompareResolvedAST(node1->connection(),
                                 node2->connection());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   if (node1->from_files_option_list().size() != node2->from_files_option_list().size()) {
     return false;
@@ -7387,9 +8430,917 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAuxLoadDataStmt(
   for (int i = 0; i < node1->from_files_option_list().size(); ++i) {
     result = CompareResolvedAST(node1->from_files_option_list(i),
                                   node2->from_files_option_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreatePropertyGraphStmt(
+    const ResolvedCreatePropertyGraphStmt* node1, const ResolvedCreatePropertyGraphStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->create_scope(), node2->create_scope())) {
+    return false;
+  }
+  if (!Equals(node1->create_mode(), node2->create_mode())) {
+    return false;
+  }
+  if (node1->node_table_list().size() != node2->node_table_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->node_table_list().size(); ++i) {
+    result = CompareResolvedAST(node1->node_table_list(i),
+                                  node2->node_table_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->edge_table_list().size() != node2->edge_table_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->edge_table_list().size(); ++i) {
+    result = CompareResolvedAST(node1->edge_table_list(i),
+                                  node2->edge_table_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->label_list().size() != node2->label_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->label_list().size(); ++i) {
+    result = CompareResolvedAST(node1->label_list(i),
+                                  node2->label_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->property_declaration_list().size() != node2->property_declaration_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->property_declaration_list().size(); ++i) {
+    result = CompareResolvedAST(node1->property_declaration_list(i),
+                                  node2->property_declaration_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphElementTable(
+    const ResolvedGraphElementTable* node1, const ResolvedGraphElementTable* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->alias(), node2->alias())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->key_list().size() != node2->key_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->key_list().size(); ++i) {
+    result = CompareResolvedAST(node1->key_list(i),
+                                  node2->key_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->source_node_reference(),
+                                node2->source_node_reference());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->dest_node_reference(),
+                                node2->dest_node_reference());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->label_name_list().size() != node2->label_name_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->label_name_list().size(); ++i) {
+    if (!Equals(node1->label_name_list(i), node2->label_name_list(i))) {
+      return false;
+    }
+  }
+  if (node1->property_definition_list().size() != node2->property_definition_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->property_definition_list().size(); ++i) {
+    result = CompareResolvedAST(node1->property_definition_list(i),
+                                  node2->property_definition_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->dynamic_label(),
+                                node2->dynamic_label());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->dynamic_properties(),
+                                node2->dynamic_properties());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphNodeTableReference(
+    const ResolvedGraphNodeTableReference* node1, const ResolvedGraphNodeTableReference* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->node_table_identifier(), node2->node_table_identifier())) {
+    return false;
+  }
+  if (node1->edge_table_column_list().size() != node2->edge_table_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->edge_table_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->edge_table_column_list(i),
+                                  node2->edge_table_column_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->node_table_column_list().size() != node2->node_table_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->node_table_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->node_table_column_list(i),
+                                  node2->node_table_column_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphElementLabel(
+    const ResolvedGraphElementLabel* node1, const ResolvedGraphElementLabel* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  if (node1->property_declaration_name_list().size() != node2->property_declaration_name_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->property_declaration_name_list().size(); ++i) {
+    if (!Equals(node1->property_declaration_name_list(i), node2->property_declaration_name_list(i))) {
+      return false;
+    }
+  }
+  if (node1->options_list().size() != node2->options_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->options_list().size(); ++i) {
+    result = CompareResolvedAST(node1->options_list(i),
+                                  node2->options_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPropertyDeclaration(
+    const ResolvedGraphPropertyDeclaration* node1, const ResolvedGraphPropertyDeclaration* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->name(), node2->name())) {
+    return false;
+  }
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPropertyDefinition(
+    const ResolvedGraphPropertyDefinition* node1, const ResolvedGraphPropertyDefinition* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->sql(), node2->sql())) {
+    return false;
+  }
+  if (!Equals(node1->property_declaration_name(), node2->property_declaration_name())) {
+    return false;
+  }
+  if (node1->options_list().size() != node2->options_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->options_list().size(); ++i) {
+    result = CompareResolvedAST(node1->options_list(i),
+                                  node2->options_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_measure(), node2->is_measure())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphDynamicLabelSpecification(
+    const ResolvedGraphDynamicLabelSpecification* node1, const ResolvedGraphDynamicLabelSpecification* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->label_expr(),
+                                node2->label_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphDynamicPropertiesSpecification(
+    const ResolvedGraphDynamicPropertiesSpecification* node1, const ResolvedGraphDynamicPropertiesSpecification* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->property_expr(),
+                                node2->property_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphRefScan(
+    const ResolvedGraphRefScan* node1, const ResolvedGraphRefScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphLinearScan(
+    const ResolvedGraphLinearScan* node1, const ResolvedGraphLinearScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (node1->scan_list().size() != node2->scan_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->scan_list().size(); ++i) {
+    result = CompareResolvedAST(node1->scan_list(i),
+                                  node2->scan_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphTableScan(
+    const ResolvedGraphTableScan* node1, const ResolvedGraphTableScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (!Equals(node1->property_graph(), node2->property_graph())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->shape_expr_list().size() != node2->shape_expr_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->shape_expr_list().size(); ++i) {
+    result = CompareResolvedAST(node1->shape_expr_list(i),
+                                  node2->shape_expr_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphCallScan(
+    const ResolvedGraphCallScan* node1, const ResolvedGraphCallScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (!Equals(node1->optional(), node2->optional())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->subquery(),
+                                node2->subquery());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->parameter_list().size() != node2->parameter_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->parameter_list().size(); ++i) {
+    result = CompareResolvedAST(node1->parameter_list(i),
+                                  node2->parameter_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphScan(
+    const ResolvedGraphScan* node1, const ResolvedGraphScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (node1->input_scan_list().size() != node2->input_scan_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->input_scan_list().size(); ++i) {
+    result = CompareResolvedAST(node1->input_scan_list(i),
+                                  node2->input_scan_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->filter_expr(),
+                                node2->filter_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->optional(), node2->optional())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathPatternQuantifier(
+    const ResolvedGraphPathPatternQuantifier* node1, const ResolvedGraphPathPatternQuantifier* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->lower_bound(),
+                                node2->lower_bound());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->upper_bound(),
+                                node2->upper_bound());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathSearchPrefix(
+    const ResolvedGraphPathSearchPrefix* node1, const ResolvedGraphPathSearchPrefix* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->path_count(),
+                                node2->path_count());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphNodeScan(
+    const ResolvedGraphNodeScan* node1, const ResolvedGraphNodeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->filter_expr(),
+                                node2->filter_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->label_expr(),
+                                node2->label_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->target_element_table_list().size() != node2->target_element_table_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->target_element_table_list().size(); ++i) {
+    if (!Equals(node1->target_element_table_list(i), node2->target_element_table_list(i))) {
+      return false;
+    }
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphEdgeScan(
+    const ResolvedGraphEdgeScan* node1, const ResolvedGraphEdgeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->filter_expr(),
+                                node2->filter_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->label_expr(),
+                                node2->label_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->target_element_table_list().size() != node2->target_element_table_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->target_element_table_list().size(); ++i) {
+    if (!Equals(node1->target_element_table_list(i), node2->target_element_table_list(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->orientation(), node2->orientation())) {
+    return false;
+  }
+  if (node1->lhs_hint_list().size() != node2->lhs_hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->lhs_hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->lhs_hint_list(i),
+                                  node2->lhs_hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->rhs_hint_list().size() != node2->rhs_hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->rhs_hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->rhs_hint_list(i),
+                                  node2->rhs_hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->cost_expr(),
+                                node2->cost_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphGetElementProperty(
+    const ResolvedGraphGetElementProperty* node1, const ResolvedGraphGetElementProperty* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->property(), node2->property())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->property_name(),
+                                node2->property_name());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphLabelNaryExpr(
+    const ResolvedGraphLabelNaryExpr* node1, const ResolvedGraphLabelNaryExpr* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->op(), node2->op())) {
+    return false;
+  }
+  if (node1->operand_list().size() != node2->operand_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->operand_list().size(); ++i) {
+    result = CompareResolvedAST(node1->operand_list(i),
+                                  node2->operand_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphLabel(
+    const ResolvedGraphLabel* node1, const ResolvedGraphLabel* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->label(), node2->label())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->label_name(),
+                                node2->label_name());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphWildCardLabel(
+    const ResolvedGraphWildCardLabel* node1, const ResolvedGraphWildCardLabel* node2) {
+
+  absl::StatusOr<bool> result;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphElementIdentifier(
+    const ResolvedGraphElementIdentifier* node1, const ResolvedGraphElementIdentifier* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->element_table(), node2->element_table())) {
+    return false;
+  }
+  if (node1->key_list().size() != node2->key_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->key_list().size(); ++i) {
+    result = CompareResolvedAST(node1->key_list(i),
+                                  node2->key_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->source_node_identifier(),
+                                node2->source_node_identifier());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->dest_node_identifier(),
+                                node2->dest_node_identifier());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphElementProperty(
+    const ResolvedGraphElementProperty* node1, const ResolvedGraphElementProperty* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->declaration(), node2->declaration())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphMakeElement(
+    const ResolvedGraphMakeElement* node1, const ResolvedGraphMakeElement* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->identifier(),
+                                node2->identifier());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->property_list().size() != node2->property_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->property_list().size(); ++i) {
+    result = CompareResolvedAST(node1->property_list(i),
+                                  node2->property_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->label_list().size() != node2->label_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->label_list().size(); ++i) {
+    if (!Equals(node1->label_list(i), node2->label_list(i))) {
+      return false;
+    }
+  }
+  result = CompareResolvedAST(node1->dynamic_labels(),
+                                node2->dynamic_labels());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->dynamic_properties(),
+                                node2->dynamic_properties());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedArrayAggregate(
+    const ResolvedArrayAggregate* node1, const ResolvedArrayAggregate* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->array(),
+                                node2->array());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->element_column(), node2->element_column())) {
+    return false;
+  }
+  if (node1->pre_aggregate_computed_column_list().size() != node2->pre_aggregate_computed_column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->pre_aggregate_computed_column_list().size(); ++i) {
+    result = CompareResolvedAST(node1->pre_aggregate_computed_column_list(i),
+                                  node2->pre_aggregate_computed_column_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->aggregate(),
+                                node2->aggregate());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphMakeArrayVariable(
+    const ResolvedGraphMakeArrayVariable* node1, const ResolvedGraphMakeArrayVariable* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->element(), node2->element())) {
+    return false;
+  }
+  if (!Equals(node1->array(), node2->array())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathMode(
+    const ResolvedGraphPathMode* node1, const ResolvedGraphPathMode* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->path_mode(), node2->path_mode())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathCost(
+    const ResolvedGraphPathCost* node1, const ResolvedGraphPathCost* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->cost_supertype(), node2->cost_supertype())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphPathScan(
+    const ResolvedGraphPathScan* node1, const ResolvedGraphPathScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  if (node1->input_scan_list().size() != node2->input_scan_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->input_scan_list().size(); ++i) {
+    result = CompareResolvedAST(node1->input_scan_list(i),
+                                  node2->input_scan_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->filter_expr(),
+                                node2->filter_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->path(),
+                                node2->path());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->head(), node2->head())) {
+    return false;
+  }
+  if (!Equals(node1->tail(), node2->tail())) {
+    return false;
+  }
+  if (node1->path_hint_list().size() != node2->path_hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->path_hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->path_hint_list(i),
+                                  node2->path_hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->quantifier(),
+                                node2->quantifier());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->group_variable_list().size() != node2->group_variable_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->group_variable_list().size(); ++i) {
+    result = CompareResolvedAST(node1->group_variable_list(i),
+                                  node2->group_variable_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->path_mode(),
+                                node2->path_mode());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->search_prefix(),
+                                node2->search_prefix());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->path_cost(),
+                                node2->path_cost());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGraphIsLabeledPredicate(
+    const ResolvedGraphIsLabeledPredicate* node1, const ResolvedGraphIsLabeledPredicate* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  if (!Equals(node1->is_not(), node2->is_not())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->label_expr(),
+                                node2->label_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
   return true;
 }
 absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUndropStmt(
@@ -7402,7 +9353,7 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUndropStmt(
   for (int i = 0; i < node1->hint_list().size(); ++i) {
     result = CompareResolvedAST(node1->hint_list(i),
                                   node2->hint_list(i));
-    ZETASQL_RETURN_IF_ERROR(result.status());
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
     if (!*result) return false;
   }
   if (!Equals(node1->schema_object_kind(), node2->schema_object_kind())) {
@@ -7421,8 +9372,755 @@ absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUndropStmt(
   }
   result = CompareResolvedAST(node1->for_system_time_expr(),
                                 node2->for_system_time_expr());
-  ZETASQL_RETURN_IF_ERROR(result.status());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedIdentityColumnInfo(
+    const ResolvedIdentityColumnInfo* node1, const ResolvedIdentityColumnInfo* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->start_with_value(), node2->start_with_value())) {
+    return false;
+  }
+  if (!Equals(node1->increment_by_value(), node2->increment_by_value())) {
+    return false;
+  }
+  if (!Equals(node1->max_value(), node2->max_value())) {
+    return false;
+  }
+  if (!Equals(node1->min_value(), node2->min_value())) {
+    return false;
+  }
+  if (!Equals(node1->cycling_enabled(), node2->cycling_enabled())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedDescribeScan(
+    const ResolvedDescribeScan* node1, const ResolvedDescribeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->describe_expr(),
+                                node2->describe_expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
   if (!*result) return false;
   return true;
 }
-}  // namespace zetasql
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedStaticDescribeScan(
+    const ResolvedStaticDescribeScan* node1, const ResolvedStaticDescribeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->describe_text(), node2->describe_text())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAssertScan(
+    const ResolvedAssertScan* node1, const ResolvedAssertScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->condition(),
+                                node2->condition());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->message(),
+                                node2->message());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedLogScan(
+    const ResolvedLogScan* node1, const ResolvedLogScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->subpipeline(),
+                                node2->subpipeline());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->output_schema(),
+                                node2->output_schema());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeIfScan(
+    const ResolvedPipeIfScan* node1, const ResolvedPipeIfScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->selected_case(), node2->selected_case())) {
+    return false;
+  }
+  if (node1->if_case_list().size() != node2->if_case_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->if_case_list().size(); ++i) {
+    result = CompareResolvedAST(node1->if_case_list(i),
+                                  node2->if_case_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeIfCase(
+    const ResolvedPipeIfCase* node1, const ResolvedPipeIfCase* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->condition(),
+                                node2->condition());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->subpipeline_sql(), node2->subpipeline_sql())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->subpipeline(),
+                                node2->subpipeline());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeForkScan(
+    const ResolvedPipeForkScan* node1, const ResolvedPipeForkScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->subpipeline_list().size() != node2->subpipeline_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->subpipeline_list().size(); ++i) {
+    result = CompareResolvedAST(node1->subpipeline_list(i),
+                                  node2->subpipeline_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeTeeScan(
+    const ResolvedPipeTeeScan* node1, const ResolvedPipeTeeScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->subpipeline_list().size() != node2->subpipeline_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->subpipeline_list().size(); ++i) {
+    result = CompareResolvedAST(node1->subpipeline_list(i),
+                                  node2->subpipeline_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeExportDataScan(
+    const ResolvedPipeExportDataScan* node1, const ResolvedPipeExportDataScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->export_data_stmt(),
+                                node2->export_data_stmt());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeCreateTableScan(
+    const ResolvedPipeCreateTableScan* node1, const ResolvedPipeCreateTableScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->create_table_as_select_stmt(),
+                                node2->create_table_as_select_stmt());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedPipeInsertScan(
+    const ResolvedPipeInsertScan* node1, const ResolvedPipeInsertScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->insert_stmt(),
+                                node2->insert_stmt());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSubpipeline(
+    const ResolvedSubpipeline* node1, const ResolvedSubpipeline* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->scan(),
+                                node2->scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSubpipelineInputScan(
+    const ResolvedSubpipelineInputScan* node1, const ResolvedSubpipelineInputScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedSubpipelineStmt(
+    const ResolvedSubpipelineStmt* node1, const ResolvedSubpipelineStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  result = CompareResolvedAST(node1->table_scan(),
+                                node2->table_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->subpipeline(),
+                                node2->subpipeline());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->output_schema(),
+                                node2->output_schema());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedGeneralizedQuerySubpipeline(
+    const ResolvedGeneralizedQuerySubpipeline* node1, const ResolvedGeneralizedQuerySubpipeline* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->subpipeline(),
+                                node2->subpipeline());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  result = CompareResolvedAST(node1->output_schema(),
+                                node2->output_schema());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedBarrierScan(
+    const ResolvedBarrierScan* node1, const ResolvedBarrierScan* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->column_list().size() != node2->column_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->column_list().size(); ++i) {
+    if (!Equals(node1->column_list(i), node2->column_list(i))) {
+      return false;
+    }
+  }
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_ordered(), node2->is_ordered())) {
+    return false;
+  }
+  if (!Equals(node1->node_source(), node2->node_source())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->input_scan(),
+                                node2->input_scan());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateConnectionStmt(
+    const ResolvedCreateConnectionStmt* node1, const ResolvedCreateConnectionStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->create_scope(), node2->create_scope())) {
+    return false;
+  }
+  if (!Equals(node1->create_mode(), node2->create_mode())) {
+    return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterConnectionStmt(
+    const ResolvedAlterConnectionStmt* node1, const ResolvedAlterConnectionStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (node1->alter_action_list().size() != node2->alter_action_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->alter_action_list().size(); ++i) {
+    result = CompareResolvedAST(node1->alter_action_list(i),
+                                  node2->alter_action_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedLockMode(
+    const ResolvedLockMode* node1, const ResolvedLockMode* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->strength(), node2->strength())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateFieldItem(
+    const ResolvedUpdateFieldItem* node1, const ResolvedUpdateFieldItem* node2) {
+
+  absl::StatusOr<bool> result;
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (node1->proto_field_path().size() != node2->proto_field_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->proto_field_path().size(); ++i) {
+    if (!Equals(node1->proto_field_path(i), node2->proto_field_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->operation(), node2->operation())) {
+    return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedUpdateConstructor(
+    const ResolvedUpdateConstructor* node1, const ResolvedUpdateConstructor* node2) {
+
+  absl::StatusOr<bool> result;
+  if (!Equals(node1->type(), node2->type())) {
+    return false;
+  }
+  if (!Equals(node1->type_annotation_map(), node2->type_annotation_map())) {
+    return false;
+  }
+  result = CompareResolvedAST(node1->expr(),
+                                node2->expr());
+  GOOGLESQL_RETURN_IF_ERROR(result.status());
+  if (!*result) return false;
+  if (!Equals(node1->alias(), node2->alias())) {
+    return false;
+  }
+  if (node1->update_field_item_list().size() != node2->update_field_item_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->update_field_item_list().size(); ++i) {
+    result = CompareResolvedAST(node1->update_field_item_list(i),
+                                  node2->update_field_item_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedCreateSequenceStmt(
+    const ResolvedCreateSequenceStmt* node1, const ResolvedCreateSequenceStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (!Equals(node1->create_scope(), node2->create_scope())) {
+    return false;
+  }
+  if (!Equals(node1->create_mode(), node2->create_mode())) {
+    return false;
+  }
+  if (node1->option_list().size() != node2->option_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->option_list().size(); ++i) {
+    result = CompareResolvedAST(node1->option_list(i),
+                                  node2->option_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  return true;
+}
+absl::StatusOr<bool> ResolvedASTComparator::CompareResolvedAlterSequenceStmt(
+    const ResolvedAlterSequenceStmt* node1, const ResolvedAlterSequenceStmt* node2) {
+
+  absl::StatusOr<bool> result;
+  if (node1->hint_list().size() != node2->hint_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->hint_list().size(); ++i) {
+    result = CompareResolvedAST(node1->hint_list(i),
+                                  node2->hint_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (node1->name_path().size() != node2->name_path().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->name_path().size(); ++i) {
+    if (!Equals(node1->name_path(i), node2->name_path(i))) {
+      return false;
+    }
+  }
+  if (node1->alter_action_list().size() != node2->alter_action_list().size()) {
+    return false;
+  }
+  for (int i = 0; i < node1->alter_action_list().size(); ++i) {
+    result = CompareResolvedAST(node1->alter_action_list(i),
+                                  node2->alter_action_list(i));
+    GOOGLESQL_RETURN_IF_ERROR(result.status());
+    if (!*result) return false;
+  }
+  if (!Equals(node1->is_if_exists(), node2->is_if_exists())) {
+    return false;
+  }
+  return true;
+}
+}  // namespace googlesql

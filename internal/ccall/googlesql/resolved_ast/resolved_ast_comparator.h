@@ -15,15 +15,15 @@
 //
 
 // resolved_ast_comparator.h GENERATED FROM resolved_ast_comparator.h.template
-#ifndef ZETASQL_RESOLVED_AST_RESOLVED_AST_COMPARATOR_H_
-#define ZETASQL_RESOLVED_AST_RESOLVED_AST_COMPARATOR_H_
+#ifndef GOOGLESQL_RESOLVED_AST_RESOLVED_AST_COMPARATOR_H_
+#define GOOGLESQL_RESOLVED_AST_RESOLVED_AST_COMPARATOR_H_
 
-#include "zetasql/resolved_ast/resolved_ast.h"
-#include "zetasql/resolved_ast/resolved_node.h"
-#include "zetasql/resolved_ast/resolved_column.h"
+#include "googlesql/resolved_ast/resolved_ast.h"
+#include "googlesql/resolved_ast/resolved_node.h"
+#include "googlesql/resolved_ast/resolved_column.h"
 #include "absl/status/statusor.h"
 
-namespace zetasql {
+namespace googlesql {
 
 class ResolvedASTComparator {
  public:
@@ -91,6 +91,8 @@ class ResolvedASTComparator {
                                                    const ResolvedGetProtoField* node2);
   static absl::StatusOr<bool> CompareResolvedGetJsonField(const ResolvedGetJsonField* node1,
                                                    const ResolvedGetJsonField* node2);
+  static absl::StatusOr<bool> CompareResolvedGetRowField(const ResolvedGetRowField* node1,
+                                                   const ResolvedGetRowField* node2);
   static absl::StatusOr<bool> CompareResolvedFlatten(const ResolvedFlatten* node1,
                                                    const ResolvedFlatten* node2);
   static absl::StatusOr<bool> CompareResolvedFlattenedArg(const ResolvedFlattenedArg* node1,
@@ -99,6 +101,8 @@ class ResolvedASTComparator {
                                                    const ResolvedReplaceFieldItem* node2);
   static absl::StatusOr<bool> CompareResolvedReplaceField(const ResolvedReplaceField* node1,
                                                    const ResolvedReplaceField* node2);
+  static absl::StatusOr<bool> CompareResolvedGetProtoOneof(const ResolvedGetProtoOneof* node1,
+                                                   const ResolvedGetProtoOneof* node2);
   static absl::StatusOr<bool> CompareResolvedSubqueryExpr(const ResolvedSubqueryExpr* node1,
                                                    const ResolvedSubqueryExpr* node2);
   static absl::StatusOr<bool> CompareResolvedWithExpr(const ResolvedWithExpr* node1,
@@ -113,6 +117,8 @@ class ResolvedASTComparator {
                                                    const ResolvedDescriptor* node2);
   static absl::StatusOr<bool> CompareResolvedSingleRowScan(const ResolvedSingleRowScan* node1,
                                                    const ResolvedSingleRowScan* node2);
+  static absl::StatusOr<bool> CompareResolvedUnsetArgumentScan(const ResolvedUnsetArgumentScan* node1,
+                                                   const ResolvedUnsetArgumentScan* node2);
   static absl::StatusOr<bool> CompareResolvedTableScan(const ResolvedTableScan* node1,
                                                    const ResolvedTableScan* node2);
   static absl::StatusOr<bool> CompareResolvedJoinScan(const ResolvedJoinScan* node1,
@@ -125,6 +131,10 @@ class ResolvedASTComparator {
                                                    const ResolvedFilterScan* node2);
   static absl::StatusOr<bool> CompareResolvedGroupingCall(const ResolvedGroupingCall* node1,
                                                    const ResolvedGroupingCall* node2);
+  static absl::StatusOr<bool> CompareResolvedGroupingSetList(const ResolvedGroupingSetList* node1,
+                                                   const ResolvedGroupingSetList* node2);
+  static absl::StatusOr<bool> CompareResolvedGroupingSetProduct(const ResolvedGroupingSetProduct* node1,
+                                                   const ResolvedGroupingSetProduct* node2);
   static absl::StatusOr<bool> CompareResolvedGroupingSet(const ResolvedGroupingSet* node1,
                                                    const ResolvedGroupingSet* node2);
   static absl::StatusOr<bool> CompareResolvedRollup(const ResolvedRollup* node1,
@@ -155,6 +165,8 @@ class ResolvedASTComparator {
                                                    const ResolvedSampleScan* node2);
   static absl::StatusOr<bool> CompareResolvedComputedColumn(const ResolvedComputedColumn* node1,
                                                    const ResolvedComputedColumn* node2);
+  static absl::StatusOr<bool> CompareResolvedDeferredComputedColumn(const ResolvedDeferredComputedColumn* node1,
+                                                   const ResolvedDeferredComputedColumn* node2);
   static absl::StatusOr<bool> CompareResolvedOrderByItem(const ResolvedOrderByItem* node1,
                                                    const ResolvedOrderByItem* node2);
   static absl::StatusOr<bool> CompareResolvedColumnAnnotations(const ResolvedColumnAnnotations* node1,
@@ -173,6 +185,8 @@ class ResolvedASTComparator {
                                                    const ResolvedCheckConstraint* node2);
   static absl::StatusOr<bool> CompareResolvedOutputColumn(const ResolvedOutputColumn* node1,
                                                    const ResolvedOutputColumn* node2);
+  static absl::StatusOr<bool> CompareResolvedOutputSchema(const ResolvedOutputSchema* node1,
+                                                   const ResolvedOutputSchema* node2);
   static absl::StatusOr<bool> CompareResolvedProjectScan(const ResolvedProjectScan* node1,
                                                    const ResolvedProjectScan* node2);
   static absl::StatusOr<bool> CompareResolvedTVFScan(const ResolvedTVFScan* node1,
@@ -183,8 +197,18 @@ class ResolvedASTComparator {
                                                    const ResolvedFunctionArgument* node2);
   static absl::StatusOr<bool> CompareResolvedExplainStmt(const ResolvedExplainStmt* node1,
                                                    const ResolvedExplainStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedStringWithLocation(const ResolvedStringWithLocation* node1,
+                                                   const ResolvedStringWithLocation* node2);
+  static absl::StatusOr<bool> CompareResolvedStatementWithPipeOperatorsStmt(const ResolvedStatementWithPipeOperatorsStmt* node1,
+                                                   const ResolvedStatementWithPipeOperatorsStmt* node2);
   static absl::StatusOr<bool> CompareResolvedQueryStmt(const ResolvedQueryStmt* node1,
                                                    const ResolvedQueryStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedGeneralizedQueryStmt(const ResolvedGeneralizedQueryStmt* node1,
+                                                   const ResolvedGeneralizedQueryStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedMultiStmt(const ResolvedMultiStmt* node1,
+                                                   const ResolvedMultiStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedCreateWithEntryStmt(const ResolvedCreateWithEntryStmt* node1,
+                                                   const ResolvedCreateWithEntryStmt* node2);
   static absl::StatusOr<bool> CompareResolvedCreateDatabaseStmt(const ResolvedCreateDatabaseStmt* node1,
                                                    const ResolvedCreateDatabaseStmt* node2);
   static absl::StatusOr<bool> CompareResolvedIndexItem(const ResolvedIndexItem* node1,
@@ -195,6 +219,8 @@ class ResolvedASTComparator {
                                                    const ResolvedCreateIndexStmt* node2);
   static absl::StatusOr<bool> CompareResolvedCreateSchemaStmt(const ResolvedCreateSchemaStmt* node1,
                                                    const ResolvedCreateSchemaStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedCreateExternalSchemaStmt(const ResolvedCreateExternalSchemaStmt* node1,
+                                                   const ResolvedCreateExternalSchemaStmt* node2);
   static absl::StatusOr<bool> CompareResolvedCreateTableStmt(const ResolvedCreateTableStmt* node1,
                                                    const ResolvedCreateTableStmt* node2);
   static absl::StatusOr<bool> CompareResolvedCreateTableAsSelectStmt(const ResolvedCreateTableAsSelectStmt* node1,
@@ -245,6 +271,8 @@ class ResolvedASTComparator {
                                                    const ResolvedDropSnapshotTableStmt* node2);
   static absl::StatusOr<bool> CompareResolvedRecursiveRefScan(const ResolvedRecursiveRefScan* node1,
                                                    const ResolvedRecursiveRefScan* node2);
+  static absl::StatusOr<bool> CompareResolvedRecursionDepthModifier(const ResolvedRecursionDepthModifier* node1,
+                                                   const ResolvedRecursionDepthModifier* node2);
   static absl::StatusOr<bool> CompareResolvedRecursiveScan(const ResolvedRecursiveScan* node1,
                                                    const ResolvedRecursiveScan* node2);
   static absl::StatusOr<bool> CompareResolvedWithScan(const ResolvedWithScan* node1,
@@ -271,6 +299,8 @@ class ResolvedASTComparator {
                                                    const ResolvedAssertStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAssertRowsModified(const ResolvedAssertRowsModified* node1,
                                                    const ResolvedAssertRowsModified* node2);
+  static absl::StatusOr<bool> CompareResolvedOnConflictClause(const ResolvedOnConflictClause* node1,
+                                                   const ResolvedOnConflictClause* node2);
   static absl::StatusOr<bool> CompareResolvedInsertRow(const ResolvedInsertRow* node1,
                                                    const ResolvedInsertRow* node2);
   static absl::StatusOr<bool> CompareResolvedInsertStmt(const ResolvedInsertStmt* node1,
@@ -279,8 +309,8 @@ class ResolvedASTComparator {
                                                    const ResolvedDeleteStmt* node2);
   static absl::StatusOr<bool> CompareResolvedUpdateItem(const ResolvedUpdateItem* node1,
                                                    const ResolvedUpdateItem* node2);
-  static absl::StatusOr<bool> CompareResolvedUpdateArrayItem(const ResolvedUpdateArrayItem* node1,
-                                                   const ResolvedUpdateArrayItem* node2);
+  static absl::StatusOr<bool> CompareResolvedUpdateItemElement(const ResolvedUpdateItemElement* node1,
+                                                   const ResolvedUpdateItemElement* node2);
   static absl::StatusOr<bool> CompareResolvedUpdateStmt(const ResolvedUpdateStmt* node1,
                                                    const ResolvedUpdateStmt* node2);
   static absl::StatusOr<bool> CompareResolvedMergeWhen(const ResolvedMergeWhen* node1,
@@ -299,12 +329,16 @@ class ResolvedASTComparator {
                                                    const ResolvedRevokeStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterDatabaseStmt(const ResolvedAlterDatabaseStmt* node1,
                                                    const ResolvedAlterDatabaseStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterIndexStmt(const ResolvedAlterIndexStmt* node1,
+                                                   const ResolvedAlterIndexStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterMaterializedViewStmt(const ResolvedAlterMaterializedViewStmt* node1,
                                                    const ResolvedAlterMaterializedViewStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterApproxViewStmt(const ResolvedAlterApproxViewStmt* node1,
                                                    const ResolvedAlterApproxViewStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterSchemaStmt(const ResolvedAlterSchemaStmt* node1,
                                                    const ResolvedAlterSchemaStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterExternalSchemaStmt(const ResolvedAlterExternalSchemaStmt* node1,
+                                                   const ResolvedAlterExternalSchemaStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterModelStmt(const ResolvedAlterModelStmt* node1,
                                                    const ResolvedAlterModelStmt* node2);
   static absl::StatusOr<bool> CompareResolvedAlterTableStmt(const ResolvedAlterTableStmt* node1,
@@ -321,6 +355,10 @@ class ResolvedASTComparator {
                                                    const ResolvedDropSubEntityAction* node2);
   static absl::StatusOr<bool> CompareResolvedAddColumnAction(const ResolvedAddColumnAction* node1,
                                                    const ResolvedAddColumnAction* node2);
+  static absl::StatusOr<bool> CompareResolvedAddColumnIdentifierAction(const ResolvedAddColumnIdentifierAction* node1,
+                                                   const ResolvedAddColumnIdentifierAction* node2);
+  static absl::StatusOr<bool> CompareResolvedRebuildAction(const ResolvedRebuildAction* node1,
+                                                   const ResolvedRebuildAction* node2);
   static absl::StatusOr<bool> CompareResolvedAddConstraintAction(const ResolvedAddConstraintAction* node1,
                                                    const ResolvedAddConstraintAction* node2);
   static absl::StatusOr<bool> CompareResolvedDropConstraintAction(const ResolvedDropConstraintAction* node1,
@@ -331,6 +369,10 @@ class ResolvedASTComparator {
                                                    const ResolvedAlterColumnOptionsAction* node2);
   static absl::StatusOr<bool> CompareResolvedAlterColumnDropNotNullAction(const ResolvedAlterColumnDropNotNullAction* node1,
                                                    const ResolvedAlterColumnDropNotNullAction* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterColumnDropGeneratedAction(const ResolvedAlterColumnDropGeneratedAction* node1,
+                                                   const ResolvedAlterColumnDropGeneratedAction* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterColumnSetGeneratedAction(const ResolvedAlterColumnSetGeneratedAction* node1,
+                                                   const ResolvedAlterColumnSetGeneratedAction* node2);
   static absl::StatusOr<bool> CompareResolvedAlterColumnSetDataTypeAction(const ResolvedAlterColumnSetDataTypeAction* node1,
                                                    const ResolvedAlterColumnSetDataTypeAction* node2);
   static absl::StatusOr<bool> CompareResolvedAlterColumnSetDefaultAction(const ResolvedAlterColumnSetDefaultAction* node1,
@@ -433,6 +475,22 @@ class ResolvedASTComparator {
                                                    const ResolvedUnpivotArg* node2);
   static absl::StatusOr<bool> CompareResolvedUnpivotScan(const ResolvedUnpivotScan* node1,
                                                    const ResolvedUnpivotScan* node2);
+  static absl::StatusOr<bool> CompareResolvedMatchRecognizeScan(const ResolvedMatchRecognizeScan* node1,
+                                                   const ResolvedMatchRecognizeScan* node2);
+  static absl::StatusOr<bool> CompareResolvedMeasureGroup(const ResolvedMeasureGroup* node1,
+                                                   const ResolvedMeasureGroup* node2);
+  static absl::StatusOr<bool> CompareResolvedMatchRecognizeVariableDefinition(const ResolvedMatchRecognizeVariableDefinition* node1,
+                                                   const ResolvedMatchRecognizeVariableDefinition* node2);
+  static absl::StatusOr<bool> CompareResolvedMatchRecognizePatternEmpty(const ResolvedMatchRecognizePatternEmpty* node1,
+                                                   const ResolvedMatchRecognizePatternEmpty* node2);
+  static absl::StatusOr<bool> CompareResolvedMatchRecognizePatternAnchor(const ResolvedMatchRecognizePatternAnchor* node1,
+                                                   const ResolvedMatchRecognizePatternAnchor* node2);
+  static absl::StatusOr<bool> CompareResolvedMatchRecognizePatternVariableRef(const ResolvedMatchRecognizePatternVariableRef* node1,
+                                                   const ResolvedMatchRecognizePatternVariableRef* node2);
+  static absl::StatusOr<bool> CompareResolvedMatchRecognizePatternOperation(const ResolvedMatchRecognizePatternOperation* node1,
+                                                   const ResolvedMatchRecognizePatternOperation* node2);
+  static absl::StatusOr<bool> CompareResolvedMatchRecognizePatternQuantification(const ResolvedMatchRecognizePatternQuantification* node1,
+                                                   const ResolvedMatchRecognizePatternQuantification* node2);
   static absl::StatusOr<bool> CompareResolvedCloneDataStmt(const ResolvedCloneDataStmt* node1,
                                                    const ResolvedCloneDataStmt* node2);
   static absl::StatusOr<bool> CompareResolvedTableAndColumnInfo(const ResolvedTableAndColumnInfo* node1,
@@ -443,10 +501,118 @@ class ResolvedASTComparator {
                                                    const ResolvedAuxLoadDataPartitionFilter* node2);
   static absl::StatusOr<bool> CompareResolvedAuxLoadDataStmt(const ResolvedAuxLoadDataStmt* node1,
                                                    const ResolvedAuxLoadDataStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedCreatePropertyGraphStmt(const ResolvedCreatePropertyGraphStmt* node1,
+                                                   const ResolvedCreatePropertyGraphStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphElementTable(const ResolvedGraphElementTable* node1,
+                                                   const ResolvedGraphElementTable* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphNodeTableReference(const ResolvedGraphNodeTableReference* node1,
+                                                   const ResolvedGraphNodeTableReference* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphElementLabel(const ResolvedGraphElementLabel* node1,
+                                                   const ResolvedGraphElementLabel* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphPropertyDeclaration(const ResolvedGraphPropertyDeclaration* node1,
+                                                   const ResolvedGraphPropertyDeclaration* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphPropertyDefinition(const ResolvedGraphPropertyDefinition* node1,
+                                                   const ResolvedGraphPropertyDefinition* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphDynamicLabelSpecification(const ResolvedGraphDynamicLabelSpecification* node1,
+                                                   const ResolvedGraphDynamicLabelSpecification* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphDynamicPropertiesSpecification(const ResolvedGraphDynamicPropertiesSpecification* node1,
+                                                   const ResolvedGraphDynamicPropertiesSpecification* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphRefScan(const ResolvedGraphRefScan* node1,
+                                                   const ResolvedGraphRefScan* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphLinearScan(const ResolvedGraphLinearScan* node1,
+                                                   const ResolvedGraphLinearScan* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphTableScan(const ResolvedGraphTableScan* node1,
+                                                   const ResolvedGraphTableScan* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphCallScan(const ResolvedGraphCallScan* node1,
+                                                   const ResolvedGraphCallScan* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphScan(const ResolvedGraphScan* node1,
+                                                   const ResolvedGraphScan* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphPathPatternQuantifier(const ResolvedGraphPathPatternQuantifier* node1,
+                                                   const ResolvedGraphPathPatternQuantifier* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphPathSearchPrefix(const ResolvedGraphPathSearchPrefix* node1,
+                                                   const ResolvedGraphPathSearchPrefix* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphNodeScan(const ResolvedGraphNodeScan* node1,
+                                                   const ResolvedGraphNodeScan* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphEdgeScan(const ResolvedGraphEdgeScan* node1,
+                                                   const ResolvedGraphEdgeScan* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphGetElementProperty(const ResolvedGraphGetElementProperty* node1,
+                                                   const ResolvedGraphGetElementProperty* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphLabelNaryExpr(const ResolvedGraphLabelNaryExpr* node1,
+                                                   const ResolvedGraphLabelNaryExpr* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphLabel(const ResolvedGraphLabel* node1,
+                                                   const ResolvedGraphLabel* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphWildCardLabel(const ResolvedGraphWildCardLabel* node1,
+                                                   const ResolvedGraphWildCardLabel* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphElementIdentifier(const ResolvedGraphElementIdentifier* node1,
+                                                   const ResolvedGraphElementIdentifier* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphElementProperty(const ResolvedGraphElementProperty* node1,
+                                                   const ResolvedGraphElementProperty* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphMakeElement(const ResolvedGraphMakeElement* node1,
+                                                   const ResolvedGraphMakeElement* node2);
+  static absl::StatusOr<bool> CompareResolvedArrayAggregate(const ResolvedArrayAggregate* node1,
+                                                   const ResolvedArrayAggregate* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphMakeArrayVariable(const ResolvedGraphMakeArrayVariable* node1,
+                                                   const ResolvedGraphMakeArrayVariable* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphPathMode(const ResolvedGraphPathMode* node1,
+                                                   const ResolvedGraphPathMode* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphPathCost(const ResolvedGraphPathCost* node1,
+                                                   const ResolvedGraphPathCost* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphPathScan(const ResolvedGraphPathScan* node1,
+                                                   const ResolvedGraphPathScan* node2);
+  static absl::StatusOr<bool> CompareResolvedGraphIsLabeledPredicate(const ResolvedGraphIsLabeledPredicate* node1,
+                                                   const ResolvedGraphIsLabeledPredicate* node2);
   static absl::StatusOr<bool> CompareResolvedUndropStmt(const ResolvedUndropStmt* node1,
                                                    const ResolvedUndropStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedIdentityColumnInfo(const ResolvedIdentityColumnInfo* node1,
+                                                   const ResolvedIdentityColumnInfo* node2);
+  static absl::StatusOr<bool> CompareResolvedDescribeScan(const ResolvedDescribeScan* node1,
+                                                   const ResolvedDescribeScan* node2);
+  static absl::StatusOr<bool> CompareResolvedStaticDescribeScan(const ResolvedStaticDescribeScan* node1,
+                                                   const ResolvedStaticDescribeScan* node2);
+  static absl::StatusOr<bool> CompareResolvedAssertScan(const ResolvedAssertScan* node1,
+                                                   const ResolvedAssertScan* node2);
+  static absl::StatusOr<bool> CompareResolvedLogScan(const ResolvedLogScan* node1,
+                                                   const ResolvedLogScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeIfScan(const ResolvedPipeIfScan* node1,
+                                                   const ResolvedPipeIfScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeIfCase(const ResolvedPipeIfCase* node1,
+                                                   const ResolvedPipeIfCase* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeForkScan(const ResolvedPipeForkScan* node1,
+                                                   const ResolvedPipeForkScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeTeeScan(const ResolvedPipeTeeScan* node1,
+                                                   const ResolvedPipeTeeScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeExportDataScan(const ResolvedPipeExportDataScan* node1,
+                                                   const ResolvedPipeExportDataScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeCreateTableScan(const ResolvedPipeCreateTableScan* node1,
+                                                   const ResolvedPipeCreateTableScan* node2);
+  static absl::StatusOr<bool> CompareResolvedPipeInsertScan(const ResolvedPipeInsertScan* node1,
+                                                   const ResolvedPipeInsertScan* node2);
+  static absl::StatusOr<bool> CompareResolvedSubpipeline(const ResolvedSubpipeline* node1,
+                                                   const ResolvedSubpipeline* node2);
+  static absl::StatusOr<bool> CompareResolvedSubpipelineInputScan(const ResolvedSubpipelineInputScan* node1,
+                                                   const ResolvedSubpipelineInputScan* node2);
+  static absl::StatusOr<bool> CompareResolvedSubpipelineStmt(const ResolvedSubpipelineStmt* node1,
+                                                   const ResolvedSubpipelineStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedGeneralizedQuerySubpipeline(const ResolvedGeneralizedQuerySubpipeline* node1,
+                                                   const ResolvedGeneralizedQuerySubpipeline* node2);
+  static absl::StatusOr<bool> CompareResolvedBarrierScan(const ResolvedBarrierScan* node1,
+                                                   const ResolvedBarrierScan* node2);
+  static absl::StatusOr<bool> CompareResolvedCreateConnectionStmt(const ResolvedCreateConnectionStmt* node1,
+                                                   const ResolvedCreateConnectionStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterConnectionStmt(const ResolvedAlterConnectionStmt* node1,
+                                                   const ResolvedAlterConnectionStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedLockMode(const ResolvedLockMode* node1,
+                                                   const ResolvedLockMode* node2);
+  static absl::StatusOr<bool> CompareResolvedUpdateFieldItem(const ResolvedUpdateFieldItem* node1,
+                                                   const ResolvedUpdateFieldItem* node2);
+  static absl::StatusOr<bool> CompareResolvedUpdateConstructor(const ResolvedUpdateConstructor* node1,
+                                                   const ResolvedUpdateConstructor* node2);
+  static absl::StatusOr<bool> CompareResolvedCreateSequenceStmt(const ResolvedCreateSequenceStmt* node1,
+                                                   const ResolvedCreateSequenceStmt* node2);
+  static absl::StatusOr<bool> CompareResolvedAlterSequenceStmt(const ResolvedAlterSequenceStmt* node1,
+                                                   const ResolvedAlterSequenceStmt* node2);
 };
 
-}  // namespace zetasql
+}  // namespace googlesql
 
-#endif  // ZETASQL_RESOLVED_AST_RESOLVED_AST_COMPARATOR_H_
+#endif  // GOOGLESQL_RESOLVED_AST_RESOLVED_AST_COMPARATOR_H_

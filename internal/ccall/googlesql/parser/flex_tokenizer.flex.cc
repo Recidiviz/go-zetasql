@@ -20,7 +20,9 @@
      * We will address this in a future release of flex, or omit the C++ scanner
      * altogether.
      */
-    #define yyFlexLexer ZetaSqlFlexLexer
+#ifndef yyFlexLexer
+    #define yyFlexLexer GoogleSqlFlexTokenizerBase
+#endif
 
 #ifdef yyalloc
 #define ZetaSqlalloc_ALREADY_DEFINED
@@ -317,16 +319,7 @@ typedef flex_uint8_t YY_CHAR;
 
 #define yytext_ptr yytext
 
-#include <FlexLexer.h>
 
-int yyFlexLexer::yywrap() { return 1; }
-int yyFlexLexer::yylex()
-	{
-	LexerError( "yyFlexLexer::yylex invoked but %option yyclass used" );
-	return 0;
-	}
-
-#define YY_DECL int FlexTokenizer::yylex()
 
 static const flex_int16_t yy_nxt[][256] =
     {

@@ -1,5 +1,5 @@
 #include "absl/strings/string_view.h"
-namespace zetasql::internal {
+namespace googlesql::internal {
 constexpr absl::string_view kPublicSuffixListData =
     R"simple_embedder(// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13485,4 +13485,4 @@ impertrix.com
 gsj.bz
 // ===END PRIVATE DOMAINS===
 )simple_embedder";
-}  // namespace zetasql::internal
+}  // namespace googlesql::internal

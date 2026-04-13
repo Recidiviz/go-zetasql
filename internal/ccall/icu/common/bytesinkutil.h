@@ -4,6 +4,9 @@
 // bytesinkutil.h
 // created: 2017sep14 Markus W. Scherer
 
+#ifndef GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_
+#define GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_
+
 #include "unicode/utypes.h"
 #include "unicode/bytestream.h"
 #include "unicode/edits.h"
@@ -81,3 +84,5 @@ private:
 };
 
 U_NAMESPACE_END
+
+#endif  // GO_GOOGLESQL_ICU_COMMON_BYTESINKUTIL_H_

@@ -32,6 +32,11 @@
 // #undefs all macros defined in port_def.inc.  See comments in port_def.inc
 // for more info.
 
+// go-googlesql: skip intermediate undefs in amalgamation (export.inc does one
+// final port_undef at the end of the TU).
+#ifdef GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF
+#else
+
 #ifndef PROTOBUF_NAMESPACE
 #error "port_undef.inc must be included after port_def.inc"
 #endif
@@ -198,3 +203,5 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+
+#endif  // GO_GOOGLESQL_PROTOBUF_AMALGAMATION_SKIP_PORT_UNDEF

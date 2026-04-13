@@ -808,7 +808,7 @@ std::string ProtoType::FormatValueContent(
 
 absl::Status ProtoType::SerializeValueContent(const ValueContent& value,
                                               ValueProto* value_proto) const {
-  value_proto->set_proto_value(GetCordValue(value));
+  value_proto->set_proto_value(std::string(GetCordValue(value)));
   return absl::OkStatus();
 }
 
@@ -817,7 +817,8 @@ absl::Status ProtoType::DeserializeValueContent(const ValueProto& value_proto,
   if (!value_proto.has_proto_value()) {
     return TypeMismatchError(value_proto);
   }
-  value->set(new internal::ProtoRep(this, value_proto.proto_value()));
+  value->set(
+      new internal::ProtoRep(this, absl::Cord(value_proto.proto_value())));
   return absl::OkStatus();
 }
 

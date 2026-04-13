@@ -18,18 +18,18 @@
 // by gen_parse_tree.py. It should never be #included directly. Include
 // parse_tree.h instead.
 
-#ifndef ZETASQL_PARSER_PARSE_TREE_GENERATED_H_
-#define ZETASQL_PARSER_PARSE_TREE_GENERATED_H_
+#ifndef GOOGLESQL_PARSER_PARSE_TREE_GENERATED_H_
+#define GOOGLESQL_PARSER_PARSE_TREE_GENERATED_H_
 
-#include "zetasql/parser/ast_enums.pb.h"
-#include "zetasql/parser/ast_node.h"
-#include "zetasql/parser/parse_tree_decls.h"
-#include "zetasql/public/id_string.h"
-#include "zetasql/public/type.pb.h"
+#include "googlesql/parser/ast_enums.pb.h"
+#include "googlesql/parser/ast_node.h"
+#include "googlesql/parser/parse_tree_decls.h"
+#include "googlesql/public/id_string.h"
+#include "googlesql/public/type.pb.h"
 
 // NOLINTBEGIN(whitespace/line_length)
 
-namespace zetasql {
+namespace googlesql {
 
 // Superclass of all Statements.
 class ASTStatement : public ASTNode {
@@ -49,6 +49,7 @@ class ASTQueryStatement final : public ASTStatement {
 
   ASTQueryStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -59,11 +60,39 @@ class ASTQueryStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
     return fl.Finalize();
   }
 
   const ASTQuery* query_ = nullptr;
+};
+
+// Represents a standalone subpipeline parsed as a statement.
+// Also used for pipe suffixes on other statements in
+// ASTStatementWithPipeOperators.
+// See (broken link).
+class ASTSubpipelineStatement final : public ASTStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_SUBPIPELINE_STATEMENT;
+
+  ASTSubpipelineStatement() : ASTStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSubpipeline* subpipeline() const { return subpipeline_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&subpipeline_));
+    return fl.Finalize();
+  }
+
+  const ASTSubpipeline* subpipeline_ = nullptr;
 };
 
 // Superclass for all query expressions.  These are top-level syntactic
@@ -84,12 +113,41 @@ class ASTQueryExpression : public ASTNode {
   bool parenthesized_ = false;
 };
 
+// This is a parenthesized query expression with an alias.
+class ASTAliasedQueryExpression final : public ASTQueryExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALIASED_QUERY_EXPRESSION;
+
+  ASTAliasedQueryExpression() : ASTQueryExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTQuery* query() const { return query_; }
+  const ASTAlias* alias() const { return alias_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
+    return fl.Finalize();
+  }
+
+  const ASTQuery* query_ = nullptr;
+  const ASTAlias* alias_ = nullptr;
+};
+
 class ASTQuery final : public ASTQueryExpression {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_QUERY;
 
   ASTQuery() : ASTQueryExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -116,15 +174,25 @@ class ASTQuery final : public ASTQueryExpression {
   // <order_by_>.
   const ASTLimitOffset* limit_offset() const { return limit_offset_; }
 
+  // If present, applies to the <query_expr_>.
+  const ASTLockMode* lock_mode() const { return lock_mode_; }
+
+  const absl::Span<const ASTPipeOperator* const>& pipe_operator_list() const {
+    return pipe_operator_list_;
+  }
+  const ASTPipeOperator* pipe_operator_list(int i) const { return pipe_operator_list_[i]; }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&with_clause_, AST_WITH_CLAUSE);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&query_expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&query_expr_));
     fl.AddOptional(&order_by_, AST_ORDER_BY);
     fl.AddOptional(&limit_offset_, AST_LIMIT_OFFSET);
+    fl.AddOptional(&lock_mode_, AST_LOCK_MODE);
+    fl.AddRestAsRepeated(&pipe_operator_list_);
     return fl.Finalize();
   }
 
@@ -132,8 +200,948 @@ class ASTQuery final : public ASTQueryExpression {
   const ASTQueryExpression* query_expr_ = nullptr;
   const ASTOrderBy* order_by_ = nullptr;
   const ASTLimitOffset* limit_offset_ = nullptr;
+  const ASTLockMode* lock_mode_ = nullptr;
   bool is_nested_ = false;
   bool is_pivot_input_ = false;
+  absl::Span<const ASTPipeOperator* const> pipe_operator_list_;
+};
+
+// This represents a FROM query, which has just a FROM clause and
+// no other clauses.  This is enabled by FEATURE_PIPES.
+class ASTFromQuery final : public ASTQueryExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_FROM_QUERY;
+
+  ASTFromQuery() : ASTQueryExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTFromClause* from_clause() const { return from_clause_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&from_clause_));
+    return fl.Finalize();
+  }
+
+  const ASTFromClause* from_clause_ = nullptr;
+};
+
+class ASTSubpipeline final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_SUBPIPELINE;
+
+  ASTSubpipeline() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  void set_parenthesized(bool parenthesized) { parenthesized_ = parenthesized; }
+  bool parenthesized() const { return parenthesized_; }
+
+  const absl::Span<const ASTPipeOperator* const>& pipe_operator_list() const {
+    return pipe_operator_list_;
+  }
+  const ASTPipeOperator* pipe_operator_list(int i) const { return pipe_operator_list_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&pipe_operator_list_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTPipeOperator* const> pipe_operator_list_;
+  bool parenthesized_ = false;
+};
+
+// This is the superclass of all ASTPipe* operators, representing one
+// pipe operation in a chain.
+class ASTPipeOperator : public ASTNode {
+ public:
+  explicit ASTPipeOperator(ASTNodeKind kind) : ASTNode(kind) {}
+
+  friend class ParseTreeSerializer;
+};
+
+// Pipe EXTEND is represented with an ASTSelect with only the
+// SELECT clause present, where the SELECT clause stores the
+// EXTEND expression list.
+// Using this representation rather than storing an ASTSelectList
+// makes sharing resolver code easier.
+class ASTPipeExtend final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_EXTEND;
+
+  ASTPipeExtend() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSelect* select() const { return select_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_));
+    return fl.Finalize();
+  }
+
+  const ASTSelect* select_ = nullptr;
+};
+
+class ASTPipeRenameItem final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_RENAME_ITEM;
+
+  ASTPipeRenameItem() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* old_name() const { return old_name_; }
+  const ASTIdentifier* new_name() const { return new_name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&old_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&new_name_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* old_name_ = nullptr;
+  const ASTIdentifier* new_name_ = nullptr;
+};
+
+class ASTPipeRename final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_RENAME;
+
+  ASTPipeRename() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTPipeRenameItem* const>& rename_item_list() const {
+    return rename_item_list_;
+  }
+  const ASTPipeRenameItem* rename_item_list(int i) const { return rename_item_list_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&rename_item_list_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTPipeRenameItem* const> rename_item_list_;
+};
+
+// Pipe AGGREGATE is represented with an ASTSelect with only the
+// SELECT and (optionally) GROUP BY clause present, where the SELECT
+// clause stores the AGGREGATE expression list.
+// Using this representation rather than storing an ASTSelectList and
+// ASTGroupBy makes sharing resolver code easier.
+class ASTPipeAggregate final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_AGGREGATE;
+
+  ASTPipeAggregate() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // If present, the WITH modifier specifying the mode of aggregation
+  // (e.g., AGGREGATE WITH DIFFERENTIAL_PRIVACY).
+  const ASTWithModifier* with_modifier() const { return with_modifier_; }
+
+  const ASTSelect* select() const { return select_; }
+
+      ABSL_DEPRECATED("Use with_modifier() instead")
+      const ASTWithModifier* select_with() const { return with_modifier(); }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&with_modifier_, AST_WITH_MODIFIER);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_));
+    return fl.Finalize();
+  }
+
+  const ASTWithModifier* with_modifier_ = nullptr;
+  const ASTSelect* select_ = nullptr;
+};
+
+// Pipe set operations are represented differently from ASTSetOperation
+// because we have the set operation and metadata always once, and then
+// one or more (not two or more) input queries.
+//
+// The syntax looks like
+//   <input_table> |> UNION ALL [modifiers] (query1), (query2), ...
+// and it produces the combination of input_table plus all rhs queries.
+class ASTPipeSetOperation final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_SET_OPERATION;
+
+  ASTPipeSetOperation() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSetOperationMetadata* metadata() const { return metadata_; }
+
+  const absl::Span<const ASTQueryExpression* const>& inputs() const {
+    return inputs_;
+  }
+  const ASTQueryExpression* inputs(int i) const { return inputs_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&metadata_));
+    fl.AddRestAsRepeated(&inputs_);
+    return fl.Finalize();
+  }
+
+  const ASTSetOperationMetadata* metadata_ = nullptr;
+  absl::Span<const ASTQueryExpression* const> inputs_;
+};
+
+// Pipe JOIN is represented with an ASTJoin, where the required lhs
+// is always an ASTPipeJoinLhsPlaceholder.
+class ASTPipeJoin final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_JOIN;
+
+  ASTPipeJoin() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTJoin* join() const { return join_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&join_));
+    return fl.Finalize();
+  }
+
+  const ASTJoin* join_ = nullptr;
+};
+
+class ASTPipeCall final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_CALL;
+
+  ASTPipeCall() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTTVF* tvf() const { return tvf_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&tvf_));
+    return fl.Finalize();
+  }
+
+  const ASTTVF* tvf_ = nullptr;
+};
+
+// Pipe WINDOW is represented with an ASTSelect with only the
+// SELECT clause present, where the SELECT clause stores the
+// WINDOW expression list.
+// Using this representation rather than storing an ASTSelectList
+// makes sharing resolver code easier.
+class ASTPipeWindow final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_WINDOW;
+
+  ASTPipeWindow() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSelect* select() const { return select_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_));
+    return fl.Finalize();
+  }
+
+  const ASTSelect* select_ = nullptr;
+};
+
+class ASTPipeWhere final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_WHERE;
+
+  ASTPipeWhere() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTWhereClause* where() const { return where_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&where_));
+    return fl.Finalize();
+  }
+
+  const ASTWhereClause* where_ = nullptr;
+};
+
+// Pipe SELECT is represented with an ASTSelect with only the
+// SELECT clause present.
+// Using this representation rather than storing an ASTSelectList
+// makes sharing resolver code easier.
+class ASTPipeSelect final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_SELECT;
+
+  ASTPipeSelect() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSelect* select() const { return select_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_));
+    return fl.Finalize();
+  }
+
+  const ASTSelect* select_ = nullptr;
+};
+
+class ASTPipeLimitOffset final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_LIMIT_OFFSET;
+
+  ASTPipeLimitOffset() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTLimitOffset* limit_offset() const { return limit_offset_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&limit_offset_));
+    return fl.Finalize();
+  }
+
+  const ASTLimitOffset* limit_offset_ = nullptr;
+};
+
+class ASTPipeOrderBy final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_ORDER_BY;
+
+  ASTPipeOrderBy() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTOrderBy* order_by() const { return order_by_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&order_by_));
+    return fl.Finalize();
+  }
+
+  const ASTOrderBy* order_by_ = nullptr;
+};
+
+class ASTPipeDistinct final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_DISTINCT;
+
+  ASTPipeDistinct() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+};
+
+class ASTPipeTablesample final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_TABLESAMPLE;
+
+  ASTPipeTablesample() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSampleClause* sample() const { return sample_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&sample_));
+    return fl.Finalize();
+  }
+
+  const ASTSampleClause* sample_ = nullptr;
+};
+
+class ASTPipeMatchRecognize final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_MATCH_RECOGNIZE;
+
+  ASTPipeMatchRecognize() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTMatchRecognizeClause* match_recognize() const { return match_recognize_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&match_recognize_));
+    return fl.Finalize();
+  }
+
+  const ASTMatchRecognizeClause* match_recognize_ = nullptr;
+};
+
+class ASTPipeAs final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_AS;
+
+  ASTPipeAs() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTAlias* alias() const { return alias_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
+    return fl.Finalize();
+  }
+
+  const ASTAlias* alias_ = nullptr;
+};
+
+class ASTPipeDescribe final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_DESCRIBE;
+
+  ASTPipeDescribe() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+};
+
+class ASTPipeStaticDescribe final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_STATIC_DESCRIBE;
+
+  ASTPipeStaticDescribe() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+};
+
+class ASTPipeAssert final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_ASSERT;
+
+  ASTPipeAssert() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* condition() const { return condition_; }
+
+  const absl::Span<const ASTExpression* const>& message_list() const {
+    return message_list_;
+  }
+  const ASTExpression* message_list(int i) const { return message_list_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
+    fl.AddRestAsRepeated(&message_list_);
+    return fl.Finalize();
+  }
+
+  const ASTExpression* condition_ = nullptr;
+  absl::Span<const ASTExpression* const> message_list_;
+};
+
+class ASTPipeLog final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_LOG;
+
+  ASTPipeLog() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTHint* hint() const { return hint_; }
+  const ASTSubpipeline* subpipeline() const { return subpipeline_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddOptional(&subpipeline_, AST_SUBPIPELINE);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+  const ASTSubpipeline* subpipeline_ = nullptr;
+};
+
+class ASTPipeDrop final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_DROP;
+
+  ASTPipeDrop() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifierList* column_list() const { return column_list_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_list_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifierList* column_list_ = nullptr;
+};
+
+class ASTPipeSetItem final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_SET_ITEM;
+
+  ASTPipeSetItem() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* column() const { return column_; }
+  const ASTExpression* expression() const { return expression_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* column_ = nullptr;
+  const ASTExpression* expression_ = nullptr;
+};
+
+class ASTPipeSet final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_SET;
+
+  ASTPipeSet() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTPipeSetItem* const>& set_item_list() const {
+    return set_item_list_;
+  }
+  const ASTPipeSetItem* set_item_list(int i) const { return set_item_list_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&set_item_list_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTPipeSetItem* const> set_item_list_;
+};
+
+class ASTPipePivot final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_PIVOT;
+
+  ASTPipePivot() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTPivotClause* pivot_clause() const { return pivot_clause_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&pivot_clause_));
+    return fl.Finalize();
+  }
+
+  const ASTPivotClause* pivot_clause_ = nullptr;
+};
+
+class ASTPipeUnpivot final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_UNPIVOT;
+
+  ASTPipeUnpivot() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTUnpivotClause* unpivot_clause() const { return unpivot_clause_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_clause_));
+    return fl.Finalize();
+  }
+
+  const ASTUnpivotClause* unpivot_clause_ = nullptr;
+};
+
+// `if_cases` must have at least one item. The first item is the IF case.
+// Additional items are ELSEIF cases.
+class ASTPipeIf final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_IF;
+
+  ASTPipeIf() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTHint* hint() const { return hint_; }
+  const ASTSubpipeline* else_subpipeline() const { return else_subpipeline_; }
+
+  const absl::Span<const ASTPipeIfCase* const>& if_cases() const {
+    return if_cases_;
+  }
+  const ASTPipeIfCase* if_cases(int i) const { return if_cases_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddRepeatedWhileIsNodeKind(&if_cases_, AST_PIPE_IF_CASE);
+    fl.AddOptional(&else_subpipeline_, AST_SUBPIPELINE);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+  absl::Span<const ASTPipeIfCase* const> if_cases_;
+  const ASTSubpipeline* else_subpipeline_ = nullptr;
+};
+
+class ASTPipeIfCase final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_IF_CASE;
+
+  ASTPipeIfCase() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* condition() const { return condition_; }
+  const ASTSubpipeline* subpipeline() const { return subpipeline_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&subpipeline_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* condition_ = nullptr;
+  const ASTSubpipeline* subpipeline_ = nullptr;
+};
+
+class ASTPipeFork final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_FORK;
+
+  ASTPipeFork() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTHint* hint() const { return hint_; }
+
+  const absl::Span<const ASTSubpipeline* const>& subpipeline_list() const {
+    return subpipeline_list_;
+  }
+  const ASTSubpipeline* subpipeline_list(int i) const { return subpipeline_list_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddRestAsRepeated(&subpipeline_list_);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+  absl::Span<const ASTSubpipeline* const> subpipeline_list_;
+};
+
+class ASTPipeTee final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_TEE;
+
+  ASTPipeTee() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTHint* hint() const { return hint_; }
+
+  const absl::Span<const ASTSubpipeline* const>& subpipeline_list() const {
+    return subpipeline_list_;
+  }
+  const ASTSubpipeline* subpipeline_list(int i) const { return subpipeline_list_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddRestAsRepeated(&subpipeline_list_);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+  absl::Span<const ASTSubpipeline* const> subpipeline_list_;
+};
+
+class ASTPipeWith final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_WITH;
+
+  ASTPipeWith() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTWithClause* with_clause() const { return with_clause_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&with_clause_));
+    return fl.Finalize();
+  }
+
+  const ASTWithClause* with_clause_ = nullptr;
+};
+
+class ASTPipeExportData final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_EXPORT_DATA;
+
+  ASTPipeExportData() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExportDataStatement* export_data_statement() const { return export_data_statement_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&export_data_statement_));
+    return fl.Finalize();
+  }
+
+  const ASTExportDataStatement* export_data_statement_ = nullptr;
+};
+
+class ASTPipeCreateTable final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_CREATE_TABLE;
+
+  ASTPipeCreateTable() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTCreateTableStatement* create_table_statement() const { return create_table_statement_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&create_table_statement_));
+    return fl.Finalize();
+  }
+
+  const ASTCreateTableStatement* create_table_statement_ = nullptr;
+};
+
+class ASTPipeInsert final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_INSERT;
+
+  ASTPipeInsert() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTInsertStatement* insert_statement() const { return insert_statement_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&insert_statement_));
+    return fl.Finalize();
+  }
+
+  const ASTInsertStatement* insert_statement_ = nullptr;
 };
 
 class ASTSelect final : public ASTQueryExpression {
@@ -142,6 +1150,7 @@ class ASTSelect final : public ASTQueryExpression {
 
   ASTSelect() : ASTQueryExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -151,7 +1160,7 @@ class ASTSelect final : public ASTQueryExpression {
   bool distinct() const { return distinct_; }
 
   const ASTHint* hint() const { return hint_; }
-  const ASTSelectWith* select_with() const { return select_with_; }
+  const ASTWithModifier* with_modifier() const { return with_modifier_; }
   const ASTSelectAs* select_as() const { return select_as_; }
   const ASTSelectList* select_list() const { return select_list_; }
   const ASTFromClause* from_clause() const { return from_clause_; }
@@ -161,15 +1170,18 @@ class ASTSelect final : public ASTQueryExpression {
   const ASTQualify* qualify() const { return qualify_; }
   const ASTWindowClause* window_clause() const { return window_clause_; }
 
+      ABSL_DEPRECATED("Use with_modifier() instead")
+      const ASTWithModifier* select_with() const { return with_modifier(); }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&hint_, AST_HINT);
-    fl.AddOptional(&select_with_, AST_SELECT_WITH);
+    fl.AddOptional(&with_modifier_, AST_WITH_MODIFIER);
     fl.AddOptional(&select_as_, AST_SELECT_AS);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&select_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_list_));
     fl.AddOptional(&from_clause_, AST_FROM_CLAUSE);
     fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
     fl.AddOptional(&group_by_, AST_GROUP_BY);
@@ -180,7 +1192,7 @@ class ASTSelect final : public ASTQueryExpression {
   }
 
   const ASTHint* hint_ = nullptr;
-  const ASTSelectWith* select_with_ = nullptr;
+  const ASTWithModifier* with_modifier_ = nullptr;
   bool distinct_ = false;
   const ASTSelectAs* select_as_ = nullptr;
   const ASTSelectList* select_list_ = nullptr;
@@ -192,12 +1204,18 @@ class ASTSelect final : public ASTQueryExpression {
   const ASTWindowClause* window_clause_ = nullptr;
 };
 
+// This is the column list in SELECT, containing expressions with optional
+// aliases and supporting SELECT-list features like star and dot-star.
+//
+// This is also used for selection lists in pipe operators, where
+// ASTGroupingItemOrder suffixes may be present.
 class ASTSelectList final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_SELECT_LIST;
 
   ASTSelectList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -224,24 +1242,33 @@ class ASTSelectColumn final : public ASTNode {
 
   ASTSelectColumn() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTExpression* expression() const { return expression_; }
   const ASTAlias* alias() const { return alias_; }
 
+  // This is the ordering suffix {ASC|DESC} [NULLS {FIRST|LAST}].
+  // It can only be present on ASTSelectColumns parsed with the
+  // `pipe_selection_item_list_with_order` rule, which is
+  // currently only the pipe AGGREGATE operator.
+  const ASTGroupingItemOrder* grouping_item_order() const { return grouping_item_order_; }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     fl.AddOptional(&alias_, AST_ALIAS);
+    fl.AddOptional(&grouping_item_order_, AST_GROUPING_ITEM_ORDER);
     return fl.Finalize();
   }
 
   const ASTExpression* expression_ = nullptr;
   const ASTAlias* alias_ = nullptr;
+  const ASTGroupingItemOrder* grouping_item_order_ = nullptr;
 };
 
 class ASTExpression : public ASTNode {
@@ -264,17 +1291,51 @@ class ASTExpression : public ASTNode {
   bool parenthesized_ = false;
 };
 
+// The name ASTLeaf is kept for backward compatibility alone. However, not
+// all subclasses are necessarily leaf nodes. ASTStringLiteral and
+// ASTBytesLiteral both have children which are the one or more components
+// of literal concatenations. Similarly, ASTDateOrTimeLiteral and
+// ASTRangeLiteral each contain a child ASTStringLiteral, which itself is not
+// a leaf.
+//
+// The grouping does not make much sense at this point, given that it
+// encompasses not only literals, but also ASTStar.
+//
+// Its main function was intended to be the nodes that get printed through
+// image(), but this is no longer applicable. This functionality is now
+// handled by a stricted abstract class ASTPrintableLeaf.
+//
+// This class should be removed, and subclasses should directly inherit from
+// ASTExpression (just as ASTDateOrTimeLiteral does right now). Once all
+// callers have been updated as such, we should remove this class from the
+// hierarchy and directly inherit from ASTExpression.
 class ASTLeaf : public ASTExpression {
  public:
   explicit ASTLeaf(ASTNodeKind kind) : ASTExpression(kind) {}
 
+  bool IsLeaf() const override { return true; }
+
+  friend class ParseTreeSerializer;
+};
+
+// Intermediate subclass of ASTLeaf which is the parent of nodes that are
+// still using image(). Ideally image() should be hidden, and only used to
+// print back to the user, but it is currently being abused in some places
+// to represent the value as well, such as with ASTIntLiteral and
+// ASTFloatLiteral.
+//
+// Generally, image() should be removed, and location offsets of the node,
+// leaf or not, should be enough to print back the image, for example within
+// error messages.
+class ASTPrintableLeaf : public ASTLeaf {
+ public:
+  explicit ASTPrintableLeaf(ASTNodeKind kind) : ASTLeaf(kind) {}
+
   std::string SingleNodeDebugString() const override;
 
   // image() references data with the same lifetime as this ASTLeaf object.
-  absl::string_view image() const { return image_; }
   void set_image(std::string image) { image_ = std::move(image); }
-
-  bool IsLeaf() const override { return true; }
+  absl::string_view image() const { return image_; }
 
   friend class ParseTreeSerializer;
 
@@ -282,12 +1343,13 @@ class ASTLeaf : public ASTExpression {
   std::string image_;
 };
 
-class ASTIntLiteral final : public ASTLeaf {
+class ASTIntLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_INT_LITERAL;
 
-  ASTIntLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTIntLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -308,14 +1370,22 @@ class ASTIdentifier final : public ASTExpression {
 
   ASTIdentifier() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   std::string SingleNodeDebugString() const override;
 
+  // Used only by the parser to determine the correct handling of
+  // "VALUE" in `SELECT AS VALUE`, as well as time functions like
+  // CURRENT_TIMESTAMP() which can be called without parentheses if
+  // unquoted. After parsing, this field is completely ignored.
+  void set_is_quoted(bool is_quoted) { is_quoted_ = is_quoted; }
+  bool is_quoted() const { return is_quoted_; }
+
   // Set the identifier string.  Input <identifier> is the unquoted identifier.
   // There is no validity checking here.  This assumes the identifier was
-  // validated and unquoted in zetasql.jjt.
+  // validated and unquoted in the parser.
   void SetIdentifier(IdString identifier) {
     id_string_ = identifier;
   }
@@ -336,6 +1406,7 @@ class ASTIdentifier final : public ASTExpression {
   }
 
   IdString id_string_;
+  bool is_quoted_ = false;
 };
 
 class ASTAlias final : public ASTNode {
@@ -344,6 +1415,7 @@ class ASTAlias final : public ASTNode {
 
   ASTAlias() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -359,7 +1431,7 @@ class ASTAlias final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
     return fl.Finalize();
   }
 
@@ -392,9 +1464,11 @@ class ASTGeneralizedPathExpression : public ASTExpression {
   explicit ASTGeneralizedPathExpression(ASTNodeKind kind) : ASTExpression(kind) {}
 
   // Returns an error if 'path' contains a node that cannot come from the
-  // <generalized_path_expression> grammar rule.
+  // <generalized_path_expression> grammar rule. If `node_kind_out` is not
+  // nullptr, also updates it with the name of the node that caused the error.
   static absl::Status VerifyIsPureGeneralizedPathExpression(
-      const ASTExpression* path);
+      const ASTExpression* path,
+      std::string* node_kind_out = nullptr);
 
   friend class ParseTreeSerializer;
 };
@@ -407,6 +1481,7 @@ class ASTPathExpression final : public ASTGeneralizedPathExpression {
 
   ASTPathExpression() : ASTGeneralizedPathExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -442,12 +1517,28 @@ class ASTPathExpression final : public ASTGeneralizedPathExpression {
   absl::Span<const ASTIdentifier* const> names_;
 };
 
+// A common superclass for all postfix table operators like TABLESAMPLE.
+class ASTPostfixTableOperator : public ASTNode {
+ public:
+  explicit ASTPostfixTableOperator(ASTNodeKind kind) : ASTNode(kind) {}
+
+  // The name of the operator to show in user-visible error messages.
+  virtual absl::string_view Name() const = 0;
+
+  friend class ParseTreeSerializer;
+};
+
 // Superclass for all table expressions.  These are things that appear in the
 // from clause and produce a stream of rows like a table.
 // This includes table scans, joins and subqueries.
 class ASTTableExpression : public ASTNode {
  public:
   explicit ASTTableExpression(ASTNodeKind kind) : ASTNode(kind) {}
+
+  const absl::Span<const ASTPostfixTableOperator* const>& postfix_operators() const {
+    return postfix_operators_;
+  }
+  const ASTPostfixTableOperator* postfix_operators(int i) const { return postfix_operators_[i]; }
 
   bool IsTableExpression() const override { return true; }
 
@@ -458,7 +1549,37 @@ class ASTTableExpression : public ASTNode {
   // if applicable.
   const ASTNode* alias_location() const;
 
+  // Compatibility getters until callers are migrated to directly use the list
+  // of posfix operators.
+  const ASTPivotClause* pivot_clause() const {
+    for (const auto* op : postfix_operators()) {
+      if (op->node_kind() == AST_PIVOT_CLAUSE) {
+        return op->GetAsOrDie<ASTPivotClause>();
+      }
+    }
+    return nullptr;
+  }
+  const ASTUnpivotClause* unpivot_clause() const {
+    for (const auto* op : postfix_operators()) {
+      if (op->node_kind() == AST_UNPIVOT_CLAUSE) {
+        return op->GetAsOrDie<ASTUnpivotClause>();
+      }
+    }
+    return nullptr;
+  }
+  const ASTSampleClause* sample_clause() const {
+    for (const auto* op : postfix_operators()) {
+      if (op->node_kind() == AST_SAMPLE_CLAUSE) {
+        return op->GetAsOrDie<ASTSampleClause>();
+      }
+    }
+    return nullptr;
+  }
+
   friend class ParseTreeSerializer;
+
+ protected:
+  absl::Span<const ASTPostfixTableOperator* const> postfix_operators_;
 };
 
 // TablePathExpression are the TableExpressions that introduce a single scan,
@@ -470,6 +1591,7 @@ class ASTTablePathExpression final : public ASTTableExpression {
 
   ASTTablePathExpression() : ASTTableExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -482,12 +1604,7 @@ class ASTTablePathExpression final : public ASTTableExpression {
   // Present if the scan had WITH OFFSET.
   const ASTWithOffset* with_offset() const { return with_offset_; }
 
-  // At most one of pivot_clause or unpivot_clause can be present.
-  const ASTPivotClause* pivot_clause() const { return pivot_clause_; }
-
-  const ASTUnpivotClause* unpivot_clause() const { return unpivot_clause_; }
   const ASTForSystemTime* for_system_time() const { return for_system_time_; }
-  const ASTSampleClause* sample_clause() const { return sample_clause_; }
 
   const ASTAlias* alias() const override { return alias_; }
 
@@ -501,10 +1618,8 @@ class ASTTablePathExpression final : public ASTTableExpression {
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&alias_, AST_ALIAS);
     fl.AddOptional(&with_offset_, AST_WITH_OFFSET);
-    fl.AddOptional(&pivot_clause_, AST_PIVOT_CLAUSE);
-    fl.AddOptional(&unpivot_clause_, AST_UNPIVOT_CLAUSE);
     fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
-    fl.AddOptional(&sample_clause_, AST_SAMPLE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
@@ -513,10 +1628,29 @@ class ASTTablePathExpression final : public ASTTableExpression {
   const ASTHint* hint_ = nullptr;
   const ASTAlias* alias_ = nullptr;
   const ASTWithOffset* with_offset_ = nullptr;
-  const ASTPivotClause* pivot_clause_ = nullptr;
-  const ASTUnpivotClause* unpivot_clause_ = nullptr;
   const ASTForSystemTime* for_system_time_ = nullptr;
-  const ASTSampleClause* sample_clause_ = nullptr;
+};
+
+// This is a placehodler ASTTableExpression used for the lhs field in
+// the ASTJoin used to represent ASTPipeJoin.
+class ASTPipeJoinLhsPlaceholder final : public ASTTableExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_JOIN_LHS_PLACEHOLDER;
+
+  ASTPipeJoinLhsPlaceholder() : ASTTableExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&postfix_operators_);
+    return fl.Finalize();
+  }
 };
 
 class ASTFromClause final : public ASTNode {
@@ -525,6 +1659,7 @@ class ASTFromClause final : public ASTNode {
 
   ASTFromClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -538,7 +1673,7 @@ class ASTFromClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&table_expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&table_expression_));
     return fl.Finalize();
   }
 
@@ -551,6 +1686,7 @@ class ASTWhereClause final : public ASTNode {
 
   ASTWhereClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -561,19 +1697,20 @@ class ASTWhereClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
   const ASTExpression* expression_ = nullptr;
 };
 
-class ASTBooleanLiteral final : public ASTLeaf {
+class ASTBooleanLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BOOLEAN_LITERAL;
 
-  ASTBooleanLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTBooleanLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -597,6 +1734,7 @@ class ASTAndExpr final : public ASTExpression {
 
   ASTAndExpr() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -625,6 +1763,7 @@ class ASTBinaryExpression final : public ASTExpression {
 
   ASTBinaryExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -650,7 +1789,9 @@ class ASTBinaryExpression final : public ASTExpression {
     MULTIPLY = ASTBinaryExpressionEnums::MULTIPLY,
     DIVIDE = ASTBinaryExpressionEnums::DIVIDE,
     CONCAT_OP = ASTBinaryExpressionEnums::CONCAT_OP,
-    DISTINCT = ASTBinaryExpressionEnums::DISTINCT
+    DISTINCT = ASTBinaryExpressionEnums::DISTINCT,
+    IS_SOURCE_NODE = ASTBinaryExpressionEnums::IS_SOURCE_NODE,
+    IS_DEST_NODE = ASTBinaryExpressionEnums::IS_DEST_NODE
   };
 
   // See description of Op values in ast_enums.proto.
@@ -676,8 +1817,8 @@ class ASTBinaryExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&rhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&rhs_));
     return fl.Finalize();
   }
 
@@ -687,12 +1828,49 @@ class ASTBinaryExpression final : public ASTExpression {
   const ASTExpression* rhs_ = nullptr;
 };
 
+// Represents a string literal which could be just a singleton or a whole
+// concatenation.
 class ASTStringLiteral final : public ASTLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_STRING_LITERAL;
 
   ASTStringLiteral() : ASTLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTStringLiteralComponent* const>& components() const {
+    return components_;
+  }
+  const ASTStringLiteralComponent* components(int i) const { return components_[i]; }
+
+  // The parsed and validated value of this literal.
+  const std::string& string_value() const { return string_value_; }
+  void set_string_value(absl::string_view string_value) {
+    string_value_ = std::string(string_value);
+  }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRepeatedWhileIsExpression(&components_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTStringLiteralComponent* const> components_;
+  std::string string_value_;
+};
+
+class ASTStringLiteralComponent final : public ASTPrintableLeaf {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_STRING_LITERAL_COMPONENT;
+
+  ASTStringLiteralComponent() : ASTPrintableLeaf(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -714,12 +1892,13 @@ class ASTStringLiteral final : public ASTLeaf {
   std::string string_value_;
 };
 
-class ASTStar final : public ASTLeaf {
+class ASTStar final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_STAR;
 
-  ASTStar() : ASTLeaf(kConcreteNodeKind) {}
+  ASTStar() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -738,6 +1917,7 @@ class ASTOrExpr final : public ASTExpression {
 
   ASTOrExpr() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -760,18 +1940,162 @@ class ASTOrExpr final : public ASTExpression {
   absl::Span<const ASTExpression* const> disjuncts_;
 };
 
+// Represents a concatenation expression, such as "a || b || c".
+class ASTConcatExpr final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CONCAT_EXPR;
+
+  ASTConcatExpr() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTExpression* const>& operands() const {
+    return operands_;
+  }
+  const ASTExpression* operands(int i) const { return operands_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&operands_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTExpression* const> operands_;
+};
+
+class ASTOrderingExpression final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ORDERING_EXPRESSION;
+
+  ASTOrderingExpression() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  // This enum is equivalent to ASTOrderingExpressionEnums::OrderingSpec in ast_enums.proto
+  enum OrderingSpec {
+    NOT_SET = ASTOrderingExpressionEnums::NOT_SET,
+    ASC = ASTOrderingExpressionEnums::ASC,
+    DESC = ASTOrderingExpressionEnums::DESC,
+    UNSPECIFIED = ASTOrderingExpressionEnums::UNSPECIFIED
+  };
+
+  void set_ordering_spec(ASTOrderingExpression::OrderingSpec ordering_spec) { ordering_spec_ = ordering_spec; }
+  ASTOrderingExpression::OrderingSpec ordering_spec() const { return ordering_spec_; }
+
+  const ASTExpression* expression() const { return expression_; }
+  const ASTCollate* collate() const { return collate_; }
+  const ASTNullOrder* null_order() const { return null_order_; }
+  const ASTOptionsList* option_list() const { return option_list_; }
+
+  bool descending() const { return ordering_spec_ == DESC; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    fl.AddOptional(&collate_, AST_COLLATE);
+    fl.AddOptional(&null_order_, AST_NULL_ORDER);
+    fl.AddOptional(&option_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTExpression* expression_ = nullptr;
+  const ASTCollate* collate_ = nullptr;
+  const ASTNullOrder* null_order_ = nullptr;
+  ASTOrderingExpression::OrderingSpec ordering_spec_ = ASTOrderingExpression::UNSPECIFIED;
+  const ASTOptionsList* option_list_ = nullptr;
+};
+
+class ASTOrderBy final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ORDER_BY;
+
+  ASTOrderBy() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTHint* hint() const { return hint_; }
+
+  const absl::Span<const ASTOrderingExpression* const>& ordering_expressions() const {
+    return ordering_expressions_;
+  }
+  const ASTOrderingExpression* ordering_expressions(int i) const { return ordering_expressions_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddRestAsRepeated(&ordering_expressions_);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+  absl::Span<const ASTOrderingExpression* const> ordering_expressions_;
+};
+
+class ASTGroupingItemOrder final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GROUPING_ITEM_ORDER;
+
+  ASTGroupingItemOrder() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  void set_ordering_spec(ASTOrderingExpression::OrderingSpec ordering_spec) { ordering_spec_ = ordering_spec; }
+  ASTOrderingExpression::OrderingSpec ordering_spec() const { return ordering_spec_; }
+
+  const ASTNullOrder* null_order() const { return null_order_; }
+
+        bool descending() const {
+          return ordering_spec_ == ASTOrderingExpression::DESC;
+        }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&null_order_, AST_NULL_ORDER);
+    return fl.Finalize();
+  }
+
+  ASTOrderingExpression::OrderingSpec ordering_spec_ = ASTOrderingExpression::UNSPECIFIED;
+  const ASTNullOrder* null_order_ = nullptr;
+};
+
 // Represents a grouping item, which is either an expression (a regular
 // group by key), or a rollup list, or a cube list, or a grouping set list.
+// The item "()", meaning an empty grouping list, is represented as an
+// ASTGroupingItem with no children.
 class ASTGroupingItem final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_GROUPING_ITEM;
 
   ASTGroupingItem() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  // Exactly one of expression() and rollup() will be non-NULL.
   const ASTExpression* expression() const { return expression_; }
 
   // A rollup() containing multiple expressions.
@@ -784,6 +2108,14 @@ class ASTGroupingItem final : public ASTNode {
   // ASTGroupingSet.
   const ASTGroupingSetList* grouping_set_list() const { return grouping_set_list_; }
 
+  // Alias can only be present for `expression` cases.
+  // It can be present but is not valid outside pipe AGGREGATE.
+  const ASTAlias* alias() const { return alias_; }
+
+  // Order can only be present for `expression` cases.
+  // It can be present but is not valid outside pipe AGGREGATE.
+  const ASTGroupingItemOrder* grouping_item_order() const { return grouping_item_order_; }
+
   friend class ParseTreeSerializer;
 
  private:
@@ -793,6 +2125,8 @@ class ASTGroupingItem final : public ASTNode {
     fl.AddOptional(&rollup_, AST_ROLLUP);
     fl.AddOptional(&cube_, AST_CUBE);
     fl.AddOptional(&grouping_set_list_, AST_GROUPING_SET_LIST);
+    fl.AddOptional(&alias_, AST_ALIAS);
+    fl.AddOptional(&grouping_item_order_, AST_GROUPING_ITEM_ORDER);
     return fl.Finalize();
   }
 
@@ -800,6 +2134,8 @@ class ASTGroupingItem final : public ASTNode {
   const ASTRollup* rollup_ = nullptr;
   const ASTCube* cube_ = nullptr;
   const ASTGroupingSetList* grouping_set_list_ = nullptr;
+  const ASTAlias* alias_ = nullptr;
+  const ASTGroupingItemOrder* grouping_item_order_ = nullptr;
 };
 
 class ASTGroupBy final : public ASTNode {
@@ -808,8 +2144,15 @@ class ASTGroupBy final : public ASTNode {
 
   ASTGroupBy() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  // True if query had AND ORDER BY on the GROUP BY.
+  void set_and_order_by(bool and_order_by) { and_order_by_ = and_order_by; }
+  bool and_order_by() const { return and_order_by_; }
 
   const ASTHint* hint() const { return hint_; }
 
@@ -837,6 +2180,7 @@ class ASTGroupBy final : public ASTNode {
   const ASTHint* hint_ = nullptr;
   const ASTGroupByAll* all_ = nullptr;
   absl::Span<const ASTGroupingItem* const> grouping_items_;
+  bool and_order_by_ = false;
 };
 
 // Wrapper node for the keyword ALL in syntax GROUP BY ALL to provide parse
@@ -847,6 +2191,7 @@ class ASTGroupByAll final : public ASTNode {
 
   ASTGroupByAll() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -859,79 +2204,56 @@ class ASTGroupByAll final : public ASTNode {
   }
 };
 
-class ASTOrderingExpression final : public ASTNode {
+// Wrapper node for the keyword ALL in syntax LIMIT ALL to provide parse
+// location range.
+class ASTLimitAll final : public ASTNode {
  public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_ORDERING_EXPRESSION;
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_LIMIT_ALL;
 
-  ASTOrderingExpression() : ASTNode(kConcreteNodeKind) {}
+  ASTLimitAll() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  std::string SingleNodeDebugString() const override;
+  friend class ParseTreeSerializer;
 
-  // This enum is equivalent to ASTOrderingExpressionEnums::OrderingSpec in ast_enums.proto
-  enum OrderingSpec {
-    NOT_SET = ASTOrderingExpressionEnums::NOT_SET,
-    ASC = ASTOrderingExpressionEnums::ASC,
-    DESC = ASTOrderingExpressionEnums::DESC,
-    UNSPECIFIED = ASTOrderingExpressionEnums::UNSPECIFIED
-  };
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+};
 
-  void set_ordering_spec(ASTOrderingExpression::OrderingSpec ordering_spec) { ordering_spec_ = ordering_spec; }
-  ASTOrderingExpression::OrderingSpec ordering_spec() const { return ordering_spec_; }
+class ASTLimit final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_LIMIT;
+
+  ASTLimit() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // When `all` is set, it represents syntax: LIMIT ALL. The syntax is
+  // mutually exclusive with syntax LIMIT `expression`, in which case
+  // `all` is nullptr and `expression` is non-empty.
+  const ASTLimitAll* all() const { return all_; }
 
   const ASTExpression* expression() const { return expression_; }
-  const ASTCollate* collate() const { return collate_; }
-  const ASTNullOrder* null_order() const { return null_order_; }
-
-  bool descending() const { return ordering_spec_ == DESC; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
-    fl.AddOptional(&collate_, AST_COLLATE);
-    fl.AddOptional(&null_order_, AST_NULL_ORDER);
+    fl.AddOptional(&all_, AST_LIMIT_ALL);
+    fl.AddOptionalExpression(&expression_);
     return fl.Finalize();
   }
 
+  const ASTLimitAll* all_ = nullptr;
   const ASTExpression* expression_ = nullptr;
-  const ASTCollate* collate_ = nullptr;
-  const ASTNullOrder* null_order_ = nullptr;
-  ASTOrderingExpression::OrderingSpec ordering_spec_ = ASTOrderingExpression::UNSPECIFIED;
-};
-
-class ASTOrderBy final : public ASTNode {
- public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_ORDER_BY;
-
-  ASTOrderBy() : ASTNode(kConcreteNodeKind) {}
-  void Accept(ParseTreeVisitor* visitor, void* data) const override;
-  absl::StatusOr<VisitResult> Accept(
-      NonRecursiveParseTreeVisitor* visitor) const override;
-
-  const ASTHint* hint() const { return hint_; }
-
-  const absl::Span<const ASTOrderingExpression* const>& ordering_expressions() const {
-    return ordering_expressions_;
-  }
-  const ASTOrderingExpression* ordering_expressions(int i) const { return ordering_expressions_[i]; }
-
-  friend class ParseTreeSerializer;
-
- private:
-  absl::Status InitFields() final {
-    FieldLoader fl(this);
-    fl.AddOptional(&hint_, AST_HINT);
-    fl.AddRestAsRepeated(&ordering_expressions_);
-    return fl.Finalize();
-  }
-
-  const ASTHint* hint_ = nullptr;
-  absl::Span<const ASTOrderingExpression* const> ordering_expressions_;
 };
 
 class ASTLimitOffset final : public ASTNode {
@@ -940,35 +2262,49 @@ class ASTLimitOffset final : public ASTNode {
 
   ASTLimitOffset() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  // The LIMIT value. Never NULL.
-  const ASTExpression* limit() const { return limit_; }
+  // The LIMIT value. Never NULL. Either `all` should be set when ALL
+  // is specified or `expression` should be set when an expression is
+  // specified.
+  const ASTLimit* limit() const { return limit_; }
 
   // The OFFSET value. NULL if no OFFSET specified.
   const ASTExpression* offset() const { return offset_; }
 
+  // Returns the limit expression if it is set, or nullptr otherwise.
+  const ASTExpression* limit_expression() const {
+    if (limit_->all() != nullptr) {
+      return nullptr;
+    }
+    return limit_->expression();
+  }
+  // Returns true if LIMIT ALL is used.
+  bool has_limit_all() const { return limit_->all() != nullptr; }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&limit_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&limit_));
     fl.AddOptionalExpression(&offset_);
     return fl.Finalize();
   }
 
-  const ASTExpression* limit_ = nullptr;
+  const ASTLimit* limit_ = nullptr;
   const ASTExpression* offset_ = nullptr;
 };
 
-class ASTFloatLiteral final : public ASTLeaf {
+class ASTFloatLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_FLOAT_LITERAL;
 
-  ASTFloatLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTFloatLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -981,12 +2317,13 @@ class ASTFloatLiteral final : public ASTLeaf {
   }
 };
 
-class ASTNullLiteral final : public ASTLeaf {
+class ASTNullLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_NULL_LITERAL;
 
-  ASTNullLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTNullLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1005,6 +2342,7 @@ class ASTOnClause final : public ASTNode {
 
   ASTOnClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1015,7 +2353,7 @@ class ASTOnClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -1028,24 +2366,28 @@ class ASTAliasedQuery final : public ASTNode {
 
   ASTAliasedQuery() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTIdentifier* alias() const { return alias_; }
   const ASTQuery* query() const { return query_; }
+  const ASTAliasedQueryModifiers* modifiers() const { return modifiers_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    fl.AddOptional(&modifiers_, AST_ALIASED_QUERY_MODIFIERS);
     return fl.Finalize();
   }
 
   const ASTIdentifier* alias_ = nullptr;
   const ASTQuery* query_ = nullptr;
+  const ASTAliasedQueryModifiers* modifiers_ = nullptr;
 };
 
 // Joins could introduce multiple scans and cannot have aliases.
@@ -1058,6 +2400,7 @@ class ASTJoin final : public ASTTableExpression {
 
   ASTJoin() : ASTTableExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1134,13 +2477,14 @@ class ASTJoin final : public ASTTableExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
     fl.AddOptional(&hint_, AST_HINT);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&join_location_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&rhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&join_location_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&rhs_));
     fl.AddOptional(&on_clause_, AST_ON_CLAUSE);
     fl.AddOptional(&using_clause_, AST_USING_CLAUSE);
     fl.AddOptional(&clause_list_, AST_ON_OR_USING_CLAUSE_LIST);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
@@ -1177,12 +2521,75 @@ class ASTJoin final : public ASTTableExpression {
   std::unique_ptr<ParseError> parse_error_ = nullptr;
 };
 
+// This represents an aliased group rows entry in the WITH clause.
+class ASTAliasedGroupRows final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALIASED_GROUP_ROWS;
+
+  ASTAliasedGroupRows() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* alias() const { return alias_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* alias_ = nullptr;
+};
+
+// This represents a WITH clause entry that must contain either an aliased
+// query or a aliased group rows.
+//
+// All these fields are mutually exclusive, meaning only one of them can be
+// populated at a time.
+class ASTWithClauseEntry final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_WITH_CLAUSE_ENTRY;
+
+  ASTWithClauseEntry() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Custom field getters that ensure only one of the with clause entry fields
+  // are populated.
+  const ASTAliasedQuery* aliased_query() const;
+  const ASTAliasedGroupRows* aliased_group_rows() const;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&aliased_query_, AST_ALIASED_QUERY);
+    fl.AddOptional(&aliased_group_rows_, AST_ALIASED_GROUP_ROWS);
+    return fl.Finalize();
+  }
+
+  const ASTAliasedQuery* aliased_query_ = nullptr;
+  const ASTAliasedGroupRows* aliased_group_rows_ = nullptr;
+};
+
+// This represents a WITH clause, which defines one or more named entries
+// such as common table expressions (CTEs) via ASTAliasedQuery.
+// If `recursive` is true, this is a WITH RECURSIVE clause.
 class ASTWithClause final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_WITH_CLAUSE;
 
   ASTWithClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1191,21 +2598,21 @@ class ASTWithClause final : public ASTNode {
   void set_recursive(bool recursive) { recursive_ = recursive; }
   bool recursive() const { return recursive_; }
 
-  const absl::Span<const ASTAliasedQuery* const>& with() const {
-    return with_;
+  const absl::Span<const ASTWithClauseEntry* const>& entries() const {
+    return entries_;
   }
-  const ASTAliasedQuery* with(int i) const { return with_[i]; }
+  const ASTWithClauseEntry* entries(int i) const { return entries_[i]; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    fl.AddRestAsRepeated(&with_);
+    fl.AddRestAsRepeated(&entries_);
     return fl.Finalize();
   }
 
-  absl::Span<const ASTAliasedQuery* const> with_;
+  absl::Span<const ASTWithClauseEntry* const> entries_;
   bool recursive_ = false;
 };
 
@@ -1215,6 +2622,7 @@ class ASTHaving final : public ASTNode {
 
   ASTHaving() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1225,7 +2633,7 @@ class ASTHaving final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -1253,6 +2661,7 @@ class ASTSimpleType final : public ASTType {
 
   ASTSimpleType() : ASTType(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1265,7 +2674,7 @@ class ASTSimpleType final : public ASTType {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_name_));
     fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
     fl.AddOptional(&collate_, AST_COLLATE);
     return fl.Finalize();
@@ -1282,6 +2691,7 @@ class ASTArrayType final : public ASTType {
 
   ASTArrayType() : ASTType(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1294,7 +2704,7 @@ class ASTArrayType final : public ASTType {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&element_type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&element_type_));
     fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
     fl.AddOptional(&collate_, AST_COLLATE);
     return fl.Finalize();
@@ -1311,6 +2721,7 @@ class ASTStructField final : public ASTNode {
 
   ASTStructField() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1325,7 +2736,7 @@ class ASTStructField final : public ASTNode {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&name_, AST_IDENTIFIER);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
     return fl.Finalize();
   }
 
@@ -1339,6 +2750,7 @@ class ASTStructType final : public ASTType {
 
   ASTStructType() : ASTType(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1372,6 +2784,7 @@ class ASTFunctionTypeArgList final : public ASTNode {
 
   ASTFunctionTypeArgList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1398,6 +2811,7 @@ class ASTFunctionType final : public ASTType {
 
   ASTFunctionType() : ASTType(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1411,8 +2825,8 @@ class ASTFunctionType final : public ASTType {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&arg_list_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&return_type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&arg_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&return_type_));
     fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
     fl.AddOptional(&collate_, AST_COLLATE);
     return fl.Finalize();
@@ -1430,6 +2844,7 @@ class ASTCastExpression final : public ASTExpression {
 
   ASTCastExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1447,8 +2862,8 @@ class ASTCastExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
     fl.AddOptional(&format_, AST_FORMAT_CLAUSE);
     return fl.Finalize();
   }
@@ -1470,6 +2885,7 @@ class ASTSelectAs final : public ASTNode {
 
   ASTSelectAs() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1511,6 +2927,7 @@ class ASTRollup final : public ASTNode {
 
   ASTRollup() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1538,6 +2955,7 @@ class ASTCube final : public ASTNode {
 
   ASTCube() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1570,6 +2988,7 @@ class ASTGroupingSet final : public ASTNode {
 
   ASTGroupingSet() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1600,6 +3019,7 @@ class ASTGroupingSetList final : public ASTNode {
 
   ASTGroupingSetList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1626,6 +3046,7 @@ class ASTExpressionWithAlias final : public ASTExpression {
 
   ASTExpressionWithAlias() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1637,8 +3058,8 @@ class ASTExpressionWithAlias final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
     return fl.Finalize();
   }
 
@@ -1652,6 +3073,7 @@ class ASTFunctionCall final : public ASTExpression {
 
   ASTFunctionCall() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1671,13 +3093,27 @@ class ASTFunctionCall final : public ASTExpression {
   void set_distinct(bool distinct) { distinct_ = distinct; }
   bool distinct() const { return distinct_; }
 
-  // Used by the Bison parser to mark CURRENT_<date/time> functions to which no
+  // Used by the parser to mark CURRENT_<date/time> functions to which no
   // parentheses have yet been applied.
   void set_is_current_date_time_without_parentheses(bool is_current_date_time_without_parentheses) { is_current_date_time_without_parentheses_ = is_current_date_time_without_parentheses; }
   bool is_current_date_time_without_parentheses() const { return is_current_date_time_without_parentheses_; }
 
+  // If true, this function was called with chained call syntax.
+  // For example,
+  //   `(base_expression).function_call(args)`
+  // which is semantically similar to
+  //   `function_call(base_expression, args)`
+  //
+  // `arguments` must have at least one element.  The first element is the
+  // base expression.
+  void set_is_chained_call(bool is_chained_call) { is_chained_call_ = is_chained_call; }
+  bool is_chained_call() const { return is_chained_call_; }
+
   const ASTPathExpression* function() const { return function_; }
+  const ASTWhereClause* where_expr() const { return where_expr_; }
   const ASTHavingModifier* having_modifier() const { return having_modifier_; }
+  const ASTGroupBy* group_by() const { return group_by_; }
+  const ASTHaving* having_expr() const { return having_expr_; }
 
   // If present, applies to the inputs of anonymized aggregate functions.
   const ASTClampedBetweenModifier* clamped_between_modifier() const { return clamped_between_modifier_; }
@@ -1695,8 +3131,6 @@ class ASTFunctionCall final : public ASTExpression {
   // hint if not null.
   const ASTHint* hint() const { return hint_; }
 
-  const ASTWithGroupRows* with_group_rows() const { return with_group_rows_; }
-
   const absl::Span<const ASTExpression* const>& arguments() const {
     return arguments_;
   }
@@ -1705,11 +3139,34 @@ class ASTFunctionCall final : public ASTExpression {
   // Convenience method that returns true if any modifiers are set. Useful for
   // places in the resolver where function call syntax is used for purposes
   // other than a function call (e.g., <array>[OFFSET(<expr>) or WEEK(MONDAY)]).
-  bool HasModifiers() const {
+  // Ignore `is_chained_call` if `ignore_is_chained_call` is true.
+  bool HasModifiers(bool ignore_is_chained_call=false) const {
     return distinct_ || null_handling_modifier_ != DEFAULT_NULL_HANDLING ||
            having_modifier_ != nullptr ||
            clamped_between_modifier_ != nullptr || order_by_ != nullptr ||
-           limit_offset_ != nullptr || with_group_rows_ != nullptr;
+           limit_offset_ != nullptr || group_by_ != nullptr ||
+           where_expr_ != nullptr || having_expr_ != nullptr ||
+           with_report_modifier_ != nullptr ||
+           (is_chained_call_ && !ignore_is_chained_call);
+  }
+
+  // Return the number of optional modifiers present on this call.
+  // Callers can use this to check that there are no unsupported modifiers by
+  // checking that the number of supported modifiers that are present and
+  // handled is equal to NumModifiers().
+  int NumModifiers() const {
+    return
+         (distinct_ ? 1 : 0) +
+         (null_handling_modifier_ != DEFAULT_NULL_HANDLING  ? 1 : 0) +
+         (having_modifier_ != nullptr  ? 1 : 0) +
+         (clamped_between_modifier_ != nullptr  ? 1 : 0) +
+         (order_by_ != nullptr  ? 1 : 0) +
+         (limit_offset_ != nullptr  ? 1 : 0) +
+         (group_by_ != nullptr  ? 1 : 0) +
+         (where_expr_ != nullptr  ? 1 : 0) +
+         (having_expr_ != nullptr  ? 1 : 0) +
+         (with_report_modifier_ != nullptr  ? 1 : 0) +
+         (is_chained_call_ ? 1 : 0);
   }
 
   friend class ParseTreeSerializer;
@@ -1717,23 +3174,34 @@ class ASTFunctionCall final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&function_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&function_));
     fl.AddRepeatedWhileIsExpression(&arguments_);
+    fl.AddOptional(&where_expr_, AST_WHERE_CLAUSE);
     fl.AddOptional(&having_modifier_, AST_HAVING_MODIFIER);
+    fl.AddOptional(&group_by_, AST_GROUP_BY);
+    fl.AddOptional(&having_expr_, AST_HAVING);
     fl.AddOptional(&clamped_between_modifier_, AST_CLAMPED_BETWEEN_MODIFIER);
     fl.AddOptional(&with_report_modifier_, AST_WITH_REPORT_MODIFIER);
     fl.AddOptional(&order_by_, AST_ORDER_BY);
     fl.AddOptional(&limit_offset_, AST_LIMIT_OFFSET);
     fl.AddOptional(&hint_, AST_HINT);
-    fl.AddOptional(&with_group_rows_, AST_WITH_GROUP_ROWS);
     return fl.Finalize();
   }
 
   const ASTPathExpression* function_ = nullptr;
   absl::Span<const ASTExpression* const> arguments_;
 
+  // Set if the function was called with FUNC(args WHERE expr).
+  const ASTWhereClause* where_expr_ = nullptr;
+
   // Set if the function was called with FUNC(args HAVING {MAX|MIN} expr).
   const ASTHavingModifier* having_modifier_ = nullptr;
+
+  // Set if the function was called with FUNC(args GROUP BY expr [, ... ]).
+  const ASTGroupBy* group_by_ = nullptr;
+
+  // Set if the function was called with FUNC(args group_by HAVING expr).
+  const ASTHaving* having_expr_ = nullptr;
 
   // Set if the function was called with
   // FUNC(args CLAMPED BETWEEN low AND high).
@@ -1752,20 +3220,43 @@ class ASTFunctionCall final : public ASTExpression {
   // Optional hint.
   const ASTHint* hint_ = nullptr;
 
-  // Set if the function was called WITH GROUP_ROWS(...).
-  const ASTWithGroupRows* with_group_rows_ = nullptr;
-
   // Set if the function was called with FUNC(args {IGNORE|RESPECT} NULLS).
   ASTFunctionCall::NullHandlingModifier null_handling_modifier_ = ASTFunctionCall::DEFAULT_NULL_HANDLING;
 
   // True if the function was called with FUNC(DISTINCT args).
   bool distinct_ = false;
 
-  // This is set by the Bison parser to indicate a parentheses-less call to
+  // This is set by the parser to indicate a parentheses-less call to
   // CURRENT_* functions. The parser parses them as function calls even without
   // the parentheses, but then still allows function call parentheses to be
   // applied.
   bool is_current_date_time_without_parentheses_ = false;
+
+  bool is_chained_call_ = false;
+};
+
+class ASTChainedBaseExpr final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CHAINED_BASE_EXPR;
+
+  ASTChainedBaseExpr() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* expr() const { return expr_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* expr_ = nullptr;
 };
 
 class ASTArrayConstructor final : public ASTExpression {
@@ -1774,6 +3265,7 @@ class ASTArrayConstructor final : public ASTExpression {
 
   ASTArrayConstructor() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1809,6 +3301,7 @@ class ASTStructConstructorArg final : public ASTNode {
 
   ASTStructConstructorArg() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1820,7 +3313,7 @@ class ASTStructConstructorArg final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     fl.AddOptional(&alias_, AST_ALIAS);
     return fl.Finalize();
   }
@@ -1837,6 +3330,7 @@ class ASTStructConstructorWithParens final : public ASTExpression {
 
   ASTStructConstructorWithParens() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1869,6 +3363,7 @@ class ASTStructConstructorWithKeyword final : public ASTExpression {
 
   ASTStructConstructorWithKeyword() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1904,6 +3399,7 @@ class ASTInExpression final : public ASTExpression {
 
   ASTInExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -1936,8 +3432,8 @@ class ASTInExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&in_location_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&in_location_));
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&in_list_, AST_IN_LIST);
     fl.AddOptional(&query_, AST_QUERY);
@@ -1973,6 +3469,7 @@ class ASTInList final : public ASTNode {
 
   ASTInList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2000,6 +3497,7 @@ class ASTBetweenExpression final : public ASTExpression {
 
   ASTBetweenExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2011,7 +3509,7 @@ class ASTBetweenExpression final : public ASTExpression {
 
   const ASTExpression* lhs() const { return lhs_; }
 
-  // Represents the location of the 'BETWEEEN' token. Used only for
+  // Represents the location of the 'BETWEEN' token. Used only for
   // error messages.
   const ASTLocation* between_location() const { return between_location_; }
 
@@ -2025,10 +3523,10 @@ class ASTBetweenExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&between_location_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&low_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&high_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&between_location_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&low_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&high_));
     return fl.Finalize();
   }
 
@@ -2047,16 +3545,22 @@ class ASTNumericLiteral final : public ASTLeaf {
 
   ASTNumericLiteral() : ASTLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTStringLiteral* string_literal() const { return string_literal_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&string_literal_));
     return fl.Finalize();
   }
+
+  const ASTStringLiteral* string_literal_ = nullptr;
 };
 
 class ASTBigNumericLiteral final : public ASTLeaf {
@@ -2065,24 +3569,67 @@ class ASTBigNumericLiteral final : public ASTLeaf {
 
   ASTBigNumericLiteral() : ASTLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTStringLiteral* string_literal() const { return string_literal_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&string_literal_));
     return fl.Finalize();
   }
+
+  const ASTStringLiteral* string_literal_ = nullptr;
 };
 
+// Represents a bytes literal which could be just a singleton or a whole
+// concatenation.
 class ASTBytesLiteral final : public ASTLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BYTES_LITERAL;
 
   ASTBytesLiteral() : ASTLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTBytesLiteralComponent* const>& components() const {
+    return components_;
+  }
+  const ASTBytesLiteralComponent* components(int i) const { return components_[i]; }
+
+  // The parsed and validated value of this literal.
+  const std::string& bytes_value() const { return bytes_value_; }
+  void set_bytes_value(std::string bytes_value) {
+    bytes_value_ = std::move(bytes_value);
+  }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRepeatedWhileIsExpression(&components_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTBytesLiteralComponent* const> components_;
+  std::string bytes_value_;
+};
+
+class ASTBytesLiteralComponent final : public ASTPrintableLeaf {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BYTES_LITERAL_COMPONENT;
+
+  ASTBytesLiteralComponent() : ASTPrintableLeaf(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2109,6 +3656,7 @@ class ASTDateOrTimeLiteral final : public ASTExpression {
 
   ASTDateOrTimeLiteral() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2124,7 +3672,7 @@ class ASTDateOrTimeLiteral final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&string_literal_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&string_literal_));
     return fl.Finalize();
   }
 
@@ -2134,12 +3682,13 @@ class ASTDateOrTimeLiteral final : public ASTExpression {
 
 // This represents the value MAX that shows up in type parameter lists.
 // It will not show up as a general expression anywhere else.
-class ASTMaxLiteral final : public ASTLeaf {
+class ASTMaxLiteral final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_MAX_LITERAL;
 
-  ASTMaxLiteral() : ASTLeaf(kConcreteNodeKind) {}
+  ASTMaxLiteral() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2158,16 +3707,22 @@ class ASTJSONLiteral final : public ASTLeaf {
 
   ASTJSONLiteral() : ASTLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTStringLiteral* string_literal() const { return string_literal_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&string_literal_));
     return fl.Finalize();
   }
+
+  const ASTStringLiteral* string_literal_ = nullptr;
 };
 
 class ASTCaseValueExpression final : public ASTExpression {
@@ -2176,6 +3731,7 @@ class ASTCaseValueExpression final : public ASTExpression {
 
   ASTCaseValueExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2202,6 +3758,7 @@ class ASTCaseNoValueExpression final : public ASTExpression {
 
   ASTCaseNoValueExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2228,6 +3785,7 @@ class ASTArrayElement final : public ASTGeneralizedPathExpression {
 
   ASTArrayElement() : ASTGeneralizedPathExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2240,9 +3798,9 @@ class ASTArrayElement final : public ASTGeneralizedPathExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&array_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&open_bracket_location_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&position_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&array_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&open_bracket_location_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&position_));
     return fl.Finalize();
   }
 
@@ -2257,6 +3815,7 @@ class ASTBitwiseShiftExpression final : public ASTExpression {
 
   ASTBitwiseShiftExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2276,9 +3835,9 @@ class ASTBitwiseShiftExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&operator_location_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&rhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&operator_location_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&rhs_));
     return fl.Finalize();
   }
 
@@ -2294,6 +3853,7 @@ class ASTCollate final : public ASTNode {
 
   ASTCollate() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2304,7 +3864,7 @@ class ASTCollate final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&collation_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&collation_name_));
     return fl.Finalize();
   }
 
@@ -2320,6 +3880,7 @@ class ASTDotGeneralizedField final : public ASTGeneralizedPathExpression {
 
   ASTDotGeneralizedField() : ASTGeneralizedPathExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2331,8 +3892,8 @@ class ASTDotGeneralizedField final : public ASTGeneralizedPathExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&path_));
     return fl.Finalize();
   }
 
@@ -2349,6 +3910,7 @@ class ASTDotIdentifier final : public ASTGeneralizedPathExpression {
 
   ASTDotIdentifier() : ASTGeneralizedPathExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2360,8 +3922,8 @@ class ASTDotIdentifier final : public ASTGeneralizedPathExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -2375,6 +3937,7 @@ class ASTDotStar final : public ASTExpression {
 
   ASTDotStar() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2385,7 +3948,7 @@ class ASTDotStar final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
     return fl.Finalize();
   }
 
@@ -2399,6 +3962,7 @@ class ASTDotStarWithModifiers final : public ASTExpression {
 
   ASTDotStarWithModifiers() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2410,8 +3974,8 @@ class ASTDotStarWithModifiers final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&modifiers_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&modifiers_));
     return fl.Finalize();
   }
 
@@ -2426,6 +3990,7 @@ class ASTExpressionSubquery final : public ASTExpression {
 
   ASTExpressionSubquery() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2435,7 +4000,8 @@ class ASTExpressionSubquery final : public ASTExpression {
   enum Modifier {
     NONE = ASTExpressionSubqueryEnums::NONE,
     ARRAY = ASTExpressionSubqueryEnums::ARRAY,
-    EXISTS = ASTExpressionSubqueryEnums::EXISTS
+    EXISTS = ASTExpressionSubqueryEnums::EXISTS,
+    VALUE = ASTExpressionSubqueryEnums::VALUE
   };
 
   // The syntactic modifier on this expression subquery.
@@ -2447,7 +4013,7 @@ class ASTExpressionSubquery final : public ASTExpression {
 
   static std::string ModifierToString(Modifier modifier);
 
-  // Note, this is intended by called from inside bison_parser.  At this stage
+  // Note, this is intended by called from inside the parser.  At this stage
   // InitFields has _not_ been set, thus we need to use only children offsets.
   // Returns null on error.
   ASTQuery* GetMutableQueryChildInternal() {
@@ -2467,7 +4033,7 @@ class ASTExpressionSubquery final : public ASTExpression {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&hint_, AST_HINT);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
     return fl.Finalize();
   }
 
@@ -2482,6 +4048,7 @@ class ASTExtractExpression final : public ASTExpression {
 
   ASTExtractExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2494,8 +4061,8 @@ class ASTExtractExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_expr_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&rhs_expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&rhs_expr_));
     fl.AddOptionalExpression(&time_zone_expr_);
     return fl.Finalize();
   }
@@ -2511,6 +4078,7 @@ class ASTHavingModifier final : public ASTNode {
 
   ASTHavingModifier() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2531,7 +4099,7 @@ class ASTHavingModifier final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
     return fl.Finalize();
   }
 
@@ -2547,6 +4115,7 @@ class ASTIntervalExpr final : public ASTExpression {
 
   ASTIntervalExpr() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2559,8 +4128,8 @@ class ASTIntervalExpr final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&interval_value_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&date_part_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&interval_value_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&date_part_name_));
     fl.AddOptional(&date_part_name_to_, AST_IDENTIFIER);
     return fl.Finalize();
   }
@@ -2578,6 +4147,7 @@ class ASTSequenceArg final : public ASTExpression {
 
   ASTSequenceArg() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2588,7 +4158,7 @@ class ASTSequenceArg final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&sequence_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&sequence_path_));
     return fl.Finalize();
   }
 
@@ -2604,6 +4174,7 @@ class ASTNamedArgument final : public ASTExpression {
 
   ASTNamedArgument() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2615,8 +4186,8 @@ class ASTNamedArgument final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
     return fl.Finalize();
   }
 
@@ -2627,12 +4198,33 @@ class ASTNamedArgument final : public ASTExpression {
   const ASTExpression* expr_ = nullptr;
 };
 
+// This node represents the keywords INPUT TABLE, used as a TVF argument.
+class ASTInputTableArgument final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_INPUT_TABLE_ARGUMENT;
+
+  ASTInputTableArgument() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+};
+
 class ASTNullOrder final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_NULL_ORDER;
 
   ASTNullOrder() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2658,6 +4250,7 @@ class ASTOnOrUsingClauseList final : public ASTNode {
 
   ASTOnOrUsingClauseList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2685,27 +4278,24 @@ class ASTParenthesizedJoin final : public ASTTableExpression {
 
   ASTParenthesizedJoin() : ASTTableExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTJoin* join() const { return join_; }
-  const ASTSampleClause* sample_clause() const { return sample_clause_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&join_));
-    fl.AddOptional(&sample_clause_, AST_SAMPLE_CLAUSE);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&join_));
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
   // Required.
   const ASTJoin* join_ = nullptr;
-
-  // Optional.
-  const ASTSampleClause* sample_clause_ = nullptr;
 };
 
 class ASTPartitionBy final : public ASTNode {
@@ -2714,6 +4304,7 @@ class ASTPartitionBy final : public ASTNode {
 
   ASTPartitionBy() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2744,6 +4335,7 @@ class ASTSetOperation final : public ASTQueryExpression {
 
   ASTSetOperation() : ASTQueryExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2768,7 +4360,9 @@ class ASTSetOperation final : public ASTQueryExpression {
   enum ColumnMatchMode {
     BY_POSITION = ASTSetOperationEnums::BY_POSITION,
     CORRESPONDING = ASTSetOperationEnums::CORRESPONDING,
-    CORRESPONDING_BY = ASTSetOperationEnums::CORRESPONDING_BY
+    CORRESPONDING_BY = ASTSetOperationEnums::CORRESPONDING_BY,
+    BY_NAME = ASTSetOperationEnums::BY_NAME,
+    BY_NAME_ON = ASTSetOperationEnums::BY_NAME_ON
   };
 
   // This enum is equivalent to ASTSetOperationEnums::ColumnPropagationMode in ast_enums.proto
@@ -2786,62 +4380,18 @@ class ASTSetOperation final : public ASTQueryExpression {
   }
   const ASTQueryExpression* inputs(int i) const { return inputs_[i]; }
 
-  // Returns the pair of <set operation type, distinct>, e.g. <UNION, ALL>,
-  // <EXCEPT, DISTINCT>.
-  // For the `ASTSetOperation` structure that supports multiple set
-  // operations), returns the <operation type, distinct'ness> of the first set
-  // operation.
-  ABSL_DEPRECATED("Use `metadata()` to get `op_type` and `all_or_distinct` instead")
-  std::pair<std::string, std::string> GetSQLForOperationPair() const;
-
-  // Returns the SQL keywords for the underlying set operation eg. UNION ALL,
-  // UNION DISTINCT, EXCEPT ALL, INTERSECT DISTINCT etc.
-  ABSL_DEPRECATED("Use `metadata()` to get `op_type` and `all_or_distinct` instead")
-  std::string GetSQLForOperation() const;
-
-  // Returns the hint of the set operation.
-  // For the legacy `ASTSetOperation` structure supporting only one hint, it
-  // returns the hint, if present; For the `ASTSetOperation` supporting multiple
-  // set operation metadata, it returns the hint of the first set operation.
-  ABSL_DEPRECATED("Use `metadata()` to get `hint` for each set operation.")
-  const ASTHint* hint() const;
-
-  // For the legacy `ASTSetOperation` supporting only one `all_or_distinct`,
-  // returns whether the set operation is distinct; for the ASTSetOperation
-  // structure supporting multiple set operations, returns the distinct'ness of
-  // the first set operation.
-  ABSL_DEPRECATED("Use `metadata()` to get `all_or_distinct` for each set operation.")
-  bool distinct() const;
-
-  ABSL_DEPRECATED("Setter for the legacy field `distinct_`. Do not use.")
-  void set_distinct(bool distinct) { distinct_ = distinct; }
-
-  // For the legacy `ASTSetOperation` structure supporting only one `op_type`,
-  // returns the operation type of the set operation, e.g. UNION; for the
-  // structure that supports multiple set operations, returns the operation type
-  // of the first set operation.
-  ABSL_DEPRECATED("Use `metadata()` to get `op_type` for each set operation.")
-  OperationType op_type() const;
-
-  ABSL_DEPRECATED("Setter for the legacy field `op_type_`. Do not use.")
-  void set_op_type(ASTSetOperation::OperationType op_type) { op_type_ = op_type; }
-
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    fl.AddOptional(&hint_, AST_HINT);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&metadata_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&metadata_));
     fl.AddRestAsRepeated(&inputs_);
     return fl.Finalize();
   }
 
-  const ASTHint* hint_ = nullptr;
-  absl::Span<const ASTQueryExpression* const> inputs_;
-  ASTSetOperation::OperationType op_type_ = ASTSetOperation::NOT_SET;
-  bool distinct_ = false;
   const ASTSetOperationMetadataList* metadata_ = nullptr;
+  absl::Span<const ASTQueryExpression* const> inputs_;
 };
 
 // Contains the list of metadata for each set operation. Note the parser
@@ -2862,6 +4412,7 @@ class ASTSetOperationMetadataList final : public ASTNode {
 
   ASTSetOperationMetadataList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2890,6 +4441,7 @@ class ASTSetOperationAllOrDistinct final : public ASTNode {
 
   ASTSetOperationAllOrDistinct() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2915,6 +4467,7 @@ class ASTSetOperationType final : public ASTNode {
 
   ASTSetOperationType() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2940,6 +4493,7 @@ class ASTSetOperationColumnMatchMode final : public ASTNode {
 
   ASTSetOperationColumnMatchMode() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2965,6 +4519,7 @@ class ASTSetOperationColumnPropagationMode final : public ASTNode {
 
   ASTSetOperationColumnPropagationMode() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -2988,6 +4543,7 @@ class ASTSetOperationMetadata final : public ASTNode {
 
   ASTSetOperationMetadata() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3000,6 +4556,9 @@ class ASTSetOperationMetadata final : public ASTNode {
   // Stores the column list for the CORRESPONDING BY clause, only
   // populated when `column_match_mode` = CORRESPONDING_BY.
   const ASTColumnList* corresponding_by_column_list() const { return corresponding_by_column_list_; }
+
+      // Returns a SQL string representation for the metadata.
+      std::string GetSQLForOperation() const;
 
   friend class ParseTreeSerializer;
 
@@ -3029,6 +4588,7 @@ class ASTStarExceptList final : public ASTNode {
 
   ASTStarExceptList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3056,6 +4616,7 @@ class ASTStarModifiers final : public ASTNode {
 
   ASTStarModifiers() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3086,6 +4647,7 @@ class ASTStarReplaceItem final : public ASTNode {
 
   ASTStarReplaceItem() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3097,8 +4659,8 @@ class ASTStarReplaceItem final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&alias_));
     return fl.Finalize();
   }
 
@@ -3113,6 +4675,7 @@ class ASTStarWithModifiers final : public ASTExpression {
 
   ASTStarWithModifiers() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3123,7 +4686,7 @@ class ASTStarWithModifiers final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&modifiers_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&modifiers_));
     return fl.Finalize();
   }
 
@@ -3136,13 +4699,14 @@ class ASTTableSubquery final : public ASTTableExpression {
 
   ASTTableSubquery() : ASTTableExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
+  void set_is_lateral(bool is_lateral) { is_lateral_ = is_lateral; }
+  bool is_lateral() const { return is_lateral_; }
+
   const ASTQuery* subquery() const { return subquery_; }
-  const ASTPivotClause* pivot_clause() const { return pivot_clause_; }
-  const ASTUnpivotClause* unpivot_clause() const { return unpivot_clause_; }
-  const ASTSampleClause* sample_clause() const { return sample_clause_; }
 
   const ASTAlias* alias() const override { return alias_; }
 
@@ -3151,22 +4715,15 @@ class ASTTableSubquery final : public ASTTableExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&subquery_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&subquery_));
     fl.AddOptional(&alias_, AST_ALIAS);
-    fl.AddOptional(&pivot_clause_, AST_PIVOT_CLAUSE);
-    fl.AddOptional(&unpivot_clause_, AST_UNPIVOT_CLAUSE);
-    fl.AddOptional(&sample_clause_, AST_SAMPLE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
   const ASTQuery* subquery_ = nullptr;
   const ASTAlias* alias_ = nullptr;
-
-  // One of pivot_clause or unpivot_clause can be present but not both.
-  const ASTPivotClause* pivot_clause_ = nullptr;
-
-  const ASTUnpivotClause* unpivot_clause_ = nullptr;
-  const ASTSampleClause* sample_clause_ = nullptr;
+  bool is_lateral_ = false;
 };
 
 class ASTUnaryExpression final : public ASTExpression {
@@ -3175,6 +4732,7 @@ class ASTUnaryExpression final : public ASTExpression {
 
   ASTUnaryExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3207,7 +4765,7 @@ class ASTUnaryExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&operand_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&operand_));
     return fl.Finalize();
   }
 
@@ -3221,6 +4779,7 @@ class ASTExpressionWithOptAlias final : public ASTNode {
 
   ASTExpressionWithOptAlias() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3232,7 +4791,7 @@ class ASTExpressionWithOptAlias final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     fl.AddOptional(&optional_alias_, AST_ALIAS);
     return fl.Finalize();
   }
@@ -3247,6 +4806,7 @@ class ASTUnnestExpression final : public ASTNode {
 
   ASTUnnestExpression() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3283,6 +4843,7 @@ class ASTWindowClause final : public ASTNode {
 
   ASTWindowClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3309,6 +4870,7 @@ class ASTWindowDefinition final : public ASTNode {
 
   ASTWindowDefinition() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3320,8 +4882,8 @@ class ASTWindowDefinition final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&window_spec_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&window_spec_));
     return fl.Finalize();
   }
 
@@ -3338,6 +4900,7 @@ class ASTWindowFrame final : public ASTNode {
 
   ASTWindowFrame() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3364,7 +4927,7 @@ class ASTWindowFrame final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&start_expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&start_expr_));
     fl.AddOptional(&end_expr_, AST_WINDOW_FRAME_EXPR);
     return fl.Finalize();
   }
@@ -3385,6 +4948,7 @@ class ASTWindowFrameExpr final : public ASTNode {
 
   ASTWindowFrameExpr() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3424,37 +4988,44 @@ class ASTWindowFrameExpr final : public ASTNode {
   ASTWindowFrameExpr::BoundaryType boundary_type_ = ASTWindowFrameExpr::UNBOUNDED_PRECEDING;
 };
 
+// Represents a LIKE expression with an ANY, ALL, or SOME quantifier.
 class ASTLikeExpression final : public ASTExpression {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_LIKE_EXPRESSION;
 
   ASTLikeExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   std::string SingleNodeDebugString() const override;
 
-  // Signifies whether the LIKE operator has a preceding NOT to it.
+  // Signifies whether the LIKE operator has a preceding NOT.
   void set_is_not(bool is_not) { is_not_ = is_not; }
   bool is_not() const { return is_not_; }
 
+  // Expression being compared to the in_list, query, or unnest_expr.
   const ASTExpression* lhs() const { return lhs_; }
 
   // Location of the 'LIKE' token. Used for error messages.
   const ASTLocation* like_location() const { return like_location_; }
 
-  // The any, some, or all operation used.
+  // The ANY, SOME, or ALL quantifier used.
   const ASTAnySomeAllOp* op() const { return op_; }
 
   // Hints specified on LIKE clause.
-  // This can be set only if LIKE clause has subquery as RHS.
+  // This can be set only if the RHS is a subquery.
   const ASTHint* hint() const { return hint_; }
 
-  // Exactly one of in_list, query or unnest_expr is present
+  // Exactly one of in_list, query, or unnest_expr is present.
+  // List of expressions to compare with lhs.
   const ASTInList* in_list() const { return in_list_; }
 
+  // Query returning row values to compare with lhs.
   const ASTQuery* query() const { return query_; }
+
+  // Array expression whose elements are to be compared with lhs.
   const ASTUnnestExpression* unnest_expr() const { return unnest_expr_; }
 
   bool IsAllowedInComparison() const override { return parenthesized(); }
@@ -3464,9 +5035,9 @@ class ASTLikeExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&like_location_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&op_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&like_location_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&op_));
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&in_list_, AST_IN_LIST);
     fl.AddOptional(&query_, AST_QUERY);
@@ -3474,29 +5045,89 @@ class ASTLikeExpression final : public ASTExpression {
     return fl.Finalize();
   }
 
-  // Expression for which we need to verify whether its resolved result matches
-  // any of the resolved results of the expressions present in the in_list_.
   const ASTExpression* lhs_ = nullptr;
-
   const ASTLocation* like_location_ = nullptr;
-
-  // Any, some, or all operator.
   const ASTAnySomeAllOp* op_ = nullptr;
-
-  // Hints specified on LIKE clause
   const ASTHint* hint_ = nullptr;
-
-  // List of expressions to check against for any/some/all comparison for lhs_.
   const ASTInList* in_list_ = nullptr;
-
-  // Query returns the row values to check against for any/some/all comparison
-  // for lhs_.
   const ASTQuery* query_ = nullptr;
-
-  // Check if lhs_ is an element of the array value inside Unnest.
   const ASTUnnestExpression* unnest_expr_ = nullptr;
-
   bool is_not_ = false;
+};
+
+// Represents a comparison expression with a quantifier,
+// like `x = ANY (a, b, c)`.
+class ASTQuantifiedComparisonExpression final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_QUANTIFIED_COMPARISON_EXPRESSION;
+
+  ASTQuantifiedComparisonExpression() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  // The comparison operator.
+  // See description of Op values in ast_enums.proto.
+  // A subset are supported: `=`, `!=`, `<>`, `<`, `<=`, `>`, `>=`.
+  void set_op(ASTBinaryExpression::Op op) { op_ = op; }
+  ASTBinaryExpression::Op op() const { return op_; }
+
+  // Expression being compared to the in_list, query, or unnest_expr.
+  const ASTExpression* lhs() const { return lhs_; }
+
+  const ASTLocation* op_location() const { return op_location_; }
+
+  // The ANY, SOME, or ALL quantifier used.
+  const ASTAnySomeAllOp* quantifier() const { return quantifier_; }
+
+  // Hints specified on subquery.
+  // This can be set only if the RHS is a subquery.
+  const ASTHint* hint() const { return hint_; }
+
+  // Exactly one of in_list, query or unnest_expr is present.
+  // List of expressions to compare with lhs.
+  const ASTInList* in_list() const { return in_list_; }
+
+  // Query returning row values to compare with lhs.
+  const ASTQuery* query() const { return query_; }
+
+  // Array expression whose elements are to be compared with lhs.
+  const ASTUnnestExpression* unnest_expr() const { return unnest_expr_; }
+
+  // Returns name of the operator in SQL.
+  std::string GetSQLForOperator() const;
+
+  bool IsAllowedInComparison() const override { return parenthesized(); }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&op_location_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&quantifier_));
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddOptional(&in_list_, AST_IN_LIST);
+    fl.AddOptional(&query_, AST_QUERY);
+    fl.AddOptional(&unnest_expr_, AST_UNNEST_EXPRESSION);
+    return fl.Finalize();
+  }
+
+  const ASTExpression* lhs_ = nullptr;
+  ASTBinaryExpression::Op op_ = ASTBinaryExpression::NOT_SET;
+
+  // Location of the comparison operator. Used for error messages.
+  const ASTLocation* op_location_ = nullptr;
+
+  const ASTAnySomeAllOp* quantifier_ = nullptr;
+  const ASTHint* hint_ = nullptr;
+  const ASTInList* in_list_ = nullptr;
+  const ASTQuery* query_ = nullptr;
+  const ASTUnnestExpression* unnest_expr_ = nullptr;
 };
 
 class ASTWindowSpecification final : public ASTNode {
@@ -3505,6 +5136,7 @@ class ASTWindowSpecification final : public ASTNode {
 
   ASTWindowSpecification() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3539,6 +5171,7 @@ class ASTWithOffset final : public ASTNode {
 
   ASTWithOffset() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3563,6 +5196,7 @@ class ASTAnySomeAllOp final : public ASTNode {
 
   ASTAnySomeAllOp() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3607,6 +5241,7 @@ class ASTStatementList final : public ASTNode {
 
   ASTStatementList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3650,6 +5285,7 @@ class ASTHintedStatement final : public ASTStatement {
 
   ASTHintedStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3661,13 +5297,49 @@ class ASTHintedStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&hint_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&statement_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&hint_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&statement_));
     return fl.Finalize();
   }
 
   const ASTHint* hint_ = nullptr;
   const ASTStatement* statement_ = nullptr;
+};
+
+// This wraps another statement, adding pipe operators on the end.
+//
+// The parser doesn't use this for ASTQueryStatement or other nodes that
+// can include pipe operator suffixes themselves.
+//
+// This can only occur if FEATURE_STATEMENT_WITH_PIPE_OPERATORS is set.
+//
+// These pipe suffixes are generally not handled by the analyzer, and must
+// be processed by the engine.  See (broken link).
+class ASTStatementWithPipeOperators final : public ASTStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_STATEMENT_WITH_PIPE_OPERATORS;
+
+  ASTStatementWithPipeOperators() : ASTStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTStatement* statement() const { return statement_; }
+  const ASTSubpipelineStatement* pipe_operator_suffix() const { return pipe_operator_suffix_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&statement_));
+    fl.AddOptional(&pipe_operator_suffix_, AST_SUBPIPELINE_STATEMENT);
+    return fl.Finalize();
+  }
+
+  const ASTStatement* statement_ = nullptr;
+  const ASTSubpipelineStatement* pipe_operator_suffix_ = nullptr;
 };
 
 // Represents an EXPLAIN statement.
@@ -3677,6 +5349,7 @@ class ASTExplainStatement final : public ASTStatement {
 
   ASTExplainStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3687,7 +5360,7 @@ class ASTExplainStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&statement_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&statement_));
     return fl.Finalize();
   }
 
@@ -3701,6 +5374,7 @@ class ASTDescribeStatement final : public ASTStatement {
 
   ASTDescribeStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3714,7 +5388,7 @@ class ASTDescribeStatement final : public ASTStatement {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&optional_identifier_, AST_IDENTIFIER);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&optional_from_name_, AST_PATH_EXPRESSION);
     return fl.Finalize();
   }
@@ -3731,6 +5405,7 @@ class ASTShowStatement final : public ASTStatement {
 
   ASTShowStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3743,7 +5418,7 @@ class ASTShowStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
     fl.AddOptional(&optional_name_, AST_PATH_EXPRESSION);
     fl.AddOptional(&optional_like_string_, AST_STRING_LITERAL);
     return fl.Finalize();
@@ -3768,6 +5443,7 @@ class ASTTransactionIsolationLevel final : public ASTTransactionMode {
 
   ASTTransactionIsolationLevel() : ASTTransactionMode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3796,6 +5472,7 @@ class ASTTransactionReadWriteMode final : public ASTTransactionMode {
 
   ASTTransactionReadWriteMode() : ASTTransactionMode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3826,6 +5503,7 @@ class ASTTransactionModeList final : public ASTNode {
 
   ASTTransactionModeList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3853,6 +5531,7 @@ class ASTBeginStatement final : public ASTStatement {
 
   ASTBeginStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3877,6 +5556,7 @@ class ASTSetTransactionStatement final : public ASTStatement {
 
   ASTSetTransactionStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3887,7 +5567,7 @@ class ASTSetTransactionStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&mode_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&mode_list_));
     return fl.Finalize();
   }
 
@@ -3901,6 +5581,7 @@ class ASTCommitStatement final : public ASTStatement {
 
   ASTCommitStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3920,6 +5601,7 @@ class ASTRollbackStatement final : public ASTStatement {
 
   ASTRollbackStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3938,6 +5620,7 @@ class ASTStartBatchStatement final : public ASTStatement {
 
   ASTStartBatchStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3961,6 +5644,7 @@ class ASTRunBatchStatement final : public ASTStatement {
 
   ASTRunBatchStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -3979,6 +5663,7 @@ class ASTAbortBatchStatement final : public ASTStatement {
 
   ASTAbortBatchStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4010,6 +5695,7 @@ class ASTDropEntityStatement final : public ASTDdlStatement {
 
   ASTDropEntityStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4029,8 +5715,8 @@ class ASTDropEntityStatement final : public ASTDdlStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&entity_type_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&entity_type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -4046,6 +5732,7 @@ class ASTDropFunctionStatement final : public ASTDdlStatement {
 
   ASTDropFunctionStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4065,7 +5752,7 @@ class ASTDropFunctionStatement final : public ASTDdlStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&parameters_, AST_FUNCTION_PARAMETERS);
     return fl.Finalize();
   }
@@ -4085,6 +5772,7 @@ class ASTDropTableFunctionStatement final : public ASTDdlStatement {
 
   ASTDropTableFunctionStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4103,7 +5791,7 @@ class ASTDropTableFunctionStatement final : public ASTDdlStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -4118,6 +5806,7 @@ class ASTDropAllRowAccessPoliciesStatement final : public ASTStatement {
 
   ASTDropAllRowAccessPoliciesStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4131,7 +5820,7 @@ class ASTDropAllRowAccessPoliciesStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
     return fl.Finalize();
   }
 
@@ -4146,6 +5835,7 @@ class ASTDropMaterializedViewStatement final : public ASTDdlStatement {
 
   ASTDropMaterializedViewStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4164,7 +5854,7 @@ class ASTDropMaterializedViewStatement final : public ASTDdlStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -4179,6 +5869,7 @@ class ASTDropSnapshotTableStatement final : public ASTDdlStatement {
 
   ASTDropSnapshotTableStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4197,7 +5888,7 @@ class ASTDropSnapshotTableStatement final : public ASTDdlStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -4234,6 +5925,7 @@ class ASTDropSearchIndexStatement final : public ASTDropIndexStatement {
 
   ASTDropSearchIndexStatement() : ASTDropIndexStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4245,7 +5937,7 @@ class ASTDropSearchIndexStatement final : public ASTDropIndexStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&table_name_, AST_PATH_EXPRESSION);
     return fl.Finalize();
   }
@@ -4258,6 +5950,7 @@ class ASTDropVectorIndexStatement final : public ASTDropIndexStatement {
 
   ASTDropVectorIndexStatement() : ASTDropIndexStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4269,7 +5962,7 @@ class ASTDropVectorIndexStatement final : public ASTDropIndexStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&table_name_, AST_PATH_EXPRESSION);
     return fl.Finalize();
   }
@@ -4282,6 +5975,7 @@ class ASTRenameStatement final : public ASTStatement {
 
   ASTRenameStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4294,9 +5988,9 @@ class ASTRenameStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&old_name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&new_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&old_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&new_name_));
     return fl.Finalize();
   }
 
@@ -4313,6 +6007,7 @@ class ASTImportStatement final : public ASTStatement {
 
   ASTImportStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4366,6 +6061,7 @@ class ASTModuleStatement final : public ASTStatement {
 
   ASTModuleStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4377,7 +6073,7 @@ class ASTModuleStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
@@ -4394,6 +6090,7 @@ class ASTWithConnectionClause final : public ASTNode {
 
   ASTWithConnectionClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4404,7 +6101,7 @@ class ASTWithConnectionClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&connection_clause_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&connection_clause_));
     return fl.Finalize();
   }
 
@@ -4417,6 +6114,7 @@ class ASTIntoAlias final : public ASTNode {
 
   ASTIntoAlias() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4432,7 +6130,7 @@ class ASTIntoAlias final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
     return fl.Finalize();
   }
 
@@ -4446,6 +6144,7 @@ class ASTUnnestExpressionWithOptAliasAndOffset final : public ASTNode {
 
   ASTUnnestExpressionWithOptAliasAndOffset() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4458,7 +6157,7 @@ class ASTUnnestExpressionWithOptAliasAndOffset final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&unnest_expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&unnest_expression_));
     fl.AddOptional(&optional_alias_, AST_ALIAS);
     fl.AddOptional(&optional_with_offset_, AST_WITH_OFFSET);
     return fl.Finalize();
@@ -4475,6 +6174,7 @@ class ASTPivotExpression final : public ASTNode {
 
   ASTPivotExpression() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4486,7 +6186,7 @@ class ASTPivotExpression final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     fl.AddOptional(&alias_, AST_ALIAS);
     return fl.Finalize();
   }
@@ -4501,6 +6201,7 @@ class ASTPivotValue final : public ASTNode {
 
   ASTPivotValue() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4512,7 +6213,7 @@ class ASTPivotValue final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
     fl.AddOptional(&alias_, AST_ALIAS);
     return fl.Finalize();
   }
@@ -4527,6 +6228,7 @@ class ASTPivotExpressionList final : public ASTNode {
 
   ASTPivotExpressionList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4553,6 +6255,7 @@ class ASTPivotValueList final : public ASTNode {
 
   ASTPivotValueList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4573,12 +6276,13 @@ class ASTPivotValueList final : public ASTNode {
   absl::Span<const ASTPivotValue* const> values_;
 };
 
-class ASTPivotClause final : public ASTNode {
+class ASTPivotClause final : public ASTPostfixTableOperator {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_PIVOT_CLAUSE;
 
-  ASTPivotClause() : ASTNode(kConcreteNodeKind) {}
+  ASTPivotClause() : ASTPostfixTableOperator(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4587,14 +6291,16 @@ class ASTPivotClause final : public ASTNode {
   const ASTPivotValueList* pivot_values() const { return pivot_values_; }
   const ASTAlias* output_alias() const { return output_alias_; }
 
+  absl::string_view Name() const override { return "PIVOT"; }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&pivot_expressions_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&for_expression_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&pivot_values_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&pivot_expressions_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&for_expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&pivot_values_));
     fl.AddOptional(&output_alias_, AST_ALIAS);
     return fl.Finalize();
   }
@@ -4611,6 +6317,7 @@ class ASTUnpivotInItem final : public ASTNode {
 
   ASTUnpivotInItem() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4622,7 +6329,7 @@ class ASTUnpivotInItem final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_columns_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_columns_));
     fl.AddOptional(&alias_, AST_UNPIVOT_IN_ITEM_LABEL);
     return fl.Finalize();
   }
@@ -4637,6 +6344,7 @@ class ASTUnpivotInItemList final : public ASTNode {
 
   ASTUnpivotInItemList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4657,12 +6365,13 @@ class ASTUnpivotInItemList final : public ASTNode {
   absl::Span<const ASTUnpivotInItem* const> in_items_;
 };
 
-class ASTUnpivotClause final : public ASTNode {
+class ASTUnpivotClause final : public ASTPostfixTableOperator {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_UNPIVOT_CLAUSE;
 
-  ASTUnpivotClause() : ASTNode(kConcreteNodeKind) {}
+  ASTUnpivotClause() : ASTPostfixTableOperator(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4684,15 +6393,16 @@ class ASTUnpivotClause final : public ASTNode {
   const ASTAlias* output_alias() const { return output_alias_; }
 
   std::string GetSQLForNullFilter() const;
+  absl::string_view Name() const override { return "UNPIVOT"; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_output_value_columns_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_output_name_column_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_in_items_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_output_value_columns_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_output_name_column_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&unpivot_in_items_));
     fl.AddOptional(&output_alias_, AST_ALIAS);
     return fl.Finalize();
   }
@@ -4710,6 +6420,7 @@ class ASTUsingClause final : public ASTNode {
 
   ASTUsingClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4736,6 +6447,7 @@ class ASTForSystemTime final : public ASTNode {
 
   ASTForSystemTime() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4746,11 +6458,401 @@ class ASTForSystemTime final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
   const ASTExpression* expression_ = nullptr;
+};
+
+// Represents a row pattern recognition clause, i.e., MATCH_RECOGNIZE().
+class ASTMatchRecognizeClause final : public ASTPostfixTableOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_MATCH_RECOGNIZE_CLAUSE;
+
+  ASTMatchRecognizeClause() : ASTPostfixTableOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTOptionsList* options_list() const { return options_list_; }
+  const ASTPartitionBy* partition_by() const { return partition_by_; }
+  const ASTOrderBy* order_by() const { return order_by_; }
+  const ASTSelectList* measures() const { return measures_; }
+  const ASTAfterMatchSkipClause* after_match_skip_clause() const { return after_match_skip_clause_; }
+  const ASTRowPatternExpression* pattern() const { return pattern_; }
+  const ASTSelectList* pattern_variable_definition_list() const { return pattern_variable_definition_list_; }
+  const ASTAlias* output_alias() const { return output_alias_; }
+
+  absl::string_view Name() const override { return "MATCH_RECOGNIZE"; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    fl.AddOptional(&partition_by_, AST_PARTITION_BY);
+    fl.AddOptional(&order_by_, AST_ORDER_BY);
+    fl.AddOptional(&measures_, AST_SELECT_LIST);
+    fl.AddOptional(&after_match_skip_clause_, AST_AFTER_MATCH_SKIP_CLAUSE);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&pattern_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&pattern_variable_definition_list_));
+    fl.AddOptional(&output_alias_, AST_ALIAS);
+    return fl.Finalize();
+  }
+
+  const ASTOptionsList* options_list_ = nullptr;
+  const ASTPartitionBy* partition_by_ = nullptr;
+  const ASTOrderBy* order_by_ = nullptr;
+  const ASTSelectList* measures_ = nullptr;
+  const ASTAfterMatchSkipClause* after_match_skip_clause_ = nullptr;
+  const ASTRowPatternExpression* pattern_ = nullptr;
+  const ASTSelectList* pattern_variable_definition_list_ = nullptr;
+  const ASTAlias* output_alias_ = nullptr;
+};
+
+class ASTAfterMatchSkipClause final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_AFTER_MATCH_SKIP_CLAUSE;
+
+  ASTAfterMatchSkipClause() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTAfterMatchSkipClauseEnums::AfterMatchSkipTargetType in ast_enums.proto
+  enum AfterMatchSkipTargetType {
+    AFTER_MATCH_SKIP_TARGET_UNSPECIFIED = ASTAfterMatchSkipClauseEnums::AFTER_MATCH_SKIP_TARGET_UNSPECIFIED,
+    PAST_LAST_ROW = ASTAfterMatchSkipClauseEnums::PAST_LAST_ROW,
+    TO_NEXT_ROW = ASTAfterMatchSkipClauseEnums::TO_NEXT_ROW
+  };
+
+  void set_target_type(ASTAfterMatchSkipClause::AfterMatchSkipTargetType target_type) { target_type_ = target_type; }
+  ASTAfterMatchSkipClause::AfterMatchSkipTargetType target_type() const { return target_type_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+
+  ASTAfterMatchSkipClause::AfterMatchSkipTargetType target_type_ = ASTAfterMatchSkipClause::AFTER_MATCH_SKIP_TARGET_UNSPECIFIED;
+};
+
+// Represents a pattern expression for row pattern recognition.
+class ASTRowPatternExpression : public ASTNode {
+ public:
+  explicit ASTRowPatternExpression(ASTNodeKind kind) : ASTNode(kind) {}
+
+  void set_parenthesized(bool parenthesized) { parenthesized_ = parenthesized; }
+  bool parenthesized() const { return parenthesized_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  bool parenthesized_ = false;
+};
+
+class ASTRowPatternVariable final : public ASTRowPatternExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ROW_PATTERN_VARIABLE;
+
+  ASTRowPatternVariable() : ASTRowPatternExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* name() const { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* name_ = nullptr;
+};
+
+// Represents an operation on a pattern expression. For example, it can
+// be an alternation (A|B) or a concatenation (A B), or quantification.
+// Note that alternation is analogous to OR, while concatenation is analogous
+// to AND.
+class ASTRowPatternOperation final : public ASTRowPatternExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ROW_PATTERN_OPERATION;
+
+  ASTRowPatternOperation() : ASTRowPatternExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTRowPatternOperationEnums::OperationType in ast_enums.proto
+  enum OperationType {
+    OPERATION_TYPE_UNSPECIFIED = ASTRowPatternOperationEnums::OPERATION_TYPE_UNSPECIFIED,
+    CONCAT = ASTRowPatternOperationEnums::CONCAT,
+    ALTERNATE = ASTRowPatternOperationEnums::ALTERNATE,
+    PERMUTE = ASTRowPatternOperationEnums::PERMUTE,
+    EXCLUDE = ASTRowPatternOperationEnums::EXCLUDE
+  };
+
+  void set_op_type(ASTRowPatternOperation::OperationType op_type) { op_type_ = op_type; }
+  ASTRowPatternOperation::OperationType op_type() const { return op_type_; }
+
+  const absl::Span<const ASTRowPatternExpression* const>& inputs() const {
+    return inputs_;
+  }
+  const ASTRowPatternExpression* inputs(int i) const { return inputs_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&inputs_);
+    return fl.Finalize();
+  }
+
+  ASTRowPatternOperation::OperationType op_type_ = ASTRowPatternOperation::OPERATION_TYPE_UNSPECIFIED;
+  absl::Span<const ASTRowPatternExpression* const> inputs_;
+};
+
+// Represents an empty pattern. Unparenthesized empty patterns can occur at
+// the root of the pattern, or under alternation. Never under concatenation,
+// since it has no infix operator.
+//
+// Parenthesized empty patterns can appear anywhere.
+//
+// This node's location is a point location, usually the start of the
+// following token.
+class ASTEmptyRowPattern final : public ASTRowPatternExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_EMPTY_ROW_PATTERN;
+
+  ASTEmptyRowPattern() : ASTRowPatternExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+};
+
+// Represents an anchor in a row pattern, i.e., `^` or `$`.
+// Just like in regular expressions, the `^` anchor adds the requirement that
+// the match must be at the start of the partition, while the `$` anchor
+// means the match must be at the end of the partition.
+class ASTRowPatternAnchor final : public ASTRowPatternExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ROW_PATTERN_ANCHOR;
+
+  ASTRowPatternAnchor() : ASTRowPatternExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTRowPatternAnchorEnums::Anchor in ast_enums.proto
+  enum Anchor {
+    ANCHOR_UNSPECIFIED = ASTRowPatternAnchorEnums::ANCHOR_UNSPECIFIED,
+    START = ASTRowPatternAnchorEnums::START,
+    END = ASTRowPatternAnchorEnums::END
+  };
+
+  void set_anchor(ASTRowPatternAnchor::Anchor anchor) { anchor_ = anchor; }
+  ASTRowPatternAnchor::Anchor anchor() const { return anchor_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+
+  ASTRowPatternAnchor::Anchor anchor_ = ASTRowPatternAnchor::ANCHOR_UNSPECIFIED;
+};
+
+// Represents a quantifier, either a symbol (e.g. + or *), or a
+// bounded quantifier, e.g. {1, 3}.
+class ASTQuantifier : public ASTNode {
+ public:
+  explicit ASTQuantifier(ASTNodeKind kind) : ASTNode(kind) {}
+
+  std::string SingleNodeDebugString() const override;
+
+  void set_is_reluctant(bool is_reluctant) { is_reluctant_ = is_reluctant; }
+  bool is_reluctant() const { return is_reluctant_; }
+
+  bool IsQuantifier() const final { return true; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  bool is_reluctant_ = false;
+};
+
+// Represents a bounded quantifier, e.g. {1, 3}. At least one bound must be
+// non-null.
+class ASTBoundedQuantifier final : public ASTQuantifier {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BOUNDED_QUANTIFIER;
+
+  ASTBoundedQuantifier() : ASTQuantifier(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTQuantifierBound* lower_bound() const { return lower_bound_; }
+  const ASTQuantifierBound* upper_bound() const { return upper_bound_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lower_bound_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&upper_bound_));
+    return fl.Finalize();
+  }
+
+  const ASTQuantifierBound* lower_bound_ = nullptr;
+  const ASTQuantifierBound* upper_bound_ = nullptr;
+};
+
+// Represents the lower or upper bound of a quantifier. This wrapper node
+// is to get around the field loader mechanism.
+class ASTQuantifierBound final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_QUANTIFIER_BOUND;
+
+  ASTQuantifierBound() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* bound() const { return bound_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptionalExpression(&bound_);
+    return fl.Finalize();
+  }
+
+  const ASTExpression* bound_ = nullptr;
+};
+
+// Represents a fixed quantifier. Note that this cannot be represented as a
+// bounded quantifier with identical ends because of positional parameters:
+// i.e., {?} is not the same as {?, ?}. See b/362819300 for details.
+class ASTFixedQuantifier final : public ASTQuantifier {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_FIXED_QUANTIFIER;
+
+  ASTFixedQuantifier() : ASTQuantifier(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* bound() const { return bound_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&bound_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* bound_ = nullptr;
+};
+
+// Represents a quantifier such as '+', '?', or '*'.
+class ASTSymbolQuantifier final : public ASTQuantifier {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_SYMBOL_QUANTIFIER;
+
+  ASTSymbolQuantifier() : ASTQuantifier(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTSymbolQuantifierEnums::Symbol in ast_enums.proto
+  enum Symbol {
+    SYMBOL_UNSPECIFIED = ASTSymbolQuantifierEnums::SYMBOL_UNSPECIFIED,
+    QUESTION_MARK = ASTSymbolQuantifierEnums::QUESTION_MARK,
+    PLUS = ASTSymbolQuantifierEnums::PLUS,
+    STAR = ASTSymbolQuantifierEnums::STAR
+  };
+
+  void set_symbol(ASTSymbolQuantifier::Symbol symbol) { symbol_ = symbol; }
+  ASTSymbolQuantifier::Symbol symbol() const { return symbol_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+
+  ASTSymbolQuantifier::Symbol symbol_ = ASTSymbolQuantifier::SYMBOL_UNSPECIFIED;
+};
+
+// Represents a quantified row pattern expression, e.g. (A|B)+?
+class ASTRowPatternQuantification final : public ASTRowPatternExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ROW_PATTERN_QUANTIFICATION;
+
+  ASTRowPatternQuantification() : ASTRowPatternExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // The operand of the quantification. Cannot be nullptr.
+  const ASTRowPatternExpression* operand() const { return operand_; }
+
+  // The quantifier. Cannot be nullptr.
+  const ASTQuantifier* quantifier() const { return quantifier_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&operand_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&quantifier_));
+    return fl.Finalize();
+  }
+
+  const ASTRowPatternExpression* operand_ = nullptr;
+  const ASTQuantifier* quantifier_ = nullptr;
 };
 
 class ASTQualify final : public ASTNode {
@@ -4759,6 +6861,7 @@ class ASTQualify final : public ASTNode {
 
   ASTQualify() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4769,7 +6872,7 @@ class ASTQualify final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -4782,6 +6885,7 @@ class ASTClampedBetweenModifier final : public ASTNode {
 
   ASTClampedBetweenModifier() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4793,8 +6897,8 @@ class ASTClampedBetweenModifier final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&low_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&high_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&low_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&high_));
     return fl.Finalize();
   }
 
@@ -4808,6 +6912,7 @@ class ASTWithReportModifier final : public ASTNode {
 
   ASTWithReportModifier() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4831,6 +6936,7 @@ class ASTFormatClause final : public ASTNode {
 
   ASTFormatClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4842,7 +6948,7 @@ class ASTFormatClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&format_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&format_));
     fl.AddOptionalExpression(&time_zone_expr_);
     return fl.Finalize();
   }
@@ -4857,6 +6963,7 @@ class ASTPathExpressionList final : public ASTNode {
 
   ASTPathExpressionList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4884,6 +6991,7 @@ class ASTParameterExpr final : public ASTParameterExprBase {
 
   ASTParameterExpr() : ASTParameterExprBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4916,6 +7024,7 @@ class ASTSystemVariableExpr final : public ASTParameterExprBase {
 
   ASTSystemVariableExpr() : ASTParameterExprBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4926,34 +7035,11 @@ class ASTSystemVariableExpr final : public ASTParameterExprBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&path_));
     return fl.Finalize();
   }
 
   const ASTPathExpression* path_ = nullptr;
-};
-
-class ASTWithGroupRows final : public ASTNode {
- public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_WITH_GROUP_ROWS;
-
-  ASTWithGroupRows() : ASTNode(kConcreteNodeKind) {}
-  void Accept(ParseTreeVisitor* visitor, void* data) const override;
-  absl::StatusOr<VisitResult> Accept(
-      NonRecursiveParseTreeVisitor* visitor) const override;
-
-  const ASTQuery* subquery() const { return subquery_; }
-
-  friend class ParseTreeSerializer;
-
- private:
-  absl::Status InitFields() final {
-    FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&subquery_));
-    return fl.Finalize();
-  }
-
-  const ASTQuery* subquery_ = nullptr;
 };
 
 // Function argument is required to be expression.
@@ -4963,6 +7049,7 @@ class ASTLambda final : public ASTExpression {
 
   ASTLambda() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -4974,8 +7061,8 @@ class ASTLambda final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&argument_list_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&argument_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
     return fl.Finalize();
   }
 
@@ -4993,59 +7080,20 @@ class ASTAnalyticFunctionCall final : public ASTExpression {
 
   ASTAnalyticFunctionCall() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
-  absl::StatusOr<VisitResult> Accept(
-      NonRecursiveParseTreeVisitor* visitor) const override;
-
-  const ASTWindowSpecification* window_spec() const { return window_spec_; }
-
-  // Exactly one of function() or function_with_group_rows() will be non-null.
-  //
-  // In the normal case, function() is non-null.
-  //
-  // The function_with_group_rows() case can only happen if
-  // FEATURE_V_1_3_WITH_GROUP_ROWS is enabled and one function call has both
-  // WITH GROUP_ROWS and an OVER clause.
-  const ASTFunctionCall* function() const;
-  const ASTFunctionCallWithGroupRows* function_with_group_rows() const;
-
-  friend class ParseTreeSerializer;
-
- private:
-  absl::Status InitFields() final {
-    FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&window_spec_));
-    return fl.Finalize();
-  }
-
-  // Required, never NULL.
-  // The expression is has to be either an ASTFunctionCall or an
-  // ASTFunctionCallWithGroupRows.
-  const ASTExpression* expression_ = nullptr;
-
-  // Required, never NULL.
-  const ASTWindowSpecification* window_spec_ = nullptr;
-};
-
-class ASTFunctionCallWithGroupRows final : public ASTExpression {
- public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_FUNCTION_CALL_WITH_GROUP_ROWS;
-
-  ASTFunctionCallWithGroupRows() : ASTExpression(kConcreteNodeKind) {}
-  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTFunctionCall* function() const { return function_; }
-  const ASTQuery* subquery() const { return subquery_; }
+  const ASTWindowSpecification* window_spec() const { return window_spec_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&function_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&subquery_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&function_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&window_spec_));
     return fl.Finalize();
   }
 
@@ -5053,7 +7101,7 @@ class ASTFunctionCallWithGroupRows final : public ASTExpression {
   const ASTFunctionCall* function_ = nullptr;
 
   // Required, never NULL.
-  const ASTQuery* subquery_ = nullptr;
+  const ASTWindowSpecification* window_spec_ = nullptr;
 };
 
 class ASTClusterBy final : public ASTNode {
@@ -5062,6 +7110,7 @@ class ASTClusterBy final : public ASTNode {
 
   ASTClusterBy() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5090,6 +7139,7 @@ class ASTNewConstructorArg final : public ASTNode {
 
   ASTNewConstructorArg() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5102,7 +7152,7 @@ class ASTNewConstructorArg final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     fl.AddOptional(&optional_identifier_, AST_IDENTIFIER);
     fl.AddOptional(&optional_path_expression_, AST_PATH_EXPRESSION);
     return fl.Finalize();
@@ -5119,6 +7169,7 @@ class ASTNewConstructor final : public ASTExpression {
 
   ASTNewConstructor() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5136,7 +7187,7 @@ class ASTNewConstructor final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_name_));
     fl.AddRestAsRepeated(&arguments_);
     return fl.Finalize();
   }
@@ -5145,14 +7196,56 @@ class ASTNewConstructor final : public ASTExpression {
   absl::Span<const ASTNewConstructorArg* const> arguments_;
 };
 
-class ASTBracedConstructorFieldValue final : public ASTExpression {
+class ASTBracedConstructorLhs final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_LHS;
+
+  ASTBracedConstructorLhs() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTBracedConstructorLhsEnums::Operation in ast_enums.proto
+  enum Operation {
+    UPDATE_SINGLE = ASTBracedConstructorLhsEnums::UPDATE_SINGLE,
+    UPDATE_MANY = ASTBracedConstructorLhsEnums::UPDATE_MANY,
+    UPDATE_SINGLE_NO_CREATION = ASTBracedConstructorLhsEnums::UPDATE_SINGLE_NO_CREATION
+  };
+
+  void set_operation(ASTBracedConstructorLhs::Operation operation) { operation_ = operation; }
+  ASTBracedConstructorLhs::Operation operation() const { return operation_; }
+
+  const ASTGeneralizedPathExpression* extended_path_expr() const { return extended_path_expr_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&extended_path_expr_));
+    return fl.Finalize();
+  }
+
+  const ASTGeneralizedPathExpression* extended_path_expr_ = nullptr;
+  ASTBracedConstructorLhs::Operation operation_ = ASTBracedConstructorLhs::UPDATE_SINGLE;
+};
+
+class ASTBracedConstructorFieldValue final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_FIELD_VALUE;
 
-  ASTBracedConstructorFieldValue() : ASTExpression(kConcreteNodeKind) {}
+  ASTBracedConstructorFieldValue() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // True if "field:value" syntax is used.
+  // False if "field value" syntax is used.
+  // The later is only allowed in proto instead of struct.
+  void set_colon_prefixed(bool colon_prefixed) { colon_prefixed_ = colon_prefixed; }
+  bool colon_prefixed() const { return colon_prefixed_; }
 
   const ASTExpression* expression() const { return expression_; }
 
@@ -5161,26 +7254,32 @@ class ASTBracedConstructorFieldValue final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
   const ASTExpression* expression_ = nullptr;
+  bool colon_prefixed_ = false;
 };
 
-// Exactly one of 'identifier' and 'parenthesized_path' is
-// set.
 class ASTBracedConstructorField final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_BRACED_CONSTRUCTOR_FIELD;
 
   ASTBracedConstructorField() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  const ASTIdentifier* identifier() const { return identifier_; }
-  const ASTPathExpression* parenthesized_path() const { return parenthesized_path_; }
+  // True if this field is separated by comma from the previous one,
+  // e.g.all e.g. "a:1,b:2".
+  // False if separated by whitespace, e.g. "a:1 b:2".
+  // The latter is only allowed in proto instead of struct.
+  void set_comma_separated(bool comma_separated) { comma_separated_ = comma_separated; }
+  bool comma_separated() const { return comma_separated_; }
+
+  const ASTBracedConstructorLhs* braced_constructor_lhs() const { return braced_constructor_lhs_; }
   const ASTBracedConstructorFieldValue* value() const { return value_; }
 
   friend class ParseTreeSerializer;
@@ -5188,15 +7287,14 @@ class ASTBracedConstructorField final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    fl.AddOptional(&identifier_, AST_IDENTIFIER);
-    fl.AddOptional(&parenthesized_path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&braced_constructor_lhs_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
     return fl.Finalize();
   }
 
-  const ASTIdentifier* identifier_ = nullptr;
-  const ASTPathExpression* parenthesized_path_ = nullptr;
+  const ASTBracedConstructorLhs* braced_constructor_lhs_ = nullptr;
   const ASTBracedConstructorFieldValue* value_ = nullptr;
+  bool comma_separated_ = false;
 };
 
 class ASTBracedConstructor final : public ASTExpression {
@@ -5205,6 +7303,7 @@ class ASTBracedConstructor final : public ASTExpression {
 
   ASTBracedConstructor() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5231,6 +7330,7 @@ class ASTBracedNewConstructor final : public ASTExpression {
 
   ASTBracedNewConstructor() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5242,12 +7342,93 @@ class ASTBracedNewConstructor final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&braced_constructor_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&braced_constructor_));
     return fl.Finalize();
   }
 
   const ASTSimpleType* type_name_ = nullptr;
+  const ASTBracedConstructor* braced_constructor_ = nullptr;
+};
+
+class ASTExtendedPathExpression final : public ASTGeneralizedPathExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_EXTENDED_PATH_EXPRESSION;
+
+  ASTExtendedPathExpression() : ASTGeneralizedPathExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTGeneralizedPathExpression* parenthesized_path() const { return parenthesized_path_; }
+  const ASTGeneralizedPathExpression* generalized_path_expression() const { return generalized_path_expression_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&parenthesized_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&generalized_path_expression_));
+    return fl.Finalize();
+  }
+
+  const ASTGeneralizedPathExpression* parenthesized_path_ = nullptr;
+  const ASTGeneralizedPathExpression* generalized_path_expression_ = nullptr;
+};
+
+class ASTUpdateConstructor final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_UPDATE_CONSTRUCTOR;
+
+  ASTUpdateConstructor() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTFunctionCall* function() const { return function_; }
+  const ASTBracedConstructor* braced_constructor() const { return braced_constructor_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&function_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&braced_constructor_));
+    return fl.Finalize();
+  }
+
+  const ASTFunctionCall* function_ = nullptr;
+  const ASTBracedConstructor* braced_constructor_ = nullptr;
+};
+
+class ASTStructBracedConstructor final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_STRUCT_BRACED_CONSTRUCTOR;
+
+  ASTStructBracedConstructor() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTType* type_name() const { return type_name_; }
+  const ASTBracedConstructor* braced_constructor() const { return braced_constructor_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptionalType(&type_name_);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&braced_constructor_));
+    return fl.Finalize();
+  }
+
+  const ASTType* type_name_ = nullptr;
   const ASTBracedConstructor* braced_constructor_ = nullptr;
 };
 
@@ -5257,6 +7438,7 @@ class ASTOptionsList final : public ASTNode {
 
   ASTOptionsList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5283,8 +7465,21 @@ class ASTOptionsEntry final : public ASTNode {
 
   ASTOptionsEntry() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTOptionsEntryEnums::AssignmentOp in ast_enums.proto
+  enum AssignmentOp {
+    NOT_SET = ASTOptionsEntryEnums::NOT_SET,
+    ASSIGN = ASTOptionsEntryEnums::ASSIGN,
+    ADD_ASSIGN = ASTOptionsEntryEnums::ADD_ASSIGN,
+    SUB_ASSIGN = ASTOptionsEntryEnums::SUB_ASSIGN
+  };
+
+  // See description of Op values in ast_enums.proto.
+  void set_assignment_op(ASTOptionsEntry::AssignmentOp assignment_op) { assignment_op_ = assignment_op; }
+  ASTOptionsEntry::AssignmentOp assignment_op() const { return assignment_op_; }
 
   const ASTIdentifier* name() const { return name_; }
 
@@ -5292,18 +7487,22 @@ class ASTOptionsEntry final : public ASTNode {
   // support identifiers, literals, parameters, constants, etc.
   const ASTExpression* value() const { return value_; }
 
+      // Returns name of the assignment operator in SQL.
+      std::string GetSQLForOperator() const;
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
     return fl.Finalize();
   }
 
   const ASTIdentifier* name_ = nullptr;
   const ASTExpression* value_ = nullptr;
+  ASTOptionsEntry::AssignmentOp assignment_op_ = ASTOptionsEntry::NOT_SET;
 };
 
 // Common superclass of CREATE statements supporting the common
@@ -5362,6 +7561,7 @@ class ASTFunctionParameter final : public ASTNode {
 
   ASTFunctionParameter() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5445,6 +7645,7 @@ class ASTFunctionParameters final : public ASTNode {
 
   ASTFunctionParameters() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5471,6 +7672,7 @@ class ASTFunctionDeclaration final : public ASTNode {
 
   ASTFunctionDeclaration() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5485,8 +7687,8 @@ class ASTFunctionDeclaration final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&parameters_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&parameters_));
     return fl.Finalize();
   }
 
@@ -5500,6 +7702,7 @@ class ASTSqlFunctionBody final : public ASTNode {
 
   ASTSqlFunctionBody() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5517,33 +7720,35 @@ class ASTSqlFunctionBody final : public ASTNode {
   const ASTExpression* expression_ = nullptr;
 };
 
-// This represents an argument to a table-valued function (TVF). ZetaSQL can
+// This represents an argument to a table-valued function (TVF). GoogleSQL can
 // parse the argument in one of the following ways:
 //
-// (1) ZetaSQL parses the argument as an expression; if any arguments are
-//     table subqueries then ZetaSQL will parse them as subquery expressions
+// (1) GoogleSQL parses the argument as an expression; if any arguments are
+//     table subqueries then GoogleSQL will parse them as subquery expressions
 //     and the resolver may interpret them as needed later. In this case the
 //     expr_ of this class is filled.
 //
-// (2) ZetaSQL parses the argument as "TABLE path"; this syntax represents a
+//     These special argument forms are also parsed as ASTExpressions,
+//     but analyzed specially:
+//       * ASTNamedArgument
+//       * ASTLambda
+//       * ASTInputTable
+//     These node types (other than ASTNamedArgument) can also occur
+//     as named arguments themselves, inside an ASTNamedArgument.
+//
+// (2) GoogleSQL parses the argument as "TABLE path"; this syntax represents a
 //     table argument including all columns in the named table. In this case the
 //     table_clause_ of this class is non-empty.
 //
-// (3) ZetaSQL parses the argument as "MODEL path"; this syntax represents a
+// (3) GoogleSQL parses the argument as "MODEL path"; this syntax represents a
 //     model argument. In this case the model_clause_ of this class is
 //     non-empty.
 //
-// (4) ZetaSQL parses the argument as "CONNECTION path"; this syntax
+// (4) GoogleSQL parses the argument as "CONNECTION path"; this syntax
 //     represents a connection argument. In this case the connection_clause_ of
 //     this class is non-empty.
 //
-// (5) ZetaSQL parses the argument as a named argument; this behaves like when
-//     the argument is an expression with the extra requirement that the
-//     resolver rearranges the provided named arguments to match the required
-//     argument names from the function signature, if present. The named
-//     argument is stored in the expr_ of this class in this case since an
-//     ASTNamedArgument is a subclass of ASTExpression.
-// (6) ZetaSQL parses the argument as "DESCRIPTOR"; this syntax represents a
+// (5) GoogleSQL parses the argument as "DESCRIPTOR"; this syntax represents a
 //    descriptor on a list of columns with optional types.
 class ASTTVFArgument final : public ASTNode {
  public:
@@ -5551,6 +7756,7 @@ class ASTTVFArgument final : public ASTNode {
 
   ASTTVFArgument() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5594,60 +7800,65 @@ class ASTTVF final : public ASTTableExpression {
 
   ASTTVF() : ASTTableExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  void set_is_lateral(bool is_lateral) { is_lateral_ = is_lateral; }
+  bool is_lateral() const { return is_lateral_; }
 
   const ASTPathExpression* name() const { return name_; }
   const ASTHint* hint() const { return hint_; }
   const ASTAlias* alias() const { return alias_; }
-  const ASTPivotClause* pivot_clause() const { return pivot_clause_; }
-  const ASTUnpivotClause* unpivot_clause() const { return unpivot_clause_; }
-  const ASTSampleClause* sample() const { return sample_; }
 
   const absl::Span<const ASTTVFArgument* const>& argument_entries() const {
     return argument_entries_;
   }
   const ASTTVFArgument* argument_entries(int i) const { return argument_entries_[i]; }
 
+  // Compatibility getters until callers are migrated to directly use the list
+  // of posfix operators.
+  const ASTSampleClause* sample() const {
+      return sample_clause();
+  }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddRepeatedWhileIsNodeKind(&argument_entries_, AST_TVF_ARGUMENT);
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&alias_, AST_ALIAS);
-    fl.AddOptional(&pivot_clause_, AST_PIVOT_CLAUSE);
-    fl.AddOptional(&unpivot_clause_, AST_UNPIVOT_CLAUSE);
-    fl.AddOptional(&sample_, AST_SAMPLE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 
   const ASTPathExpression* name_ = nullptr;
   absl::Span<const ASTTVFArgument* const> argument_entries_;
+  bool is_lateral_ = false;
   const ASTHint* hint_ = nullptr;
   const ASTAlias* alias_ = nullptr;
-  const ASTPivotClause* pivot_clause_ = nullptr;
-  const ASTUnpivotClause* unpivot_clause_ = nullptr;
-  const ASTSampleClause* sample_ = nullptr;
 };
 
 // This represents a clause of form "TABLE <target>", where <target> is either
 // a path expression representing a table name, or <target> is a TVF call.
 // It is currently only supported for relation arguments to table-valued
 // functions.
-class ASTTableClause final : public ASTNode {
+class ASTTableClause final : public ASTQueryExpression {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_TABLE_CLAUSE;
 
-  ASTTableClause() : ASTNode(kConcreteNodeKind) {}
+  ASTTableClause() : ASTQueryExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTPathExpression* table_path() const { return table_path_; }
   const ASTTVF* tvf() const { return tvf_; }
+  const ASTWhereClause* where_clause() const { return where_clause_; }
 
   friend class ParseTreeSerializer;
 
@@ -5656,6 +7867,7 @@ class ASTTableClause final : public ASTNode {
     FieldLoader fl(this);
     fl.AddOptional(&table_path_, AST_PATH_EXPRESSION);
     fl.AddOptional(&tvf_, AST_TVF);
+    fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
     return fl.Finalize();
   }
 
@@ -5663,6 +7875,7 @@ class ASTTableClause final : public ASTNode {
   const ASTPathExpression* table_path_ = nullptr;
 
   const ASTTVF* tvf_ = nullptr;
+  const ASTWhereClause* where_clause_ = nullptr;
 };
 
 // This represents a clause of form "MODEL <target>", where <target> is a model
@@ -5673,6 +7886,7 @@ class ASTModelClause final : public ASTNode {
 
   ASTModelClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5683,36 +7897,38 @@ class ASTModelClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&model_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&model_path_));
     return fl.Finalize();
   }
 
   const ASTPathExpression* model_path_ = nullptr;
 };
 
-// This represents a clause of form "CONNECTION <target>", where <target> is a
-// connection name.
+// This represents a clause of `CONNECTION DEFAULT` or `CONNECTION <path>`.
+// In the former form, the connection_path will be a default literal. In the
+// latter form, the connection_path will be a path expression.
 class ASTConnectionClause final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_CONNECTION_CLAUSE;
 
   ASTConnectionClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  const ASTPathExpression* connection_path() const { return connection_path_; }
+  const ASTExpression* connection_path() const { return connection_path_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&connection_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&connection_path_));
     return fl.Finalize();
   }
 
-  const ASTPathExpression* connection_path_ = nullptr;
+  const ASTExpression* connection_path_ = nullptr;
 };
 
 class ASTTableDataSource : public ASTTableExpression {
@@ -5737,6 +7953,7 @@ class ASTCloneDataSource final : public ASTTableDataSource {
 
   ASTCloneDataSource() : ASTTableDataSource(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5745,9 +7962,10 @@ class ASTCloneDataSource final : public ASTTableDataSource {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&path_expr_));
     fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
     fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 };
@@ -5758,6 +7976,7 @@ class ASTCopyDataSource final : public ASTTableDataSource {
 
   ASTCopyDataSource() : ASTTableDataSource(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5766,9 +7985,10 @@ class ASTCopyDataSource final : public ASTTableDataSource {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&path_expr_));
     fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
     fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
+    fl.AddRestAsRepeated(&postfix_operators_);
     return fl.Finalize();
   }
 };
@@ -5779,6 +7999,7 @@ class ASTCloneDataSourceList final : public ASTNode {
 
   ASTCloneDataSourceList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5805,6 +8026,7 @@ class ASTCloneDataStatement final : public ASTStatement {
 
   ASTCloneDataStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5816,13 +8038,45 @@ class ASTCloneDataStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&data_source_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&data_source_list_));
     return fl.Finalize();
   }
 
   const ASTPathExpression* target_path_ = nullptr;
   const ASTCloneDataSourceList* data_source_list_ = nullptr;
+};
+
+// This represents a CREATE CONNECTION statement, i.e.,
+// CREATE [OR REPLACE] CONNECTION
+//   [IF NOT EXISTS] <name_path> OPTIONS (name=value, ...);
+class ASTCreateConnectionStatement final : public ASTCreateStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_CONNECTION_STATEMENT;
+
+  ASTCreateConnectionStatement() : ASTCreateStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTPathExpression* name() const { return name_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  const ASTPathExpression* GetDdlTarget() const override { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* name_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
 };
 
 // This represents a CREATE CONSTANT statement, i.e.,
@@ -5834,21 +8088,22 @@ class ASTCreateConstantStatement final : public ASTCreateStatement {
 
   ASTCreateConstantStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTPathExpression* name() const { return name_; }
   const ASTExpression* expr() const { return expr_; }
 
-  const ASTPathExpression* GetDdlTarget() const override { return name_; }
+      const ASTPathExpression* GetDdlTarget() const override { return name_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
     return fl.Finalize();
   }
 
@@ -5864,6 +8119,7 @@ class ASTCreateDatabaseStatement final : public ASTStatement {
 
   ASTCreateDatabaseStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5875,7 +8131,7 @@ class ASTCreateDatabaseStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
@@ -5890,6 +8146,7 @@ class ASTCreateProcedureStatement final : public ASTCreateStatement {
 
   ASTCreateProcedureStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -5918,8 +8175,8 @@ class ASTCreateProcedureStatement final : public ASTCreateStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&parameters_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&parameters_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     fl.AddOptional(&body_, AST_SCRIPT);
     fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
@@ -5938,37 +8195,80 @@ class ASTCreateProcedureStatement final : public ASTCreateStatement {
   ASTCreateStatement::SqlSecurity external_security_ = ASTCreateStatement::SQL_SECURITY_UNSPECIFIED;
 };
 
-// This represents a CREATE SCHEMA statement, i.e.,
-// CREATE SCHEMA <name> [OPTIONS (name=value, ...)];
-class ASTCreateSchemaStatement final : public ASTCreateStatement {
+// A base class to be used by statements that create schemas, including
+// CREATE SCHEMA and CREATE EXTERNAL SCHEMA.
+class ASTCreateSchemaStmtBase : public ASTCreateStatement {
  public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_SCHEMA_STATEMENT;
-
-  ASTCreateSchemaStatement() : ASTCreateStatement(kConcreteNodeKind) {}
-  void Accept(ParseTreeVisitor* visitor, void* data) const override;
-  absl::StatusOr<VisitResult> Accept(
-      NonRecursiveParseTreeVisitor* visitor) const override;
+  explicit ASTCreateSchemaStmtBase(ASTNodeKind kind) : ASTCreateStatement(kind) {}
 
   const ASTPathExpression* name() const { return name_; }
-  const ASTCollate* collate() const { return collate_; }
   const ASTOptionsList* options_list() const { return options_list_; }
 
   const ASTPathExpression* GetDdlTarget() const override { return name_; }
 
   friend class ParseTreeSerializer;
 
+ protected:
+  const ASTPathExpression* name_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+};
+
+// This represents a CREATE SCHEMA statement, i.e.,
+// CREATE SCHEMA <name> [OPTIONS (name=value, ...)];
+class ASTCreateSchemaStatement final : public ASTCreateSchemaStmtBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_SCHEMA_STATEMENT;
+
+  ASTCreateSchemaStatement() : ASTCreateSchemaStmtBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTCollate* collate() const { return collate_; }
+
+  friend class ParseTreeSerializer;
+
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&collate_, AST_COLLATE);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
 
-  const ASTPathExpression* name_ = nullptr;
   const ASTCollate* collate_ = nullptr;
-  const ASTOptionsList* options_list_ = nullptr;
+};
+
+// This represents a CREATE EXTERNAL SCHEMA statement, i.e.,
+// CREATE [OR REPLACE] [TEMP|TEMPORARY|PUBLIC|PRIVATE] EXTERNAL SCHEMA [IF
+// NOT EXISTS] <name> [WITH CONNECTION <connection>] OPTIONS (name=value,
+// ...);
+class ASTCreateExternalSchemaStatement final : public ASTCreateSchemaStmtBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_EXTERNAL_SCHEMA_STATEMENT;
+
+  ASTCreateExternalSchemaStatement() : ASTCreateSchemaStmtBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTWithConnectionClause* with_connection_clause() const { return with_connection_clause_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTWithConnectionClause* with_connection_clause_ = nullptr;
 };
 
 class ASTAliasedQueryList final : public ASTNode {
@@ -5977,6 +8277,7 @@ class ASTAliasedQueryList final : public ASTNode {
 
   ASTAliasedQueryList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6003,6 +8304,7 @@ class ASTTransformClause final : public ASTNode {
 
   ASTTransformClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6013,7 +8315,7 @@ class ASTTransformClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&select_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_list_));
     return fl.Finalize();
   }
 
@@ -6035,6 +8337,7 @@ class ASTCreateModelStatement final : public ASTCreateStatement {
 
   ASTCreateModelStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6056,7 +8359,7 @@ class ASTCreateModelStatement final : public ASTCreateStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&input_output_clause_, AST_INPUT_OUTPUT_CLAUSE);
     fl.AddOptional(&transform_clause_, AST_TRANSFORM_CLAUSE);
     fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
@@ -6077,22 +8380,28 @@ class ASTCreateModelStatement final : public ASTCreateStatement {
 };
 
 // Represents 'ALL COLUMNS' index key expression.
-class ASTIndexAllColumns final : public ASTLeaf {
+class ASTIndexAllColumns final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_INDEX_ALL_COLUMNS;
 
-  ASTIndexAllColumns() : ASTLeaf(kConcreteNodeKind) {}
+  ASTIndexAllColumns() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIndexItemList* column_options() const { return column_options_; }
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
+    fl.AddOptional(&column_options_, AST_INDEX_ITEM_LIST);
     return fl.Finalize();
   }
+
+  const ASTIndexItemList* column_options_ = nullptr;
 };
 
 // Represents the list of expressions used to order an index.
@@ -6102,6 +8411,7 @@ class ASTIndexItemList final : public ASTNode {
 
   ASTIndexItemList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6130,6 +8440,7 @@ class ASTIndexStoringExpressionList final : public ASTNode {
 
   ASTIndexStoringExpressionList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6157,6 +8468,7 @@ class ASTIndexUnnestExpressionList final : public ASTNode {
 
   ASTIndexUnnestExpressionList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6184,6 +8496,7 @@ class ASTCreateIndexStatement final : public ASTCreateStatement {
 
   ASTCreateIndexStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6204,6 +8517,7 @@ class ASTCreateIndexStatement final : public ASTCreateStatement {
   const ASTIndexUnnestExpressionList* optional_index_unnest_expression_list() const { return optional_index_unnest_expression_list_; }
   const ASTIndexItemList* index_item_list() const { return index_item_list_; }
   const ASTIndexStoringExpressionList* optional_index_storing_expressions() const { return optional_index_storing_expressions_; }
+  const ASTPartitionBy* optional_partition_by() const { return optional_partition_by_; }
   const ASTOptionsList* options_list() const { return options_list_; }
   const ASTSpannerInterleaveClause* spanner_interleave_clause() const { return spanner_interleave_clause_; }
 
@@ -6214,12 +8528,13 @@ class ASTCreateIndexStatement final : public ASTCreateStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
     fl.AddOptional(&optional_table_alias_, AST_ALIAS);
     fl.AddOptional(&optional_index_unnest_expression_list_, AST_INDEX_UNNEST_EXPRESSION_LIST);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&index_item_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&index_item_list_));
     fl.AddOptional(&optional_index_storing_expressions_, AST_INDEX_STORING_EXPRESSION_LIST);
+    fl.AddOptional(&optional_partition_by_, AST_PARTITION_BY);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     fl.AddOptional(&spanner_interleave_clause_, AST_SPANNER_INTERLEAVE_CLAUSE);
     return fl.Finalize();
@@ -6231,6 +8546,7 @@ class ASTCreateIndexStatement final : public ASTCreateStatement {
   const ASTIndexUnnestExpressionList* optional_index_unnest_expression_list_ = nullptr;
   const ASTIndexItemList* index_item_list_ = nullptr;
   const ASTIndexStoringExpressionList* optional_index_storing_expressions_ = nullptr;
+  const ASTPartitionBy* optional_partition_by_ = nullptr;
   const ASTOptionsList* options_list_ = nullptr;
   bool is_unique_ = false;
   bool is_search_ = false;
@@ -6245,11 +8561,17 @@ class ASTExportDataStatement final : public ASTStatement {
 
   ASTExportDataStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
   const ASTWithConnectionClause* with_connection_clause() const { return with_connection_clause_; }
   const ASTOptionsList* options_list() const { return options_list_; }
+
+  // `query` is always present when this node is used as an EXPORT DATA
+  // statement.
+  // `query` is never present when this is node is used as a
+  // pipe EXPORT DATA operator.
   const ASTQuery* query() const { return query_; }
 
   friend class ParseTreeSerializer;
@@ -6259,7 +8581,7 @@ class ASTExportDataStatement final : public ASTStatement {
     FieldLoader fl(this);
     fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    fl.AddOptional(&query_, AST_QUERY);
     return fl.Finalize();
   }
 
@@ -6274,6 +8596,7 @@ class ASTExportModelStatement final : public ASTStatement {
 
   ASTExportModelStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6286,7 +8609,7 @@ class ASTExportModelStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&model_name_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&model_name_path_));
     fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
@@ -6304,6 +8627,7 @@ class ASTExportMetadataStatement final : public ASTStatement {
 
   ASTExportMetadataStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6321,7 +8645,7 @@ class ASTExportMetadataStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_path_));
     fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
@@ -6339,6 +8663,7 @@ class ASTCallStatement final : public ASTStatement {
 
   ASTCallStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6354,7 +8679,7 @@ class ASTCallStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&procedure_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&procedure_name_));
     fl.AddRestAsRepeated(&arguments_);
     return fl.Finalize();
   }
@@ -6369,6 +8694,7 @@ class ASTDefineTableStatement final : public ASTStatement {
 
   ASTDefineTableStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6380,8 +8706,35 @@ class ASTDefineTableStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&options_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&options_list_));
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* name_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+};
+
+class ASTCreateLocalityGroupStatement final : public ASTStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_LOCALITY_GROUP_STATEMENT;
+
+  ASTCreateLocalityGroupStatement() : ASTStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTPathExpression* name() const { return name_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
 
@@ -6395,6 +8748,7 @@ class ASTWithPartitionColumnsClause final : public ASTNode {
 
   ASTWithPartitionColumnsClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6412,12 +8766,52 @@ class ASTWithPartitionColumnsClause final : public ASTNode {
   const ASTTableElementList* table_element_list_ = nullptr;
 };
 
+// Represents a generic CREATE SNAPSHOT statement.
+// Currently used for CREATE SNAPSHOT SCHEMA statement.
+class ASTCreateSnapshotStatement final : public ASTCreateStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_SNAPSHOT_STATEMENT;
+
+  ASTCreateSnapshotStatement() : ASTCreateStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  void set_schema_object_kind(SchemaObjectKind schema_object_kind) { schema_object_kind_ = schema_object_kind; }
+  SchemaObjectKind schema_object_kind() const { return schema_object_kind_; }
+
+  const ASTPathExpression* name() const { return name_; }
+  const ASTCloneDataSource* clone_data_source() const { return clone_data_source_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  const ASTPathExpression* GetDdlTarget() const override { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&clone_data_source_));
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  SchemaObjectKind schema_object_kind_ = kInvalidSchemaObjectKind;
+  const ASTPathExpression* name_ = nullptr;
+  const ASTCloneDataSource* clone_data_source_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+};
+
+// Represents a CREATE SNAPSHOT TABLE statement.
 class ASTCreateSnapshotTableStatement final : public ASTCreateStatement {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_SNAPSHOT_TABLE_STATEMENT;
 
   ASTCreateSnapshotTableStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6432,8 +8826,8 @@ class ASTCreateSnapshotTableStatement final : public ASTCreateStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&clone_data_source_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&clone_data_source_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
@@ -6449,6 +8843,7 @@ class ASTTypeParameterList final : public ASTNode {
 
   ASTTypeParameterList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6482,6 +8877,7 @@ class ASTTVFSchema final : public ASTNode {
 
   ASTTVFSchema() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6510,6 +8906,7 @@ class ASTTVFSchemaColumn final : public ASTNode {
 
   ASTTVFSchemaColumn() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6524,7 +8921,7 @@ class ASTTVFSchemaColumn final : public ASTNode {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&name_, AST_IDENTIFIER);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
     return fl.Finalize();
   }
 
@@ -6538,6 +8935,7 @@ class ASTTableAndColumnInfo final : public ASTNode {
 
   ASTTableAndColumnInfo() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6549,7 +8947,7 @@ class ASTTableAndColumnInfo final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
     fl.AddOptional(&column_list_, AST_COLUMN_LIST);
     return fl.Finalize();
   }
@@ -6564,6 +8962,7 @@ class ASTTableAndColumnInfoList final : public ASTNode {
 
   ASTTableAndColumnInfoList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6590,6 +8989,7 @@ class ASTTemplatedParameterType final : public ASTNode {
 
   ASTTemplatedParameterType() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6618,7 +9018,7 @@ class ASTTemplatedParameterType final : public ASTNode {
   ASTTemplatedParameterType::TemplatedTypeKind kind_ = ASTTemplatedParameterType::UNINITIALIZED;
 };
 
-// This represents the value DEFAULT that shows up in DML statements.
+// This represents the value DEFAULT in DML statements or connection clauses.
 // It will not show up as a general expression anywhere else.
 class ASTDefaultLiteral final : public ASTExpression {
  public:
@@ -6626,6 +9026,7 @@ class ASTDefaultLiteral final : public ASTExpression {
 
   ASTDefaultLiteral() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6644,6 +9045,7 @@ class ASTAnalyzeStatement final : public ASTStatement {
 
   ASTAnalyzeStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6670,6 +9072,7 @@ class ASTAssertStatement final : public ASTStatement {
 
   ASTAssertStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6681,7 +9084,7 @@ class ASTAssertStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
     fl.AddOptional(&description_, AST_STRING_LITERAL);
     return fl.Finalize();
   }
@@ -6696,6 +9099,7 @@ class ASTAssertRowsModified final : public ASTNode {
 
   ASTAssertRowsModified() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6706,7 +9110,7 @@ class ASTAssertRowsModified final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&num_rows_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&num_rows_));
     return fl.Finalize();
   }
 
@@ -6721,6 +9125,7 @@ class ASTReturningClause final : public ASTNode {
 
   ASTReturningClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6732,13 +9137,80 @@ class ASTReturningClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&select_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_list_));
     fl.AddOptional(&action_alias_, AST_ALIAS);
     return fl.Finalize();
   }
 
   const ASTSelectList* select_list_ = nullptr;
   const ASTAlias* action_alias_ = nullptr;
+};
+
+// This is used in INSERT statements to specify an alternate action if the
+// the insert row causes unique constraint violations.
+//
+// conflict_action is either UPDATE or NOTHING
+//
+// conflict_target, unique_constraint_name:
+// They are applicable for both conflict actions. They are optional but are
+// mutually exclusive. It is allowed for both fields to be null. They will
+// then be analyzed according to the conflict action.
+//
+// update_item_list, update_where_clause applies:
+// They are applicable for conflict action UPDATE only.
+class ASTOnConflictClause final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ON_CONFLICT_CLAUSE;
+
+  ASTOnConflictClause() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  // This enum is equivalent to ASTOnConflictClauseEnums::ConflictAction in ast_enums.proto
+  enum ConflictAction {
+    NOT_SET = ASTOnConflictClauseEnums::NOT_SET,
+    NOTHING = ASTOnConflictClauseEnums::NOTHING,
+    UPDATE = ASTOnConflictClauseEnums::UPDATE
+  };
+
+  void set_conflict_action(ASTOnConflictClause::ConflictAction conflict_action) { conflict_action_ = conflict_action; }
+  ASTOnConflictClause::ConflictAction conflict_action() const { return conflict_action_; }
+
+  // If defined, the column list must not be empty.
+  const ASTColumnList* conflict_target() const { return conflict_target_; }
+
+  const ASTIdentifier* unique_constraint_name() const { return unique_constraint_name_; }
+
+  // Defined only for conflict action UPDATE. It must be non empty
+  // if defined.
+  const ASTUpdateItemList* update_item_list() const { return update_item_list_; }
+
+  // Defined only for conflict action UPDATE. It is an optional field.
+  const ASTExpression* update_where_clause() const { return update_where_clause_; }
+
+  std::string GetSQLForConflictAction() const;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&conflict_target_, AST_COLUMN_LIST);
+    fl.AddOptional(&unique_constraint_name_, AST_IDENTIFIER);
+    fl.AddOptional(&update_item_list_, AST_UPDATE_ITEM_LIST);
+    fl.AddOptionalExpression(&update_where_clause_);
+    return fl.Finalize();
+  }
+
+  ASTOnConflictClause::ConflictAction conflict_action_ = ASTOnConflictClause::NOT_SET;
+  const ASTColumnList* conflict_target_ = nullptr;
+  const ASTIdentifier* unique_constraint_name_ = nullptr;
+  const ASTUpdateItemList* update_item_list_ = nullptr;
+  const ASTExpression* update_where_clause_ = nullptr;
 };
 
 // This is used for both top-level DELETE statements and for nested DELETEs
@@ -6750,6 +9222,7 @@ class ASTDeleteStatement final : public ASTStatement {
 
   ASTDeleteStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6775,7 +9248,7 @@ class ASTDeleteStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&alias_, AST_ALIAS);
     fl.AddOptional(&offset_, AST_WITH_OFFSET);
@@ -6809,6 +9282,7 @@ class ASTNotNullColumnAttribute final : public ASTColumnAttribute {
 
   ASTNotNullColumnAttribute() : ASTColumnAttribute(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6829,6 +9303,7 @@ class ASTHiddenColumnAttribute final : public ASTColumnAttribute {
 
   ASTHiddenColumnAttribute() : ASTColumnAttribute(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6849,6 +9324,7 @@ class ASTPrimaryKeyColumnAttribute final : public ASTColumnAttribute {
 
   ASTPrimaryKeyColumnAttribute() : ASTColumnAttribute(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6876,6 +9352,7 @@ class ASTForeignKeyColumnAttribute final : public ASTColumnAttribute {
 
   ASTForeignKeyColumnAttribute() : ASTColumnAttribute(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6890,7 +9367,7 @@ class ASTForeignKeyColumnAttribute final : public ASTColumnAttribute {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&constraint_name_, AST_IDENTIFIER);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&reference_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&reference_));
     return fl.Finalize();
   }
 
@@ -6904,6 +9381,7 @@ class ASTColumnAttributeList final : public ASTNode {
 
   ASTColumnAttributeList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6930,6 +9408,7 @@ class ASTStructColumnField final : public ASTNode {
 
   ASTStructColumnField() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -6944,7 +9423,7 @@ class ASTStructColumnField final : public ASTNode {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&name_, AST_IDENTIFIER);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&schema_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&schema_));
     return fl.Finalize();
   }
 
@@ -6958,10 +9437,11 @@ class ASTGeneratedColumnInfo final : public ASTNode {
 
   ASTGeneratedColumnInfo() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  // Adds stored_mode (if needed) to the debug string.
+  // Adds stored_mode and generated_mode to the debug string.
   std::string SingleNodeDebugString() const override;
 
   // This enum is equivalent to ASTGeneratedColumnInfoEnums::StoredMode in ast_enums.proto
@@ -6971,24 +9451,37 @@ class ASTGeneratedColumnInfo final : public ASTNode {
     STORED_VOLATILE = ASTGeneratedColumnInfoEnums::STORED_VOLATILE
   };
 
+  // This enum is equivalent to ASTGeneratedColumnInfoEnums::GeneratedMode in ast_enums.proto
+  enum GeneratedMode {
+    ALWAYS = ASTGeneratedColumnInfoEnums::ALWAYS,
+    BY_DEFAULT = ASTGeneratedColumnInfoEnums::BY_DEFAULT
+  };
+
   void set_stored_mode(ASTGeneratedColumnInfo::StoredMode stored_mode) { stored_mode_ = stored_mode; }
   ASTGeneratedColumnInfo::StoredMode stored_mode() const { return stored_mode_; }
+  void set_generated_mode(ASTGeneratedColumnInfo::GeneratedMode generated_mode) { generated_mode_ = generated_mode; }
+  ASTGeneratedColumnInfo::GeneratedMode generated_mode() const { return generated_mode_; }
 
   const ASTExpression* expression() const { return expression_; }
+  const ASTIdentityColumnInfo* identity_column_info() const { return identity_column_info_; }
 
   std::string GetSqlForStoredMode() const;
+  std::string GetSqlForGeneratedMode() const;
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    fl.AddOptionalExpression(&expression_);
+    fl.AddOptional(&identity_column_info_, AST_IDENTITY_COLUMN_INFO);
     return fl.Finalize();
   }
 
   const ASTExpression* expression_ = nullptr;
   ASTGeneratedColumnInfo::StoredMode stored_mode_ = ASTGeneratedColumnInfo::NON_STORED;
+  ASTGeneratedColumnInfo::GeneratedMode generated_mode_ = ASTGeneratedColumnInfo::ALWAYS;
+  const ASTIdentityColumnInfo* identity_column_info_ = nullptr;
 };
 
 // Base class for CREATE TABLE elements, including column definitions and
@@ -7006,6 +9499,7 @@ class ASTColumnDefinition final : public ASTTableElement {
 
   ASTColumnDefinition() : ASTTableElement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7017,8 +9511,8 @@ class ASTColumnDefinition final : public ASTTableElement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&schema_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&schema_));
     return fl.Finalize();
   }
 
@@ -7032,6 +9526,7 @@ class ASTTableElementList final : public ASTNode {
 
   ASTTableElementList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7060,6 +9555,7 @@ class ASTColumnList final : public ASTNode {
 
   ASTColumnList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7086,6 +9582,7 @@ class ASTColumnPosition final : public ASTNode {
 
   ASTColumnPosition() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7107,7 +9604,7 @@ class ASTColumnPosition final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
     return fl.Finalize();
   }
 
@@ -7121,6 +9618,7 @@ class ASTInsertValuesRow final : public ASTNode {
 
   ASTInsertValuesRow() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7148,6 +9646,7 @@ class ASTInsertValuesRowList final : public ASTNode {
 
   ASTInsertValuesRowList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7177,6 +9676,7 @@ class ASTInsertStatement final : public ASTStatement {
 
   ASTInsertStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7199,14 +9699,9 @@ class ASTInsertStatement final : public ASTStatement {
     kSeenValuesList = ASTInsertStatementEnums::kSeenValuesList
   };
 
-  // This is used by the Bison parser to store the latest element of the INSERT
-  // syntax that was seen. The INSERT statement is extremely complicated to
-  // parse in bison because it is very free-form, almost everything is optional
-  // and almost all of the keywords are also usable as identifiers. So we parse
-  // it in a very free-form way, and enforce the grammar in code during/after
-  // parsing.
-  void set_parse_progress(ASTInsertStatement::ParseProgress parse_progress) { parse_progress_ = parse_progress; }
-  ASTInsertStatement::ParseProgress parse_progress() const { return parse_progress_; }
+  // Deprecated
+  void set_deprecated_parse_progress(int deprecated_parse_progress) { deprecated_parse_progress_ = deprecated_parse_progress; }
+  int deprecated_parse_progress() const { return deprecated_parse_progress_; }
 
   void set_insert_mode(ASTInsertStatement::InsertMode insert_mode) { insert_mode_ = insert_mode; }
   ASTInsertStatement::InsertMode insert_mode() const { return insert_mode_; }
@@ -7220,6 +9715,7 @@ class ASTInsertStatement final : public ASTStatement {
   const ASTInsertValuesRowList* rows() const { return rows_; }
 
   const ASTQuery* query() const { return query_; }
+  const ASTOnConflictClause* on_conflict() const { return on_conflict_; }
   const ASTAssertRowsModified* assert_rows_modified() const { return assert_rows_modified_; }
   const ASTReturningClause* returning() const { return returning_; }
 
@@ -7239,11 +9735,12 @@ class ASTInsertStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&column_list_, AST_COLUMN_LIST);
     fl.AddOptional(&rows_, AST_INSERT_VALUES_ROW_LIST);
     fl.AddOptional(&query_, AST_QUERY);
+    fl.AddOptional(&on_conflict_, AST_ON_CONFLICT_CLAUSE);
     fl.AddOptional(&assert_rows_modified_, AST_ASSERT_ROWS_MODIFIED);
     fl.AddOptional(&returning_, AST_RETURNING_CLAUSE);
     return fl.Finalize();
@@ -7258,9 +9755,10 @@ class ASTInsertStatement final : public ASTStatement {
   const ASTInsertValuesRowList* rows_ = nullptr;
 
   const ASTQuery* query_ = nullptr;
+  const ASTOnConflictClause* on_conflict_ = nullptr;
   const ASTAssertRowsModified* assert_rows_modified_ = nullptr;
   const ASTReturningClause* returning_ = nullptr;
-  ASTInsertStatement::ParseProgress parse_progress_ = ASTInsertStatement::kInitial;
+  int deprecated_parse_progress_ = 0;
   ASTInsertStatement::InsertMode insert_mode_ = ASTInsertStatement::DEFAULT_MODE;
 };
 
@@ -7270,6 +9768,7 @@ class ASTUpdateSetValue final : public ASTNode {
 
   ASTUpdateSetValue() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7283,8 +9782,8 @@ class ASTUpdateSetValue final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
     return fl.Finalize();
   }
 
@@ -7298,6 +9797,7 @@ class ASTUpdateItem final : public ASTNode {
 
   ASTUpdateItem() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7333,6 +9833,7 @@ class ASTUpdateItemList final : public ASTNode {
 
   ASTUpdateItemList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7362,6 +9863,7 @@ class ASTUpdateStatement final : public ASTStatement {
 
   ASTUpdateStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7389,11 +9891,11 @@ class ASTUpdateStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
     fl.AddOptional(&hint_, AST_HINT);
     fl.AddOptional(&alias_, AST_ALIAS);
     fl.AddOptional(&offset_, AST_WITH_OFFSET);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&update_item_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&update_item_list_));
     fl.AddOptional(&from_clause_, AST_FROM_CLAUSE);
     fl.AddOptionalExpression(&where_);
     fl.AddOptional(&assert_rows_modified_, AST_ASSERT_ROWS_MODIFIED);
@@ -7418,6 +9920,7 @@ class ASTTruncateStatement final : public ASTStatement {
 
   ASTTruncateStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7434,7 +9937,7 @@ class ASTTruncateStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
     fl.AddOptionalExpression(&where_);
     return fl.Finalize();
   }
@@ -7449,6 +9952,7 @@ class ASTMergeAction final : public ASTNode {
 
   ASTMergeAction() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7505,6 +10009,7 @@ class ASTMergeWhenClause final : public ASTNode {
 
   ASTMergeWhenClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7532,7 +10037,7 @@ class ASTMergeWhenClause final : public ASTNode {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptionalExpression(&search_condition_);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_));
     return fl.Finalize();
   }
 
@@ -7547,6 +10052,7 @@ class ASTMergeWhenClauseList final : public ASTNode {
 
   ASTMergeWhenClauseList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7573,6 +10079,7 @@ class ASTMergeStatement final : public ASTStatement {
 
   ASTMergeStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7587,11 +10094,11 @@ class ASTMergeStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
     fl.AddOptional(&alias_, AST_ALIAS);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&table_expression_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&merge_condition_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&when_clauses_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&table_expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&merge_condition_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&when_clauses_));
     return fl.Finalize();
   }
 
@@ -7608,6 +10115,7 @@ class ASTPrivilege final : public ASTNode {
 
   ASTPrivilege() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7619,7 +10127,7 @@ class ASTPrivilege final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&privilege_action_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&privilege_action_));
     fl.AddOptional(&paths_, AST_PATH_EXPRESSION_LIST);
     return fl.Finalize();
   }
@@ -7637,6 +10145,7 @@ class ASTPrivileges final : public ASTNode {
 
   ASTPrivileges() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7668,6 +10177,7 @@ class ASTGranteeList final : public ASTNode {
 
   ASTGranteeList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7696,6 +10206,7 @@ class ASTGrantStatement final : public ASTStatement {
 
   ASTGrantStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7722,10 +10233,10 @@ class ASTGrantStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
     fl.AddRepeatedWhileIsNodeKind(&target_type_parts_, AST_IDENTIFIER);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&grantee_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&grantee_list_));
     return fl.Finalize();
   }
 
@@ -7741,6 +10252,7 @@ class ASTRevokeStatement final : public ASTStatement {
 
   ASTRevokeStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7767,10 +10279,10 @@ class ASTRevokeStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
     fl.AddRepeatedWhileIsNodeKind(&target_type_parts_, AST_IDENTIFIER);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&grantee_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&grantee_list_));
     return fl.Finalize();
   }
 
@@ -7786,6 +10298,7 @@ class ASTRepeatableClause final : public ASTNode {
 
   ASTRepeatableClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7796,7 +10309,7 @@ class ASTRepeatableClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&argument_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&argument_));
     return fl.Finalize();
   }
 
@@ -7809,6 +10322,7 @@ class ASTFilterFieldsArg final : public ASTNode {
 
   ASTFilterFieldsArg() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7833,7 +10347,7 @@ class ASTFilterFieldsArg final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&path_expression_));
     return fl.Finalize();
   }
 
@@ -7847,6 +10361,7 @@ class ASTReplaceFieldsArg final : public ASTNode {
 
   ASTReplaceFieldsArg() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7858,8 +10373,8 @@ class ASTReplaceFieldsArg final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&path_expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&path_expression_));
     return fl.Finalize();
   }
 
@@ -7873,6 +10388,7 @@ class ASTReplaceFieldsExpression final : public ASTExpression {
 
   ASTReplaceFieldsExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7888,7 +10404,7 @@ class ASTReplaceFieldsExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expr_));
     fl.AddRestAsRepeated(&arguments_);
     return fl.Finalize();
   }
@@ -7903,6 +10419,7 @@ class ASTSampleSize final : public ASTNode {
 
   ASTSampleSize() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7929,7 +10446,7 @@ class ASTSampleSize final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&size_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&size_));
     fl.AddOptional(&partition_by_, AST_PARTITION_BY);
     return fl.Finalize();
   }
@@ -7948,6 +10465,7 @@ class ASTWithWeight final : public ASTNode {
 
   ASTWithWeight() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7972,6 +10490,7 @@ class ASTSampleSuffix final : public ASTNode {
 
   ASTSampleSuffix() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -7994,12 +10513,13 @@ class ASTSampleSuffix final : public ASTNode {
   const ASTRepeatableClause* repeat_ = nullptr;
 };
 
-class ASTSampleClause final : public ASTNode {
+class ASTSampleClause final : public ASTPostfixTableOperator {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_SAMPLE_CLAUSE;
 
-  ASTSampleClause() : ASTNode(kConcreteNodeKind) {}
+  ASTSampleClause() : ASTPostfixTableOperator(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8007,13 +10527,15 @@ class ASTSampleClause final : public ASTNode {
   const ASTSampleSize* sample_size() const { return sample_size_; }
   const ASTSampleSuffix* sample_suffix() const { return sample_suffix_; }
 
+  absl::string_view Name() const override { return "TABLESAMPLE"; }
+
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&sample_method_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&sample_size_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&sample_method_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&sample_size_));
     fl.AddOptional(&sample_suffix_, AST_SAMPLE_SUFFIX);
     return fl.Finalize();
   }
@@ -8040,6 +10562,7 @@ class ASTSetOptionsAction final : public ASTAlterAction {
 
   ASTSetOptionsAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8052,7 +10575,7 @@ class ASTSetOptionsAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&options_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&options_list_));
     return fl.Finalize();
   }
 
@@ -8066,6 +10589,7 @@ class ASTSetAsAction final : public ASTAlterAction {
 
   ASTSetAsAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8095,6 +10619,7 @@ class ASTAddConstraintAction final : public ASTAlterAction {
 
   ASTAddConstraintAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8112,7 +10637,7 @@ class ASTAddConstraintAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&constraint_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&constraint_));
     return fl.Finalize();
   }
 
@@ -8127,6 +10652,7 @@ class ASTDropPrimaryKeyAction final : public ASTAlterAction {
 
   ASTDropPrimaryKeyAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8155,6 +10681,7 @@ class ASTDropConstraintAction final : public ASTAlterAction {
 
   ASTDropConstraintAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8172,7 +10699,7 @@ class ASTDropConstraintAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&constraint_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&constraint_name_));
     return fl.Finalize();
   }
 
@@ -8187,6 +10714,7 @@ class ASTAlterConstraintEnforcementAction final : public ASTAlterAction {
 
   ASTAlterConstraintEnforcementAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8206,7 +10734,7 @@ class ASTAlterConstraintEnforcementAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&constraint_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&constraint_name_));
     return fl.Finalize();
   }
 
@@ -8222,6 +10750,7 @@ class ASTAlterConstraintSetOptionsAction final : public ASTAlterAction {
 
   ASTAlterConstraintSetOptionsAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8240,14 +10769,53 @@ class ASTAlterConstraintSetOptionsAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&constraint_name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&options_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&constraint_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&options_list_));
     return fl.Finalize();
   }
 
   const ASTIdentifier* constraint_name_ = nullptr;
   const ASTOptionsList* options_list_ = nullptr;
   bool is_if_exists_ = false;
+};
+
+// ALTER SEARCH|VECTOR INDEX action for "ADD COLUMN" clause.
+// Note: Different from ASTAddColumnAction, this action is used for adding an
+// existing column in table to an index, so it doesn't need column definition
+// or other fields in ASTAddColumnAction.
+class ASTAddColumnIdentifierAction final : public ASTAlterAction {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ADD_COLUMN_IDENTIFIER_ACTION;
+
+  ASTAddColumnIdentifierAction() : ASTAlterAction(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  void set_is_if_not_exists(bool is_if_not_exists) { is_if_not_exists_ = is_if_not_exists; }
+  bool is_if_not_exists() const { return is_if_not_exists_; }
+
+  const ASTIdentifier* column_name() const { return column_name_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  std::string GetSQLForAlterAction() const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* column_name_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+  bool is_if_not_exists_ = false;
 };
 
 // ALTER table action for "ADD COLUMN" clause
@@ -8257,6 +10825,7 @@ class ASTAddColumnAction final : public ASTAlterAction {
 
   ASTAddColumnAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8279,7 +10848,7 @@ class ASTAddColumnAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_definition_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_definition_));
     fl.AddOptional(&column_position_, AST_COLUMN_POSITION);
     fl.AddOptionalExpression(&fill_expression_);
     return fl.Finalize();
@@ -8298,6 +10867,7 @@ class ASTDropColumnAction final : public ASTAlterAction {
 
   ASTDropColumnAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8315,7 +10885,7 @@ class ASTDropColumnAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
     return fl.Finalize();
   }
 
@@ -8330,6 +10900,7 @@ class ASTRenameColumnAction final : public ASTAlterAction {
 
   ASTRenameColumnAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8348,8 +10919,8 @@ class ASTRenameColumnAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&new_column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&new_column_name_));
     return fl.Finalize();
   }
 
@@ -8365,6 +10936,7 @@ class ASTAlterColumnTypeAction final : public ASTAlterAction {
 
   ASTAlterColumnTypeAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8384,8 +10956,8 @@ class ASTAlterColumnTypeAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&schema_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&schema_));
     fl.AddOptional(&collate_, AST_COLLATE);
     return fl.Finalize();
   }
@@ -8403,6 +10975,7 @@ class ASTAlterColumnOptionsAction final : public ASTAlterAction {
 
   ASTAlterColumnOptionsAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8421,8 +10994,8 @@ class ASTAlterColumnOptionsAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&options_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&options_list_));
     return fl.Finalize();
   }
 
@@ -8438,6 +11011,7 @@ class ASTAlterColumnSetDefaultAction final : public ASTAlterAction {
 
   ASTAlterColumnSetDefaultAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8456,8 +11030,8 @@ class ASTAlterColumnSetDefaultAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&default_expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&default_expression_));
     return fl.Finalize();
   }
 
@@ -8473,6 +11047,7 @@ class ASTAlterColumnDropDefaultAction final : public ASTAlterAction {
 
   ASTAlterColumnDropDefaultAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8490,7 +11065,7 @@ class ASTAlterColumnDropDefaultAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
     return fl.Finalize();
   }
 
@@ -8505,6 +11080,7 @@ class ASTAlterColumnDropNotNullAction final : public ASTAlterAction {
 
   ASTAlterColumnDropNotNullAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8522,11 +11098,80 @@ class ASTAlterColumnDropNotNullAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
     return fl.Finalize();
   }
 
   const ASTIdentifier* column_name_ = nullptr;
+  bool is_if_exists_ = false;
+};
+
+// ALTER table action for "ALTER COLUMN DROP GENERATED" clause
+class ASTAlterColumnDropGeneratedAction final : public ASTAlterAction {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_COLUMN_DROP_GENERATED_ACTION;
+
+  ASTAlterColumnDropGeneratedAction() : ASTAlterAction(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  void set_is_if_exists(bool is_if_exists) { is_if_exists_ = is_if_exists; }
+  bool is_if_exists() const { return is_if_exists_; }
+
+  const ASTIdentifier* column_name() const { return column_name_; }
+
+  std::string GetSQLForAlterAction() const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* column_name_ = nullptr;
+  bool is_if_exists_ = false;
+};
+
+// ALTER table action for "ALTER COLUMN SET GENERATED" clause
+class ASTAlterColumnSetGeneratedAction final : public ASTAlterAction {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_COLUMN_SET_GENERATED_ACTION;
+
+  ASTAlterColumnSetGeneratedAction() : ASTAlterAction(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  void set_is_if_exists(bool is_if_exists) { is_if_exists_ = is_if_exists; }
+  bool is_if_exists() const { return is_if_exists_; }
+
+  const ASTIdentifier* column_name() const { return column_name_; }
+  const ASTGeneratedColumnInfo* generated_column_info() const { return generated_column_info_; }
+
+  std::string GetSQLForAlterAction() const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&generated_column_info_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* column_name_ = nullptr;
+  const ASTGeneratedColumnInfo* generated_column_info_ = nullptr;
   bool is_if_exists_ = false;
 };
 
@@ -8538,6 +11183,7 @@ class ASTGrantToClause final : public ASTAlterAction {
 
   ASTGrantToClause() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8553,7 +11199,7 @@ class ASTGrantToClause final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&grantee_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&grantee_list_));
     return fl.Finalize();
   }
 
@@ -8569,6 +11215,7 @@ class ASTRestrictToClause final : public ASTAlterAction {
 
   ASTRestrictToClause() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8581,7 +11228,7 @@ class ASTRestrictToClause final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&restrictee_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&restrictee_list_));
     return fl.Finalize();
   }
 
@@ -8595,6 +11242,7 @@ class ASTAddToRestricteeListClause final : public ASTAlterAction {
 
   ASTAddToRestricteeListClause() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8610,7 +11258,7 @@ class ASTAddToRestricteeListClause final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&restrictee_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&restrictee_list_));
     return fl.Finalize();
   }
 
@@ -8625,6 +11273,7 @@ class ASTRemoveFromRestricteeListClause final : public ASTAlterAction {
 
   ASTRemoveFromRestricteeListClause() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8640,7 +11289,7 @@ class ASTRemoveFromRestricteeListClause final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&restrictee_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&restrictee_list_));
     return fl.Finalize();
   }
 
@@ -8656,6 +11305,7 @@ class ASTFilterUsingClause final : public ASTAlterAction {
 
   ASTFilterUsingClause() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8671,7 +11321,7 @@ class ASTFilterUsingClause final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&predicate_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&predicate_));
     return fl.Finalize();
   }
 
@@ -8686,6 +11336,7 @@ class ASTRevokeFromClause final : public ASTAlterAction {
 
   ASTRevokeFromClause() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8719,6 +11370,7 @@ class ASTRenameToClause final : public ASTAlterAction {
 
   ASTRenameToClause() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8731,7 +11383,7 @@ class ASTRenameToClause final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&new_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&new_name_));
     return fl.Finalize();
   }
 
@@ -8745,6 +11397,7 @@ class ASTSetCollateClause final : public ASTAlterAction {
 
   ASTSetCollateClause() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8757,7 +11410,7 @@ class ASTSetCollateClause final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&collate_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&collate_));
     return fl.Finalize();
   }
 
@@ -8771,8 +11424,11 @@ class ASTAlterSubEntityAction final : public ASTAlterAction {
 
   ASTAlterSubEntityAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
 
   void set_is_if_exists(bool is_if_exists) { is_if_exists_ = is_if_exists; }
   bool is_if_exists() const { return is_if_exists_; }
@@ -8782,16 +11438,15 @@ class ASTAlterSubEntityAction final : public ASTAlterAction {
   const ASTAlterAction* action() const { return action_; }
 
   std::string GetSQLForAlterAction() const override;
-  std::string SingleNodeDebugString() const override;
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_));
     return fl.Finalize();
   }
 
@@ -8808,8 +11463,11 @@ class ASTAddSubEntityAction final : public ASTAlterAction {
 
   ASTAddSubEntityAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
 
   void set_is_if_not_exists(bool is_if_not_exists) { is_if_not_exists_ = is_if_not_exists; }
   bool is_if_not_exists() const { return is_if_not_exists_; }
@@ -8819,15 +11477,14 @@ class ASTAddSubEntityAction final : public ASTAlterAction {
   const ASTOptionsList* options_list() const { return options_list_; }
 
   std::string GetSQLForAlterAction() const override;
-  std::string SingleNodeDebugString() const override;
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
@@ -8845,8 +11502,11 @@ class ASTDropSubEntityAction final : public ASTAlterAction {
 
   ASTDropSubEntityAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
 
   void set_is_if_exists(bool is_if_exists) { is_if_exists_ = is_if_exists; }
   bool is_if_exists() const { return is_if_exists_; }
@@ -8855,15 +11515,14 @@ class ASTDropSubEntityAction final : public ASTAlterAction {
   const ASTIdentifier* name() const { return name_; }
 
   std::string GetSQLForAlterAction() const override;
-  std::string SingleNodeDebugString() const override;
 
   friend class ParseTreeSerializer;
 
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -8879,6 +11538,7 @@ class ASTAddTtlAction final : public ASTAlterAction {
 
   ASTAddTtlAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8894,7 +11554,7 @@ class ASTAddTtlAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -8909,6 +11569,7 @@ class ASTReplaceTtlAction final : public ASTAlterAction {
 
   ASTReplaceTtlAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8924,7 +11585,7 @@ class ASTReplaceTtlAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -8939,6 +11600,7 @@ class ASTDropTtlAction final : public ASTAlterAction {
 
   ASTDropTtlAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8964,6 +11626,7 @@ class ASTAlterActionList final : public ASTNode {
 
   ASTAlterActionList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -8990,6 +11653,7 @@ class ASTAlterAllRowAccessPoliciesStatement final : public ASTStatement {
 
   ASTAlterAllRowAccessPoliciesStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9001,8 +11665,8 @@ class ASTAlterAllRowAccessPoliciesStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_path_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&alter_action_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&alter_action_));
     return fl.Finalize();
   }
 
@@ -9016,6 +11680,7 @@ class ASTForeignKeyActions final : public ASTNode {
 
   ASTForeignKeyActions() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9054,6 +11719,7 @@ class ASTForeignKeyReference final : public ASTNode {
 
   ASTForeignKeyReference() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9082,9 +11748,9 @@ class ASTForeignKeyReference final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_list_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&actions_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&actions_));
     return fl.Finalize();
   }
 
@@ -9102,6 +11768,7 @@ class ASTScript final : public ASTNode {
 
   ASTScript() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9116,7 +11783,7 @@ class ASTScript final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&statement_list_node_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&statement_list_node_));
     return fl.Finalize();
   }
 
@@ -9130,6 +11797,7 @@ class ASTElseifClause final : public ASTNode {
 
   ASTElseifClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9148,8 +11816,8 @@ class ASTElseifClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
     return fl.Finalize();
   }
 
@@ -9166,6 +11834,7 @@ class ASTElseifClauseList final : public ASTNode {
 
   ASTElseifClauseList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9192,6 +11861,7 @@ class ASTIfStatement final : public ASTScriptStatement {
 
   ASTIfStatement() : ASTScriptStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9212,8 +11882,8 @@ class ASTIfStatement final : public ASTScriptStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&then_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&then_list_));
     fl.AddOptional(&elseif_clauses_, AST_ELSEIF_CLAUSE_LIST);
     fl.AddOptional(&else_list_, AST_STATEMENT_LIST);
     return fl.Finalize();
@@ -9232,6 +11902,7 @@ class ASTWhenThenClause final : public ASTNode {
 
   ASTWhenThenClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9252,8 +11923,8 @@ class ASTWhenThenClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
     return fl.Finalize();
   }
 
@@ -9270,6 +11941,7 @@ class ASTWhenThenClauseList final : public ASTNode {
 
   ASTWhenThenClauseList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9296,6 +11968,7 @@ class ASTCaseStatement final : public ASTScriptStatement {
 
   ASTCaseStatement() : ASTScriptStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9313,7 +11986,7 @@ class ASTCaseStatement final : public ASTScriptStatement {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptionalExpression(&expression_);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&when_then_clauses_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&when_then_clauses_));
     fl.AddOptional(&else_list_, AST_STATEMENT_LIST);
     return fl.Finalize();
   }
@@ -9329,6 +12002,7 @@ class ASTHint final : public ASTNode {
 
   ASTHint() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9362,6 +12036,7 @@ class ASTHintEntry final : public ASTNode {
 
   ASTHintEntry() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9384,14 +12059,14 @@ class ASTHintEntry final : public ASTNode {
     // type ASTIdentifier and the first one is optional.
     if (num_children() == 2) {
       FieldLoader fl(this);
-      ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-      ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+      GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+      GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
       return fl.Finalize();
     } else {
       FieldLoader fl(this);
-      ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&qualifier_));
-      ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-      ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+      GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&qualifier_));
+      GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+      GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
       return fl.Finalize();
     }
   }
@@ -9403,10 +12078,11 @@ class ASTUnpivotInItemLabel final : public ASTNode {
 
   ASTUnpivotInItemLabel() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
-  const ASTLeaf* label() const {
+  const ASTExpression* label() const {
     if (string_label_ != nullptr) {
       return string_label_;
     }
@@ -9433,6 +12109,7 @@ class ASTDescriptor final : public ASTNode {
 
   ASTDescriptor() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9443,7 +12120,7 @@ class ASTDescriptor final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&columns_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&columns_));
     return fl.Finalize();
   }
 
@@ -9508,6 +12185,7 @@ class ASTSimpleColumnSchema final : public ASTColumnSchema {
 
   ASTSimpleColumnSchema() : ASTColumnSchema(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9518,7 +12196,7 @@ class ASTSimpleColumnSchema final : public ASTColumnSchema {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_name_));
     fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
     fl.AddOptional(&collate_, AST_COLLATE);
     fl.AddOptional(&generated_column_info_, AST_GENERATED_COLUMN_INFO);
@@ -9551,6 +12229,7 @@ class ASTArrayColumnSchema final : public ASTElementTypeColumnSchema {
 
   ASTArrayColumnSchema() : ASTElementTypeColumnSchema(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9559,7 +12238,7 @@ class ASTArrayColumnSchema final : public ASTElementTypeColumnSchema {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&element_schema_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&element_schema_));
     fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
     fl.AddOptional(&collate_, AST_COLLATE);
     fl.AddOptional(&generated_column_info_, AST_GENERATED_COLUMN_INFO);
@@ -9576,6 +12255,7 @@ class ASTRangeColumnSchema final : public ASTElementTypeColumnSchema {
 
   ASTRangeColumnSchema() : ASTElementTypeColumnSchema(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9584,7 +12264,7 @@ class ASTRangeColumnSchema final : public ASTElementTypeColumnSchema {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&element_schema_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&element_schema_));
     fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
     fl.AddOptional(&collate_, AST_COLLATE);
     fl.AddOptional(&generated_column_info_, AST_GENERATED_COLUMN_INFO);
@@ -9595,12 +12275,46 @@ class ASTRangeColumnSchema final : public ASTElementTypeColumnSchema {
   }
 };
 
+class ASTMapColumnSchema final : public ASTColumnSchema {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_MAP_COLUMN_SCHEMA;
+
+  ASTMapColumnSchema() : ASTColumnSchema(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTColumnSchema* key_schema() const { return key_schema_; }
+  const ASTColumnSchema* value_schema() const { return value_schema_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&key_schema_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_schema_));
+    fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
+    fl.AddOptional(&collate_, AST_COLLATE);
+    fl.AddOptional(&generated_column_info_, AST_GENERATED_COLUMN_INFO);
+    fl.AddOptionalExpression(&default_expression_);
+    fl.AddOptional(&attributes_, AST_COLUMN_ATTRIBUTE_LIST);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTColumnSchema* key_schema_ = nullptr;
+  const ASTColumnSchema* value_schema_ = nullptr;
+};
+
 class ASTPrimaryKeyElement final : public ASTNode {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_PRIMARY_KEY_ELEMENT;
 
   ASTPrimaryKeyElement() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9624,7 +12338,7 @@ class ASTPrimaryKeyElement final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_));
     fl.AddOptional(&null_order_, AST_NULL_ORDER);
     return fl.Finalize();
   }
@@ -9640,6 +12354,7 @@ class ASTPrimaryKeyElementList final : public ASTNode {
 
   ASTPrimaryKeyElementList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9677,6 +12392,7 @@ class ASTPrimaryKey final : public ASTTableConstraint {
 
   ASTPrimaryKey() : ASTTableConstraint(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9712,6 +12428,7 @@ class ASTForeignKey final : public ASTTableConstraint {
 
   ASTForeignKey() : ASTTableConstraint(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9725,8 +12442,8 @@ class ASTForeignKey final : public ASTTableConstraint {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_list_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&reference_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&reference_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     fl.AddOptional(&constraint_name_, AST_IDENTIFIER);
     return fl.Finalize();
@@ -9744,6 +12461,7 @@ class ASTCheckConstraint final : public ASTTableConstraint {
 
   ASTCheckConstraint() : ASTTableConstraint(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9761,7 +12479,7 @@ class ASTCheckConstraint final : public ASTTableConstraint {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     fl.AddOptional(&constraint_name_, AST_IDENTIFIER);
     return fl.Finalize();
@@ -9779,6 +12497,7 @@ class ASTDescriptorColumn final : public ASTNode {
 
   ASTDescriptorColumn() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9790,7 +12509,7 @@ class ASTDescriptorColumn final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -9803,6 +12522,7 @@ class ASTDescriptorColumnList final : public ASTNode {
 
   ASTDescriptorColumnList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9830,6 +12550,7 @@ class ASTCreateEntityStatement final : public ASTCreateStatement {
 
   ASTCreateEntityStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9846,8 +12567,8 @@ class ASTCreateEntityStatement final : public ASTCreateStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     fl.AddOptional(&json_body_, AST_JSON_LITERAL);
     fl.AddOptional(&text_body_, AST_STRING_LITERAL);
@@ -9867,6 +12588,7 @@ class ASTRaiseStatement final : public ASTScriptStatement {
 
   ASTRaiseStatement() : ASTScriptStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9897,6 +12619,7 @@ class ASTExceptionHandler final : public ASTNode {
 
   ASTExceptionHandler() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9908,7 +12631,7 @@ class ASTExceptionHandler final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&statement_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&statement_list_));
     return fl.Finalize();
   }
 
@@ -9924,6 +12647,7 @@ class ASTExceptionHandlerList final : public ASTNode {
 
   ASTExceptionHandlerList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9950,6 +12674,7 @@ class ASTBeginEndBlock final : public ASTScriptStatement {
 
   ASTBeginEndBlock() : ASTScriptStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -9974,7 +12699,7 @@ class ASTBeginEndBlock final : public ASTScriptStatement {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&label_, AST_LABEL);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&statement_list_node_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&statement_list_node_));
     fl.AddOptional(&handler_list_, AST_EXCEPTION_HANDLER_LIST);
     return fl.Finalize();
   }
@@ -9990,6 +12715,7 @@ class ASTIdentifierList final : public ASTNode {
 
   ASTIdentifierList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10017,6 +12743,7 @@ class ASTVariableDeclaration final : public ASTScriptStatement {
 
   ASTVariableDeclaration() : ASTScriptStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10034,7 +12761,7 @@ class ASTVariableDeclaration final : public ASTScriptStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&variable_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&variable_list_));
     fl.AddOptionalType(&type_);
     fl.AddOptionalExpression(&default_value_);
     return fl.Finalize();
@@ -10052,6 +12779,7 @@ class ASTUntilClause final : public ASTNode {
 
   ASTUntilClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10068,7 +12796,7 @@ class ASTUntilClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
     return fl.Finalize();
   }
 
@@ -10120,6 +12848,7 @@ class ASTBreakStatement final : public ASTBreakContinueStatement {
 
   ASTBreakStatement() : ASTBreakContinueStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10144,6 +12873,7 @@ class ASTContinueStatement final : public ASTBreakContinueStatement {
 
   ASTContinueStatement() : ASTBreakContinueStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10168,6 +12898,7 @@ class ASTDropPrivilegeRestrictionStatement final : public ASTDdlStatement {
 
   ASTDropPrivilegeRestrictionStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10186,9 +12917,9 @@ const ASTPathExpression*
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&object_type_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&object_type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_path_));
     return fl.Finalize();
   }
 
@@ -10205,6 +12936,7 @@ class ASTDropRowAccessPolicyStatement final : public ASTDdlStatement {
 
   ASTDropRowAccessPolicyStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10228,8 +12960,8 @@ class ASTDropRowAccessPolicyStatement final : public ASTDdlStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&table_name_));
     return fl.Finalize();
   }
 
@@ -10244,6 +12976,7 @@ class ASTCreatePrivilegeRestrictionStatement final : public ASTCreateStatement {
 
   ASTCreatePrivilegeRestrictionStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10259,9 +12992,9 @@ class ASTCreatePrivilegeRestrictionStatement final : public ASTCreateStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&object_type_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&object_type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_path_));
     fl.AddOptional(&restrict_to_, AST_RESTRICT_TO_CLAUSE);
     return fl.Finalize();
   }
@@ -10278,6 +13011,7 @@ class ASTCreateRowAccessPolicyStatement final : public ASTCreateStatement {
 
   ASTCreateRowAccessPolicyStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10300,9 +13034,9 @@ class ASTCreateRowAccessPolicyStatement final : public ASTCreateStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&target_path_));
     fl.AddOptional(&grant_to_, AST_GRANT_TO_CLAUSE);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&filter_using_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&filter_using_));
     fl.AddOptional(&name_, AST_PATH_EXPRESSION);
     return fl.Finalize();
   }
@@ -10321,6 +13055,7 @@ class ASTDropStatement final : public ASTDdlStatement {
 
   ASTDropStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10352,7 +13087,7 @@ class ASTDropStatement final : public ASTDdlStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -10368,6 +13103,7 @@ class ASTReturnStatement final : public ASTScriptStatement {
 
   ASTReturnStatement() : ASTScriptStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10389,6 +13125,7 @@ class ASTSingleAssignment final : public ASTScriptStatement {
 
   ASTSingleAssignment() : ASTScriptStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10400,8 +13137,8 @@ class ASTSingleAssignment final : public ASTScriptStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&variable_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&variable_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -10418,6 +13155,7 @@ class ASTParameterAssignment final : public ASTStatement {
 
   ASTParameterAssignment() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10429,8 +13167,8 @@ class ASTParameterAssignment final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&parameter_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&parameter_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -10447,6 +13185,7 @@ class ASTSystemVariableAssignment final : public ASTStatement {
 
   ASTSystemVariableAssignment() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10458,8 +13197,8 @@ class ASTSystemVariableAssignment final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&system_variable_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&system_variable_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -10477,6 +13216,7 @@ class ASTAssignmentFromStruct final : public ASTScriptStatement {
 
   ASTAssignmentFromStruct() : ASTScriptStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10488,8 +13228,8 @@ class ASTAssignmentFromStruct final : public ASTScriptStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&variables_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&struct_expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&variables_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&struct_expression_));
     return fl.Finalize();
   }
 
@@ -10527,6 +13267,7 @@ class ASTCreateTableStatement final : public ASTCreateTableStmtBase {
 
   ASTCreateTableStatement() : ASTCreateTableStmtBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10543,7 +13284,7 @@ class ASTCreateTableStatement final : public ASTCreateTableStmtBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&table_element_list_, AST_TABLE_ELEMENT_LIST);
     fl.AddOptional(&spanner_options_, AST_SPANNER_TABLE_OPTIONS);
     fl.AddOptional(&like_table_name_, AST_PATH_EXPRESSION);
@@ -10574,6 +13315,7 @@ class ASTCreateExternalTableStatement final : public ASTCreateTableStmtBase {
 
   ASTCreateExternalTableStatement() : ASTCreateTableStmtBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10584,7 +13326,7 @@ class ASTCreateExternalTableStatement final : public ASTCreateTableStmtBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&table_element_list_, AST_TABLE_ELEMENT_LIST);
     fl.AddOptional(&like_table_name_, AST_PATH_EXPRESSION);
     fl.AddOptional(&collate_, AST_COLLATE);
@@ -10634,6 +13376,7 @@ class ASTCreateViewStatement final : public ASTCreateViewStatementBase {
 
   ASTCreateViewStatement() : ASTCreateViewStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10642,7 +13385,7 @@ class ASTCreateViewStatement final : public ASTCreateViewStatementBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&column_with_options_list_, AST_COLUMN_WITH_OPTIONS_LIST);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     fl.AddOptional(&query_, AST_QUERY);
@@ -10656,6 +13399,7 @@ class ASTCreateMaterializedViewStatement final : public ASTCreateViewStatementBa
 
   ASTCreateMaterializedViewStatement() : ASTCreateViewStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10668,7 +13412,7 @@ class ASTCreateMaterializedViewStatement final : public ASTCreateViewStatementBa
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&column_with_options_list_, AST_COLUMN_WITH_OPTIONS_LIST);
     fl.AddOptional(&partition_by_, AST_PARTITION_BY);
     fl.AddOptional(&cluster_by_, AST_CLUSTER_BY);
@@ -10689,6 +13433,7 @@ class ASTCreateApproxViewStatement final : public ASTCreateViewStatementBase {
 
   ASTCreateApproxViewStatement() : ASTCreateViewStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10697,7 +13442,7 @@ class ASTCreateApproxViewStatement final : public ASTCreateViewStatementBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&column_with_options_list_, AST_COLUMN_WITH_OPTIONS_LIST);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     fl.AddOptional(&query_, AST_QUERY);
@@ -10736,6 +13481,7 @@ class ASTWhileStatement final : public ASTLoopStatement {
 
   ASTWhileStatement() : ASTLoopStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10750,7 +13496,7 @@ class ASTWhileStatement final : public ASTLoopStatement {
     FieldLoader fl(this);
     fl.AddOptional(&label_, AST_LABEL);
     fl.AddOptionalExpression(&condition_);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
     return fl.Finalize();
   }
 
@@ -10765,6 +13511,7 @@ class ASTRepeatStatement final : public ASTLoopStatement {
 
   ASTRepeatStatement() : ASTLoopStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10777,8 +13524,8 @@ class ASTRepeatStatement final : public ASTLoopStatement {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&label_, AST_LABEL);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&until_clause_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&until_clause_));
     return fl.Finalize();
   }
 
@@ -10793,6 +13540,7 @@ class ASTForInStatement final : public ASTLoopStatement {
 
   ASTForInStatement() : ASTLoopStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10805,9 +13553,9 @@ class ASTForInStatement final : public ASTLoopStatement {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&label_, AST_LABEL);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&variable_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&variable_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&query_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
     return fl.Finalize();
   }
 
@@ -10842,12 +13590,15 @@ class ASTAlterStatementBase : public ASTDdlStatement {
   bool is_if_exists_ = false;
 };
 
-class ASTAlterDatabaseStatement final : public ASTAlterStatementBase {
+// Represents the statement ALTER CONNECTION <name_path> SET OPTIONS
+// <options_list>
+class ASTAlterConnectionStatement final : public ASTAlterStatementBase {
  public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_DATABASE_STATEMENT;
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_CONNECTION_STATEMENT;
 
-  ASTAlterDatabaseStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
+  ASTAlterConnectionStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10857,7 +13608,28 @@ class ASTAlterDatabaseStatement final : public ASTAlterStatementBase {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    return fl.Finalize();
+  }
+};
+
+class ASTAlterDatabaseStatement final : public ASTAlterStatementBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_DATABASE_STATEMENT;
+
+  ASTAlterDatabaseStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&path_, AST_PATH_EXPRESSION);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 };
@@ -10868,6 +13640,7 @@ class ASTAlterSchemaStatement final : public ASTAlterStatementBase {
 
   ASTAlterSchemaStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10877,7 +13650,28 @@ class ASTAlterSchemaStatement final : public ASTAlterStatementBase {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    return fl.Finalize();
+  }
+};
+
+class ASTAlterExternalSchemaStatement final : public ASTAlterStatementBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_EXTERNAL_SCHEMA_STATEMENT;
+
+  ASTAlterExternalSchemaStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&path_, AST_PATH_EXPRESSION);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 };
@@ -10888,6 +13682,7 @@ class ASTAlterTableStatement final : public ASTAlterStatementBase {
 
   ASTAlterTableStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10897,7 +13692,7 @@ class ASTAlterTableStatement final : public ASTAlterStatementBase {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 };
@@ -10908,6 +13703,7 @@ class ASTAlterViewStatement final : public ASTAlterStatementBase {
 
   ASTAlterViewStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10917,7 +13713,7 @@ class ASTAlterViewStatement final : public ASTAlterStatementBase {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 };
@@ -10928,6 +13724,7 @@ class ASTAlterMaterializedViewStatement final : public ASTAlterStatementBase {
 
   ASTAlterMaterializedViewStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10937,7 +13734,7 @@ class ASTAlterMaterializedViewStatement final : public ASTAlterStatementBase {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 };
@@ -10948,6 +13745,7 @@ class ASTAlterApproxViewStatement final : public ASTAlterStatementBase {
 
   ASTAlterApproxViewStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10957,7 +13755,7 @@ class ASTAlterApproxViewStatement final : public ASTAlterStatementBase {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 };
@@ -10968,6 +13766,7 @@ class ASTAlterModelStatement final : public ASTAlterStatementBase {
 
   ASTAlterModelStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -10977,7 +13776,7 @@ class ASTAlterModelStatement final : public ASTAlterStatementBase {
   absl::Status InitFields() final {
     FieldLoader fl(this);
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 };
@@ -10988,6 +13787,7 @@ class ASTAlterPrivilegeRestrictionStatement final : public ASTAlterStatementBase
 
   ASTAlterPrivilegeRestrictionStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11002,10 +13802,10 @@ class ASTAlterPrivilegeRestrictionStatement final : public ASTAlterStatementBase
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&object_type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&privileges_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&object_type_));
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 
@@ -11019,6 +13819,7 @@ class ASTAlterRowAccessPolicyStatement final : public ASTAlterStatementBase {
 
   ASTAlterRowAccessPolicyStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11030,9 +13831,9 @@ class ASTAlterRowAccessPolicyStatement final : public ASTAlterStatementBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 
@@ -11045,6 +13846,7 @@ class ASTAlterEntityStatement final : public ASTAlterStatementBase {
 
   ASTAlterEntityStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11055,13 +13857,75 @@ class ASTAlterEntityStatement final : public ASTAlterStatementBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
     fl.AddOptional(&path_, AST_PATH_EXPRESSION);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
     return fl.Finalize();
   }
 
   const ASTIdentifier* type_ = nullptr;
+};
+
+// ALTER SEARCH|VECTOR INDEX action for "REBUILD" clause.
+class ASTRebuildAction final : public ASTAlterAction {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_REBUILD_ACTION;
+
+  ASTRebuildAction() : ASTAlterAction(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string GetSQLForAlterAction() const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+};
+
+// Represents a ALTER SEARCH|VECTOR INDEX statement.
+// Note: ALTER INDEX without SEARCH or VECTOR is currently resolved to
+// schema_object_kind, and throws not supported error.
+class ASTAlterIndexStatement final : public ASTAlterStatementBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_INDEX_STATEMENT;
+
+  ASTAlterIndexStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTAlterIndexStatementEnums::IndexType in ast_enums.proto
+  enum IndexType {
+    INDEX_DEFAULT = ASTAlterIndexStatementEnums::INDEX_DEFAULT,
+    INDEX_SEARCH = ASTAlterIndexStatementEnums::INDEX_SEARCH,
+    INDEX_VECTOR = ASTAlterIndexStatementEnums::INDEX_VECTOR
+  };
+
+  void set_index_type(ASTAlterIndexStatement::IndexType index_type) { index_type_ = index_type; }
+  ASTAlterIndexStatement::IndexType index_type() const { return index_type_; }
+
+  const ASTPathExpression* table_name() const { return table_name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&path_, AST_PATH_EXPRESSION);
+    fl.AddOptional(&table_name_, AST_PATH_EXPRESSION);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* table_name_ = nullptr;
+  ASTAlterIndexStatement::IndexType index_type_ = ASTAlterIndexStatement::INDEX_DEFAULT;
 };
 
 // This is the common superclass of CREATE FUNCTION and CREATE TABLE FUNCTION
@@ -11128,6 +13992,7 @@ class ASTCreateFunctionStatement final : public ASTCreateFunctionStmtBase {
 
   ASTCreateFunctionStatement() : ASTCreateFunctionStmtBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11147,7 +14012,7 @@ class ASTCreateFunctionStatement final : public ASTCreateFunctionStmtBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&function_declaration_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&function_declaration_));
     fl.AddOptionalType(&return_type_);
     fl.AddOptional(&language_, AST_IDENTIFIER);
     fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
@@ -11167,7 +14032,7 @@ class ASTCreateFunctionStatement final : public ASTCreateFunctionStmtBase {
   const ASTWithConnectionClause* with_connection_clause_ = nullptr;
 };
 
-// This represents a table-valued function declaration statement in ZetaSQL,
+// This represents a table-valued function declaration statement in GoogleSQL,
 // using the CREATE TABLE FUNCTION syntax. Note that some combinations of field
 // settings can represent functions that are not actually valid, since optional
 // members may be inappropriate for one type of function or another; validity of
@@ -11178,6 +14043,7 @@ class ASTCreateTableFunctionStatement final : public ASTCreateFunctionStmtBase {
 
   ASTCreateTableFunctionStatement() : ASTCreateFunctionStmtBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11191,7 +14057,7 @@ class ASTCreateTableFunctionStatement final : public ASTCreateFunctionStmtBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&function_declaration_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&function_declaration_));
     fl.AddOptional(&return_tvf_schema_, AST_TVF_SCHEMA);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     fl.AddOptional(&language_, AST_IDENTIFIER);
@@ -11210,6 +14076,7 @@ class ASTStructColumnSchema final : public ASTColumnSchema {
 
   ASTStructColumnSchema() : ASTColumnSchema(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11242,6 +14109,7 @@ class ASTInferredTypeColumnSchema final : public ASTColumnSchema {
 
   ASTInferredTypeColumnSchema() : ASTColumnSchema(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11266,6 +14134,7 @@ class ASTExecuteIntoClause final : public ASTNode {
 
   ASTExecuteIntoClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11276,7 +14145,7 @@ class ASTExecuteIntoClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&identifiers_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifiers_));
     return fl.Finalize();
   }
 
@@ -11289,6 +14158,7 @@ class ASTExecuteUsingArgument final : public ASTNode {
 
   ASTExecuteUsingArgument() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11302,7 +14172,7 @@ class ASTExecuteUsingArgument final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     fl.AddOptional(&alias_, AST_ALIAS);
     return fl.Finalize();
   }
@@ -11317,6 +14187,7 @@ class ASTExecuteUsingClause final : public ASTNode {
 
   ASTExecuteUsingClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11343,6 +14214,7 @@ class ASTExecuteImmediateStatement final : public ASTStatement {
 
   ASTExecuteImmediateStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11355,7 +14227,7 @@ class ASTExecuteImmediateStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&sql_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&sql_));
     fl.AddOptional(&into_clause_, AST_EXECUTE_INTO_CLAUSE);
     fl.AddOptional(&using_clause_, AST_EXECUTE_USING_CLAUSE);
     return fl.Finalize();
@@ -11372,6 +14244,7 @@ class ASTAuxLoadDataFromFilesOptionsList final : public ASTNode {
 
   ASTAuxLoadDataFromFilesOptionsList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11395,6 +14268,7 @@ class ASTAuxLoadDataPartitionsClause final : public ASTNode {
 
   ASTAuxLoadDataPartitionsClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11419,13 +14293,14 @@ class ASTAuxLoadDataPartitionsClause final : public ASTNode {
 };
 
 // Auxiliary statement used by some engines but not formally part of the
-// ZetaSQL language.
+// GoogleSQL language.
 class ASTAuxLoadDataStatement final : public ASTCreateTableStmtBase {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_AUX_LOAD_DATA_STATEMENT;
 
   ASTAuxLoadDataStatement() : ASTCreateTableStmtBase(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11454,14 +14329,14 @@ class ASTAuxLoadDataStatement final : public ASTCreateTableStmtBase {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&table_element_list_, AST_TABLE_ELEMENT_LIST);
     fl.AddOptional(&load_data_partitions_clause_, AST_AUX_LOAD_DATA_PARTITIONS_CLAUSE);
     fl.AddOptional(&collate_, AST_COLLATE);
     fl.AddOptional(&partition_by_, AST_PARTITION_BY);
     fl.AddOptional(&cluster_by_, AST_CLUSTER_BY);
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&from_files_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&from_files_));
     fl.AddOptional(&with_partition_columns_clause_, AST_WITH_PARTITION_COLUMNS_CLAUSE);
     fl.AddOptional(&with_connection_clause_, AST_WITH_CONNECTION_CLAUSE);
     return fl.Finalize();
@@ -11482,6 +14357,7 @@ class ASTLabel final : public ASTNode {
 
   ASTLabel() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11492,7 +14368,7 @@ class ASTLabel final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     return fl.Finalize();
   }
 
@@ -11505,6 +14381,7 @@ class ASTWithExpression final : public ASTExpression {
 
   ASTWithExpression() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11516,8 +14393,8 @@ class ASTWithExpression final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&variables_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&variables_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -11531,6 +14408,7 @@ class ASTTtlClause final : public ASTNode {
 
   ASTTtlClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11541,7 +14419,7 @@ class ASTTtlClause final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
     return fl.Finalize();
   }
 
@@ -11556,6 +14434,7 @@ class ASTLocation final : public ASTNode {
 
   ASTLocation() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11574,6 +14453,7 @@ class ASTInputOutputClause final : public ASTNode {
 
   ASTInputOutputClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11601,6 +14481,7 @@ class ASTSpannerTableOptions final : public ASTNode {
 
   ASTSpannerTableOptions() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11628,6 +14509,7 @@ class ASTSpannerInterleaveClause final : public ASTNode {
 
   ASTSpannerInterleaveClause() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11666,6 +14548,7 @@ class ASTSpannerAlterColumnAction final : public ASTAlterAction {
 
   ASTSpannerAlterColumnAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11678,7 +14561,7 @@ class ASTSpannerAlterColumnAction final : public ASTAlterAction {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&column_definition_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&column_definition_));
     return fl.Finalize();
   }
 
@@ -11692,6 +14575,7 @@ class ASTSpannerSetOnDeleteAction final : public ASTAlterAction {
 
   ASTSpannerSetOnDeleteAction() : ASTAlterAction(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11721,6 +14605,7 @@ class ASTRangeLiteral final : public ASTExpression {
 
   ASTRangeLiteral() : ASTExpression(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11736,8 +14621,8 @@ class ASTRangeLiteral final : public ASTExpression {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&range_value_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&range_value_));
     return fl.Finalize();
   }
 
@@ -11751,6 +14636,7 @@ class ASTRangeType final : public ASTType {
 
   ASTRangeType() : ASTType(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11763,7 +14649,7 @@ class ASTRangeType final : public ASTType {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&element_type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&element_type_));
     fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
     fl.AddOptional(&collate_, AST_COLLATE);
     return fl.Finalize();
@@ -11774,13 +14660,1734 @@ class ASTRangeType final : public ASTType {
   const ASTCollate* collate_ = nullptr;
 };
 
-// Represents SELECT WITH clause.
-class ASTSelectWith final : public ASTNode {
+class ASTCreatePropertyGraphStatement final : public ASTCreateStatement {
  public:
-  static constexpr ASTNodeKind kConcreteNodeKind = AST_SELECT_WITH;
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_PROPERTY_GRAPH_STATEMENT;
 
-  ASTSelectWith() : ASTNode(kConcreteNodeKind) {}
+  ASTCreatePropertyGraphStatement() : ASTCreateStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Path expression for the target property graph.
+  const ASTPathExpression* name() const { return name_; }
+
+  // GraphNodeTable definitions.
+  const ASTGraphElementTableList* node_table_list() const { return node_table_list_; }
+
+  // GraphEdgeTable definitions.
+  const ASTGraphElementTableList* edge_table_list() const { return edge_table_list_; }
+
+  // Placeholder for now. Schema options support is out of scope of MVP.
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  const ASTPathExpression* GetDdlTarget() const override { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&node_table_list_));
+    fl.AddOptional(&edge_table_list_, AST_GRAPH_ELEMENT_TABLE_LIST);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* name_ = nullptr;
+  const ASTGraphElementTableList* node_table_list_ = nullptr;
+  const ASTGraphElementTableList* edge_table_list_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+};
+
+class ASTGraphElementTableList final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_ELEMENT_TABLE_LIST;
+
+  ASTGraphElementTableList() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // GraphElementTable definitions.
+  const absl::Span<const ASTGraphElementTable* const>& element_tables() const {
+    return element_tables_;
+  }
+  const ASTGraphElementTable* element_tables(int i) const { return element_tables_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&element_tables_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTGraphElementTable* const> element_tables_;
+};
+
+class ASTGraphElementTable final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_ELEMENT_TABLE;
+
+  ASTGraphElementTable() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // GraphElementTable identifier. There should exist an underlying
+  // table with the same name.
+  const ASTPathExpression* name() const { return name_; }
+
+  // GraphElementTable alias.
+  const ASTAlias* alias() const { return alias_; }
+
+  // List of columns that uniquely identifies a row in GraphElementTable.
+  const ASTColumnList* key_list() const { return key_list_; }
+
+  // GraphEdgeTable should have this field referencing source node of the edge.
+  const ASTGraphNodeTableReference* source_node_reference() const { return source_node_reference_; }
+
+  // GraphEdgeTable should have this field referencing destination node of the edge.
+  const ASTGraphNodeTableReference* dest_node_reference() const { return dest_node_reference_; }
+
+  // List of Labels exposed by this ElementTable, along with the
+  // Properties exposed by the Label. This list can never be empty.
+  const ASTGraphElementLabelAndPropertiesList* label_properties_list() const { return label_properties_list_; }
+
+  // If present, this is the dynamic label(s) exposed by
+  // this ElementTable.
+  const ASTGraphDynamicLabel* dynamic_label() const { return dynamic_label_; }
+
+  // If present, this is the dynamic properties exposed by
+  // this ElementTable.
+  const ASTGraphDynamicProperties* dynamic_properties() const { return dynamic_properties_; }
+
+  // If present, this is options associated with the default label
+  // of this element table.
+  const ASTOptionsList* default_label_options_list() const { return default_label_options_list_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    fl.AddOptional(&alias_, AST_ALIAS);
+    fl.AddOptional(&key_list_, AST_COLUMN_LIST);
+    fl.AddOptional(&source_node_reference_, AST_GRAPH_NODE_TABLE_REFERENCE);
+    fl.AddOptional(&dest_node_reference_, AST_GRAPH_NODE_TABLE_REFERENCE);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&label_properties_list_));
+    fl.AddOptional(&dynamic_label_, AST_GRAPH_DYNAMIC_LABEL);
+    fl.AddOptional(&dynamic_properties_, AST_GRAPH_DYNAMIC_PROPERTIES);
+    fl.AddOptional(&default_label_options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* name_ = nullptr;
+  const ASTAlias* alias_ = nullptr;
+  const ASTColumnList* key_list_ = nullptr;
+  const ASTGraphNodeTableReference* source_node_reference_ = nullptr;
+  const ASTGraphNodeTableReference* dest_node_reference_ = nullptr;
+  const ASTGraphElementLabelAndPropertiesList* label_properties_list_ = nullptr;
+  const ASTGraphDynamicLabel* dynamic_label_ = nullptr;
+  const ASTGraphDynamicProperties* dynamic_properties_ = nullptr;
+  const ASTOptionsList* default_label_options_list_ = nullptr;
+};
+
+class ASTGraphNodeTableReference final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_NODE_TABLE_REFERENCE;
+
+  ASTGraphNodeTableReference() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  // This enum is equivalent to ASTGraphNodeTableReferenceEnums::NodeReferenceType in ast_enums.proto
+  enum NodeReferenceType {
+    NODE_REFERENCE_TYPE_UNSPECIFIED = ASTGraphNodeTableReferenceEnums::NODE_REFERENCE_TYPE_UNSPECIFIED,
+    SOURCE = ASTGraphNodeTableReferenceEnums::SOURCE,
+    DESTINATION = ASTGraphNodeTableReferenceEnums::DESTINATION
+  };
+
+  void set_node_reference_type(ASTGraphNodeTableReference::NodeReferenceType node_reference_type) { node_reference_type_ = node_reference_type; }
+  ASTGraphNodeTableReference::NodeReferenceType node_reference_type() const { return node_reference_type_; }
+
+  // Referenced GraphNodeTable alias
+  const ASTIdentifier* node_table_identifier() const { return node_table_identifier_; }
+
+  // GraphEdgeTable columns referencing GraphNodeTable columns.
+  const ASTColumnList* edge_table_columns() const { return edge_table_columns_; }
+
+  // GraphNodeTable columns referenced by GraphEdgeTable
+  const ASTColumnList* node_table_columns() const { return node_table_columns_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&node_table_identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&edge_table_columns_));
+    fl.AddOptional(&node_table_columns_, AST_COLUMN_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* node_table_identifier_ = nullptr;
+  const ASTColumnList* edge_table_columns_ = nullptr;
+  const ASTColumnList* node_table_columns_ = nullptr;
+  ASTGraphNodeTableReference::NodeReferenceType node_reference_type_ = ASTGraphNodeTableReference::NODE_REFERENCE_TYPE_UNSPECIFIED;
+};
+
+class ASTGraphElementLabelAndPropertiesList final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_ELEMENT_LABEL_AND_PROPERTIES_LIST;
+
+  ASTGraphElementLabelAndPropertiesList() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This can never be empty.
+  const absl::Span<const ASTGraphElementLabelAndProperties* const>& label_properties_list() const {
+    return label_properties_list_;
+  }
+  const ASTGraphElementLabelAndProperties* label_properties_list(int i) const { return label_properties_list_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&label_properties_list_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTGraphElementLabelAndProperties* const> label_properties_list_;
+};
+
+class ASTGraphElementLabelAndProperties final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_ELEMENT_LABEL_AND_PROPERTIES;
+
+  ASTGraphElementLabelAndProperties() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Label of the element table.
+  // If NULL, it is equivalent to explicitly specifying "DEFAULT LABEL" in
+  // the element table definition.
+  const ASTIdentifier* label_name() const { return label_name_; }
+
+  // Options associated with the label.
+  const ASTOptionsList* label_options_list() const { return label_options_list_; }
+
+  // Properties exposed by the label.
+  const ASTGraphProperties* properties() const { return properties_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&label_name_, AST_IDENTIFIER);
+    fl.AddOptional(&label_options_list_, AST_OPTIONS_LIST);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&properties_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* label_name_ = nullptr;
+  const ASTOptionsList* label_options_list_ = nullptr;
+  const ASTGraphProperties* properties_ = nullptr;
+};
+
+// <expression> [AS <alias>] [OPTIONS (<options>)]
+class ASTGraphDerivedProperty final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_DERIVED_PROPERTY;
+
+  ASTGraphDerivedProperty() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Sql expression for the property.
+  const ASTExpression* expression() const { return expression_; }
+
+  // Alias for the property.
+  const ASTAlias* alias() const { return alias_; }
+
+  // Options associated with the property definition.
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    fl.AddOptional(&alias_, AST_ALIAS);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTExpression* expression_ = nullptr;
+  const ASTAlias* alias_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+};
+
+class ASTGraphDerivedPropertyList final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_DERIVED_PROPERTY_LIST;
+
+  ASTGraphDerivedPropertyList() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This can never be empty.
+  const absl::Span<const ASTGraphDerivedProperty* const>& properties() const {
+    return properties_;
+  }
+  const ASTGraphDerivedProperty* properties(int i) const { return properties_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&properties_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTGraphDerivedProperty* const> properties_;
+};
+
+class ASTGraphProperties final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_PROPERTIES;
+
+  ASTGraphProperties() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // If true, derived_property_list and all_except_columns are ignored.
+  // It means NO PROPERTIES
+  void set_no_properties(bool no_properties) { no_properties_ = no_properties; }
+  bool no_properties() const { return no_properties_; }
+
+  // no_properties must be false for the following to take effect:
+  // If NULL, it means: PROPERTIES [ARE] ALL COLUMNS.
+  // If not NULL, it means: PROPERTIES(<derived property list>);
+  const ASTGraphDerivedPropertyList* derived_property_list() const { return derived_property_list_; }
+
+  // no_properties must be false and derived_property_list must be
+  // NULL for the following to take effect:
+  // If not NULL, it appends optional EXCEPT(<all_except_columns>)
+  // list to PROPERTIES [ARE] ALL COLUMNS.
+  const ASTColumnList* all_except_columns() const { return all_except_columns_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&derived_property_list_, AST_GRAPH_DERIVED_PROPERTY_LIST);
+    fl.AddOptional(&all_except_columns_, AST_COLUMN_LIST);
+    return fl.Finalize();
+  }
+
+  bool no_properties_ = false;
+  const ASTGraphDerivedPropertyList* derived_property_list_ = nullptr;
+  const ASTColumnList* all_except_columns_ = nullptr;
+};
+
+class ASTGraphDynamicLabel final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_DYNAMIC_LABEL;
+
+  ASTGraphDynamicLabel() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Label expression.
+  const ASTExpression* label() const { return label_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&label_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* label_ = nullptr;
+};
+
+class ASTGraphDynamicProperties final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_DYNAMIC_PROPERTIES;
+
+  ASTGraphDynamicProperties() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Properties expression.
+  const ASTExpression* properties() const { return properties_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&properties_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* properties_ = nullptr;
+};
+
+// Represents a <graph pattern>
+class ASTGraphPattern final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_PATTERN;
+
+  ASTGraphPattern() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTWhereClause* where_clause() const { return where_clause_; }
+
+  const absl::Span<const ASTGraphPathPattern* const>& paths() const {
+    return paths_;
+  }
+  const ASTGraphPathPattern* paths(int i) const { return paths_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRepeatedWhileIsNodeKind(&paths_, AST_GRAPH_PATH_PATTERN);
+    fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTGraphPathPattern* const> paths_;
+  const ASTWhereClause* where_clause_ = nullptr;
+};
+
+// This represents a graph query expression which can only be produced
+// by either a top level graph query statement, or a subquery expression.
+// See below docs for details:
+// - (broken link):top-level-gql-query-statement
+// - (broken link):gql-subquery
+class ASTGqlQuery final : public ASTQueryExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_QUERY;
+
+  ASTGqlQuery() : ASTQueryExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTGraphTableQuery* graph_table() const { return graph_table_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&graph_table_));
+    return fl.Finalize();
+  }
+
+  const ASTGraphTableQuery* graph_table_ = nullptr;
+};
+
+// This represents a graph query expression that only contains a
+// graph pattern. It can be used to construct an "EXISTS" graph subquery
+// expression.
+class ASTGqlGraphPatternQuery final : public ASTQueryExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_GRAPH_PATTERN_QUERY;
+
+  ASTGqlGraphPatternQuery() : ASTQueryExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Optional path expression for the target property graph.
+  const ASTPathExpression* graph_reference() const { return graph_reference_; }
+
+  const ASTGraphPattern* graph_pattern() const { return graph_pattern_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&graph_reference_, AST_PATH_EXPRESSION);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&graph_pattern_));
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* graph_reference_ = nullptr;
+  const ASTGraphPattern* graph_pattern_ = nullptr;
+};
+
+// This represents a graph query expression that only contains an
+// ASTGqlOperatorList. It can be used to construct an "EXISTS"
+// graph subquery expression with RETURN operator omitted.
+class ASTGqlLinearOpsQuery final : public ASTQueryExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_LINEAR_OPS_QUERY;
+
+  ASTGqlLinearOpsQuery() : ASTQueryExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Optional path expression for the target property graph.
+  const ASTPathExpression* graph_reference() const { return graph_reference_; }
+
+  const ASTGqlOperatorList* linear_ops() const { return linear_ops_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&graph_reference_, AST_PATH_EXPRESSION);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&linear_ops_));
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* graph_reference_ = nullptr;
+  const ASTGqlOperatorList* linear_ops_ = nullptr;
+};
+
+// Represents a GRAPH_TABLE() query
+class ASTGraphTableQuery final : public ASTTableExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_TABLE_QUERY;
+
+  ASTGraphTableQuery() : ASTTableExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Path expression for the target property graph.
+  // If this is a subquery, the graph reference is optional and may be
+  // inferred from the context.
+  const ASTPathExpression* graph_reference() const { return graph_reference_; }
+
+  // Graph matching operator. Can be an ASTGqlMatch or an
+  // ASTGqlOperatorList. See (broken link):gql-graph-table for more details
+  const ASTGqlOperator* graph_op() const { return graph_op_; }
+
+  // The expression list with aliases to be projected to the outer
+  // query. Exists only when `graph_op` is an ASTGqlMatch. See
+  // (broken link):gql-graph-table for more details
+  const ASTSelectList* graph_table_shape() const { return graph_table_shape_; }
+
+  const ASTAlias* alias() const { return alias_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&graph_reference_, AST_PATH_EXPRESSION);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&graph_op_));
+    fl.AddOptional(&graph_table_shape_, AST_SELECT_LIST);
+    fl.AddOptional(&alias_, AST_ALIAS);
+    fl.AddRestAsRepeated(&postfix_operators_);
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* graph_reference_ = nullptr;
+  const ASTGqlOperator* graph_op_ = nullptr;
+  const ASTSelectList* graph_table_shape_ = nullptr;
+  const ASTAlias* alias_ = nullptr;
+};
+
+// Represents a graph element label expression.
+class ASTGraphLabelExpression : public ASTNode {
+ public:
+  explicit ASTGraphLabelExpression(ASTNodeKind kind) : ASTNode(kind) {}
+
+  void set_parenthesized(bool parenthesized) { parenthesized_ = parenthesized; }
+  bool parenthesized() const { return parenthesized_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  bool parenthesized_ = false;
+};
+
+class ASTGraphElementLabel final : public ASTGraphLabelExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_ELEMENT_LABEL;
+
+  ASTGraphElementLabel() : ASTGraphLabelExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* name() const { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* name_ = nullptr;
+};
+
+class ASTGraphWildcardLabel final : public ASTGraphLabelExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_WILDCARD_LABEL;
+
+  ASTGraphWildcardLabel() : ASTGraphLabelExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+};
+
+class ASTGraphLabelOperation final : public ASTGraphLabelExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_LABEL_OPERATION;
+
+  ASTGraphLabelOperation() : ASTGraphLabelExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  // This enum is equivalent to ASTGraphLabelOperationEnums::OperationType in ast_enums.proto
+  enum OperationType {
+    OPERATION_TYPE_UNSPECIFIED = ASTGraphLabelOperationEnums::OPERATION_TYPE_UNSPECIFIED,
+    NOT = ASTGraphLabelOperationEnums::NOT,
+    AND = ASTGraphLabelOperationEnums::AND,
+    OR = ASTGraphLabelOperationEnums::OR
+  };
+
+  void set_op_type(ASTGraphLabelOperation::OperationType op_type) { op_type_ = op_type; }
+  ASTGraphLabelOperation::OperationType op_type() const { return op_type_; }
+
+  const absl::Span<const ASTGraphLabelExpression* const>& inputs() const {
+    return inputs_;
+  }
+  const ASTGraphLabelExpression* inputs(int i) const { return inputs_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&inputs_);
+    return fl.Finalize();
+  }
+
+  ASTGraphLabelOperation::OperationType op_type_ = ASTGraphLabelOperation::OPERATION_TYPE_UNSPECIFIED;
+  absl::Span<const ASTGraphLabelExpression* const> inputs_;
+};
+
+// Filter label on a graph node or edge pattern. This node wraps the label
+// expression filter just like ASTWhereClause wraps the scalar filter
+// expression.
+class ASTGraphLabelFilter final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_LABEL_FILTER;
+
+  ASTGraphLabelFilter() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTGraphLabelExpression* label_expression() const { return label_expression_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&label_expression_));
+    return fl.Finalize();
+  }
+
+  const ASTGraphLabelExpression* label_expression_ = nullptr;
+};
+
+// Binary expression which contains an element variable name `operand` and
+// a `label_expression`.
+// Note we do not use ASTBinaryExpression because we need to accommodate
+// `label_expression` which is not an `expression`.
+class ASTGraphIsLabeledPredicate final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_IS_LABELED_PREDICATE;
+
+  ASTGraphIsLabeledPredicate() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // Signifies whether the predicate has a NOT.
+  // Used for "IS NOT LABELED"
+  void set_is_not(bool is_not) { is_not_ = is_not; }
+  bool is_not() const { return is_not_; }
+
+  const ASTExpression* operand() const { return operand_; }
+  const ASTGraphLabelExpression* label_expression() const { return label_expression_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&operand_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&label_expression_));
+    return fl.Finalize();
+  }
+
+  bool is_not_ = false;
+  const ASTExpression* operand_ = nullptr;
+  const ASTGraphLabelExpression* label_expression_ = nullptr;
+};
+
+// Filler of an element pattern which can contain the element variable name
+// of this pattern and two element filters (label-based filter and where
+// clause filter).
+class ASTGraphElementPatternFiller final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_ELEMENT_PATTERN_FILLER;
+
+  ASTGraphElementPatternFiller() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* variable_name() const { return variable_name_; }
+  const ASTGraphLabelFilter* label_filter() const { return label_filter_; }
+  const ASTWhereClause* where_clause() const { return where_clause_; }
+  const ASTGraphPropertySpecification* property_specification() const { return property_specification_; }
+  const ASTHint* hint() const { return hint_; }
+  const ASTExpression* edge_cost() const { return edge_cost_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&variable_name_, AST_IDENTIFIER);
+    fl.AddOptional(&label_filter_, AST_GRAPH_LABEL_FILTER);
+    fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
+    fl.AddOptional(&property_specification_, AST_GRAPH_PROPERTY_SPECIFICATION);
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddOptionalExpression(&edge_cost_);
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* variable_name_ = nullptr;
+  const ASTGraphLabelFilter* label_filter_ = nullptr;
+  const ASTWhereClause* where_clause_ = nullptr;
+  const ASTGraphPropertySpecification* property_specification_ = nullptr;
+  const ASTHint* hint_ = nullptr;
+  const ASTExpression* edge_cost_ = nullptr;
+};
+
+// The property specification that contains a list of property name and value
+// .
+class ASTGraphPropertySpecification final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_PROPERTY_SPECIFICATION;
+
+  ASTGraphPropertySpecification() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTGraphPropertyNameAndValue* const>& property_name_and_value() const {
+    return property_name_and_value_;
+  }
+  const ASTGraphPropertyNameAndValue* property_name_and_value(int i) const { return property_name_and_value_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&property_name_and_value_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTGraphPropertyNameAndValue* const> property_name_and_value_;
+};
+
+// Property name and value pair.
+class ASTGraphPropertyNameAndValue final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_PROPERTY_NAME_AND_VALUE;
+
+  ASTGraphPropertyNameAndValue() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* property_name() const { return property_name_; }
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&property_name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* property_name_ = nullptr;
+  const ASTExpression* value_ = nullptr;
+};
+
+// Common base class for ASTGraphElementPattern and ASTGraphPathPattern.
+// Both are potentially quantified.
+class ASTGraphPathBase : public ASTNode {
+ public:
+  explicit ASTGraphPathBase(ASTNodeKind kind) : ASTNode(kind) {}
+
+  const ASTQuantifier* quantifier() const { return quantifier_; }
+
+  friend class ParseTreeSerializer;
+
+ protected:
+  const ASTQuantifier* quantifier_ = nullptr;
+};
+
+// Represents one element pattern.
+class ASTGraphElementPattern : public ASTGraphPathBase {
+ public:
+  explicit ASTGraphElementPattern(ASTNodeKind kind) : ASTGraphPathBase(kind) {}
+
+  const ASTGraphElementPatternFiller* filler() const { return filler_; }
+
+  friend class ParseTreeSerializer;
+
+ protected:
+  const ASTGraphElementPatternFiller* filler_ = nullptr;
+};
+
+// ASTGraphElementPattern that represents one node pattern.
+class ASTGraphNodePattern final : public ASTGraphElementPattern {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_NODE_PATTERN;
+
+  ASTGraphNodePattern() : ASTGraphElementPattern(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&filler_, AST_GRAPH_ELEMENT_PATTERN_FILLER);
+    fl.AddOptionalQuantifier(&quantifier_);
+    return fl.Finalize();
+  }
+};
+
+// ASTGraphLhsHint is used to represent a hint that occurs on a traversal
+// from a node to an inbound edge.
+class ASTGraphLhsHint final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_LHS_HINT;
+
+  ASTGraphLhsHint() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTHint* hint() const { return hint_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+};
+
+// ASTGraphRhsHint is used to represent a hint that occurs on a traversal
+// from an outbound edge to a node.
+class ASTGraphRhsHint final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_RHS_HINT;
+
+  ASTGraphRhsHint() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTHint* hint() const { return hint_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+};
+
+// Represents a path pattern search prefix which restricts the result from a
+// graph pattern match by partitioning the resulting paths by their endpoints
+// (the first and last vertices) and makes a selection of paths from each
+// partition.
+// path_count refers to the number of paths to select from each partition,
+// if unspecified only one path is selected.
+class ASTGraphPathSearchPrefix final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_PATH_SEARCH_PREFIX;
+
+  ASTGraphPathSearchPrefix() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTGraphPathSearchPrefixEnums::PathSearchPrefixType in ast_enums.proto
+  enum PathSearchPrefixType {
+    PATH_SEARCH_PREFIX_TYPE_UNSPECIFIED = ASTGraphPathSearchPrefixEnums::PATH_SEARCH_PREFIX_TYPE_UNSPECIFIED,
+    ANY = ASTGraphPathSearchPrefixEnums::ANY,
+    SHORTEST = ASTGraphPathSearchPrefixEnums::SHORTEST,
+    ALL = ASTGraphPathSearchPrefixEnums::ALL,
+    ALL_SHORTEST = ASTGraphPathSearchPrefixEnums::ALL_SHORTEST,
+    CHEAPEST = ASTGraphPathSearchPrefixEnums::CHEAPEST,
+    ALL_CHEAPEST = ASTGraphPathSearchPrefixEnums::ALL_CHEAPEST
+  };
+
+  void set_type(ASTGraphPathSearchPrefix::PathSearchPrefixType type) { type_ = type; }
+  ASTGraphPathSearchPrefix::PathSearchPrefixType type() const { return type_; }
+
+  const ASTGraphPathSearchPrefixCount* path_count() const { return path_count_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&path_count_, AST_GRAPH_PATH_SEARCH_PREFIX_COUNT);
+    return fl.Finalize();
+  }
+
+  ASTGraphPathSearchPrefix::PathSearchPrefixType type_ = ASTGraphPathSearchPrefix::PATH_SEARCH_PREFIX_TYPE_UNSPECIFIED;
+  const ASTGraphPathSearchPrefixCount* path_count_ = nullptr;
+};
+
+// Represents the number of paths to retain from each partition of path
+// bindings containing the same head and tail.
+class ASTGraphPathSearchPrefixCount final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_PATH_SEARCH_PREFIX_COUNT;
+
+  ASTGraphPathSearchPrefixCount() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* path_count() const { return path_count_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&path_count_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* path_count_ = nullptr;
+};
+
+// ASTGraphElementPattern that represents one edge pattern.
+class ASTGraphEdgePattern final : public ASTGraphElementPattern {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_EDGE_PATTERN;
+
+  ASTGraphEdgePattern() : ASTGraphElementPattern(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTGraphEdgePatternEnums::EdgeOrientation in ast_enums.proto
+  enum EdgeOrientation {
+    EDGE_ORIENTATION_NOT_SET = ASTGraphEdgePatternEnums::EDGE_ORIENTATION_NOT_SET,
+    ANY = ASTGraphEdgePatternEnums::ANY,
+    LEFT = ASTGraphEdgePatternEnums::LEFT,
+    RIGHT = ASTGraphEdgePatternEnums::RIGHT
+  };
+
+  void set_orientation(ASTGraphEdgePattern::EdgeOrientation orientation) { orientation_ = orientation; }
+  ASTGraphEdgePattern::EdgeOrientation orientation() const { return orientation_; }
+
+  const ASTGraphLhsHint* lhs_hint() const { return lhs_hint_; }
+  const ASTGraphRhsHint* rhs_hint() const { return rhs_hint_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptionalQuantifier(&quantifier_);
+    fl.AddOptional(&lhs_hint_, AST_GRAPH_LHS_HINT);
+    fl.AddOptional(&rhs_hint_, AST_GRAPH_RHS_HINT);
+    fl.AddOptional(&filler_, AST_GRAPH_ELEMENT_PATTERN_FILLER);
+    return fl.Finalize();
+  }
+
+  ASTGraphEdgePattern::EdgeOrientation orientation_ = ASTGraphEdgePattern::EDGE_ORIENTATION_NOT_SET;
+  const ASTGraphLhsHint* lhs_hint_ = nullptr;
+  const ASTGraphRhsHint* rhs_hint_ = nullptr;
+};
+
+// Represents path mode.
+class ASTGraphPathMode final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_PATH_MODE;
+
+  ASTGraphPathMode() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTGraphPathModeEnums::PathMode in ast_enums.proto
+  enum PathMode {
+    PATH_MODE_UNSPECIFIED = ASTGraphPathModeEnums::PATH_MODE_UNSPECIFIED,
+    WALK = ASTGraphPathModeEnums::WALK,
+    TRAIL = ASTGraphPathModeEnums::TRAIL,
+    SIMPLE = ASTGraphPathModeEnums::SIMPLE,
+    ACYCLIC = ASTGraphPathModeEnums::ACYCLIC
+  };
+
+  void set_path_mode(ASTGraphPathMode::PathMode path_mode) { path_mode_ = path_mode; }
+  ASTGraphPathMode::PathMode path_mode() const { return path_mode_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+
+  ASTGraphPathMode::PathMode path_mode_ = ASTGraphPathMode::PATH_MODE_UNSPECIFIED;
+};
+
+// Represents a path pattern that contains a list of element
+// patterns or subpath patterns.
+class ASTGraphPathPattern final : public ASTGraphPathBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GRAPH_PATH_PATTERN;
+
+  ASTGraphPathPattern() : ASTGraphPathBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This adds the "parenthesized" modifier to the node name.
+  std::string SingleNodeDebugString() const override;
+
+  void set_parenthesized(bool parenthesized) { parenthesized_ = parenthesized; }
+  bool parenthesized() const { return parenthesized_; }
+
+  const ASTHint* hint() const { return hint_; }
+  const ASTWhereClause* where_clause() const { return where_clause_; }
+  const ASTGraphPathMode* path_mode() const { return path_mode_; }
+  const ASTGraphPathSearchPrefix* search_prefix() const { return search_prefix_; }
+  const ASTIdentifier* path_name() const { return path_name_; }
+
+  const absl::Span<const ASTGraphPathBase* const>& input_pattern_list() const {
+    return input_pattern_list_;
+  }
+  const ASTGraphPathBase* input_pattern_list(int i) const { return input_pattern_list_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&hint_, AST_HINT);
+    fl.AddOptionalQuantifier(&quantifier_);
+    fl.AddOptional(&where_clause_, AST_WHERE_CLAUSE);
+    fl.AddOptional(&path_name_, AST_IDENTIFIER);
+    fl.AddOptional(&search_prefix_, AST_GRAPH_PATH_SEARCH_PREFIX);
+    fl.AddOptional(&path_mode_, AST_GRAPH_PATH_MODE);
+    fl.AddRestAsRepeated(&input_pattern_list_);
+    return fl.Finalize();
+  }
+
+  const ASTHint* hint_ = nullptr;
+  const ASTWhereClause* where_clause_ = nullptr;
+  const ASTGraphPathMode* path_mode_ = nullptr;
+  const ASTGraphPathSearchPrefix* search_prefix_ = nullptr;
+  absl::Span<const ASTGraphPathBase* const> input_pattern_list_;
+  bool parenthesized_ = false;
+  const ASTIdentifier* path_name_ = nullptr;
+};
+
+// Represents a generic graph operator in GoogleSQL graph query language.
+class ASTGqlOperator : public ASTNode {
+ public:
+  explicit ASTGqlOperator(ASTNodeKind kind) : ASTNode(kind) {}
+
+  friend class ParseTreeSerializer;
+};
+
+// Represents a MATCH operator in GoogleSQL graph query language,
+// which simply contains <graph pattern>.
+class ASTGqlMatch final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_MATCH;
+
+  ASTGqlMatch() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  std::string SingleNodeDebugString() const override;
+
+  void set_optional(bool optional) { optional_ = optional; }
+  bool optional() const { return optional_; }
+
+  const ASTGraphPattern* graph_pattern() const { return graph_pattern_; }
+  const ASTHint* hint() const { return hint_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&graph_pattern_));
+    fl.AddOptional(&hint_, AST_HINT);
+    return fl.Finalize();
+  }
+
+  const ASTGraphPattern* graph_pattern_ = nullptr;
+  bool optional_ = false;
+  const ASTHint* hint_ = nullptr;
+};
+
+// Represents a RETURN operator in GoogleSQL graph query language.
+// RETURN is represented with an ASTSelect with only the
+// SELECT, DISTINCT, and (optionally) GROUP BY clause present.
+// Using this representation rather than storing an ASTSelectList and
+// ASTGroupBy makes sharing resolver code easier.
+class ASTGqlReturn final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_RETURN;
+
+  ASTGqlReturn() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSelect* select() const { return select_; }
+  const ASTGqlOrderByAndPage* order_by_page() const { return order_by_page_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_));
+    fl.AddOptional(&order_by_page_, AST_GQL_ORDER_BY_AND_PAGE);
+    return fl.Finalize();
+  }
+
+  const ASTSelect* select_ = nullptr;
+  const ASTGqlOrderByAndPage* order_by_page_ = nullptr;
+};
+
+// Represents a WITH operator in GoogleSQL graph query language.
+// WITH is represented with an ASTSelect with only the
+// SELECT clause present.
+class ASTGqlWith final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_WITH;
+
+  ASTGqlWith() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSelect* select() const { return select_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&select_));
+    return fl.Finalize();
+  }
+
+  const ASTSelect* select_ = nullptr;
+};
+
+// Represents a FOR operator in GoogleSQL graph query language.
+class ASTGqlFor final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_FOR;
+
+  ASTGqlFor() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* identifier() const { return identifier_; }
+  const ASTExpression* expression() const { return expression_; }
+  const ASTWithOffset* with_offset() const { return with_offset_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    fl.AddOptional(&with_offset_, AST_WITH_OFFSET);
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* identifier_ = nullptr;
+  const ASTExpression* expression_ = nullptr;
+  const ASTWithOffset* with_offset_ = nullptr;
+};
+
+// Represents a GQL CALL operator.
+// Note that this is different from the pipe Call.
+class ASTGqlCallBase : public ASTGqlOperator {
+ public:
+  explicit ASTGqlCallBase(ASTNodeKind kind) : ASTGqlOperator(kind) {}
+
+  void set_optional(bool optional) { optional_ = optional; }
+  bool optional() const { return optional_; }
+
+  // Indicates whether this call partitions the input working table.
+  //
+  // When set, the `name_capture_list` defines the partitioning
+  // columns. The target of this CALL operation (TVF or subquery) is
+  // invoked for each partition. This is a FOR EACH PARTITION BY
+  // operation (and if the list is empty, a simple TVF call).
+  //
+  // Otherwise, the target is invoked for each row in the input
+  // (like LATERAL join). The `name_capture_list` contains the
+  // columns exposed to the derived subquery/TVF (i.e., these are the
+  // columns which can be referenced "laterally").
+  //
+  // Note that both cases can be viewed as similar, if we consider
+  // that the "non-partitioning" case is still partitioning but by
+  // a hidden row ID column which leads to each row being in its own
+  // partition.
+  void set_is_partitioning(bool is_partitioning) { is_partitioning_ = is_partitioning; }
+  bool is_partitioning() const { return is_partitioning_; }
+
+  // The list of columns exposed to the target TVF or subquery of
+  // this CALL. If `is_partitioning` is set, these are the
+  // partitioning columns. Otherwise, these are the columns which can
+  // be referenced "laterally".
+  const ASTIdentifierList* name_capture_list() const { return name_capture_list_; }
+
+  friend class ParseTreeSerializer;
+
+ protected:
+  bool optional_ = false;
+  bool is_partitioning_ = false;
+  const ASTIdentifierList* name_capture_list_ = nullptr;
+};
+
+// Represents a GQL CALL operator to a named TVF.
+class ASTGqlNamedCall final : public ASTGqlCallBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_NAMED_CALL;
+
+  ASTGqlNamedCall() : ASTGqlCallBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTTVF* tvf_call() const { return tvf_call_; }
+
+  // Represents the YIELD clause, if present.
+  const ASTYieldItemList* yield_clause() const { return yield_clause_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&tvf_call_));
+    fl.AddOptional(&yield_clause_, AST_YIELD_ITEM_LIST);
+    fl.AddOptional(&name_capture_list_, AST_IDENTIFIER_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTTVF* tvf_call_ = nullptr;
+  const ASTYieldItemList* yield_clause_ = nullptr;
+};
+
+// Represents the YIELD clause.
+class ASTYieldItemList final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_YIELD_ITEM_LIST;
+
+  ASTYieldItemList() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // The list of YIELD items in the YIELD clause. The grammar
+  // guarantees that this list is never empty.
+  const absl::Span<const ASTExpressionWithOptAlias* const>& yield_items() const {
+    return yield_items_;
+  }
+  const ASTExpressionWithOptAlias* yield_items(int i) const { return yield_items_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&yield_items_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTExpressionWithOptAlias* const> yield_items_;
+};
+
+// Represents a GQL CALL operator to an inline subquery.
+class ASTGqlInlineSubqueryCall final : public ASTGqlCallBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_INLINE_SUBQUERY_CALL;
+
+  ASTGqlInlineSubqueryCall() : ASTGqlCallBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTQuery* subquery() const { return subquery_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&subquery_));
+    fl.AddOptional(&name_capture_list_, AST_IDENTIFIER_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTQuery* subquery_ = nullptr;
+};
+
+// Represents a LET operator in GoogleSQL graph query language
+class ASTGqlLet final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_LET;
+
+  ASTGqlLet() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTGqlLetVariableDefinitionList* variable_definition_list() const { return variable_definition_list_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&variable_definition_list_));
+    return fl.Finalize();
+  }
+
+  const ASTGqlLetVariableDefinitionList* variable_definition_list_ = nullptr;
+};
+
+// Represents column definitions within a LET statement of a GQL query
+class ASTGqlLetVariableDefinitionList final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_LET_VARIABLE_DEFINITION_LIST;
+
+  ASTGqlLetVariableDefinitionList() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTGqlLetVariableDefinition* const>& variable_definitions() const {
+    return variable_definitions_;
+  }
+  const ASTGqlLetVariableDefinition* variable_definitions(int i) const { return variable_definitions_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&variable_definitions_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTGqlLetVariableDefinition* const> variable_definitions_;
+};
+
+// Represents one column definition within a LET statement of a GQL query
+class ASTGqlLetVariableDefinition final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_LET_VARIABLE_DEFINITION;
+
+  ASTGqlLetVariableDefinition() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTIdentifier* identifier() const { return identifier_; }
+  const ASTExpression* expression() const { return expression_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&expression_));
+    return fl.Finalize();
+  }
+
+  const ASTIdentifier* identifier_ = nullptr;
+  const ASTExpression* expression_ = nullptr;
+};
+
+// Represents a FILTER operator within GoogleSQL Graph query language.
+class ASTGqlFilter final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_FILTER;
+
+  ASTGqlFilter() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTWhereClause* condition() const { return condition_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&condition_));
+    return fl.Finalize();
+  }
+
+  const ASTWhereClause* condition_ = nullptr;
+};
+
+// Represents a linear graph query operator in
+// GoogleSQL graph query language, which contains a vector of child
+// graph query operators.
+class ASTGqlOperatorList final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_OPERATOR_LIST;
+
+  ASTGqlOperatorList() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const absl::Span<const ASTGqlOperator* const>& operators() const {
+    return operators_;
+  }
+  const ASTGqlOperator* operators(int i) const { return operators_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddRestAsRepeated(&operators_);
+    return fl.Finalize();
+  }
+
+  absl::Span<const ASTGqlOperator* const> operators_;
+};
+
+// Represents a composite query statement, aka. set operation, in
+// GoogleSQL graph query language. Each input is one linear graph query.
+class ASTGqlSetOperation final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_SET_OPERATION;
+
+  ASTGqlSetOperation() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSetOperationMetadataList* metadata() const { return metadata_; }
+
+  const absl::Span<const ASTGqlOperator* const>& inputs() const {
+    return inputs_;
+  }
+  const ASTGqlOperator* inputs(int i) const { return inputs_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&metadata_));
+    fl.AddRestAsRepeated(&inputs_);
+    return fl.Finalize();
+  }
+
+  const ASTSetOperationMetadataList* metadata_ = nullptr;
+  absl::Span<const ASTGqlOperator* const> inputs_;
+};
+
+// Represents the LIMIT clause of a GQL '[<order by>] [<offset>] [<limit>]`
+// linear query statement. It is a child of ASTGqlPage. Note: we cannot use
+// an ASTLimitOffset node because its 'limit' field is required, while it can
+// be optional in GQL linear queries. We also cannot have two
+// consecutive OPTIONAL_EXPRESSION fields in ASTGqlPage.
+class ASTGqlPageLimit final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_PAGE_LIMIT;
+
+  ASTGqlPageLimit() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* limit() const { return limit_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&limit_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* limit_ = nullptr;
+};
+
+// Represents the OFFSET clause of a GQL '[<order by>] [<offset>] [<limit>]`
+// linear query statement. It is a child of ASTGqlPage. Note: we cannot use
+// an ASTLimitOffset node because its 'limit' field is required, while it can
+// be optional in GQL linear queries. We also cannot have two
+// consecutive OPTIONAL_EXPRESSION fields in ASTGqlPage.
+class ASTGqlPageOffset final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_PAGE_OFFSET;
+
+  ASTGqlPageOffset() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* offset() const { return offset_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&offset_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* offset_ = nullptr;
+};
+
+// Groups together ASTGqlPageOffset and ASTGqlPageLimit nodes. Note: we
+// cannot use an ASTLimitOffset node because its 'limit' field is required,
+// while it can be optional in GQL linear queries. We also cannot have two
+// consecutive OPTIONAL_EXPRESSION fields.
+class ASTGqlPage final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_PAGE;
+
+  ASTGqlPage() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // The OFFSET value. Offset and limit are independent, and can be
+  // present or not regardless of whether the other is present.
+  const ASTGqlPageOffset* offset() const { return offset_; }
+
+  // The LIMIT value. Offset and limit are independent, and can be
+  // present or not regardless of whether the other is present.
+  const ASTGqlPageLimit* limit() const { return limit_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&offset_, AST_GQL_PAGE_OFFSET);
+    fl.AddOptional(&limit_, AST_GQL_PAGE_LIMIT);
+    return fl.Finalize();
+  }
+
+  const ASTGqlPageOffset* offset_ = nullptr;
+  const ASTGqlPageLimit* limit_ = nullptr;
+};
+
+// Represents the three clauses of a GQL '[<order by>] [<offset>] [<limit>]`
+// linear query statement.
+class ASTGqlOrderByAndPage final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_ORDER_BY_AND_PAGE;
+
+  ASTGqlOrderByAndPage() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTOrderBy* order_by() const { return order_by_; }
+  const ASTGqlPage* page() const { return page_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&order_by_, AST_ORDER_BY);
+    fl.AddOptional(&page_, AST_GQL_PAGE);
+    return fl.Finalize();
+  }
+
+  const ASTOrderBy* order_by_ = nullptr;
+  const ASTGqlPage* page_ = nullptr;
+};
+
+// Represents a SAMPLE operator within GoogleSQL Graph query language.
+class ASTGqlSample final : public ASTGqlOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_GQL_SAMPLE;
+
+  ASTGqlSample() : ASTGqlOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSampleClause* sample() const { return sample_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&sample_));
+    return fl.Finalize();
+  }
+
+  const ASTSampleClause* sample_ = nullptr;
+};
+
+// Represents WITH modifier clause (e.g., `SELECT WITH`, `|> AGGREGATE WITH`).
+class ASTWithModifier final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_WITH_MODIFIER;
+
+  ASTWithModifier() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11792,7 +16399,7 @@ class ASTSelectWith final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&identifier_));
     fl.AddOptional(&options_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
@@ -11807,6 +16414,7 @@ class ASTColumnWithOptions final : public ASTNode {
 
   ASTColumnWithOptions() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11818,7 +16426,7 @@ class ASTColumnWithOptions final : public ASTNode {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
@@ -11833,6 +16441,7 @@ class ASTColumnWithOptionsList final : public ASTNode {
 
   ASTColumnWithOptionsList() : ASTNode(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11854,12 +16463,13 @@ class ASTColumnWithOptionsList final : public ASTNode {
 };
 
 // Represents the body of a DEFINE MACRO statement.
-class ASTMacroBody final : public ASTLeaf {
+class ASTMacroBody final : public ASTPrintableLeaf {
  public:
   static constexpr ASTNodeKind kConcreteNodeKind = AST_MACRO_BODY;
 
-  ASTMacroBody() : ASTLeaf(kConcreteNodeKind) {}
+  ASTMacroBody() : ASTPrintableLeaf(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11879,6 +16489,7 @@ class ASTDefineMacroStatement final : public ASTStatement {
 
   ASTDefineMacroStatement() : ASTStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11890,8 +16501,8 @@ class ASTDefineMacroStatement final : public ASTStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&body_));
     return fl.Finalize();
   }
 
@@ -11906,6 +16517,7 @@ class ASTUndropStatement final : public ASTDdlStatement {
 
   ASTUndropStatement() : ASTDdlStatement(kConcreteNodeKind) {}
   void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
   absl::StatusOr<VisitResult> Accept(
       NonRecursiveParseTreeVisitor* visitor) const override;
 
@@ -11916,6 +16528,7 @@ class ASTUndropStatement final : public ASTDdlStatement {
 
   const ASTPathExpression* name() const { return name_; }
   const ASTForSystemTime* for_system_time() const { return for_system_time_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
 
   const ASTPathExpression* GetDdlTarget() const override { return name_; }
 
@@ -11924,8 +16537,9 @@ class ASTUndropStatement final : public ASTDdlStatement {
  private:
   absl::Status InitFields() final {
     FieldLoader fl(this);
-    ZETASQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
     fl.AddOptional(&for_system_time_, AST_FOR_SYSTEM_TIME);
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
     return fl.Finalize();
   }
 
@@ -11933,9 +16547,518 @@ class ASTUndropStatement final : public ASTDdlStatement {
   const ASTPathExpression* name_ = nullptr;
   bool is_if_not_exists_ = false;
   const ASTForSystemTime* for_system_time_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
 };
 
-}  // namespace zetasql
+class ASTIdentityColumnInfo final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_INFO;
+
+  ASTIdentityColumnInfo() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  void set_cycling_enabled(bool cycling_enabled) { cycling_enabled_ = cycling_enabled; }
+  bool cycling_enabled() const { return cycling_enabled_; }
+
+  const ASTIdentityColumnStartWith* start_with_value() const { return start_with_value_; }
+  const ASTIdentityColumnIncrementBy* increment_by_value() const { return increment_by_value_; }
+  const ASTIdentityColumnMaxValue* max_value() const { return max_value_; }
+  const ASTIdentityColumnMinValue* min_value() const { return min_value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&start_with_value_, AST_IDENTITY_COLUMN_START_WITH);
+    fl.AddOptional(&increment_by_value_, AST_IDENTITY_COLUMN_INCREMENT_BY);
+    fl.AddOptional(&max_value_, AST_IDENTITY_COLUMN_MAX_VALUE);
+    fl.AddOptional(&min_value_, AST_IDENTITY_COLUMN_MIN_VALUE);
+    return fl.Finalize();
+  }
+
+  const ASTIdentityColumnStartWith* start_with_value_ = nullptr;
+  const ASTIdentityColumnIncrementBy* increment_by_value_ = nullptr;
+  const ASTIdentityColumnMaxValue* max_value_ = nullptr;
+  const ASTIdentityColumnMinValue* min_value_ = nullptr;
+  bool cycling_enabled_ = false;
+};
+
+class ASTIdentityColumnStartWith final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_START_WITH;
+
+  ASTIdentityColumnStartWith() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* value_ = nullptr;
+};
+
+class ASTIdentityColumnIncrementBy final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_INCREMENT_BY;
+
+  ASTIdentityColumnIncrementBy() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* value_ = nullptr;
+};
+
+class ASTIdentityColumnMaxValue final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_MAX_VALUE;
+
+  ASTIdentityColumnMaxValue() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* value_ = nullptr;
+};
+
+class ASTIdentityColumnMinValue final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_IDENTITY_COLUMN_MIN_VALUE;
+
+  ASTIdentityColumnMinValue() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* value() const { return value_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_));
+    return fl.Finalize();
+  }
+
+  const ASTExpression* value_ = nullptr;
+};
+
+class ASTAliasedQueryModifiers final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALIASED_QUERY_MODIFIERS;
+
+  ASTAliasedQueryModifiers() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTRecursionDepthModifier* recursion_depth_modifier() const { return recursion_depth_modifier_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&recursion_depth_modifier_, AST_RECURSION_DEPTH_MODIFIER);
+    return fl.Finalize();
+  }
+
+  const ASTRecursionDepthModifier* recursion_depth_modifier_ = nullptr;
+};
+
+// This represents an integer or an unbounded integer.
+// The semantic of unbounded integer depends on the context.
+class ASTIntOrUnbounded final : public ASTExpression {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_INT_OR_UNBOUNDED;
+
+  ASTIntOrUnbounded() : ASTExpression(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTExpression* bound() const { return bound_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptionalExpression(&bound_);
+    return fl.Finalize();
+  }
+
+  const ASTExpression* bound_ = nullptr;
+};
+
+class ASTRecursionDepthModifier final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_RECURSION_DEPTH_MODIFIER;
+
+  ASTRecursionDepthModifier() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTAlias* alias() const { return alias_; }
+
+  // lower bound is 0 when the node's `bound` field is unset.
+  const ASTIntOrUnbounded* lower_bound() const { return lower_bound_; }
+
+  // upper_bound is infinity when the node's `bound` field is unset.
+  const ASTIntOrUnbounded* upper_bound() const { return upper_bound_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&alias_, AST_ALIAS);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&lower_bound_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&upper_bound_));
+    return fl.Finalize();
+  }
+
+  const ASTAlias* alias_ = nullptr;
+  const ASTIntOrUnbounded* lower_bound_ = nullptr;
+  const ASTIntOrUnbounded* upper_bound_ = nullptr;
+};
+
+class ASTMapType final : public ASTType {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_MAP_TYPE;
+
+  ASTMapType() : ASTType(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTType* key_type() const { return key_type_; }
+  const ASTType* value_type() const { return value_type_; }
+  const ASTTypeParameterList* type_parameters() const override { return type_parameters_; }
+  const ASTCollate* collate() const override { return collate_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&key_type_));
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&value_type_));
+    fl.AddOptional(&type_parameters_, AST_TYPE_PARAMETER_LIST);
+    fl.AddOptional(&collate_, AST_COLLATE);
+    return fl.Finalize();
+  }
+
+  const ASTType* key_type_ = nullptr;
+  const ASTType* value_type_ = nullptr;
+  const ASTTypeParameterList* type_parameters_ = nullptr;
+  const ASTCollate* collate_ = nullptr;
+};
+
+class ASTLockMode final : public ASTNode {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_LOCK_MODE;
+
+  ASTLockMode() : ASTNode(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // This enum is equivalent to ASTLockModeEnums::LockStrengthSpec in ast_enums.proto
+  enum LockStrengthSpec {
+    NOT_SET = ASTLockModeEnums::NOT_SET,
+    UPDATE = ASTLockModeEnums::UPDATE
+  };
+
+  // The lock strength. Never NULL.
+  void set_strength(ASTLockMode::LockStrengthSpec strength) { strength_ = strength; }
+  ASTLockMode::LockStrengthSpec strength() const { return strength_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    return fl.Finalize();
+  }
+
+  ASTLockMode::LockStrengthSpec strength_ = ASTLockMode::NOT_SET;
+};
+
+// Represents a pipe RECURSIVE UNION operator ((broken link)):
+// ```
+// |> RECURSIVE [outer_mode] UNION {ALL | DISTINCT} [corresponding_spec]
+//    [recursion_depth_clause]
+//    {<subquery> | <subpipeline>}
+//    [AS alias]
+// ```
+//
+// It is semantically the same as the standard recursive queries using WITH
+// RECURSIVE but the syntax is more intuitive.
+//
+// It supports subqueries or subpipelines as input.
+// Exactly one of `input_subquery` and `input_subpipeline` will be set.
+class ASTPipeRecursiveUnion final : public ASTPipeOperator {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_PIPE_RECURSIVE_UNION;
+
+  ASTPipeRecursiveUnion() : ASTPipeOperator(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTSetOperationMetadata* metadata() const { return metadata_; }
+
+  // The optional recursion depth modifier for the recursive query.
+  const ASTRecursionDepthModifier* recursion_depth_modifier() const { return recursion_depth_modifier_; }
+
+  // The input subpipeline for the recursive union operator. The
+  // input table to the subpipeline is the output of the previous
+  // iteration.
+  //
+  // Example:
+  //
+  // ```SQL
+  // FROM KeyValue
+  // |> RECURSIVE UNION ALL (
+  //     |> SET value = value + 1
+  //     |> WHERE key < 10
+  //   )
+  const ASTSubpipeline* input_subpipeline() const { return input_subpipeline_; }
+
+  // The input subquery for the recursive union operator.
+  //
+  // Example:
+  //
+  // ```SQL
+  // FROM KeyValue
+  // |> RECURSIVE UNION ALL (
+  //     SELECT key, value + 1 AS value
+  //     FROM KeyValue
+  //     WHERE key < 10
+  //   )
+  // ```
+  const ASTQueryExpression* input_subquery() const { return input_subquery_; }
+
+  // The optional alias for the result of the recursive union. Note
+  // it acts as both the input table to the next iteration, and the
+  // output table of the recursive union. For example, in the
+  // following query:
+  //
+  // ```SQL
+  // FROM TreeNodes
+  // |> RECURSIVE UNION ALL (
+  //   |> JOIN TreeNodes AS child_node ON
+  //       nodes.id = child_node.parent_id
+  //   |> SELECT child_node.*
+  // ) AS nodes;
+  // ```
+  //
+  // The alias `nodes` is the output table of the recursive union,
+  // and the input table to the next iteration.
+  const ASTAlias* alias() const { return alias_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&metadata_));
+    fl.AddOptional(&recursion_depth_modifier_, AST_RECURSION_DEPTH_MODIFIER);
+    fl.AddOptional(&input_subpipeline_, AST_SUBPIPELINE);
+    fl.AddOptionalIfSubkind<ASTQueryExpression>(&input_subquery_);
+    fl.AddOptional(&alias_, AST_ALIAS);
+    return fl.Finalize();
+  }
+
+  const ASTSetOperationMetadata* metadata_ = nullptr;
+  const ASTRecursionDepthModifier* recursion_depth_modifier_ = nullptr;
+  const ASTSubpipeline* input_subpipeline_ = nullptr;
+  const ASTQueryExpression* input_subquery_ = nullptr;
+  const ASTAlias* alias_ = nullptr;
+};
+
+// Represents a RUN statement.
+//
+// Syntax: RUN <child_script_path> [(<named_arguments>)]
+//
+// The RUN statement is used to execute statements in a separate script.
+// The child script path maybe specified as a string literal or a path
+// expression.
+//
+// Optional named arguments are supported using either `=>` or `=`.
+//
+// With path expression syntax, parentheses are required even if there are
+// no arguments.
+//
+// Examples:
+// ```
+// -- Parentheses are optional when using string literal syntax.
+// RUN "path/to/script.sql";
+// RUN "path/to/script.sql"(foo => "bar");
+// RUN "path/to/another_script.sql"();
+// RUN my_catalog.my_script(foo => "bar");
+//
+// -- Parentheses are NOT optional when using path expression syntax.
+// RUN my_catalog.my_script();
+// ```
+class ASTRunStatement final : public ASTStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_RUN_STATEMENT;
+
+  ASTRunStatement() : ASTStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  // The target script addressed using an ASTPathExpression.
+  // Exactly one of `target_path` and `target_string` will be set.
+  //
+  // e.g. `RUN my_catalog.my_script();`
+  const ASTPathExpression* target_path_expression() const { return target_path_expression_; }
+
+  // The target script addressed by a ASTStringLiteral.
+  // Exactly one of `target_path` and `target_string` will be set.
+  //
+  // e.g. `RUN "path/to/script.sql";`
+  const ASTStringLiteral* target_string_literal() const { return target_string_literal_; }
+
+  // Represents named arguments supplied to the child script
+  // for parameter substitution. Arguments are optional.
+  //
+  // Argument names are required to be valid identifiers, and
+  // argument values are required to be string literals.
+  //
+  // Examples:
+  // ```
+  // RUN my_catalog.preamble();
+  // RUN my_catalog.my_script(foo => "bar")
+  // ```
+  const absl::Span<const ASTNamedArgument* const>& arguments() const {
+    return arguments_;
+  }
+  const ASTNamedArgument* arguments(int i) const { return arguments_[i]; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&target_path_expression_, AST_PATH_EXPRESSION);
+    fl.AddOptional(&target_string_literal_, AST_STRING_LITERAL);
+    fl.AddRestAsRepeated(&arguments_);
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* target_path_expression_ = nullptr;
+  const ASTStringLiteral* target_string_literal_ = nullptr;
+  absl::Span<const ASTNamedArgument* const> arguments_;
+};
+
+// This represents a CREATE SEQUENCE statement, i.e.,
+// CREATE [OR REPLACE] SEQUENCE
+//   [IF NOT EXISTS] <name_path> OPTIONS (name=value, ...);
+class ASTCreateSequenceStatement final : public ASTCreateStatement {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_CREATE_SEQUENCE_STATEMENT;
+
+  ASTCreateSequenceStatement() : ASTCreateStatement(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  const ASTPathExpression* name() const { return name_; }
+  const ASTOptionsList* options_list() const { return options_list_; }
+
+  const ASTPathExpression* GetDdlTarget() const override { return name_; }
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&name_));
+    fl.AddOptional(&options_list_, AST_OPTIONS_LIST);
+    return fl.Finalize();
+  }
+
+  const ASTPathExpression* name_ = nullptr;
+  const ASTOptionsList* options_list_ = nullptr;
+};
+
+// This represents a ALTER SEQUENCE statement, i.e.,
+// ALTER SEQUENCE <name_path> SET OPTIONS (name=value, ...);
+class ASTAlterSequenceStatement final : public ASTAlterStatementBase {
+ public:
+  static constexpr ASTNodeKind kConcreteNodeKind = AST_ALTER_SEQUENCE_STATEMENT;
+
+  ASTAlterSequenceStatement() : ASTAlterStatementBase(kConcreteNodeKind) {}
+  void Accept(ParseTreeVisitor* visitor, void* data) const override;
+  absl::Status Accept(ParseTreeStatusVisitor& visitor, std::any& output) const override;
+  absl::StatusOr<VisitResult> Accept(
+      NonRecursiveParseTreeVisitor* visitor) const override;
+
+  friend class ParseTreeSerializer;
+
+ private:
+  absl::Status InitFields() final {
+    FieldLoader fl(this);
+    fl.AddOptional(&path_, AST_PATH_EXPRESSION);
+    GOOGLESQL_RETURN_IF_ERROR(fl.AddRequired(&action_list_));
+    return fl.Finalize();
+  }
+};
+
+}  // namespace googlesql
 // NOLINTEND(whitespace/line_length)
-#endif  // ZETASQL_PARSER_PARSE_TREE_GENERATED_H_
+#endif  // GOOGLESQL_PARSER_PARSE_TREE_GENERATED_H_
 

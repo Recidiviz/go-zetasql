@@ -766,6 +766,7 @@ static absl::StatusOr<T> ConvertTimestampInterval(T interval,
                          << " scale to " << TimestampScale_Name(output_scale)
                          << " scale causes overflow";
 }
+#undef FCT
 
 // Adjust Year/Month/Day for overflow/underflow value.
 // Roll year value forward if month is overflow, or backward if month is

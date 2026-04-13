@@ -100,6 +100,7 @@ cc_library(
         "//googlesql/public:value_content",
         "//googlesql/public/functions:date_time_util",
         "//googlesql/public/functions:rounding_mode_cc_proto",
+        "//googlesql/public/proto:wire_format_annotation_cc_proto",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/base:no_destructor",
         "@com_google_absl//absl/base:nullability",
