@@ -194,6 +194,7 @@ Take **one** slice per PR: prove objects with **`ar t`** / **`nm -C`** on **`lib
 
 - **CI:** `./scripts/cgo-shard-inventory.sh --check` ([.github/workflows/go.yml](../.github/workflows/go.yml)).
 - **Prebuilts:** after **`extract_protobuf_cgo_lib.sh`** or **`extract_googlesql_unified_lib.sh`** changes, **`task verify:prebuilt-protobuf`** / **`task verify:prebuilt-googlesql-unified`** (see §Phase 5).
+- **Full local gate (default path + policy scripts):** **`task verify:tier-b-cgo-policy`**, **`task verify:protobuf-tier-b`**, **`./scripts/cgo-shard-inventory.sh --check`**, **`task verify:prebuilt-protobuf`**, **`task verify:prebuilt-googlesql-unified`**, **`task test:compile-root-unified`**, **`task test:googlesql-unified-root`**. Optional Tier B archive: **`task verify:prebuilt-absl`** after **`task prebuilt:absl`** (only when working on **`googlesql_tier_b_absl`**).
 - **Releases:** smoke **go-googlesqlite** / **bigquery-emulator** per [prebuilt-cgo.md](prebuilt-cgo.md) and Tier B doc when bumping the module.
 
 ## Risk register
