@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/strings/string_view.cc"
 
 // include dependencies
 #include "go-absl/base/base/export.inc"

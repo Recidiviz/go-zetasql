@@ -3,7 +3,6 @@
 
 #include "absl/strings/string_view.h"
 // include sources
-#include "absl/strings/string_view.cc"
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/config/export.inc"

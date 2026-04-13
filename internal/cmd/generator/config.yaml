@@ -631,6 +631,10 @@ cclib:
     - pkg: absl/types/bad_any_cast_impl
       sources:
         - absl/types/bad_any_cast.cc
+    # absl/strings/string_view.cc — object in libprotobuf_cgo.a (e.g. *string_view*.pic.o); same pattern as types/bad_*.
+    - pkg: absl/strings/string_view
+      sources:
+        - absl/strings/string_view.cc
   bind_cc_prelude_before_headers:
     - pkg: googlesql/parser/parser
       lines: |
