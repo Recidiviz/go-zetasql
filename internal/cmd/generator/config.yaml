@@ -667,6 +667,37 @@ cclib:
     - pkg: absl/random/seed_gen_exception
       sources:
         - absl/random/seed_gen_exception.cc
+    # Second batch-10 default-path go-absl slice (single .cc per shard; libprotobuf_cgo.a ownership).
+    - pkg: absl/base/poison
+      sources:
+        - absl/base/internal/poison.cc
+    - pkg: absl/base/scoped_set_env
+      sources:
+        - absl/base/internal/scoped_set_env.cc
+    - pkg: absl/base/malloc_internal
+      sources:
+        - absl/base/internal/low_level_alloc.cc
+    - pkg: absl/base/raw_logging_internal
+      sources:
+        - absl/base/internal/raw_logging.cc
+    - pkg: absl/profiling/periodic_sampler
+      sources:
+        - absl/profiling/internal/periodic_sampler.cc
+    - pkg: absl/synchronization/graphcycles_internal
+      sources:
+        - absl/synchronization/internal/graphcycles.cc
+    - pkg: absl/debugging/stacktrace
+      sources:
+        - absl/debugging/stacktrace.cc
+    - pkg: absl/debugging/leak_check
+      sources:
+        - absl/debugging/leak_check.cc
+    - pkg: absl/debugging/stack_consumption
+      sources:
+        - absl/debugging/internal/stack_consumption.cc
+    - pkg: absl/strings/pow10_helper
+      sources:
+        - absl/strings/internal/pow10_helper.cc
   bind_cc_prelude_before_headers:
     - pkg: googlesql/parser/parser
       lines: |

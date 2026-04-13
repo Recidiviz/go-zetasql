@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/debugging/internal/stack_consumption.cc"
 
 // include dependencies
 #include "go-absl/base/config/export.inc"

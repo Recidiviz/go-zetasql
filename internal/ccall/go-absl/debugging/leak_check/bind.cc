@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/debugging/leak_check.cc"
 
 // include dependencies
 #include "go-absl/base/config/export.inc"

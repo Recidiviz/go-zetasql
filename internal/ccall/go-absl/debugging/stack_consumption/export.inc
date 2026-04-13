@@ -3,7 +3,6 @@
 
 #include "absl/debugging/internal/stack_consumption.h"
 // include sources
-#include "absl/debugging/internal/stack_consumption.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/core_headers/export.inc"

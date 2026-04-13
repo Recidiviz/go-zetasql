@@ -61,7 +61,6 @@
 //#undef private
 
 // include sources
-#include "absl/base/internal/low_level_alloc.cc"
 
 // include dependencies
 #include "go-absl/base/base/export.inc"

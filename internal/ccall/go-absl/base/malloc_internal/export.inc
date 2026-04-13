@@ -4,7 +4,6 @@
 #include "absl/base/internal/direct_mmap.h"
 #include "absl/base/internal/low_level_alloc.h"
 // include sources
-#include "absl/base/internal/low_level_alloc.cc"
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/base_internal/export.inc"

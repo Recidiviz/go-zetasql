@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/base/internal/raw_logging.cc"
 
 // include dependencies
 #include "go-absl/base/atomic_hook/export.inc"

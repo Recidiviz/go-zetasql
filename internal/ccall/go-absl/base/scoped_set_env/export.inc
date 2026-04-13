@@ -3,7 +3,6 @@
 
 #include "absl/base/internal/scoped_set_env.h"
 // include sources
-#include "absl/base/internal/scoped_set_env.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/base/raw_logging_internal/export.inc"

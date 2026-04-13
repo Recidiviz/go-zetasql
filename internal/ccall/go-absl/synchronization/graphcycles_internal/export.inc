@@ -3,7 +3,6 @@
 
 #include "absl/synchronization/internal/graphcycles.h"
 // include sources
-#include "absl/synchronization/internal/graphcycles.cc"
 // include dependencies
 #include "go-absl/base/base/export.inc"
 #include "go-absl/base/base_internal/export.inc"

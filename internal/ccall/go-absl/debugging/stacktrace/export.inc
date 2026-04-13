@@ -4,7 +4,6 @@
 #include "absl/debugging/stacktrace.h"
 // include sources
 #include "absl/debugging/internal/stacktrace_config.h"
-#include "absl/debugging/stacktrace.cc"
 // include dependencies
 #include "go-absl/debugging/debugging_internal/export.inc"
 #include "go-absl/base/config/export.inc"
