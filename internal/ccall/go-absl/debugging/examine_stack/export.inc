@@ -3,7 +3,6 @@
 
 #include "absl/debugging/internal/examine_stack.h"
 // include sources
-#include "absl/debugging/internal/examine_stack.cc"
 // include dependencies
 #include "go-absl/debugging/stacktrace/export.inc"
 #include "go-absl/debugging/symbolize/export.inc"

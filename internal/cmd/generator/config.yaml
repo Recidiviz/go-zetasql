@@ -851,7 +851,11 @@ cclib:
     - pkg: absl/flags/usage_internal
       sources:
         - absl/flags/internal/usage.cc
-    # Debugging (skip examine_stack; leak_check_disable not generator-managed; skip failure_signal_handler if missing from archive).
+    # Debugging: failure_signal_handler / leak_check_disable — no matching .pic.o in libprotobuf_cgo.a; keep amalgamated.
+    # examine_stack: object 29_examine_stack_examine_stack.pic.o is in libprotobuf_cgo.a (nm/ar t proof).
+    - pkg: absl/debugging/examine_stack
+      sources:
+        - absl/debugging/internal/examine_stack.cc
     - pkg: absl/debugging/demangle_internal
       sources:
         - absl/debugging/internal/demangle.cc
