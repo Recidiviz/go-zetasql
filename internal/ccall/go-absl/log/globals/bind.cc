@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/globals.cc"
 
 // include dependencies
 #include "go-absl/base/atomic_hook/export.inc"

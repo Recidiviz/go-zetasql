@@ -3,7 +3,6 @@
 
 #include "absl/log/internal/conditions.h"
 // include sources
-#include "absl/log/internal/conditions.cc"
 // include dependencies
 #include "go-absl/log/go_internal/voidify/export.inc"
 #include "go-absl/base/base/export.inc"

@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/internal/check_op.cc"
 
 // include dependencies
 #include "go-absl/log/go_internal/nullguard/export.inc"

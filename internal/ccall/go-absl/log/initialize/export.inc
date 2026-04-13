@@ -3,7 +3,6 @@
 
 #include "absl/log/initialize.h"
 // include sources
-#include "absl/log/initialize.cc"
 // include dependencies
 #include "go-absl/log/globals/export.inc"
 #include "go-absl/base/config/export.inc"

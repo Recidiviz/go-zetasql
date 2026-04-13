@@ -13,8 +13,6 @@
 #include "absl/random/uniform_real_distribution.h"
 #include "absl/random/zipf_distribution.h"
 // include sources
-#include "absl/random/discrete_distribution.cc"
-#include "absl/random/gaussian_distribution.cc"
 // include dependencies
 #include "go-absl/base/base_internal/export.inc"
 #include "go-absl/base/config/export.inc"

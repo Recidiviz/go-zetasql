@@ -61,9 +61,7 @@
 //#undef private
 
 // include sources
-#include "absl/crc/internal/crc.cc"
 #include "absl/crc/internal/crc_internal.h"
-#include "absl/crc/internal/crc_x86_arm_combined.cc"
 
 // include dependencies
 #include "go-absl/crc/cpu_detect/export.inc"

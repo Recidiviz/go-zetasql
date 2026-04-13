@@ -739,6 +739,47 @@ cclib:
     - pkg: absl/debugging/utf8_for_code_point
       sources:
         - absl/debugging/internal/utf8_for_code_point.cc
+    # Fourth wave: random seed_sequences + log singles / log/internal (libprotobuf_cgo.a).
+    # Note: absl/status/status_matchers and absl/log/flags are not proven in libprotobuf_cgo.a; skipped.
+    - pkg: absl/random/seed_sequences
+      sources:
+        - absl/random/seed_sequences.cc
+    - pkg: absl/log/die_if_null
+      sources:
+        - absl/log/die_if_null.cc
+    - pkg: absl/log/globals
+      sources:
+        - absl/log/globals.cc
+    - pkg: absl/log/initialize
+      sources:
+        - absl/log/initialize.cc
+    - pkg: absl/log/log_entry
+      sources:
+        - absl/log/log_entry.cc
+    - pkg: absl/log/log_sink
+      sources:
+        - absl/log/log_sink.cc
+    - pkg: absl/log/internal/check_op
+      sources:
+        - absl/log/internal/check_op.cc
+    - pkg: absl/log/internal/conditions
+      sources:
+        - absl/log/internal/conditions.cc
+    - pkg: absl/log/internal/fnmatch
+      sources:
+        - absl/log/internal/fnmatch.cc
+    - pkg: absl/log/internal/format
+      sources:
+        - absl/log/internal/log_format.cc
+    # Fifth wave: multi-source shards (both .cc in libprotobuf_cgo.a).
+    - pkg: absl/random/distributions
+      sources:
+        - absl/random/discrete_distribution.cc
+        - absl/random/gaussian_distribution.cc
+    - pkg: absl/crc/crc_internal
+      sources:
+        - absl/crc/internal/crc.cc
+        - absl/crc/internal/crc_x86_arm_combined.cc
   bind_cc_prelude_before_headers:
     - pkg: googlesql/parser/parser
       lines: |

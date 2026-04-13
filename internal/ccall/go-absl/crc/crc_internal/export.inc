@@ -4,9 +4,7 @@
 #include "absl/crc/internal/crc.h"
 #include "absl/crc/internal/crc32_x86_arm_combined_simd.h"
 // include sources
-#include "absl/crc/internal/crc.cc"
 #include "absl/crc/internal/crc_internal.h"
-#include "absl/crc/internal/crc_x86_arm_combined.cc"
 // include dependencies
 #include "go-absl/crc/cpu_detect/export.inc"
 #include "go-absl/base/config/export.inc"

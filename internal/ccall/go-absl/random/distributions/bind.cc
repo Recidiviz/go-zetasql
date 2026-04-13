@@ -70,8 +70,6 @@
 //#undef private
 
 // include sources
-#include "absl/random/discrete_distribution.cc"
-#include "absl/random/gaussian_distribution.cc"
 
 // include dependencies
 #include "go-absl/base/base_internal/export.inc"

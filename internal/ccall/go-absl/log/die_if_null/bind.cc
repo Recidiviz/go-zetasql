@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/die_if_null.cc"
 
 // include dependencies
 #include "go-absl/log/log/export.inc"

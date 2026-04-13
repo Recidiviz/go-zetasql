@@ -3,7 +3,6 @@
 
 #include "absl/random/seed_sequences.h"
 // include sources
-#include "absl/random/seed_sequences.cc"
 // include dependencies
 #include "go-absl/random/seed_gen_exception/export.inc"
 #include "go-absl/base/config/export.inc"

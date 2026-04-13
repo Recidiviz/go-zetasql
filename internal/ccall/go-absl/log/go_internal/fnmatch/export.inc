@@ -3,7 +3,6 @@
 
 #include "absl/log/internal/fnmatch.h"
 // include sources
-#include "absl/log/internal/fnmatch.cc"
 // include dependencies
 #include "go-absl/base/config/export.inc"
 #include "go-absl/strings/strings/export.inc"

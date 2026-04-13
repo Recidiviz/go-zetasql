@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/internal/conditions.cc"
 
 // include dependencies
 #include "go-absl/log/go_internal/voidify/export.inc"

@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/log/internal/log_format.cc"
 
 // include dependencies
 #include "go-absl/log/go_internal/append_truncated/export.inc"

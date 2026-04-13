@@ -3,7 +3,6 @@
 
 #include "absl/log/log_sink.h"
 // include sources
-#include "absl/log/log_sink.cc"
 // include dependencies
 #include "go-absl/log/log_entry/export.inc"
 #include "go-absl/base/config/export.inc"

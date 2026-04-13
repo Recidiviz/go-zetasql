@@ -3,7 +3,6 @@
 
 #include "absl/log/die_if_null.h"
 // include sources
-#include "absl/log/die_if_null.cc"
 // include dependencies
 #include "go-absl/log/log/export.inc"
 #include "go-absl/base/config/export.inc"

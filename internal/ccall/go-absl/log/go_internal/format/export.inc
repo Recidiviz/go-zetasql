@@ -3,7 +3,6 @@
 
 #include "absl/log/internal/log_format.h"
 // include sources
-#include "absl/log/internal/log_format.cc"
 // include dependencies
 #include "go-absl/log/go_internal/append_truncated/export.inc"
 #include "go-absl/log/go_internal/config/export.inc"
