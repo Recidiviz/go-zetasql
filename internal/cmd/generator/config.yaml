@@ -864,8 +864,11 @@ cclib:
     - pkg: absl/debugging/failure_signal_handler
       sources:
         - absl/debugging/failure_signal_handler.cc
-    # leak_check_disable: vendored internal/ccall/absl/debugging/leak_check_disable.cc (local TU); not merged
-    # from Abseil prebuilts — keep amalgamated. examine_stack: 29_examine_stack*.pic.o in libprotobuf_cgo.a.
+    # leak_check_disable: vendored TU; .pic.o merged in extract_protobuf_cgo_lib.sh (Twelfth follow-up).
+    - pkg: absl/debugging/leak_check_disable
+      sources:
+        - absl/debugging/leak_check_disable.cc
+    # examine_stack: 29_examine_stack*.pic.o in libprotobuf_cgo.a.
     - pkg: absl/debugging/examine_stack
       sources:
         - absl/debugging/internal/examine_stack.cc

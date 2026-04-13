@@ -110,6 +110,15 @@ for obj in ${OBJS}; do
   parent="$(basename "$(dirname "$obj")")"
   cp -f "$obj" "$STAGE/${i}_${parent}_${base}"
 done
+# Vendored leak_check_disable.cc (__lsan_is_turned_off): not in @com_google_absl; compile with the
+# same libc++ ABI as Bazel Abseil and merge (Twelfth follow-up; docs/cgo-consolidation.md).
+LEAK_SRC="$REPO_ROOT/internal/ccall/absl/debugging/leak_check_disable.cc"
+if [[ ! -f "$LEAK_SRC" ]]; then
+  echo "missing $LEAK_SRC" >&2
+  exit 1
+fi
+i=$((i + 1))
+"$CXX" -std=c++20 -stdlib=libc++ -fPIC -c -o "$STAGE/${i}_vendored_leak_check_disable.pic.o" "$LEAK_SRC"
 # shellcheck disable=SC2086
 ar crs "$OUT" "$STAGE"/*.o
 echo "Wrote $OUT ($(ls -lh "$OUT" | awk '{print $5}'))"

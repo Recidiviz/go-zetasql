@@ -366,6 +366,15 @@ cc_library(
     ],
 )
 
+# Vendored from Abseil (LSAN hook); go-googlesql links implementation from libprotobuf_cgo.a (Twelfth follow-up).
+cc_library(
+    name = "leak_check_disable",
+    srcs = ["leak_check_disable.cc"],
+    copts = ABSL_DEFAULT_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
+    deps = ["//absl/base:config"],
+)
+
 cc_test(
     name = "leak_check_test",
     srcs = ["leak_check_test.cc"],
