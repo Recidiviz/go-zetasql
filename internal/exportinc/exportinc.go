@@ -112,16 +112,24 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 	return prelude
 }
 
-// filterAlgorithmsUtilLinkOnlySources drops algorithms/util.cc from go-algorithms/util/export.inc.
-// bind.cc is link-only (cclib.link_only_bind_packages); the .cc object is in libgooglesql.a from
-// com_google_cc_differential_privacy. Parent TUs must not compile util.cc again via export.inc.
+// filterAlgorithmsUtilLinkOnlySources drops algorithms/*.cc lines for link-only go-algorithms
+// packages (cclib.link_only_bind_packages). Generator syncs export.inc from amalgamation-shaped
+// bind.cc.tmpl for dependency edges; thin bind.cc is link-only. The .cc objects live in
+// libgooglesql.a (com_google_cc_differential_privacy). Parent TUs must not compile those bodies
+// again via export.inc.
 func filterAlgorithmsUtilLinkOnlySources(packageDir string, prelude []string) []string {
-	if !strings.Contains(packageDir, "go-algorithms/util") {
+	var drop string
+	switch {
+	case strings.Contains(packageDir, "go-algorithms/util"):
+		drop = `#include "algorithms/util.cc"`
+	case strings.Contains(packageDir, "go-algorithms/distributions"):
+		drop = `#include "algorithms/distributions.cc"`
+	default:
 		return prelude
 	}
 	out := make([]string, 0, len(prelude))
 	for _, line := range prelude {
-		if strings.TrimSpace(line) == `#include "algorithms/util.cc"` {
+		if strings.TrimSpace(line) == drop {
 			continue
 		}
 		out = append(out, line)

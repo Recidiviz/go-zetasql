@@ -3,7 +3,6 @@
 
 #include "algorithms/distributions.h"
 // include sources
-#include "algorithms/distributions.cc"
 // include dependencies
 #include "go-algorithms/rand/export.inc"
 #include "go-algorithms/util/export.inc"

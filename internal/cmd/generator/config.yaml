@@ -548,6 +548,8 @@ cclib:
     # algorithms/util.cc is merged from com_google_cc_differential_privacy into libgooglesql.a;
     # link-only avoids compiling the .cc body in the CGO TU (see extract_googlesql_unified_lib.sh SEARCH_ROOTS).
     - algorithms/util
+    # algorithms/distributions.cc — same DP archive closure as util.
+    - algorithms/distributions
     # Differential-privacy protos: .pb.o live in libgooglesql.a (external DP repo); link-only avoids
     # duplicate TU bodies vs the unified archive. See docs/cgo-consolidation.md (class C).
     - proto/confidence_interval_cc_proto
