@@ -558,6 +558,9 @@ cclib:
     # gaussian-dp-calculator.cc — built into libgooglesql.a via
     # @com_google_cc_differential_privacy//algorithms:gaussian-dp-calculator (default_bazel_targets.txt).
     - algorithms/gaussian-dp-calculator
+    # bounded-mean-ci.cc, count-tree.cc — same DP archive (default_bazel_targets.txt external targets).
+    - algorithms/internal/bounded-mean-ci
+    - algorithms/internal/count-tree
     # Differential-privacy protos: .pb.o live in libgooglesql.a (external DP repo); link-only avoids
     # duplicate TU bodies vs the unified archive. See docs/cgo-consolidation.md (class C).
     - proto/confidence_interval_cc_proto

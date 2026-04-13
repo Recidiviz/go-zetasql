@@ -2,7 +2,10 @@
 #ifndef algorithms_internal_count_tree_bind_cc
 #define algorithms_internal_count_tree_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy algorithms_internal_count_tree_differential_privacy
 #define googlesql algorithms_internal_count_tree_googlesql
 #define googlesql_base algorithms_internal_count_tree_googlesql_base
@@ -51,22 +54,10 @@
 #define GO_EXPORT(def) export_algorithms_internal_count_tree_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "algorithms/internal/count-tree.h"
-//#undef private
-
-// include sources
-#include "algorithms/internal/count-tree.cc"
-
-// include dependencies
-#include "go-absl/container/flat_hash_map/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-base/status/export.inc"
-#include "go-proto/summary_cc_proto/export.inc"
 
 #include "bridge.h"
 

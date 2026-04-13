@@ -3,7 +3,6 @@
 
 #include "algorithms/internal/bounded-mean-ci.h"
 // include sources
-#include "algorithms/internal/bounded-mean-ci.cc"
 // include dependencies
 #include "go-algorithms/numerical-mechanisms/export.inc"
 #include "go-algorithms/util/export.inc"
