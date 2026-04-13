@@ -41,6 +41,7 @@ package sql_formatter
 #cgo LDFLAGS: -lc++
 #define GO_EXPORT(API) export_googlesql_public_sql_formatter_ ## API
 #include "bridge.h"
+extern void googlesql_format_sql_go_shim(void *arg0, void **arg1, void **arg2);
 #undef GO_EXPORT
 #define GO_EXPORT(API) export_absl_time_internal_cctz_time_zone_ ## API
 #include "../../../go-absl/time/go_internal/cctz/time_zone/bridge.h"

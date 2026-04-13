@@ -100,6 +100,7 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 	prelude = filterBisonExportDuplicateFlexTokenizer(packageDir, prelude)
 	prelude = filterFlexTokenizerExportDuplicateSources(packageDir, prelude)
 	prelude = filterParserPackageExportDuplicateFlex(packageDir, prelude)
+	prelude = filterAlgorithmsUtilLinkOnlySources(packageDir, prelude)
 	if !strings.Contains(packageDir, "/go-absl/types/") {
 		return prelude
 	}
@@ -109,6 +110,23 @@ func applyExportPreludePolicy(packageDir string, prelude []string) []string {
 		}
 	}
 	return prelude
+}
+
+// filterAlgorithmsUtilLinkOnlySources drops algorithms/util.cc from go-algorithms/util/export.inc.
+// bind.cc is link-only (cclib.link_only_bind_packages); the .cc object is in libgooglesql.a from
+// com_google_cc_differential_privacy. Parent TUs must not compile util.cc again via export.inc.
+func filterAlgorithmsUtilLinkOnlySources(packageDir string, prelude []string) []string {
+	if !strings.Contains(packageDir, "go-algorithms/util") {
+		return prelude
+	}
+	out := make([]string, 0, len(prelude))
+	for _, line := range prelude {
+		if strings.TrimSpace(line) == `#include "algorithms/util.cc"` {
+			continue
+		}
+		out = append(out, line)
+	}
+	return out
 }
 
 // filterGoProtobufAmalgamationSingleOwner drops a legacy include of the removed

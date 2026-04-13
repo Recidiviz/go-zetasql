@@ -2,7 +2,10 @@
 #ifndef algorithms_util_bind_cc
 #define algorithms_util_bind_cc
 
-// switch namespace
+// Link-only bind.cc (no amalgamated .cc includes). Native implementations must come from prebuilt
+// archives (e.g. libgooglesql.a) and match this package's exported bridge symbols.
+// Enable per package via cclib.link_only_bind_packages in internal/cmd/generator/config.yaml.
+// See docs/link-only-cgo-migration.md.
 #define differential_privacy algorithms_util_differential_privacy
 #define googlesql algorithms_util_googlesql
 #define googlesql_base algorithms_util_googlesql_base
@@ -51,24 +54,10 @@
 #define GO_EXPORT(def) export_algorithms_util_ ## def
 #define U_ICU_ENTRY_POINT_RENAME(x) GO_EXPORT(x)
 
-// bridge_cc.inc uses GoSlice; bridge.inc includes _cgo_export.h again for exported symbols.
 #include "_cgo_export.h"
 
-// include headers
-//#define private public
+// include headers (types only; no .cc bodies)
 #include "algorithms/util.h"
-//#undef private
-
-// include sources
-#include "algorithms/util.cc"
-
-// include dependencies
-#include "go-base/logging/export.inc"
-#include "go-absl/base/core_headers/export.inc"
-#include "go-absl/status/status/export.inc"
-#include "go-absl/status/statusor/export.inc"
-#include "go-absl/strings/strings/export.inc"
-#include "go-base/status/export.inc"
 
 #include "bridge.h"
 

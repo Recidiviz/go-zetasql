@@ -3,7 +3,6 @@
 
 #include "algorithms/util.h"
 // include sources
-#include "algorithms/util.cc"
 // include dependencies
 #include "go-base/logging/export.inc"
 #include "go-absl/base/core_headers/export.inc"
