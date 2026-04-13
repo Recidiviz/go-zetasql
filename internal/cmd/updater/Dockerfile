@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
     && rm -rf /var/lib/apt/lists/*
 RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
 RUN echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-RUN apt-get update && apt-get install --no-install-recommends -y make g++ clang git python3 openjdk-11-jdk unzip \
+RUN apt-get update && apt-get install --no-install-recommends -y make g++ clang git python3 openjdk-17-jdk-headless unzip \
     && rm -rf /var/lib/apt/lists/*
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 100
 RUN GOBIN=/usr/local/bin go install github.com/bazelbuild/bazelisk@latest
