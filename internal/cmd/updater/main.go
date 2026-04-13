@@ -89,6 +89,9 @@ func outExternalDir() string {
 func appendLineIfMissing(path string, needle string, insertAfter string) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
 		return err
 	}
 	content := string(data)
@@ -107,6 +110,9 @@ func appendLineIfMissing(path string, needle string, insertAfter string) error {
 func replaceIfMissing(path string, old string, new string) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
 		return err
 	}
 	content := string(data)
@@ -341,6 +347,9 @@ std::string ASTOptionsEntry::GetSQLForOperator() const {
 func replaceAllInFile(path, old, new string) error {
 	b, err := os.ReadFile(path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
 		return err
 	}
 	s := string(b)
