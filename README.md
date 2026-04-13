@@ -10,7 +10,7 @@ GoogleSQL can parse all queries related to Cloud Spanner and BigQuery. This func
 # Features
 
 - No need to install GoogleSQL as a separate system library
-  - The repository vendors GoogleSQL sources and CGO bindings. **Supported development and releases** rely on **prebuilt static archives** (`libprotobuf_cgo.a`, `libgooglesql.a`) and **link-only** CGO — see [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md) and [`docs/link-only-cgo-migration.md`](docs/link-only-cgo-migration.md).
+  - The repository vendors GoogleSQL sources and CGO bindings. **Supported development and releases** rely on **prebuilt static archives** (`libprotobuf_cgo.a`, `libgooglesql.a`) and **link-only** CGO — see [`docs/README.md`](docs/README.md) (index), [`docs/prebuilt-cgo.md`](docs/prebuilt-cgo.md), and [`docs/link-only-cgo-migration.md`](docs/link-only-cgo-migration.md).
 
 - Can create a portable single binary even though it using cgo
   - You can create a static binary even with `CGO_ENABLED=1` by specifying the following options at build time: `--ldflags '-extldflags "-static"'`

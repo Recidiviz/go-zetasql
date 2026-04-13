@@ -1,6 +1,6 @@
 # Native build pipeline (prebuilt `.a` artifacts)
 
-This note maps **which C++ surfaces** move first when evolving from per-package CGO compilation toward **prebuilt archives** (Bazel or CMake). It is a companion to [`prebuilt-cgo.md`](prebuilt-cgo.md) and [`tier-b-absl-protobuf.md`](tier-b-absl-protobuf.md).
+This note maps how **Bazel-built static archives** feed the default Go CGO path. The **primary pipeline is implemented:** protobuf + utf8_range via **`libprotobuf_cgo.a`**, GoogleSQL via **`libgooglesql.a`**, link-only generated binds — see [`prebuilt-cgo.md`](prebuilt-cgo.md) and [`link-only-cgo-migration.md`](link-only-cgo-migration.md). Below, **phase table** entries marked *done* reflect that; remaining rows are **Tier B pilots** or **incremental consolidation** ([cgo-consolidation.md](cgo-consolidation.md)).
 
 ## Primary pipeline (today): Bazel in the GoogleSQL submodule
 
@@ -32,16 +32,16 @@ Tier B reduces **compile** duplication by linking one Bazel-built archive per hu
 
 The old protobuf amalgamation bind path has been removed from the default Linux/Darwin package. [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) / [`bind_darwin.go`](../internal/ccall/go-protobuf/protobuf/bind_darwin.go) now link the protobuf prebuilt archive directly, and CI’s default [`go.yml`](../.github/workflows/go.yml) bootstraps that archive before testing ([`prebuilt-cgo.md`](prebuilt-cgo.md)).
 
-## Suggested shard order for future consolidation
+## Shard order (history + what is left)
 
-| Phase | Content | Notes |
+| Phase | Content | Status |
 |-------|---------|--------|
-| 1 | **Protobuf + utf8_range** | Implemented by `task prebuilt:protobuf` / the default protobuf bind files. |
-| 2 | **Abseil** | **`task prebuilt:absl`** → `libabsl_cgo.a`. **Incremental rollout:** [`meta/type_traits`](../internal/ccall/go-absl/meta/type_traits), [`base/config`](../internal/ccall/go-absl/base/config), [`utility/utility`](../internal/ccall/go-absl/utility/utility) use `bind_tier_b_absl.go` + `googlesql_tier_b_absl`. Overlap / multi-package link: [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). Consolidated single-owner option: below. |
-| 3 | **googlesql public / analyzer** | Large `export.inc` bundles; consolidating requires a stable C bridge ABI (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)). |
-| 3b | **Unified `libgooglesql.a` (bootstrap)** | [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh) + [`docs/libgooglesql-unified.md`](libgooglesql-unified.md): Bazel `*.pic.o` from configurable targets (default several `//googlesql/base:*` libs) plus a C anchor. Expand targets toward `//googlesql/public:analyzer` when the Bazel graph is available. |
-| 4 | **Parser / flex** | Depends on phase 3 includes and generated sources. |
-| 4b | **Generator link-only `bind.cc`** | Opt-in `cclib.link_only_bind_packages` in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) + [`link-only-cgo-migration.md`](link-only-cgo-migration.md). **Production opt-in** for `googlesql/public/*` is gated on namespace-aligned prebuilt objects (see **Namespace alignment** in that doc); generator templates and unified ABI (`googlesql_unified_capabilities`) support the rollout. |
+| 1 | **Protobuf + utf8_range** | **Done** — `task prebuilt:protobuf` / default [`bind_linux.go`](../internal/ccall/go-protobuf/protobuf/bind_linux.go) bind files. |
+| 2 | **Abseil Tier B pilot** | **Optional** — `task prebuilt:absl` → `libabsl_cgo.a`; isolated packages use `bind_tier_b_absl.go` + `googlesql_tier_b_absl`. Do not mix with default protobuf prebuilt in one link: [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md). |
+| 3 | **googlesql public / analyzer** | **Default path** uses link-only binds + `libgooglesql.a`; bridge ABI still [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl). Further shrink = consolidation playbook. |
+| 3b | **Unified `libgooglesql.a`** | **Done** for the supported root slice — [`extract_googlesql_unified_lib.sh`](../internal/ccall/go-googlesql-unified/extract_googlesql_unified_lib.sh), [`libgooglesql-unified.md`](libgooglesql-unified.md); default target list includes analyzer/parser when the workspace builds. |
+| 4 | **Parser / flex** | **In** unified archive + link-only shards when using default tags; flex/parser details in [cgo-consolidation.md](cgo-consolidation.md). |
+| 4b | **Generator link-only `bind.cc`** | **Default** for `googlesql/*` and packages under `cclib.link_only_bind_packages` — [`link-only-cgo-migration.md`](link-only-cgo-migration.md). |
 
 Detailed duplicate-symbol inventory: [`protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
 

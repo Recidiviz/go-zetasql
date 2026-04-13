@@ -7,7 +7,7 @@ This document describes the **default protobuf path**: link a **Bazel-built** `l
 | Goal | Tags | Preconditions |
 |------|------|----------------|
 | **GoogleSQL CGO (default)** | `-tags googlesql,googlesql_unified_prebuilt` | `libprotobuf_cgo.a` and `libgooglesql.a` (see [`libgooglesql-unified.md`](libgooglesql-unified.md)) |
-| **Tier B Abseil (pilot)** | `-tags googlesql,googlesql_tier_b_absl` | `libabsl_cgo.a` under `internal/ccall/go-absl/lib/` — **not** combined with `googlesql_tier_b` |
+| **Tier B Abseil (pilot)** | `-tags googlesql,googlesql_tier_b_absl` | `libabsl_cgo.a` under `internal/ccall/go-absl/lib/` — **not** combined with the default **`libprotobuf_cgo.a`** link in one binary ([prebuilt-absl-overlap.md](prebuilt-absl-overlap.md)) |
 | **Protobuf package only (CI)** | `-tags googlesql,googlesql_unified_prebuilt` | `libprotobuf_cgo.a` only — `task test:protobuf-cgo` |
 
 **Full GoogleSQL CGO:** **Unified prebuilt + link-only** binds — see [`link-only-cgo-migration.md`](link-only-cgo-migration.md).

@@ -9,7 +9,9 @@ This document is the **implementation roadmap** for combining:
 1. **Default protobuf prebuilt** — link [`libprotobuf_cgo.a`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) built by Bazel in the submodule instead of the removed single-TU amalgamation bundle that previously lived under `go-protobuf/protobuf`.
 2. **One namespace story** — use **plain** `absl::` and `google::protobuf::` everywhere in a single link, so protobuf code compiled in one archive matches headers included from analyzer/parser/other shards.
 
-The naive “drop `#include` of the amalgamation and blank-import `go-protobuf`” approach fails because those shards currently use **`#define absl <fqdn>_absl`** (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)), so templates and out-of-line references expect **renamed** Abseil types, while a separately built protobuf TU uses **plain** `absl::`. See [`docs/protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
+**Current state:** Phases 0–3 below are **landed** for the default GoogleSQL path: `cclib.global_exclude_replace_names: [absl, google]` is set in [`config.yaml`](../internal/cmd/generator/config.yaml), `go test` with `-tags googlesql` (and unified prebuilt tags as in [prebuilt-cgo.md](prebuilt-cgo.md)) expects a working prebuilt protobuf link when archives are built. Remaining work is incremental consolidation ([cgo-consolidation.md](cgo-consolidation.md)), Tier B pilots, and downstream alignment — not “expect link errors until Phase 3.”
+
+The naive “drop `#include` of the amalgamation and blank-import `go-protobuf`” approach **used to** fail because shards applied **`#define absl <fqdn>_absl`** (see [`templates/bind.cc.tmpl`](../internal/cmd/generator/templates/bind.cc.tmpl)) while a separately built protobuf TU uses **plain** `absl::`. **`global_exclude_replace_names`** plus prebuilt archives address that for the default build; historical analysis remains in [`protobuf-single-owner-inventory.md`](protobuf-single-owner-inventory.md).
 
 ## Prebuilt tag policy (single Abseil owner)
 
@@ -40,31 +42,29 @@ task prebuilt:protobuf
 
 Confirm `internal/ccall/go-protobuf/protobuf/lib/libprotobuf_cgo.a` exists (symlink to `linux_amd64/libprotobuf_cgo.a` or similar).
 
-## Phase 2 — Try the default prebuilt link for `go-protobuf` only
+## Phase 2 — Verify the default prebuilt link for `go-protobuf` only
 
 ```bash
+task verify:prebuilt-protobuf
 go test -tags 'googlesql' -count=1 ./internal/ccall/go-protobuf/protobuf/
 ```
 
-Expect link errors until Phases 3–4 align symbols (no `export_protobuf_*` from amalgamation, possible missing Abseil objects). This step checks that **`-lprotobuf_cgo`** resolves on your platform.
+With a fresh **`task prebuilt:protobuf`** and aligned vendored headers, this should **link**. If it fails, fix missing **`libprotobuf_cgo.a`**, wrong `CGO_CXXFLAGS` (**`-stdlib=libc++`**), or protobuf/Abseil skew before debugging generator renames (Phase 3 is already enabled in-tree).
 
-## Phase 3 — Unified `absl` / `google` macros (generator)
+## Phase 3 — Unified `absl` / `google` macros (generator) — **done in mainline**
 
-1. Uncomment / set in [`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml):
+[`internal/cmd/generator/config.yaml`](../internal/cmd/generator/config.yaml) has:
 
-   ```yaml
-   cclib:
-     global_exclude_replace_names:
-       - absl
-       - google
-   ```
+```yaml
+cclib:
+  global_exclude_replace_names:
+    - absl
+    - google
+```
 
-2. Run **`go run ./internal/cmd/generator`** from the repo root and fix compile/link failures iteratively.
+After **`config.yaml`** edits, run **`go run ./internal/cmd/generator`** from the repo root.
 
-**Risk:** omitting `absl` rename can surface **duplicate Abseil symbols** across CGO packages that each still compile pieces of Abseil. Mitigations:
-
-- Prefer **not** compiling Abseil `.cc` in every shard; link **one** `libabsl` (Bazel-built, matching protobuf’s Abseil) similarly to protobuf.
-- Or keep **`--allow-multiple-definition`** only while migrating (already in [`Taskfile.yml`](../Taskfile.yml)).
+**Residual risk:** some shards still compile Abseil `.cc` bodies locally; consolidation retires those via **`exclude_amalgamation_sources`** and archive ownership ([cgo-consolidation.md](cgo-consolidation.md)). [`Taskfile.yml`](../Taskfile.yml) may still pass **`-Wl,--allow-multiple-definition`** during rollout; the long-term goal is a single-owner link without relying on it ([native-build-pipeline.md](native-build-pipeline.md)).
 
 ## Phase 4 — Descriptor / runtime patches
 
@@ -72,7 +72,7 @@ After the link is stable, revisit vendored edits under [`internal/ccall/protobuf
 
 ## Phase 5 — Downstream
 
-Align [`go-googlesqlite`](https://github.com/vantaboard/go-googlesqlite) and [`bigquery-emulator`](https://github.com/goccy/bigquery-emulator) `CGO_LDFLAGS` and tags once go-googlesql’s default or documented path is fixed.
+When bumping the **`go-googlesql`** module, align [`go-googlesqlite`](https://github.com/vantaboard/go-googlesqlite) and [`bigquery-emulator`](https://github.com/goccy/bigquery-emulator) `CGO_LDFLAGS` and tags with [prebuilt-cgo.md](prebuilt-cgo.md) (default: `googlesql` + `googlesql_unified_prebuilt` + both archives).
 
 ## Current root-slice rollout
 
@@ -88,8 +88,8 @@ The first prebuilt-heavy slice now targets the **root Go package** (`TESTPKG=./`
 Use this slice with:
 
 ```bash
-task prebuilt:protobuf verify-prebuilt-protobuf
-task prebuilt:googlesql-unified verify-prebuilt-googlesql-unified
+task prebuilt:protobuf verify:prebuilt-protobuf
+task prebuilt:googlesql-unified verify:prebuilt-googlesql-unified
 task build:googlesql-unified-root
 task test:googlesql-unified-root
 ```
@@ -104,7 +104,7 @@ GoogleSQL CGO uses **`googlesql` + `googlesql_unified_prebuilt`** with prebuilt 
 | `task sync:protobuf-vendor-from-bazel` | Copy Bazel `@com_google_protobuf` sources into `internal/ccall/protobuf/` (then `go run ./internal/cmd/vendorpatch`) |
 | `task regenerate:ccall-cpp-protos` | Regenerate `internal/ccall` `*.pb.{h,cc}` (googlesql, googleapis, proto) with Bazel-built `protoc` (`regenerate:googlesql-cpp-protos` is an alias) |
 | `task verify:tier-b-cgo-policy` | Print supported / unsupported tag combinations |
-| [link-only-cgo-migration.md](link-only-cgo-migration.md) | Generator opt-in `cclib.link_only_bind_packages` for thin `bind.cc` |
+| [link-only-cgo-migration.md](link-only-cgo-migration.md) | Link-only `bind.cc`, `cclib.link_only_bind_packages`, verification commands |
 
 ## Build tags summary
 
@@ -112,7 +112,7 @@ GoogleSQL CGO uses **`googlesql` + `googlesql_unified_prebuilt`** with prebuilt 
 |-----|---------|
 | `googlesql` | Default CGO GoogleSQL build with the protobuf prebuilt owner. |
 | `googlesql_tier_b` | Deprecated compatibility alias; protobuf already uses the prebuilt owner by default. |
-| `googlesql_tier_b_absl` | Use `bind_tier_b_absl.go` in packages that define it (`go-absl/meta/type_traits`, `base/config`, `utility/utility`, …); link `libabsl_cgo.a` from [`extract_absl_cgo_lib.sh`](../internal/ccall/go-absl/extract_absl_cgo_lib.sh). See [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md) before combining with `googlesql_tier_b`. |
+| `googlesql_tier_b_absl` | Use `bind_tier_b_absl.go` in packages that define it (`go-absl/meta/type_traits`, `base/config`, `utility/utility`, …); link `libabsl_cgo.a` from [`extract_absl_cgo_lib.sh`](../internal/ccall/go-absl/extract_absl_cgo_lib.sh). See [`prebuilt-absl-overlap.md`](prebuilt-absl-overlap.md) — do **not** combine with the default **`libprotobuf_cgo.a`** link in one binary. |
 
 Use **`googlesql`** for the default protobuf prebuilt path: `-tags 'googlesql'`.  
 Use **`googlesql` and `googlesql_tier_b_absl`** for the isolated Abseil pilot: `-tags 'googlesql,googlesql_tier_b_absl'`.

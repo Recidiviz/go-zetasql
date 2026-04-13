@@ -2,6 +2,8 @@
 
 **Related:** multi-phase CGO/prebuilt consolidation charter, inventory script, and CI checks — [cgo-consolidation.md](cgo-consolidation.md).
 
+**Status:** The default build uses **`global_exclude_replace_names`** + prebuilt **`libprotobuf_cgo.a`** / **`libgooglesql.a`** (see [tier-b-absl-protobuf.md](tier-b-absl-protobuf.md), [link-only-cgo-migration.md](link-only-cgo-migration.md)). This doc keeps **scale numbers**, the **historical spike** (why naive link-only import failed), and verification bullets.
+
 This doc captures **inventory** from the protobuf CGO consolidation effort and the **blocking constraint** on a naive “single owner” layout.
 
 ## Scale (current generator output)
