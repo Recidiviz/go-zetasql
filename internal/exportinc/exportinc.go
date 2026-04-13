@@ -130,6 +130,8 @@ func filterAlgorithmsUtilLinkOnlySources(packageDir string, prelude []string) []
 		drops = []string{`#include "algorithms/rand.cc"`}
 	case strings.Contains(packageDir, "go-algorithms/go_internal/gaussian-stddev-calculator"):
 		drops = []string{`#include "algorithms/internal/gaussian-stddev-calculator.cc"`}
+	case strings.Contains(packageDir, "go-algorithms/gaussian-dp-calculator"):
+		drops = []string{`#include "algorithms/gaussian-dp-calculator.cc"`}
 	default:
 		return prelude
 	}

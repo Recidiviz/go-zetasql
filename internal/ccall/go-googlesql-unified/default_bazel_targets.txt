@@ -72,3 +72,8 @@
 //googlesql/public:catalog
 //googlesql/public:simple_catalog
 //googlesql/public:sql_formatter
+# External — com_google_cc_differential_privacy algorithm .pic.o for link-only go-algorithms CGO
+# (bounded-mean-ci, count-tree, gaussian-dp-calculator); see docs/cgo-consolidation.md
+@com_google_cc_differential_privacy//algorithms/internal:bounded-mean-ci
+@com_google_cc_differential_privacy//algorithms/internal:count-tree
+@com_google_cc_differential_privacy//algorithms:gaussian-dp-calculator

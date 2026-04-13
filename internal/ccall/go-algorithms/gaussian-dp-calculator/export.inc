@@ -3,7 +3,6 @@
 
 #include "algorithms/gaussian-dp-calculator.h"
 // include sources
-#include "algorithms/gaussian-dp-calculator.cc"
 // include dependencies
 #include "go-algorithms/go_internal/gaussian-stddev-calculator/export.inc"
 
