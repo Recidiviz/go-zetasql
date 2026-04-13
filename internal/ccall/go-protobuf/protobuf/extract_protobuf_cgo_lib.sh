@@ -45,6 +45,16 @@ BAZEL="${BAZEL:-$(command -v bazelisk || command -v bazel)}"
   --cxxopt=-std=c++20 --host_cxxopt=-std=c++20 \
   --jobs="${BAZEL_JOBS:-8}"
 
+# Abseil .cc bodies used by go-absl amalgamation shards are not always present in protobuf's
+# transitive .pic.o closure; build them explicitly so collect_protobuf_pic_o can merge the
+# matching *_*.pic.o members (see docs/cgo-consolidation.md, prebuilt expansion).
+"$BAZEL" build \
+  @com_google_absl//absl/log:flags \
+  @com_google_absl//absl/strings:cordz_sample_token \
+  @com_google_absl//absl/debugging:failure_signal_handler \
+  --cxxopt=-std=c++20 --host_cxxopt=-std=c++20 \
+  --jobs="${BAZEL_JOBS:-8}"
+
 BINROOT="$("$BAZEL" info bazel-bin | tr -d '\r')"
 # Bazel 7+ module repos use names like external/protobuf~; older layouts used com_google_protobuf.
 # utf8_range may live under protobuf/third_party/utf8_range or its own external root.

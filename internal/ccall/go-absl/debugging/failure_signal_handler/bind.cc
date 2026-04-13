@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/debugging/failure_signal_handler.cc"
 
 // include dependencies
 #include "go-absl/debugging/examine_stack/export.inc"

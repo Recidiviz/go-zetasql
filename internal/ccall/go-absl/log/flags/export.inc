@@ -3,7 +3,6 @@
 
 #include "absl/log/flags.h"
 // include sources
-#include "absl/log/flags.cc"
 // include dependencies
 #include "go-absl/log/globals/export.inc"
 #include "go-absl/base/config/export.inc"

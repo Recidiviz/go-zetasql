@@ -60,7 +60,6 @@
 //#undef private
 
 // include sources
-#include "absl/strings/internal/cordz_sample_token.cc"
 
 // include dependencies
 #include "go-absl/strings/cordz_handle/export.inc"

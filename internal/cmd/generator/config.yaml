@@ -853,8 +853,19 @@ cclib:
     - pkg: absl/flags/usage_internal
       sources:
         - absl/flags/internal/usage.cc
-    # Debugging: failure_signal_handler / leak_check_disable — no matching .pic.o in libprotobuf_cgo.a; keep amalgamated.
-    # examine_stack: object 29_examine_stack_examine_stack.pic.o is in libprotobuf_cgo.a (nm/ar t proof).
+    # log/flags, cordz_sample_token, failure_signal_handler: explicit @com_google_absl Bazel builds in
+    # extract_protobuf_cgo_lib.sh merge matching *_*.pic.o into libprotobuf_cgo.a.
+    - pkg: absl/log/flags
+      sources:
+        - absl/log/flags.cc
+    - pkg: absl/strings/cordz_sample_token
+      sources:
+        - absl/strings/internal/cordz_sample_token.cc
+    - pkg: absl/debugging/failure_signal_handler
+      sources:
+        - absl/debugging/failure_signal_handler.cc
+    # leak_check_disable: vendored internal/ccall/absl/debugging/leak_check_disable.cc (local TU); not merged
+    # from Abseil prebuilts — keep amalgamated. examine_stack: 29_examine_stack*.pic.o in libprotobuf_cgo.a.
     - pkg: absl/debugging/examine_stack
       sources:
         - absl/debugging/internal/examine_stack.cc

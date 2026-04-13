@@ -3,7 +3,6 @@
 
 #include "absl/strings/internal/cordz_sample_token.h"
 // include sources
-#include "absl/strings/internal/cordz_sample_token.cc"
 // include dependencies
 #include "go-absl/strings/cordz_handle/export.inc"
 #include "go-absl/strings/cordz_info/export.inc"
