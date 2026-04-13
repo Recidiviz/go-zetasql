@@ -576,6 +576,8 @@ cclib:
   excludes:
     - bison_keyword_token_codes_inc
     # gmock-only test helpers; not available in default CGO/prebuilt CI headers.
+    # scoped_mock_log / status_matchers are NOT excluded: optional generated shards for
+    # downstream/tests that link gtest — see docs/cgo-consolidation.md (GMock shard policy).
     - ^optional_ref_matchers$
     - ^edge_matchers$
     - ^nfa_matchers$
