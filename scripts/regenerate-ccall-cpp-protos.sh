@@ -87,4 +87,52 @@ done
 	--cpp_out="$CCALL" \
 	"${PROTO_RELPATHS[@]}"
 
+# Differential-privacy protos under internal/ccall/proto: protoc emits port_def.inc before
+# PROTOBUF_VERSION is defined. Insert runtime_version.h so standalone CGO TUs compile.
+if [[ -d "$CCALL/proto" ]]; then
+	for f in "$CCALL/proto"/*.pb.h; do
+		[[ -f "$f" ]] || continue
+		if grep -qF 'google/protobuf/runtime_version.h' "$f" 2>/dev/null; then
+			continue
+		fi
+		if grep -qF '#include <type_traits>' "$f" && grep -qF '#include "google/protobuf/port_def.inc"' "$f"; then
+			python3 - "$f" <<'PY'
+import pathlib, sys
+p = pathlib.Path(sys.argv[1])
+t = p.read_text()
+old = '#include <type_traits>\n\n#include "google/protobuf/port_def.inc"'
+new = '#include <type_traits>\n\n#include "google/protobuf/runtime_version.h"\n#include "google/protobuf/port_def.inc"'
+if "runtime_version.h" not in t and old in t:
+    p.write_text(t.replace(old, new, 1))
+PY
+		fi
+	done
+fi
+
+# Protobuf 5.29+ may emit the same _static_init2_ symbol in every *.pb.cc; when several
+# proto .cc files are #included into one CGO TU, rename to a per-file symbol.
+if [[ -d "$CCALL/proto" ]]; then
+	for f in "$CCALL/proto"/*.pb.cc; do
+		[[ -f "$f" ]] || continue
+		if ! grep -qF '_static_init2_' "$f" 2>/dev/null; then
+			continue
+		fi
+		base=$(basename "$f" .pb.cc)
+		safe=$(echo "$base" | tr '.-' '_')
+		python3 - "$f" "$safe" <<'PY'
+import pathlib, re, sys
+path, safe = pathlib.Path(sys.argv[1]), sys.argv[2]
+text = path.read_text()
+text, n = re.subn(
+    r"(PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::std::false_type\s*\n\s*)_static_init2_(\s+PROTOBUF_UNUSED)",
+    rf"\1_static_init_proto_{safe}_\2",
+    text,
+    count=1,
+)
+if n:
+    path.write_text(text)
+PY
+	done
+fi
+
 echo "Regenerated ${#PROTOS[@]} proto(s) under internal/ccall (googlesql, googleapis, proto)."

@@ -5,6 +5,8 @@
 *.so
 *.dylib
 *.proto
+# Differential-privacy sources (regenerate internal/ccall/proto/*.pb.* via scripts/regenerate-ccall-cpp-protos.sh)
+!internal/ccall/proto/*.proto
 # Test binary, built with `go test -c`
 *.test
 *.py
