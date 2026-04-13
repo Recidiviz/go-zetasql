@@ -620,6 +620,17 @@ cclib:
         # Single owner: googlesql/public/analyzer (add_sources); wire_format pairs with proto/type_annotation.
         - googlesql/public/proto/type_annotation.pb.cc
         - googlesql/public/proto/wire_format_annotation.pb.cc
+    # go-absl/types exception shards: Abseil object code is embedded in libprotobuf_cgo.a; do not
+    # amalgamate these .cc bodies into per-shard CGO TUs (see docs/prebuilt-cgo.md, docs/prebuilt-absl-overlap.md).
+    - pkg: absl/types/bad_optional_access
+      sources:
+        - absl/types/bad_optional_access.cc
+    - pkg: absl/types/bad_variant_access
+      sources:
+        - absl/types/bad_variant_access.cc
+    - pkg: absl/types/bad_any_cast_impl
+      sources:
+        - absl/types/bad_any_cast.cc
   bind_cc_prelude_before_headers:
     - pkg: googlesql/parser/parser
       lines: |

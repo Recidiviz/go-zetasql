@@ -59,7 +59,6 @@
 //#undef private
 
 // include sources
-#include "absl/types/bad_any_cast.cc"
 #include "absl/types/bad_any_cast.h"
 
 // include dependencies
