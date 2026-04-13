@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 void GO_EXPORT(cctz_FixedOffsetFromName)(void * arg0,void * arg1,char* arg2)
 {
   *arg2 = absl::time_internal::cctz::FixedOffsetFromName((char *)arg0, (absl::time_internal::cctz::seconds *)arg1);

@@ -11,6 +11,8 @@ import (
 	"github.com/vantaboard/go-googlesql/types"
 )
 
+/*
+*/
 import "C"
 
 type AnalyzerOutput struct {

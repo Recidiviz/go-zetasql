@@ -18,6 +18,8 @@ go_googlesql_env_export() {
 	fi
 
 	export CGO_LDFLAGS_ALLOW_LIST='-Wl,--no-gc-sections|-Wl,--allow-multiple-definition|-fuse-ld=mold|-Wl,--whole-archive|-Wl,--no-whole-archive|-Wl,--start-group|-Wl,--end-group|-stdlib=libc\+\+'
+	# `go list`, `go build`, and gopls read CGO_LDFLAGS_ALLOW (`go help environment`), not *_ALLOW_LIST.
+	export CGO_LDFLAGS_ALLOW="${CGO_LDFLAGS_ALLOW:-$CGO_LDFLAGS_ALLOW_LIST}"
 	export CGO_LDFLAGS_BASE="-Wl,--no-gc-sections -Wl,--allow-multiple-definition ${MOLD_LD} -stdlib=libc++"
 	export GOOGLESQL_BUILD_TAGS=googlesql,googlesql_unified_prebuilt
 	export GOCACHE="$GO_CACHE_ROOT/gocache"
