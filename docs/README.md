@@ -32,7 +32,7 @@ Use this map to find the right note. **Supported default:** `googlesql` + `googl
 | Doc | Purpose |
 |-----|---------|
 | [ci-bazel-cache.md](ci-bazel-cache.md) | GitHub Actions caches for Go, ccache, Bazel |
-| [cgo-consolidation.md](cgo-consolidation.md) | Shard inventory, CI `--check`, open decisions (e.g. GMock binds) |
+| [cgo-consolidation.md](cgo-consolidation.md) | Shard inventory, CI `--check`, consolidation changelog (waves 1–12), GMock policy |
 
 ## Investigation / historical
 
