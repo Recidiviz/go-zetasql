@@ -886,10 +886,8 @@ cclib:
     - pkg: absl/debugging/symbolize
       sources:
         - absl/debugging/symbolize.cc
-    # Time / cctz (partial): Option B — IANA zone bodies stay amalgamated in
-    # absl/time/internal/cctz/time_zone (extract_protobuf_cgo_lib.sh drops time_zone_*.pic.o from
-    # libprotobuf_cgo.a on purpose; see docs/unified-prebuilt-root-segfault-investigation.md).
-    # These .cc bodies have matching *.pic.o in libprotobuf_cgo.a (verify with ar t / task verify:prebuilt-protobuf).
+    # Time / cctz: Option B (civil_time, absl/time/time, kernel_timeout) + Option A (time_zone IANA):
+    # time_zone_*.pic.o merge into libprotobuf_cgo.a (extract_protobuf_cgo_lib.sh); verify ar t / task verify:prebuilt-protobuf.
     - pkg: absl/time/internal/cctz/civil_time
       sources:
         - absl/time/internal/cctz/src/civil_time_detail.cc
@@ -903,7 +901,17 @@ cclib:
     - pkg: absl/synchronization/kernel_timeout_internal
       sources:
         - absl/synchronization/internal/kernel_timeout.cc
-    # absl/time/internal/cctz/time_zone: still amalgamated (single-owner Go TU vs archive policy above).
+    - pkg: absl/time/internal/cctz/time_zone
+      sources:
+        - absl/time/internal/cctz/src/time_zone_fixed.cc
+        - absl/time/internal/cctz/src/time_zone_format.cc
+        - absl/time/internal/cctz/src/time_zone_if.cc
+        - absl/time/internal/cctz/src/time_zone_impl.cc
+        - absl/time/internal/cctz/src/time_zone_info.cc
+        - absl/time/internal/cctz/src/time_zone_libc.cc
+        - absl/time/internal/cctz/src/time_zone_lookup.cc
+        - absl/time/internal/cctz/src/time_zone_posix.cc
+        - absl/time/internal/cctz/src/zone_info_source.cc
     # Mega-shards (last): list every amalgamated .cc from bind.cc.
     - pkg: absl/base/base
       sources:

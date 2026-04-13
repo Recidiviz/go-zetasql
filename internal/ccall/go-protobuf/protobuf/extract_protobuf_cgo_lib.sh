@@ -77,18 +77,15 @@ collect_protobuf_pic_o() {
 # Exclude Abseil test-only objects (e.g. status_matchers) that reference gtest — otherwise
 # `-Wl,--whole-archive -lprotobuf_cgo` pulls them in and the link requires libgtest.
 #
-# Single-owner cctz IANA zone implementation (see docs/unified-prebuilt-root-segfault-investigation.md):
-# time_zone_*.pic.o and zone_info_source.pic.o duplicate internal/ccall/go-absl/.../cctz/time_zone
-# bind.cc. Duplicate TUs under -Wl,--allow-multiple-definition corrupt protobuf DescriptorPool
-# static init (SIGSEGV in absl::raw_hash_set). civil_time_detail is single-owned via libprotobuf_cgo.a;
-# go-absl cctz export.inc / civil_time bind.cc must not also #include civil_time_detail.cc (see repo).
+# cctz IANA zone: time_zone_*.pic.o and zone_info_source.pic.o merge into libprotobuf_cgo.a (Option A).
+# go-absl/time/.../cctz/time_zone bind.cc must not also #include those .cc bodies — use
+# cclib.exclude_amalgamation_sources in internal/cmd/generator/config.yaml and regenerate bind.cc.
 OBJS=$(
   collect_protobuf_pic_o \
     | grep -Ev 'test|unittest|benchmark' \
     | grep -Ev 'status_matchers|gmock|gtest|googletest|googlemock' \
     | grep -Ev '/_objs/(timestamp|duration|any|wrappers|struct|empty|field_mask|source_context|type|api)_proto/' \
     | grep -Ev '/google/protobuf/compiler/' \
-    | grep -Ev 'time_zone_(fixed|format|if|impl|info|libc|lookup|posix)\.pic\.o|zone_info_source\.pic\.o' \
     | sort -u || true
 )
 if [[ -z "${OBJS// }" ]]; then

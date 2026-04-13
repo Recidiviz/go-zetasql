@@ -93,11 +93,11 @@ per-package cgo links match the protobuf archive (see `bindGoParamUnifiedPrebuil
 
 **Update (2026-04):** On a Linux host with the same `CGO_CXXFLAGS_PREBUILT` / `CGO_LDFLAGS_BASE` as [`.envrc`](../.envrc) / [`scripts/go-googlesql-env.sh`](../scripts/go-googlesql-env.sh) (default `-stdlib=libc++`), `ldd` on the unified-prebuilt test binary shows **libc++.so.1** and **no libstdc++.so** — so mixed GNU/libstdc++ vs LLVM/libc++ is not the only failure mode.
 
-**Duplicate Abseil cctz / `civil_time_detail` vs `libprotobuf_cgo.a`:** `libprotobuf_cgo.a` merges Abseil `*.pic.o` from Bazel. The same **IANA time_zone** object files and **`civil_time_detail.cc`** body also appear in Go CGO TUs (`internal/ccall/go-absl/time/.../cctz/time_zone`, `civil_time/export.inc`, etc.). With `-Wl,--allow-multiple-definition`, the linker can merge incompatible copies and the process still crashes in `DescriptorPool::Tables` / `GroupSse2Impl` at startup.
+**Duplicate Abseil cctz / `civil_time_detail` vs `libprotobuf_cgo.a` (historical):** `libprotobuf_cgo.a` merges Abseil `*.pic.o` from Bazel. When the same **IANA time_zone** object files and **`civil_time_detail.cc`** body also appeared in Go CGO TUs, duplicate TUs under `-Wl,--allow-multiple-definition` could corrupt startup (`DescriptorPool::Tables` / `GroupSse2Impl`).
 
-Mitigations in-tree:
+Mitigations in-tree (current):
 
-- [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) **drops** Abseil members `time_zone_*.pic.o` and `zone_info_source.pic.o` from the merged `libprotobuf_cgo.a` so the **Go `cctz/time_zone` shard** is the single owner of that implementation.
+- [`extract_protobuf_cgo_lib.sh`](../internal/ccall/go-protobuf/protobuf/extract_protobuf_cgo_lib.sh) **merges** `time_zone_*.pic.o` and `zone_info_source.pic.o` into `libprotobuf_cgo.a`; **`cclib.exclude_amalgamation_sources`** + regenerated **`go-absl/.../cctz/time_zone/bind.cc`** omit those `.cc` bodies from the CGO TU (**Eleventh follow-up**, [cgo-consolidation.md](cgo-consolidation.md)).
 - [`civil_time/export.inc`](../internal/ccall/go-absl/time/go_internal/cctz/civil_time/export.inc) no longer `#include`s `civil_time_detail.cc`; that TU stays in `libprotobuf_cgo.a` only. The `civil_time` CGO package [blank-imports `go-protobuf/protobuf`](../internal/ccall/go-absl/time/go_internal/cctz/civil_time/bind_linux.go) so out-of-line symbols resolve.
 - [`public/analyzer/bridge_cc.inc`](../internal/ccall/go-googlesql/public/analyzer/bridge_cc.inc) uses a uniquely named helper `googlesql_public_analyzer_bridge_slice_to_strs` so link-only root + analyzer shards do not emit two globals named `slice_to_strs` when building **without** `--allow-multiple-definition`.
 
