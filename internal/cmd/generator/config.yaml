@@ -886,8 +886,9 @@ cclib:
     - pkg: absl/debugging/symbolize
       sources:
         - absl/debugging/symbolize.cc
-    # Time / cctz / kernel_timeout: defer exclude_amalgamation_sources — cctz TU must stay
-    # link-coherent with libprotobuf_cgo.a + libgooglesql.a (undefined cctz symbols if dropped here).
+    # Time / cctz / kernel_timeout: defer exclude_amalgamation_sources — follow
+    # docs/cgo-consolidation.md (cctz / kernel_timeout future PR checklist); not YAML-only.
+    # cctz TU must stay link-coherent with libprotobuf_cgo.a + libgooglesql.a (undefined cctz if dropped here).
     # Mega-shards (last): list every amalgamated .cc from bind.cc.
     - pkg: absl/base/base
       sources:
