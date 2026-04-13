@@ -14,7 +14,7 @@ echo "ok: $LIB"
 check_symbol() {
 	local label="$1"
 	local pattern="$2"
-	if (nm -C "$LIB" 2>/dev/null || true) | rg -q "$pattern"; then
+	if (nm -C "$LIB" 2>/dev/null || true) | grep -qE "$pattern"; then
 		echo "ok: $label"
 	else
 		echo "missing expected libgooglesql.a symbol for $label: $pattern" >&2
@@ -22,7 +22,8 @@ check_symbol() {
 	fi
 }
 
-check_symbol "icu" 'icu_76::Normalizer2::getNFKDInstance\(UErrorCode&\)'
+# ICU major is embedded in the mangled namespace (icu_76::, icu_74::, …).
+check_symbol "icu" 'icu_[0-9]+::Normalizer2::getNFKDInstance\(UErrorCode&\)'
 check_symbol "re2" 're2::Prog::CompileSet'
 check_symbol "googleapis date proto" 'google::type::Date::GetMetadata\(\) const'
 check_symbol "reflection proto" 'googlesql::reflection::Column::Column\(google::protobuf::Arena\*\)'
