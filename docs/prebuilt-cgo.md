@@ -163,6 +163,8 @@ source "$GO_GOOGLESQL_ROOT/scripts/go-googlesql-stack-bootstrap.sh"
 # then: go test -tags googlesql,googlesql_unified_prebuilt ...
 ```
 
+**CI on downstream forks:** After checking out **`vantaboard/go-googlesql`** at the same version as `go.mod`, run [`scripts/ci-download-or-build-default-prebuilts.sh`](../scripts/ci-download-or-build-default-prebuilts.sh) once, then bootstrap + `go test` / `go build` (see [`docs/stack-release-policy.md`](stack-release-policy.md#ci)).
+
 See also [Downstream repositories](#downstream-repositories) and [`README.md`](../README.md#development).
 
 ## Environment variables

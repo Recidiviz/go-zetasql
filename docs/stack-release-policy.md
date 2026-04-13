@@ -18,6 +18,6 @@ This document ties together **module versions**, **prebuilt archives**, and **Do
 2. Bump **`go-googlesql`** in **`go-googlesqlite`** `go.mod`; run tests with sibling **`replace`** and prebuilts.
 3. Bump **`go-googlesql`** / **`go-googlesqlite`** in **`bigquery-emulator`** `go.mod`; align **`GO_GOOGLESQL_BASE`**; run **`make test/linux`** or stack integration tests.
 
-## CI caveat
+## CI
 
-GitHub Actions for **downstream** repos often test against the **public module** (no prebuilt `.a` in the module zip). That may use a different CGO compile path than the unified-prebuilt sibling workflow. For **release confidence**, gate on local or internal jobs that use **`replace`**, a prebuilt tarball, or **`task test:local`** in `go-googlesql`.
+Downstream workflows should check out **`vantaboard/go-googlesql`** at the same **`require`** version as `go.mod`, run **`scripts/ci-download-or-build-default-prebuilts.sh`**, then **`source scripts/go-googlesql-stack-bootstrap.sh`** before **`go test`** / **`go build`** so CI uses **`googlesql,googlesql_unified_prebuilt`** with the same prebuilt archives as local sibling development (release tarball on **linux/amd64** when available, otherwise Task + Bazel).
