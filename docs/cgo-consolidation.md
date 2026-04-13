@@ -130,7 +130,7 @@ For each **B** candidate:
 
 - **GMock shard policy (decision):** **`log/scoped_mock_log`** and **`status/status_matchers`** stay **generated** and **not** listed under **`cclib.excludes`** (unlike **`optional_ref_matchers`**, **`edge_matchers`**, etc.). The default module tests do not import them; they exist for **optional** downstream or test binaries that link **GTest/GMock**. Expect them to remain in the amalgamation **inventory** until a separate policy removes test-oriented CGO packages.
 
-- **Open product decisions (GMock inventory):** **Recorded default (2026-04):** option **(1)** — keep **`scoped_mock_log`** / **`status_matchers`** generated for optional downstream consumers (see **GMock shard policy** bullet above) until product explicitly chooses **(2)** **`cclib.excludes`** or **(3)** remove test-oriented CGO. **Tier B** **`libabsl_cgo.a`** remains a separate pilot — not a shortcut for default inventory.
+- **Open product decisions (GMock inventory):** **Recorded default (2026-04):** option **(1)** — keep **`scoped_mock_log`** / **`status_matchers`** generated for optional downstream consumers (see **GMock shard policy** bullet above) until product explicitly chooses **(2)** **`cclib.excludes`** or **(3)** remove test-oriented CGO. **Reaffirmed (2026-04-13):** option **(1)** remains active; **(2)** / **(3)** not scheduled — see **Remaining consolidation roadmap** below. **Tier B** **`libabsl_cgo.a`** remains a separate pilot — not a shortcut for default inventory.
 
 - **cctz / `kernel_timeout` future PR checklist:** **Landed (2026-04):** Tenth + Eleventh follow-ups completed **Option B** + **Option A** for time/cctz (see bullets above). **Remaining optional work:** vendored **`leak_check_disable`**, GMock inventory (policy), or downstream smoke on releases.
 
@@ -167,6 +167,34 @@ Full removal of **`internal/ccall/go-absl`** remains a **multi-quarter** effort.
 
 1. **GMock shards (`scoped_mock_log`, `status_matchers`):** policy remains **generated for optional consumers** (recorded default **(1)** under **Open product decisions**); inventory **2 → 0** only if product **removes test-oriented CGO** or adopts **`cclib.excludes`** for those packages.
 2. **`googlesql_tier_b_absl`** + **`libabsl_cgo.a`** stays a **separate Tier B pilot** — not a substitute for shrinking the default inventory ([tier-b-absl-protobuf.md](tier-b-absl-protobuf.md)).
+
+## Remaining consolidation roadmap
+
+### GMock inventory (only `--list` amalgamation entries)
+
+**Recorded decision:** Continue **option (1)** — keep generated **`scoped_mock_log`** and **`status_matchers`** for optional downstream or test binaries that link GTest/GMock. Inventory **2→0** requires **(2)** add **`cclib.excludes`** (then `go run ./internal/cmd/generator`) or **(3)** delete the generated packages; both need Phase 4 proofs and downstream communication.
+
+**Implementation status (2026-04-13):** **(2)** / **(3)** not implemented — no change to [config.yaml](../internal/cmd/generator/config.yaml) excludes for those packages.
+
+### Tier B boundary
+
+**`googlesql_tier_b_absl`** + **`libabsl_cgo.a`** is an **isolated** pilot ([tier-b-absl-protobuf.md](tier-b-absl-protobuf.md)). Do **not** combine it with the default protobuf + GoogleSQL prebuilt archives in one link ([prebuilt-absl-overlap.md](prebuilt-absl-overlap.md)). When changing Tier B tags or extract scripts, run **`task verify:tier-b-cgo-policy`** and **`task verify:protobuf-tier-b`** as applicable ([Taskfile.yml](../Taskfile.yml)).
+
+### Incremental `go-absl` backlog (ranked)
+
+Take **one** slice per PR: prove objects with **`ar t`** / **`nm -C`** on **`libprotobuf_cgo.a`** or **`libgooglesql.a`** before extending **`cclib.exclude_amalgamation_sources`** in [config.yaml](../internal/cmd/generator/config.yaml).
+
+1. **Smaller TUs** — remaining **`absl/log/*`** singles or **`absl/random/*`** gaps (see historical waves in §Phase 4 playbook above); lowest coordination cost.
+2. **`absl/flags/*`** — bulk wave; separate epic (many targets already merged in Fifth/Sixth wave history).
+3. **Mega-shards** — **`absl/strings/strings`**, **`absl/synchronization/synchronization`**, **`absl/base/base`** — separate epics; highest duplicate-symbol risk.
+4. **Time / cctz** — do not regress Tenth–Eleventh ownership; follow [unified-prebuilt-root-segfault-investigation.md](unified-prebuilt-root-segfault-investigation.md) for any new edits.
+5. **GMock shards** — not candidates for archive-only excludes on the default path; inventory changes only via GMock policy **(1–3)** above.
+
+### Program hygiene
+
+- **CI:** `./scripts/cgo-shard-inventory.sh --check` ([.github/workflows/go.yml](../.github/workflows/go.yml)).
+- **Prebuilts:** after **`extract_protobuf_cgo_lib.sh`** or **`extract_googlesql_unified_lib.sh`** changes, **`task verify:prebuilt-protobuf`** / **`task verify:prebuilt-googlesql-unified`** (see §Phase 5).
+- **Releases:** smoke **go-googlesqlite** / **bigquery-emulator** per [prebuilt-cgo.md](prebuilt-cgo.md) and Tier B doc when bumping the module.
 
 ## Risk register
 
