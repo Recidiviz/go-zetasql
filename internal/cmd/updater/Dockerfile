@@ -1,6 +1,7 @@
 # Builds google/googlesql at a pinned tag and exports Bazel artifacts for the Go updater.
 # Build: make -C internal/cmd/updater build   (or docker build -t googlesql-updater .)
-FROM golang:1.24-bullseye
+# Bookworm (glibc 2.36): Bazel's hermetic LLVM toolchain requires GLIBC_2.32+ (bullseye is too old).
+FROM golang:1.24-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg git \
     && rm -rf /var/lib/apt/lists/*
