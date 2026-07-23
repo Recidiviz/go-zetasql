@@ -78,6 +78,7 @@ const lib_specs = [_]LibSpec{
             ccall ++ "/zetasql/testdata/sample_annotation.cc",
             ccall ++ "/zetasql/scripting/parsed_script.cc",
             ccall ++ "/zetasql/scripting/control_flow_graph.cc",
+            ccall ++ "/zetasql/scripting/script_segment.cc",
             ccall ++ "/zetasql/scripting/script_exception.pb.cc",
         },
     },
