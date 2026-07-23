@@ -25,21 +25,23 @@ const include_dirs = [_][]const u8{
 // Mirrors the CXXFLAGS the cgo build uses, minus per-warning toggles
 // (-w) and with UBSan disabled: the vendored code has benign UB that
 // zig's default Debug sanitizers would otherwise trap on.
-const cxx_flags = [_][]const u8{
+const base_cxx_flags = [_][]const u8{
     "-std=c++17",
     "-w",
     "-g0",
     "-fno-sanitize=undefined",
-    // The vendored sources predate compilers that stopped including
-    // <cstdint> transitively; force it in.
-    "-include",
-    "cstdint",
     "-DHAVE_PTHREAD",
     "-DU_COMMON_IMPLEMENTATION",
     "-DU_STATIC_IMPLEMENTATION=1",
     // hash.cc expects the farmhash functions in namespace `farmhash`
     // rather than upstream's default `util`.
     "-DNAMESPACE_FOR_HASH_FUNCTIONS=farmhash",
+    // The vendored sources predate compilers that stopped including
+    // <cstdint> transitively; force it in via the prelude header. The
+    // path is appended in build() as an absolute path: zig's cache
+    // manifest treats the -include argument as an input file, and a
+    // bare header name like "cstdint" fails the cache check.
+    "-include",
 };
 
 const LibSpec = struct {
@@ -118,6 +120,11 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    var flags = std.ArrayList([]const u8).init(b.allocator);
+    flags.appendSlice(&base_cxx_flags) catch @panic("OOM");
+    flags.append(b.pathFromRoot("zig/prelude.h")) catch @panic("OOM");
+    const cxx_flags = flags.items;
+
     const exe = b.addExecutable(.{
         .name = "zetasql-analyzer-demo",
         .root_source_file = b.path("zig/main.zig"),
@@ -128,7 +135,7 @@ pub fn build(b: *std.Build) void {
     addIncludes(b, exe);
     exe.addCSourceFiles(.{
         .files = &.{"zig/analyzer_smoke.cc"},
-        .flags = &cxx_flags,
+        .flags = cxx_flags,
     });
 
     for (lib_specs) |spec| {
@@ -146,7 +153,7 @@ pub fn build(b: *std.Build) void {
             });
         };
         files.appendSlice(spec.extras) catch @panic("OOM");
-        lib.addCSourceFiles(.{ .files = files.items, .flags = &cxx_flags });
+        lib.addCSourceFiles(.{ .files = files.items, .flags = cxx_flags });
         exe.linkLibrary(lib);
     }
 
@@ -161,7 +168,7 @@ pub fn build(b: *std.Build) void {
         const files = protobufSources(b) catch |err| {
             std.debug.panic("parsing protobuf export.inc: {s}", .{@errorName(err)});
         };
-        lib.addCSourceFiles(.{ .files = files, .flags = &cxx_flags });
+        lib.addCSourceFiles(.{ .files = files, .flags = cxx_flags });
         exe.linkLibrary(lib);
     }
 
