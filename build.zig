@@ -29,6 +29,10 @@ const cxx_flags = [_][]const u8{
     "-w",
     "-g0",
     "-fno-sanitize=undefined",
+    // The vendored sources predate compilers that stopped including
+    // <cstdint> transitively; force it in.
+    "-include",
+    "cstdint",
     "-DHAVE_PTHREAD",
     "-DU_COMMON_IMPLEMENTATION",
     "-DU_STATIC_IMPLEMENTATION=1",
@@ -61,11 +65,9 @@ const lib_specs = [_]LibSpec{
             "/mock",     "mock_",     "gentables", "print_hash_of",
         },
     },
-    .{
-        .name = "protobuf",
-        .root = ccall ++ "/protobuf/google",
-        .excludes = &.{ "test", "mock", "/compiler/" },
-    },
+    // protobuf is handled separately: the vendored tree mixes files from
+    // several protobuf versions, and only the curated list maintained in
+    // go-protobuf/protobuf/export.inc compiles as a set.
     .{
         .name = "icu",
         .root = ccall ++ "/icu/common",
@@ -125,6 +127,21 @@ pub fn build(b: *std.Build) void {
         exe.linkLibrary(lib);
     }
 
+    {
+        const lib = b.addStaticLibrary(.{
+            .name = "protobuf",
+            .target = target,
+            .optimize = optimize,
+        });
+        lib.linkLibCpp();
+        addIncludes(b, lib);
+        const files = protobufSources(b) catch |err| {
+            std.debug.panic("parsing protobuf export.inc: {s}", .{@errorName(err)});
+        };
+        lib.addCSourceFiles(.{ .files = files, .flags = &cxx_flags });
+        exe.linkLibrary(lib);
+    }
+
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
@@ -136,6 +153,32 @@ pub fn build(b: *std.Build) void {
 
 fn addIncludes(b: *std.Build, compile: *std.Build.Step.Compile) void {
     for (include_dirs) |dir| compile.addIncludePath(b.path(dir));
+}
+
+// Reads the curated protobuf source list out of the same file the cgo
+// build uses (go-protobuf/protobuf/export.inc), skipping the google/type
+// protos, which live under googleapis and are part of the support lib.
+fn protobufSources(b: *std.Build) ![]const []const u8 {
+    var files = std.ArrayList([]const u8).init(b.allocator);
+
+    const inc = try b.build_root.handle.readFileAlloc(
+        b.allocator,
+        ccall ++ "/go-protobuf/protobuf/export.inc",
+        1 << 20,
+    );
+
+    var lines = std.mem.tokenizeScalar(u8, inc, '\n');
+    while (lines.next()) |line| {
+        const prefix = "#include \"google/";
+        if (!std.mem.startsWith(u8, line, prefix)) continue;
+        const start = std.mem.indexOfScalar(u8, line, '"').? + 1;
+        const end = std.mem.lastIndexOfScalar(u8, line, '"').?;
+        const rel = line[start..end];
+        if (!std.mem.endsWith(u8, rel, ".cc")) continue;
+        if (std.mem.startsWith(u8, rel, "google/type/")) continue;
+        try files.append(b.pathJoin(&.{ ccall ++ "/protobuf", rel }));
+    }
+    return files.items;
 }
 
 fn collectSources(b: *std.Build, spec: LibSpec) !std.ArrayList([]const u8) {
