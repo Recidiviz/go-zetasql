@@ -20,6 +20,7 @@ const include_dirs = [_][]const u8{
     ccall ++ "/googleapis",
     ccall ++ "/flex/src",
     ccall ++ "/boringssl",
+    ccall ++ "/farmhash",
 };
 
 // Mirrors the CXXFLAGS the cgo build uses, minus per-warning toggles
