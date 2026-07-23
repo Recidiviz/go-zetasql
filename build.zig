@@ -77,6 +77,8 @@ const lib_specs = [_]LibSpec{
             // files are needed despite living in excluded directories.
             ccall ++ "/zetasql/testdata/sample_annotation.cc",
             ccall ++ "/zetasql/scripting/parsed_script.cc",
+            ccall ++ "/zetasql/scripting/control_flow_graph.cc",
+            ccall ++ "/zetasql/scripting/script_exception.pb.cc",
         },
     },
     .{
